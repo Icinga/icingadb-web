@@ -1,3 +1,6 @@
+@gray-dark: #777;
+@gray-light: #d8d8d8;
+
 .ball {
   border-radius: 50%;
   display: inline-block;
@@ -26,4 +29,17 @@
   width: 2.5em;
   line-height: 2.5em;
   height: 2.5em;
+}
+
+.attempt-ball {
+  .ball();
+  .ball-size-xs();
+
+  background-color: @gray-light;
+
+  &.taken {
+    .ball-size-s();
+
+    background-color: @gray-dark;
+  }
 }
