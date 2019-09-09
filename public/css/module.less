@@ -43,3 +43,37 @@
     background-color: @gray-dark;
   }
 }
+
+.state-ball {
+  .ball();
+
+  &.state-up {
+    background-color: @color-ok;
+  }
+
+  &.state-down {
+    background-color: @color-critical;
+  }
+
+  &.state-ok {
+    background-color: @color-ok;
+  }
+
+  &.state-warning {
+    background-color: @color-warning;
+  }
+
+  &.state-critical {
+    background-color: @color-critical;
+  }
+
+
+  &.state-unknown {
+    background-color: @color-unknown;
+  }
+
+
+  &.state-pending {
+    background-color: @color-pending;
+  }
+}
