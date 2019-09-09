@@ -15,6 +15,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
+        $hosts->limit(25);
 
         $hostList = new HostList($hosts);
 
