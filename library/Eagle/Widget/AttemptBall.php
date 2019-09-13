@@ -21,7 +21,9 @@ class AttemptBall extends BaseHtmlElement
         $class = 'attempt-ball';
 
         if ($taken) {
-            $class .= ' taken';
+            $class .= ' size-s taken';
+        } else {
+            $class .= ' size-xs';
         }
 
         $this->defaultAttributes = ['class' => $class];

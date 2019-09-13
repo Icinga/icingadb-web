@@ -12,4 +12,7 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/hosts',
         'priority' => 10
     ]);
+
+    // TODO: Switch to from='ipl' prior release!
+    $this->requireCssFile('state-ball.less', 'ipldev');
 }

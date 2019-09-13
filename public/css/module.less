@@ -1,80 +1,11 @@
 @gray-dark: #777;
 @gray-light: #d8d8d8;
 
-.ball {
-  border-radius: 50%;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.ball-size-xs {
-  height: 1/3em;
-  line-height: 1/3em;
-  width: 1/3em;
-}
-
-.ball-size-s {
-  height: 0.5em;
-  line-height: 0.5em;
-  width: 0.5em;
-}
-
-.ball-size-m {
-  height: 1em;
-  line-height: 1em;
-  width: 1em;
-}
-
-.ball-size-l {
-  width: 2.5em;
-  line-height: 2.5em;
-  height: 2.5em;
-}
-
 .attempt-ball {
-  .ball();
-  .ball-size-xs();
-
   background-color: @gray-light;
 
   &.taken {
-    .ball-size-s();
-
     background-color: @gray-dark;
-  }
-}
-
-.state-ball {
-  .ball();
-
-  &.state-up {
-    background-color: @color-ok;
-  }
-
-  &.state-down {
-    background-color: @color-critical;
-  }
-
-  &.state-ok {
-    background-color: @color-ok;
-  }
-
-  &.state-warning {
-    background-color: @color-warning;
-  }
-
-  &.state-critical {
-    background-color: @color-critical;
-  }
-
-
-  &.state-unknown {
-    background-color: @color-unknown;
-  }
-
-
-  &.state-pending {
-    background-color: @color-pending;
   }
 }
 
