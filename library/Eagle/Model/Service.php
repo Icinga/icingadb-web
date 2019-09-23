@@ -5,14 +5,11 @@ namespace Icinga\Module\Eagle\Model;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
-/**
- * Host model.
- */
-class Host extends Model
+class Service extends Model
 {
     public function getTableName()
     {
-        return 'host';
+        return 'service';
     }
 
     public function getKeyName()
@@ -28,13 +25,10 @@ class Host extends Model
             'properties_checksum',
             'customvars_checksum',
             'groups_checksum',
+            'host_id',
             'name',
             'name_ci',
             'display_name',
-            'address',
-            'address',
-            'address_bin',
-            'address',
             'checkcommand',
             'checkcommand_id',
             'max_check_attempts',
@@ -69,9 +63,11 @@ class Host extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('host', Host::class);
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id');
+        $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('action_url', ActionUrl::class);
         $relations->belongsTo('notes_url', NotesUrl::class);
         $relations->belongsTo('icon_image', IconImage::class);
@@ -80,16 +76,15 @@ class Host extends Model
             ->setCandidateKey('command_endpoint_id');
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(HostCustomvar::class);
+            ->setThrough(ServiceCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(HostCustomvar::class);
-        $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setThrough(HostgroupMember::class);
+            ->setThrough(ServiceCustomvar::class);
+        $relations->belongsToMany('servicegroup', Servicegroup::class)
+            ->setThrough(ServicegroupMember::class);
 
-        $relations->hasOne('state', HostState::class);
-        $relations->hasMany('comment', HostComment::class);
-        $relations->hasMany('downtime', HostDowntime::class);
+        $relations->hasOne('state', ServiceState::class);
+        $relations->hasMany('comment', ServiceComment::class);
+        $relations->hasMany('downtime', ServiceDowntime::class);
         $relations->hasMany('notification', Notification::class);
-        $relations->hasMany('service', Service::class);
     }
 }

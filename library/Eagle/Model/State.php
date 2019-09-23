@@ -12,7 +12,7 @@ abstract class State extends Model
     public function getColumns()
     {
         return [
-            'env_id',
+            'environment_id',
             'state_type',
             'soft_state',
             'hard_state',
@@ -36,7 +36,8 @@ abstract class State extends Model
             'last_state_change',
             'last_soft_state',
             'last_hard_state',
-            'next_check'
+            'next_check',
+            'next_update'
         ];
     }
 }

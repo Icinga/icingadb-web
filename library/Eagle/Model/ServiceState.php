@@ -2,30 +2,27 @@
 
 namespace Icinga\Module\Eagle\Model;
 
-use Icinga\Module\Eagle\Common\HostStates;
+use Icinga\Module\Eagle\Common\ServiceStates;
 use ipl\Orm\Relations;
 
-/**
- * Host state model.
- */
-class HostState extends State
+class ServiceState extends State
 {
     public function getTableName()
     {
-        return 'host_state';
+        return 'service_state';
     }
 
     public function getKeyName()
     {
-        return 'host_id';
+        return 'service_id';
     }
 
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('service', Service::class);
 
-        $relations->hasOne('comment', HostComment::class)
+        $relations->hasOne('comment', ServiceComment::class)
             ->setCandidateKey('acknowledgement_comment_id');
     }
 
@@ -36,7 +33,7 @@ class HostState extends State
      */
     public function getStateText()
     {
-        return HostStates::text($this->properties['soft_state']);
+        return ServiceStates::text($this->properties['soft_state']);
     }
 
     /**
@@ -46,6 +43,6 @@ class HostState extends State
      */
     public function getStateTextTranslated()
     {
-        return HostStates::text($this->properties['soft_state']);
+        return ServiceStates::text($this->properties['soft_state']);
     }
 }
