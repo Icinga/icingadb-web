@@ -33,6 +33,6 @@ class StateBall extends BaseHtmlElement
             $size = self::SIZE_MEDIUM;
         }
 
-        $this->defaultAttributes = ['class' => "state-ball state-$state ball-size-$size"];
+        $this->defaultAttributes = ['class' => "state-ball state-$state size-$size"];
     }
 }
