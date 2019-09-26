@@ -12,7 +12,7 @@ class HostList extends BaseHtmlElement
 {
     protected $tag = 'ul';
 
-    protected $defaultAttributes = ['class' => 'host-list', 'data-base-target' => '_next'];
+    protected $defaultAttributes = ['class' => 'object-list', 'data-base-target' => '_next'];
 
     /** @var iterable Data source of the list */
     protected $hosts;

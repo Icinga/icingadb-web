@@ -1,0 +1,36 @@
+.object-list {
+  // Reset defaults
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-item {
+  display: flex;
+  padding: 0.75em;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  .main {
+    flex: 1;
+  }
+
+  .visual {
+    margin-right: 1em;
+  }
+
+  .caption {
+    margin: 0;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+
+    a {
+      font-weight: bold;
+    }
+  }
+}

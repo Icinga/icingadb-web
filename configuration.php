@@ -15,4 +15,6 @@ namespace Icinga\Module\Eagle
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
+
+    $this->provideCssFile('lists.less');
 }

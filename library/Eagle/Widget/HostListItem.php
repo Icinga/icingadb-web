@@ -3,6 +3,7 @@
 namespace Icinga\Module\Eagle\Widget;
 
 use Icinga\Module\Eagle\Model\Host;
+use Icinga\Module\Eagle\Model\HostState;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -13,10 +14,12 @@ class HostListItem extends BaseHtmlElement
 {
     protected $tag = 'li';
 
+    protected $defaultAttributes = ['class' => 'list-item'];
+
     /** @var Host The item's associated host model */
     protected $host;
 
-    /** @var \Icinga\Module\Eagle\Model\HostState The state of the host */
+    /** @var HostState The state of the host */
     protected $state;
 
     /**
@@ -34,31 +37,31 @@ class HostListItem extends BaseHtmlElement
     {
         $header = [
             $this->createTitle(),
-            $this->createMeta()
+            $this->createTimestamp(),
         ];
 
         return Html::tag('header', $header);
     }
 
+    protected function createTimestamp()
+    {
+        return new TimeSince($this->state->last_update);
+    }
+
     protected function createMain()
     {
         return Html::tag('div', ['class' => 'main'], [
-            $this->createTitle(),
-            Html::tag('p', ['class' => 'caption output'], $this->state->output)
+            $this->createHeader(),
+            Html::tag('p', ['class' => 'caption plugin-output'], $this->state->output)
         ]);
-    }
-
-    protected function createMeta()
-    {
-        return Html::tag('div', ['class' => 'meta'], new TimeSince($this->host->state->last_update));
     }
 
     protected function createTitle()
     {
         return HTML::tag('div', ['class' => 'title'], [
-            $this->host->display_name,
+            Html::tag('a', ['href' => 'host'], $this->host->display_name),
             ' is ',
-            $this->state->getStateTextTranslated()
+            Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
         ]);
     }
 
@@ -72,7 +75,9 @@ class HostListItem extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->add($this->createVisual());
-        $this->add($this->createMain());
+        $this->add([
+            $this->createVisual(),
+            $this->createMain(),
+        ]);
     }
 }
