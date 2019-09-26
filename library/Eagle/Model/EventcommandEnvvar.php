@@ -1,0 +1,37 @@
+<?php
+
+namespace Icinga\Module\Eagle\Model;
+
+use ipl\Orm\Model;
+use ipl\Orm\Relations;
+
+class EventcommandEnvvar extends Model
+{
+    public function getTableName()
+    {
+        return 'eventcommand_envvar';
+    }
+
+    public function getKeyName()
+    {
+        return 'id';
+    }
+
+    public function getColumns()
+    {
+        return [
+            'command_id',
+            'envvar_key',
+            'environment_id',
+            'properties_checksum',
+            'envvar_value'
+        ];
+    }
+
+    public function createRelations(Relations $relations)
+    {
+        $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('eventcommand', Eventcommand::class)
+            ->setCandidateKey('command_id');
+    }
+}
