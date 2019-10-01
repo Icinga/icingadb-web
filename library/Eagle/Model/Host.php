@@ -38,7 +38,7 @@ class Host extends Model
             'checkcommand',
             'checkcommand_id',
             'max_check_attempts',
-            'check_period',
+            'check_timeperiod',
             'check_timeperiod_id',
             'check_timeout',
             'check_interval',
