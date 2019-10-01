@@ -34,6 +34,10 @@ class CheckAttempt extends BaseHtmlElement
 
     protected function assemble()
     {
+        if ($this->attempt == $this->maxAttempts) {
+            return;
+        }
+
         if ($this->maxAttempts > 5) {
             $this->add(new FormattedString('%d/%d', $this->attempt, $this->maxAttempts));
         } else {
