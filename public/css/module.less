@@ -2,9 +2,12 @@
 @gray-light: #d8d8d8;
 
 .attempt-ball {
+  .ball();
+  .ball-size-xs();
   background-color: @gray-light;
 
   &.taken {
+    .ball-size-s();
     background-color: @gray-dark;
   }
 }
