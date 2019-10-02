@@ -22,7 +22,7 @@ class UsergroupMember extends Model
         return [
             'user_id',
             'usergroup_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

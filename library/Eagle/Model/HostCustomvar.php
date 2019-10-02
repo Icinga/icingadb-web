@@ -22,7 +22,7 @@ class HostCustomvar extends Model
         return [
             'host_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

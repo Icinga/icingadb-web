@@ -22,7 +22,7 @@ class NotificationUser extends Model
         return [
             'notification_id',
             'user_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

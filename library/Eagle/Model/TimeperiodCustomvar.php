@@ -22,7 +22,7 @@ class TimeperiodCustomvar extends Model
         return [
             'timeperiod_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

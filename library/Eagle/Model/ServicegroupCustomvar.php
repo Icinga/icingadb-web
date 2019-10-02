@@ -22,7 +22,7 @@ class ServicegroupCustomvar extends Model
         return [
             'servicegroup_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

@@ -22,7 +22,7 @@ class HostgroupCustomvar extends Model
         return [
             'hostgroup_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

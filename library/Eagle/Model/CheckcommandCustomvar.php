@@ -22,7 +22,7 @@ class CheckcommandCustomvar extends Model
         return [
             'command_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

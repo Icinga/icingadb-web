@@ -22,7 +22,7 @@ class TimeperiodOverrideExclude extends Model
         return [
             'timeperiod_id',
             'override_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

@@ -21,7 +21,7 @@ class NotesUrl extends Model
     {
         return [
             'notes_url',
-            'env_id'
+            'environment_id'
         ];
     }
 

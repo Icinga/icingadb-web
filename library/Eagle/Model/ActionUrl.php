@@ -21,7 +21,7 @@ class ActionUrl extends Model
     {
         return [
             'action_url',
-            'env_id'
+            'environment_id'
         ];
     }
 

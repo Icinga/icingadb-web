@@ -22,7 +22,7 @@ class NotificationCustomvar extends Model
         return [
             'notification_id',
             'customvar_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

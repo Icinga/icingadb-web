@@ -22,7 +22,7 @@ class ServicegroupMember extends Model
         return [
             'service_id',
             'servicegroup_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

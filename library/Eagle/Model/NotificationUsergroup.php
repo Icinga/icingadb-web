@@ -22,7 +22,7 @@ class NotificationUsergroup extends Model
         return [
             'notification_id',
             'usergroup_id',
-            'env_id'
+            'environment_id'
         ];
     }
 

@@ -21,7 +21,7 @@ class IconImage extends Model
     {
         return [
             'icon_image',
-            'env_id'
+            'environment_id'
         ];
     }
 

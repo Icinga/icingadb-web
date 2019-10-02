@@ -22,7 +22,7 @@ class HostgroupMember extends Model
         return [
             'host_id',
             'hostgroup_id',
-            'env_id'
+            'environment_id'
         ];
     }
 
