@@ -5,12 +5,15 @@ namespace Icinga\Module\Eagle\Redis;
 use ipl\Orm\Model;
 
 /**
- * Base class for helpers to fetch volatile states from Icinga Redis.
+ * Fetch volatile host or service states from redis.
  */
-abstract class VolatileState
+class VolatileState
 {
     /** @var \Redis */
     protected $redis;
+
+    /** @var string */
+    protected $type;
 
     /** @var array */
     protected $objects = [];
@@ -26,13 +29,6 @@ abstract class VolatileState
     }
 
     /**
-     * Get the object type for which to fetch volatile states
-     *
-     * @return string
-     */
-    abstract public function getType();
-
-    /**
      * Add an object to fetch volatile states for
      *
      * @param Model $object
@@ -42,6 +38,10 @@ abstract class VolatileState
     public function add(Model $object)
     {
         $this->objects[bin2hex($object->id)] = $object;
+
+        if ($this->type === null) {
+            $this->type = $object->getTableName();
+        }
 
         return $this;
     }
@@ -59,7 +59,7 @@ abstract class VolatileState
             return $this;
         }
 
-        $rs = array_combine($keys, $this->redis->hMGet("icinga:state:object:{$this->getType()}", $keys));
+        $rs = array_combine($keys, $this->redis->hMGet("icinga:config:state:{$this->type}", $keys));
 
         foreach ($rs as $key => $json) {
             if ($json === false) {
