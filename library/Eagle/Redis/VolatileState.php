@@ -18,6 +18,21 @@ class VolatileState
     /** @var array */
     protected $objects = [];
 
+    /** @var array Set of keys to sync */
+    public static $keys = [
+        'attempt',
+        'output',
+        'long_output',
+        'performance_data',
+        'check_commandline',
+        'execution_time',
+        'latency',
+        'timeout',
+        'last_update',
+        'next_check',
+        'next_update'
+    ];
+
     /**
      * VolatileState constructor.
      *
@@ -67,6 +82,8 @@ class VolatileState
             }
 
             $data = json_decode($json, true);
+
+            $data = array_intersect_key($data, array_flip(static::$keys));
 
             $this->objects[$key]->state->setProperties($data);
         }
