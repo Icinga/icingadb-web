@@ -27,6 +27,7 @@ class HostsController extends Controller
             ->setRedis($this->getRedis())
             ->setViewMode($viewModeSwitcher->getViewMode());
 
+        $this->addControl($this->createPaginationControl($hosts));
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
 
