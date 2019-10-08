@@ -4,9 +4,11 @@ namespace Icinga\Module\Eagle\Web;
 
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
+use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
 use ipl\Sql\Connection;
 use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\PaginationControl;
 use ipl\Web\Url;
 
 class Controller extends CompatController
@@ -71,6 +73,23 @@ class Controller extends CompatController
         $this->params->shift($limitControl->getLimitParam());
 
         return $limitControl;
+    }
+
+    /**
+     * Create and return the PaginationControl
+     *
+     * This automatically shifts the pagination URL parameters from {@link $params}.
+     *
+     * @return PaginationControl
+     */
+    public function createPaginationControl(PaginationInterface $paginatable)
+    {
+        $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
+
+        $this->params->shift($paginationControl->getPageParam());
+        $this->params->shift($paginationControl->getPageSizeParam());
+
+        return $paginationControl;
     }
 
     /**
