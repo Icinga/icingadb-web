@@ -58,10 +58,20 @@ class ViewModeSwitcher extends BaseHtmlElement
         return $this;
     }
 
+    /**
+     * Get the view mode
+     *
+     * @return string
+     */
+    public function getViewMode()
+    {
+        return $this->url->getParam($this->getViewModeParam(), static::DEFAULT_VIEW_MODE);
+    }
+
     protected function assemble()
     {
         $viewModeParam = $this->getViewModeParam();
-        $currentViewMode = $this->url->getParam($viewModeParam, static::DEFAULT_VIEW_MODE);
+        $currentViewMode = $this->getViewMode();
 
         foreach (static::$viewModes as $viewMode => $icon) {
             $url = $this->url->with($viewModeParam, $viewMode);
