@@ -3,8 +3,10 @@
 namespace Icinga\Module\Eagle\Web;
 
 use Icinga\Data\ResourceFactory;
+use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
 use ipl\Web\Compat\CompatController;
 use ipl\Sql\Connection;
+use ipl\Web\Url;
 
 class Controller extends CompatController
 {
@@ -52,5 +54,21 @@ class Controller extends CompatController
         }
 
         return $this->redis;
+    }
+
+    /**
+     * Create and return the ViewModeSwitcher
+     *
+     * This automatically shifts the view mode URL parameter from {@link $params}.
+     *
+     * @return ViewModeSwitcher
+     */
+    public function createViewModeSwitcher()
+    {
+        $viewModeSwitcher = new ViewModeSwitcher(Url::fromRequest());
+
+        $this->params->shift($viewModeSwitcher->getViewModeParam());
+
+        return $viewModeSwitcher;
     }
 }
