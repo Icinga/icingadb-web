@@ -17,8 +17,13 @@ class HostsController extends Controller
         $hosts = Host::on($db)->with('state');
         $hosts->limit(25);
 
+        $viewModeSwitcher = $this->createViewModeSwitcher();
+
         $hostList = (new HostList($hosts))
-            ->setRedis($this->getRedis());
+            ->setRedis($this->getRedis())
+            ->setViewMode($viewModeSwitcher->getViewMode());
+
+        $this->addControl($viewModeSwitcher);
 
         $this->addContent($hostList);
     }
