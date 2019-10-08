@@ -6,6 +6,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
 use ipl\Web\Compat\CompatController;
 use ipl\Sql\Connection;
+use ipl\Web\Control\LimitControl;
 use ipl\Web\Url;
 
 class Controller extends CompatController
@@ -54,6 +55,22 @@ class Controller extends CompatController
         }
 
         return $this->redis;
+    }
+
+    /**
+     * Create and return the LimitControl
+     *
+     * This automatically shifts the limit URL parameter from {@link $params}.
+     *
+     * @return LimitControl
+     */
+    public function createLimitControl()
+    {
+        $limitControl = new LimitControl();
+
+        $this->params->shift($limitControl->getLimitParam());
+
+        return $limitControl;
     }
 
     /**
