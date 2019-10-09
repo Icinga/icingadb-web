@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Eagle\Widget;
 
+use Icinga\Module\Eagle\Common\ViewMode;
 use InvalidArgumentException;
 use Redis;
 use Icinga\Module\Eagle\Redis\VolatileState;
@@ -9,6 +10,8 @@ use ipl\Html\BaseHtmlElement;
 
 abstract class StateList extends BaseHtmlElement
 {
+    use ViewMode;
+
     /** @var iterable Data source of the list */
     protected $data;
 
@@ -57,6 +60,8 @@ abstract class StateList extends BaseHtmlElement
 
     protected function assemble()
     {
+        $this->addAttributes(['class' => $this->getViewMode()]);
+
         $itemClass = $this->getItemClass();
         $volatileState = $this->getVolatileState();
 
