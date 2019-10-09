@@ -7,9 +7,7 @@ namespace Icinga\Module\Eagle\Widget;
  */
 class HostList extends StateList
 {
-    protected $tag = 'ul';
-
-    protected $defaultAttributes = ['class' => 'object-list', 'data-base-target' => '_next'];
+    protected $defaultAttributes = ['class' => 'host-list'];
 
     protected function getItemClass()
     {
