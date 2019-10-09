@@ -10,12 +10,12 @@ use ipl\Html\BaseHtmlElement;
  */
 abstract class BaseItemList extends BaseHtmlElement
 {
+    protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
+
     /** @var iterable */
     protected $data;
 
     protected $tag = 'ul';
-
-    protected $defaultAttributes = ['class' => 'item-list'];
 
     /**
      * Create a new item  list
@@ -29,6 +29,8 @@ abstract class BaseItemList extends BaseHtmlElement
         }
 
         $this->data = $data;
+
+        $this->addAttributes($this->baseAttributes);
 
         $this->init();
     }

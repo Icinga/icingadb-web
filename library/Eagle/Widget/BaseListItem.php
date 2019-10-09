@@ -10,12 +10,12 @@ use ipl\Html\Html;
  */
 abstract class BaseListItem extends BaseHtmlElement
 {
+    protected $baseAttributes = ['class' => 'list-item'];
+
     /** @var object The associated list item */
     protected $item;
 
     protected $tag = 'li';
-
-    protected $defaultAttributes = ['class' => 'list-item'];
 
     /**
      * Create a new list item
@@ -25,6 +25,8 @@ abstract class BaseListItem extends BaseHtmlElement
     public function __construct($item)
     {
         $this->item = $item;
+
+        $this->addAttributes($this->baseAttributes);
 
         $this->init();
     }
