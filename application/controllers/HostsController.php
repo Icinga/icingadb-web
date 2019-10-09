@@ -16,12 +16,11 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
-        // @TODO(el): Looks a bit odd since createLimitControl() also shifts the limit
-        $hosts->limit($this->params->shift('limit'));
 
         $viewModeSwitcher = $this->createViewModeSwitcher();
         $limitControl = $this->createLimitControl();
-        $limitControl->handleRequest(ServerRequest::fromGlobals());
+
+        $hosts->limit($limitControl->getLimit());
 
         $hostList = (new HostList($hosts))
             ->setRedis($this->getRedis())

@@ -68,7 +68,7 @@ class Controller extends CompatController
      */
     public function createLimitControl()
     {
-        $limitControl = new LimitControl();
+        $limitControl = new LimitControl(Url::fromRequest());
 
         $this->params->shift($limitControl->getLimitParam());
 
