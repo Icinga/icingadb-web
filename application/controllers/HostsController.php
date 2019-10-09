@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Eagle\Controllers;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\HostList;
