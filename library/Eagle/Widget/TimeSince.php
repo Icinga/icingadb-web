@@ -10,12 +10,27 @@ use ipl\Html\BaseHtmlElement;
  */
 class TimeSince extends BaseHtmlElement
 {
-    protected $tag = 'span';
+    /** @var int */
+    protected $since;
+
+    protected $tag = 'time';
 
     protected $defaultAttributes = ['class' => 'time-since'];
 
     public function __construct($since)
     {
-        $this->setContent(DateFormatter::timeSince((int) $since));
+        $this->since = (int) $since;
+    }
+
+    protected function assemble()
+    {
+        $dateTime = DateFormatter::formatDateTime($this->since);
+
+        $this->addAttributes([
+            'datetime' => $dateTime,
+            'title'    => $dateTime
+        ]);
+
+        $this->add(DateFormatter::timeSince($this->since));
     }
 }
