@@ -29,9 +29,20 @@ abstract class BaseItemList extends BaseHtmlElement
         }
 
         $this->data = $data;
+
+        $this->init();
     }
 
     abstract protected function getItemClass();
+
+    /**
+     * Initialize the item list
+     *
+     * If you want to adjust the item list after construction, override this method.
+     */
+    protected function init()
+    {
+    }
 
     protected function assemble()
     {
