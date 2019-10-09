@@ -19,6 +19,8 @@ abstract class BaseListItem extends BaseHtmlElement
     public function __construct($item)
     {
         $this->item = $item;
+
+        $this->init();
     }
 
     protected function assembleCaption(BaseHtmlElement $caption)
@@ -93,6 +95,15 @@ abstract class BaseListItem extends BaseHtmlElement
         $this->assembleVisual($visual);
 
         return $visual;
+    }
+
+    /**
+     * Initialize the list item
+     *
+     * If you want to adjust the list item after construction, override this method.
+     */
+    protected function init()
+    {
     }
 
     protected function assemble()
