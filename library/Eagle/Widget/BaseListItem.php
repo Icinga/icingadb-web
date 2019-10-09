@@ -10,9 +10,16 @@ use ipl\Html\Html;
  */
 abstract class BaseListItem extends BaseHtmlElement
 {
+    protected $item;
+
     protected $tag = 'li';
 
     protected $defaultAttributes = ['class' => 'list-item'];
+
+    public function __construct($item)
+    {
+        $this->item = $item;
+    }
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
