@@ -5,6 +5,7 @@ namespace Icinga\Module\Eagle\Widget;
 use Icinga\Module\Eagle\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Widget\StateBall;
 
 /**
  * Host or service item of a host or service list. Represents one database row.
