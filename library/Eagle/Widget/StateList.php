@@ -3,12 +3,10 @@
 namespace Icinga\Module\Eagle\Widget;
 
 use Icinga\Module\Eagle\Common\ViewMode;
-use InvalidArgumentException;
-use Redis;
 use Icinga\Module\Eagle\Redis\VolatileState;
-use ipl\Html\BaseHtmlElement;
+use Redis;
 
-abstract class StateList extends BaseHtmlElement
+abstract class StateList extends BaseItemList
 {
     use ViewMode;
 
@@ -17,20 +15,6 @@ abstract class StateList extends BaseHtmlElement
 
     /** @var Redis Redis connection to fetch volatile states from */
     protected $redis;
-
-    /**
-     * Create a new state list
-     *
-     * @param iterable $data Data source of the list
-     */
-    public function __construct($data)
-    {
-        if (! is_iterable($data)) {
-            throw new InvalidArgumentException('Data must be an array or an instance of Traversable');
-        }
-
-        $this->data = $data;
-    }
 
     /**
      * Set the Redis connection to fetch volatile states from
@@ -45,8 +29,6 @@ abstract class StateList extends BaseHtmlElement
 
         return $this;
     }
-
-    abstract protected function getItemClass();
 
     /**
      * Get the helper to fetch volatile states
