@@ -12,6 +12,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/hosts',
         'priority' => 10
     ]);
+    $section->add(N_('Services'), [
+        'url' => 'eagle/services',
+        'priority' => 20
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
