@@ -10,7 +10,10 @@ use Icinga\Module\Eagle\Widget\ServiceListItem;
 
 class ServiceController extends Controller
 {
-    public function indexAction()
+    /** @var Service The service object */
+    protected $service;
+
+    public function init()
     {
         $name = $this->params->shiftRequired('name');
         $hostName = $this->params->shiftRequired('host_name');
@@ -34,6 +37,11 @@ class ServiceController extends Controller
         $volatileState->add($service);
         $volatileState->fetch();
 
-        $this->addContent((new ServiceListItem($service))->setTag('div'));
+        $this->service = $service;
+    }
+
+    public function indexAction()
+    {
+        $this->addContent((new ServiceListItem($this->service))->setTag('div'));
     }
 }
