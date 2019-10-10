@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Eagle\Widget;
 
+use Icinga\Module\Eagle\Common\Icons;
 use Icinga\Module\Eagle\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
 /**
@@ -50,7 +52,14 @@ abstract class StateListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        return new TimeSince($this->state->last_update);
+        $since = new TimeSince($this->state->last_update);
+
+        if ($this->state->is_overdue) {
+            $since->prepend('Overdue ');
+            $since->prepend(new Icon(Icons::WARNING));
+        }
+
+        return $since;
     }
 
     protected function assemble()
