@@ -82,7 +82,7 @@ class Service extends Model
         $relations->belongsToMany('servicegroup', Servicegroup::class)
             ->setThrough(ServicegroupMember::class);
 
-        $relations->hasOne('state', ServiceState::class);
+        $relations->hasOne('state', ServiceState::class)->setTableAlias('service_state');
         $relations->hasMany('comment', ServiceComment::class);
         $relations->hasMany('downtime', ServiceDowntime::class);
         $relations->hasMany('notification', Notification::class);
