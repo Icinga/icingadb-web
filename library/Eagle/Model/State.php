@@ -9,6 +9,8 @@ use ipl\Orm\Model;
  */
 abstract class State extends Model
 {
+    protected $accessorsAndMutatorsEnabled = true;
+
     public function getColumns()
     {
         return [
@@ -39,5 +41,10 @@ abstract class State extends Model
             'next_check',
             'next_update'
         ];
+    }
+
+    public function mutateIsOverdueProperty()
+    {
+        return $this->properties['next_update'] < time();
     }
 }
