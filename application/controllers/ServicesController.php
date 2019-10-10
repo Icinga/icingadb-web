@@ -16,7 +16,8 @@ class ServicesController extends Controller
 
         $services = Service::on($db)->with([
             'state',
-            'host'
+            'host',
+            'host.state'
         ]);
 
         $viewModeSwitcher = $this->createViewModeSwitcher();
