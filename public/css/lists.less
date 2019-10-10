@@ -19,8 +19,16 @@
     background-color: @gray-lighter;
   }
 
-  &.overdue .main {
-    opacity: .6;
+  &.overdue header > *:not(time),
+  &.overdue .caption {
+    opacity: 0.6;
+  }
+
+  &.overdue time {
+    .rounded-corners();
+    background-color: @color-critical;
+    color: white;
+    padding: 0 0.5em;
   }
 
   .main {
