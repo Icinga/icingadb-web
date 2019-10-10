@@ -52,4 +52,13 @@ abstract class StateListItem extends BaseListItem
     {
         return new TimeSince($this->state->last_update);
     }
+
+    protected function assemble()
+    {
+        if ($this->state->is_overdue) {
+            $this->addAttributes(['class' => 'overdue']);
+        }
+
+        parent::assemble();
+    }
 }
