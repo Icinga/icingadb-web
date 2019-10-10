@@ -3,6 +3,7 @@
 namespace Icinga\Module\Eagle\Controllers;
 
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Service;
 use Icinga\Module\Eagle\Redis\VolatileState;
 use Icinga\Module\Eagle\Web\Controller;
@@ -10,6 +11,8 @@ use Icinga\Module\Eagle\Widget\ServiceListItem;
 
 class ServiceController extends Controller
 {
+    use CommandActions;
+
     /** @var Service The service object */
     protected $service;
 
@@ -38,6 +41,11 @@ class ServiceController extends Controller
         $volatileState->fetch();
 
         $this->service = $service;
+    }
+
+    public function fetchCommandTargets()
+    {
+        return [$this->service];
     }
 
     public function indexAction()
