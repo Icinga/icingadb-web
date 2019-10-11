@@ -5,7 +5,6 @@ namespace Icinga\Module\Eagle\Controllers;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Service;
-use Icinga\Module\Eagle\Redis\VolatileState;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\ServiceListItem;
 
@@ -35,10 +34,6 @@ class ServiceController extends Controller
         if ($service === null) {
             throw new NotFoundError($this->translate('Service not found'));
         }
-
-        $volatileState = new VolatileState($this->getRedis());
-        $volatileState->add($service);
-        $volatileState->fetch();
 
         $this->service = $service;
     }
