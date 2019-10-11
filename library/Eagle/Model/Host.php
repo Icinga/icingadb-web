@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Eagle\Model;
 
+use Icinga\Module\Eagle\Model\Behavior\BoolCast;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -64,6 +66,17 @@ class Host extends Model
             'command_endpoint',
             'command_endpoint_id'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new BoolCast([
+            'active_checks_enabled',
+            'passive_checks_enabled',
+            'event_handler_enabled',
+            'notifications_enabled',
+            'flapping_enabled'
+        ]));
     }
 
     public function createRelations(Relations $relations)
