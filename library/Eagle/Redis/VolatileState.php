@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Eagle\Redis;
 
-use ipl\Orm\Model;
+use Icinga\Module\Eagle\Model\State;
 
 /**
  * Fetch volatile host or service states from redis.
@@ -11,12 +11,6 @@ class VolatileState
 {
     /** @var \Redis */
     protected $redis;
-
-    /** @var string */
-    protected $type;
-
-    /** @var array */
-    protected $objects = [];
 
     /** @var array Set of keys to sync */
     public static $keys = [
@@ -44,48 +38,22 @@ class VolatileState
     }
 
     /**
-     * Add an object to fetch volatile states for
+     * Fetch volatile state
      *
-     * @param Model $object
-     *
-     * @return $this
-     */
-    public function add(Model $object)
-    {
-        $this->objects[bin2hex($object->id)] = $object;
-
-        if ($this->type === null) {
-            $this->type = $object->getTableName();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Fetch volatile states
+     * @param State $state
      *
      * @return $this
      */
-    public function fetch()
+    public function fetch(State $state)
     {
-        $keys = array_keys($this->objects);
+        $type = substr($state->getTableName(), 0, -6);
 
-        if (empty($keys)) {
-            return $this;
-        }
-
-        $rs = array_combine($keys, $this->redis->hMGet("icinga:config:state:{$this->type}", $keys));
-
-        foreach ($rs as $key => $json) {
-            if ($json === false) {
-                continue;
-            }
-
+        $json = $this->redis->hGet("icinga:config:state:{$type}", bin2hex($state->{$type . '_id'}));
+        if ($json !== false) {
             $data = json_decode($json, true);
-
             $data = array_intersect_key($data, array_flip(static::$keys));
 
-            $this->objects[$key]->state->setProperties($data);
+            $state->setProperties($data);
         }
 
         return $this;

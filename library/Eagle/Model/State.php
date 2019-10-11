@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Eagle\Model;
 
+use Icinga\Module\Eagle\Model\Behavior\VolatileState;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
 /**
@@ -41,6 +43,11 @@ abstract class State extends Model
             'next_check',
             'next_update'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new VolatileState());
     }
 
     public function mutateIsOverdueProperty()
