@@ -24,6 +24,8 @@ abstract class StateListItem extends BaseListItem
 
     abstract protected function createSubject();
 
+    abstract protected function getStateBallSize();
+
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         $caption
@@ -44,7 +46,7 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $stateBall = new StateBall($this->state->getStateText(), StateBall::SIZE_LARGE);
+        $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
 
         if ($this->state->is_handled === 'y') {
             switch (true) {
