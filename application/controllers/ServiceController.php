@@ -17,7 +17,8 @@ class ServiceController extends Controller
 
         $query = Service::on($this->getDb())->with([
             'state',
-            'host'
+            'host',
+            'host.state'
         ]);
         $query->getSelectBase()
             ->where(['service.name = ?' => $name])
