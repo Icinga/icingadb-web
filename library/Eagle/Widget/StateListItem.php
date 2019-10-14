@@ -44,8 +44,29 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
+        $stateBall = new StateBall($this->state->getStateText(), StateBall::SIZE_LARGE);
+
+        if ($this->state->is_handled === 'y') {
+            switch (true) {
+                case $this->state->in_downtime === 'y':
+                    $icon = Icons::IN_DOWNTIME;
+                    break;
+                case $this->state->is_acknowledged === 'y':
+                    $icon = Icons::IS_ACKNOWLEDGED;
+                    break;
+                case $this->state->is_flapping === 'y':
+                    $icon = Icons::IS_FLAPPING;
+                    break;
+                default:
+                    $icon = Icons::HOST_DOWN;
+            }
+
+            $stateBall->add(new Icon($icon));
+            $stateBall->getAttributes()->add('class', 'handled');
+        }
+
         $visual->add([
-            new StateBall($this->state->getStateText(), StateBall::SIZE_LARGE),
+            $stateBall,
             new CheckAttempt($this->state->attempt, $this->item->max_check_attempts)
         ]);
     }
