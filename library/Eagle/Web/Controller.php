@@ -5,6 +5,8 @@ namespace Icinga\Module\Eagle\Web;
 use Generator;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
+use ipl\Html\Html;
+use ipl\Orm\Query;
 use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
 use ipl\Sql\Connection;
@@ -16,6 +18,9 @@ class Controller extends CompatController
 {
     /** @var Connection Connection to the Icinga database */
     private $db;
+
+    /** @var string|null */
+    private $format;
 
     /** @var \Redis Connection to the Icinga Redis */
     private $redis;
@@ -109,6 +114,20 @@ class Controller extends CompatController
         return $viewModeSwitcher;
     }
 
+    public function export(Query $query)
+    {
+        if ($this->format === 'sql') {
+            list($sql, $values) = $query->getDb()->getQueryBuilder()->assembleSelect($query->assembleSelect());
+            foreach ($values as $value) {
+                $pos = strpos($sql, '?');
+                $sql = substr_replace($sql, "\"{$value}\"", $pos, 1);
+            }
+            $this->content->setContent(Html::tag('pre', $sql));
+
+            return true;
+        }
+    }
+
     public function dispatch($action)
     {
         // Notify helpers of action preDispatch state
@@ -136,5 +155,10 @@ class Controller extends CompatController
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
         $this->_helper->notifyPostDispatch();
+    }
+
+    public function preDispatch()
+    {
+        $this->format = $this->params->shift('format');
     }
 }
