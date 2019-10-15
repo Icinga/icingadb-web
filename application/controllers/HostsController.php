@@ -16,15 +16,14 @@ class HostsController extends Controller
 
         $hosts = Host::on($db)->with('state');
 
-        $viewModeSwitcher = $this->createViewModeSwitcher();
         $limitControl = $this->createLimitControl();
-
-        $hosts->limit($limitControl->getLimit());
+        $paginationControl = $this->createPaginationControl($hosts);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $hostList = (new HostList($hosts))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        $this->addControl($this->createPaginationControl($hosts));
+        $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
 

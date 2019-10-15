@@ -20,15 +20,14 @@ class ServicesController extends Controller
             'host.state'
         ]);
 
-        $viewModeSwitcher = $this->createViewModeSwitcher();
         $limitControl = $this->createLimitControl();
-
-        $services->limit($limitControl->getLimit());
+        $paginationControl = $this->createPaginationControl($services);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        $this->addControl($this->createPaginationControl($services));
+        $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
 
