@@ -23,6 +23,8 @@ class HostsController extends Controller
         $hostList = (new HostList($hosts))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
+        yield $this->export($hosts);
+
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
