@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Eagle\Web;
 
+use Generator;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
 use ipl\Stdlib\Contract\PaginationInterface;
@@ -106,5 +107,34 @@ class Controller extends CompatController
         $this->params->shift($viewModeSwitcher->getViewModeParam());
 
         return $viewModeSwitcher;
+    }
+
+    public function dispatch($action)
+    {
+        // Notify helpers of action preDispatch state
+        $this->_helper->notifyPreDispatch();
+
+        $this->preDispatch();
+
+        if ($this->getRequest()->isDispatched()) {
+            // If pre-dispatch hooks introduced a redirect then stop dispatch
+            // @see ZF-7496
+            if (! $this->getResponse()->isRedirect()) {
+                $interceptable = $this->$action();
+                if ($interceptable instanceof Generator) {
+                    foreach ($interceptable as $stopSignal) {
+                        if ($stopSignal === true) {
+                            break;
+                        }
+                    }
+                }
+            }
+            $this->postDispatch();
+        }
+
+        // whats actually important here is that this action controller is
+        // shutting down, regardless of dispatching; notify the helpers of this
+        // state
+        $this->_helper->notifyPostDispatch();
     }
 }
