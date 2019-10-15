@@ -26,7 +26,6 @@ class ServicesController extends Controller
         $services->limit($limitControl->getLimit());
 
         $serviceList = (new ServiceList($services))
-            ->setRedis($this->getRedis())
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl($this->createPaginationControl($services));

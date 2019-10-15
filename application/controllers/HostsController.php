@@ -22,7 +22,6 @@ class HostsController extends Controller
         $hosts->limit($limitControl->getLimit());
 
         $hostList = (new HostList($hosts))
-            ->setRedis($this->getRedis())
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl($this->createPaginationControl($hosts));

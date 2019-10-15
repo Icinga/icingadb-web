@@ -2,6 +2,9 @@
 
 namespace Icinga\Module\Eagle\Model;
 
+use Icinga\Module\Eagle\Model\Behavior\Timestamp;
+use Icinga\Module\Eagle\Model\Behavior\VolatileState;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
 /**
@@ -41,6 +44,19 @@ abstract class State extends Model
             'next_check',
             'next_update'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new VolatileState());
+        $behaviors->add(new Timestamp([
+            'last_update',
+            'last_state_change',
+            'last_soft_state',
+            'last_hard_state',
+            'next_check',
+            'next_update'
+        ]));
     }
 
     public function mutateIsOverdueProperty()
