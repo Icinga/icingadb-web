@@ -24,6 +24,8 @@ class ServicesController extends Controller
         $paginationControl = $this->createPaginationControl($services);
         $viewModeSwitcher = $this->createViewModeSwitcher();
 
+        $this->filter($services);
+
         yield $this->export($services);
 
         $serviceList = (new ServiceList($services))
