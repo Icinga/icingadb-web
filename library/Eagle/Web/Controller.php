@@ -3,9 +3,11 @@
 namespace Icinga\Module\Eagle\Web;
 
 use Generator;
+use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
+use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
@@ -155,6 +157,16 @@ class Controller extends CompatController
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
         $this->_helper->notifyPostDispatch();
+    }
+
+    public function filter(Query $query)
+    {
+        FilterProcessor::apply(
+            Filter::fromQueryString((string) $this->params),
+            $query
+        );
+
+        return $this;
     }
 
     public function preDispatch()
