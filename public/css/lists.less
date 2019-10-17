@@ -8,12 +8,11 @@
 .list-item {
   color: @text-color-light;
   display: flex;
-  margin: 0 -0.5em;
-  padding: 0.5em 0.5em 0;
+  margin: 0 -1em;
+  padding: 0 1em;
 
-  &:not(:last-child) .main {
-    padding-bottom: 0.5em;
-    border-bottom: 1px solid @gray-light;
+  &.active {
+    background-color: fade(@icinga-blue, 10);
   }
 
   &.overdue {
@@ -34,7 +33,11 @@
 
   .main {
     flex: 1 1 auto;
-    width: 0;
+    padding: .5em 0;
+  }
+
+  &:not(:last-child) .main {
+    border-bottom: 1px solid @gray-light;
   }
 
   .visual {
@@ -54,6 +57,15 @@
     margin: 0;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: @text-color;
+
+    a {
+      color: @icinga-blue;
+    }
+
+    i {
+      opacity: 0.8;
+    }
   }
 
   header {
@@ -62,11 +74,21 @@
 
     .state-text {
       color: @text-color;
+      text-transform: uppercase;
     }
 
     a {
       color: @text-color;
       font-weight: bold;
+
+      &:hover {
+        color: @icinga-blue;
+        text-decoration: none;
+      }
+    }
+
+    time {
+      color: @text-color;
     }
   }
 }
