@@ -16,6 +16,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/services',
         'priority' => 20
     ]);
+    $section->add(N_('Downtimes'), [
+        'url' => 'eagle/downtimes',
+        'priority' => 30
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
