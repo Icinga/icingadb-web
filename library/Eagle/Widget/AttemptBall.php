@@ -11,6 +11,8 @@ class AttemptBall extends BaseHtmlElement
 {
     protected $tag = 'div';
 
+    protected $defaultAttributes = ['class' => 'ball'];
+
     /**
      * Create a new attempt ball
      *
@@ -18,14 +20,10 @@ class AttemptBall extends BaseHtmlElement
      */
     public function __construct($taken = false)
     {
-        $class = 'attempt-ball';
-
         if ($taken) {
-            $class .= ' size-s taken';
+            $this->addAttributes(['class' => 'ball-size-s taken']);
         } else {
-            $class .= ' size-xs';
+            $this->addAttributes(['class' => 'ball-size-xs']);
         }
-
-        $this->defaultAttributes = ['class' => $class];
     }
 }

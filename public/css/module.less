@@ -1,20 +1,15 @@
 @gray-dark: #777;
 @gray-light: #d8d8d8;
 
-.attempt-ball {
-  .ball();
-  .ball-size-xs();
+.check-attempt .ball {
   background-color: @gray-light;
 
-  &.taken {
-    .ball-size-s();
-    background-color: @gray-dark;
+  &:not(:last-child) {
+    margin-right: 1/6em;
   }
-}
 
-.check-attempt {
-  .attempt-ball:not(:last-child) {
-    margin-right: .25em;
+  &.taken {
+    background-color: @gray-dark;
   }
 }
 
