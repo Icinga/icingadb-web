@@ -5,6 +5,7 @@ namespace Icinga\Module\Eagle\Web;
 use Generator;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
+use Icinga\Module\Eagle\Widget\FilterControl;
 use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
 use ipl\Orm\Compat\FilterProcessor;
@@ -98,6 +99,23 @@ class Controller extends CompatController
         $this->params->shift($paginationControl->getPageSizeParam());
 
         return $paginationControl;
+    }
+
+    /**
+     * Create and return the FilterControl
+     *
+     * @param Query $query
+     * @return FilterControl
+     */
+    public function createFilterControl(Query $query)
+    {
+        $request = clone $this->getRequest();
+        $request->getUrl()->setParams($this->params);
+
+        $filterControl = new FilterControl($query);
+        $filterControl->handleRequest($request);
+
+        return $filterControl;
     }
 
     /**
