@@ -146,6 +146,8 @@ class Controller extends CompatController
 
             return true;
         }
+
+        $this->getTabs()->enableDataExports();
     }
 
     public function dispatch($action)
