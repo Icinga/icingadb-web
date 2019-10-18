@@ -19,6 +19,7 @@ class HostsController extends Controller
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);
         $viewModeSwitcher = $this->createViewModeSwitcher();
+        $filterControl = $this->createFilterControl($hosts);
 
         $hostList = (new HostList($hosts))
             ->setViewMode($viewModeSwitcher->getViewMode());
@@ -30,6 +31,7 @@ class HostsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
+        $this->addControl($filterControl);
 
         $this->addContent($hostList);
     }
