@@ -68,6 +68,11 @@ class Host extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['name_ci'];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([
