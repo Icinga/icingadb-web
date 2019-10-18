@@ -23,6 +23,7 @@ class ServicesController extends Controller
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
         $viewModeSwitcher = $this->createViewModeSwitcher();
+        $filterControl = $this->createFilterControl($services);
 
         $this->filter($services);
 
@@ -34,6 +35,7 @@ class ServicesController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
+        $this->addControl($filterControl);
 
         $this->addContent($serviceList);
     }
