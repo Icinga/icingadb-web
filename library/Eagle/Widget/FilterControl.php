@@ -1,0 +1,102 @@
+<?php
+
+namespace Icinga\Module\Eagle\Widget;
+
+use Icinga\Web\Request;
+use Icinga\Web\Widget\FilterEditor;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlString;
+use ipl\Orm\Query;
+
+class FilterControl extends HtmlDocument
+{
+    /** @var Query */
+    protected $query;
+
+    /** @var FilterEditor */
+    protected $filterEditor;
+
+    /**
+     * FilterControl constructor.
+     * @param Query $query
+     */
+    public function __construct(Query $query)
+    {
+        $this->query = $query;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function handleRequest(Request $request)
+    {
+        $this->getFilterEditor()->handleRequest($request);
+
+        // The editor clones the url prior shifting these so we have to do it again here
+        $params = $request->getUrl()->getParams();
+        $params->shift('addFilter');
+        $params->shift('removeFilter');
+        $params->shift('stripFilter');
+        $params->shift('modifyFilter');
+        $params->shift('q');
+    }
+
+    /**
+     * @return FilterEditor
+     */
+    protected function getFilterEditor()
+    {
+        if ($this->filterEditor === null) {
+            $columns = $this->selectColumns($this->query->getModel()->getColumns());
+            $searchColumns = array_keys(
+                $this->selectColumns($this->query->getModel()->getSearchColumns())
+            );
+
+            foreach ($this->query->getWith() as $relation) {
+                $path = explode('.', $relation->getName());
+                $columns += $this->selectColumns($relation->getTarget()->getColumns(), $path);
+                array_push($searchColumns, ...array_keys(
+                    $this->selectColumns($relation->getTarget()->getSearchColumns(), $path)
+                ));
+            }
+
+            $this->filterEditor = (new FilterEditor([]))
+                ->setSearchColumns($searchColumns)
+                ->setColumns($columns);
+        }
+
+        return $this->filterEditor;
+    }
+
+    /**
+     * @param array $columns
+     * @param array $path
+     * @return array
+     */
+    protected function selectColumns(array $columns, array $path = [])
+    {
+        $titlePath = [];
+        if (! empty($path)) {
+            $titlePath = array_filter($path, function ($v) {
+                return $v !== 'state';
+            });
+            if (count($titlePath) > 1 && $titlePath[1] === 'host' && $titlePath[0] === 'service') {
+                array_shift($titlePath);
+            }
+        }
+
+        $options = [];
+        foreach ($columns as $column) {
+            $options[join('.', array_merge($path, [$column]))] = ucwords(
+                join(' ', array_merge($titlePath, [str_replace('_', ' ', $column)]))
+            );
+        }
+
+        return $options;
+    }
+
+    protected function assemble()
+    {
+        $this->add(new HtmlString($this->getFilterEditor()->render()));
+    }
+}
