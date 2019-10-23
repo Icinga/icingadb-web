@@ -2,10 +2,17 @@
 
 namespace Icinga\Module\Eagle\Model\Behavior;
 
-class BoolCast extends PropertiesBehavior
+use ipl\Orm\Contract\PropertyBehavior;
+
+class BoolCast extends PropertyBehavior
 {
-    public function __invoke($value, $key)
+    public function fromDb($value, $_)
     {
         return $value === 'y';
+    }
+
+    public function toDb($value, $_)
+    {
+        return $value ? 'y' : 'n';
     }
 }
