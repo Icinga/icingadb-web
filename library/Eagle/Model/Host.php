@@ -99,12 +99,13 @@ class Host extends Model
 
         $relations->belongsToMany('customvar', Customvar::class)
             ->setThrough(HostCustomvar::class);
-        $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
+        $relations->belongsToMany('vars', CustomvarFlat::class)
             ->setThrough(HostCustomvar::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->setThrough(HostgroupMember::class);
 
-        $relations->hasOne('state', HostState::class)->setTableAlias('host_state');
+        $relations->hasOne('state', HostState::class)
+            ->setTableAlias('host_state');
         $relations->hasMany('comment', HostComment::class);
         $relations->hasMany('downtime', HostDowntime::class);
         $relations->hasMany('notification', Notification::class);
