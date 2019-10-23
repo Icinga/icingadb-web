@@ -187,3 +187,33 @@
     height: 1.5em;
   }
 }
+
+.notification-list .list-item {
+  .visual {
+    width: 2.25em;
+    display: block;
+    text-align: center;
+
+    .state-ball {
+      box-shadow: 0 0 0 1px white;
+    }
+
+    .state-ball ~ .state-ball {
+      margin-left: -.875em;
+    }
+
+    .state-ball.state-ok,
+    .state-ball.state-up {
+      background-color: white;
+    }
+  }
+
+  .caption {
+    .text-ellipsis();
+    height: 1.5em;
+
+    i {
+      opacity: .8;
+    }
+  }
+}
