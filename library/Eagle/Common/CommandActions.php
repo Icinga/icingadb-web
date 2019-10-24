@@ -25,6 +25,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use ipl\Html\HtmlString;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
+use ipl\Web\Url;
 use LogicException;
 
 /**
@@ -32,6 +33,7 @@ use LogicException;
  *
  * @method mixed fetchCommandTargets() Fetch command targets, \ipl\Orm\Query or \ipl\Orm\Model[]
  * @method object getFeatureStatus() Get status of toggleable features
+ * @method Url getCommandTargetsUrl() Get url to view command targets, used as redirection target
  */
 trait CommandActions
 {
@@ -113,6 +115,8 @@ trait CommandActions
                 'objects'   => $this->getCommandObjects()
             ]);
         }
+
+        $form->setRedirectUrl($this->getCommandTargetsUrl());
 
         $form->handleRequest();
         $this->addContent(HtmlString::create($form->render()));
