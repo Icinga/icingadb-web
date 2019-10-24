@@ -32,6 +32,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/users',
         'priority' => 60
     ]);
+    $section->add(N_('User Groups'), [
+        'url' => 'eagle/usergroups',
+        'priority' => 70
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
