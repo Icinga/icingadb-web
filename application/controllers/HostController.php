@@ -7,6 +7,7 @@ use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\HostListItem;
+use ipl\Web\Url;
 
 class HostController extends Controller
 {
@@ -30,6 +31,11 @@ class HostController extends Controller
         }
 
         $this->host = $host;
+    }
+
+    protected function getCommandTargetsUrl()
+    {
+        return Url::fromPath('eagle/host', ['name' => $this->host->name]);
     }
 
     protected function fetchCommandTargets()
