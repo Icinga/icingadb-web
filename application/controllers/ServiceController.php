@@ -7,6 +7,7 @@ use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Service;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\ServiceListItem;
+use ipl\Web\Url;
 
 class ServiceController extends Controller
 {
@@ -36,6 +37,14 @@ class ServiceController extends Controller
         }
 
         $this->service = $service;
+    }
+
+    public function getCommandTargetsUrl()
+    {
+        return Url::fromPath('eagle/service', [
+            'name'      => $this->service->name,
+            'host_name' => $this->service->host->name
+        ]);
     }
 
     public function fetchCommandTargets()
