@@ -28,6 +28,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/notifications',
         'priority' => 50
     ]);
+    $section->add(N_('Users'), [
+        'url' => 'eagle/users',
+        'priority' => 60
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
