@@ -2,10 +2,17 @@
 
 namespace Icinga\Module\Eagle\Model\Behavior;
 
-class Timestamp extends PropertiesBehavior
+use ipl\Orm\Contract\PropertyBehavior;
+
+class Timestamp extends PropertyBehavior
 {
-    public function __invoke($value, $key)
+    public function fromDb($value, $_)
     {
         return $value / 1000.0;
+    }
+
+    public function toDb($value, $_)
+    {
+        return $value * 1000.0;
     }
 }

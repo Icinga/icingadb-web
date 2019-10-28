@@ -4,11 +4,11 @@ namespace Icinga\Module\Eagle\Model\Behavior;
 
 use Icinga\Application\Config;
 use Icinga\Module\Eagle\Redis\VolatileState as RedisState;
-use ipl\Orm\Contract\BehaviorInterface;
+use ipl\Orm\Contract\RetrieveBehavior;
 use ipl\Orm\Model;
 use Redis;
 
-class VolatileState implements BehaviorInterface
+class VolatileState implements RetrieveBehavior
 {
     protected $state;
 
@@ -29,7 +29,7 @@ class VolatileState implements BehaviorInterface
         return $this->state;
     }
 
-    public function apply(Model $model)
+    public function retrieve(Model $model)
     {
         $this->getVolatileState()->fetch($model);
     }

@@ -32,6 +32,7 @@ class HostCustomvar extends Model
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
+            ->setForeignKey('customvar_id')
             ->setCandidateKey('customvar_id');
     }
 }

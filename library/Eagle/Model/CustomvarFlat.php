@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Eagle\Model;
 
+use Icinga\Module\Eagle\Model\Behavior\FlattenedObjectVars;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -66,5 +68,10 @@ class CustomvarFlat extends Model
         $relations->belongsToMany('usergroup', Usergroup::class)
             ->setThrough(UsergroupCustomvar::class)
             ->setCandidateKey('customvar_id');
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new FlattenedObjectVars());
     }
 }
