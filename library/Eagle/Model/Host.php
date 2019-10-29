@@ -104,8 +104,7 @@ class Host extends Model
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->setThrough(HostgroupMember::class);
 
-        $relations->hasOne('state', HostState::class)
-            ->setTableAlias('host_state');
+        $relations->hasOne('state', HostState::class);
         $relations->hasMany('comment', HostComment::class);
         $relations->hasMany('downtime', HostDowntime::class);
         $relations->hasMany('notification', Notification::class);
