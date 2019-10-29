@@ -12,5 +12,7 @@ class Icons
 
     const IS_FLAPPING = 'flash';
 
+    const USER = 'user';
+
     const WARNING = 'warning-empty';
 }
