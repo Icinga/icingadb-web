@@ -49,7 +49,7 @@ abstract class BaseListItem extends BaseHtmlElement
 
     protected function createCaption()
     {
-        $caption = Html::tag('p', ['class' => 'caption']);
+        $caption = Html::tag('section', ['class' => 'caption']);
 
         $this->assembleCaption($caption);
 
