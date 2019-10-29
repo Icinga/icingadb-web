@@ -27,7 +27,7 @@ class ServiceController extends Controller
         ]);
         $query->getSelectBase()
             ->where(['service.name = ?' => $name])
-            ->where(['host.name = ?' => $hostName]);
+            ->where(['service_host.name = ?' => $hostName]);
 
         /** @var Service $service */
         $service = $query->first();
