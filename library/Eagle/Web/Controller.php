@@ -138,10 +138,21 @@ class Controller extends CompatController
     {
         if ($this->format === 'sql') {
             list($sql, $values) = $query->getDb()->getQueryBuilder()->assembleSelect($query->assembleSelect());
+
+            $unused = [];
             foreach ($values as $value) {
                 $pos = strpos($sql, '?');
-                $sql = substr_replace($sql, "\"{$value}\"", $pos, 1);
+                if ($pos !== false) {
+                    $sql = substr_replace($sql, "\"{$value}\"", $pos, 1);
+                } else {
+                    $unused[] = $value;
+                }
             }
+
+            if (! empty($unused)) {
+                $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
+            }
+
             $this->content->setContent(Html::tag('pre', $sql));
 
             return true;
