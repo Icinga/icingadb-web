@@ -12,6 +12,8 @@ class Icons
 
     const IS_FLAPPING = 'flash';
 
+    const IS_PERSISTENT = 'pin';
+
     const USER = 'user';
 
     const WARNING = 'warning-empty';
