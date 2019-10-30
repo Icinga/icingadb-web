@@ -20,6 +20,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/downtimes',
         'priority' => 30
     ]);
+    $section->add(N_('Comments'), [
+        'url' => 'eagle/comments',
+        'priority' => 40
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
