@@ -1,0 +1,42 @@
+<?php
+
+namespace Icinga\Module\Eagle\Controllers;
+
+use Icinga\Module\Eagle\Model\NotificationHistory;
+use Icinga\Module\Eagle\Web\Controller;
+use Icinga\Module\Eagle\Widget\ItemList\NotificationList;
+
+class NotificationsController extends Controller
+{
+    public function indexAction()
+    {
+        $this->setTitle($this->translate('Notifications'));
+
+        $db = $this->getDb();
+
+        $notifications = NotificationHistory::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($notifications);
+        $filterControl = $this->createFilterControl($notifications);
+
+        $notificationList = new NotificationList($notifications);
+
+        $this->filter($notifications);
+
+        yield $this->export($notifications);
+
+        $this->addControl($paginationControl);
+        $this->addControl($limitControl);
+        $this->addControl($filterControl);
+
+        $this->addContent($notificationList);
+    }
+}
