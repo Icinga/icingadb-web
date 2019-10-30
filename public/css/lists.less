@@ -79,7 +79,9 @@
       color: @text-color;
       text-transform: uppercase;
     }
+  }
 
+  .title {
     a {
       color: @text-color;
       font-weight: bold;
@@ -215,5 +217,33 @@
     i {
       opacity: .8;
     }
+  }
+}
+
+.item-table {
+  display: table;
+  width: 100%;
+
+  .visual {
+    padding: .25em;
+    padding-right: .75em;
+    width: 2.5em;
+  }
+
+  .list-item {
+    display: table-row;
+
+    &:not(:last-child) > *:not(.visual) {
+      border-bottom: 1px solid @gray-light;
+    }
+  }
+
+  .list-item > * {
+    display: table-cell;
+    padding: .5em 0;
+  }
+
+  .col {
+    vertical-align: middle;
   }
 }

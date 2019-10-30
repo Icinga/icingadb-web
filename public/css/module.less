@@ -79,10 +79,18 @@
 .user-ball {
   .ball();
   .ball-size-xl();
-  .ball-solid(@gray-light);
-  text-transform: uppercase;
+  .ball-solid(fade(@gray, 70));
   font-weight: bold;
   line-height: 1.75;
+  text-transform: uppercase;
+}
+
+.usergroup-ball {
+  .ball();
+  .ball-outline(@gray);
+  .ball-size-xl();
+  line-height: 1.75;
+  text-transform: uppercase;
 }
 
 .ack-badge {
