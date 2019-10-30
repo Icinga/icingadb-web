@@ -24,12 +24,10 @@ class UsergroupsController extends Controller
 
         yield $this->export($usergroups);
 
-        $usergroupList = new UsergroupList($usergroups);
-
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent($usergroupList);
+        $this->addContent(new UsergroupList($usergroups));
     }
 }

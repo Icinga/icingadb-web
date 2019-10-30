@@ -27,8 +27,6 @@ class NotificationsController extends Controller
         $paginationControl = $this->createPaginationControl($notifications);
         $filterControl = $this->createFilterControl($notifications);
 
-        $notificationList = new NotificationList($notifications);
-
         $this->filter($notifications);
 
         yield $this->export($notifications);
@@ -37,6 +35,6 @@ class NotificationsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent($notificationList);
+        $this->addContent(new NotificationList($notifications));
     }
 }

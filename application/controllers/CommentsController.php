@@ -31,12 +31,10 @@ class CommentsController extends Controller
 
         yield $this->export($comments);
 
-        $commentList = (new CommentList($comments));
-
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent($commentList);
+        $this->addContent(new CommentList($comments));
     }
 }

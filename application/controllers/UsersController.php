@@ -24,12 +24,10 @@ class UsersController extends Controller
 
         yield $this->export($users);
 
-        $userList = new UserList($users);
-
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent($userList);
+        $this->addContent(new UserList($users));
     }
 }
