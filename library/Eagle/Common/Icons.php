@@ -14,6 +14,8 @@ class Icons
 
     const IS_PERSISTENT = 'pin';
 
+    const NOTIFICATION = 'bell';
+
     const USER = 'user';
 
     const WARNING = 'warning-empty';
