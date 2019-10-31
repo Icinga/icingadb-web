@@ -47,9 +47,10 @@ class FilterControl extends HtmlDocument
     protected function getFilterEditor()
     {
         if ($this->filterEditor === null) {
-            $columns = $this->selectColumns($this->query->getModel()->getColumns());
+            $model = $this->query->getModel();
+            $columns = $this->selectColumns($this->query->getResolver()->getSelectableColumns($model));
             $searchColumns = array_keys(
-                $this->selectColumns($this->query->getModel()->getSearchColumns())
+                $this->selectColumns($model->getSearchColumns())
             );
 
             foreach ($this->query->getWith() as $relation) {
