@@ -40,6 +40,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/hostgroups',
         'priority' => 80
     ]);
+    $section->add(N_('Service Groups'), [
+        'url' => 'eagle/servicegroups',
+        'priority' => 80
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
