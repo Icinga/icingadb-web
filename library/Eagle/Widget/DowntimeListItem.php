@@ -38,14 +38,14 @@ class DowntimeListItem extends CommonListItem
         parent::__construct($item);
 
         if ($this->item->is_flexible && $this->item->is_in_effect) {
-            $this->startTime = $this->item->actual_start_time;
+            $this->startTime = $this->item->start_time;
         } else {
             $this->startTime = $this->item->scheduled_start_time;
         }
 
         if ($this->item->is_flexible && $this->item->is_in_effect) {
-//            $this->endTime = $this->item->actual_end_time;
-            $this->endTime = $this->item->actual_start_time + $this->item->flexible_duration;
+//            $this->endTime = $this->item->end_time;
+            $this->endTime = $this->item->start_time + $this->item->flexible_duration;
         } else {
             $this->endTime = $this->item->scheduled_end_time;
         }

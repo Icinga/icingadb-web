@@ -38,8 +38,8 @@ class Downtime extends Model
             'flexible_duration',
             'is_flexible',
             'is_in_effect',
-            'actual_start_time',
-            'actual_end_time',
+            'start_time',
+            'end_time',
             'zone_id'
         ];
     }
@@ -55,8 +55,8 @@ class Downtime extends Model
             'scheduled_start_time',
             'scheduled_end_time',
             'flexible_duration',
-            'actual_start_time',
-            'actual_end_time'
+            'start_time',
+            'end_time'
         ]));
     }
 
