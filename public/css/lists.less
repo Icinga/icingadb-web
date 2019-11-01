@@ -224,12 +224,6 @@
   display: table;
   width: 100%;
 
-  .visual {
-    padding: .25em;
-    padding-right: .75em;
-    width: 2.5em;
-  }
-
   .list-item {
     display: table-row;
 
@@ -238,12 +232,37 @@
     }
   }
 
-  .list-item > * {
+  .list-item > .col {
     display: table-cell;
-    padding: .5em 0;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:not(:last-child) {
+      padding-right: 1em;
+    }
+
+    &.title {
+      .text-ellipsis();
+      max-width: 1em;
+      width: 100%;
+    }
+
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+
+      &:not(:last-child) {
+        margin-right: .5em;
+      }
+    }
   }
 
-  .col {
-    vertical-align: middle;
+  .list-item > *:not(.visual) {
+    padding: .5em 0;
   }
+}
+
+.hostgroup-list .donut-graph {
+  height: 2.25em;
+  width:  2.25em;
 }
