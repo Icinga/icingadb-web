@@ -25,6 +25,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use ipl\Html\HtmlString;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
+use ipl\Web\Url;
 use LogicException;
 
 /**
@@ -32,6 +33,7 @@ use LogicException;
  *
  * @method mixed fetchCommandTargets() Fetch command targets, \ipl\Orm\Query or \ipl\Orm\Model[]
  * @method object getFeatureStatus() Get status of toggleable features
+ * @method Url getCommandTargetsUrl() Get url to view command targets, used as redirection target
  */
 trait CommandActions
 {
@@ -114,17 +116,21 @@ trait CommandActions
             ]);
         }
 
+        $form->setRedirectUrl($this->getCommandTargetsUrl());
+
         $form->handleRequest();
         $this->addContent(HtmlString::create($form->render()));
     }
 
     public function acknowledgeAction()
     {
+        $this->setTitle($this->translate('Acknowledge Problem'));
         $this->handleCommandForm(AcknowledgeProblemCommandForm::class);
     }
 
     public function addCommentAction()
     {
+        $this->setTitle($this->translate('Add Comment'));
         $this->handleCommandForm(AddCommentCommandForm::class);
     }
 
@@ -155,6 +161,7 @@ trait CommandActions
 
     public function processCheckresultAction()
     {
+        $this->setTitle($this->translate('Submit Passive Check Result'));
         $this->handleCommandForm(ProcessCheckResultCommandForm::class);
     }
 
@@ -168,6 +175,7 @@ trait CommandActions
         switch ($this->getCommandTargetModel()->getTableName())
         {
             case 'host':
+                $this->setTitle($this->translate('Reschedule Host Check'));
                 $this->handleCommandForm(ScheduleHostCheckCommandForm::class);
                 break;
             case 'service':
@@ -181,9 +189,11 @@ trait CommandActions
         switch ($this->getCommandTargetModel()->getTableName())
         {
             case 'host':
+                $this->setTitle($this->translate('Schedule Host Downtime'));
                 $this->handleCommandForm(ScheduleHostDowntimeCommandForm::class);
                 break;
             case 'service':
+                $this->setTitle($this->translate('Schedule Service Downtime'));
                 $this->handleCommandForm(ScheduleServiceDowntimeCommandForm::class);
                 break;
         }
@@ -191,6 +201,7 @@ trait CommandActions
 
     public function sendCustomNotificationAction()
     {
+        $this->setTitle($this->translate('Send Custom Notification'));
         $this->handleCommandForm(SendCustomNotificationCommandForm::class);
     }
 
