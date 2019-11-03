@@ -4,6 +4,7 @@ namespace Icinga\Module\Eagle\Controllers;
 
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
+use Icinga\Module\Eagle\Common\Links;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
@@ -39,7 +40,7 @@ class HostController extends Controller
 
     protected function getCommandTargetsUrl()
     {
-        return Url::fromPath('eagle/host', ['name' => $this->host->name]);
+        return Links::host($this->host);
     }
 
     protected function fetchCommandTargets()

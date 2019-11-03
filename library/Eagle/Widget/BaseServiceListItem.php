@@ -2,8 +2,8 @@
 
 namespace Icinga\Module\Eagle\Widget;
 
+use Icinga\Module\Eagle\Common\Links;
 use ipl\Html\Html;
-use ipl\Web\Url;
 use ipl\Web\Widget\StateBall;
 
 /**
@@ -17,10 +17,7 @@ abstract class BaseServiceListItem extends StateListItem
             Html::tag(
                 'a',
                 [
-                    'href'  => Url::fromPath('eagle/service', [
-                        'name'      => $this->item->name,
-                        'host_name' => $this->item->host->name
-                    ]),
+                    'href'  => Links::service($this->item, $this->item->host),
                     'class' => 'subject'
                 ],
                 $this->item->display_name
@@ -29,7 +26,7 @@ abstract class BaseServiceListItem extends StateListItem
             Html::tag(
                 'a',
                 [
-                    'href'  => Url::fromPath('eagle/host', ['name' => $this->item->host->name]),
+                    'href'  => Links::host($this->item->host),
                     'class' => 'subject'
                 ],
                 [

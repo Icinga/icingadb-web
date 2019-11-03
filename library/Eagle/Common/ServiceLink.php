@@ -5,7 +5,6 @@ namespace Icinga\Module\Eagle\Common;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Model\Service;
 use ipl\Html\Html;
-use ipl\Web\Url;
 use ipl\Web\Widget\StateBall;
 
 trait ServiceLink
@@ -22,22 +21,11 @@ trait ServiceLink
         $content[] = $service->display_name;
 
         return [
-            Html::tag(
-                'a',
-                [
-                    'href'  => Url::fromPath('eagle/service', [
-                        'name'      => $service->name,
-                        'host_name' => $host->name
-                    ])
-                ],
-                $content
-            ),
+            Html::tag('a', ['href' => Links::service($service, $host)], $content),
             ' on ',
             Html::tag(
                 'a',
-                [
-                    'href' => Url::fromPath('eagle/host', ['name' => $host->name])
-                ],
+                ['href' => Links::host($host)],
                 [
                     new StateBall($host->state->getStateText(), StateBall::SIZE_MEDIUM),
                     ' ',

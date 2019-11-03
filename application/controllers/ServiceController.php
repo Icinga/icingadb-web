@@ -4,12 +4,12 @@ namespace Icinga\Module\Eagle\Controllers;
 
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
+use Icinga\Module\Eagle\Common\Links;
 use Icinga\Module\Eagle\Model\Service;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
 use Icinga\Module\Eagle\Widget\Detail\QuickActions;
 use Icinga\Module\Eagle\Widget\ServiceList;
-use ipl\Web\Url;
 
 class ServiceController extends Controller
 {
@@ -20,8 +20,10 @@ class ServiceController extends Controller
 
     public function init()
     {
+        $this->setTitle($this->translate('Service'));
+
         $name = $this->params->shiftRequired('name');
-        $hostName = $this->params->shiftRequired('host_name');
+        $hostName = $this->params->shiftRequired('host.name');
 
         $query = Service::on($this->getDb())->with([
             'state',
@@ -43,10 +45,7 @@ class ServiceController extends Controller
 
     public function getCommandTargetsUrl()
     {
-        return Url::fromPath('eagle/service', [
-            'name'      => $this->service->name,
-            'host_name' => $this->service->host->name
-        ]);
+        return Links::service($this->service, $this->service->host);
     }
 
     public function fetchCommandTargets()
