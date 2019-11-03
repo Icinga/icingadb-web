@@ -117,6 +117,6 @@ class NotificationListItem extends CommonListItem
 
     protected function createTimestamp()
     {
-        return Dateformatter::timeAgo($this->item->send_time);
+        return Dateformatter::timeAgo($this->item->event_time);
     }
 }
