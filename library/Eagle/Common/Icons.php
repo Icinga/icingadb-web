@@ -18,5 +18,7 @@ class Icons
 
     const USER = 'user';
 
+    const USERGROUP = 'users';
+
     const WARNING = 'warning-empty';
 }
