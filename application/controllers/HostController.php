@@ -2,15 +2,18 @@
 
 namespace Icinga\Module\Eagle\Controllers;
 
+use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
+use Icinga\Module\Eagle\Common\HostLinks;
 use Icinga\Module\Eagle\Common\Links;
+use Icinga\Module\Eagle\Model\History;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
 use Icinga\Module\Eagle\Widget\Detail\QuickActions;
 use Icinga\Module\Eagle\Widget\HostList;
-use ipl\Web\Url;
+use Icinga\Module\Eagle\Widget\ItemList\HistoryList;
 
 class HostController extends Controller
 {
@@ -21,8 +24,6 @@ class HostController extends Controller
 
     public function init()
     {
-        $this->setTitle($this->translate('Host'));
-
         $name = $this->params->shiftRequired('name');
 
         $query = Host::on($this->getDb())->with('state');
@@ -36,6 +37,8 @@ class HostController extends Controller
         }
 
         $this->host = $host;
+
+        $this->setTitleTab($this->getRequest()->getActionName());
     }
 
     protected function getCommandTargetsUrl()
@@ -54,5 +57,63 @@ class HostController extends Controller
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new ObjectDetail($this->host));
+    }
+
+    public function historyAction()
+    {
+        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+
+        $db = $this->getDb();
+
+        $history = History::on($db)->with([
+            'host',
+            'host.state',
+            'comment',
+            'downtime',
+            'notification',
+            'state'
+        ]);
+
+        $history
+            ->getSelectBase()
+            ->where([
+                'history_host.id = ?' => $this->host->id,
+                'history.object_type = ?' => 'host'
+            ]);
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($history);
+
+        yield $this->export($history);
+
+        $this->addControl($paginationControl);
+        $this->addControl($limitControl);
+
+        $this->addContent(new HistoryList($history));
+    }
+
+    protected function createTabs()
+    {
+        return $this
+            ->getTabs()
+            ->add('index', [
+                'label'  => $this->translate('Host'),
+                'url'    => Links::host($this->host)
+            ])
+            ->add('history', [
+                'label'  => $this->translate('History'),
+                'url'    => HostLinks::history($this->host)
+            ]);
+    }
+
+    protected function setTitleTab($name)
+    {
+        $tab = $this->createTabs()->get($name);
+
+        if ($tab !== null) {
+            $tab->setActive();
+
+            $this->view->title = $tab->getLabel();
+        }
     }
 }
