@@ -47,6 +47,7 @@ namespace Icinga\Module\Eagle
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
+    $this->requireCssFile('graphs.less', 'ipldev');
 
     $this->provideCssFile('lists.less');
     $this->provideCssFile('mixins.less');
