@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Eagle\Model;
 
+use Icinga\Module\Eagle\Model\Behavior\BoolCast;
 use Icinga\Module\Eagle\Model\Behavior\Timestamp;
 use Icinga\Module\Eagle\Model\Behavior\VolatileState;
 use ipl\Orm\Behaviors;
@@ -49,6 +50,14 @@ abstract class State extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new VolatileState());
+        $behaviors->add(new BoolCast([
+            'is_problem',
+            'is_handled',
+            'is_reachable',
+            'is_flapping',
+            'is_acknowledged',
+            'in_downtime'
+        ]));
         $behaviors->add(new Timestamp([
             'last_update',
             'last_state_change',

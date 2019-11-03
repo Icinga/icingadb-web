@@ -6,7 +6,9 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\HostListItem;
+use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
+use Icinga\Module\Eagle\Widget\Detail\QuickActions;
+use Icinga\Module\Eagle\Widget\HostList;
 use ipl\Web\Url;
 
 class HostController extends Controller
@@ -18,6 +20,8 @@ class HostController extends Controller
 
     public function init()
     {
+        $this->setTitle($this->translate('Host'));
+
         $name = $this->params->shiftRequired('name');
 
         $query = Host::on($this->getDb())->with('state');
@@ -45,6 +49,9 @@ class HostController extends Controller
 
     public function indexAction()
     {
-        $this->addContent((new HostListItem($this->host))->setTag('div'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl(new QuickActions($this->host));
+
+        $this->addContent(new ObjectDetail($this->host));
     }
 }

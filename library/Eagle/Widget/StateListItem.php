@@ -48,15 +48,15 @@ abstract class StateListItem extends BaseListItem
     {
         $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
 
-        if ($this->state->is_handled === 'y') {
+        if ($this->state->is_handled) {
             switch (true) {
-                case $this->state->in_downtime === 'y':
+                case $this->state->in_downtime:
                     $icon = Icons::IN_DOWNTIME;
                     break;
-                case $this->state->is_acknowledged === 'y':
+                case $this->state->is_acknowledged:
                     $icon = Icons::IS_ACKNOWLEDGED;
                     break;
-                case $this->state->is_flapping === 'y':
+                case $this->state->is_flapping:
                     $icon = Icons::IS_FLAPPING;
                     break;
                 default:

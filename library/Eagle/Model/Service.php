@@ -81,7 +81,7 @@ class Service extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id');
@@ -105,8 +105,8 @@ class Service extends Model
             ->setThrough(HostgroupMember::class);
 
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
-        $relations->hasMany('comment', ServiceComment::class);
-        $relations->hasMany('downtime', ServiceDowntime::class);
+        $relations->hasMany('comment', Comment::class);
+        $relations->hasMany('downtime', Downtime::class);
         $relations->hasMany('notification', Notification::class);
     }
 }

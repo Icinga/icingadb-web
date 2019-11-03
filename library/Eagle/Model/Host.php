@@ -105,9 +105,9 @@ class Host extends Model
             ->setThrough(HostgroupMember::class);
 
         $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
-        $relations->hasMany('comment', HostComment::class);
-        $relations->hasMany('downtime', HostDowntime::class);
+        $relations->hasMany('comment', Comment::class);
+        $relations->hasMany('downtime', Downtime::class);
         $relations->hasMany('notification', Notification::class);
-        $relations->hasMany('service', Service::class);
+        $relations->hasMany('service', Service::class)->setJoinType('LEFT');
     }
 }
