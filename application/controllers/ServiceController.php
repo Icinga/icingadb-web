@@ -6,7 +6,9 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Model\Service;
 use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ServiceListItem;
+use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
+use Icinga\Module\Eagle\Widget\Detail\QuickActions;
+use Icinga\Module\Eagle\Widget\ServiceList;
 use ipl\Web\Url;
 
 class ServiceController extends Controller
@@ -54,6 +56,9 @@ class ServiceController extends Controller
 
     public function indexAction()
     {
-        $this->addContent((new ServiceListItem($this->service))->setTag('div'));
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('compact'));
+        $this->addControl(new QuickActions($this->service));
+
+        $this->addContent(new ObjectDetail($this->service));
     }
 }
