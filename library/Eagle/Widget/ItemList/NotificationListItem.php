@@ -62,22 +62,30 @@ class NotificationListItem extends CommonListItem
     {
         switch (self::TYPES[$this->item->type]) {
             case 'Ack':
-                $visual->add(Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED)));
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
+                );
 
                 break;
             case 'Custom':
-                $visual->add(Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION)));
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION))
+                );
 
                 break;
             case 'DowntimeEnd':
             case 'DowntimeRemove':
             case 'DowntimeStart':
-                $visual->add(Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME)));
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME))
+                );
 
                 break;
             case 'FlappingEnd':
             case 'FlappingStart':
-                $visual->add(Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING)));
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
+                );
 
                 break;
             case 'Problem':
