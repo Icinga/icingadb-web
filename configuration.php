@@ -44,6 +44,10 @@ namespace Icinga\Module\Eagle
         'url' => 'eagle/servicegroups',
         'priority' => 80
     ]);
+    $section->add(N_('History'), [
+        'url' => 'eagle/history',
+        'priority' => 90
+    ]);
 
     // TODO: Switch to from='ipl' prior release!
     $this->requireCssFile('balls.less', 'ipldev');
