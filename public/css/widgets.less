@@ -146,3 +146,34 @@
     border-color: @color-warning;
   }
 }
+
+.quick-actions {
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  a {
+    text-decoration: none;
+  }
+
+  li {
+    .rounded-corners();
+    padding: .375em;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:hover {
+      background: @gray-lighter;
+    }
+
+    i {
+      font-size: 1.125em;
+    }
+  }
+
+  .spinner {
+    padding: 0;
+  }
+}
