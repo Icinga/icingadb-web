@@ -18,6 +18,8 @@ class Icons
 
     const NOTIFICATION = 'bell';
 
+    const REMOVE = 'trash';
+
     const USER = 'user';
 
     const USERGROUP = 'users';
