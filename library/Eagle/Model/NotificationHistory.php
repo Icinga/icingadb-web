@@ -29,7 +29,7 @@ class NotificationHistory extends Model
             'service_id',
             'notification_id',
             'type',
-            'send_time',
+            'event_time',
             'state',
             'previous_hard_state',
             'author',
@@ -41,7 +41,7 @@ class NotificationHistory extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new Timestamp([
-            'send_time'
+            'event_time'
         ]));
     }
 
