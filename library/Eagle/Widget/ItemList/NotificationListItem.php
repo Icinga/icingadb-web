@@ -9,6 +9,7 @@ use Icinga\Module\Eagle\Common\Icons;
 use Icinga\Module\Eagle\Common\ServiceLink;
 use Icinga\Module\Eagle\Common\ServiceStates;
 use Icinga\Module\Eagle\Widget\CommonListItem;
+use Icinga\Module\Eagle\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;
@@ -125,6 +126,6 @@ class NotificationListItem extends CommonListItem
 
     protected function createTimestamp()
     {
-        return Dateformatter::timeAgo($this->item->event_time);
+        return new TimeAgo($this->item->event_time);
     }
 }
