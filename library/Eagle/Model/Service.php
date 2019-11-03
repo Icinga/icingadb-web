@@ -81,7 +81,7 @@ class Service extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id');
