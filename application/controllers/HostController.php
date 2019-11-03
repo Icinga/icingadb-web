@@ -20,6 +20,8 @@ class HostController extends Controller
 
     public function init()
     {
+        $this->setTitle($this->translate('Host'));
+
         $name = $this->params->shiftRequired('name');
 
         $query = Host::on($this->getDb())->with('state');
