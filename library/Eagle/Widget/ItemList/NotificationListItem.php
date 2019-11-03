@@ -27,8 +27,8 @@ class NotificationListItem extends CommonListItem
         'DowntimeStart'  => 'Downtime was started',
         'FlappingEnd'    => 'Flapping ended',
         'FlappingStart'  => 'Flapping detected',
-        'Problem'        => 'Host ran into a problem',
-        'Recovery'       => 'Host recovered'
+        'Problem'        => '%s ran into a problem',
+        'Recovery'       => '%s recovered'
     ];
 
     const TYPES = [
@@ -102,7 +102,7 @@ class NotificationListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            self::PHRASES[self::TYPES[$this->item->type]],
+            sprintf(self::PHRASES[self::TYPES[$this->item->type]], ucfirst($this->item->object_type)),
             Html::tag('br')
         ]);
 
