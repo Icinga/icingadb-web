@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Eagle\Widget\ItemList;
 
-use Icinga\Date\DateFormatter;
 use Icinga\Module\Eagle\Common\HostLink;
 use Icinga\Module\Eagle\Common\HostStates;
 use Icinga\Module\Eagle\Common\Icons;
