@@ -12,10 +12,16 @@ class FlattenedObjectVars implements RewriteFilterBehavior
     {
         $column = $expression->getColumn();
         if ($column !== 'flatname' && $column !== 'flatvalue') {
-            return Filter::matchAll(
-                Filter::where($relation . 'flatname', $column),
-                $expression->setColumn($relation . 'flatvalue')
-            );
+            $nameFilter = Filter::where($relation . 'flatname', $column);
+            $valueFilter = Filter::where($relation . 'flatvalue', $expression->getExpression());
+            $filter = Filter::matchAll($nameFilter, $valueFilter);
+
+            // TODO: Ugly, yes, let's implement this stuff in our own filters
+            $nameFilter->noOptmization = true;
+            $valueFilter->noOptmization = true;
+            $filter->transferMetaData = true;
+
+            return $filter;
         }
     }
 }
