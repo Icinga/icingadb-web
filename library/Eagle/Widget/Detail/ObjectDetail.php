@@ -73,7 +73,7 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             Html::tag('h2', 'Downtimes'),
-            new DowntimeList($this->object->downtime),
+            new DowntimeList($downtimes),
             new ShowMore($downtimes, $link)
         ];
     }

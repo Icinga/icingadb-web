@@ -177,6 +177,7 @@
     padding: 0;
   }
 }
+
 .state-change {
   .state-ball {
     box-shadow: 0 0 0 1px white;
@@ -189,5 +190,25 @@
   .state-ball.state-ok,
   .state-ball.state-up {
     background-color: white;
+  }
+}
+
+.key-value-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+  }
+
+  li > span {
+    padding: .25em;
+
+    &.label {
+      display: block;
+      padding-left: 0;
+      width: 12em;
+    }
   }
 }

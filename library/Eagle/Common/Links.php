@@ -28,7 +28,7 @@ abstract class Links
         return Url::fromPath('eagle/host', ['name' => $host->name]);
     }
 
-    public static function hostgroup(Hostgroup $hostgroup)
+    public static function hostgroup($hostgroup)
     {
         return Url::fromPath('eagle/hostgroup', ['name' => $hostgroup->name]);
     }
@@ -38,7 +38,7 @@ abstract class Links
         return Url::fromPath('eagle/service', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
-    public static function servicegroup(Servicegroup $servicegroup)
+    public static function servicegroup($servicegroup)
     {
         return Url::fromPath('eagle/servicegroup', ['name' => $servicegroup->name]);
     }

@@ -14,7 +14,7 @@ class Hostgroupsummary extends UnionModel
 
     public function getKeyName()
     {
-        return 'hostgroup_id';
+        return ['id' => 'hostgroup_id'];
     }
 
     public function getColumns()
