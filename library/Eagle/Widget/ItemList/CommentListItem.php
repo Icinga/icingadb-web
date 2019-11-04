@@ -27,6 +27,7 @@ class CommentListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $header)
     {
         $isAck = $this->item->entry_type === 'ack';
+        $expires = $this->item->expire_time;
 
         $header->add([
             new Icon(Icons::USER),
@@ -43,6 +44,10 @@ class CommentListItem extends CommonListItem
             }
 
             $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], $label));
+        }
+
+        if ($expires != 0) {
+            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], 'EXPIRES'));
         }
 
         $header->add(Html::tag('br'));
