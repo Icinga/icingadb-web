@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Eagle\Controllers;
 
-use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Eagle\Common\CommandActions;
 use Icinga\Module\Eagle\Common\HostLinks;
@@ -13,7 +12,9 @@ use Icinga\Module\Eagle\Model\Service;
 use Icinga\Module\Eagle\Web\Controller;
 use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
 use Icinga\Module\Eagle\Widget\Detail\QuickActions;
+use Icinga\Module\Eagle\Widget\DowntimeList;
 use Icinga\Module\Eagle\Widget\HostList;
+use Icinga\Module\Eagle\Widget\ItemList\CommentList;
 use Icinga\Module\Eagle\Widget\ItemList\HistoryList;
 use Icinga\Module\Eagle\Widget\ServiceList;
 
@@ -59,6 +60,44 @@ class HostController extends Controller
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new ObjectDetail($this->host));
+    }
+
+    public function commentsAction()
+    {
+        $this->setTitle($this->translate('Comments'));
+
+        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+
+        $comments = $this->host->comment;
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($comments);
+
+        yield $this->export($comments);
+
+        $this->addControl($paginationControl);
+        $this->addControl($limitControl);
+
+        $this->addContent(new CommentList($comments));
+    }
+
+    public function downtimesAction()
+    {
+        $this->setTitle($this->translate('Downtimes'));
+
+        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+
+        $downtimes = $this->host->downtime;
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($downtimes);
+
+        yield $this->export($downtimes);
+
+        $this->addControl($paginationControl);
+        $this->addControl($limitControl);
+
+        $this->addContent(new DowntimeList($downtimes));
     }
 
     public function historyAction()
