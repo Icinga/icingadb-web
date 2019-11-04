@@ -4,12 +4,14 @@ namespace Icinga\Module\Eagle\Widget\ItemList;
 
 use Icinga\Chart\Donut;
 use Icinga\Module\Eagle\Common\BaseTableRowItem;
+use Icinga\Module\Eagle\Common\Links;
 use Icinga\Module\Eagle\Widget\ServiceStateBadges;
 use Icinga\Module\Eagle\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Widget\Link;
 
 class ServicegroupListItem extends BaseTableRowItem
 {
@@ -39,7 +41,7 @@ class ServicegroupListItem extends BaseTableRowItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            $this->item->display_name,
+            new Link($this->item->display_name, Links::servicegroup($this->item)),
             Html::tag('br'),
             $this->item->name
         ]);
