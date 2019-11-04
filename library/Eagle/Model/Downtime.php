@@ -44,6 +44,11 @@ class Downtime extends Model
         ];
     }
 
+    public function getSortRules()
+    {
+        return ['is_in_effect, start_time DESC'];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([

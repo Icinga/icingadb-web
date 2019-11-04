@@ -67,6 +67,11 @@ class Service extends Model
         return ['name_ci'];
     }
 
+    public function getSortRules()
+    {
+        return ['display_name'];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([

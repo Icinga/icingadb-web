@@ -41,6 +41,11 @@ class Comment extends Model
         ];
     }
 
+    public function getSortRules()
+    {
+        return ['entry_time DESC'];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([
