@@ -4,6 +4,7 @@ namespace Icinga\Module\Eagle\Widget\ItemList;
 
 use Icinga\Chart\Donut;
 use Icinga\Module\Eagle\Common\BaseTableRowItem;
+use Icinga\Module\Eagle\Common\Links;
 use Icinga\Module\Eagle\Widget\HostStateBadges;
 use Icinga\Module\Eagle\Widget\ServiceStateBadges;
 use Icinga\Module\Eagle\Widget\VerticalKeyValue;
@@ -11,6 +12,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Widget\Link;
 
 class HostgroupListItem extends BaseTableRowItem
 {
@@ -56,7 +58,7 @@ class HostgroupListItem extends BaseTableRowItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            $this->item->display_name,
+            new Link($this->item->display_name, Links::hostgroup($this->item)),
             Html::tag('br'),
             $this->item->name
         ]);
