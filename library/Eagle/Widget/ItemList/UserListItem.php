@@ -25,9 +25,9 @@ class UserListItem extends BaseHtmlElement
                 Html::tag('div', ['class' => 'user-ball'], $this->item->display_name[0])
             ]),
             Html::tag('div', ['class' => 'title col'], [
-                $this->item->name,
+                $this->item->display_name,
                 Html::tag('br'),
-                $this->item->display_name
+                $this->item->name
             ]),
             Html::tag('div', ['class' => 'col'], $this->item->email),
             Html::tag('div', ['class' => 'col'], $this->item->pager)
