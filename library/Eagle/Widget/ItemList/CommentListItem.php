@@ -6,6 +6,7 @@ namespace Icinga\Module\Eagle\Widget\ItemList;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Eagle\Common\HostLink;
 use Icinga\Module\Eagle\Common\Icons;
+use Icinga\Module\Eagle\Common\Links;
 use Icinga\Module\Eagle\Common\ServiceLink;
 use Icinga\Module\Eagle\Widget\CommonListItem;
 use Icinga\Web\Helper\Markdown;
@@ -13,6 +14,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class CommentListItem extends CommonListItem
 {
@@ -27,12 +29,18 @@ class CommentListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $header)
     {
         $isAck = $this->item->entry_type === 'ack';
+        $expires = $this->item->expire_time;
 
         $header->add([
             new Icon(Icons::USER),
-            $this->item->author,
-            ' ',
-            ($isAck ? 'acknowledged' : 'commented'),
+            new Link(
+                [
+                    $this->item->author,
+                    ' ',
+                    ($isAck ? 'acknowledged' : 'commented')
+                ],
+                Links::comment($this->item)
+            )
         ]);
 
         if ($isAck) {
@@ -43,6 +51,10 @@ class CommentListItem extends CommonListItem
             }
 
             $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], $label));
+        }
+
+        if ($expires != 0) {
+            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], 'EXPIRES'));
         }
 
         $header->add(Html::tag('br'));

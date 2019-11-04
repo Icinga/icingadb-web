@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Eagle\Common;
 
+use Icinga\Module\Eagle\Model\Comment;
 use Icinga\Module\Eagle\Model\Host;
 use Icinga\Module\Eagle\Model\Hostgroup;
 use Icinga\Module\Eagle\Model\Service;
@@ -12,6 +13,16 @@ use ipl\Web\Url;
 
 abstract class Links
 {
+    public static function comment(Comment $comment)
+    {
+        return Url::fromPath('eagle/comment', ['name' => $comment->name]);
+    }
+
+    public static function comments()
+    {
+        return Url::fromPath('eagle/comments');
+    }
+
     public static function host(Host $host)
     {
         return Url::fromPath('eagle/host', ['name' => $host->name]);

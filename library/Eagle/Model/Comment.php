@@ -35,6 +35,7 @@ class Comment extends Model
             'entry_type',
             'entry_time',
             'is_persistent',
+            'is_sticky',
             'expire_time',
             'zone_id'
         ];
@@ -43,7 +44,8 @@ class Comment extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([
-            'is_persistent'
+            'is_persistent',
+            'is_sticky'
         ]));
 
         $behaviors->add(new Timestamp([
