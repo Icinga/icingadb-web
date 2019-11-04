@@ -240,6 +240,43 @@
     background-color: fade(@color-warning, 80);
     border-color: @color-warning;
   }
+
+  &.collapsible.collapsed {
+    &.state-critical:before,
+    &.state-critical:after {
+      background: linear-gradient(fade(@color-critical, 0), fade(@color-critical, 80));
+    }
+
+    &.state-down:before,
+    &.state-down:after {
+      background: linear-gradient(fade(@color-down, 0), fade(@color-down, 80));
+    }
+
+    &.state-ok:before,
+    &.state-ok:after {
+      background: linear-gradient(fade(@color-ok, 0), fade(@color-ok, 80));
+    }
+
+    &.state-pending:before,
+    &.state-pending:after {
+      background: linear-gradient(fade(@color-pending, 0), fade(@color-pending, 80));
+    }
+
+    &.state-unknown:before,
+    &.state-unknown:after {
+      background: linear-gradient(fade(@color-unknown, 0), fade(@color-unknown, 80));
+    }
+
+    &.state-up:before,
+    &.state-up:after {
+      background: linear-gradient(fade(@color-up, 0), fade(@color-up, 80));
+    }
+
+    &.state-warning:before,
+    &.state-warning:after {
+      background: linear-gradient(fade(@color-warning, 0), fade(@color-warning, 80));
+    }
+  }
 }
 
 .quick-actions {
