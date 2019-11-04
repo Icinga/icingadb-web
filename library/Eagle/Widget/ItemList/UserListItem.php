@@ -2,8 +2,10 @@
 
 namespace Icinga\Module\Eagle\Widget\ItemList;
 
+use Icinga\Module\Eagle\Common\Links;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Widget\Link;
 
 class UserListItem extends BaseHtmlElement
 {
@@ -25,7 +27,7 @@ class UserListItem extends BaseHtmlElement
                 Html::tag('div', ['class' => 'user-ball'], $this->item->display_name[0])
             ]),
             Html::tag('div', ['class' => 'title col'], [
-                $this->item->display_name,
+                new Link($this->item->display_name, Links::user($this->item)),
                 Html::tag('br'),
                 $this->item->name
             ]),
