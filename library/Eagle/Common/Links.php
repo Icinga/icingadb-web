@@ -28,7 +28,7 @@ abstract class Links
         return Url::fromPath('eagle/host', ['name' => $host->name]);
     }
 
-    public static function hostgroup(Hostgroup $hostgroup)
+    public static function hostgroup($hostgroup)
     {
         return Url::fromPath('eagle/hostgroup', ['name' => $hostgroup->name]);
     }
