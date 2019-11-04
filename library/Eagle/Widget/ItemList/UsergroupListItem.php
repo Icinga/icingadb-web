@@ -25,9 +25,9 @@ class UsergroupListItem extends BaseHtmlElement
                 Html::tag('div', ['class' => 'usergroup-ball'], $this->item->display_name[0])
             ]),
             Html::tag('div', ['class' => 'title col'], [
-                $this->item->name,
+                $this->item->display_name,
                 Html::tag('br'),
-                $this->item->display_name
+                $this->item->name
             ])
         ]);
     }
