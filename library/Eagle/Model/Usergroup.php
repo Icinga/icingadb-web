@@ -31,6 +31,11 @@ class Usergroup extends Model
         ];
     }
 
+    public function getSortRules()
+    {
+        return ['display_name'];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
