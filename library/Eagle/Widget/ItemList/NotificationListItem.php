@@ -21,32 +21,20 @@ class NotificationListItem extends CommonListItem
     use ServiceLink;
 
     const PHRASES = [
-        'Ack'            => 'Problem was acknowledged',
-        'Custom'         => 'Custom Notification was triggered',
-        'DowntimeEnd'    => 'Downtime ended',
-        'DowntimeRemove' => 'Downtime was removed',
-        'DowntimeStart'  => 'Downtime was started',
-        'FlappingEnd'    => 'Flapping ended',
-        'FlappingStart'  => 'Flapping detected',
-        'Problem'        => '%s ran into a problem',
-        'Recovery'       => '%s recovered'
-    ];
-
-    const TYPES = [
-        1   => 'DowntimeStart',
-        2   => 'DowntimeEnd',
-        4   => 'DowntimeRemove',
-        8   => 'Custom',
-        16  => 'Ack',
-        32  => 'Problem',
-        64  => 'Recovery',
-        128 => 'FlappingStart',
-        256 => 'FlappingEnd'
+        'acknowledgement'  => 'Problem was acknowledged',
+        'custom'           => 'Custom Notification was triggered',
+        'downtime_end'     => 'Downtime ended',
+        'downtime_removed' => 'Downtime was removed',
+        'downtime_start'   => 'Downtime was started',
+        'flapping_end'     => 'Flapping ended',
+        'flapping_start'   => 'Flapping detected',
+        'problem'          => '%s ran into a problem',
+        'recovery'         => '%s recovered'
     ];
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        if (in_array(self::TYPES[$this->item->type], ['FlappingStart', 'FlappingEnd', 'Problem', 'Recovery'])) {
+        if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
             $caption->addAttributes(['class' => 'plugin-output']);
             $caption->add($this->item->text);
         } else {
@@ -61,8 +49,8 @@ class NotificationListItem extends CommonListItem
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        switch (self::TYPES[$this->item->type]) {
-            case 'Ack':
+        switch ($this->item->type) {
+            case 'acknowledgement':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
                 );
@@ -74,23 +62,23 @@ class NotificationListItem extends CommonListItem
                 );
 
                 break;
-            case 'DowntimeEnd':
-            case 'DowntimeRemove':
-            case 'DowntimeStart':
+            case 'downtime_end':
+            case 'downtime_removed':
+            case 'downtime_start':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME))
                 );
 
                 break;
-            case 'FlappingEnd':
-            case 'FlappingStart':
+            case 'flapping_end':
+            case 'flapping_start':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
                 );
 
                 break;
-            case 'Problem':
-            case 'Recovery':
+            case 'problem':
+            case 'recovery':
                 if ($this->item->object_type === 'host') {
                     $state = HostStates::text($this->item->state);
                     $previousHardState = HostStates::text($this->item->previous_hard_state);
@@ -111,7 +99,7 @@ class NotificationListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            sprintf(self::PHRASES[self::TYPES[$this->item->type]], ucfirst($this->item->object_type)),
+            sprintf(self::PHRASES[$this->item->type], ucfirst($this->item->object_type)),
             Html::tag('br')
         ]);
 
