@@ -4,6 +4,8 @@ namespace Icinga\Module\Eagle\Common;
 
 class Icons
 {
+    const COMMENT = 'comment-empty';
+
     const HOST_DOWN = 'sitemap';
 
     const IN_DOWNTIME = 'plug';
@@ -15,6 +17,8 @@ class Icons
     const IS_PERSISTENT = 'pin';
 
     const NOTIFICATION = 'bell';
+
+    const REMOVE = 'trash';
 
     const USER = 'user';
 

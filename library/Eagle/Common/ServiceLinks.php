@@ -43,6 +43,13 @@ abstract class ServiceLinks
         );
     }
 
+    public static function history(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'eagle/service/history', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
+
     public static function removeAcknowledgement(Service $service, Host $host)
     {
         return Url::fromPath(

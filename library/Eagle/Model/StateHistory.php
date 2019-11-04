@@ -7,11 +7,11 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
-class NotificationHistory extends Model
+class StateHistory extends Model
 {
     public function getTableName()
     {
-        return 'notification_history';
+        return 'state_history';
     }
 
     public function getKeyName()
@@ -27,14 +27,17 @@ class NotificationHistory extends Model
             'object_type',
             'host_id',
             'service_id',
-            'notification_id',
-            'type',
             'event_time',
-            'state',
+            'state_type',
+            'soft_state',
+            'hard_state',
+            'attempt',
+            'previous_soft_state',
             'previous_hard_state',
-            'author',
-            'text',
-            'users_notified'
+            'output',
+            'long_output',
+            'max_check_attempts',
+            'check_source'
         ];
     }
 
@@ -47,6 +50,7 @@ class NotificationHistory extends Model
 
     public function createRelations(Relations $relations)
     {
+        $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');

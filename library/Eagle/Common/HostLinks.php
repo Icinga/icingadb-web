@@ -32,6 +32,11 @@ abstract class HostLinks
         return Url::fromPath('eagle/host/downtimes', ['name' => $host->name]);
     }
 
+    public static function history(Host $host)
+    {
+        return Url::fromPath('eagle/host/history', ['name' => $host->name]);
+    }
+
     public static function removeAcknowledgement(Host $host)
     {
         return Url::fromPath('eagle/host/remove-acknowledgement', ['name' => $host->name]);
