@@ -18,6 +18,11 @@ abstract class Links
         return Url::fromPath('eagle/comment', ['name' => $comment->name]);
     }
 
+    public static function comments()
+    {
+        return Url::fromPath('eagle/comments');
+    }
+
     public static function host(Host $host)
     {
         return Url::fromPath('eagle/host', ['name' => $host->name]);
