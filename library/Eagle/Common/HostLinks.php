@@ -56,4 +56,9 @@ abstract class HostLinks
     {
         return Url::fromPath('eagle/host/send-custom-notification', ['name' => $host->name]);
     }
+
+    public static function services(Host $host)
+    {
+        return Url::fromPath('eagle/host/services', ['name' => $host->name]);
+    }
 }
