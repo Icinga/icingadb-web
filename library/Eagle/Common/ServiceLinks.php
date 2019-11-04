@@ -50,6 +50,13 @@ abstract class ServiceLinks
         );
     }
 
+    public static function removeComment(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'eagle/service/delete-comment', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
+
     public static function scheduleDowntime(Service $service, Host $host)
     {
         return Url::fromPath(
