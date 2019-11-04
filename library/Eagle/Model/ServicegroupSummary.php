@@ -14,7 +14,7 @@ class ServicegroupSummary extends UnionModel
 
     public function getKeyName()
     {
-        return 'servicegroup_id';
+        return ['id' => 'servicegroup_id'];
     }
 
     public function getColumns()
