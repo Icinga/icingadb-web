@@ -32,8 +32,8 @@ class HostsController extends Controller
         yield $this->export($hosts, $summary);
 
         $this->addControl($paginationControl);
-        $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
 
         $this->addContent($hostList);
