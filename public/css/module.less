@@ -100,13 +100,21 @@
 }
 
 .controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  border-bottom: 1px solid @gray-lighter;
 
-  .tabs,
   .filter {
     width: 100%;
+  }
+
+  .pagination-control {
+    float: left;
+  }
+
+  .limit-control,
+  .view-mode-switcher,
+  .sort-control {
+    float: right;
+    margin-left: .5em;
   }
 
   .item-list {
