@@ -5,6 +5,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Web\Helper\Markdown;
@@ -12,6 +13,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class DowntimeListItem extends CommonListItem
 {
@@ -118,7 +120,7 @@ class DowntimeListItem extends CommonListItem
         }
 
         $title->add([
-            "{$type} Downtime",
+            new Link("{$type} Downtime", Links::downtime($this->item)),
             ': ',
             $link
         ]);
