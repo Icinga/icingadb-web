@@ -139,26 +139,28 @@ class Controller extends CompatController
         return $viewModeSwitcher;
     }
 
-    public function export(Query $query)
+    public function export(Query ...$queries)
     {
         if ($this->format === 'sql') {
-            list($sql, $values) = $query->getDb()->getQueryBuilder()->assembleSelect($query->assembleSelect());
+            foreach ($queries as $query) {
+                list($sql, $values) = $query->getDb()->getQueryBuilder()->assembleSelect($query->assembleSelect());
 
-            $unused = [];
-            foreach ($values as $value) {
-                $pos = strpos($sql, '?');
-                if ($pos !== false) {
-                    $sql = substr_replace($sql, "\"{$value}\"", $pos, 1);
-                } else {
-                    $unused[] = $value;
+                $unused = [];
+                foreach ($values as $value) {
+                    $pos = strpos($sql, '?');
+                    if ($pos !== false) {
+                        $sql = substr_replace($sql, "\"{$value}\"", $pos, 1);
+                    } else {
+                        $unused[] = $value;
+                    }
                 }
-            }
 
-            if (! empty($unused)) {
-                $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
-            }
+                if (!empty($unused)) {
+                    $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
+                }
 
-            $this->content->setContent(Html::tag('pre', $sql));
+                $this->content->add(Html::tag('pre', $sql));
+            }
 
             return true;
         }
