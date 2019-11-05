@@ -67,10 +67,10 @@ abstract class StateListItem extends BaseListItem
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
-        $visual->add([
-            $stateBall,
-            new CheckAttempt($this->state->attempt, $this->item->max_check_attempts)
-        ]);
+        $visual->add($stateBall);
+        if ($this->state->state_type === 'soft') {
+            $visual->add(new CheckAttempt($this->state->attempt, $this->item->max_check_attempts));
+        }
     }
 
     protected function createTimestamp()
