@@ -10,12 +10,13 @@ use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
+use ipl\Sql\Connection;
 use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
-use ipl\Sql\Connection;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Url;
+use PDO;
 
 class Controller extends CompatController
 {
@@ -38,11 +39,15 @@ class Controller extends CompatController
     public function getDb()
     {
         if ($this->db === null) {
-            $this->db = new Connection(
-                ResourceFactory::getResourceConfig(
-                    $this->Config()->get('icingadb', 'resource', 'icingadb')
-                )->toArray()
-            );
+            $config = ResourceFactory::getResourceConfig($this->Config()->get('icingadb', 'resource', 'icingadb'));
+
+            $config->options = [
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET SESSION SQL_MODE='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE"
+                    . ",ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'"
+            ];
+
+            $this->db = new Connection($config);
         }
 
         return $this->db;
