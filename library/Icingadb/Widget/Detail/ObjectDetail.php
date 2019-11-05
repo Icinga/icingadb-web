@@ -37,6 +37,14 @@ class ObjectDetail extends BaseHtmlElement
         $this->objectType = $object instanceof Host ? 'host' : 'service';
     }
 
+    protected function createCheckStatistics()
+    {
+        return [
+            Html::tag('h2', 'Check Statistics'),
+            new CheckStatistics($this->object)
+        ];
+    }
+
     protected function createComments()
     {
         if ($this->objectType === 'host') {
@@ -186,6 +194,7 @@ class ObjectDetail extends BaseHtmlElement
             $this->createComments(),
             $this->createDowntimes(),
             $this->createNotifications(),
+            $this->createCheckStatistics(),
             $this->createPerformanceData(),
             $this->createCustomVars()
         ]);
