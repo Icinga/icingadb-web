@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model;
+namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Eagle\Model\Behavior\FlattenedObjectVars;
+use Icinga\Module\Icingadb\Model\Behavior\FlattenedObjectVars;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;

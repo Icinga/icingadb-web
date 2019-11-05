@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\Hostgroupsummary;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ItemList\HostgroupList;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 
 class HostgroupsController extends Controller
 {

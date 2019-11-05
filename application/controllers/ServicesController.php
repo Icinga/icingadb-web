@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\Service;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ServiceList;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ServiceList;
 
 class ServicesController extends Controller
 {

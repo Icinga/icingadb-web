@@ -1,14 +1,14 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Eagle\Model\Host;
-use Icinga\Module\Eagle\Model\Hostgroupsummary;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\HostList;
-use Icinga\Module\Eagle\Widget\ItemList\HostgroupList;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\HostList;
+use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use ipl\Orm\Compat\FilterProcessor;
 
 class HostgroupController extends Controller

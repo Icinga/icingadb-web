@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
 /**
  * Collection of possible host states.
@@ -59,16 +59,16 @@ class HostStates
     {
         switch ((int) $state) {
             case self::UP:
-                $text = mt('eagle', 'up');
+                $text = mt('icingadb', 'up');
                 break;
             case self::DOWN:
-                $text = mt('eagle', 'down');
+                $text = mt('icingadb', 'down');
                 break;
             case self::UNREACHABLE:
-                $text = mt('eagle', 'unreachable');
+                $text = mt('icingadb', 'unreachable');
                 break;
             case self::PENDING:
-                $text = mt('eagle', 'pending');
+                $text = mt('icingadb', 'pending');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid host state %d', $state));

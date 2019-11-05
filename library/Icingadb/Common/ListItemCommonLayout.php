@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
 use ipl\Html\BaseHtmlElement;
 

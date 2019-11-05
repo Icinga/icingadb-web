@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Redis;
+namespace Icinga\Module\Icingadb\Redis;
 
-use Icinga\Module\Eagle\Model\State;
+use Icinga\Module\Icingadb\Model\State;
 
 /**
  * Fetch volatile host or service states from redis.

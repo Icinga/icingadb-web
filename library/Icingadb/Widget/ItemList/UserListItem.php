@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Eagle\Common\Links;
+use Icinga\Module\Icingadb\Common\Links;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Link;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Compat;
+namespace Icinga\Module\Icingadb\Compat;
 
 /**
  * Class CompatHost
- * @package Icinga\Module\Eagle\Compat
+ * @package Icinga\Module\Icingadb\Compat
  */
 class CompatHost extends CompatObject
 {

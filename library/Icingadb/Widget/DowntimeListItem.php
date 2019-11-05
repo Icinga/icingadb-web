@@ -1,12 +1,12 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Date\DateFormatter as WebDateFormatter;
-use Icinga\Module\Eagle\Common\HostLink;
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Common\ServiceLink;
-use Icinga\Module\Eagle\Date\DateFormatter;
+use Icinga\Module\Icingadb\Common\HostLink;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

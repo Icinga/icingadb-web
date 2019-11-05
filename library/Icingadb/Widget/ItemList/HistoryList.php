@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Eagle\Widget\BaseItemList;
+use Icinga\Module\Icingadb\Widget\BaseItemList;
 
 class HistoryList extends BaseItemList
 {

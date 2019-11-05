@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
 class DowntimeList extends BaseItemList
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\Downtime;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
 
 class DowntimesController extends Controller
 {

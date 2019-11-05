@@ -1,14 +1,14 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Eagle\Model\Service;
-use Icinga\Module\Eagle\Model\Servicegroupsummary;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ServiceList;
-use Icinga\Module\Eagle\Widget\ItemList\ServicegroupList;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\Servicegroupsummary;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
 use ipl\Orm\Compat\FilterProcessor;
 
 class ServicegroupController extends Controller

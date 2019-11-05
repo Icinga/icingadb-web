@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\Host;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\HostList;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\HostList;
 
 class HostsController extends Controller
 {

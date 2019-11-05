@@ -1,12 +1,12 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Chart\Donut;
-use Icinga\Module\Eagle\Common\BaseTableRowItem;
-use Icinga\Module\Eagle\Common\Links;
-use Icinga\Module\Eagle\Widget\ServiceStateBadges;
-use Icinga\Module\Eagle\Widget\VerticalKeyValue;
+use Icinga\Module\Icingadb\Common\BaseTableRowItem;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
+use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Icinga\Module\Eagle\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Eagle\Common\HostLink;
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Common\Links;
-use Icinga\Module\Eagle\Common\ServiceLink;
-use Icinga\Module\Eagle\Widget\CommonListItem;
+use Icinga\Module\Icingadb\Common\HostLink;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

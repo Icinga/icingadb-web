@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Date;
+namespace Icinga\Module\Icingadb\Date;
 
 class DateFormatter
 {

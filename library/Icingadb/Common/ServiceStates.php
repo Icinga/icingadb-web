@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
 /**
  * Collection of possible service states.
@@ -64,19 +64,19 @@ class ServiceStates
     {
         switch ((int) $state) {
             case self::OK:
-                $text = mt('eagle', 'ok');
+                $text = mt('icingadb', 'ok');
                 break;
             case self::WARNING:
-                $text = mt('eagle', 'warning');
+                $text = mt('icingadb', 'warning');
                 break;
             case self::CRITICAL:
-                $text = mt('eagle', 'critical');
+                $text = mt('icingadb', 'critical');
                 break;
             case self::UNKNOWN:
-                $text = mt('eagle', 'unknown');
+                $text = mt('icingadb', 'unknown');
                 break;
             case self::PENDING:
-                $text = mt('eagle', 'pending');
+                $text = mt('icingadb', 'pending');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid service state %d', $state));

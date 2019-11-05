@@ -1,15 +1,15 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Eagle\Common\CommandActions;
-use Icinga\Module\Eagle\Common\HostLink;
-use Icinga\Module\Eagle\Common\Links;
-use Icinga\Module\Eagle\Common\ServiceLink;
-use Icinga\Module\Eagle\Model\Comment;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\Detail\CommentDetail;
+use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\HostLink;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\CommentDetail;
 
 class CommentController extends Controller
 {

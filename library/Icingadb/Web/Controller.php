@@ -1,12 +1,12 @@
 <?php
 
-namespace Icinga\Module\Eagle\Web;
+namespace Icinga\Module\Icingadb\Web;
 
 use Generator;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
-use Icinga\Module\Eagle\Widget\FilterControl;
-use Icinga\Module\Eagle\Widget\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\FilterControl;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;

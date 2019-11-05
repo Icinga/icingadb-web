@@ -1,9 +1,9 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Model\State;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Eagle\Common\ViewMode;
+use Icinga\Module\Icingadb\Common\ViewMode;
 
 abstract class StateList extends BaseItemList
 {

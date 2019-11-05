@@ -1,55 +1,55 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Eagle\Model\Comment;
-use Icinga\Module\Eagle\Model\Host;
-use Icinga\Module\Eagle\Model\Hostgroup;
-use Icinga\Module\Eagle\Model\Service;
-use Icinga\Module\Eagle\Model\Servicegroup;
-use Icinga\Module\Eagle\Model\User;
-use Icinga\Module\Eagle\Model\Usergroup;
+use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Hostgroup;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\Servicegroup;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Model\Usergroup;
 use ipl\Web\Url;
 
 abstract class Links
 {
     public static function comment(Comment $comment)
     {
-        return Url::fromPath('eagle/comment', ['name' => $comment->name]);
+        return Url::fromPath('icingadb/comment', ['name' => $comment->name]);
     }
 
     public static function comments()
     {
-        return Url::fromPath('eagle/comments');
+        return Url::fromPath('icingadb/comments');
     }
 
     public static function host(Host $host)
     {
-        return Url::fromPath('eagle/host', ['name' => $host->name]);
+        return Url::fromPath('icingadb/host', ['name' => $host->name]);
     }
 
     public static function hostgroup($hostgroup)
     {
-        return Url::fromPath('eagle/hostgroup', ['name' => $hostgroup->name]);
+        return Url::fromPath('icingadb/hostgroup', ['name' => $hostgroup->name]);
     }
 
     public static function service(Service $service, Host $host)
     {
-        return Url::fromPath('eagle/service', ['name' => $service->name, 'host.name' => $host->name]);
+        return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
     public static function servicegroup($servicegroup)
     {
-        return Url::fromPath('eagle/servicegroup', ['name' => $servicegroup->name]);
+        return Url::fromPath('icingadb/servicegroup', ['name' => $servicegroup->name]);
     }
 
     public static function user(User $user)
     {
-        return Url::fromPath('eagle/user', ['name' => $user->name]);
+        return Url::fromPath('icingadb/user', ['name' => $user->name]);
     }
 
     public static function usergroup(Usergroup $usergroup)
     {
-        return Url::fromPath('eagle/usergroup', ['name' => $usergroup->name]);
+        return Url::fromPath('icingadb/usergroup', ['name' => $usergroup->name]);
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Eagle\Common\ListItemCompactLayout;
+use Icinga\Module\Icingadb\Common\ListItemCompactLayout;
 use ipl\Web\Widget\StateBall;
 
 class HostListItemCompact extends BaseHostListItem

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model;
+namespace Icinga\Module\Icingadb\Model;
 
 use ipl\Orm\Model;
 use ipl\Orm\Relations;

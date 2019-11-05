@@ -1,11 +1,11 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Eagle\Compat\CompatBackend;
-use Icinga\Module\Eagle\Compat\CompatHost;
-use Icinga\Module\Eagle\Compat\CompatObjects;
-use Icinga\Module\Eagle\Compat\CompatService;
+use Icinga\Module\Icingadb\Compat\CompatBackend;
+use Icinga\Module\Icingadb\Compat\CompatHost;
+use Icinga\Module\Icingadb\Compat\CompatObjects;
+use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Compat;
+namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
@@ -8,7 +8,7 @@ use ipl\Orm\Model;
 
 /**
  * Class CompatObject
- * @package Icinga\Module\Eagle\Compat
+ * @package Icinga\Module\Icingadb\Compat
  */
 class CompatObject extends MonitoredObject
 {

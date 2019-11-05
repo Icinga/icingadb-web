@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\User;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 
 class UsersController extends Controller
 {

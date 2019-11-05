@@ -1,9 +1,9 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model\Behavior;
+namespace Icinga\Module\Icingadb\Model\Behavior;
 
 use Icinga\Application\Config;
-use Icinga\Module\Eagle\Redis\VolatileState as RedisState;
+use Icinga\Module\Icingadb\Redis\VolatileState as RedisState;
 use ipl\Orm\Contract\RetrieveBehavior;
 use ipl\Orm\Model;
 use Redis;
@@ -16,7 +16,7 @@ class VolatileState implements RetrieveBehavior
     {
         if ($this->state === null) {
             // TODO(jmeyer): Use a service provider here. (Or something similar)
-            $config = Config::module('eagle')->getSection('redis');
+            $config = Config::module('icingadb')->getSection('redis');
             $redis = new Redis();
             $redis->connect(
                 $config->get('host', 'redis'),

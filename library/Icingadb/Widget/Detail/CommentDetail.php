@@ -1,14 +1,14 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\Detail;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Module\Eagle\Common\HostLink;
-use Icinga\Module\Eagle\Common\HostLinks;
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Common\ServiceLink;
-use Icinga\Module\Eagle\Common\ServiceLinks;
-use Icinga\Module\Eagle\Widget\TimeAgo;
-use Icinga\Module\Eagle\Widget\TimeUntil;
+use Icinga\Module\Icingadb\Common\HostLink;
+use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Widget\TimeAgo;
+use Icinga\Module\Icingadb\Widget\TimeUntil;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

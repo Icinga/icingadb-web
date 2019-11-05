@@ -1,12 +1,12 @@
 <?php
 
-namespace Icinga\Module\Eagle\Compat;
+namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * Class CompatBackend
- * @package Icinga\Module\Eagle\Compat
+ * @package Icinga\Module\Icingadb\Compat
  */
 class CompatBackend extends MonitoringBackend
 {

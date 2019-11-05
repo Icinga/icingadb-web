@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Eagle\Widget\StateBadge;
+use Icinga\Module\Icingadb\Widget\StateBadge;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 

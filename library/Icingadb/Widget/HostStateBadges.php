@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Eagle\Common\StateBadges;
+use Icinga\Module\Icingadb\Common\StateBadges;
 
 class HostStateBadges extends StateBadges
 {

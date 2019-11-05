@@ -1,14 +1,14 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Eagle\Common\HostLink;
-use Icinga\Module\Eagle\Common\HostStates;
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Common\ServiceLink;
-use Icinga\Module\Eagle\Common\ServiceStates;
-use Icinga\Module\Eagle\Widget\CommonListItem;
-use Icinga\Module\Eagle\Widget\TimeAgo;
+use Icinga\Module\Icingadb\Common\HostLink;
+use Icinga\Module\Icingadb\Common\HostStates;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Widget\CommonListItem;
+use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;

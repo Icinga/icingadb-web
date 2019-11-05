@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model;
+namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Eagle\Common\ServiceStates;
+use Icinga\Module\Icingadb\Common\ServiceStates;
 use ipl\Orm\Relations;
 
 class ServiceState extends State

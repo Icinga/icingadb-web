@@ -1,22 +1,22 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
 use Exception;
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Eagle\Common\CommandActions;
-use Icinga\Module\Eagle\Common\Links;
-use Icinga\Module\Eagle\Common\ServiceLinks;
-use Icinga\Module\Eagle\Model\History;
-use Icinga\Module\Eagle\Model\Service;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\Detail\ObjectDetail;
-use Icinga\Module\Eagle\Widget\Detail\QuickActions;
-use Icinga\Module\Eagle\Widget\DowntimeList;
-use Icinga\Module\Eagle\Widget\HostList;
-use Icinga\Module\Eagle\Widget\ItemList\CommentList;
-use Icinga\Module\Eagle\Widget\ItemList\HistoryList;
-use Icinga\Module\Eagle\Widget\ServiceList;
+use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectDetail;
+use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\HostList;
+use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
+use Icinga\Module\Icingadb\Widget\ServiceList;
 use ipl\Sql\Sql;
 
 class ServiceController extends Controller

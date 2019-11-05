@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Common;
+namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Eagle\Model\Host;
+use Icinga\Module\Icingadb\Model\Host;
 use ipl\Html\Html;
 use ipl\Web\Widget\StateBall;
 

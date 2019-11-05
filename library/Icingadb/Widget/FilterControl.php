@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Web\Request;
 use Icinga\Web\Widget\FilterEditor;

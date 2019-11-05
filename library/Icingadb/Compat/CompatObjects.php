@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Compat;
+namespace Icinga\Module\Icingadb\Compat;
 
 use Countable;
 use IteratorAggregate;

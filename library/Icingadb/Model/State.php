@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model;
+namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Eagle\Model\Behavior\BoolCast;
-use Icinga\Module\Eagle\Model\Behavior\Timestamp;
-use Icinga\Module\Eagle\Model\Behavior\VolatileState;
+use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
+use Icinga\Module\Icingadb\Model\Behavior\VolatileState;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\Detail;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

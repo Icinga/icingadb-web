@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model\Behavior;
+namespace Icinga\Module\Icingadb\Model\Behavior;
 
 use ipl\Orm\Contract\PropertyBehavior;
 

@@ -1,19 +1,19 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\Detail;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Module\Eagle\Common\HostLinks;
-use Icinga\Module\Eagle\Common\HostStates;
-use Icinga\Module\Eagle\Common\Icons;
-use Icinga\Module\Eagle\Common\Links;
-use Icinga\Module\Eagle\Common\ServiceLinks;
-use Icinga\Module\Eagle\Common\ServiceStates;
-use Icinga\Module\Eagle\Model\Host;
-use Icinga\Module\Eagle\Widget\DowntimeList;
-use Icinga\Module\Eagle\Widget\HorizontalKeyValue;
-use Icinga\Module\Eagle\Widget\ItemList\CommentList;
-use Icinga\Module\Eagle\Widget\ShowMore;
-use Icinga\Module\Eagle\Widget\TagList;
+use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\HostStates;
+use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

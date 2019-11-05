@@ -1,8 +1,8 @@
 <?php
 
-namespace Icinga\Module\Eagle\Model;
+namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Eagle\Common\HostStates;
+use Icinga\Module\Icingadb\Common\HostStates;
 use ipl\Orm\Relations;
 
 /**

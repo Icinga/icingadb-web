@@ -1,11 +1,11 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget\Detail;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Module\Eagle\Common\HostLinks;
-use Icinga\Module\Eagle\Common\ServiceLinks;
-use Icinga\Module\Eagle\Model\Host;
-use Icinga\Module\Eagle\Model\Service;
+use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use ipl\Html\BaseHtmlElement;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle\Widget;
+namespace Icinga\Module\Icingadb\Widget;
 
 use ipl\Html\ValidHtml;
 use ipl\Orm\ResultSet;

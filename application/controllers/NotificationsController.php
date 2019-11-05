@@ -1,10 +1,10 @@
 <?php
 
-namespace Icinga\Module\Eagle\Controllers;
+namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Eagle\Model\NotificationHistory;
-use Icinga\Module\Eagle\Web\Controller;
-use Icinga\Module\Eagle\Widget\ItemList\NotificationList;
+use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 
 class NotificationsController extends Controller
 {

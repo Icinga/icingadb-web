@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Eagle
+namespace Icinga\Module\Icingadb
 {
     /** @var \Icinga\Application\Modules\Module $this */
     $section = $this->menuSection(N_('Icinga DB'), [
@@ -9,43 +9,43 @@ namespace Icinga\Module\Eagle
     ]);
 
     $section->add(N_('Hosts'), [
-        'url' => 'eagle/hosts',
+        'url' => 'icingadb/hosts',
         'priority' => 10
     ]);
     $section->add(N_('Services'), [
-        'url' => 'eagle/services',
+        'url' => 'icingadb/services',
         'priority' => 20
     ]);
     $section->add(N_('Downtimes'), [
-        'url' => 'eagle/downtimes',
+        'url' => 'icingadb/downtimes',
         'priority' => 30
     ]);
     $section->add(N_('Comments'), [
-        'url' => 'eagle/comments',
+        'url' => 'icingadb/comments',
         'priority' => 40
     ]);
     $section->add(N_('Notifications'), [
-        'url' => 'eagle/notifications',
+        'url' => 'icingadb/notifications',
         'priority' => 50
     ]);
     $section->add(N_('Users'), [
-        'url' => 'eagle/users',
+        'url' => 'icingadb/users',
         'priority' => 60
     ]);
     $section->add(N_('User Groups'), [
-        'url' => 'eagle/usergroups',
+        'url' => 'icingadb/usergroups',
         'priority' => 70
     ]);
     $section->add(N_('Host Groups'), [
-        'url' => 'eagle/hostgroups',
+        'url' => 'icingadb/hostgroups',
         'priority' => 80
     ]);
     $section->add(N_('Service Groups'), [
-        'url' => 'eagle/servicegroups',
+        'url' => 'icingadb/servicegroups',
         'priority' => 80
     ]);
     $section->add(N_('History'), [
-        'url' => 'eagle/history',
+        'url' => 'icingadb/history',
         'priority' => 90
     ]);
 
