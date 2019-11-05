@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 
@@ -19,6 +20,7 @@ class ServicesController extends Controller
             'host',
             'host.state'
         ]);
+        $summary = ServicestateSummary::on($db)->with('state');
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
@@ -26,8 +28,9 @@ class ServicesController extends Controller
         $filterControl = $this->createFilterControl($services);
 
         $this->filter($services);
+        $this->filter($summary);
 
-        yield $this->export($services);
+        yield $this->export($services, $summary);
 
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
