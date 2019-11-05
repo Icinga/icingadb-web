@@ -63,7 +63,7 @@ class ServiceController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('compact'));
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->service));
 
         $this->addContent(new ObjectDetail($this->service));
@@ -73,7 +73,7 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Comments'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('compact'));
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $comments = $this->service->comment;
 
@@ -92,7 +92,7 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Downtimes'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('compact'));
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $downtimes = $this->service->downtime;
 
@@ -109,7 +109,7 @@ class ServiceController extends Controller
 
     public function historyAction()
     {
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('compact'));
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 

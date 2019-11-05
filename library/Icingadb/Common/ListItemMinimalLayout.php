@@ -4,7 +4,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use ipl\Html\BaseHtmlElement;
 
-trait ListItemCompactLayout
+trait ListItemMinimalLayout
 {
     protected function assembleHeader(BaseHtmlElement $header)
     {
