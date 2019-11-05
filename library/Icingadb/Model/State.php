@@ -60,6 +60,8 @@ abstract class State extends Model
             'in_downtime'
         ]));
         $behaviors->add(new Timestamp([
+            'execution_time',
+            'latency',
             'last_update',
             'last_state_change',
             'last_soft_state',
