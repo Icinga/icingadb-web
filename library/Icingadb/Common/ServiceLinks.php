@@ -29,6 +29,13 @@ abstract class ServiceLinks
         );
     }
 
+    public static function cancelDowntime(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'icingadb/service/delete-downtime', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
+
     public static function comments(Service $service, Host $host)
     {
         return Url::fromPath(
