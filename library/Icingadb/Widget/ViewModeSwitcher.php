@@ -14,7 +14,7 @@ class ViewModeSwitcher extends BaseHtmlElement
 
     /** @var array View mode-icon pairs */
     public static $viewModes = [
-        'compact'  => 'chat-empty',
+        'minimal'  => 'chat-empty',
         'common'   => 'th-list',
         'detailed' => 'chat'
     ];

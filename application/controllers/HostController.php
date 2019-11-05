@@ -56,7 +56,7 @@ class HostController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new ObjectDetail($this->host));
@@ -66,7 +66,7 @@ class HostController extends Controller
     {
         $this->setTitle($this->translate('Comments'));
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $comments = $this->host->comment;
 
@@ -85,7 +85,7 @@ class HostController extends Controller
     {
         $this->setTitle($this->translate('Downtimes'));
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $downtimes = $this->host->downtime;
 
@@ -102,7 +102,7 @@ class HostController extends Controller
 
     public function historyAction()
     {
-        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 
@@ -135,7 +135,7 @@ class HostController extends Controller
 
     public function servicesAction()
     {
-        $this->addControl((new HostList([$this->host]))->setViewMode('compact'));
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 

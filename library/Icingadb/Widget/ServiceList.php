@@ -8,8 +8,8 @@ class ServiceList extends StateList
 
     protected function getItemClass()
     {
-        if ($this->getViewMode() === 'compact') {
-            return ServiceListItemCompact::class;
+        if ($this->getViewMode() === 'minimal') {
+            return ServiceListItemMinimal::class;
         }
 
         return ServiceListItem::class;

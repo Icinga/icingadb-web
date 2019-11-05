@@ -2,12 +2,12 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Icingadb\Common\ListItemCompactLayout;
+use Icinga\Module\Icingadb\Common\ListItemMinimalLayout;
 use ipl\Web\Widget\StateBall;
 
-class HostListItemCompact extends BaseHostListItem
+class ServiceListItemMinimal extends BaseServiceListItem
 {
-    use ListItemCompactLayout;
+    use ListItemMinimalLayout;
 
     protected function getStateBallSize()
     {

@@ -11,8 +11,8 @@ class HostList extends StateList
 
     protected function getItemClass()
     {
-        if ($this->getViewMode() === 'compact') {
-            return HostListItemCompact::class;
+        if ($this->getViewMode() === 'minimal') {
+            return HostListItemMinimal::class;
         }
 
         return HostListItem::class;
