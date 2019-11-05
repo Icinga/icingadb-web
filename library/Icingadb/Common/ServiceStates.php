@@ -39,7 +39,7 @@ class ServiceStates
                 $text = 'critical';
                 break;
             case self::UNKNOWN:
-                $text = 'unkown';
+                $text = 'unknown';
                 break;
             case self::PENDING:
                 $text = 'pending';
