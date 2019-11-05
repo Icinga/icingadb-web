@@ -22,6 +22,11 @@ abstract class HostLinks
         return Url::fromPath('icingadb/host/check-now', ['name' => $host->name]);
     }
 
+    public static function cancelDowntime(Host $host)
+    {
+        return Url::fromPath('icingadb/host/delete-downtime', ['name' => $host->name]);
+    }
+
     public static function comments(Host $host)
     {
         return Url::fromPath('icingadb/host/comments', ['name' => $host->name]);

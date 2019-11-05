@@ -119,13 +119,35 @@
   }
 }
 
+.downtime-timeline {
+  .rounded-corners(.5em);
+  background-color: @gray-lighter;
+  height: 1em;
+  margin: 1em 0;
+  position: relative;
+
+  .progress-bar,
+  .progress-in-effect {
+    border-bottom-left-radius: .5em;
+    border-top-left-radius: .5em;
+    height: 100%;
+    position: absolute;
+  }
+
+  .progress-bar {
+    background-color: @color-ok;
+  }
+}
+
 .horizontal-key-value {
   display: flex;
+  padding: .25em 0;
 
   .key {
     width: 12em;
     margin-right: 1em;
     flex: 0 0 auto;
+    color: @gray;
   }
 
   .value {
