@@ -38,6 +38,7 @@ abstract class State extends Model
             'execution_time',
             'latency',
             'timeout',
+            'check_source',
             'last_update',
             'last_state_change',
             'last_soft_state',
