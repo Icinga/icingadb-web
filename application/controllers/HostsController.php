@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostList;
 
@@ -15,6 +16,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
+        $summary = HoststateSummary::on($db)->with('state');
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);
@@ -25,8 +27,9 @@ class HostsController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->filter($hosts);
+        $this->filter($summary);
 
-        yield $this->export($hosts);
+        yield $this->export($hosts, $summary);
 
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
