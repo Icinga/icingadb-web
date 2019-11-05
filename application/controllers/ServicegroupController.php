@@ -5,7 +5,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\Model\Servicegroupsummary;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
@@ -13,7 +13,7 @@ use ipl\Orm\Compat\FilterProcessor;
 
 class ServicegroupController extends Controller
 {
-    /** @var Servicegroupsummary The service group object */
+    /** @var ServicegroupSummary The service group object */
     protected $servicegroup;
 
     public function init()
@@ -22,7 +22,7 @@ class ServicegroupController extends Controller
 
         $name = $this->params->shiftRequired('name');
 
-        $query = Servicegroupsummary::on($this->getDb());
+        $query = ServicegroupSummary::on($this->getDb());
 
         FilterProcessor::apply(
             new FilterExpression('servicegroup.name', '=', $name),

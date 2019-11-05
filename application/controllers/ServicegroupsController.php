@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Icingadb\Model\Servicegroupsummary;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
 
@@ -14,7 +14,7 @@ class ServicegroupsController extends Controller
 
         $db = $this->getDb();
 
-        $servicegroups = Servicegroupsummary::on($db);
+        $servicegroups = ServicegroupSummary::on($db);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
