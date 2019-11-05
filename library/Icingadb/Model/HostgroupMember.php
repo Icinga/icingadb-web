@@ -31,5 +31,9 @@ class HostgroupMember extends Model
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('hostgroup', Hostgroup::class);
         $relations->belongsTo('host', Host::class);
+
+        $relations->hasMany('service', Service::class)
+            ->setForeignKey('host_id')
+            ->setCandidateKey('host_id');
     }
 }

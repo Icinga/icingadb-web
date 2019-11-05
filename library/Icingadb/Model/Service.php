@@ -105,8 +105,6 @@ class Service extends Model
         $relations->belongsToMany('servicegroup', Servicegroup::class)
             ->setThrough(ServicegroupMember::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setCandidateKey('host_id')
-            ->setForeignKey('host_id')
             ->setThrough(HostgroupMember::class);
 
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');

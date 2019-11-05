@@ -47,5 +47,7 @@ class Hostgroup extends Model
             ->setThrough(HostgroupCustomvar::class);
         $relations->belongsToMany('host', Host::class)
             ->setThrough(HostgroupMember::class);
+        $relations->belongsToMany('service', Service::class)
+            ->setThrough(HostgroupMember::class);
     }
 }
