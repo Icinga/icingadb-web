@@ -1,3 +1,98 @@
+.card {
+  .rounded-corners(.5em);
+  border: 1px solid @gray-light;
+}
+
+.card-body,
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: .5em;
+}
+
+.card-header {
+  border-bottom: 1px solid @gray-light;
+}
+
+.check-statistics {
+  .vertical-key-value {
+    .key {
+      color: @gray;
+    }
+
+    .value {
+      font-size: 1em;
+      line-height: 1;
+    }
+  }
+
+  .check-attempt {
+    display: inline-flex;
+  }
+}
+
+.check-timeline {
+  padding: .5em .5em 3.5em;
+  width: 80%;
+
+  &::after {
+    .rounded-corners(.5em);
+    content: '';
+    display: block;
+    height: 0.25em;
+    width: 100%;
+  }
+
+  &:not(.overdue)::after {
+    background-color: gray;
+  }
+
+  &.overdue::after {
+    background-color: @color-critical;
+  }
+
+  li {
+    position: relative;
+
+    &:not(.above) {
+      transform: translateY(100%);
+      padding-top: 1.5em;
+    }
+
+    &::after {
+      background-color: gray;
+      content: '';
+      display: block;
+      height: 1em;
+      width: 1px;
+
+      position: absolute;
+      left: 50%;
+    }
+
+    &:not(.above)::after {
+      margin-top: .25em;
+      top: 0;
+    }
+
+    &.above::after {
+      margin-top: 0.125em;
+    }
+  }
+
+  ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .custom-var-table {
   .level-1 th {
     padding-left: .5em;
