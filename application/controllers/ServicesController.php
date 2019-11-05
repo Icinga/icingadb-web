@@ -36,8 +36,8 @@ class ServicesController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl($paginationControl);
-        $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
 
         $this->addContent($serviceList);
