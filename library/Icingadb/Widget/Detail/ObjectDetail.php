@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -14,11 +15,11 @@ use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
-use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
-use fpl\Web\Widget\Perfdata;
+use Zend_View_Helper_Perfdata;
 
 class ObjectDetail extends BaseHtmlElement
 {
@@ -147,11 +148,15 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createPerformanceData()
     {
+        require_once Icinga::app()->getModuleManager()->getModule('monitoring')->getBaseDir()
+            . '/application/views/helpers/Perfdata.php';
+
+        $helper = new Zend_View_Helper_Perfdata();
+        $helper->view = Icinga::app()->getViewRenderer()->view;
+
         return [
             Html::tag('h2', 'Performance Data'),
-            new Perfdata(
-                PerfdataSet::fromString($this->object->state->performance_data)->asArray(), $this->object->checkcommand
-            )
+            new HtmlString($helper->perfdata($this->object->state->performance_data))
         ];
     }
 
