@@ -49,8 +49,7 @@ namespace Icinga\Module\Icingadb
         'priority' => 90
     ]);
 
-    // TODO: Switch to from='ipl' prior release!
-    $this->requireCssFile('balls.less', 'ipldev');
+    $this->requireCssFile('balls.less', 'ipl');
 
     $this->provideCssFile('lists.less');
     $this->provideCssFile('mixins.less');
