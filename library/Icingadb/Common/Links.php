@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Service;
@@ -21,6 +22,11 @@ abstract class Links
     public static function comments()
     {
         return Url::fromPath('icingadb/comments');
+    }
+
+    public static function downtime(Downtime $downtime)
+    {
+        return Url::fromPath('icingadb/downtime', ['name' => $downtime->name]);
     }
 
     public static function host(Host $host)
