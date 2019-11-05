@@ -18,7 +18,7 @@ use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\Perfdata;
+use fpl\Web\Widget\Perfdata;
 
 class ObjectDetail extends BaseHtmlElement
 {
