@@ -100,7 +100,7 @@ class Service extends Model
 
         $relations->belongsToMany('customvar', Customvar::class)
             ->setThrough(ServiceCustomvar::class);
-        $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
+        $relations->belongsToMany('vars', CustomvarFlat::class)
             ->setThrough(ServiceCustomvar::class);
         $relations->belongsToMany('servicegroup', Servicegroup::class)
             ->setThrough(ServicegroupMember::class);
