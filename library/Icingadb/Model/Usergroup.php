@@ -47,7 +47,7 @@ class Usergroup extends Model
             ->setThrough(UsergroupCustomvar::class);
         $relations->belongsToMany('user', User::class)
             ->setThrough(UsergroupMember::class);
-        $relations->belongsToMany('notification', NotificationUsergroup::class)
+        $relations->belongsToMany('notification', Notification::class)
             ->setThrough(NotificationUsergroup::class);
     }
 }
