@@ -13,6 +13,10 @@ class BoolCast extends PropertyBehavior
 
     public function toDb($value, $_)
     {
+        if (is_string($value)) {
+            return $value;
+        }
+
         return $value ? 'y' : 'n';
     }
 }
