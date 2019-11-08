@@ -13,6 +13,10 @@ class Timestamp extends PropertyBehavior
 
     public function toDb($value, $_)
     {
+        if (! ctype_digit($value)) {
+            $value = strtotime($value);
+        }
+
         return $value * 1000.0;
     }
 }
