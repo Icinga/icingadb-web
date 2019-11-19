@@ -108,17 +108,6 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createEvents()
     {
-        if ($this->objectType === 'host') {
-            $state = HostStates::text($this->object->state->soft_state);
-        } else {
-            $state = ServiceStates::text($this->object->state->soft_state);
-        }
-        return [
-            Html::tag('h2', 'Plugin Output'),
-            (new EventBox())
-                ->setCaption($this->object->state->output . "\n" . $this->object->state->long_output, true)
-                ->setState($state)
-        ];
     }
 
     protected function createGroups()
@@ -207,6 +196,23 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
+    protected function createPluginOutput()
+    {
+        if ($this->objectType === 'host') {
+            $state = HostStates::text($this->object->state->soft_state);
+        } else {
+            $state = ServiceStates::text($this->object->state->soft_state);
+        }
+        return [
+            Html::tag('h2', 'Plugin Output'),
+            Html::tag('div', ['class' => 'collapsible'],
+                Html::tag('p', ['class' => 'plugin-output'],
+                    $this->object->state->output . "\n" . $this->object->state->long_output
+                )
+            )
+        ];
+    }
+
     protected function getUsersAndUsergroups()
     {
         $users = [];
@@ -228,6 +234,7 @@ class ObjectDetail extends BaseHtmlElement
     protected function assemble()
     {
         $this->add([
+            $this->createPluginOutput(),
             $this->createEvents(),
             $this->createGroups(),
             $this->createComments(),
