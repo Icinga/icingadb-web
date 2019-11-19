@@ -22,6 +22,7 @@ abstract class State extends Model
             'state_type',
             'soft_state',
             'hard_state',
+            'previous_hard_state',
             'attempt',
             'severity',
             'output',
@@ -41,8 +42,6 @@ abstract class State extends Model
             'check_source',
             'last_update',
             'last_state_change',
-            'last_soft_state',
-            'last_hard_state',
             'next_check',
             'next_update'
         ];
@@ -64,8 +63,6 @@ abstract class State extends Model
             'latency',
             'last_update',
             'last_state_change',
-            'last_soft_state',
-            'last_hard_state',
             'next_check',
             'next_update'
         ]));
