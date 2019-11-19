@@ -50,12 +50,12 @@ class User extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(UserCustomvar::class);
+            ->through(UserCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(UserCustomvar::class);
+            ->through(UserCustomvar::class);
         $relations->belongsToMany('notification', Notification::class)
-            ->setThrough(NotificationUser::class);
+            ->through(NotificationUser::class);
         $relations->belongsToMany('usergroup', Usergroup::class)
-            ->setThrough(UsergroupMember::class);
+            ->through(UsergroupMember::class);
     }
 }

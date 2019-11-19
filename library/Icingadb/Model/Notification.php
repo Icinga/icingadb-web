@@ -52,10 +52,10 @@ class Notification extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(NotificationCustomvar::class);
+            ->through(NotificationCustomvar::class);
         $relations->belongsToMany('user', User::class)
-            ->setThrough(NotificationUser::class);
+            ->through(NotificationUser::class);
         $relations->belongsToMany('usergroup', Usergroup::class)
-            ->setThrough(NotificationUsergroup::class);
+            ->through(NotificationUsergroup::class);
     }
 }

@@ -37,9 +37,9 @@ class Notificationcommand extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(NotificationcommandCustomvar::class);
+            ->through(NotificationcommandCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(NotificationcommandCustomvar::class);
+            ->through(NotificationcommandCustomvar::class);
 
         $relations->hasMany('notification', Notification::class)
             ->setForeignKey('command_id');

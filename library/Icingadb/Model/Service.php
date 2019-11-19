@@ -99,13 +99,13 @@ class Service extends Model
             ->setCandidateKey('command_endpoint_id');
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(ServiceCustomvar::class);
+            ->through(ServiceCustomvar::class);
         $relations->belongsToMany('vars', CustomvarFlat::class)
-            ->setThrough(ServiceCustomvar::class);
+            ->through(ServiceCustomvar::class);
         $relations->belongsToMany('servicegroup', Servicegroup::class)
-            ->setThrough(ServicegroupMember::class);
+            ->through(ServicegroupMember::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setThrough(HostgroupMember::class);
+            ->through(HostgroupMember::class);
 
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class);

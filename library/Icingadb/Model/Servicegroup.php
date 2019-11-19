@@ -42,10 +42,10 @@ class Servicegroup extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(ServicegroupCustomvar::class);
+            ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(ServicegroupCustomvar::class);
+            ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('service', Service::class)
-            ->setThrough(ServicegroupMember::class);
+            ->through(ServicegroupMember::class);
     }
 }

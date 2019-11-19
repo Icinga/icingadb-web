@@ -42,12 +42,12 @@ class Hostgroup extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(HostgroupCustomvar::class);
+            ->through(HostgroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(HostgroupCustomvar::class);
+            ->through(HostgroupCustomvar::class);
         $relations->belongsToMany('host', Host::class)
-            ->setThrough(HostgroupMember::class);
+            ->through(HostgroupMember::class);
         $relations->belongsToMany('service', Service::class)
-            ->setThrough(HostgroupMember::class);
+            ->through(HostgroupMember::class);
     }
 }

@@ -37,9 +37,9 @@ class Eventcommand extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(EventcommandCustomvar::class);
+            ->through(EventcommandCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(EventcommandCustomvar::class);
+            ->through(EventcommandCustomvar::class);
 
         $relations->hasMany('argument', EventcommandArgument::class)
             ->setForeignKey('command_id');

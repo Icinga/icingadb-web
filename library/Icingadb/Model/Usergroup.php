@@ -42,12 +42,12 @@ class Usergroup extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(UsergroupCustomvar::class);
+            ->through(UsergroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
-            ->setThrough(UsergroupCustomvar::class);
+            ->through(UsergroupCustomvar::class);
         $relations->belongsToMany('user', User::class)
-            ->setThrough(UsergroupMember::class);
+            ->through(UsergroupMember::class);
         $relations->belongsToMany('notification', Notification::class)
-            ->setThrough(NotificationUsergroup::class);
+            ->through(NotificationUsergroup::class);
     }
 }

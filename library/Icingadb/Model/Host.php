@@ -103,11 +103,11 @@ class Host extends Model
             ->setCandidateKey('command_endpoint_id');
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->setThrough(HostCustomvar::class);
+            ->through(HostCustomvar::class);
         $relations->belongsToMany('vars', CustomvarFlat::class)
-            ->setThrough(HostCustomvar::class);
+            ->through(HostCustomvar::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setThrough(HostgroupMember::class);
+            ->through(HostgroupMember::class);
 
         $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class);

@@ -36,37 +36,37 @@ class CustomvarFlat extends Model
         $relations->belongsTo('customvar', Customvar::class);
 
         $relations->belongsToMany('checkcommand', Checkcommand::class)
-            ->setThrough(CheckcommandCustomvar::class)
+            ->through(CheckcommandCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('eventcommand', Eventcommand::class)
-            ->setThrough(EventcommandCustomvar::class)
+            ->through(EventcommandCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('host', Host::class)
-            ->setThrough(HostCustomvar::class)
+            ->through(HostCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setThrough(HostgroupCustomvar::class)
+            ->through(HostgroupCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('notification', Notification::class)
-            ->setThrough(NotificationCustomvar::class)
+            ->through(NotificationCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('notificationcommand', Notificationcommand::class)
-            ->setThrough(NotificationcommandCustomvar::class)
+            ->through(NotificationcommandCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('service', Service::class)
-            ->setThrough(ServiceCustomvar::class)
+            ->through(ServiceCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('servicegroup', Servicegroup::class)
-            ->setThrough(ServicegroupCustomvar::class)
+            ->through(ServicegroupCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('timeperiod', Timeperiod::class)
-            ->setThrough(TimeperiodCustomvar::class)
+            ->through(TimeperiodCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('user', User::class)
-            ->setThrough(UserCustomvar::class)
+            ->through(UserCustomvar::class)
             ->setCandidateKey('customvar_id');
         $relations->belongsToMany('usergroup', Usergroup::class)
-            ->setThrough(UsergroupCustomvar::class)
+            ->through(UsergroupCustomvar::class)
             ->setCandidateKey('customvar_id');
     }
 

@@ -32,27 +32,27 @@ class Customvar extends Model
         $relations->belongsTo('environment', Environment::class);
 
         $relations->belongsToMany('checkcommand', Checkcommand::class)
-            ->setThrough(CheckcommandCustomvar::class);
+            ->through(CheckcommandCustomvar::class);
         $relations->belongsToMany('eventcommand', Eventcommand::class)
-            ->setThrough(EventcommandCustomvar::class);
+            ->through(EventcommandCustomvar::class);
         $relations->belongsToMany('host', Host::class)
-            ->setThrough(HostCustomvar::class);
+            ->through(HostCustomvar::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
-            ->setThrough(HostgroupCustomvar::class);
+            ->through(HostgroupCustomvar::class);
         $relations->belongsToMany('notification', Notification::class)
-            ->setThrough(NotificationCustomvar::class);
+            ->through(NotificationCustomvar::class);
         $relations->belongsToMany('notificationcommand', Notificationcommand::class)
-            ->setThrough(NotificationcommandCustomvar::class);
+            ->through(NotificationcommandCustomvar::class);
         $relations->belongsToMany('service', Service::class)
-            ->setThrough(ServiceCustomvar::class);
+            ->through(ServiceCustomvar::class);
         $relations->belongsToMany('servicegroup', Servicegroup::class)
-            ->setThrough(ServicegroupCustomvar::class);
+            ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('timeperiod', Timeperiod::class)
-            ->setThrough(TimeperiodCustomvar::class);
+            ->through(TimeperiodCustomvar::class);
         $relations->belongsToMany('user', User::class)
-            ->setThrough(UserCustomvar::class);
+            ->through(UserCustomvar::class);
         $relations->belongsToMany('usergroup', Usergroup::class)
-            ->setThrough(UsergroupCustomvar::class);
+            ->through(UsergroupCustomvar::class);
 
         $relations->hasMany('customvar_flat', CustomvarFlat::class);
     }
