@@ -75,11 +75,12 @@ abstract class StateListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        $since = new TimeSince($this->state->last_update);
-
         if ($this->state->is_overdue) {
+            $since = new TimeSince($this->state->next_check);
             $since->prepend('Overdue ');
             $since->prepend(new Icon(Icons::WARNING));
+        } else {
+            $since = new TimeSince($this->state->last_update);
         }
 
         return $since;
