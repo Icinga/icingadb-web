@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -46,6 +47,10 @@ class History extends Model
     {
         $behaviors->add(new Timestamp([
             'event_time'
+        ]));
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 

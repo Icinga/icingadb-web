@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -86,6 +87,10 @@ class Host extends Model
             'event_handler_enabled',
             'notifications_enabled',
             'flapping_enabled'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 

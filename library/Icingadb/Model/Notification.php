@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -39,6 +41,13 @@ class Notification extends Model
             'types',
             'zone_id'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new ReRoute([
+            'servicegroup'  => 'service.servicegroup'
+        ]));
     }
 
     public function createRelations(Relations $relations)
