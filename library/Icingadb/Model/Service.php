@@ -110,6 +110,8 @@ class Service extends Model
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class);
         $relations->hasMany('downtime', Downtime::class);
+        $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class);
+        $relations->hasMany('notification_history', NotificationHistory::class);
     }
 }
