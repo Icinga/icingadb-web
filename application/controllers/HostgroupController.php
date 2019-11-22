@@ -29,6 +29,8 @@ class HostgroupController extends Controller
             $query
         );
 
+        $this->applyMonitoringRestriction($query);
+
         $hostgroup = $query->first();
         if ($hostgroup === null) {
             throw new NotFoundError($this->translate('Host group not found'));
@@ -36,6 +38,7 @@ class HostgroupController extends Controller
 
         $this->hostgroup = $hostgroup;
     }
+
     public function indexAction()
     {
         $this->addControl((new HostgroupList([$this->hostgroup])));
@@ -48,6 +51,8 @@ class HostgroupController extends Controller
             new FilterExpression('hostgroup.id', '=', $this->hostgroup->id),
             $hosts
         );
+
+        $this->applyMonitoringRestriction($hosts);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);

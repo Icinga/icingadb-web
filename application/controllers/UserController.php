@@ -23,6 +23,8 @@ class UserController extends Controller
         $query->getSelectBase()
             ->where(['name = ?' => $name]);
 
+        $this->applyMonitoringRestriction($query);
+
         $user = $query->first();
         if ($user === null) {
             throw new NotFoundError($this->translate('User not found'));

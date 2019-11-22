@@ -202,6 +202,8 @@ class Controller extends CompatController
 
     public function filter(Query $query)
     {
+        $this->applyMonitoringRestriction($query);
+
         FilterProcessor::apply(
             Filter::fromQueryString((string) $this->params),
             $query

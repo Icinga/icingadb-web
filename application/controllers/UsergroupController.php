@@ -24,6 +24,8 @@ class UsergroupController extends Controller
         $query->getSelectBase()
             ->where(['name = ?' => $name]);
 
+        $this->applyMonitoringRestriction($query);
+
         $usergroup = $query->first();
         if ($usergroup === null) {
             throw new NotFoundError($this->translate('User group not found'));
