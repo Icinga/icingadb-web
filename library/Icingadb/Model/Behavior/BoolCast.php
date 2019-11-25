@@ -6,12 +6,12 @@ use ipl\Orm\Contract\PropertyBehavior;
 
 class BoolCast extends PropertyBehavior
 {
-    public function fromDb($value, $_)
+    public function fromDb($value, $key, $_)
     {
         return $value === 'y';
     }
 
-    public function toDb($value, $_)
+    public function toDb($value, $key, $_)
     {
         if (is_string($value)) {
             return $value;
