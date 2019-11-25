@@ -10,7 +10,12 @@ class FlattenedObjectVars implements RewriteFilterBehavior
 {
     public function rewriteCondition(FilterExpression $expression, $relation = null)
     {
-        $column = $expression->getColumn();
+        if (! isset($expression->metaData['relationCol'])) {
+            // TODO: Shouldn't be necessary. Solve this intelligently or do it elsewhere.
+            return;
+        }
+
+        $column = $expression->metaData['relationCol'];
         if ($column !== 'flatname' && $column !== 'flatvalue') {
             $nameFilter = Filter::where($relation . 'flatname', $column);
             $valueFilter = Filter::where($relation . 'flatvalue', $expression->getExpression());
