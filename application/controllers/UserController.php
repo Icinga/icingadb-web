@@ -21,7 +21,7 @@ class UserController extends Controller
 
         $query = User::on($this->getDb());
         $query->getSelectBase()
-            ->where(['name = ?' => $name]);
+            ->where(['user.name = ?' => $name]);
 
         $this->applyMonitoringRestriction($query);
 

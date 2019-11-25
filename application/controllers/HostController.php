@@ -31,7 +31,7 @@ class HostController extends Controller
 
         $query = Host::on($this->getDb())->with('state');
         $query->getSelectBase()
-            ->where(['name = ?' => $name]);
+            ->where(['host.name = ?' => $name]);
 
         $this->applyMonitoringRestriction($query);
 
