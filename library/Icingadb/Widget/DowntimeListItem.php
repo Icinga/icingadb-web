@@ -108,7 +108,7 @@ class DowntimeListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         if ($this->item->is_flexible) {
-            $type = 'Flexbile';
+            $type = 'Flexible';
         } else {
             $type = 'Fixed';
         }
