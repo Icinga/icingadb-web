@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -206,7 +207,7 @@ class ObjectDetail extends BaseHtmlElement
         return [
             Html::tag('h2', 'Plugin Output'),
             Html::tag('div', ['class' => 'collapsible'],
-                Html::tag('p', ['class' => 'plugin-output'],
+                CompatPluginOutput::getInstance()->render(
                     $this->object->state->output . "\n" . $this->object->state->long_output
                 )
             )

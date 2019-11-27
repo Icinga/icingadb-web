@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -28,11 +29,7 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $caption
-            ->add($this->state->output)
-            ->getAttributes()
-                ->add('class', 'plugin-output');
-
+        $caption->add(CompatPluginOutput::getInstance()->render($this->state->output));
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
