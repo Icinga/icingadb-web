@@ -26,7 +26,7 @@ class HistoryListItem extends CommonListItem
             case 'comment_add':
             case 'comment_remove':
                 $caption->add([
-                    New Icon(Icons::USER),
+                    new Icon(Icons::USER),
                     $this->item->comment->author,
                     ': ',
                     $this->item->comment->comment
@@ -36,7 +36,7 @@ class HistoryListItem extends CommonListItem
             case 'downtime_end':
             case 'downtime_start':
                 $caption->add([
-                    New Icon(Icons::USER),
+                    new Icon(Icons::USER),
                     $this->item->downtime->author,
                     ': ',
                     $this->item->downtime->comment
@@ -48,7 +48,7 @@ class HistoryListItem extends CommonListItem
 
                 if (! empty($this->item->notification->author)) {
                     $caption->prepend([
-                        New Icon(Icons::USER),
+                        new Icon(Icons::USER),
                         $this->item->notification->author,
                         ': '
                     ]);

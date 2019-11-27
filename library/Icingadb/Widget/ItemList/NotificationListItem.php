@@ -38,7 +38,7 @@ class NotificationListItem extends CommonListItem
             $caption->add($this->item->text);
         } else {
             $caption->add([
-                New Icon(Icons::USER),
+                new Icon(Icons::USER),
                 $this->item->author,
                 ': ',
                 $this->item->text
