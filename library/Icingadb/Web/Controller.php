@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Web;
 
 use Generator;
+use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Icingadb\Widget\FilterControl;
@@ -210,5 +211,10 @@ class Controller extends CompatController
     public function preDispatch()
     {
         $this->format = $this->params->shift('format');
+    }
+
+    protected function moduleInit()
+    {
+        Icinga::app()->getModuleManager()->loadModule('monitoring');
     }
 }
