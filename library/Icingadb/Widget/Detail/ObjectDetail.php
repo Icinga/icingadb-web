@@ -126,7 +126,12 @@ class ObjectDetail extends BaseHtmlElement
                 $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
-            $groups[] = new HorizontalKeyValue('Host Groups', $hostgroupList);
+            $groups[] = new HorizontalKeyValue(
+                'Host Groups',
+                $hostgroupList->hasContent()
+                    ? $hostgroupList
+                    : new EmptyState('Not a member of any host group.')
+            );
         } else {
             $servicegroupList = new TagList();
 
@@ -134,7 +139,12 @@ class ObjectDetail extends BaseHtmlElement
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
-            $groups[] = new HorizontalKeyValue('Service Groups', $servicegroupList);
+            $groups[] = new HorizontalKeyValue(
+                'Service Groups',
+                $servicegroupList->hasContent()
+                    ? $servicegroupList
+                    : new EmptyState('Not a member of any service group.')
+            );
         }
 
         return $groups;
@@ -159,11 +169,16 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
-
         return [
             Html::tag('h2', 'Notifications'),
-            new HorizontalKeyValue('Users', $userList),
-            new HorizontalKeyValue('User Groups', $usergroupList)
+            new HorizontalKeyValue(
+                'Users',
+                $userList->hasContent() ? $userList : new EmptyState('No users configured.')
+            ),
+            new HorizontalKeyValue(
+                'User Groups',
+                $usergroupList->hasContent() ? $usergroupList : new EmptyState('No user groups configured.')
+            )
         ];
     }
 
