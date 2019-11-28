@@ -3,8 +3,12 @@
 namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
+use InvalidArgumentException;
 use ipl\Orm\Model;
+use function ipl\Stdlib\get_php_type;
 
 /**
  * Class CompatObject
@@ -20,6 +24,21 @@ abstract class CompatObject extends MonitoredObject
     public function __construct(Model $object)
     {
         $this->object = $object;
+    }
+
+    public static function fromModel(Model $object)
+    {
+        switch (true) {
+            case $object instanceof Host:
+                return new CompatHost($object);
+            case $object instanceof Service:
+                return new CompatService($object);
+            default:
+                throw new InvalidArgumentException(sprintf(
+                    'Host or Service Model instance expected, got "%s" instead.',
+                    get_php_type($object)
+                ));
+        }
     }
 
     public function __isset($name)
