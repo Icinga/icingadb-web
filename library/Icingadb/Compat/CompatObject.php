@@ -41,6 +41,19 @@ abstract class CompatObject extends MonitoredObject
         }
     }
 
+    public function getActionUrls()
+    {
+        $actionUrl = $this->object->action_url;
+
+        if ($actionUrl === null) {
+            return [];
+        }
+
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($actionUrl->action_url)
+        );
+    }
+
     public function __isset($name)
     {
         return isset($this->object->$name);
