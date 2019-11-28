@@ -26,6 +26,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
+use Icinga\Web\Helper\Markdown;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
@@ -204,6 +205,50 @@ class ObjectDetail extends BaseHtmlElement
         return $groups;
     }
 
+    protected function createNotes()
+    {
+        $compatObject = CompatObject::fromModel($this->object);
+        $navigation = new Navigation();
+        $notes = trim($this->object->notes);
+
+        foreach ($compatObject->getNotesUrls() as $i => $url) {
+            $navigation->addItem(
+                'Notes ' . ($i + 1),
+                [
+                    'renderer' => 'NavigationItemRenderer',
+                    'target'   => '_blank',
+                    'url'      => $url
+                ]
+            );
+        }
+
+        $content = [];
+
+        if (! $navigation->isEmpty() && $navigation->hasRenderableItems()) {
+            $content[] = new HtmlString($navigation->getRenderer()->render());
+        }
+
+        if ($notes !== '') {
+            $content[] = Html::tag(
+                'section',
+                [
+                    'class'               => 'markdown collapsible',
+                    'data-visible-height' => 200,
+                    'id'                  => $this->objectType . '-notes'
+                ],
+                Markdown::text($notes)
+            );
+        }
+
+        if (empty($content)) {
+            return null;
+        }
+
+        array_unshift($content, Html::tag('h2', 'Notes'));
+
+        return $content;
+    }
+
     protected function createNotifications()
     {
         list($users, $usergroups) = $this->getUsersAndUsergroups();
@@ -321,6 +366,7 @@ class ObjectDetail extends BaseHtmlElement
             $this->createPluginOutput(),
             $this->createEvents(),
             $this->createActions(),
+            $this->createNotes(),
             $this->createGroups(),
             $this->createComments(),
             $this->createDowntimes(),
