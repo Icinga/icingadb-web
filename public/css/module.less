@@ -107,10 +107,17 @@
 }
 
 .controls {
-  border-bottom: 1px solid @gray-lighter;
+  box-shadow: 0 0 0 1px @gray-lighter;
+  flex-shrink: 0;
+  min-height: 8em;
+
+  > * {
+    margin-bottom: .5em;
+  }
 
   .filter {
     width: 100%;
+    margin-top: 0;
   }
 
   .pagination-control {
@@ -120,20 +127,22 @@
   .limit-control,
   .view-mode-switcher,
   .sort-control {
-    float: right;
     margin-left: .5em;
+    float: right;
   }
 
   .item-list {
     width: 100%;
-
-    .main {
-      border-top: none;
-    }
   }
 
-  .list-item {
-    margin-bottom: .5em;
+  .list-item .main {
+    border-top: none;
+  }
+
+  .list-item .visual,
+  .list-item .main {
+    padding-bottom: .25em;
+    padding-top: .25em;
   }
 }
 
