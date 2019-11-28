@@ -32,6 +32,8 @@ class ActionUrl extends Model
         $relations->hasMany('host', Host::class)
             ->setCandidateKey('id')
             ->setForeignKey('action_url_id');
-        $relations->hasMany('service', Service::class);
+        $relations->hasMany('service', Service::class)
+            ->setCandidateKey('id')
+            ->setForeignKey('action_url_id');
     }
 }
