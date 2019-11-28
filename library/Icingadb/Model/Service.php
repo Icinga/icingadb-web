@@ -92,7 +92,9 @@ class Service extends Model
         $relations->belongsTo('action_url', ActionUrl::class)
             ->setCandidateKey('action_url_id')
             ->setForeignKey('id');
-        $relations->belongsTo('notes_url', NotesUrl::class);
+        $relations->belongsTo('notes_url', NotesUrl::class)
+            ->setCandidateKey('notes_url_id')
+            ->setForeignKey('id');
         $relations->belongsTo('icon_image', IconImage::class);
         $relations->belongsTo('zone', Zone::class);
         $relations->belongsTo('endpoint', Endpoint::class)

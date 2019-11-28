@@ -32,6 +32,8 @@ class NotesUrl extends Model
         $relations->hasMany('host', Host::class)
             ->setCandidateKey('id')
             ->setForeignKey('notes_url_id');
-        $relations->hasMany('service', Service::class);
+        $relations->hasMany('service', Service::class)
+            ->setCandidateKey('id')
+            ->setForeignKey('notes_url_id');
     }
 }
