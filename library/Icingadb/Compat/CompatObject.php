@@ -54,11 +54,6 @@ abstract class CompatObject extends MonitoredObject
         );
     }
 
-    public function __isset($name)
-    {
-        return isset($this->object->$name);
-    }
-
     public function __get($name)
     {
         if (isset($this->legacyColumns[$name])) {
@@ -89,6 +84,11 @@ abstract class CompatObject extends MonitoredObject
         return $this->resolveAllStrings(
             MonitoredObject::parseAttributeUrls($notesUrl->notes_url)
         );
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->object->$name);
     }
 
     /**
