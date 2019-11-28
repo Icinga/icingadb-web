@@ -13,8 +13,10 @@ use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatBackend;
 use Icinga\Module\Icingadb\Compat\CompatHost;
+use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Compat\CompatService;
+use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -22,8 +24,10 @@ use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
-use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
+use Icinga\Web\Hook;
+use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -47,6 +51,44 @@ class ObjectDetail extends BaseHtmlElement
     {
         $this->object = $object;
         $this->objectType = $object instanceof Host ? 'host' : 'service';
+    }
+
+    protected function createActions()
+    {
+        $compatObject = CompatObject::fromModel($this->object);
+        $navigation = new Navigation();
+        $navigation->load($this->objectType . '-action');
+        foreach ($navigation as $item) {
+            $item->setObject($compatObject);
+        }
+
+        foreach ($compatObject->getActionUrls() as $i => $url) {
+            $navigation->addItem(
+                'Action ' . ($i + 1),
+                [
+                    'renderer' => [
+                        'NavigationItemRenderer',
+                        'escape_label' => false
+                    ],
+                    'target'   => '_blank',
+                    'url'      => $url
+                ]
+            );
+        }
+
+        /** @var ObjectActionsHook $hook */
+        foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
+            $navigation->merge($hook->getNavigation($compatObject));
+        }
+
+        if ($navigation->isEmpty() || ! $navigation->hasRenderableItems()) {
+            return null;
+        }
+
+        return [
+            Html::tag('h2', 'Actions'),
+            new HtmlString($navigation->getRenderer()->render())
+        ];
     }
 
     protected function createCheckStatistics()
@@ -278,6 +320,7 @@ class ObjectDetail extends BaseHtmlElement
         $this->add([
             $this->createPluginOutput(),
             $this->createEvents(),
+            $this->createActions(),
             $this->createGroups(),
             $this->createComments(),
             $this->createDowntimes(),
