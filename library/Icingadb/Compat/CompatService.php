@@ -2,10 +2,6 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
-/**
- * Class CompatService
- * @package Icinga\Module\Icingadb\Compat
- */
 class CompatService extends CompatObject
 {
     protected $type = self::TYPE_SERVICE;

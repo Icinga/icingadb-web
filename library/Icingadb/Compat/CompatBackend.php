@@ -4,10 +4,6 @@ namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
-/**
- * Class CompatBackend
- * @package Icinga\Module\Icingadb\Compat
- */
 class CompatBackend extends MonitoringBackend
 {
     /**

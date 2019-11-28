@@ -10,10 +10,6 @@ use InvalidArgumentException;
 use ipl\Orm\Model;
 use function ipl\Stdlib\get_php_type;
 
-/**
- * Class CompatObject
- * @package Icinga\Module\Icingadb\Compat
- */
 abstract class CompatObject extends MonitoredObject
 {
     private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
