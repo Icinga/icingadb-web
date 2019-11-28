@@ -29,7 +29,9 @@ class NotesUrl extends Model
     {
         $relations->belongsTo('environment', Environment::class);
 
-        $relations->hasMany('host', Host::class);
+        $relations->hasMany('host', Host::class)
+            ->setCandidateKey('id')
+            ->setForeignKey('notes_url_id');
         $relations->hasMany('service', Service::class);
     }
 }
