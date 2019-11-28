@@ -10,7 +10,7 @@ use ipl\Orm\Model;
  * Class CompatObject
  * @package Icinga\Module\Icingadb\Compat
  */
-class CompatObject extends MonitoredObject
+abstract class CompatObject extends MonitoredObject
 {
     private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
 
