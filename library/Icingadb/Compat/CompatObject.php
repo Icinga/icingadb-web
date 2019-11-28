@@ -78,14 +78,6 @@ abstract class CompatObject extends MonitoredObject
         return $this->object->name;
     }
 
-    /**
-     * @throws NotImplementedError Don't use!
-     */
-    protected function getDataView()
-    {
-        throw new NotImplementedError('getDataView() is not supported');
-    }
-
     public function getNotesUrls()
     {
         $notesUrl = $this->object->notes_url;
@@ -97,5 +89,13 @@ abstract class CompatObject extends MonitoredObject
         return $this->resolveAllStrings(
             MonitoredObject::parseAttributeUrls($notesUrl->notes_url)
         );
+    }
+
+    /**
+     * @throws NotImplementedError Don't use!
+     */
+    protected function getDataView()
+    {
+        throw new NotImplementedError('getDataView() is not supported');
     }
 }
