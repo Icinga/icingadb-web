@@ -40,10 +40,10 @@ class HostgroupListItem extends BaseTableRowItem
 
             $columns->add([
                 $this->createColumn(HtmlString::create($hostsChart->render())),
-                $this->createColumn(new VerticalKeyValue(
+                $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Host' . ($this->item->hosts_total > 1 ? 's' : ''),
-                    $badges->createLink($this->item->hosts_total)
-                ))->addAttributes(['class' => 'text-center']),
+                    $this->item->hosts_total
+                )))->addAttributes(['class' => 'text-center']),
                 $this->createColumn($badges)
             ]);
         }
@@ -54,10 +54,10 @@ class HostgroupListItem extends BaseTableRowItem
 
             $columns->add([
                 $this->createColumn(HtmlString::create($servicesChart->render())),
-                $this->createColumn(new VerticalKeyValue(
+                $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Service' . ($this->item->services_total > 1 ? 's' : ''),
-                    $badges->createLink($this->item->services_total)
-                ))->addAttributes(['class' => 'text-center']),
+                    $this->item->services_total
+                )))->addAttributes(['class' => 'text-center']),
                 $this->createColumn($badges)
             ]);
         }
