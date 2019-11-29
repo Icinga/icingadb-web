@@ -45,6 +45,7 @@ class Hostgroupsummary extends UnionModel
             'hosts_up'                    => new Expression(
                 'SUM(CASE WHEN host_state = 0 THEN 1 ELSE 0 END)'
             ),
+            'hosts_severity'              => new Expression('MAX(host_severity)'),
             'name'                        => 'hostgroup_name',
             'services_critical_handled'   => new Expression(
                 'SUM(CASE WHEN service_state = 2 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
@@ -102,6 +103,7 @@ class Hostgroupsummary extends UnionModel
                     'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
+                    'host_severity'          => 'state.severity',
                     'service_state'          => new Expression('NULL'),
                     'service_handled'        => new Expression('NULL')
                 ]
@@ -114,6 +116,7 @@ class Hostgroupsummary extends UnionModel
                     'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
+                    'host_severity'          => new Expression('0'),
                     'service_state'          => 'state.soft_state',
                     'service_handled'        => 'state.is_handled'
                 ]
