@@ -29,7 +29,7 @@ class NotificationHistory extends Model
             'service_id',
             'notification_id',
             'type',
-            'event_time',
+            'send_time',
             'state',
             'previous_hard_state',
             'author',
@@ -40,13 +40,13 @@ class NotificationHistory extends Model
 
     public function getSortRules()
     {
-        return ['event_time DESC'];
+        return ['send_time DESC'];
     }
 
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new Timestamp([
-            'event_time'
+            'send_time'
         ]));
     }
 

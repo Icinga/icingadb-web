@@ -113,6 +113,6 @@ class NotificationListItem extends CommonListItem
 
     protected function createTimestamp()
     {
-        return new TimeAgo($this->item->event_time);
+        return new TimeAgo($this->item->send_time);
     }
 }
