@@ -75,6 +75,7 @@ class MonitoringRestrictions
             return Filter::matchAll();
         }
 
+        $restriction->setAllowedFilterColumns([]);
         return $restriction;
     }
 }
