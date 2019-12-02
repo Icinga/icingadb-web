@@ -18,7 +18,11 @@ class FlattenedObjectVars implements RewriteFilterBehavior
         $column = $expression->metaData['relationCol'];
         if ($column !== 'flatname' && $column !== 'flatvalue') {
             $nameFilter = Filter::where($relation . 'flatname', $column);
-            $valueFilter = Filter::where($relation . 'flatvalue', $expression->getExpression());
+            $valueFilter = Filter::expression(
+                $relation . 'flatvalue',
+                $expression->getSign(),
+                $expression->getExpression()
+            );
             $filter = Filter::matchAll($nameFilter, $valueFilter);
 
             // TODO: Ugly, yes, let's implement this stuff in our own filters
