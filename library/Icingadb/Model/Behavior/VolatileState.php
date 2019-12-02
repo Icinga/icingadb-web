@@ -20,7 +20,7 @@ class VolatileState implements RetrieveBehavior
             $redis = new Redis();
             $redis->connect(
                 $config->get('host', 'redis'),
-                $config->get('port', 6379)
+                $config->get('port', 6380)
             );
 
             $this->state = new RedisState($redis);
