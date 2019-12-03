@@ -35,10 +35,8 @@ class DowntimeListItem extends CommonListItem
     /** @var int Downtime start time */
     protected $startTime;
 
-    public function __construct($item)
+    protected function init()
     {
-        parent::__construct($item);
-
         if ($this->item->is_flexible && $this->item->is_in_effect) {
             $this->startTime = $this->item->start_time;
         } else {
