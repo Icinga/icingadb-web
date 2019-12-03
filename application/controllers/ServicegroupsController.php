@@ -28,6 +28,8 @@ class ServicegroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent(new ServicegroupList($servicegroups));
+        $this->addContent(
+            (new ServicegroupList($servicegroups))->setBaseFilter($this->getFilter())
+        );
     }
 }

@@ -29,7 +29,11 @@ class ServicegroupListItem extends BaseTableRowItem
 
         if ($this->item->services_total > 0) {
             $badges = new ServiceStateBadges($this->item);
-            $badges->getUrl()->getParams()->mergeValues(['servicegroup.name' => $this->item->name]);
+            $badges
+                ->setBaseFilter($this->list->getBaseFilter())
+                ->getUrl()
+                    ->getParams()
+                    ->mergeValues(['servicegroup.name' => $this->item->name]);
 
             $columns->add([
                 $this->createColumn(HtmlString::create($servicesChart->render())),
