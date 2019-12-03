@@ -26,6 +26,9 @@ class Controller extends CompatController
     /** @var Connection Connection to the Icinga database */
     private $db;
 
+    /** @var Filter Filter from query string parameters */
+    private $filter;
+
     /** @var string|null */
     private $format;
 
@@ -54,6 +57,20 @@ class Controller extends CompatController
         }
 
         return $this->db;
+    }
+
+    /**
+     * Get the filter created from query string parameters
+     *
+     * @return Filter
+     */
+    public function getFilter()
+    {
+        if ($this->filter === null) {
+            $this->filter = Filter::fromQueryString((string) $this->params);
+        }
+
+        return $this->filter;
     }
 
     /**
@@ -205,7 +222,7 @@ class Controller extends CompatController
         $this->applyMonitoringRestriction($query);
 
         FilterProcessor::apply(
-            Filter::fromQueryString((string) $this->params),
+            $this->getFilter(),
             $query
         );
 
