@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -108,17 +109,6 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createEvents()
     {
-        if ($this->objectType === 'host') {
-            $state = HostStates::text($this->object->state->soft_state);
-        } else {
-            $state = ServiceStates::text($this->object->state->soft_state);
-        }
-        return [
-            Html::tag('h2', 'Plugin Output'),
-            (new EventBox())
-                ->setCaption($this->object->state->output . "\n" . $this->object->state->long_output, true)
-                ->setState($state)
-        ];
     }
 
     protected function createGroups()
@@ -207,6 +197,23 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
+    protected function createPluginOutput()
+    {
+        if ($this->objectType === 'host') {
+            $state = HostStates::text($this->object->state->soft_state);
+        } else {
+            $state = ServiceStates::text($this->object->state->soft_state);
+        }
+        return [
+            Html::tag('h2', 'Plugin Output'),
+            Html::tag('div', ['class' => 'collapsible'],
+                CompatPluginOutput::getInstance()->render(
+                    $this->object->state->output . "\n" . $this->object->state->long_output
+                )
+            )
+        ];
+    }
+
     protected function getUsersAndUsergroups()
     {
         $users = [];
@@ -228,6 +235,7 @@ class ObjectDetail extends BaseHtmlElement
     protected function assemble()
     {
         $this->add([
+            $this->createPluginOutput(),
             $this->createEvents(),
             $this->createGroups(),
             $this->createComments(),
