@@ -72,10 +72,16 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createCustomVars()
     {
-        return [
-            Html::tag('h2', 'Custom Variables'),
-            new CustomVarTable($this->object->customvar)
-        ];
+        $content = [Html::tag('h2', 'Custom Variables')];
+        $vars = $this->object->customvar->execute();
+
+        if ($vars->hasResult()) {
+            $content[] = new CustomVarTable($vars);
+        } else {
+            $content[] = new EmptyState('No custom variables configured.');
+        }
+
+        return $content;
     }
 
     protected function createDowntimes()
