@@ -32,6 +32,7 @@ class ServiceCustomvar extends Model
         $relations->belongsTo('service', Service::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
+            ->setForeignKey('customvar_id')
             ->setCandidateKey('customvar_id');
     }
 }

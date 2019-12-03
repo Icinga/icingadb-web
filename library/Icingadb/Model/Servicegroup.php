@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -34,6 +36,14 @@ class Servicegroup extends Model
     public function getSortRules()
     {
         return ['display_name'];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new ReRoute([
+            'host'      => 'service.host',
+            'hostgroup' => 'service.hostgroup'
+        ]));
     }
 
     public function createRelations(Relations $relations)

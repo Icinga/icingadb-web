@@ -27,8 +27,6 @@ class HistoryController extends Controller
             'state'
         ]);
 
-        $history->getSelectBase()->orderBy('event_time DESC');
-
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $filterControl = $this->createFilterControl($history);

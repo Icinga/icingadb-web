@@ -40,6 +40,8 @@ class ServiceController extends Controller
             ->where(['service.name = ?' => $name])
             ->where(['service_host.name = ?' => $hostName]);
 
+        $this->applyMonitoringRestriction($query);
+
         /** @var Service $service */
         $service = $query->first();
         if ($service === null) {

@@ -25,7 +25,9 @@ class DowntimeController extends Controller
 
         $query = Downtime::on($this->getDb());
         $query->getSelectBase()
-            ->where(['name = ?' => $name]);
+            ->where(['downtime.name = ?' => $name]);
+
+        $this->applyMonitoringRestriction($query);
 
         $downtime = $query->first();
         if ($downtime === null) {

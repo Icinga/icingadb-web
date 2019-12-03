@@ -54,4 +54,6 @@ namespace Icinga\Module\Icingadb
     $this->provideCssFile('lists.less');
     $this->provideCssFile('mixins.less');
     $this->provideCssFile('widgets.less');
+
+    $this->provideJsFile('migrate.js');
 }

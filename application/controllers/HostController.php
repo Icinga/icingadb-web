@@ -31,7 +31,9 @@ class HostController extends Controller
 
         $query = Host::on($this->getDb())->with('state');
         $query->getSelectBase()
-            ->where(['name = ?' => $name]);
+            ->where(['host.name = ?' => $name]);
+
+        $this->applyMonitoringRestriction($query);
 
         /** @var Host $host */
         $host = $query->first();
@@ -148,6 +150,8 @@ class HostController extends Controller
         $services
             ->getSelectBase()
             ->where(['service_host.id = ?' => $this->host->id]);
+
+        $this->applyMonitoringRestriction($services);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);

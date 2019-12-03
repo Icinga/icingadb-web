@@ -48,7 +48,8 @@ class ServicegroupSummary extends UnionModel
             ),
             'services_warning_unhandled'  => new Expression(
                 'SUM(CASE WHEN service_state = 1 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
-            )
+            ),
+            'services_severity'           => new Expression('MAX(service_severity)')
         ];
     }
 
@@ -77,7 +78,8 @@ class ServicegroupSummary extends UnionModel
                     'servicegroup_name'         => 'servicegroup.name',
                     'servicegroup_display_name' => 'servicegroup.display_name',
                     'service_state'             => 'state.soft_state',
-                    'service_handled'           => 'state.is_handled'
+                    'service_handled'           => 'state.is_handled',
+                    'service_severity'          => 'state.severity'
                 ]
             ]
         ];

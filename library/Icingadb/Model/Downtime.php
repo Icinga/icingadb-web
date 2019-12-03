@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -62,6 +63,10 @@ class Downtime extends Model
             'flexible_duration',
             'start_time',
             'end_time'
+        ]));
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 

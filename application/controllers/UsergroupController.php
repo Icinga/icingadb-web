@@ -22,7 +22,9 @@ class UsergroupController extends Controller
 
         $query = Usergroup::on($this->getDb());
         $query->getSelectBase()
-            ->where(['name = ?' => $name]);
+            ->where(['usergroup.name = ?' => $name]);
+
+        $this->applyMonitoringRestriction($query);
 
         $usergroup = $query->first();
         if ($usergroup === null) {

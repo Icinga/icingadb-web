@@ -48,13 +48,16 @@ class FilterControl extends HtmlDocument
     {
         if ($this->filterEditor === null) {
             $model = $this->query->getModel();
-            $columns = $this->selectColumns($this->query->getResolver()->getSelectableColumns($model));
+            $columns = $this->selectColumns(
+                $this->query->getResolver()->getSelectableColumns($model),
+                [$model->getTableName()]
+            );
             $searchColumns = array_keys(
-                $this->selectColumns($model->getSearchColumns())
+                $this->selectColumns($model->getSearchColumns(), [$model->getTableName()])
             );
 
-            foreach ($this->query->getWith() as $relation) {
-                $path = explode('.', $relation->getName());
+            foreach ($this->query->getWith() as $path => $relation) {
+                $path = explode('.', $path);
                 $columns += $this->selectColumns($relation->getTarget()->getColumns(), $path);
                 array_push($searchColumns, ...array_keys(
                     $this->selectColumns($relation->getTarget()->getSearchColumns(), $path)

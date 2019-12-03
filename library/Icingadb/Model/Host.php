@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -87,6 +88,10 @@ class Host extends Model
             'notifications_enabled',
             'flapping_enabled'
         ]));
+
+        $behaviors->add(new ReRoute([
+            'servicegroup'  => 'service.servicegroup'
+        ]));
     }
 
     public function createRelations(Relations $relations)
@@ -112,7 +117,9 @@ class Host extends Model
         $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class);
         $relations->hasMany('downtime', Downtime::class);
+        $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class);
+        $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
     }
 }

@@ -29,6 +29,8 @@ class ServicegroupController extends Controller
             $query
         );
 
+        $this->applyMonitoringRestriction($query);
+
         $servicegroup = $query->first();
         if ($servicegroup === null) {
             throw new NotFoundError($this->translate('Service group not found'));
@@ -52,6 +54,8 @@ class ServicegroupController extends Controller
             new FilterExpression('servicegroup.id', '=', $this->servicegroup->id),
             $services
         );
+
+        $this->applyMonitoringRestriction($services);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);

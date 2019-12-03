@@ -6,6 +6,8 @@ use Generator;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
+use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
+use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Widget\FilterControl;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
@@ -200,10 +202,27 @@ class Controller extends CompatController
 
     public function filter(Query $query)
     {
+        $this->applyMonitoringRestriction($query);
+
         FilterProcessor::apply(
             Filter::fromQueryString((string) $this->params),
             $query
         );
+
+        return $this;
+    }
+
+    public function applyMonitoringRestriction(Query $query, $queryTransformer = null)
+    {
+        if ($queryTransformer === null || UrlMigrator::hasQueryTransformer($queryTransformer)) {
+            $restriction = UrlMigrator::transformFilter(
+                MonitoringRestrictions::getRestriction('monitoring/filter/objects'),
+                $queryTransformer
+            );
+            if ($restriction) {
+                FilterProcessor::apply($restriction, $query);
+            }
+        }
 
         return $this;
     }
