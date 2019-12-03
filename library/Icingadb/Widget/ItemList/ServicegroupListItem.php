@@ -36,7 +36,7 @@ class ServicegroupListItem extends BaseTableRowItem
                 $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Service' . ($this->item->services_total > 1 ? 's' : ''),
                     $this->item->services_total
-                )))->addAttributes(['class' => 'text-center']),
+                )))->addAttributes(['class' => 'services-total text-center']),
                 $this->createColumn($badges)
             ]);
         }
