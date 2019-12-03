@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
@@ -11,6 +12,8 @@ use ipl\Html\BaseHtmlElement;
  */
 abstract class BaseItemList extends BaseHtmlElement
 {
+    use BaseFilter;
+
     protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
 
     /** @var iterable */
