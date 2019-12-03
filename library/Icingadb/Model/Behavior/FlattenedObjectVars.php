@@ -23,14 +23,7 @@ class FlattenedObjectVars implements RewriteFilterBehavior
                 $expression->getSign(),
                 $expression->getExpression()
             );
-            $filter = Filter::matchAll($nameFilter, $valueFilter);
-
-            // TODO: Ugly, yes, let's implement this stuff in our own filters
-            $nameFilter->noOptmization = true;
-            $valueFilter->noOptmization = true;
-            $filter->transferMetaData = true;
-
-            return $filter;
+            return Filter::matchAll($nameFilter, $valueFilter);
         }
     }
 }
