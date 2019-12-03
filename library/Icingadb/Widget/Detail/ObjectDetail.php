@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -18,6 +19,7 @@ use Icinga\Module\Icingadb\Widget\TagList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Orm\ResultSet;
 use ipl\Web\Widget\Icon;
 use Zend_View_Helper_Perfdata;
 
@@ -53,21 +55,33 @@ class ObjectDetail extends BaseHtmlElement
             $link = ServiceLinks::comments($this->object, $this->object->host);
         }
 
+        /** @var ResultSet $comments */
         $comments = $this->object->comment->limit(3)->peekAhead()->execute();
 
-        return [
-            Html::tag('h2', 'Comments'),
-            new CommentList($comments),
-            new ShowMore($comments, $link)
-        ];
+        $content = [Html::tag('h2', 'Comments')];
+
+        if ($comments->hasResult()) {
+            $content[] = new CommentList($comments);
+            $content[] = new ShowMore($comments, $link);
+        } else {
+            $content[] = new EmptyState('No comments created.');
+        }
+
+        return $content;
     }
 
     protected function createCustomVars()
     {
-        return [
-            Html::tag('h2', 'Custom Variables'),
-            new CustomVarTable($this->object->customvar)
-        ];
+        $content = [Html::tag('h2', 'Custom Variables')];
+        $vars = $this->object->customvar->execute();
+
+        if ($vars->hasResult()) {
+            $content[] = new CustomVarTable($vars);
+        } else {
+            $content[] = new EmptyState('No custom variables configured.');
+        }
+
+        return $content;
     }
 
     protected function createDowntimes()
@@ -80,11 +94,16 @@ class ObjectDetail extends BaseHtmlElement
 
         $downtimes = $this->object->downtime->limit(3)->peekAhead()->execute();
 
-        return [
-            Html::tag('h2', 'Downtimes'),
-            new DowntimeList($downtimes),
-            new ShowMore($downtimes, $link)
-        ];
+        $content = [Html::tag('h2', 'Downtimes')];
+
+        if ($downtimes->hasResult()) {
+            $content[] = new DowntimeList($downtimes);
+            $content[] = new ShowMore($downtimes, $link);
+        } else {
+            $content[] = new EmptyState('No downtimes scheduled.');
+        }
+
+        return $content;
     }
 
     protected function createEvents()
@@ -113,7 +132,12 @@ class ObjectDetail extends BaseHtmlElement
                 $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
-            $groups[] = new HorizontalKeyValue('Host Groups', $hostgroupList);
+            $groups[] = new HorizontalKeyValue(
+                'Host Groups',
+                $hostgroupList->hasContent()
+                    ? $hostgroupList
+                    : new EmptyState('Not a member of any host group.')
+            );
         } else {
             $servicegroupList = new TagList();
 
@@ -121,7 +145,12 @@ class ObjectDetail extends BaseHtmlElement
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
-            $groups[] = new HorizontalKeyValue('Service Groups', $servicegroupList);
+            $groups[] = new HorizontalKeyValue(
+                'Service Groups',
+                $servicegroupList->hasContent()
+                    ? $servicegroupList
+                    : new EmptyState('Not a member of any service group.')
+            );
         }
 
         return $groups;
@@ -146,11 +175,16 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
-
         return [
             Html::tag('h2', 'Notifications'),
-            new HorizontalKeyValue('Users', $userList),
-            new HorizontalKeyValue('User Groups', $usergroupList)
+            new HorizontalKeyValue(
+                'Users',
+                $userList->hasContent() ? $userList : new EmptyState('No users configured.')
+            ),
+            new HorizontalKeyValue(
+                'User Groups',
+                $usergroupList->hasContent() ? $usergroupList : new EmptyState('No user groups configured.')
+            )
         ];
     }
 
@@ -162,10 +196,15 @@ class ObjectDetail extends BaseHtmlElement
         $helper = new Zend_View_Helper_Perfdata();
         $helper->view = Icinga::app()->getViewRenderer()->view;
 
-        return [
-            Html::tag('h2', 'Performance Data'),
-            new HtmlString($helper->perfdata($this->object->state->performance_data))
-        ];
+        $content[] = Html::tag('h2', 'Performance Data');
+
+        if (empty($this->object->state->performance_data)) {
+            $content[] = new EmptyState('No performance data available.');
+        } else {
+            $content[] = new HtmlString($helper->perfdata($this->object->state->performance_data));
+        }
+
+        return $content;
     }
 
     protected function getUsersAndUsergroups()

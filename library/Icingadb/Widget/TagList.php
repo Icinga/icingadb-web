@@ -21,6 +21,11 @@ class TagList extends BaseHtmlElement
         return $this;
     }
 
+    public function hasContent()
+    {
+        return ! empty($this->content);
+    }
+
     protected function assemble()
     {
         $this->add(Html::wrapEach($this->content, 'li'));
