@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Module\Icingadb\Widget\BaseItemList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -13,16 +14,21 @@ abstract class BaseTableRowItem extends BaseHtmlElement
     /** @var object The associated list item */
     protected $item;
 
+    /** @var BaseItemList The list where the item is part of */
+    protected $list;
+
     protected $tag = 'li';
 
     /**
      * Create a new table row item
      *
-     * @param object $item
+     * @param object       $item
+     * @param BaseItemList $list
      */
-    public function __construct($item)
+    public function __construct($item, BaseItemList $list)
     {
         $this->item = $item;
+        $this->list = $list;
 
         $this->addAttributes($this->baseAttributes);
 

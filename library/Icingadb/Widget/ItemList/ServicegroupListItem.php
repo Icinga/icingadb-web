@@ -28,12 +28,20 @@ class ServicegroupListItem extends BaseTableRowItem
             ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
 
         if ($this->item->services_total > 0) {
+            $badges = new ServiceStateBadges($this->item);
+            $badges
+                ->setBaseFilter($this->list->getBaseFilter())
+                ->getUrl()
+                    ->getParams()
+                    ->mergeValues(['servicegroup.name' => $this->item->name]);
+
             $columns->add([
                 $this->createColumn(HtmlString::create($servicesChart->render())),
-                $this->createColumn(new VerticalKeyValue(
-                    'Service' . ($this->item->services_total > 1 ? 's' : ''), $this->item->services_total
-                ))->addAttributes(['class' => 'text-center']),
-                $this->createColumn(new ServiceStateBadges($this->item))
+                $this->createColumn($badges->createLink(new VerticalKeyValue(
+                    'Service' . ($this->item->services_total > 1 ? 's' : ''),
+                    $this->item->services_total
+                )))->addAttributes(['class' => 'services-total text-center']),
+                $this->createColumn($badges)
             ]);
         }
     }

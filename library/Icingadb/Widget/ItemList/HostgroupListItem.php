@@ -35,22 +35,38 @@ class HostgroupListItem extends BaseTableRowItem
             ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
 
         if ($this->item->hosts_total > 0) {
+            $badges = new HostStateBadges($this->item);
+            $badges
+                ->setBaseFilter($this->list->getBaseFilter())
+                ->getUrl()
+                    ->getParams()
+                    ->mergeValues(['hostgroup.name' => $this->item->name]);
+
             $columns->add([
                 $this->createColumn(HtmlString::create($hostsChart->render())),
-                $this->createColumn(new VerticalKeyValue(
-                    'Host' . ($this->item->hosts_total > 1 ? 's' : ''), $this->item->hosts_total
-                ))->addAttributes(['class' => 'text-center']),
-                $this->createColumn(new HostStateBadges($this->item))
+                $this->createColumn($badges->createLink(new VerticalKeyValue(
+                    'Host' . ($this->item->hosts_total > 1 ? 's' : ''),
+                    $this->item->hosts_total
+                )))->addAttributes(['class' => 'hosts-total text-center']),
+                $this->createColumn($badges)
             ]);
         }
 
         if ($this->item->services_total > 0) {
+            $badges = new ServiceStateBadges($this->item);
+            $badges
+                ->setBaseFilter($this->list->getBaseFilter())
+                ->getUrl()
+                    ->getParams()
+                    ->mergeValues(['hostgroup.name' => $this->item->name]);
+
             $columns->add([
                 $this->createColumn(HtmlString::create($servicesChart->render())),
-                $this->createColumn(new VerticalKeyValue(
-                    'Service' . ($this->item->services_total > 1 ? 's' : ''), $this->item->services_total
-                ))->addAttributes(['class' => 'text-center']),
-                $this->createColumn(new ServiceStateBadges($this->item))
+                $this->createColumn($badges->createLink(new VerticalKeyValue(
+                    'Service' . ($this->item->services_total > 1 ? 's' : ''),
+                    $this->item->services_total
+                )))->addAttributes(['class' => 'services-total text-center']),
+                $this->createColumn($badges)
             ]);
         }
     }

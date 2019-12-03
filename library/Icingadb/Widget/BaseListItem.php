@@ -15,16 +15,21 @@ abstract class BaseListItem extends BaseHtmlElement
     /** @var object The associated list item */
     protected $item;
 
+    /** @var BaseItemList The list where the item is part of */
+    protected $list;
+
     protected $tag = 'li';
 
     /**
      * Create a new list item
      *
-     * @param object $item
+     * @param object       $item
+     * @param BaseItemList $list
      */
-    public function __construct($item)
+    public function __construct($item, BaseItemList $list)
     {
         $this->item = $item;
+        $this->list = $list;
 
         $this->addAttributes($this->baseAttributes);
 

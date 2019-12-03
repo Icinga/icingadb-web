@@ -28,6 +28,8 @@ class HostgroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent(new HostgroupList($hostgroups));
+        $this->addContent(
+            (new HostgroupList($hostgroups))->setBaseFilter($this->getFilter())
+        );
     }
 }

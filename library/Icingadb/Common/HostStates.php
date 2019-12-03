@@ -16,6 +16,37 @@ class HostStates
     const PENDING = 99;
 
     /**
+     * Get the integer value of the given textual host state
+     *
+     * @param string $state
+     *
+     * @return int
+     *
+     * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
+     */
+    public static function int($state)
+    {
+        switch (strtolower($state)) {
+            case 'up':
+                $int = self::UP;
+                break;
+            case 'down':
+                $int = self::DOWN;
+                break;
+            case 'unreachable':
+                $int = self::UNREACHABLE;
+                break;
+            case 'pending':
+                $int = self::PENDING;
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('Invalid host state %d', $state));
+        }
+
+        return $int;
+    }
+
+    /**
      * Get the textual representation of the passed host state
      *
      * @param int $state

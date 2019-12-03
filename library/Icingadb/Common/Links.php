@@ -39,6 +39,11 @@ abstract class Links
         return Url::fromPath('icingadb/hostgroup', ['name' => $hostgroup->name]);
     }
 
+    public static function hosts()
+    {
+        return Url::fromPath('icingadb/hosts');
+    }
+
     public static function service(Service $service, Host $host)
     {
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
@@ -47,6 +52,11 @@ abstract class Links
     public static function servicegroup($servicegroup)
     {
         return Url::fromPath('icingadb/servicegroup', ['name' => $servicegroup->name]);
+    }
+
+    public static function services()
+    {
+        return Url::fromPath('icingadb/services');
     }
 
     public static function user(User $user)
