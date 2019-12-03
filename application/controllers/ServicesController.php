@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ServiceList;
+use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 
 class ServicesController extends Controller
 {
@@ -52,6 +53,10 @@ class ServicesController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent($serviceList);
+
+        $this->addFooter(
+            (new ServiceStatusBar($summary->first()))->setBaseFilter($this->getFilter())
+        );
 
         $this->setAutorefreshInterval(10);
     }
