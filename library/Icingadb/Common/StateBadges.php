@@ -11,8 +11,7 @@ use ipl\Web\Widget\Link;
 
 abstract class StateBadges extends BaseHtmlElement
 {
-    /** @var Filter Base filter applied to any badge link */
-    protected $baseFilter;
+    use BaseFilter;
 
     /** @var object $item */
     protected $item;
@@ -61,40 +60,6 @@ abstract class StateBadges extends BaseHtmlElement
      * @return int
      */
     abstract protected function getStateInt($state);
-
-    /**
-     * Get whether a base filter is configured
-     *
-     * @return bool
-     */
-    public function hasBaseFilter()
-    {
-        return $this->baseFilter !== null;
-    }
-
-    /**
-     * Get the base filter applied to any badge link
-     *
-     * @return Filter
-     */
-    public function getBaseFilter()
-    {
-        return $this->baseFilter;
-    }
-
-    /**
-     * Set the base filter applied to any badge link
-     *
-     * @param Filter $baseFilter
-     *
-     * @return $this
-     */
-    public function setBaseFilter($baseFilter)
-    {
-        $this->baseFilter = $baseFilter;
-
-        return $this;
-    }
 
     /**
      * Get the badge URL
