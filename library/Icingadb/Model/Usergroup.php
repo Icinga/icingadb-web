@@ -59,6 +59,6 @@ class Usergroup extends Model
         $relations->belongsToMany('user', User::class)
             ->through(UsergroupMember::class);
         $relations->belongsToMany('notification', Notification::class)
-            ->through(NotificationUsergroup::class);
+            ->through('notification_recipient');
     }
 }
