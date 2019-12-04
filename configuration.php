@@ -54,6 +54,11 @@ namespace Icinga\Module\Icingadb
         'title' => $this->translate('Configure the database backend'),
         'url'   => 'config/database'
     ]);
+    $this->provideConfigTab('command-transports', [
+        'label' => $this->translate('Command Transports'),
+        'title' => $this->translate('Configure command transports'),
+        'url'   => 'config/command-transports'
+    ]);
 
     $this->requireCssFile('balls.less', 'ipl');
 
