@@ -59,6 +59,11 @@ namespace Icinga\Module\Icingadb
         'title' => $this->translate('Configure command transports'),
         'url'   => 'config/command-transports'
     ]);
+    $this->provideConfigTab('security', [
+        'label' => $this->translate('Security'),
+        'title' => $this->translate('Configure security related settings'),
+        'url'   => 'config/security'
+    ]);
 
     $this->requireCssFile('balls.less', 'ipl');
 

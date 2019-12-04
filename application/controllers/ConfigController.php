@@ -8,6 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Module\Icingadb\Forms\DatabaseConfigForm;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\TransportReorderForm;
 use Icinga\Web\Form;
@@ -167,6 +168,18 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('database'));
+
+        $this->addFormToContent($form);
+    }
+
+    public function securityAction()
+    {
+        $form = (new SecurityConfigForm())
+            ->setIniConfig(Config::module('monitoring'));
+
+        $form->handleRequest();
+
+        $this->mergeTabs($this->Module()->getConfigTabs()->activate('security'));
 
         $this->addFormToContent($form);
     }
