@@ -23,7 +23,6 @@ class Zone extends Model
             'environment_id',
             'name_checksum',
             'properties_checksum',
-            'parents_checksum',
             'name',
             'name_ci',
             'is_global',

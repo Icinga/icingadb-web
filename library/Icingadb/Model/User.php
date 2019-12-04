@@ -26,8 +26,6 @@ class User extends Model
             'environment_id',
             'name_checksum',
             'properties_checksum',
-            'customvars_checksum',
-            'groups_checksum',
             'name',
             'name_ci',
             'display_name',

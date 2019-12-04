@@ -25,8 +25,6 @@ class Service extends Model
             'environment_id',
             'name_checksum',
             'properties_checksum',
-            'customvars_checksum',
-            'groups_checksum',
             'host_id',
             'name',
             'name_ci',
