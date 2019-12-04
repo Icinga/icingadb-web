@@ -13,8 +13,6 @@ use ipl\Orm\Model;
  */
 abstract class State extends Model
 {
-    protected $accessorsAndMutatorsEnabled = true;
-
     public function getColumns()
     {
         return [
@@ -33,6 +31,7 @@ abstract class State extends Model
             'is_handled',
             'is_reachable',
             'is_flapping',
+            'is_overdue',
             'is_acknowledged',
             'acknowledgement_comment_id',
             'in_downtime',
@@ -55,6 +54,7 @@ abstract class State extends Model
             'is_handled',
             'is_reachable',
             'is_flapping',
+            'is_overdue',
             'is_acknowledged',
             'in_downtime'
         ]));
@@ -66,10 +66,5 @@ abstract class State extends Model
             'next_check',
             'next_update'
         ]));
-    }
-
-    public function mutateIsOverdueProperty()
-    {
-        return $this->properties['next_update'] < time();
     }
 }
