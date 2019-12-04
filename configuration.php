@@ -49,6 +49,12 @@ namespace Icinga\Module\Icingadb
         'priority' => 90
     ]);
 
+    $this->provideConfigTab('database', [
+        'label' => $this->translate('Database'),
+        'title' => $this->translate('Configure the database backend'),
+        'url'   => 'config/database'
+    ]);
+
     $this->requireCssFile('balls.less', 'ipl');
 
     $this->provideCssFile('lists.less');
