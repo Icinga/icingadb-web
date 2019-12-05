@@ -54,6 +54,11 @@ namespace Icinga\Module\Icingadb
         'title' => $this->translate('Configure the database backend'),
         'url'   => 'config/database'
     ]);
+    $this->provideConfigTab('redis', [
+        'label' => $this->translate('Redis'),
+        'title' => $this->translate('Configure the Redis connections'),
+        'url'   => 'config/redis'
+    ]);
     $this->provideConfigTab('command-transports', [
         'label' => $this->translate('Command Transports'),
         'title' => $this->translate('Configure command transports'),

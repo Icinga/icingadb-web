@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Module\Icingadb\Forms\DatabaseConfigForm;
+use Icinga\Module\Icingadb\Forms\RedisConfigForm;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
@@ -168,6 +169,18 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('database'));
+
+        $this->addFormToContent($form);
+    }
+
+    public function redisAction()
+    {
+        $form = (new RedisConfigForm())
+            ->setIniConfig($this->Config());
+
+        $form->handleRequest();
+
+        $this->mergeTabs($this->Module()->getConfigTabs()->activate('redis'));
 
         $this->addFormToContent($form);
     }
