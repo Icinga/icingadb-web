@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
+use ipl\Sql\Config;
 use ipl\Sql\Connection;
 use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
@@ -45,7 +46,9 @@ class Controller extends CompatController
     public function getDb()
     {
         if ($this->db === null) {
-            $config = ResourceFactory::getResourceConfig($this->Config()->get('icingadb', 'resource', 'icingadb'));
+            $config = new Config(ResourceFactory::getResourceConfig(
+                $this->Config()->get('icingadb', 'resource', 'icingadb')
+            ));
 
             $config->options = [
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
