@@ -49,6 +49,27 @@ namespace Icinga\Module\Icingadb
         'priority' => 90
     ]);
 
+    $this->provideConfigTab('database', [
+        'label' => $this->translate('Database'),
+        'title' => $this->translate('Configure the database backend'),
+        'url'   => 'config/database'
+    ]);
+    $this->provideConfigTab('redis', [
+        'label' => $this->translate('Redis'),
+        'title' => $this->translate('Configure the Redis connections'),
+        'url'   => 'config/redis'
+    ]);
+    $this->provideConfigTab('command-transports', [
+        'label' => $this->translate('Command Transports'),
+        'title' => $this->translate('Configure command transports'),
+        'url'   => 'config/command-transports'
+    ]);
+    $this->provideConfigTab('security', [
+        'label' => $this->translate('Security'),
+        'title' => $this->translate('Configure security related settings'),
+        'url'   => 'config/security'
+    ]);
+
     $this->requireCssFile('balls.less', 'ipl');
 
     $this->provideCssFile('lists.less');
