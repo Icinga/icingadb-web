@@ -81,7 +81,8 @@ trait IcingaRedis
 
         $redis->connect(
             $config->get('host', 'redis'),
-            $config->get('port', 6380)
+            $config->get('port', 6380),
+            0.5
         );
 
         return $redis;
@@ -100,7 +101,8 @@ trait IcingaRedis
 
         $redis->connect(
             $host,
-            $config->get('port', 6380)
+            $config->get('port', 6380),
+            0.5
         );
 
         return $redis;
