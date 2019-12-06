@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
+use Exception;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Redis\VolatileState as RedisState;
 use ipl\Orm\Contract\RetrieveBehavior;
@@ -24,6 +25,10 @@ class VolatileState implements RetrieveBehavior
 
     public function retrieve(Model $model)
     {
-        $this->getVolatileState()->fetch($model);
+        try {
+            $this->getVolatileState()->fetch($model);
+        } catch (Exception $e) {
+            // Pass
+        }
     }
 }
