@@ -33,9 +33,6 @@ class Controller extends CompatController
     /** @var string|null */
     private $format;
 
-    /** @var \Redis Connection to the Icinga Redis */
-    private $redis;
-
     /**
      * Get the filter created from query string parameters
      *
@@ -48,26 +45,6 @@ class Controller extends CompatController
         }
 
         return $this->filter;
-    }
-
-    /**
-     * Get the connection to the Icinga Redis
-     *
-     * @return \Redis
-     */
-    public function getRedis()
-    {
-        if ($this->redis === null) {
-            $config = $this->Config()->getSection('redis');
-
-            $this->redis = new \Redis();
-            $this->redis->connect(
-                $config->get('host', 'redis'),
-                $config->get('port', 6379)
-            );
-        }
-
-        return $this->redis;
     }
 
     /**
