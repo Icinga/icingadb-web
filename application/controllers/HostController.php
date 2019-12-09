@@ -58,6 +58,9 @@ class HostController extends Controller
 
     public function indexAction()
     {
+        if ($this->host->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->host));
 
@@ -104,6 +107,9 @@ class HostController extends Controller
 
     public function historyAction()
     {
+        if ($this->host->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
@@ -137,6 +143,9 @@ class HostController extends Controller
 
     public function servicesAction()
     {
+        if ($this->host->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();

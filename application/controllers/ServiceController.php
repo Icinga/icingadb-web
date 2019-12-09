@@ -65,6 +65,9 @@ class ServiceController extends Controller
 
     public function indexAction()
     {
+        if ($this->service->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
         $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->service));
 
@@ -111,6 +114,9 @@ class ServiceController extends Controller
 
     public function historyAction()
     {
+        if ($this->service->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
         $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $db = $this->getDb();
