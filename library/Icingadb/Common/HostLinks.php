@@ -72,6 +72,11 @@ abstract class HostLinks
         return Url::fromPath('icingadb/host/process-checkresult', ['name' => $host->name]);
     }
 
+    public static function toggleFeatures(Host $host)
+    {
+        return Url::fromPath('icingadb/host/toggle-features', ['name' => $host->name]);
+    }
+
     public static function services(Host $host)
     {
         return Url::fromPath('icingadb/host/services', ['name' => $host->name]);
