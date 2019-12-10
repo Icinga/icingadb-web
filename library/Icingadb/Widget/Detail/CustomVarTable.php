@@ -50,6 +50,8 @@ class CustomVarTable extends BaseHtmlElement
         foreach ($array as $key => $value) {
             $this->renderVar("[$key]", $value);
         }
+
+        --$this->level;
     }
 
     protected function renderObject($name, $object)
@@ -61,13 +63,13 @@ class CustomVarTable extends BaseHtmlElement
         foreach ($object as $key => $value) {
             $this->renderVar($key, $value);
         }
+
+        --$this->level;
     }
 
     protected function renderScalar($name, $value)
     {
         $this->addRow($name, $value);
-
-        $this->level = 0;
     }
 
     protected function assemble()
