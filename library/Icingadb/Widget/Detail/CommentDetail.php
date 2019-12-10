@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -18,6 +19,7 @@ use ipl\Web\Widget\Icon;
 
 class CommentDetail extends BaseHtmlElement
 {
+    use Auth;
     use HostLink;
     use ServiceLink;
 
@@ -167,15 +169,8 @@ class CommentDetail extends BaseHtmlElement
             $this->add($details);
         }
 
-        $removeCommentForm = (new DeleteCommentCommandForm())
-            ->setAction(HostLinks::removeComment($this->comment->host));
-
-        $submitButton = $removeCommentForm->create()->getElement('btn_submit');
-        $submitButton->content = (new HtmlDocument())
-            ->add([new Icon('trash'), 'Remove Comment'])
-            ->setSeparator(' ')
-            ->render();
-
-        $this->add($this->createRemoveCommentForm());
+        if ($this->getAuth()->hasPermission('monitoring/command/comment/delete')) {
+            $this->add($this->createRemoveCommentForm());
+        }
     }
 }

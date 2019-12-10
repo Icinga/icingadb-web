@@ -124,54 +124,65 @@ trait CommandActions
 
     public function acknowledgeAction()
     {
+        $this->assertPermission('monitoring/command/acknowledge-problem');
         $this->setTitle($this->translate('Acknowledge Problem'));
         $this->handleCommandForm(AcknowledgeProblemCommandForm::class);
     }
 
     public function addCommentAction()
     {
+        $this->assertPermission('monitoring/command/comment/add');
         $this->setTitle($this->translate('Add Comment'));
         $this->handleCommandForm(AddCommentCommandForm::class);
     }
 
     public function checkNowAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
         $this->handleCommandForm(CheckNowCommandForm::class);
     }
 
     public function deleteCommentAction()
     {
+        $this->assertPermission('monitoring/command/comment/delete');
         $this->handleCommandForm(DeleteCommentCommandForm::class);
     }
 
     public function deleteCommentsAction()
     {
+        $this->assertPermission('monitoring/command/comment/delete');
         $this->handleCommandForm(DeleteCommentsCommandForm::class);
     }
 
     public function deleteDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/delete');
         $this->handleCommandForm(DeleteDowntimeCommandForm::class);
     }
 
     public function deleteDowntimesAction()
     {
+        $this->assertPermission('monitoring/command/downtime/delete');
         $this->handleCommandForm(DeleteDowntimesCommandForm::class);
     }
 
     public function processCheckresultAction()
     {
+        $this->assertPermission('monitoring/command/process-check-result');
         $this->setTitle($this->translate('Submit Passive Check Result'));
         $this->handleCommandForm(ProcessCheckResultCommandForm::class);
     }
 
     public function removeAcknowledgementAction()
     {
+        $this->assertPermission('monitoring/command/remove-acknowledgement');
         $this->handleCommandForm(RemoveAcknowledgementCommandForm::class);
     }
 
     public function scheduleCheckAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
+
         switch ($this->getCommandTargetModel()->getTableName())
         {
             case 'host':
@@ -186,6 +197,8 @@ trait CommandActions
 
     public function scheduleDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
         switch ($this->getCommandTargetModel()->getTableName())
         {
             case 'host':
@@ -201,6 +214,7 @@ trait CommandActions
 
     public function sendCustomNotificationAction()
     {
+        $this->assertPermission('monitoring/command/send-custom-notification');
         $this->setTitle($this->translate('Send Custom Notification'));
         $this->handleCommandForm(SendCustomNotificationCommandForm::class);
     }
