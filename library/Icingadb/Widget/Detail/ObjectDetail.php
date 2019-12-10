@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Application\Icinga;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -26,6 +27,8 @@ use Zend_View_Helper_Perfdata;
 
 class ObjectDetail extends BaseHtmlElement
 {
+    use Auth;
+
     protected $object;
 
     protected $objectType;
@@ -219,13 +222,18 @@ class ObjectDetail extends BaseHtmlElement
         $users = [];
         $usergroups = [];
 
-        foreach ($this->object->notification as $notification) {
-            foreach ($notification->user as $user) {
-                $users[$user->name] = $user;
-            }
+        if (
+            $this->getAuth()->hasPermission('*')
+            || ! $this->getAuth()->hasPermission('no-monitoring/contacts')
+        ) {
+            foreach ($this->object->notification as $notification) {
+                foreach ($notification->user as $user) {
+                    $users[$user->name] = $user;
+                }
 
-            foreach ($notification->usergroup as $usergroup) {
-                $usergroups[$usergroup->name] = $usergroup;
+                foreach ($notification->usergroup as $usergroup) {
+                    $usergroups[$usergroup->name] = $usergroup;
+                }
             }
         }
 

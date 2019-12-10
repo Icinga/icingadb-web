@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Icingadb
 {
+    use Icinga\Authentication\Auth;
+
     /** @var \Icinga\Application\Modules\Module $this */
     $section = $this->menuSection(N_('Icinga DB'), [
         'icon'     => 'database',
@@ -28,14 +30,19 @@ namespace Icinga\Module\Icingadb
         'url' => 'icingadb/notifications',
         'priority' => 50
     ]);
-    $section->add(N_('Users'), [
-        'url' => 'icingadb/users',
-        'priority' => 60
-    ]);
-    $section->add(N_('User Groups'), [
-        'url' => 'icingadb/usergroups',
-        'priority' => 70
-    ]);
+
+    $auth = Auth::getInstance();
+    if ($auth->hasPermission('*') || ! $auth->hasPermission('no-monitoring/contacts')) {
+        $section->add(N_('Users'), [
+            'url' => 'icingadb/users',
+            'priority' => 60
+        ]);
+        $section->add(N_('User Groups'), [
+            'url' => 'icingadb/usergroups',
+            'priority' => 70
+        ]);
+    }
+
     $section->add(N_('Host Groups'), [
         'url' => 'icingadb/hostgroups',
         'priority' => 80
