@@ -105,6 +105,15 @@ class QuickActions extends BaseHtmlElement
                 'Schedule the next active check at a different time than the current one'
             );
         }
+
+        if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
+            $this->assembleAction(
+                'processCheckresult',
+                'Process check result',
+                'icon-edit',
+                sprintf('Submit a one time or so called passive result for the %s check', $this->object->checkcommand)
+            );
+        }
     }
 
     protected function assembleAction($action, $label, $icon, $title)

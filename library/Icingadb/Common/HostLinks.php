@@ -67,6 +67,11 @@ abstract class HostLinks
         return Url::fromPath('icingadb/host/send-custom-notification', ['name' => $host->name]);
     }
 
+    public static function processCheckresult(Host $host)
+    {
+        return Url::fromPath('icingadb/host/process-checkresult', ['name' => $host->name]);
+    }
+
     public static function services(Host $host)
     {
         return Url::fromPath('icingadb/host/services', ['name' => $host->name]);

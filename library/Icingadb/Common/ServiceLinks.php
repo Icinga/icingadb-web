@@ -91,4 +91,11 @@ abstract class ServiceLinks
             'icingadb/service/send-custom-notification', ['name' => $service->name, 'host.name' => $host->name]
         );
     }
+
+    public static function processCheckresult(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'icingadb/service/process-checkresult', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
 }
