@@ -173,7 +173,7 @@ class Controller extends CompatController
                     $pos = strpos($sql, '?');
                     if ($pos !== false) {
                         if (is_string($value)) {
-                            $value = '"' . $value . '"';
+                            $value = "'" . $value . "'";
                         }
 
                         $sql = substr_replace($sql, $value, $pos, 1);
