@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter as WebDateFormatter;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLink;
@@ -19,6 +20,7 @@ use ipl\Web\Widget\Icon;
 
 class DowntimeDetail extends BaseHtmlElement
 {
+    use Auth;
     use HostLink;
     use ServiceLink;
 
@@ -242,6 +244,8 @@ class DowntimeDetail extends BaseHtmlElement
         $this->add(Html::tag('h2', 'Progress'));
         $this->add($this->createTimeline());
 
-        $this->add($this->createCancelDowntimeForm());
+        if ($this->getAuth()->hasPermission('monitoring/command/downtime/delete')) {
+            $this->add($this->createCancelDowntimeForm());
+        }
     }
 }

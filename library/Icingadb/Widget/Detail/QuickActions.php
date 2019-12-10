@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Model\Host;
@@ -14,6 +15,8 @@ use ipl\Html\HtmlString;
 
 class QuickActions extends BaseHtmlElement
 {
+    use Auth;
+
     /** @var Host|Service */
     protected $object;
 
@@ -30,13 +33,15 @@ class QuickActions extends BaseHtmlElement
     {
         if ($this->object->state->is_problem) {
             if ($this->object->state->is_acknowledged) {
-                $removeAckForm = (new RemoveAcknowledgementCommandForm())
-                    ->setAction($this->getLink('removeAcknowledgement'))
-                    ->setLabelEnabled(true)
-                    ->setObjects([true]);
+                if ($this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')) {
+                    $removeAckForm = (new RemoveAcknowledgementCommandForm())
+                        ->setAction($this->getLink('removeAcknowledgement'))
+                        ->setLabelEnabled(true)
+                        ->setObjects([true]);
 
-                $this->add(Html::tag('li', new HtmlString($removeAckForm->render())));
-            } else {
+                    $this->add(Html::tag('li', new HtmlString($removeAckForm->render())));
+                }
+            } elseif ($this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')) {
                 $this->assembleAction(
                     'acknowledge',
                     'Acknowledge',
@@ -46,31 +51,69 @@ class QuickActions extends BaseHtmlElement
             }
         }
 
-        $checkNowForm = (new CheckNowCommandForm())
-            ->setAction($this->getLink('checkNow'));
+        if (
+            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            || (
+                $this->object->active_checks_enabled
+                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+            )
+        ) {
+            $checkNowForm = (new CheckNowCommandForm())
+                ->setAction($this->getLink('checkNow'));
 
-        $this->add(Html::tag('li', new HtmlString($checkNowForm->render())));
+            $this->add(Html::tag('li', new HtmlString($checkNowForm->render())));
+        }
 
-        $this->assembleAction(
-            'addComment',
-            'Comment',
-            'icon-comment-empty',
-            'Add a new comment'
-        );
+        if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
+            $this->assembleAction(
+                'addComment',
+                'Comment',
+                'icon-comment-empty',
+                'Add a new comment'
+            );
+        }
 
-        $this->assembleAction(
-            'sendCustomNotification',
-            'Notification',
-            'icon-bell',
-            'Send a custom notification'
-        );
+        if ($this->getAuth()->hasPermission('monitoring/command/send-custom-notification')) {
+            $this->assembleAction(
+                'sendCustomNotification',
+                'Notification',
+                'icon-bell',
+                'Send a custom notification'
+            );
+        }
 
-        $this->assembleAction(
-            'scheduleDowntime',
-            'Downtime',
-            'icon-plug',
-            'Schedule a downtime to suppress all problem notifications within a specific period of time'
-        );
+        if ($this->getAuth()->hasPermission('monitoring/command/downtime/schedule')) {
+            $this->assembleAction(
+                'scheduleDowntime',
+                'Downtime',
+                'icon-plug',
+                'Schedule a downtime to suppress all problem notifications within a specific period of time'
+            );
+        }
+
+        if (
+            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            || (
+                $this->object->active_checks_enabled
+                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+            )
+        ) {
+            $this->assembleAction(
+                'scheduleCheck',
+                'Reschedule',
+                'icon-calendar-empty',
+                'Schedule the next active check at a different time than the current one'
+            );
+        }
+
+        if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
+            $this->assembleAction(
+                'processCheckresult',
+                'Process check result',
+                'icon-edit',
+                sprintf('Submit a one time or so called passive result for the %s check', $this->object->checkcommand)
+            );
+        }
     }
 
     protected function assembleAction($action, $label, $icon, $title)
