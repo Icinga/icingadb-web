@@ -73,8 +73,7 @@ class CustomVarTable extends BaseHtmlElement
     protected function assemble()
     {
         foreach ($this->data as $customvar) {
-            $value = json_decode($customvar->value);
-            $this->renderVar($customvar->name, $value !== null ? $value : $customvar->value);
+            $this->renderVar($customvar->name, $customvar->value);
         }
     }
 }
