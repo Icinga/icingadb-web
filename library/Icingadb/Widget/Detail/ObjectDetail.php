@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
@@ -18,6 +19,7 @@ use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
+use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -80,6 +82,13 @@ class ObjectDetail extends BaseHtmlElement
         $vars = $this->object->customvar->execute();
 
         if ($vars->hasResult()) {
+            $vars = new CustomvarFilter(
+                $vars,
+                $this->objectType,
+                $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
+                Config::module('monitoring')->get('security', 'protected_customvars', '')
+            );
+
             $content[] = new CustomVarTable($vars);
         } else {
             $content[] = new EmptyState('No custom variables configured.');
