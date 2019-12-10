@@ -29,6 +29,13 @@ abstract class ServiceLinks
         );
     }
 
+    public static function scheduleCheck(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'icingadb/service/schedule-check', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
+
     public static function cancelDowntime(Service $service, Host $host)
     {
         return Url::fromPath(

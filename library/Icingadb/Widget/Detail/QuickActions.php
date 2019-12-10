@@ -90,6 +90,21 @@ class QuickActions extends BaseHtmlElement
                 'Schedule a downtime to suppress all problem notifications within a specific period of time'
             );
         }
+
+        if (
+            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            || (
+                $this->object->active_checks_enabled
+                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+            )
+        ) {
+            $this->assembleAction(
+                'scheduleCheck',
+                'Reschedule',
+                'icon-calendar-empty',
+                'Schedule the next active check at a different time than the current one'
+            );
+        }
     }
 
     protected function assembleAction($action, $label, $icon, $title)
