@@ -98,4 +98,11 @@ abstract class ServiceLinks
             'icingadb/service/process-checkresult', ['name' => $service->name, 'host.name' => $host->name]
         );
     }
+
+    public static function toggleFeatures(Service $service, Host $host)
+    {
+        return Url::fromPath(
+            'icingadb/service/toggle-features', ['name' => $service->name, 'host.name' => $host->name]
+        );
+    }
 }
