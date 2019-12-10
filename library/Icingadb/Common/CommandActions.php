@@ -190,6 +190,7 @@ trait CommandActions
                 $this->handleCommandForm(ScheduleHostCheckCommandForm::class);
                 break;
             case 'service':
+                $this->setTitle($this->translate('Reschedule Service Check'));
                 $this->handleCommandForm(ScheduleServiceCheckCommandForm::class);
                 break;
         }
