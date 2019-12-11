@@ -25,6 +25,21 @@ class DowntimesController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($downtimes);
+        $sortControl = $this->createSortControl(
+            $downtimes,
+            [
+                'downtime.is_in_effect, downtime.start_time desc' => $this->translate('Is In Effect'),
+                'downtime.entry_time'                             => $this->translate('Entry Time'),
+                'host.display_name, service.display_name'         => $this->translate('Host'),
+                'service.display_name, host.display_name'         => $this->translate('Service'),
+                'downtime.author'                                 => $this->translate('Author'),
+                'downtime.start_time desc'                        => $this->translate('Start Time'),
+                'downtime.end_time desc'                          => $this->translate('End Time'),
+                'downtime.scheduled_start_time desc'              => $this->translate('Scheduled Start Time'),
+                'downtime.scheduled_end_time desc'                => $this->translate('Scheduled End Time'),
+                'downtime.duration desc'                          => $this->translate('Duration')
+            ]
+        );
         $filterControl = $this->createFilterControl($downtimes);
 
         $this->filter($downtimes);
@@ -32,6 +47,7 @@ class DowntimesController extends Controller
         yield $this->export($downtimes);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
