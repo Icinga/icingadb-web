@@ -28,6 +28,12 @@ class UsergroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($usergroups);
+        $sortControl = $this->createSortControl(
+            $usergroups,
+            [
+                'usergroup.display_name' => $this->translate('Name')
+            ]
+        );
         $filterControl = $this->createFilterControl($usergroups);
 
         $this->filter($usergroups);
@@ -35,6 +41,7 @@ class UsergroupsController extends Controller
         yield $this->export($usergroups);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
