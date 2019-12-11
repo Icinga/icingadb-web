@@ -2,7 +2,9 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
-class CompatHost extends CompatObject
+use Icinga\Module\Monitoring\Object\Host;
+
+class CompatHost extends Host
 {
-    protected $type = self::TYPE_HOST;
+    use CompatObject;
 }

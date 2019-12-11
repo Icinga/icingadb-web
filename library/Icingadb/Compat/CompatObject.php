@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use ipl\Orm\Model;
 use function ipl\Stdlib\get_php_type;
 
-abstract class CompatObject extends MonitoredObject
+trait CompatObject
 {
     private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
 

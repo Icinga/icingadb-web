@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
-class CompatService extends CompatObject
+use Icinga\Module\Monitoring\Object\Service;
+
+class CompatService extends Service
 {
-    protected $type = self::TYPE_SERVICE;
+    use CompatObject;
 
     /**
      * Get this service's host
@@ -13,6 +15,6 @@ class CompatService extends CompatObject
      */
     public function getHost()
     {
-        return new CompatHost($this->host);
+        return new CompatHost($this->object->host);
     }
 }
