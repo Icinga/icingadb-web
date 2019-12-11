@@ -28,6 +28,14 @@ class UsersController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($users);
+        $sortControl = $this->createSortControl(
+            $users,
+            [
+                'user.display_name' => $this->translate('Name'),
+                'user.email'        => $this->translate('Email'),
+                'user.pager'        => $this->translate('Pager Address / Number')
+            ]
+        );
         $filterControl = $this->createFilterControl($users);
 
         $this->filter($users);
@@ -35,6 +43,7 @@ class UsersController extends Controller
         yield $this->export($users);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
