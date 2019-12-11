@@ -36,12 +36,13 @@ class ConfigController extends Controller
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('command-transports'));
 
-        $this->addControl(new ButtonLink(
-            $this->translate('Create Command Transport'),
-            'icingadb/config/create-command-transport',
-            'plus',
-            ['data-base-target' => '_next']
-        ));
+        $this->addControl(
+            (new ButtonLink(
+                $this->translate('Create Command Transport'),
+                'icingadb/config/create-command-transport',
+                'plus'
+            ))->setBaseTarget('_next')
+        );
 
         $this->addFormToContent($form);
     }
