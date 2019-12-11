@@ -28,7 +28,7 @@ class NotificationsController extends Controller
         $sortControl = $this->createSortControl(
             $notifications,
             [
-                'notification.send_time desc' => $this->translate('Send Time')
+                'notification_history.send_time desc' => $this->translate('Send Time')
             ]
         );
         $filterControl = $this->createFilterControl($notifications);
