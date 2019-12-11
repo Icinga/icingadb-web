@@ -79,7 +79,7 @@ class UrlMigrator
         return $rewritten === false ? false : ($rewritten instanceof Filter ? $rewritten : $filter);
     }
 
-    protected function rewrite(Filter $filter, array $legacyColumns)
+    protected function rewrite(Filter $filter, array $legacyColumns, $parent = null)
     {
         $rewritten = null;
         if ($filter->isExpression()) {
@@ -118,14 +118,38 @@ class UrlMigrator
                         return $rewritten;
                     }
 
-                    $rewritten = $filter->setExpression(key($legacyColumns[$column]));
+                    $column = key($legacyColumns[$column]);
+
+                    $rewritten = $filter->setExpression($column);
                 }
+
+                if ($parent !== null) {
+                    foreach ($parent->filters() as $child) {
+                        if ($child->isExpression() && $child->getColumn() === 'dir') {
+                            $dir = $child->getExpression();
+
+                            $rewritten = $filter->setExpression("{$column} {$dir}");
+
+                            $parent->removeId($child->getId());
+                        }
+                    }
+                }
+            } elseif ($column === 'dir') {
+                if ($parent !== null) {
+                    foreach ($parent->filters() as $child) {
+                        if ($child->isExpression() && $child->getColumn() === 'sort') {
+                            return null;
+                        }
+                    }
+                }
+
+                return false;
             } elseif (preg_match('/^_(host|service)_([\w.]+)/i', $column, $groups)) {
                 $rewritten = $filter->setColumn($groups[1] . '.vars.' . $groups[2]);
             }
         } else {
             foreach ($filter->filters() as $child) {
-                $retVal = $this->rewrite($child->isExpression() ? clone $child : $child, $legacyColumns);
+                $retVal = $this->rewrite($child->isExpression() ? clone $child : $child, $legacyColumns, $filter);
                 if ($retVal === false) {
                     $filter->removeId($child->getId());
                 } elseif ($retVal instanceof Filter) {
@@ -677,6 +701,9 @@ class UrlMigrator
         return [
 
             // Query columns
+            'hostgroup_alias' => [
+                'display_name' => self::USE_EXPR
+            ],
             'hosts_severity' => self::SORT_ONLY,
             'hosts_total' => self::SORT_ONLY,
             'services_total' => self::SORT_ONLY,
@@ -698,6 +725,9 @@ class UrlMigrator
             // Query columns
             'services_severity' => self::SORT_ONLY,
             'services_total' => self::SORT_ONLY,
+            'servicegroup_alias' => [
+                'display_name' => self::USE_EXPR
+            ],
 
             // Filter columns
             'host_contact' => [

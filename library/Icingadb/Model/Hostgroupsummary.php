@@ -87,9 +87,9 @@ class Hostgroupsummary extends UnionModel
         return ['display_name'];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['display_name'];
+        return 'display_name';
     }
 
     public function getUnions()

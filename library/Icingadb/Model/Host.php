@@ -72,9 +72,9 @@ class Host extends Model
         return ['name_ci'];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['display_name'];
+        return 'display_name';
     }
 
     public function createBehaviors(Behaviors $behaviors)

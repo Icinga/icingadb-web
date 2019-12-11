@@ -38,9 +38,9 @@ class History extends Model
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['event_time DESC'];
+        return 'history.event_time desc';
     }
 
     public function createBehaviors(Behaviors $behaviors)

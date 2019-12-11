@@ -29,6 +29,12 @@ class HistoryController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
+        $sortControl = $this->createSortControl(
+            $history,
+            [
+                'history.event_time desc' => $this->translate('Event Time')
+            ]
+        );
         $filterControl = $this->createFilterControl($history);
 
         $this->filter($history);
@@ -36,6 +42,7 @@ class HistoryController extends Controller
         yield $this->export($history);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 

@@ -20,6 +20,15 @@ class HostsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);
+        $sortControl = $this->createSortControl(
+            $hosts,
+            [
+                'host.display_name'                 => $this->translate('Name'),
+                'host.state.severity desc'          => $this->translate('Severity'),
+                'host.state.soft_state'             => $this->translate('Current State'),
+                'host.state.last_state_change desc' => $this->translate('Last State Change')
+            ]
+        );
         $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($hosts);
 
@@ -32,6 +41,7 @@ class HostsController extends Controller
         yield $this->export($hosts, $summary);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);

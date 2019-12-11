@@ -18,6 +18,14 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
+        $sortControl = $this->createSortControl(
+            $servicegroups,
+            [
+                'display_name'           => $this->translate('Name'),
+                'services_severity desc' => $this->translate('Severity'),
+                'services_total desc'    => $this->translate('Total Services')
+            ]
+        );
         $filterControl = $this->createFilterControl($servicegroups);
 
         $this->filter($servicegroups);
@@ -25,6 +33,7 @@ class ServicegroupsController extends Controller
         yield $this->export($servicegroups);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 

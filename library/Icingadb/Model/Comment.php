@@ -42,9 +42,9 @@ class Comment extends Model
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['entry_time DESC'];
+        return 'comment.entry_time desc';
     }
 
     public function createBehaviors(Behaviors $behaviors)

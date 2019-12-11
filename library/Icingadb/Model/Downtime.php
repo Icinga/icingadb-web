@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
+use ipl\Sql\Expression;
 
 class Downtime extends Model
 {
@@ -41,13 +42,17 @@ class Downtime extends Model
             'is_in_effect',
             'start_time',
             'end_time',
-            'zone_id'
+            'zone_id',
+            'duration' => new Expression(
+                'CASE WHEN is_flexible = \'y\' THEN flexible_duration ELSE'
+                . ' scheduled_end_time - scheduled_start_time END'
+            )
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['is_in_effect, start_time DESC'];
+        return ['downtime.is_in_effect', 'downtime.start_time desc'];
     }
 
     public function createBehaviors(Behaviors $behaviors)

@@ -25,6 +25,12 @@ class NotificationsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
+        $sortControl = $this->createSortControl(
+            $notifications,
+            [
+                'notification.send_time desc' => $this->translate('Send Time')
+            ]
+        );
         $filterControl = $this->createFilterControl($notifications);
 
         $this->filter($notifications);
@@ -32,6 +38,7 @@ class NotificationsController extends Controller
         yield $this->export($notifications);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
