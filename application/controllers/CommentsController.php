@@ -25,6 +25,16 @@ class CommentsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($comments);
+        $sortControl = $this->createSortControl(
+            $comments,
+            [
+                'comment.entry_time desc'                 => $this->translate('Entry Time'),
+                'host.display_name, service.display_name' => $this->translate('Host'),
+                'service.display_name, host.display_name' => $this->translate('Service'),
+                'comment.author'                          => $this->translate('Author'),
+                'comment.expire_time desc'                => $this->translate('Expire Time')
+            ]
+        );
         $filterControl = $this->createFilterControl($comments);
 
         $this->filter($comments);
@@ -32,6 +42,7 @@ class CommentsController extends Controller
         yield $this->export($comments);
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
