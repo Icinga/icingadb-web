@@ -301,3 +301,25 @@
     color: white;
   }
 }
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .25em 1em;
+  box-shadow: 0 -1px 0 0px @gray-lighter;
+  font-size: .857em;
+  z-index: 1000;
+  line-height: 1.7;
+
+  .item-count {
+    margin-left: auto;
+    font-size: 1.25em;
+    color: @gray;
+  }
+
+  .state-badges {
+    margin: 0;
+    margin-left: .417em;
+  }
+}

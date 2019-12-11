@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostList;
+use Icinga\Module\Icingadb\Widget\HostStatusBar;
 
 class HostsController extends Controller
 {
@@ -47,6 +48,10 @@ class HostsController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent($hostList);
+
+        $this->addFooter(
+            (new HostStatusBar($summary->first()))->setBaseFilter($this->getFilter())
+        );
 
         $this->setAutorefreshInterval(10);
     }
