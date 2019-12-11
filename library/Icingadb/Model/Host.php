@@ -74,7 +74,7 @@ class Host extends Model
 
     public function getDefaultSort()
     {
-        return 'display_name';
+        return 'host.display_name';
     }
 
     public function createBehaviors(Behaviors $behaviors)
