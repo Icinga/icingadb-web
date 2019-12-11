@@ -43,5 +43,7 @@ class UsergroupController extends Controller
         $this->addControl(new UsergroupList([$this->usergroup]));
 
         $this->addContent(new UserList($this->usergroup->user));
+
+        $this->setAutorefreshInterval(10);
     }
 }

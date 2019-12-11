@@ -36,5 +36,7 @@ class NotificationsController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent(new NotificationList($notifications));
+
+        $this->setAutorefreshInterval(10);
     }
 }

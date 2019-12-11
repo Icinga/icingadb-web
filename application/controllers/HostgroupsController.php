@@ -31,5 +31,7 @@ class HostgroupsController extends Controller
         $this->addContent(
             (new HostgroupList($hostgroups))->setBaseFilter($this->getFilter())
         );
+
+        $this->setAutorefreshInterval(30);
     }
 }

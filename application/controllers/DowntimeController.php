@@ -44,6 +44,8 @@ class DowntimeController extends Controller
         $this->addControl($downtimeDetail->getControl());
 
         $this->addContent($downtimeDetail);
+
+        $this->setAutorefreshInterval(10);
     }
 
     protected function fetchCommandTargets()

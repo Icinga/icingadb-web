@@ -39,5 +39,7 @@ class UsergroupsController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent(new UsergroupList($usergroups));
+
+        $this->setAutorefreshInterval(10);
     }
 }

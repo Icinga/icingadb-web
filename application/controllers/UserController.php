@@ -61,5 +61,7 @@ class UserController extends Controller
                 )
             ])
         ]));
+
+        $this->setAutorefreshInterval(10);
     }
 }

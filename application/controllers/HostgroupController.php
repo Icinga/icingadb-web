@@ -68,5 +68,7 @@ class HostgroupController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent($hostList);
+
+        $this->setAutorefreshInterval(10);
     }
 }
