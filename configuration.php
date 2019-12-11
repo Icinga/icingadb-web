@@ -11,12 +11,14 @@ namespace Icinga\Module\Icingadb
     ]);
 
     $section->add(N_('Hosts'), [
-        'url' => 'icingadb/hosts',
-        'priority' => 10
+        'priority' => 10,
+        'renderer' => 'HostProblemsBadge',
+        'url'      => 'icingadb/hosts'
     ]);
     $section->add(N_('Services'), [
-        'url' => 'icingadb/services',
-        'priority' => 20
+        'priority' => 20,
+        'renderer' => 'ServiceProblemsBadge',
+        'url'      => 'icingadb/services'
     ]);
     $section->add(N_('Downtimes'), [
         'url' => 'icingadb/downtimes',

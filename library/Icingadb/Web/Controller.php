@@ -5,7 +5,7 @@ namespace Icinga\Module\Icingadb\Web;
 use Generator;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
-use Icinga\Data\ResourceFactory;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
@@ -16,20 +16,16 @@ use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
-use ipl\Sql\Config;
-use ipl\Sql\Connection;
 use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
-use PDO;
 
 class Controller extends CompatController
 {
-    /** @var Connection Connection to the Icinga database */
-    private $db;
+    use Database;
 
     /** @var Filter Filter from query string parameters */
     private $filter;
@@ -39,32 +35,6 @@ class Controller extends CompatController
 
     /** @var \Redis Connection to the Icinga Redis */
     private $redis;
-
-    /**
-     * Get the connection to the Icinga database
-     *
-     * @return Connection
-     *
-     * @throws \Icinga\Exception\ConfigurationError If the related resource configuration does not exist
-     */
-    public function getDb()
-    {
-        if ($this->db === null) {
-            $config = new Config(ResourceFactory::getResourceConfig(
-                $this->Config()->get('icingadb', 'resource', 'icingadb')
-            ));
-
-            $config->options = [
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET SESSION SQL_MODE='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE"
-                    . ",ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'"
-            ];
-
-            $this->db = new Connection($config);
-        }
-
-        return $this->db;
-    }
 
     /**
      * Get the filter created from query string parameters
