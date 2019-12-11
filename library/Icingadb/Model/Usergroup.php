@@ -32,9 +32,9 @@ class Usergroup extends Model
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['display_name'];
+        return 'usergroup.display_name';
     }
 
     public function createBehaviors(Behaviors $behaviors)
