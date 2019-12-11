@@ -50,9 +50,9 @@ class Downtime extends Model
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['is_in_effect, start_time DESC'];
+        return ['downtime.is_in_effect', 'downtime.start_time desc'];
     }
 
     public function createBehaviors(Behaviors $behaviors)
