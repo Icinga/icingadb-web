@@ -43,6 +43,15 @@ class HistoryListItem extends CommonListItem
                 ]);
 
                 break;
+            case 'flapping_start':
+            case 'flapping_end':
+                $caption
+                    ->add('Low Threshold: ' . $this->item->host->flapping_threshold_low .
+                        ', High Threshold: ' . $this->item->host->flapping_threshold_high)
+                    ->getAttributes()
+                    ->add('class', 'plugin-output');
+
+                break;
             case 'ack_clear':
                 if (! empty($this->item->acknowledgement->cleared_by)) {
                     $caption->add([
@@ -112,6 +121,13 @@ class HistoryListItem extends CommonListItem
             case 'ack_set':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
+                );
+
+                break;
+            case 'flapping_end':
+            case 'flapping_start':
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
                 );
 
                 break;
