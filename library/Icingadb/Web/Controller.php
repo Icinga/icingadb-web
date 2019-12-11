@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Widget\FilterControl;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
+use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Sql\Config;
@@ -21,6 +22,7 @@ use ipl\Stdlib\Contract\PaginationInterface;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use PDO;
 
@@ -129,6 +131,41 @@ class Controller extends CompatController
         $this->params->shift($paginationControl->getPageSizeParam());
 
         return $paginationControl;
+    }
+
+    /**
+     * Create and return the SortControl
+     *
+     * This automatically shifts the sort URL parameter from {@link $params}.
+     *
+     * @param Query $query
+     * @param array $columns Possible sort columns as sort string-label pairs
+     *
+     * @return SortControl
+     */
+    public function createSortControl(Query $query, array $columns)
+    {
+        $default = (array) $query->getModel()->getDefaultSort();
+        $normalized = [];
+        foreach ($columns as $key => $value) {
+            $normalized[SortUtil::normalizeSortSpec($key)] = $value;
+        }
+        $sortControl = (new SortControl(Url::fromRequest()))
+            ->setColumns($normalized);
+
+        if (! empty($default)) {
+            $sortControl->setDefault(SortUtil::normalizeSortSpec($default));
+        }
+
+        $sort = $sortControl->getSort();
+
+        if (! empty($sort)) {
+            $query->orderBy(SortUtil::createOrderBy($sort));
+        }
+
+        $this->params->shift($sortControl->getSortParam());
+
+        return $sortControl;
     }
 
     /**
