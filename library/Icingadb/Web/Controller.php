@@ -8,9 +8,11 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\ResourceFactory;
 use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
+use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\FilterControl;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Html\Html;
+use ipl\Html\ValidHtml;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Sql\Config;
@@ -222,6 +224,15 @@ class Controller extends CompatController
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
         $this->_helper->notifyPostDispatch();
+    }
+
+    protected function addContent(ValidHtml $content)
+    {
+        if ($content instanceof BaseItemList) {
+            $this->content->getAttributes()->add('class', 'full-width');
+        }
+
+        return parent::addContent($content);
     }
 
     public function filter(Query $query)

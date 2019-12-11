@@ -16,8 +16,6 @@
 .list-item {
   color: @text-color-light;
   display: flex;
-  margin: 0 -1em;
-  padding: 0 1em;
 
   &.active {
     background-color: fade(@icinga-blue, 10);
@@ -107,6 +105,10 @@
   .badge {
     margin-left: .417em;
   }
+}
+
+.content.full-width .list-item {
+  padding: 0 1em;
 }
 
 .common .list-item {
@@ -312,6 +314,20 @@
 
   .list-item > *:not(.visual) {
     padding: .5em 0;
+  }
+
+  .list-item > .visual {
+    display: table-cell;
+    padding: .5em 1em 0 0;
+  }
+}
+
+.content.full-width .item-table .list-item {
+  // The .list-item itself can't have padding because of `display:table-row`
+  &:before, &:after {
+    display: inline-block;
+    content: '\00a0';
+    width: 1em;
   }
 }
 
