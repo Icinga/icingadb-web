@@ -24,6 +24,16 @@ class ServicesController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
+        $sortControl = $this->createSortControl(
+            $services,
+            [
+                'service.display_name, host.display_name' => $this->translate('Name'),
+                'service.state.severity desc'             => $this->translate('Severity'),
+                'service.state.soft_state'                => $this->translate('Current State'),
+                'service.state.last_state_change desc'    => $this->translate('Last State Change'),
+                'host.display_name, service.display_name' => $this->translate('Host')
+            ]
+        );
         $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($services);
 
@@ -36,6 +46,7 @@ class ServicesController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl($paginationControl);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
