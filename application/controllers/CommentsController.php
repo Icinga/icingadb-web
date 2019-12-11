@@ -36,5 +36,7 @@ class CommentsController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent(new CommentList($comments));
+
+        $this->setAutorefreshInterval(10);
     }
 }

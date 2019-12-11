@@ -72,6 +72,8 @@ class ServiceController extends Controller
         $this->addControl(new QuickActions($this->service));
 
         $this->addContent(new ObjectDetail($this->service));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function commentsAction()
@@ -91,6 +93,8 @@ class ServiceController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent(new CommentList($comments));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function downtimesAction()
@@ -110,6 +114,8 @@ class ServiceController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent(new DowntimeList($downtimes));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function historyAction()

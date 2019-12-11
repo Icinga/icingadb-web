@@ -59,5 +59,7 @@ class CommentController extends Controller
 
         $this->addControl($detail->getControl());
         $this->addContent($detail);
+
+        $this->setAutorefreshInterval(10);
     }
 }

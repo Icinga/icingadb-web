@@ -41,5 +41,7 @@ class ServicesController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent($serviceList);
+
+        $this->setAutorefreshInterval(10);
     }
 }

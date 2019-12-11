@@ -36,5 +36,7 @@ class DowntimesController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent(new DowntimeList($downtimes));
+
+        $this->setAutorefreshInterval(10);
     }
 }

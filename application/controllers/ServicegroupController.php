@@ -38,6 +38,7 @@ class ServicegroupController extends Controller
 
         $this->servicegroup = $servicegroup;
     }
+
     public function indexAction()
     {
         $this->addControl((new ServicegroupList([$this->servicegroup])));
@@ -71,5 +72,7 @@ class ServicegroupController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent($serviceList);
+
+        $this->setAutorefreshInterval(10);
     }
 }

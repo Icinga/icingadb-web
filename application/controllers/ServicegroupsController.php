@@ -31,5 +31,7 @@ class ServicegroupsController extends Controller
         $this->addContent(
             (new ServicegroupList($servicegroups))->setBaseFilter($this->getFilter())
         );
+
+        $this->setAutorefreshInterval(30);
     }
 }

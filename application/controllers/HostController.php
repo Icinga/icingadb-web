@@ -61,10 +61,13 @@ class HostController extends Controller
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
+
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new ObjectDetail($this->host));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function commentsAction()
@@ -84,6 +87,8 @@ class HostController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent(new CommentList($comments));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function downtimesAction()
@@ -103,6 +108,8 @@ class HostController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent(new DowntimeList($downtimes));
+
+        $this->setAutorefreshInterval(10);
     }
 
     public function historyAction()
@@ -110,6 +117,7 @@ class HostController extends Controller
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
+
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
@@ -146,6 +154,7 @@ class HostController extends Controller
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
+
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
@@ -176,6 +185,8 @@ class HostController extends Controller
         $this->addControl($limitControl);
 
         $this->addContent($serviceList);
+
+        $this->setAutorefreshInterval(10);
     }
 
     protected function createTabs()

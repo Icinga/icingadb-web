@@ -37,5 +37,7 @@ class HostsController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent($hostList);
+
+        $this->setAutorefreshInterval(10);
     }
 }

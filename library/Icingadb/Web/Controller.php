@@ -264,6 +264,8 @@ class Controller extends CompatController
 
     public function preDispatch()
     {
+        parent::preDispatch();
+
         $this->format = $this->params->shift('format');
     }
 

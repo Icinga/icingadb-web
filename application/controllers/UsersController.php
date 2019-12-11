@@ -39,5 +39,7 @@ class UsersController extends Controller
         $this->addControl($filterControl);
 
         $this->addContent(new UserList($users));
+
+        $this->setAutorefreshInterval(10);
     }
 }
