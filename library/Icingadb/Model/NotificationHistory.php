@@ -39,9 +39,9 @@ class NotificationHistory extends Model
         ];
     }
 
-    public function getSortRules()
+    public function getDefaultSort()
     {
-        return ['send_time DESC'];
+        return 'send_time desc';
     }
 
     public function createBehaviors(Behaviors $behaviors)
