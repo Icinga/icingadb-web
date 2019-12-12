@@ -2,28 +2,22 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use Icinga\Application\Config;
+use Exception;
+use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Redis\VolatileState as RedisState;
 use ipl\Orm\Contract\RetrieveBehavior;
 use ipl\Orm\Model;
-use Redis;
 
 class VolatileState implements RetrieveBehavior
 {
+    use IcingaRedis;
+
     protected $state;
 
     protected function getVolatileState()
     {
         if ($this->state === null) {
-            // TODO(jmeyer): Use a service provider here. (Or something similar)
-            $config = Config::module('icingadb')->getSection('redis');
-            $redis = new Redis();
-            $redis->connect(
-                $config->get('host', 'redis'),
-                $config->get('port', 6380)
-            );
-
-            $this->state = new RedisState($redis);
+            $this->state = new RedisState($this->getIcingaRedis());
         }
 
         return $this->state;
@@ -31,6 +25,10 @@ class VolatileState implements RetrieveBehavior
 
     public function retrieve(Model $model)
     {
-        $this->getVolatileState()->fetch($model);
+        try {
+            $this->getVolatileState()->fetch($model);
+        } catch (Exception $e) {
+            // Pass
+        }
     }
 }
