@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -23,11 +24,14 @@ class DowntimeDetail extends BaseHtmlElement
     use HostLink;
     use ServiceLink;
 
-    /** @var  BaseHtmlElement */
+    /** @var BaseHtmlElement */
     protected $control;
 
     /** @var Downtime */
     protected $downtime;
+
+    /** @var int */
+    protected $duration;
 
     /** @var string */
     protected $endTime;
@@ -69,9 +73,8 @@ class DowntimeDetail extends BaseHtmlElement
         $formData = [
             'downtime_id'   => $this->downtime->name,
             'downtime_name' => $this->downtime->name,
-            'redirect'     => '__BACK__'
+            'redirect'      => '__BACK__'
         ];
-
 
         if ($this->downtime->object_type === 'host') {
             $action = HostLinks::cancelDowntime($this->downtime->host);
@@ -96,25 +99,7 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected function createTimeline()
     {
-        $ref = floor(
-            (float) (time() - $this->startTime)
-            / (float) ($this->endTime- $this->startTime)
-            * 100
-        );
-
-        $timeline = Html::tag('div', ['class' => 'downtime-timeline']);
-
-        $progress = Html::tag(
-            'div',
-            [
-                'class' => 'progress-bar',
-                'style' => 'width: ' . $ref . '%'
-            ]
-        );
-
-        $timeline->add($progress);
-
-        return $timeline;
+        return new DowntimeCard($this->downtime);
     }
 
     protected function assemble()
@@ -137,18 +122,23 @@ class DowntimeDetail extends BaseHtmlElement
         );
         $this->add(
             new HorizontalKeyValue('End time', WebDateFormatter::formatDateTime($this->downtime->end_time)));
-        $this->add(
-            new HorizontalKeyValue(
-                'Scheduled Start',
-                WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
+        $this->add(new HorizontalKeyValue(
+            'Scheduled Start', WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
+        ));
+        $this->add(new HorizontalKeyValue(
+            'Scheduled End', WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
+        ));
+        $this->add(new HorizontalKeyValue(
+            'Scheduled Duration',
+            DateFormatter::formatDuration(
+                $this->downtime->scheduled_end_time - $this->downtime->scheduled_start_time
             )
-        );
-        $this->add(
-            new HorizontalKeyValue(
-                'Scheduled End',
-                WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
-            )
-        );
+        ));
+        if ($this->downtime->is_flexible) {
+            $this->add(new HorizontalKeyValue(
+                'Flexible Duration', DateFormatter::formatDuration($this->downtime->flexible_duration)
+            ));
+        }
 
         $this->add(Html::tag('h2', 'Progress'));
         $this->add($this->createTimeline());
