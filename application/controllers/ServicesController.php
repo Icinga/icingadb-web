@@ -21,7 +21,11 @@ class ServicesController extends Controller
             'host',
             'host.state'
         ]);
-        $summary = ServicestateSummary::on($db)->with('state');
+
+        $summary = null;
+        if (! $this->view->compact) {
+            $summary = ServicestateSummary::on($db)->with('state');
+        }
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
@@ -39,9 +43,12 @@ class ServicesController extends Controller
         $filterControl = $this->createFilterControl($services);
 
         $this->filter($services);
-        $this->filter($summary);
-
-        yield $this->export($services, $summary);
+        if (isset($summary)) {
+            $this->filter($summary);
+            yield $this->export($services, $summary);
+        } else {
+            yield $this->export($services);
+        }
 
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
@@ -54,9 +61,11 @@ class ServicesController extends Controller
 
         $this->addContent($serviceList);
 
-        $this->addFooter(
-            (new ServiceStatusBar($summary->first()))->setBaseFilter($this->getFilter())
-        );
+        if (isset($summary)) {
+            $this->addFooter(
+                (new ServiceStatusBar($summary->first()))->setBaseFilter($this->getFilter())
+            );
+        }
 
         $this->setAutorefreshInterval(10);
     }
