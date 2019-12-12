@@ -17,7 +17,11 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
-        $summary = HoststateSummary::on($db)->with('state');
+
+        $summary = null;
+        if (! $this->view->compact) {
+            $summary = HoststateSummary::on($db)->with('state');
+        }
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);
@@ -37,9 +41,12 @@ class HostsController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->filter($hosts);
-        $this->filter($summary);
-
-        yield $this->export($hosts, $summary);
+        if (isset($summary)) {
+            $this->filter($summary);
+            yield $this->export($hosts, $summary);
+        } else {
+            yield $this->export($hosts);
+        }
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
@@ -49,9 +56,11 @@ class HostsController extends Controller
 
         $this->addContent($hostList);
 
-        $this->addFooter(
-            (new HostStatusBar($summary->first()))->setBaseFilter($this->getFilter())
-        );
+        if (isset($summary)) {
+            $this->addFooter(
+                (new HostStatusBar($summary->first()))->setBaseFilter($this->getFilter())
+            );
+        }
 
         $this->setAutorefreshInterval(10);
     }
