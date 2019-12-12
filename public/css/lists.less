@@ -48,19 +48,6 @@
     border-bottom: 1px solid @gray-light;
   }
 
-  &.page-separator {
-    padding: 1em;
-
-    .main {
-      height: 5em;
-      border-color: @black;
-
-      a {
-        font-size: 1.2em;
-      }
-    }
-  }
-
   .visual {
     display: flex;
     align-items: center;
@@ -350,4 +337,31 @@
     height: 2.25em;
     width:  2.25em;
   }
+}
+
+.page-separator {
+  padding: 2em 1em;
+  display: flex;
+
+  a {
+    color: @gray;
+    margin-right: .5em;
+    font-weight: bold;
+    font-size: .857em;
+  }
+
+  hr {
+    flex: 1 1 auto;
+    border-top: 1px solid @gray-lighter;
+    .appearance(none);
+  }
+}
+
+.item-list + .action-link {
+  display: block;
+  background: @gray-lighter;
+  text-align: center;
+  margin: 0 1em;
+  .rounded-corners();
+  padding: .25em;
 }
