@@ -5,6 +5,8 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
 
 class HistoryController extends Controller
 {
@@ -27,8 +29,12 @@ class HistoryController extends Controller
             'state'
         ]);
 
+        $url = Url::fromRequest();
+        if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
+            $page = 1;
+        }
+
         $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
             $history,
             [
@@ -37,15 +43,22 @@ class HistoryController extends Controller
         );
         $filterControl = $this->createFilterControl($history);
 
+        $history->limit($limitControl->getLimit() * $page);
         $this->filter($history);
 
         yield $this->export($history);
 
-        $this->addControl($paginationControl);
+        $showMore = new ShowMore(
+            $history->peekAhead()->execute(),
+            (clone $url)->setParam('page', $page + 1)
+                ->setAnchor('page-' . ($page + 1))
+        );
+
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent(new HistoryList($history));
+        $this->addContent((new HistoryList($history))->setPageSize($limitControl->getLimit()));
+        $this->addContent($showMore);
     }
 }
