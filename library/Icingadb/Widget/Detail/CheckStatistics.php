@@ -27,34 +27,91 @@ class CheckStatistics extends Card
 
     protected function assembleBody(BaseHtmlElement $body)
     {
-        $lastUpdate = Html::tag(
-            'li', new VerticalKeyValue('Last update', new TimeAgo($this->object->state->last_update))
-        );
-        $nextCheck = Html::tag(
-            'li', new VerticalKeyValue('Next check', new TimeUntil($this->object->state->next_check))
-        );
-        $now = Html::tag('li', ['class' => 'above'], Html::tag('strong', 'Now'));
-        $timeline = Html::tag('div', ['class' => 'check-timeline']);
+        $hPadding = 10;
+        $durationScale = $this->object->state->is_overdue ? 50 : 100;
+
+        $timeline = Html::tag('div', ['class' => 'check-timeline timeline']);
+
+        $duration = $this->object->state->next_check - $this->object->state->last_update;
 
         if ($this->object->state->is_overdue) {
-            $timeline->add(Html::tag('ol', [
-                $lastUpdate,
-                $nextCheck,
-                $now
-            ]));
-            $timeline->addAttributes(['class' => 'overdue']);
+            $leftNow = 100 - $hPadding;
+            $overdueBar = Html::tag('div', [
+                'class' => 'progress-bar overdue',
+                'style' => 'left: ' .  ($durationScale) . '%; ' .
+                           'width: ' . ($leftNow - $durationScale) . '%'
+            ]);
         } else {
-            $timeline->add(Html::tag('ol', [
-                $lastUpdate,
-                $now,
-                $nextCheck
-            ]));
+            $leftNow = $hPadding + (time() - $this->object->state->last_update) / $duration * (100 - 2 * $hPadding);
+            if ($leftNow > 97) {
+                $leftNow = 97;
+            }
+            if ($leftNow < $hPadding) {
+                $leftNow = $hPadding;
+            }
+            $overdueBar = null;
         }
 
-        $body->add([
-            $timeline,
-            new VerticalKeyValue('Check interval', Format::seconds($this->object->check_interval))
+        $above = Html::tag('ul', ['class' => 'above']);
+        $now = Html::tag('li', [
+            'class' => 'bubble now',
+            'style' => 'left: ' . $leftNow . '%',
+        ], Html::tag('strong', 'Now'));
+        $above->add($now);
+
+        $markerLast = Html::tag('div', [
+            'class' => 'marker last',
+            'style' => 'left: ' . $hPadding . '%',
+            'title' => $this->object->state->last_update
         ]);
+        $markerNext = Html::tag('div', [
+            'class' => 'marker next',
+            'style' => 'left: ' .  ($durationScale - ($this->object->state->is_overdue ? 0 : $hPadding)) . '%',
+            'title' => $this->object->state->next_check
+        ]);
+        $markerNow = Html::tag('div', [
+            'class' => 'marker now',
+            'style' => 'left: ' . $leftNow . '%',
+        ]);
+
+        $timeline->add([
+            $markerLast,
+            $markerNow,
+            $markerNext,
+            $overdueBar
+        ]);
+
+        $lastUpdate = Html::tag(
+            'li',
+            ['class' => 'bubble upwards last'],
+            new VerticalKeyValue('Last update', new TimeAgo($this->object->state->last_update))
+        );
+        $interval = Html::tag(
+            'li',
+            ['class' => 'interval'],
+            new VerticalKeyValue('Interval', Format::seconds($this->object->check_interval))
+        );
+        $nextCheck = Html::tag(
+            'li',
+            ['class' => 'bubble upwards next'],
+            new VerticalKeyValue('Next check', new TimeUntil($this->object->state->next_check))
+        );
+
+        $below = Html::tag(
+            'ul',
+            [
+                'class' => 'below',
+                'style' => 'width: ' . $durationScale . '%; ' . 'padding-right: '
+                    . ($this->object->state->is_overdue ? 0 : $hPadding) . '%; '
+            ]
+        );
+        $below->add([
+            $lastUpdate,
+            $interval,
+            $nextCheck
+        ]);
+
+        $body->add([$above, $timeline, $below]);
     }
 
     protected function assembleFooter(BaseHtmlElement $footer)
@@ -71,10 +128,12 @@ class CheckStatistics extends Card
 
         $header->add([
             new VerticalKeyValue('Command', $this->object->checkcommand),
-            new VerticalKeyValue('Attempts', new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)),
+            new VerticalKeyValue(
+                'Attempts', new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
+            ),
             new VerticalKeyValue('Check source', $checkSource),
             new VerticalKeyValue('Execution time', Format::seconds($this->object->state->execution_time)),
-            new VerticalKeyValue('Latency', Format::seconds($this->object->state->latency)),
+            new VerticalKeyValue('Latency', Format::seconds($this->object->state->latency))
         ]);
     }
 }
