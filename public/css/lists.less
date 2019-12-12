@@ -48,6 +48,19 @@
     border-bottom: 1px solid @gray-light;
   }
 
+  &.page-separator {
+    padding: 1em;
+
+    .main {
+      height: 5em;
+      border-color: @black;
+
+      a {
+        font-size: 1.2em;
+      }
+    }
+  }
+
   .visual {
     display: flex;
     align-items: center;
@@ -108,7 +121,8 @@
 }
 
 .content.full-width .list-item {
-  padding: 0 1em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .common .list-item {
