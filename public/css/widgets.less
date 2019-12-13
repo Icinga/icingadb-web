@@ -584,3 +584,98 @@ form.object-features {
     text-decoration: none;
   }
 }
+
+.monitoring-health {
+  max-width: 65em;
+
+  > section:not(:last-child),
+  .icinga-health {
+    margin-bottom: 1em;
+  }
+
+  .check-summary {
+    .col {
+      padding: 1em;
+    }
+
+    .col:not(:last-child) {
+      border-right: 1px solid @gray-light;
+    }
+  }
+
+  .check-summary,
+  .instance-features {
+    .rounded-corners();
+    border: 1px solid @gray-light;
+    display: flex;
+    padding: .5em 0;
+    width: 100%;
+  }
+
+  .check-summary,
+  .col-content,
+  .icinga-info {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .col {
+    flex: 1 1 auto;
+    text-align: center;
+
+    > h3 {
+      margin: 0 0 0.5em;
+    }
+  }
+
+  .icinga-health {
+    .rounded-corners();
+    padding: 1em;
+    text-align: center;
+    width: 100%;
+
+    &.up {
+      border: 1px solid @color-up;
+      color: @color-up;
+    }
+
+    &.down {
+      background-color: @color-down;
+      color: @body-bg-color;
+    }
+  }
+
+  .instance-features {
+    .control-group {
+      flex: 1 1 auto;
+      margin: 0;
+      padding: .5em;
+      width: 0;
+
+      display: flex;
+      align-items: center;
+      flex-direction: column-reverse;
+      justify-content: flex-end;
+
+      &:not(:last-of-type) {
+        border-right: 1px solid @gray-light;
+      }
+
+      .control-label-group {
+        font-size: .75em;
+        margin-right: 0;
+        margin-top: 1em;
+        padding: 0;
+        text-align: center;
+        width: auto;
+      }
+
+      .toggle-switch {
+        margin: 0;
+      }
+    }
+  }
+}
