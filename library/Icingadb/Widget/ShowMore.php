@@ -2,16 +2,22 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use ipl\Html\ValidHtml;
+use ipl\Html\BaseHtmlElement;
 use ipl\Orm\ResultSet;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 
-class ShowMore implements ValidHtml
+class ShowMore extends BaseHtmlElement
 {
+    protected $defaultAttributes = ['class' => 'show-more'];
+
+    protected $tag = 'div';
+
     protected $resultSet;
 
     protected $url;
+
+    protected $label;
 
     public function __construct(ResultSet $resultSet, Url $url)
     {
@@ -19,12 +25,22 @@ class ShowMore implements ValidHtml
         $this->url = $url;
     }
 
-    public function render()
+    public function setLabel($label)
     {
-        if (! $this->resultSet->hasMore()) {
-            return null;
-        }
+        $this->label = $label;
 
-        return (new ActionLink('Show More', $this->url))->render();
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        return $this->label ?: 'Show More';
+    }
+
+    protected function assemble()
+    {
+        if ($this->resultSet->hasMore()) {
+            $this->add(new ActionLink($this->getLabel(), $this->url));
+        }
     }
 }

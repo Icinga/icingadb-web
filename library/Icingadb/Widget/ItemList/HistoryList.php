@@ -11,6 +11,8 @@ class HistoryList extends BaseItemList
 
     protected $pageSize;
 
+    protected $pageNumber;
+
     protected function init()
     {
         $this->realData = $this->data;
@@ -24,6 +26,13 @@ class HistoryList extends BaseItemList
         return $this;
     }
 
+    public function setPageNumber($number)
+    {
+        $this->pageNumber = $number;
+
+        return $this;
+    }
+
     protected function getItemClass()
     {
         return HistoryListItem::class;
@@ -32,7 +41,11 @@ class HistoryList extends BaseItemList
     protected function getIterator()
     {
         $count = 0;
-        $pageNumber = 1;
+        $pageNumber = $this->pageNumber ?: 1;
+
+        if ($pageNumber > 1) {
+            $this->add(new PageSeparatorItem($pageNumber));
+        }
 
         foreach ($this->realData as $data) {
             $count++;

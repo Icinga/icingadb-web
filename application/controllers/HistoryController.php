@@ -13,6 +13,7 @@ class HistoryController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('History'));
+        $compact = $this->params->shift('view') === 'compact'; // TODO: Don't shift here..
 
         $db = $this->getDb();
 
@@ -29,7 +30,7 @@ class HistoryController extends Controller
             'state'
         ]);
 
-        $url = Url::fromRequest();
+        $url = Url::fromPath('icingadb/history')->setParams($this->params);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
         }
@@ -43,22 +44,43 @@ class HistoryController extends Controller
         );
         $filterControl = $this->createFilterControl($history);
 
-        $history->limit($limitControl->getLimit() * $page);
+        $history->limit($limitControl->getLimit());
+        if ($page > 1) {
+            if ($compact) {
+                $history->offset(($page - 1) * $limitControl->getLimit());
+            } else {
+                $history->limit($page * $limitControl->getLimit());
+            }
+        }
+
         $this->filter($history);
 
         yield $this->export($history);
 
-        $showMore = new ShowMore(
+        $showMore = (new ShowMore(
             $history->peekAhead()->execute(),
             (clone $url)->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
-        );
+        ))
+            ->setLabel('Load More')
+            ->setAttribute('data-no-icinga-ajax', true);
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent((new HistoryList($history))->setPageSize($limitControl->getLimit()));
-        $this->addContent($showMore);
+        $historyList = (new HistoryList($history))
+            ->setPageSize($limitControl->getLimit());
+        if ($compact) {
+            $historyList->setPageNumber($page);
+        }
+
+        // TODO: Dirty, really dirty, find a better solution (And I don't just mean `getContent()` !)
+        $historyList->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
+        if ($compact && $page > 1) {
+            $this->document->add($historyList->getContent());
+        } else {
+            $this->addContent($historyList);
+        }
     }
 }

@@ -86,4 +86,5 @@ namespace Icinga\Module\Icingadb
     $this->provideCssFile('widgets.less');
 
     $this->provideJsFile('migrate.js');
+    $this->provideJsFile('loadmore.js');
 }

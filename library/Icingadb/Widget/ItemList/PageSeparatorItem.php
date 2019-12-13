@@ -2,13 +2,12 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Widget\CommonListItem;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
 class PageSeparatorItem extends BaseHtmlElement
 {
-    protected $defaultAttributes = ['class' => 'page-separator'];
+    protected $defaultAttributes = ['class' => 'list-item page-separator'];
 
     /** @var int */
     protected $pageNumber;
@@ -23,16 +22,12 @@ class PageSeparatorItem extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->add([Html::tag(
-                'a',
-                [
-                    'id' => 'page-' . $this->pageNumber
-                ],
-                'Page ' . $this->pageNumber
-            ),
-            Html::tag('hr')
-        ]);
-
-
+        $this->add(Html::tag(
+            'a',
+            [
+                'id' => 'page-' . $this->pageNumber
+            ],
+            'Page ' . $this->pageNumber
+        ));
     }
 }
