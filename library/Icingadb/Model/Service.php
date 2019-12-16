@@ -110,7 +110,7 @@ class Service extends Model
             ->through(HostgroupMember::class);
 
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
-        $relations->hasMany('comment', Comment::class);
+        $relations->hasMany('comment', Comment::class)->setJoinType('LEFT');
         $relations->hasMany('downtime', Downtime::class);
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class);
