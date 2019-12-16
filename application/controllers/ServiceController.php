@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
@@ -13,7 +12,6 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectDetail;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
-use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
