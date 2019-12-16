@@ -24,6 +24,11 @@ abstract class Links
         return Url::fromPath('icingadb/comments');
     }
 
+    public static function commentsDetails()
+    {
+        return Url::fromPath('icingadb/comments/details');
+    }
+
     public static function downtime(Downtime $downtime)
     {
         return Url::fromPath('icingadb/downtime', ['name' => $downtime->name]);
