@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 
 class CommentsController extends Controller
 {
@@ -51,5 +53,39 @@ class CommentsController extends Controller
         $this->addContent((new CommentList($comments))->setViewMode($viewModeSwitcher->getViewMode()));
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function detailsAction()
+    {
+        $this->setTitle($this->translate('Comments'));
+
+        $db = $this->getDb();
+
+        $comments = Comment::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $comments->limit(3)->peekAhead();
+
+        $this->filter($comments);
+
+        yield $this->export($comments);
+
+        $rs = $comments->execute();
+
+        $this->addControl((new CommentList($rs))->setViewMode('minimal'));
+
+        if ($rs->hasMore()) {
+            $this->addControl(new ShowMore(
+                $rs,
+                Links::comments()->setQueryString($this->getFilter()->toQueryString()),
+                sprintf($this->translate('Show all %d comments'), $comments->count())
+            ));
+        }
     }
 }
