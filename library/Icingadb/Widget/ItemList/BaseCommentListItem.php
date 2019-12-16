@@ -3,12 +3,12 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
+use Icinga\Module\Icingadb\Widget\TimeAgo;
 use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -77,6 +77,6 @@ class BaseCommentListItem extends CommonListItem
 
     protected function createTimestamp()
     {
-        return DateFormatter::timeAgo($this->item->entry_time);
+        return new TimeAgo($this->item->entry_time);
     }
 }
