@@ -48,16 +48,6 @@ class HostController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
     }
 
-    protected function getCommandTargetsUrl()
-    {
-        return Links::host($this->host);
-    }
-
-    protected function fetchCommandTargets()
-    {
-        return [$this->host];
-    }
-
     public function indexAction()
     {
         if ($this->host->state->is_overdue) {
@@ -252,5 +242,15 @@ class HostController extends Controller
 
             $this->view->title = $tab->getLabel();
         }
+    }
+
+    protected function fetchCommandTargets()
+    {
+        return [$this->host];
+    }
+
+    protected function getCommandTargetsUrl()
+    {
+        return Links::host($this->host);
     }
 }
