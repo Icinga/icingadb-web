@@ -16,7 +16,7 @@ use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
-class CommentListItem extends CommonListItem
+class BaseCommentListItem extends CommonListItem
 {
     use HostLink;
     use ServiceLink;
