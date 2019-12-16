@@ -41,8 +41,6 @@ class ServicegroupController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new ServicegroupList([$this->servicegroup])));
-
         $db = $this->getDb();
 
         $services = Service::on($db)->with([
@@ -67,6 +65,7 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
+        $this->addControl((new ServicegroupList([$this->servicegroup])));
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
