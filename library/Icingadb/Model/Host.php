@@ -120,7 +120,7 @@ class Host extends Model
         $relations->hasMany('comment', Comment::class)->setJoinType('LEFT');
         $relations->hasMany('downtime', Downtime::class)->setJoinType('LEFT');
         $relations->hasMany('history', History::class);
-        $relations->hasMany('notification', Notification::class);
+        $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
     }
