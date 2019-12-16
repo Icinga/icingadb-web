@@ -6,9 +6,9 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
-use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
 
 class DowntimeController extends Controller
 {
@@ -39,11 +39,11 @@ class DowntimeController extends Controller
 
     public function indexAction()
     {
-        $downtimeDetail = new DowntimeDetail($this->downtime);
+        $detail = new DowntimeDetail($this->downtime);
 
-        $this->addControl($downtimeDetail->getControl());
+        $this->addControl((new DowntimeList([$this->downtime]))->setViewMode('minimal')->setCaptionDisabled());
 
-        $this->addContent($downtimeDetail);
+        $this->addContent($detail);
 
         $this->setAutorefreshInterval(10);
     }
