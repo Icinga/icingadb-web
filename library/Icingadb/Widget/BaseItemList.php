@@ -14,7 +14,7 @@ abstract class BaseItemList extends BaseHtmlElement
 {
     use BaseFilter;
 
-    protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
+    protected $baseAttributes = ['class' => 'action-list item-list', 'data-base-target' => '_next'];
 
     /** @var iterable */
     protected $data;
