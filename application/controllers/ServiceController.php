@@ -70,8 +70,6 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Comments'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-
         $comments = $this->service->comment;
 
         $limitControl = $this->createLimitControl();
@@ -79,6 +77,7 @@ class ServiceController extends Controller
 
         yield $this->export($comments);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
 
@@ -91,8 +90,6 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Downtimes'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-
         $downtimes = $this->service->downtime;
 
         $limitControl = $this->createLimitControl();
@@ -100,6 +97,7 @@ class ServiceController extends Controller
 
         yield $this->export($downtimes);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
 
@@ -115,8 +113,6 @@ class ServiceController extends Controller
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
-
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 
@@ -167,6 +163,7 @@ class ServiceController extends Controller
             ->setLabel('Load More')
             ->setAttribute('data-no-icinga-ajax', true);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($limitControl);
 
         $historyList = (new HistoryList($history))
