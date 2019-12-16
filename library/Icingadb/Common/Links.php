@@ -39,6 +39,11 @@ abstract class Links
         return Url::fromPath('icingadb/downtimes');
     }
 
+    public static function downtimesDelete()
+    {
+        return Url::fromPath('icingadb/downtimes/delete');
+    }
+
     public static function downtimesDetails()
     {
         return Url::fromPath('icingadb/downtimes/details');
