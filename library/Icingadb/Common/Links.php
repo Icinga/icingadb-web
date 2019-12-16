@@ -24,6 +24,11 @@ abstract class Links
         return Url::fromPath('icingadb/comments');
     }
 
+    public static function commentsDelete()
+    {
+        return Url::fromPath('icingadb/comments/delete');
+    }
+
     public static function commentsDetails()
     {
         return Url::fromPath('icingadb/comments/details');
