@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -57,6 +58,8 @@ abstract class BaseDowntimeListItem extends BaseListItem
             || $this->item->is_flexible && $this->item->scheduled_start_time <= $this->currentTime;
 
         $this->duration = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
+
+        $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
     }
 
     protected function createProgress()
