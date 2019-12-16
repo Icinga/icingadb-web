@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\Links;
 use ipl\Html\Html;
 
@@ -16,5 +17,12 @@ abstract class BaseHostListItem extends StateListItem
             'href'  => Links::host($this->item),
             'class' => 'subject'
         ], $this->item->display_name);
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        $this->setMultiselectFilter(new FilterExpression('host.name', '=', $this->item->name));
     }
 }

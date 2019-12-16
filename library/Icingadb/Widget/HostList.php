@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\Links;
+
 /**
  * Host list
  */
@@ -16,5 +18,10 @@ class HostList extends StateList
         }
 
         return HostListItem::class;
+    }
+
+    protected function init()
+    {
+        $this->setMultiselectUrl(Links::hostsDetails());
     }
 }
