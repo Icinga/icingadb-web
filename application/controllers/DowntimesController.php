@@ -2,9 +2,11 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 
 class DowntimesController extends Controller
 {
@@ -56,5 +58,39 @@ class DowntimesController extends Controller
         $this->addContent((new DowntimeList($downtimes))->setViewMode($viewModeSwitcher->getViewMode()));
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function detailsAction()
+    {
+        $this->setTitle($this->translate('Downtimes'));
+
+        $db = $this->getDb();
+
+        $downtimes = Downtime::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $downtimes->limit(3)->peekAhead();
+
+        $this->filter($downtimes);
+
+        yield $this->export($downtimes);
+
+        $rs = $downtimes->execute();
+
+        $this->addControl((new DowntimeList($rs))->setViewMode('minimal'));
+
+        if ($rs->hasMore()) {
+            $this->addControl(new ShowMore(
+                $rs,
+                Links::downtimes()->setQueryString($this->getFilter()->toQueryString()),
+                sprintf($this->translate('Show all %d downtimes'), $downtimes->count())
+            ));
+        }
     }
 }
