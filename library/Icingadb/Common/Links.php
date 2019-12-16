@@ -69,6 +69,11 @@ abstract class Links
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
+    public static function servicesDetails()
+    {
+        return Url::fromPath('icingadb/services/details');
+    }
+
     public static function servicegroup($servicegroup)
     {
         return Url::fromPath('icingadb/servicegroup', ['name' => $servicegroup->name]);
