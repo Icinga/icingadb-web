@@ -40,6 +40,7 @@ class DowntimesController extends Controller
                 'downtime.duration desc'                          => $this->translate('Duration')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($downtimes);
 
         $this->filter($downtimes);
@@ -49,9 +50,10 @@ class DowntimesController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
 
-        $this->addContent(new DowntimeList($downtimes));
+        $this->addContent((new DowntimeList($downtimes))->setViewMode($viewModeSwitcher->getViewMode()));
 
         $this->setAutorefreshInterval(10);
     }
