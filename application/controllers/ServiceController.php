@@ -53,16 +53,6 @@ class ServiceController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
     }
 
-    public function getCommandTargetsUrl()
-    {
-        return Links::service($this->service, $this->service->host);
-    }
-
-    public function fetchCommandTargets()
-    {
-        return [$this->service];
-    }
-
     public function indexAction()
     {
         if ($this->service->state->is_overdue) {
@@ -217,5 +207,15 @@ class ServiceController extends Controller
 
             $this->view->title = $tab->getLabel();
         }
+    }
+
+    public function fetchCommandTargets()
+    {
+        return [$this->service];
+    }
+
+    public function getCommandTargetsUrl()
+    {
+        return Links::service($this->service, $this->service->host);
     }
 }
