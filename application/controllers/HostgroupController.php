@@ -41,8 +41,6 @@ class HostgroupController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new HostgroupList([$this->hostgroup])));
-
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
@@ -63,6 +61,7 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
+        $this->addControl((new HostgroupList([$this->hostgroup])));
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
