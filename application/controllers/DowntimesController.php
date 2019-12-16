@@ -7,6 +7,11 @@ use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlString;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
 
 class DowntimesController extends Controller
 {
@@ -60,6 +65,59 @@ class DowntimesController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
+    public function deleteAction()
+    {
+        $this->setTitle($this->translate('Cancel Downtimes'));
+
+        $db = $this->getDb();
+
+        $downtimes = Downtime::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $this->filter($downtimes);
+
+        $cancelDowntimesForm = (new DeleteDowntimesCommandForm())
+            ->addDescription(sprintf(
+                $this->translate('Confirm cancellation of %d downtimes.'),
+                $downtimes->count()
+            ))
+            ->setDowntimes($downtimes)
+            ->setRedirectUrl(Links::downtimes())
+            ->create();
+
+        $cancelDowntimesForm->removeElement('btn_submit');
+
+        $cancelDowntimesForm->addElement(
+            'button',
+            'btn_submit',
+            [
+                'class'      => 'cancel-button spinner',
+                'decorators' => [
+                    'ViewHelper',
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ],
+                'escape'     => false,
+                'ignore'     => true,
+                'label'      => (new HtmlDocument())
+                    ->add([new Icon('trash'), $this->translate('Cancel Downtimes')])
+                    ->setSeparator(' ')
+                    ->render(),
+                'title'      => $this->translate('Cancel downtimes'),
+                'type'       => 'submit'
+            ]
+        );
+
+        $cancelDowntimesForm->handleRequest();
+
+        $this->addContent(HtmlString::create($cancelDowntimesForm->render()));
+    }
+
     public function detailsAction()
     {
         $this->setTitle($this->translate('Downtimes'));
@@ -92,5 +150,16 @@ class DowntimesController extends Controller
                 sprintf($this->translate('Show all %d downtimes'), $downtimes->count())
             ));
         }
+
+        $this->addContent(new ActionLink(
+            sprintf($this->translate('Cancel %d downtimes'), $downtimes->count()),
+            Links::downtimesDelete()->setQueryString($this->getFilter()->toQueryString()),
+            'trash',
+            [
+                'class'               => 'cancel-button',
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
+            ]
+        ));
     }
 }
