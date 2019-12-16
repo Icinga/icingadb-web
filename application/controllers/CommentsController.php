@@ -7,6 +7,11 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlString;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
 
 class CommentsController extends Controller
 {
@@ -55,6 +60,59 @@ class CommentsController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
+    public function deleteAction()
+    {
+        $this->setTitle($this->translate('Remove Comments'));
+
+        $db = $this->getDb();
+
+        $comments = Comment::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $this->filter($comments);
+
+        $deleteCommentsForm = (new DeleteCommentsCommandForm())
+            ->addDescription(sprintf(
+                $this->translate('Confirm removal of %d comments.'),
+                $comments->count()
+            ))
+            ->setComments($comments)
+            ->setRedirectUrl(Links::comments())
+            ->create();
+
+        $deleteCommentsForm->removeElement('btn_submit');
+
+        $deleteCommentsForm->addElement(
+            'button',
+            'btn_submit',
+            [
+                'class'      => 'cancel-button spinner',
+                'decorators' => [
+                    'ViewHelper',
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ],
+                'escape'     => false,
+                'ignore'     => true,
+                'label'      => (new HtmlDocument())
+                    ->add([new Icon('trash'), $this->translate('Remove Comments')])
+                    ->setSeparator(' ')
+                    ->render(),
+                'title'      => $this->translate('Remove comments'),
+                'type'       => 'submit'
+            ]
+        );
+
+        $deleteCommentsForm->handleRequest();
+
+        $this->addContent(HtmlString::create($deleteCommentsForm->render()));
+    }
+
     public function detailsAction()
     {
         $this->setTitle($this->translate('Comments'));
@@ -87,5 +145,16 @@ class CommentsController extends Controller
                 sprintf($this->translate('Show all %d comments'), $comments->count())
             ));
         }
+
+        $this->addContent(new ActionLink(
+            sprintf($this->translate('Remove %d comments'), $comments->count()),
+            Links::commentsDelete()->setQueryString($this->getFilter()->toQueryString()),
+            'trash',
+            [
+                'class'               => 'cancel-button',
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
+            ]
+        ));
     }
 }
