@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\HostLink;
