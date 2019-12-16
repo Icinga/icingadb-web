@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -77,5 +78,10 @@ abstract class BaseCommentListItem extends BaseListItem
     protected function createTimestamp()
     {
         return new TimeAgo($this->item->entry_time);
+    }
+
+    protected function init()
+    {
+        $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
     }
 }
