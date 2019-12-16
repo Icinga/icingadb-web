@@ -40,7 +40,7 @@ class HoststateSummary extends Host
                 ),
                 'hosts_up'                     => new Expression(
                     'SUM(CASE WHEN host_state.soft_state = 0 THEN 1 ELSE 0 END)'
-                ),
+                )
             ]
         );
     }
