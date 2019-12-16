@@ -35,6 +35,7 @@ class CommentsController extends Controller
                 'comment.expire_time desc'                => $this->translate('Expire Time')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($comments);
 
         $this->filter($comments);
@@ -44,9 +45,10 @@ class CommentsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
 
-        $this->addContent(new CommentList($comments));
+        $this->addContent((new CommentList($comments))->setViewMode($viewModeSwitcher->getViewMode()));
 
         $this->setAutorefreshInterval(10);
     }
