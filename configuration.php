@@ -89,6 +89,7 @@ namespace Icinga\Module\Icingadb
     $this->provideCssFile('mixins.less');
     $this->provideCssFile('widgets.less');
 
+    $this->provideJsFile('action-list.js');
     $this->provideJsFile('migrate.js');
     $this->provideJsFile('loadmore.js');
 }
