@@ -65,7 +65,7 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
-        $this->addControl((new ServicegroupList([$this->servicegroup])));
+        $this->addControl((new ServicegroupList([$this->servicegroup]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
