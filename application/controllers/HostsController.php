@@ -2,14 +2,26 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
+use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Widget\ActionLink;
+use IteratorIterator;
+use LimitIterator;
 
 class HostsController extends Controller
 {
+    use CommandActions;
+
     public function indexAction()
     {
         $this->setTitle($this->translate('Hosts'));
@@ -63,5 +75,83 @@ class HostsController extends Controller
         }
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function detailsAction()
+    {
+        $this->setTitle($this->translate('Hosts'));
+
+        $db = $this->getDb();
+
+        $hosts = Host::on($db)->with('state');
+        $summary = HoststateSummary::on($db)->with(['state']);
+
+        $this->filter($hosts);
+        $this->filter($summary);
+
+        yield $this->export($hosts, $summary);
+
+        $summary = $summary->first();
+
+        $downtimes = Host::on($db)->with(['downtime']);
+        $downtimes->getWith()['host.downtime']->setJoinType('INNER');
+        $this->filter($downtimes);
+        $summary->downtimes_total = $downtimes->count();
+
+        $comments = Host::on($db)->with(['comment']);
+        $comments->getWith()['host.comment']->setJoinType('INNER');
+        $this->filter($comments);
+        $summary->comments_total = $comments->count();
+
+        $this->addControl(
+            (new HostList(new LimitIterator(new IteratorIterator($hosts), 0, 3)))
+                ->setViewMode('minimal')
+        );
+        if ($hosts->count() > 3) {
+            $this->addControl(new ActionLink(
+                sprintf($this->translate('Show all %d hosts'), $hosts->count()),
+                Links::hosts()->setQueryString($this->getFilter()->toQueryString()),
+                null,
+                ['class' => 'show-more']
+            ));
+        }
+        $this->addControl(
+            (new MultiselectQuickActions('host', $hosts, $summary))
+                ->setBaseFilter($this->getFilter())
+        );
+
+        $this->addContent(
+            (new ObjectsDetail('host', $hosts, $summary))
+                ->setBaseFilter($this->getFilter())
+        );
+    }
+
+    public function fetchCommandTargets()
+    {
+        $db = $this->getDb();
+
+        $hosts = Host::on($db)->with('state');
+
+        switch ($this->getRequest()->getActionName()) {
+            case 'acknowledge':
+                FilterProcessor::apply(
+                    Filter::matchAll([
+                        new FilterExpression('state.is_problem', '=', 'y'),
+                        new FilterExpression('state.is_acknowledged', '=', 'n')
+                    ]),
+                    $hosts
+                );
+
+                break;
+        }
+
+        $this->filter($hosts);
+
+        return $hosts;
+    }
+
+    public function getCommandTargetsUrl()
+    {
+        return Links::hostsDetails()->setQueryString($this->getFilter()->toQueryString());
     }
 }
