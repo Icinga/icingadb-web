@@ -216,8 +216,29 @@
   }
 }
 
-.downtime-detail .list-item {
-  margin-bottom: .5em;
+.downtime-list.minimal .list-item {
+  .visual {
+    display: block;
+    line-height: 1.5;
+    width: 8em;
+    white-space: nowrap;
+
+    strong {
+      display: inline-block;
+      font-size: 1em;
+    }
+  }
+
+  .caption {
+    .text-ellipsis()
+  }
+}
+
+.downtime-list.detailed .list-item {
+  .caption {
+    height: auto;
+    max-height: 4.5em;
+  }
 }
 
 .comment-list {
