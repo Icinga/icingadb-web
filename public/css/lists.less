@@ -413,3 +413,33 @@
     text-decoration: none;
   }
 }
+
+.hostgroup-list.minimal,
+.servicegroup-list.minimal {
+  .col {
+    padding: 0;
+
+    &.hosts-total,
+    &.services-total {
+      padding-right: .417em;
+    }
+  }
+
+  .title br {
+    display: none;
+  }
+
+  .vertical-key-value {
+    br {
+      display: none;
+    }
+
+    .key {
+      padding-left: .417em;
+    }
+
+    .value {
+      vertical-align: middle;
+    }
+  }
+}
