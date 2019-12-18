@@ -14,27 +14,22 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Link;
 
+/** @property HostgroupList $list */
 class HostgroupListItem extends BaseTableRowItem
 {
     protected function assembleColumns(HtmlDocument $columns)
     {
-        $hostsChart = (new Donut())
-            ->addSlice($this->item->hosts_up, ['class' => 'slice-state-ok'])
-            ->addSlice($this->item->hosts_down_handled, ['class' => 'slice-state-critical-handled'])
-            ->addSlice($this->item->hosts_down_unhandled, ['class' => 'slice-state-critical'])
-            ->addSlice($this->item->hosts_pending, ['class' => 'slice-state-pending']);
-
-        $servicesChart = (new Donut())
-            ->addSlice($this->item->services_ok, ['class' => 'slice-state-ok'])
-            ->addSlice($this->item->services_warning_handled, ['class' => 'slice-state-warning-handled'])
-            ->addSlice($this->item->services_warning_unhandled, ['class' => 'slice-state-warning'])
-            ->addSlice($this->item->services_critical_handled, ['class' => 'slice-state-critical-handled'])
-            ->addSlice($this->item->services_critical_unhandled, ['class' => 'slice-state-critical'])
-            ->addSlice($this->item->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
-            ->addSlice($this->item->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
-            ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
-
         if ($this->item->hosts_total > 0) {
+            if ($this->list->getViewMode() !== 'minimal') {
+                $hostsChart = (new Donut())
+                    ->addSlice($this->item->hosts_up, ['class' => 'slice-state-ok'])
+                    ->addSlice($this->item->hosts_down_handled, ['class' => 'slice-state-critical-handled'])
+                    ->addSlice($this->item->hosts_down_unhandled, ['class' => 'slice-state-critical'])
+                    ->addSlice($this->item->hosts_pending, ['class' => 'slice-state-pending']);
+
+                $columns->add($this->createColumn(HtmlString::create($hostsChart->render())));
+            }
+
             $badges = new HostStateBadges($this->item);
             $badges
                 ->setBaseFilter($this->list->getBaseFilter())
@@ -43,7 +38,6 @@ class HostgroupListItem extends BaseTableRowItem
                     ->mergeValues(['hostgroup.name' => $this->item->name]);
 
             $columns->add([
-                $this->createColumn(HtmlString::create($hostsChart->render())),
                 $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Host' . ($this->item->hosts_total > 1 ? 's' : ''),
                     $this->item->hosts_total
@@ -53,6 +47,20 @@ class HostgroupListItem extends BaseTableRowItem
         }
 
         if ($this->item->services_total > 0) {
+            if ($this->list->getViewMode() !== 'minimal') {
+                $servicesChart = (new Donut())
+                    ->addSlice($this->item->services_ok, ['class' => 'slice-state-ok'])
+                    ->addSlice($this->item->services_warning_handled, ['class' => 'slice-state-warning-handled'])
+                    ->addSlice($this->item->services_warning_unhandled, ['class' => 'slice-state-warning'])
+                    ->addSlice($this->item->services_critical_handled, ['class' => 'slice-state-critical-handled'])
+                    ->addSlice($this->item->services_critical_unhandled, ['class' => 'slice-state-critical'])
+                    ->addSlice($this->item->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
+                    ->addSlice($this->item->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
+                    ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
+
+                $columns->add($this->createColumn(HtmlString::create($servicesChart->render())));
+            }
+
             $badges = new ServiceStateBadges($this->item);
             $badges
                 ->setBaseFilter($this->list->getBaseFilter())
@@ -61,7 +69,6 @@ class HostgroupListItem extends BaseTableRowItem
                     ->mergeValues(['hostgroup.name' => $this->item->name]);
 
             $columns->add([
-                $this->createColumn(HtmlString::create($servicesChart->render())),
                 $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Service' . ($this->item->services_total > 1 ? 's' : ''),
                     $this->item->services_total
