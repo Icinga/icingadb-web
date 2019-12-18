@@ -325,6 +325,27 @@
   }
 }
 
+.multiselect-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  // Donut
+  > div:first-child {
+    height: 4em;
+    width: 4em;
+
+    > svg {
+      height: auto;
+      max-width: 100%;
+    }
+  }
+
+  > .vertical-key-value {
+    padding: 0 .5em;
+  }
+}
+
 // Icinga Web 2 override
 .donut-graph {
   vertical-align: middle;
