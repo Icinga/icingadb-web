@@ -11,37 +11,43 @@ class ServicestateSummary extends Service
         return array_merge(
             parent::getColumns(),
             [
-                'services_active_checks_enabled'  => new Expression(
+                'services_acknowledged'            => new Expression(
+                    'SUM(CASE WHEN service_state.is_acknowledged = \'n\' THEN 0 ELSE 1 END)'
+                ),
+                'services_active_checks_enabled'   => new Expression(
                     'SUM(CASE WHEN service.active_checks_enabled = \'y\' THEN 1 ELSE 0 END)'
                 ),
-                'services_passive_checks_enabled' => new Expression(
+                'services_passive_checks_enabled'  => new Expression(
                     'SUM(CASE WHEN service.passive_checks_enabled = \'y\' THEN 1 ELSE 0 END)'
                 ),
-                'services_critical_handled'       => new Expression(
+                'services_critical_handled'        => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 2 AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
                 ),
-                'services_critical_unhandled'     => new Expression(
+                'services_critical_unhandled'      => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 2 AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
                 ),
-                'services_ok'                     => new Expression(
+                'services_ok'                      => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 0 THEN 1 ELSE 0 END)'
                 ),
-                'services_pending'                => new Expression(
+                'services_pending'                 => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 99 THEN 1 ELSE 0 END)'
                 ),
-                'services_total'                  => new Expression(
+                'services_problems_unacknowledged' => new Expression(
+                    'SUM(CASE WHEN service_state.is_problem = \'y\' AND service_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
+                ),
+                'services_total'                   => new Expression(
                     'SUM(CASE WHEN service_state.soft_state IS NOT NULL THEN 1 ELSE 0 END)'
                 ),
-                'services_unknown_handled'        => new Expression(
+                'services_unknown_handled'         => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 3 AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
                 ),
-                'services_unknown_unhandled'      => new Expression(
+                'services_unknown_unhandled'       => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 3 AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
                 ),
-                'services_warning_handled'        => new Expression(
+                'services_warning_handled'         => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 1 AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
                 ),
-                'services_warning_unhandled'      => new Expression(
+                'services_warning_unhandled'       => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 1 AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
                 )
             ]
