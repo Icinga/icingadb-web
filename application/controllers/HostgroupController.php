@@ -61,7 +61,7 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
-        $this->addControl((new HostgroupList([$this->hostgroup])));
+        $this->addControl((new HostgroupList([$this->hostgroup]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
