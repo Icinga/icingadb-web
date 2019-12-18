@@ -13,21 +13,26 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Link;
 
+/** @property ServicegroupList $list */
 class ServicegroupListItem extends BaseTableRowItem
 {
     protected function assembleColumns(HtmlDocument $columns)
     {
-        $servicesChart = (new Donut())
-            ->addSlice($this->item->services_ok, ['class' => 'slice-state-ok'])
-            ->addSlice($this->item->services_warning_handled, ['class' => 'slice-state-warning-handled'])
-            ->addSlice($this->item->services_warning_unhandled, ['class' => 'slice-state-warning'])
-            ->addSlice($this->item->services_critical_handled, ['class' => 'slice-state-critical-handled'])
-            ->addSlice($this->item->services_critical_unhandled, ['class' => 'slice-state-critical'])
-            ->addSlice($this->item->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
-            ->addSlice($this->item->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
-            ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
-
         if ($this->item->services_total > 0) {
+            if ($this->list->getViewMode() !== 'minimal') {
+                $servicesChart = (new Donut())
+                    ->addSlice($this->item->services_ok, ['class' => 'slice-state-ok'])
+                    ->addSlice($this->item->services_warning_handled, ['class' => 'slice-state-warning-handled'])
+                    ->addSlice($this->item->services_warning_unhandled, ['class' => 'slice-state-warning'])
+                    ->addSlice($this->item->services_critical_handled, ['class' => 'slice-state-critical-handled'])
+                    ->addSlice($this->item->services_critical_unhandled, ['class' => 'slice-state-critical'])
+                    ->addSlice($this->item->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
+                    ->addSlice($this->item->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
+                    ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
+
+                $columns->add($this->createColumn(HtmlString::create($servicesChart->render())));
+            }
+
             $badges = new ServiceStateBadges($this->item);
             $badges
                 ->setBaseFilter($this->list->getBaseFilter())
@@ -36,7 +41,6 @@ class ServicegroupListItem extends BaseTableRowItem
                     ->mergeValues(['servicegroup.name' => $this->item->name]);
 
             $columns->add([
-                $this->createColumn(HtmlString::create($servicesChart->render())),
                 $this->createColumn($badges->createLink(new VerticalKeyValue(
                     'Service' . ($this->item->services_total > 1 ? 's' : ''),
                     $this->item->services_total
