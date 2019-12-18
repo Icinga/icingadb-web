@@ -1,3 +1,14 @@
+.action-list {
+  > .list-item:hover {
+    background-color: #f5fdff;
+    cursor: pointer;
+  }
+
+  > .list-item.active {
+    background-color: fade(@icinga-blue, 10);
+  }
+}
+
 .item-list {
   // Reset defaults
   list-style-type: none;
@@ -16,10 +27,6 @@
 .list-item {
   color: @text-color-light;
   display: flex;
-
-  &.active {
-    background-color: fade(@icinga-blue, 10);
-  }
 
   &.overdue {
     background-color: @gray-lighter;
