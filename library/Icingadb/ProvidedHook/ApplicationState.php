@@ -4,16 +4,58 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Exception;
 use Icinga\Application\Hook\ApplicationStateHook;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
+use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Web\Session;
 
 class ApplicationState extends ApplicationStateHook
 {
+    use Database;
     use IcingaRedis;
 
     public function collectMessages()
     {
+        $this->checkDatabase();
         $this->checkRedis();
+    }
+
+    private function checkDatabase()
+    {
+        $instance = Instance::on($this->getDb())->with(['endpoint'])->first();
+
+        if ($instance === null) {
+            $noInstanceSince = Session::getSession()
+                ->getNamespace('icingadb')->get('icingadb.no-instance-since');
+
+            if ($noInstanceSince === null) {
+                $noInstanceSince = time();
+                Session::getSession()
+                    ->getNamespace('icingadb')->set('icingadb.no-instance-since', $noInstanceSince);
+            }
+
+            $this->addError(
+                'icingadb/no-instance',
+                $noInstanceSince,
+                mt(
+                    'It seems that Icinga DB is not running.'
+                    . ' Make sure Icinga DB is running and writing into the database.'
+                )
+            );
+        } else {
+            Session::getSession()->getNamespace('icingadb')->delete('db.no-instance-since');
+
+            if ($instance->heartbeat < time() - 60) {
+                $this->addError(
+                    'icingadb/icingadb-down',
+                    $instance->heartbeat,
+                    mt(
+                        'It seems that Icinga DB is not running.'
+                        . ' Make sure Icinga DB is running and writing into the database.'
+                    )
+                );
+            }
+        }
     }
 
     private function checkRedis()
