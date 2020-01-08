@@ -302,11 +302,6 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createPluginOutput()
     {
-        if ($this->objectType === 'host') {
-            $state = HostStates::text($this->object->state->soft_state);
-        } else {
-            $state = ServiceStates::text($this->object->state->soft_state);
-        }
         return [
             Html::tag('h2', 'Plugin Output'),
             Html::tag('div', ['class' => 'collapsible'],
