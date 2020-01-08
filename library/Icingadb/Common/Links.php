@@ -94,6 +94,16 @@ abstract class Links
         return Url::fromPath('icingadb/services');
     }
 
+    public static function toggleHostsFeatures()
+    {
+        return Url::fromPath('icingadb/hosts/toggle-features');
+    }
+
+    public static function toggleServicesFeatures()
+    {
+        return Url::fromPath('icingadb/services/toggle-features');
+    }
+
     public static function user(User $user)
     {
         return Url::fromPath('icingadb/user', ['name' => $user->name]);
