@@ -6,6 +6,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -153,5 +154,10 @@ class HostsController extends Controller
     public function getCommandTargetsUrl()
     {
         return Links::hostsDetails()->setQueryString($this->getFilter()->toQueryString());
+    }
+
+    protected function getFeatureStatus()
+    {
+        return new FeatureStatus('host', HoststateSummary::on($this->getDb())->with(['state'])->first());
     }
 }
