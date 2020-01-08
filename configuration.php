@@ -57,6 +57,10 @@ namespace Icinga\Module\Icingadb
         'url' => 'icingadb/history',
         'priority' => 90
     ]);
+    $section->add(N_('Health'), [
+        'url' => 'icingadb/health',
+        'priority' => 100
+    ]);
 
     $this->provideConfigTab('database', [
         'label' => $this->translate('Database'),
