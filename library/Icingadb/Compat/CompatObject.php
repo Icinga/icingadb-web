@@ -3,14 +3,14 @@
 namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
+use InvalidArgumentException;
 use ipl\Orm\Model;
+use function ipl\Stdlib\get_php_type;
 
-/**
- * Class CompatObject
- * @package Icinga\Module\Icingadb\Compat
- */
-class CompatObject extends MonitoredObject
+trait CompatObject
 {
     private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
 
@@ -22,18 +22,32 @@ class CompatObject extends MonitoredObject
         $this->object = $object;
     }
 
-    public function __isset($name)
+    public static function fromModel(Model $object)
     {
-        return isset($this->object->$name);
+        switch (true) {
+            case $object instanceof Host:
+                return new CompatHost($object);
+            case $object instanceof Service:
+                return new CompatService($object);
+            default:
+                throw new InvalidArgumentException(sprintf(
+                    'Host or Service Model instance expected, got "%s" instead.',
+                    get_php_type($object)
+                ));
+        }
     }
 
-    public function __get($name)
+    public function getActionUrls()
     {
-        if (isset($this->legacyColumns[$name])) {
-            $name = $this->legacyColumns[$name];
+        $actionUrl = $this->object->action_url;
+
+        if ($actionUrl === null) {
+            return [];
         }
 
-        return $this->object->$name;
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($actionUrl->action_url)
+        );
     }
 
     /**
@@ -46,19 +60,38 @@ class CompatObject extends MonitoredObject
         return $this->object->name;
     }
 
+    public function getNotesUrls()
+    {
+        $notesUrl = $this->object->notes_url;
+
+        if ($notesUrl === null) {
+            return [];
+        }
+
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($notesUrl->notes_url)
+        );
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->legacyColumns[$name])) {
+            $name = $this->legacyColumns[$name];
+        }
+
+        return $this->object->$name;
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->object->$name);
+    }
+
     /**
      * @throws NotImplementedError Don't use!
      */
     protected function getDataView()
     {
         throw new NotImplementedError('getDataView() is not supported');
-    }
-
-    /**
-     * @throws NotImplementedError Don't use!
-     */
-    public function getNotesUrls()
-    {
-        throw new NotImplementedError('getNotesUrls() is not supported');
     }
 }

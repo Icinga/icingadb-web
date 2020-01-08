@@ -98,8 +98,12 @@ class Host extends Model
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id');
-        $relations->belongsTo('action_url', ActionUrl::class);
-        $relations->belongsTo('notes_url', NotesUrl::class);
+        $relations->belongsTo('action_url', ActionUrl::class)
+            ->setCandidateKey('action_url_id')
+            ->setForeignKey('id');
+        $relations->belongsTo('notes_url', NotesUrl::class)
+            ->setCandidateKey('notes_url_id')
+            ->setForeignKey('id');
         $relations->belongsTo('icon_image', IconImage::class);
         $relations->belongsTo('zone', Zone::class);
         $relations->belongsTo('endpoint', Endpoint::class)
