@@ -26,6 +26,15 @@ class ServicestateSummary extends Service
                 'services_critical_unhandled'      => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 2 AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
                 ),
+                'services_event_handler_enabled'   => new Expression(
+                    'SUM(CASE WHEN service.event_handler_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
+                'services_flapping_enabled'   => new Expression(
+                    'SUM(CASE WHEN service.flapping_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
+                'services_notifications_enabled'   => new Expression(
+                    'SUM(CASE WHEN service.notifications_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
                 'services_ok'                      => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 0 THEN 1 ELSE 0 END)'
                 ),
