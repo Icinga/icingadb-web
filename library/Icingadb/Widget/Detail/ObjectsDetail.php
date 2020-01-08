@@ -5,10 +5,13 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Chart\Donut;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Compat\CompatBackend;
+use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
 use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -110,6 +113,26 @@ class ObjectsDetail extends BaseHtmlElement
         return $content;
     }
 
+    protected function createFeatureToggles()
+    {
+        $form = new ToggleObjectFeaturesCommandForm([
+            'backend' => new CompatBackend()
+        ]);
+
+        $form->load(new FeatureStatus($this->type, $this->summary));
+
+        if ($this->type === 'host') {
+            $form->setAction(Links::toggleHostsFeatures()->setQueryString($this->getBaseFilter()->toQueryString()));
+        } else {
+            $form->setAction(Links::toggleServicesFeatures()->setQueryString($this->getBaseFilter()->toQueryString()));
+        }
+
+        return [
+            Html::tag('h2', 'Feature Commands'),
+            HtmlString::create($form->render())
+        ];
+    }
+
     protected function createSummary()
     {
         return [
@@ -123,7 +146,8 @@ class ObjectsDetail extends BaseHtmlElement
         $this->add([
             $this->createSummary(),
             $this->createComments(),
-            $this->createDowntimes()
+            $this->createDowntimes(),
+            $this->createFeatureToggles()
         ]);
     }
 }
