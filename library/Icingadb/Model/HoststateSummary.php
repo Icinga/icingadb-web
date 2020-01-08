@@ -26,6 +26,15 @@ class HoststateSummary extends Host
                 'hosts_down_unhandled'          => new Expression(
                     'SUM(CASE WHEN host_state.soft_state = 1 AND host_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
                 ),
+                'hosts_event_handler_enabled'   => new Expression(
+                    'SUM(CASE WHEN host.event_handler_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
+                'hosts_flapping_enabled'   => new Expression(
+                    'SUM(CASE WHEN host.flapping_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
+                'hosts_notifications_enabled'   => new Expression(
+                    'SUM(CASE WHEN host.notifications_enabled = \'y\' THEN 1 ELSE 0 END)'
+                ),
                 'hosts_pending'                 => new Expression(
                     'SUM(CASE WHEN host_state.soft_state = 99 THEN 1 ELSE 0 END)'
                 ),
