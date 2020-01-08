@@ -6,6 +6,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -162,5 +163,10 @@ class ServicesController extends Controller
     public function getCommandTargetsUrl()
     {
         return Links::servicesDetails()->setQueryString($this->getFilter()->toQueryString());
+    }
+
+    protected function getFeatureStatus()
+    {
+        return new FeatureStatus('service', ServicestateSummary::on($this->getDb())->with(['state'])->first());
     }
 }
