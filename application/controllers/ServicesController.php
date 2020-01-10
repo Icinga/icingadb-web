@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ServiceList;
@@ -71,6 +72,7 @@ class ServicesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
+        $this->addControl(new ContinueWith($this->getFilter(), Links::servicesDetails()));
 
         $this->addContent($serviceList);
 
