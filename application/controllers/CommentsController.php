@@ -5,6 +5,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
@@ -54,6 +55,7 @@ class CommentsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
+        $this->addControl(new ContinueWith($this->getFilter(), Links::commentsDetails()));
 
         $this->addContent((new CommentList($comments))->setViewMode($viewModeSwitcher->getViewMode()));
 
