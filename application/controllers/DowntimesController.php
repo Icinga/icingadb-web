@@ -5,6 +5,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
@@ -59,6 +60,7 @@ class DowntimesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
+        $this->addControl(new ContinueWith($this->getFilter(), Links::downtimesDetails()));
 
         $this->addContent((new DowntimeList($downtimes))->setViewMode($viewModeSwitcher->getViewMode()));
 
