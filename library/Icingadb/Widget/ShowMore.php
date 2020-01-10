@@ -19,8 +19,9 @@ class ShowMore extends BaseHtmlElement
 
     protected $label;
 
-    public function __construct(ResultSet $resultSet, Url $url)
+    public function __construct(ResultSet $resultSet, Url $url, $label = null)
     {
+        $this->label = $label;
         $this->resultSet = $resultSet;
         $this->url = $url;
     }
