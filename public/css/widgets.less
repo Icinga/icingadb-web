@@ -1,3 +1,16 @@
+.cancel-button {
+  .button();
+
+  background-color: white;
+  border: 1px solid @color-critical;
+  color: @color-critical;
+
+  &:hover {
+    background-color: @color-critical;
+    color: white;
+  }
+}
+
 .card {
   .rounded-corners(.5em);
   border: 1px solid @gray-light;
@@ -678,4 +691,9 @@ form.object-features {
       }
     }
   }
+}
+
+.show-more {
+  .clearfix();
+  float: right;
 }

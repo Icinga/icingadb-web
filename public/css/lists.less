@@ -1,3 +1,14 @@
+.action-list {
+  > .list-item:hover {
+    background-color: #f5fdff;
+    cursor: pointer;
+  }
+
+  > .list-item.active {
+    background-color: fade(@icinga-blue, 10);
+  }
+}
+
 .item-list {
   // Reset defaults
   list-style-type: none;
@@ -16,10 +27,6 @@
 .list-item {
   color: @text-color-light;
   display: flex;
-
-  &.active {
-    background-color: fade(@icinga-blue, 10);
-  }
 
   &.overdue {
     background-color: @gray-lighter;
@@ -209,14 +216,63 @@
   }
 }
 
-.downtime-detail .list-item {
-  margin-bottom: .5em;
+.downtime-list.minimal .list-item {
+  .visual {
+    display: block;
+    line-height: 1.5;
+    width: 8em;
+    white-space: nowrap;
+
+    strong {
+      display: inline-block;
+      font-size: 1em;
+    }
+  }
+
+  .caption {
+    .text-ellipsis()
+  }
+}
+
+.downtime-list.detailed .list-item {
+  .caption {
+    height: auto;
+    max-height: 4.5em;
+  }
 }
 
 .comment-list {
   .caption {
     .text-ellipsis();
     height: 1.5em;
+  }
+}
+
+.comment-list.minimal .list-item {
+  .visual {
+    width: 2em;
+  }
+
+  .user-ball {
+    font-size: .857em;
+    height: 1.75em;
+    line-height: 1.5em;
+    width: 1.75em;
+  }
+
+  .title br {
+    display: none;
+  }
+
+  .title a:first-of-type {
+    margin-right: .417em;
+  }
+}
+
+.comment-list.detailed .list-item {
+  .caption {
+    max-height: 4.5em;
+    white-space: normal;
   }
 }
 
@@ -279,7 +335,6 @@
 
     > * {
       display: inline-block;
-      vertical-align: middle;
 
       &:not(:last-child) {
         margin-right: .5em;
@@ -332,7 +387,7 @@
 }
 
 .hostgroup-list, .servicegroup-list {
-  .donut-graph{
+  .donut-graph {
     height: 2.25em;
     width:  2.25em;
   }
@@ -356,5 +411,35 @@
 
   &:hover {
     text-decoration: none;
+  }
+}
+
+.hostgroup-list.minimal,
+.servicegroup-list.minimal {
+  .col {
+    padding: 0;
+
+    &.hosts-total,
+    &.services-total {
+      padding-right: .417em;
+    }
+  }
+
+  .title br {
+    display: none;
+  }
+
+  .vertical-key-value {
+    br {
+      display: none;
+    }
+
+    .key {
+      padding-left: .417em;
+    }
+
+    .value {
+      vertical-align: middle;
+    }
   }
 }

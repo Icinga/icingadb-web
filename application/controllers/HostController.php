@@ -48,16 +48,6 @@ class HostController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
     }
 
-    protected function getCommandTargetsUrl()
-    {
-        return Links::host($this->host);
-    }
-
-    protected function fetchCommandTargets()
-    {
-        return [$this->host];
-    }
-
     public function indexAction()
     {
         if ($this->host->state->is_overdue) {
@@ -122,8 +112,6 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
-
         $db = $this->getDb();
 
         $history = History::on($db)->with([
@@ -168,6 +156,7 @@ class HostController extends Controller
             ->setLabel('Load More')
             ->setAttribute('data-no-icinga-ajax', true);
 
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl($limitControl);
 
         $historyList = (new HistoryList($history))
@@ -190,8 +179,6 @@ class HostController extends Controller
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
-
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 
@@ -216,6 +203,7 @@ class HostController extends Controller
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
+        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
@@ -252,5 +240,15 @@ class HostController extends Controller
 
             $this->view->title = $tab->getLabel();
         }
+    }
+
+    protected function fetchCommandTargets()
+    {
+        return [$this->host];
+    }
+
+    protected function getCommandTargetsUrl()
+    {
+        return Links::host($this->host);
     }
 }

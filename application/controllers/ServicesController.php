@@ -2,14 +2,28 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\ContinueWith;
+use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
+use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Widget\ActionLink;
+use IteratorIterator;
+use LimitIterator;
 
 class ServicesController extends Controller
 {
+    use CommandActions;
+
     public function indexAction()
     {
         $this->setTitle($this->translate('Services'));
@@ -58,6 +72,7 @@ class ServicesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($filterControl);
+        $this->addControl(new ContinueWith($this->getFilter(), Links::servicesDetails()));
 
         $this->addContent($serviceList);
 
@@ -68,5 +83,92 @@ class ServicesController extends Controller
         }
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function detailsAction()
+    {
+        $this->setTitle($this->translate('Services'));
+
+        $db = $this->getDb();
+
+        $services = Service::on($db)->with('state');
+        $summary = ServicestateSummary::on($db)->with(['state']);
+
+        $this->filter($services);
+        $this->filter($summary);
+
+        yield $this->export($services, $summary);
+
+        $summary = $summary->first();
+
+        $downtimes = Service::on($db)->with(['downtime']);
+        $downtimes->getWith()['service.downtime']->setJoinType('INNER');
+        $this->filter($downtimes);
+        $summary->downtimes_total = $downtimes->count();
+
+        $comments = Service::on($db)->with(['comment']);
+        $comments->getWith()['service.comment']->setJoinType('INNER');
+        $this->filter($comments);
+        $summary->comments_total = $comments->count();
+
+        $this->addControl(
+            (new ServiceList(new LimitIterator(new IteratorIterator($services), 0, 3)))
+                ->setViewMode('minimal')
+        );
+        if ($services->count() > 3) {
+            $this->addControl(new ActionLink(
+                sprintf($this->translate('Show all %d services'), $services->count()),
+                Links::services()->setQueryString($this->getFilter()->toQueryString()),
+                null,
+                ['class' => 'show-more']
+            ));
+        }
+        $this->addControl(
+            (new MultiselectQuickActions('service', $services, $summary))
+                ->setBaseFilter($this->getFilter())
+        );
+
+        $this->addContent(
+            (new ObjectsDetail('service', $services, $summary))
+                ->setBaseFilter($this->getFilter())
+        );
+    }
+
+    public function fetchCommandTargets()
+    {
+        $db = $this->getDb();
+
+        $services = Service::on($db)->with([
+            'state',
+            'host',
+            'host.state'
+        ]);
+
+        switch ($this->getRequest()->getActionName()) {
+            case 'acknowledge':
+                FilterProcessor::apply(
+                    Filter::matchAll([
+                        new FilterExpression('state.is_problem', '=', 'y'),
+                        new FilterExpression('state.is_acknowledged', '=', 'n')
+                    ]),
+                    $services
+                );
+
+                break;
+        }
+
+        $this->filter($services);
+
+        return $services;
+    }
+
+    public function getCommandTargetsUrl()
+    {
+        return Links::servicesDetails()->setQueryString($this->getFilter()->toQueryString());
+    }
+
+    protected function getFeatureStatus()
+    {
+        return new FeatureStatus('service', ServicestateSummary::on($this->getDb())->with(['state'])->first());
     }
 }

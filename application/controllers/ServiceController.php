@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Exception;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
@@ -13,7 +12,6 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectDetail;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
-use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
@@ -55,16 +53,6 @@ class ServiceController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
     }
 
-    public function getCommandTargetsUrl()
-    {
-        return Links::service($this->service, $this->service->host);
-    }
-
-    public function fetchCommandTargets()
-    {
-        return [$this->service];
-    }
-
     public function indexAction()
     {
         if ($this->service->state->is_overdue) {
@@ -82,8 +70,6 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Comments'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-
         $comments = $this->service->comment;
 
         $limitControl = $this->createLimitControl();
@@ -91,6 +77,7 @@ class ServiceController extends Controller
 
         yield $this->export($comments);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
 
@@ -103,8 +90,6 @@ class ServiceController extends Controller
     {
         $this->setTitle($this->translate('Downtimes'));
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-
         $downtimes = $this->service->downtime;
 
         $limitControl = $this->createLimitControl();
@@ -112,6 +97,7 @@ class ServiceController extends Controller
 
         yield $this->export($downtimes);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
         $this->addControl($limitControl);
 
@@ -127,8 +113,6 @@ class ServiceController extends Controller
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
-
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
 
         $db = $this->getDb();
 
@@ -179,6 +163,7 @@ class ServiceController extends Controller
             ->setLabel('Load More')
             ->setAttribute('data-no-icinga-ajax', true);
 
+        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($limitControl);
 
         $historyList = (new HistoryList($history))
@@ -219,5 +204,15 @@ class ServiceController extends Controller
 
             $this->view->title = $tab->getLabel();
         }
+    }
+
+    public function fetchCommandTargets()
+    {
+        return [$this->service];
+    }
+
+    public function getCommandTargetsUrl()
+    {
+        return Links::service($this->service, $this->service->host);
     }
 }

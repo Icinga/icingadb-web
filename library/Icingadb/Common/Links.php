@@ -24,14 +24,44 @@ abstract class Links
         return Url::fromPath('icingadb/comments');
     }
 
+    public static function commentsDelete()
+    {
+        return Url::fromPath('icingadb/comments/delete');
+    }
+
+    public static function commentsDetails()
+    {
+        return Url::fromPath('icingadb/comments/details');
+    }
+
     public static function downtime(Downtime $downtime)
     {
         return Url::fromPath('icingadb/downtime', ['name' => $downtime->name]);
     }
 
+    public static function downtimes()
+    {
+        return Url::fromPath('icingadb/downtimes');
+    }
+
+    public static function downtimesDelete()
+    {
+        return Url::fromPath('icingadb/downtimes/delete');
+    }
+
+    public static function downtimesDetails()
+    {
+        return Url::fromPath('icingadb/downtimes/details');
+    }
+
     public static function host(Host $host)
     {
         return Url::fromPath('icingadb/host', ['name' => $host->name]);
+    }
+
+    public static function hostsDetails()
+    {
+        return Url::fromPath('icingadb/hosts/details');
     }
 
     public static function hostgroup($hostgroup)
@@ -49,6 +79,11 @@ abstract class Links
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
+    public static function servicesDetails()
+    {
+        return Url::fromPath('icingadb/services/details');
+    }
+
     public static function servicegroup($servicegroup)
     {
         return Url::fromPath('icingadb/servicegroup', ['name' => $servicegroup->name]);
@@ -57,6 +92,16 @@ abstract class Links
     public static function services()
     {
         return Url::fromPath('icingadb/services');
+    }
+
+    public static function toggleHostsFeatures()
+    {
+        return Url::fromPath('icingadb/hosts/toggle-features');
+    }
+
+    public static function toggleServicesFeatures()
+    {
+        return Url::fromPath('icingadb/services/toggle-features');
     }
 
     public static function user(User $user)

@@ -124,8 +124,15 @@
     background-color: @gray-lighter;
   }
 
+  .continue-with {
+    float: left;
+    line-height: 2;
+    height: 2em;
+    margin: 0 0 .5em .5em;
+  }
+
   .filter {
-    width: 100%;
+    float: left;
     margin-top: 0;
   }
 
@@ -269,6 +276,7 @@
   display: inline-block;
   line-height: .75;
   text-align: center;
+  vertical-align: middle;
 
   .value {
     font-size: 1.5em;
@@ -322,4 +330,30 @@
     margin: 0;
     margin-left: .417em;
   }
+}
+
+.multiselect-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  // Donut
+  > div:first-child {
+    height: 4em;
+    width: 4em;
+
+    > svg {
+      height: auto;
+      max-width: 100%;
+    }
+  }
+
+  > .vertical-key-value {
+    padding: 0 .5em;
+  }
+}
+
+// Icinga Web 2 override
+.donut-graph {
+  vertical-align: middle;
 }

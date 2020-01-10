@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\Links;
+
 class ServiceList extends StateList
 {
     protected $defaultAttributes = ['class' => 'service-list'];
@@ -13,5 +15,10 @@ class ServiceList extends StateList
         }
 
         return ServiceListItem::class;
+    }
+
+    protected function init()
+    {
+        $this->setMultiselectUrl(Links::servicesDetails());
     }
 }

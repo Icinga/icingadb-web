@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\CommentDetail;
+use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 
 class CommentController extends Controller
 {
@@ -26,9 +27,7 @@ class CommentController extends Controller
 
         $name = $this->params->shiftRequired('name');
 
-        $query = Comment::on($this->getDb())
-            ->with('host')
-            ->with('host.state');
+        $query = Comment::on($this->getDb())->with(['host', 'host.state']);
 
         $query->getSelectBase()
             ->where(['comment.name = ?' => $name]);
@@ -43,6 +42,15 @@ class CommentController extends Controller
         $this->comment = $comment;
     }
 
+    public function indexAction()
+    {
+        $this->addControl((new CommentList([$this->comment]))->setViewMode('minimal')->setCaptionDisabled());
+
+        $this->addContent(new CommentDetail($this->comment));
+
+        $this->setAutorefreshInterval(10);
+    }
+
     protected function fetchCommandTargets()
     {
         return [$this->comment];
@@ -51,15 +59,5 @@ class CommentController extends Controller
     protected function getCommandTargetsUrl()
     {
         return Links::comment($this->comment);
-    }
-
-    public function indexAction()
-    {
-        $detail = new CommentDetail($this->comment);
-
-        $this->addControl($detail->getControl());
-        $this->addContent($detail);
-
-        $this->setAutorefreshInterval(10);
     }
 }

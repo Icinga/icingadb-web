@@ -8,7 +8,6 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -65,16 +64,6 @@ class DowntimeDetail extends BaseHtmlElement
         $this->duration = ($this->isActive ? $this->endTime : $this->startTime) - time();
     }
 
-    public function getControl()
-    {
-        return Html::tag('ul', ['class' => 'downtime-detail item-list'], [
-            Html::tag('li', ['class' => 'list-item'], [
-                $this->createVisual(),
-                $this->createMain()
-            ])
-        ]);
-    }
-
     protected function createCancelDowntimeForm()
     {
         $formData = [
@@ -105,51 +94,6 @@ class DowntimeDetail extends BaseHtmlElement
         return new HtmlString($cancelDowntimeForm->render());
     }
 
-    protected function createMain()
-    {
-        $main = Html::tag('div', ['class' => 'main']);
-        $header = Html::tag('header');
-        $title = Html::tag('div', ['class' =>'title']);
-
-        if ($this->downtime->is_flexible) {
-            $type = 'Flexible';
-        } else {
-            $type = 'Fixed';
-        }
-
-        if ($this->downtime->object_type === 'host') {
-            $link = $this->createHostLink($this->downtime->host, true);
-        } else {
-            $link = $this->createServiceLink($this->downtime->service, $this->downtime->service->host, true);
-        }
-
-        $title->add([
-            "{$type} Downtime",
-            ': ',
-            $link
-        ]);
-
-        $dateTime = WebDateFormatter::formatDateTime($this->endTime);
-        $timestamp = Html::tag('time',
-            [
-                'datetime' => $dateTime,
-                'title'    => $dateTime
-            ],
-            [
-                $this->isActive ? 'expires in' : 'starts in',
-                ' ',
-                DateFormatter::formatDuration($this->duration)
-            ]
-        );
-
-        $header->add($title);
-        $header->add($timestamp);
-
-        $main->add($header);
-
-        return $main;
-    }
-
     protected function createTimeline()
     {
         $ref = floor(
@@ -171,41 +115,6 @@ class DowntimeDetail extends BaseHtmlElement
         $timeline->add($progress);
 
         return $timeline;
-    }
-
-    protected function createVisual()
-    {
-        $visual = Html::tag('div', ['class' => 'visual']);
-        $dateTime = WebDateFormatter::formatDateTime($this->endTime);
-
-        if ($this->isActive) {
-            if ($this->downtime->is_in_effect) {
-                $visual->addAttributes(['class' => 'active']);
-            }
-            $visual->add([
-                Html::tag(
-                    'strong',
-                    Html::tag(
-                        'time',
-                        [
-                            'datetime' => $dateTime,
-                            'title'    => $dateTime
-                        ],
-                        DateFormatter::formatDuration($this->duration, true)
-                    )
-                ),
-                ' ',
-                'left'
-            ]);
-        } else {
-            $visual->add([
-                'in',
-                ' ',
-                Html::tag('strong', DateFormatter::formatDuration($this->duration, true))
-            ]);
-        }
-
-        return $visual;
     }
 
     protected function assemble()

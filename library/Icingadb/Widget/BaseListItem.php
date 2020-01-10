@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Data\Filter\Filter;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -109,6 +110,13 @@ abstract class BaseListItem extends BaseHtmlElement
      */
     protected function init()
     {
+    }
+
+    protected function setMultiselectFilter(Filter $filter)
+    {
+        $this->addAttributes(['data-icinga-multiselect-filter' => '(' . $filter->toQueryString() . ')']);
+
+        return $this;
     }
 
     protected function assemble()

@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
+use ipl\Web\Url;
 
 /**
  * Base class for item lists
@@ -14,7 +15,7 @@ abstract class BaseItemList extends BaseHtmlElement
 {
     use BaseFilter;
 
-    protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
+    protected $baseAttributes = ['class' => 'action-list item-list', 'data-base-target' => '_next'];
 
     /** @var iterable */
     protected $data;
@@ -48,6 +49,13 @@ abstract class BaseItemList extends BaseHtmlElement
      */
     protected function init()
     {
+    }
+
+    protected function setMultiselectUrl(Url $url)
+    {
+        $this->addAttributes(['data-icinga-multiselect-url' => $url]);
+
+        return $this;
     }
 
     protected function assemble()
