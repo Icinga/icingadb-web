@@ -38,6 +38,7 @@ class ApplicationState extends ApplicationStateHook
                 'icingadb/no-instance',
                 $noInstanceSince,
                 mt(
+                    'icingadb',
                     'It seems that Icinga DB is not running.'
                     . ' Make sure Icinga DB is running and writing into the database.'
                 )
@@ -50,6 +51,7 @@ class ApplicationState extends ApplicationStateHook
                     'icingadb/icingadb-down',
                     $instance->heartbeat,
                     mt(
+                        'icingadb',
                         'It seems that Icinga DB is not running.'
                         . ' Make sure Icinga DB is running and writing into the database.'
                     )
