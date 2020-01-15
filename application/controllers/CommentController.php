@@ -27,7 +27,14 @@ class CommentController extends Controller
 
         $name = $this->params->shiftRequired('name');
 
-        $query = Comment::on($this->getDb())->with(['host', 'host.state']);
+        $query = Comment::on($this->getDb())->with([
+            'host',
+            'host.state',
+            'service',
+            'service.state',
+            'service.host',
+            'service.host.state'
+        ]);
 
         $query->getSelectBase()
             ->where(['comment.name = ?' => $name]);
