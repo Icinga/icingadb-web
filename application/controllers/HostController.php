@@ -106,7 +106,7 @@ class HostController extends Controller
 
     public function historyAction()
     {
-        $compact = $this->params->shift('view') === 'compact'; // TODO: Don't shift here..
+        $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);

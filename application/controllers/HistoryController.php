@@ -13,7 +13,7 @@ class HistoryController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('History'));
-        $compact = $this->params->shift('view') === 'compact'; // TODO: Don't shift here..
+        $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
         $db = $this->getDb();
 
