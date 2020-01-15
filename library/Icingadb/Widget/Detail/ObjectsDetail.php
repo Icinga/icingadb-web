@@ -21,8 +21,6 @@ class ObjectsDetail extends BaseHtmlElement
 {
     use BaseFilter;
 
-    protected $objects;
-
     protected $summary;
 
     protected $type;
@@ -31,9 +29,8 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct($type, $objects, $summary)
+    public function __construct($type, $summary)
     {
-        $this->objects = $objects;
         $this->summary = $summary;
         $this->type = $type;
     }
