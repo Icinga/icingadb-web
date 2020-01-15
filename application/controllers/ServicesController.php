@@ -15,10 +15,8 @@ use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
-use ipl\Web\Widget\ActionLink;
-use IteratorIterator;
-use LimitIterator;
 
 class ServicesController extends Controller
 {
@@ -97,8 +95,12 @@ class ServicesController extends Controller
         $this->filter($services);
         $this->filter($summary);
 
+        $services->limit(3);
+        $services->peekAhead();
+
         yield $this->export($services, $summary);
 
+        $results = $services->execute();
         $summary = $summary->first();
 
         $downtimes = Service::on($db)->with(['downtime']);
@@ -112,17 +114,14 @@ class ServicesController extends Controller
         $summary->comments_total = $comments->count();
 
         $this->addControl(
-            (new ServiceList(new LimitIterator(new IteratorIterator($services), 0, 3)))
+            (new ServiceList($results))
                 ->setViewMode('minimal')
         );
-        if ($services->count() > 3) {
-            $this->addControl(new ActionLink(
-                sprintf($this->translate('Show all %d services'), $services->count()),
-                Links::services()->setQueryString($this->getFilter()->toQueryString()),
-                null,
-                ['class' => 'show-more']
-            ));
-        }
+        $this->addControl(new ShowMore(
+            $results,
+            Links::services()->setQueryString($this->getFilter()->toQueryString()),
+            sprintf($this->translate('Show all %d services'), $services->count())
+        ));
         $this->addControl(
             (new MultiselectQuickActions('service', $services, $summary))
                 ->setBaseFilter($this->getFilter())
