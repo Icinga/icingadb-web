@@ -15,10 +15,8 @@ use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
-use ipl\Web\Widget\ActionLink;
-use IteratorIterator;
-use LimitIterator;
 
 class HostsController extends Controller
 {
@@ -92,8 +90,12 @@ class HostsController extends Controller
         $this->filter($hosts);
         $this->filter($summary);
 
+        $hosts->limit(3);
+        $hosts->peekAhead();
+
         yield $this->export($hosts, $summary);
 
+        $results = $hosts->execute();
         $summary = $summary->first();
 
         $downtimes = Host::on($db)->with(['downtime']);
@@ -107,17 +109,14 @@ class HostsController extends Controller
         $summary->comments_total = $comments->count();
 
         $this->addControl(
-            (new HostList(new LimitIterator(new IteratorIterator($hosts), 0, 3)))
+            (new HostList($results))
                 ->setViewMode('minimal')
         );
-        if ($hosts->count() > 3) {
-            $this->addControl(new ActionLink(
-                sprintf($this->translate('Show all %d hosts'), $hosts->count()),
-                Links::hosts()->setQueryString($this->getFilter()->toQueryString()),
-                null,
-                ['class' => 'show-more']
-            ));
-        }
+        $this->addControl(new ShowMore(
+            $results,
+            Links::hosts()->setQueryString($this->getFilter()->toQueryString()),
+            sprintf($this->translate('Show all %d hosts'), $hosts->count())
+        ));
         $this->addControl(
             (new MultiselectQuickActions('host', $hosts, $summary))
                 ->setBaseFilter($this->getFilter())
