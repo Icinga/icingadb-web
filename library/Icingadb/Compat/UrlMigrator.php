@@ -15,10 +15,12 @@ class UrlMigrator
 
     const SUPPORTED_PATHS = [
         'monitoring/list/hosts' => ['hosts', 'icingadb/hosts'],
+        'monitoring/hosts/show' => ['multipleHosts', 'icingadb/hosts/details'],
         'monitoring/host/show'  => ['host', 'icingadb/host'],
         'monitoring/host/services' => ['host', 'icingadb/host/services'],
         'monitoring/host/history' => ['host', 'icingadb/host/history'],
         'monitoring/list/services' => ['services', 'icingadb/services'],
+        'monitoring/services/show' => ['multipleServices', 'icingadb/services/details'],
         'monitoring/service/show' => ['service', 'icingadb/service'],
         'monitoring/service/history' => ['service', 'icingadb/service/history'],
         'monitoring/list/hostgroups' => ['hostgroups', 'icingadb/hostgroups'],
@@ -28,7 +30,9 @@ class UrlMigrator
         'monitoring/list/comments' => ['comments', 'icingadb/comments'],
         'monitoring/list/downtimes' => ['downtimes', 'icingadb/downtimes'],
         'monitoring/list/eventhistory' => ['history', 'icingadb/history'],
-        'monitoring/list/notifications' => ['notificationHistory', 'icingadb/notifications']
+        'monitoring/list/notifications' => ['notificationHistory', 'icingadb/notifications'],
+        'monitoring/health/info' => [null, 'icingadb/health'],
+        'monitoring/health/stats' => [null, 'icingadb/health']
     ];
 
     public static function isSupportedUrl(Url $url)
@@ -382,6 +386,18 @@ class UrlMigrator
         ];
     }
 
+    protected static function multipleHostsColumns()
+    {
+        return array_merge(
+            static::hostsColumns(),
+            [
+                'host'  => [
+                    'host.name' => self::USE_EXPR
+                ]
+            ]
+        );
+    }
+
     protected static function hostColumns()
     {
         return [
@@ -682,6 +698,21 @@ class UrlMigrator
             'service_status_update_time' => self::DROP,
             'problems' => self::DROP,
         ];
+    }
+
+    protected static function multipleServicesColumns()
+    {
+        return array_merge(
+            static::servicesColumns(),
+            [
+                'host' => [
+                    'host.name' => self::USE_EXPR
+                ],
+                'service' => [
+                    'service.name' => self::USE_EXPR
+                ]
+            ]
+        );
     }
 
     protected static function serviceColumns()
