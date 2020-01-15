@@ -23,7 +23,14 @@ class DowntimeController extends Controller
 
         $name = $this->params->shiftRequired('name');
 
-        $query = Downtime::on($this->getDb());
+        $query = Downtime::on($this->getDb())->with([
+            'host',
+            'host.state',
+            'service',
+            'service.state',
+            'service.host',
+            'service.host.state'
+        ]);
         $query->getSelectBase()
             ->where(['downtime.name = ?' => $name]);
 
