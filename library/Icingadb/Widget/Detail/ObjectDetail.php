@@ -104,12 +104,14 @@ class ObjectDetail extends BaseHtmlElement
     {
         if ($this->objectType === 'host') {
             $link = HostLinks::comments($this->object);
+            $relations = ['host', 'host.state'];
         } else {
             $link = ServiceLinks::comments($this->object, $this->object->host);
+            $relations = ['service', 'service.state', 'service.host', 'service.host.state'];
         }
 
         /** @var ResultSet $comments */
-        $comments = $this->object->comment->limit(3)->peekAhead()->execute();
+        $comments = $this->object->comment->with($relations)->limit(3)->peekAhead()->execute();
 
         $content = [Html::tag('h2', 'Comments')];
 
