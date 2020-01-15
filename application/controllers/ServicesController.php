@@ -123,7 +123,7 @@ class ServicesController extends Controller
             sprintf($this->translate('Show all %d services'), $services->count())
         ));
         $this->addControl(
-            (new MultiselectQuickActions('service', $services, $summary))
+            (new MultiselectQuickActions('service', $summary))
                 ->setBaseFilter($this->getFilter())
         );
 

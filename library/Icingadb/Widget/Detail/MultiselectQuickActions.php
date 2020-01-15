@@ -16,8 +16,6 @@ class MultiselectQuickActions extends BaseHtmlElement
     use BaseFilter;
     use Auth;
 
-    protected $objects;
-
     protected $summary;
 
     protected $type;
@@ -26,9 +24,8 @@ class MultiselectQuickActions extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'quick-actions'];
 
-    public function __construct($type, $objects, $summary)
+    public function __construct($type, $summary)
     {
-        $this->objects = $objects;
         $this->summary = $summary;
         $this->type = $type;
     }

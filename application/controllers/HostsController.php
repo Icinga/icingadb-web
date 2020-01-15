@@ -118,7 +118,7 @@ class HostsController extends Controller
             sprintf($this->translate('Show all %d hosts'), $hosts->count())
         ));
         $this->addControl(
-            (new MultiselectQuickActions('host', $hosts, $summary))
+            (new MultiselectQuickActions('host', $summary))
                 ->setBaseFilter($this->getFilter())
         );
 
