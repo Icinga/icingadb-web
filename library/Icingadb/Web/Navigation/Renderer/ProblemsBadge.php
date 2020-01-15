@@ -109,7 +109,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
             $item = $this->getItem();
         }
 
-        $item->setCssClass('badge-nav-item');
+        $item->setCssClass('has-badge');
 
         return (new HtmlDocument())
             ->add(new HtmlString(parent::render($item)))
