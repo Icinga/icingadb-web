@@ -793,14 +793,18 @@ form.object-features {
 .monitoring-health {
   max-width: 65em;
 
-  > section:not(:last-child),
-  .icinga-health {
-    margin-bottom: 1em;
+  > section:not(:last-child) {
+    margin-bottom: 4em;
+  }
+
+  .vertical-key-value .value {
+    display: inline-block;
+    margin-bottom: .25em;
   }
 
   .check-summary {
     .col {
-      padding: 1em;
+      padding: 0 1em .5em 1em;
     }
 
     .col:not(:last-child) {
@@ -832,19 +836,22 @@ form.object-features {
     text-align: center;
 
     > h3 {
-      margin: 0 0 0.5em;
+      margin: 0 0 1em;
     }
   }
 
   .icinga-health {
     .rounded-corners();
+    margin-bottom: 2em;
     padding: 1em;
     text-align: center;
     width: 100%;
+    font-weight: bold;
 
     &.up {
       border: 1px solid @color-up;
-      color: @color-up;
+      color: #399c63;
+      color: darken(@color-up, 5);
     }
 
     &.down {
@@ -870,7 +877,7 @@ form.object-features {
       }
 
       .control-label-group {
-        font-size: .75em;
+        font-size: 10/12em;
         margin-right: 0;
         margin-top: 1em;
         padding: 0;
