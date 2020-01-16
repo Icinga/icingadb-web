@@ -2,14 +2,13 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use ipl\Html\BaseHtmlElement;
+use ipl\Html\HtmlDocument;
+use ipl\Web\Widget\Link;
 
-class StateBadge extends BaseHtmlElement
+class StateBadge extends HtmlDocument
 {
-    protected $defaultAttributes = ['class' => 'state-badge'];
-
-    /** @var mixed Badge content */
-    protected $content;
+    /** @var mixed Badge link */
+    protected $link;
 
     /** @var bool Whether the state is handled */
     protected $isHandled;
@@ -20,28 +19,26 @@ class StateBadge extends BaseHtmlElement
     /**
      * Create a new state badge
      *
-     * @param mixed  $content   Content of the badge
+     * @param mixed  $link   Link of the badge
      * @param string $state     Textual representation of a state
      * @param bool   $isHandled True if state is handled
      */
-    public function __construct($content, $state, $isHandled = false)
+    public function __construct(Link $link, $state, $isHandled = false)
     {
-        $this->content = $content;
+        $this->link = $link;
         $this->isHandled = $isHandled;
         $this->state = $state;
     }
 
     protected function assemble()
     {
-        $this->setTag('span');
-
-        $class = "state-{$this->state}";
+        $class = "state-badge state-{$this->state}";
         if ($this->isHandled) {
             $class .= ' handled';
         }
 
-        $this->addAttributes(['class' => $class]);
+        $this->link->addAttributes(['class' => $class]);
 
-        $this->add($this->content);
+        $this->add($this->link);
     }
 }
