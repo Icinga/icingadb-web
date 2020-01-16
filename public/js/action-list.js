@@ -2,12 +2,36 @@
 
     "use strict";
 
+    /**
+     * Remove one leading and trailing bracket and all text outside those brackets
+     *
+     * @param {string} subject
+     *
+     * @returns {string}
+     */
+    var stripBrackets = function (subject) {
+        return subject.replace(/^[^(]*\({1,2}/, '(').replace(/\){1,2}[^)]*$/, ')');
+    };
+
+    /**
+     * Parse the filter query contained in the given URL query string
+     *
+     * @param {string} queryString
+     *
+     * @returns {array}
+     */
+    var parseSelectionQuery = function (queryString) {
+        return stripBrackets(queryString).split('|');
+    };
+
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     var ActionList = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('click', '.action-list > .list-item', this.onClick, this);
+
+        this.on('rendered', '.container', this.onRendered, this);
     };
 
     ActionList.prototype = new Icinga.EventListener();
@@ -75,6 +99,29 @@
             _this.icinga.loader.loadUrl(
                 url, _this.icinga.loader.getLinkTargetFor($item)
             );
+        }
+    };
+
+    ActionList.prototype.onRendered = function (event) {
+        var $target = $(event.target);
+
+        if ($target.attr('id') !== 'col1') {
+            return;
+        }
+
+        var $list = $target.find('.action-list');
+
+        if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
+            var _this = event.data.self;
+            var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
+
+            if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
+                $.each(parseSelectionQuery(detailUrl.query), function (i, filter) {
+                    $list.find(
+                        '[data-icinga-multiselect-filter="' + filter + '"]'
+                    ).addClass('active');
+                });
+            }
         }
     };
 
