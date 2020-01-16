@@ -48,8 +48,10 @@
             $anchor.html(label + dots);
         }, null, 250);
 
+        var url = $anchor.attr('href');
         var req = _this.icinga.loader.loadUrl(
-            _this.icinga.utils.addUrlParams($anchor.attr('href'), { 'view': 'compact' }),
+            // Add view=compact, we don't want controls in paged results
+            _this.icinga.utils.addUrlParams(url, { view: 'compact' }),
             $showMore.parent(),
             undefined,
             undefined,
@@ -61,13 +63,10 @@
         req.done(function () {
             $showMore.remove();
 
-            if (_this.icinga.history.enabled) {
-                window.history.replaceState(
-                    _this.icinga.history.getBehaviorState(),
-                    null,
-                    $anchor.attr('href')
-                );
-            }
+            // Set data-icinga-url to make it available for Icinga.History.getCurrentState()
+            req.$target.closest('.container').data('icingaUrl', url);
+
+            _this.icinga.history.replaceCurrentState();
         });
 
         return false;
