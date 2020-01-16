@@ -61,6 +61,10 @@ namespace Icinga\Module\Icingadb
         'url' => 'icingadb/health',
         'priority' => 100
     ]);
+    $section->add(N_('Tactical Overview'), [
+        'url' => 'icingadb/tactical',
+        'priority' => 110
+    ]);
 
     $this->provideConfigTab('database', [
         'label' => $this->translate('Database'),
