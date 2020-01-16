@@ -5,6 +5,7 @@ namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Widget\StateBadge;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 use ipl\Html\HtmlDocument;
@@ -109,7 +110,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
             $item = $this->getItem();
         }
 
-        $item->setCssClass('has-badge');
+        $item->setCssClass('icinga-module module-icingadb has-badge');
 
         return (new HtmlDocument())
             ->add(new HtmlString(parent::render($item)))
@@ -122,10 +123,9 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         $count = $this->getProblemsCount();
 
         if ($count) {
-            return new Link($count, $this->getUrl(), [
-                'class' => sprintf('badge state-%s', $this->getState()),
+            return new StateBadge(new Link($count, $this->getUrl(), [
                 'title' => $this->getTitle()
-            ]);
+            ]), $this->getState());
         }
 
         return null;
