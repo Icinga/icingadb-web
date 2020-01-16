@@ -47,7 +47,7 @@ abstract class BaseServiceListItem extends StateListItem
         $this->setMultiselectFilter(
             (new FilterAnd())
                 ->addFilter(new FilterExpression('service.name', '=', $this->item->name))
-                ->addFilter(new FilterExpression('service.host.name', '=', $this->item->host->name))
+                ->addFilter(new FilterExpression('host.name', '=', $this->item->host->name))
         );
     }
 }
