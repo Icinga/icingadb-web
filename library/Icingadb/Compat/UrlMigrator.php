@@ -371,10 +371,17 @@ class UrlMigrator
             'host_last_time_unreachable' => self::DROP,
             'host_last_time_up' => self::DROP,
             'host_next_notification' => self::DROP,
-            'host_next_update' => [
+            'host_next_update' => function ($filter) {
+                /** @var \Icinga\Data\Filter\FilterExpression $filter */
+                if ($filter->getExpression() !== 'now') {
+                    return false;
+                }
+
                 // Doesn't get dropped because there's a default dashlet using it..
-                'host.state.next_update' => self::USE_EXPR
-            ],
+                // Though since this dashlet uses it to check for overdue hosts we'll
+                // replace it as next_update is volatile (only in redis up2date)
+                return Filter::where('host.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
+            },
             'host_no_more_notifications' => self::DROP,
             'host_normal_check_interval' => self::DROP,
             'host_problem_has_been_acknowledged' => self::DROP,
@@ -684,10 +691,17 @@ class UrlMigrator
             'service_failure_prediction_enabled' => self::DROP,
             'service_is_passive_checked' => self::DROP,
             'service_next_notification' => self::DROP,
-            'service_next_update' => [
+            'service_next_update' => function ($filter) {
+                /** @var \Icinga\Data\Filter\FilterExpression $filter */
+                if ($filter->getExpression() !== 'now') {
+                    return false;
+                }
+
                 // Doesn't get dropped because there's a default dashlet using it..
-                'service.state.next_update' => self::USE_EXPR
-            ],
+                // Though since this dashlet uses it to check for overdue services we'll
+                // replace it as next_update is volatile (only in redis up2date)
+                return Filter::where('host.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
+            },
             'service_no_more_notifications' => self::DROP,
             'service_normal_check_interval' => self::DROP,
             'service_percent_state_change' => self::DROP,
