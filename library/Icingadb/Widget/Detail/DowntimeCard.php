@@ -142,8 +142,7 @@ class DowntimeCard extends BaseHtmlElement
                     new VerticalKeyValue('End', new TimeUntil($this->downtime->end_time))
                 )
             ]);
-
-        } else if ($this->downtime->is_flexible) {
+        } elseif ($this->downtime->is_flexible) {
             $this->addAttributes(['class' => 'flexible']);
 
             $timelineProgress = Html::tag('div', [
