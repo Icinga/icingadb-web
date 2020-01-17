@@ -12,7 +12,6 @@ class CompatBackend extends MonitoringBackend
      */
     public function __construct()
     {
-
     }
 
     /**
