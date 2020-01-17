@@ -59,9 +59,12 @@ class FilterControl extends HtmlDocument
             foreach ($this->query->getWith() as $path => $relation) {
                 $path = explode('.', $path);
                 $columns += $this->selectColumns($relation->getTarget()->getColumns(), $path);
-                array_push($searchColumns, ...array_keys(
-                    $this->selectColumns($relation->getTarget()->getSearchColumns(), $path)
-                ));
+                $relationSearchColumns = $relation->getTarget()->getSearchColumns();
+                if (! empty($relationSearchColumns)) {
+                    array_push($searchColumns, ...array_keys(
+                        $this->selectColumns($relationSearchColumns, $path)
+                    ));
+                }
             }
 
             $this->filterEditor = (new FilterEditor([]))
