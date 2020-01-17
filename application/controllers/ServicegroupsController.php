@@ -8,8 +8,8 @@ use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
 
 class ServicegroupsController extends Controller
 {
-    public function indexAction() {
-
+    public function indexAction()
+    {
         $this->setTitle($this->translate('Service Groups'));
 
         $db = $this->getDb();
