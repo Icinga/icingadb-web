@@ -70,6 +70,6 @@ class Comment extends Model
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
-        $relations->belongsTo('zone',Zone::class);
+        $relations->belongsTo('zone', Zone::class);
     }
 }
