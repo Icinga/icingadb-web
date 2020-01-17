@@ -259,14 +259,13 @@ class ObjectDetail extends BaseHtmlElement
         $usergroupList = new TagList();
 
         foreach ($users as $user) {
-            $userList->addLink(
-                [new Icon(Icons::USER), $user->display_name], Links::user($user)
-            );
+            $userList->addLink([new Icon(Icons::USER), $user->display_name], Links::user($user));
         }
 
         foreach ($usergroups as $usergroup) {
             $usergroupList->addLink(
-                [new Icon(Icons::USERGROUP), $usergroup->display_name], Links::usergroup($usergroup)
+                [new Icon(Icons::USERGROUP), $usergroup->display_name],
+                Links::usergroup($usergroup)
             );
         }
 
@@ -306,7 +305,9 @@ class ObjectDetail extends BaseHtmlElement
     {
         return [
             Html::tag('h2', 'Plugin Output'),
-            Html::tag('div', ['class' => 'collapsible'],
+            Html::tag(
+                'div',
+                ['class' => 'collapsible'],
                 CompatPluginOutput::getInstance()->render(
                     $this->object->state->output . "\n" . $this->object->state->long_output
                 )
