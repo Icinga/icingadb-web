@@ -129,7 +129,8 @@ class CheckStatistics extends Card
         $header->add([
             new VerticalKeyValue('Command', $this->object->checkcommand),
             new VerticalKeyValue(
-                'Attempts', new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
+                'Attempts',
+                new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
             ),
             new VerticalKeyValue('Check source', $checkSource),
             new VerticalKeyValue('Execution time', Format::seconds($this->object->state->execution_time)),
