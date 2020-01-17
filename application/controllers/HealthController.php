@@ -75,11 +75,12 @@ class HealthController extends Controller
                         )
                     ])
                 ])
-            ]
-        ));
+        ]));
 
         $featureCommands = Html::tag(
-            'section', ['class' => 'instance-commands'], Html::tag('h2', 'Feature Commands')
+            'section',
+            ['class' => 'instance-commands'],
+            Html::tag('h2', 'Feature Commands')
         );
         $programStatus = (object) [
             'active_host_checks_enabled'    => $instance->icinga2_active_host_checks_enabled,
