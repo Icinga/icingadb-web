@@ -120,13 +120,17 @@ class DowntimeDetail extends BaseHtmlElement
         $this->add(
             new HorizontalKeyValue('Start time', WebDateFormatter::formatDateTime($this->downtime->start_time))
         );
-        $this->add(
-            new HorizontalKeyValue('End time', WebDateFormatter::formatDateTime($this->downtime->end_time)));
         $this->add(new HorizontalKeyValue(
-            'Scheduled Start', WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
+            'End time',
+            WebDateFormatter::formatDateTime($this->downtime->end_time)
         ));
         $this->add(new HorizontalKeyValue(
-            'Scheduled End', WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
+            'Scheduled Start',
+            WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
+        ));
+        $this->add(new HorizontalKeyValue(
+            'Scheduled End',
+            WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
         ));
         $this->add(new HorizontalKeyValue(
             'Scheduled Duration',
@@ -136,7 +140,8 @@ class DowntimeDetail extends BaseHtmlElement
         ));
         if ($this->downtime->is_flexible) {
             $this->add(new HorizontalKeyValue(
-                'Flexible Duration', DateFormatter::formatDuration($this->downtime->flexible_duration)
+                'Flexible Duration',
+                DateFormatter::formatDuration($this->downtime->flexible_duration)
             ));
         }
 
