@@ -90,26 +90,28 @@ class ConfigController extends Controller
         $confirmRemovalForm = (new ConfirmRemovalForm())
             ->setRedirectUrl('icingadb/config/command-transports');
 
-        $confirmRemovalForm->setOnSuccess(function (ConfirmRemovalForm $form) use ($transportName, $transportConfigForm) {
-            try {
-                $transportConfigForm->delete($transportName);
-            } catch (Exception $e) {
-                $form->error($e->getMessage());
+        $confirmRemovalForm->setOnSuccess(
+            function (ConfirmRemovalForm $form) use ($transportName, $transportConfigForm) {
+                try {
+                    $transportConfigForm->delete($transportName);
+                } catch (Exception $e) {
+                    $form->error($e->getMessage());
+
+                    return false;
+                }
+
+                if ($transportConfigForm->save()) {
+                    Notification::success(sprintf(
+                        $this->translate('Command transport "%s" successfully removed'),
+                        $transportName
+                    ));
+
+                    return true;
+                }
 
                 return false;
             }
-
-            if ($transportConfigForm->save()) {
-                Notification::success(sprintf(
-                    $this->translate('Command transport "%s" successfully removed'),
-                    $transportName
-                ));
-
-                return true;
-            }
-
-            return false;
-        });
+        );
 
         $confirmRemovalForm->handleRequest();
 
