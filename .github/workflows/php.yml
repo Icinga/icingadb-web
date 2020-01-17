@@ -37,11 +37,10 @@ jobs:
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
-#        continue-on-error: ${{ matrix.allow_failure }}
         run: |
           composer require -n --no-progress overtrue/phplint
-          ./vendor/bin/phplint -n --exclude=vendor --no-ansi -- ./
+          ./vendor/bin/phplint -n --exclude=vendor -- ./
 
       - name: PHP CodeSniffer
         if: success() || matrix.allow_failure
-        run: phpcs ./ --ignore=vendor/* --standard=PSR12
+        run: phpcs -wps --colors
