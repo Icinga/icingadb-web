@@ -14,6 +14,7 @@ class ServiceProblemsBadge extends ProblemsBadge
 
     protected function getUrl()
     {
-        return Links::services()->setParams(['service.state.is_problem' => 'y', 'sort' => 'service.state.severity desc']);
+        return Links::services()
+            ->setParams(['service.state.is_problem' => 'y', 'sort' => 'service.state.severity desc']);
     }
 }

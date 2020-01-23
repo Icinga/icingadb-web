@@ -43,7 +43,7 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderArray($name, array $array)
     {
-        $this->addRow("$name (Array)",count($array) . ' items');
+        $this->addRow("$name (Array)", count($array) . ' items');
 
         ++$this->level;
 
@@ -56,7 +56,7 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderObject($name, $object)
     {
-        $this->addRow($name,count(get_object_vars($object)) . ' items');
+        $this->addRow($name, count(get_object_vars($object)) . ' items');
 
         ++$this->level;
 
@@ -79,4 +79,3 @@ class CustomVarTable extends BaseHtmlElement
         }
     }
 }
-

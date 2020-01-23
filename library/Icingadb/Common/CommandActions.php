@@ -87,8 +87,7 @@ trait CommandActions
      */
     protected function getCommandObjects()
     {
-        switch ($this->getCommandTargetModel()->getTableName())
-        {
+        switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
                 $compatClass = CompatHost::class;
                 break;
@@ -183,8 +182,7 @@ trait CommandActions
     {
         $this->assertPermission('monitoring/command/schedule-check');
 
-        switch ($this->getCommandTargetModel()->getTableName())
-        {
+        switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
                 $this->setTitle($this->translate('Reschedule Host Check'));
                 $this->handleCommandForm(ScheduleHostCheckCommandForm::class);
@@ -200,8 +198,7 @@ trait CommandActions
     {
         $this->assertPermission('monitoring/command/downtime/schedule');
 
-        switch ($this->getCommandTargetModel()->getTableName())
-        {
+        switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
                 $this->setTitle($this->translate('Schedule Host Downtime'));
                 $this->handleCommandForm(ScheduleHostDowntimeCommandForm::class);

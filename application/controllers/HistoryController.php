@@ -30,7 +30,7 @@ class HistoryController extends Controller
             'state'
         ]);
 
-        $url = Url::fromPath('icingadb/history')->setParams($this->params);
+        $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
         }
@@ -59,7 +59,7 @@ class HistoryController extends Controller
 
         $showMore = (new ShowMore(
             $history->peekAhead()->execute(),
-            (clone $url)->setParam('page', $page + 1)
+            $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
             ->setLabel('Load More')

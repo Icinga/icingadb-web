@@ -8,8 +8,8 @@ use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 
 class HostgroupsController extends Controller
 {
-    public function indexAction() {
-
+    public function indexAction()
+    {
         $this->setTitle($this->translate('Host Groups'));
 
         $db = $this->getDb();

@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+
 use function ipl\Stdlib\get_php_type;
 
 trait CompatObject

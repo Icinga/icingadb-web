@@ -6,6 +6,7 @@ use FilterIterator;
 use Icinga\Util\GlobFilter;
 use Iterator;
 use stdClass;
+
 use function ipl\Stdlib\arrayval;
 
 class CustomvarFilter extends FilterIterator

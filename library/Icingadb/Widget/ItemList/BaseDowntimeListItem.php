@@ -66,7 +66,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
     {
         $ref = floor(
             (float) ($this->currentTime - $this->startTime)
-            / (float) ($this->endTime- $this->startTime)
+            / (float) ($this->endTime - $this->startTime)
             * 100
         );
 
@@ -164,7 +164,8 @@ abstract class BaseDowntimeListItem extends BaseListItem
     {
         $dateTime = WebDateFormatter::formatDateTime($this->endTime);
 
-        return Html::tag('time',
+        return Html::tag(
+            'time',
             [
                 'datetime' => $dateTime,
                 'title'    => $dateTime

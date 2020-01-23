@@ -11,98 +11,112 @@ abstract class ServiceLinks
     public static function acknowledge(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/acknowledge', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/acknowledge',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function addComment(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/add-comment', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/add-comment',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function checkNow(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/check-now', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/check-now',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function scheduleCheck(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/schedule-check', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/schedule-check',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function cancelDowntime(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/delete-downtime', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/delete-downtime',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function comments(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/comments', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/comments',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function downtimes(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/downtimes', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/downtimes',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function history(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/history', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/history',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function removeAcknowledgement(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/remove-acknowledgement', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/remove-acknowledgement',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function removeComment(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/delete-comment', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/delete-comment',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function scheduleDowntime(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/schedule-downtime', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/schedule-downtime',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function sendCustomNotification(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/send-custom-notification', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/send-custom-notification',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function processCheckresult(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/process-checkresult', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/process-checkresult',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function toggleFeatures(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/toggle-features', ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/service/toggle-features',
+            ['name' => $service->name, 'host.name' => $host->name]
         );
     }
 }

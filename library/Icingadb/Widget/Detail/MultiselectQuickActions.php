@@ -36,7 +36,8 @@ class MultiselectQuickActions extends BaseHtmlElement
         $acks = "{$this->type}s_acknowledged";
         $activeChecks = "{$this->type}s_active_checks_enabled";
 
-        if ($this->summary->$unacknowledged > $this->summary->$acks
+        if (
+            $this->summary->$unacknowledged > $this->summary->$acks
             && $this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')
         ) {
             $this->assembleAction(
@@ -47,7 +48,8 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->summary->$acks > 0
+        if (
+            $this->summary->$acks > 0
             && $this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')
         ) {
             $removeAckForm = (new RemoveAcknowledgementCommandForm())
