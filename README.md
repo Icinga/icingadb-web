@@ -1,5 +1,9 @@
 # Icinga DB
 
+[![PHP Support](https://img.shields.io/badge/php-%3E%3D%207.0-777BB4?logo=PHP)](https://php.net/)
+![Build Status](https://github.com/icinga/icingaweb2-module-icingadb/workflows/PHP%20Tests/badge.svg?branch=master)
+[![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2-module-icingadb.svg)](https://github.com/Icinga/icingaweb2-module-icingadb)
+
 1. [Documentation](README.md#documentation)
 2. [Installation](README.md#installation)
 3. [Configuration](README.md#configuration)
