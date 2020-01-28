@@ -56,11 +56,17 @@
     Migrate.prototype.onRendered = function(event) {
         var _this = event.data.self;
         var $target = $(event.target);
-        var urls = {};
-        var href;
 
         if (! $target.is('#main > .container')) {
-            // We are really only interested in top-level containers
+            var attrUrl = $target.attr('data-icinga-url');
+            var dataUrl = $target.data('icingaUrl');
+            if (!! attrUrl && attrUrl !== dataUrl) {
+                // Search urls are redirected, update any migration suggestions
+                _this.prepareMigration($target);
+                return;
+            }
+
+            // We are else really only interested in top-level containers
             return;
         }
 
@@ -77,6 +83,14 @@
             $target = $dashboard.children('.container');
         }
 
+        _this.prepareMigration($target);
+    };
+
+    Migrate.prototype.prepareMigration = function($target) {
+        var urls = {};
+        var href;
+
+        var _this = this;
         $target.each(function () {
             var $container = $(this);
             href = $container.data('icingaUrl');
@@ -95,10 +109,10 @@
             }
         });
 
-        if (_this.icinga.utils.objectKeys(urls).length) {
-            _this.migrateMonitoringUrls(urls);
+        if (this.icinga.utils.objectKeys(urls).length) {
+            this.migrateMonitoringUrls(urls);
         } else {
-            _this.cleanupSuggestions();
+            this.cleanupSuggestions();
         }
     };
 
