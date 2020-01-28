@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
@@ -32,8 +33,7 @@ class CheckStatistics extends Card
 
         $timeline = Html::tag('div', ['class' => 'check-timeline timeline']);
 
-        $duration = $this->object->state->next_check - $this->object->state->last_update;
-
+        $overdueBar = null;
         if ($this->object->state->is_overdue) {
             $leftNow = 100 - $hPadding;
             $overdueBar = Html::tag('div', [
@@ -42,14 +42,15 @@ class CheckStatistics extends Card
                            'width: ' . ($leftNow - $durationScale) . '%'
             ]);
         } else {
-            $leftNow = $hPadding + (time() - $this->object->state->last_update) / $duration * (100 - 2 * $hPadding);
+            $duration = $this->object->check_interval;
+            $leftNow = $hPadding + ($duration - ($this->object->state->next_check - time()))
+                / $duration * (100 - 2 * $hPadding);
             if ($leftNow > 97) {
                 $leftNow = 97;
             }
             if ($leftNow < $hPadding) {
                 $leftNow = $hPadding;
             }
-            $overdueBar = null;
         }
 
         $above = Html::tag('ul', ['class' => 'above']);
@@ -62,12 +63,14 @@ class CheckStatistics extends Card
         $markerLast = Html::tag('div', [
             'class' => 'marker last',
             'style' => 'left: ' . $hPadding . '%',
-            'title' => $this->object->state->last_update
+            'title' => $this->object->state->last_update !== null
+                ? DateFormatter::formatDateTime($this->object->state->last_update)
+                : null
         ]);
         $markerNext = Html::tag('div', [
             'class' => 'marker next',
             'style' => 'left: ' .  ($durationScale - ($this->object->state->is_overdue ? 0 : $hPadding)) . '%',
-            'title' => $this->object->state->next_check
+            'title' => DateFormatter::formatDateTime($this->object->state->next_check)
         ]);
         $markerNow = Html::tag('div', [
             'class' => 'marker now',
@@ -84,7 +87,9 @@ class CheckStatistics extends Card
         $lastUpdate = Html::tag(
             'li',
             ['class' => 'bubble upwards last'],
-            new VerticalKeyValue('Last update', new TimeAgo($this->object->state->last_update))
+            new VerticalKeyValue('Last update', $this->object->state->last_update !== null
+                ? new TimeAgo($this->object->state->last_update)
+                : 'PENDING')
         );
         $interval = Html::tag(
             'li',
