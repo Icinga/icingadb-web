@@ -8,11 +8,19 @@ class Timestamp extends PropertyBehavior
 {
     public function fromDb($value, $key, $_)
     {
+        if ($value === null) {
+            return $value;
+        }
+
         return $value / 1000.0;
     }
 
     public function toDb($value, $key, $_)
     {
+        if ($value === null) {
+            return $value;
+        }
+
         if (! ctype_digit($value)) {
             $value = strtotime($value);
         }
