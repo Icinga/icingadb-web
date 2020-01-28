@@ -9,7 +9,7 @@ class ServicegroupSummary extends UnionModel
 {
     public function getTableName()
     {
-        return 'summary';
+        return 'servicegroup';
     }
 
     public function getKeyName()
