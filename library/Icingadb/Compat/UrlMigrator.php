@@ -747,7 +747,7 @@ class UrlMigrator
 
             // Query columns
             'hostgroup_alias' => [
-                'display_name' => self::USE_EXPR
+                'hostgroup.display_name' => self::USE_EXPR
             ],
             'hosts_severity' => self::SORT_ONLY,
             'hosts_total' => self::SORT_ONLY,
@@ -771,7 +771,7 @@ class UrlMigrator
             'services_severity' => self::SORT_ONLY,
             'services_total' => self::SORT_ONLY,
             'servicegroup_alias' => [
-                'display_name' => self::USE_EXPR
+                'servicegroup.display_name' => self::USE_EXPR
             ],
 
             // Filter columns
