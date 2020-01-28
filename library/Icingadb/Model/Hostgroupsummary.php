@@ -9,7 +9,7 @@ class Hostgroupsummary extends UnionModel
 {
     public function getTableName()
     {
-        return 'summary';
+        return 'hostgroup';
     }
 
     public function getKeyName()
