@@ -131,7 +131,7 @@ abstract class StateBadges extends BaseHtmlElement
         if (isset($this->item->$unhandledKey) && $this->item->$unhandledKey) {
             $content[] = Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$unhandledKey, $state),
-                ['state.soft_state' => $this->getStateInt($state)]
+                ['state.soft_state' => $this->getStateInt($state), 'state.is_handled' => 'n']
             ));
         }
 
