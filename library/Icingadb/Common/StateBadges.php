@@ -113,9 +113,9 @@ abstract class StateBadges extends BaseHtmlElement
         $key = $this->prefix . "_{$state}";
 
         if (isset($this->item->$key) && $this->item->$key) {
-            return Html::tag('li', new StateBadge(
-                $this->createLink($this->item->$key, ['state.soft_state' => $this->getStateInt($state)]),
-                $state
+            return Html::tag('li', $this->createLink(
+                new StateBadge($this->item->$key, $state),
+                ['state.soft_state' => $this->getStateInt($state)]
             ));
         }
 
@@ -129,20 +129,16 @@ abstract class StateBadges extends BaseHtmlElement
         $unhandledKey = $this->prefix . "_{$state}_unhandled";
 
         if (isset($this->item->$unhandledKey) && $this->item->$unhandledKey) {
-            $content[] = Html::tag('li', new StateBadge(
-                $this->createLink($this->item->$unhandledKey, ['state.soft_state' => $this->getStateInt($state)]),
-                $state
+            $content[] = Html::tag('li', $this->createLink(
+                new StateBadge($this->item->$unhandledKey, $state),
+                ['state.soft_state' => $this->getStateInt($state)]
             ));
         }
 
         if (isset($this->item->$handledKey) && $this->item->$handledKey) {
-            $content[] = Html::tag('li', new StateBadge(
-                $this->createLink(
-                    $this->item->$handledKey,
-                    ['state.soft_state' => $this->getStateInt($state), 'state.is_handled' => 'y']
-                ),
-                $state,
-                true
+            $content[] = Html::tag('li', $this->createLink(
+                new StateBadge($this->item->$handledKey, $state, true),
+                ['state.soft_state' => $this->getStateInt($state), 'state.is_handled' => 'y']
             ));
         }
 
