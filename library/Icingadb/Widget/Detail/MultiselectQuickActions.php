@@ -62,10 +62,10 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->getAuth()->hasPermission('monitoring/command/schedule-check')
-//            || (
-//                $this->summary->$activeChecks > 0
-//                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
-//            )
+            || (
+                $this->summary->$activeChecks > 0
+                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+            )
         ) {
             $checkNowForm = (new CheckNowCommandForm())
                 ->setAction($this->getLink('checkNow'));
@@ -102,10 +102,10 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->getAuth()->hasPermission('monitoring/command/schedule-check')
-//            || (
-//                $this->summary->$activeChecks > 0
-//                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
-//            )
+            || (
+                $this->summary->$activeChecks > 0
+                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+            )
         ) {
             $this->assembleAction(
                 'scheduleCheck',
