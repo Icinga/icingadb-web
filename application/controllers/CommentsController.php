@@ -140,13 +140,11 @@ class CommentsController extends Controller
 
         $this->addControl((new CommentList($rs))->setViewMode('minimal'));
 
-        if ($rs->hasMore()) {
-            $this->addControl(new ShowMore(
-                $rs,
-                Links::comments()->setQueryString($this->getFilter()->toQueryString()),
-                sprintf($this->translate('Show all %d comments'), $comments->count())
-            ));
-        }
+        $this->addControl(new ShowMore(
+            $rs,
+            Links::comments()->setQueryString($this->getFilter()->toQueryString()),
+            sprintf($this->translate('Show all %d comments'), $comments->count())
+        ));
 
         $this->addContent(new ActionLink(
             sprintf($this->translate('Remove %d comments'), $comments->count()),
