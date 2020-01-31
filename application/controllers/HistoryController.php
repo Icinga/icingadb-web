@@ -30,6 +30,7 @@ class HistoryController extends Controller
             'state'
         ]);
 
+        $this->params->shift('view'); // TODO: Don't shift here, damn it (Nothing else does it)
         $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
