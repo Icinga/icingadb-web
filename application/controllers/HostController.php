@@ -137,6 +137,7 @@ class HostController extends Controller
 
         $limitControl = $this->createLimitControl();
 
+        $history->peekAhead();
         $history->limit($limitControl->getLimit());
         if ($page > 1) {
             if ($compact) {
@@ -148,8 +149,10 @@ class HostController extends Controller
 
         yield $this->export($history);
 
+        $results = $history->execute();
+
         $showMore = (new ShowMore(
-            $history->peekAhead()->execute(),
+            $results,
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
@@ -159,7 +162,7 @@ class HostController extends Controller
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl($limitControl);
 
-        $historyList = (new HistoryList($history))
+        $historyList = (new HistoryList($results))
             ->setPageSize($limitControl->getLimit());
         if ($compact) {
             $historyList->setPageNumber($page);

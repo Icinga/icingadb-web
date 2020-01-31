@@ -44,6 +44,7 @@ class HistoryController extends Controller
         );
         $filterControl = $this->createFilterControl($history);
 
+        $history->peekAhead();
         $history->limit($limitControl->getLimit());
         if ($page > 1) {
             if ($compact) {
@@ -57,8 +58,10 @@ class HistoryController extends Controller
 
         yield $this->export($history);
 
+        $results = $history->execute();
+
         $showMore = (new ShowMore(
-            $history->peekAhead()->execute(),
+            $results,
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
@@ -69,7 +72,7 @@ class HistoryController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $historyList = (new HistoryList($history))
+        $historyList = (new HistoryList($results))
             ->setPageSize($limitControl->getLimit());
         if ($compact) {
             $historyList->setPageNumber($page);
