@@ -5,12 +5,15 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
 
 class NotificationsController extends Controller
 {
     public function indexAction()
     {
         $this->setTitle($this->translate('Notifications'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
@@ -35,6 +38,8 @@ class NotificationsController extends Controller
 
         $this->filter($notifications);
 
+        $notifications->peekAhead($compact);
+
         yield $this->export($notifications);
 
         $this->addControl($paginationControl);
@@ -42,7 +47,20 @@ class NotificationsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
-        $this->addContent(new NotificationList($notifications));
+        $results = $notifications->execute();
+
+        $this->addContent(new NotificationList($results));
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d notifications'),
+                        $notifications->count()
+                    ))
+            );
+        }
 
         $this->setAutorefreshInterval(10);
     }
