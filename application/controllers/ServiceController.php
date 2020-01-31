@@ -137,7 +137,7 @@ class ServiceController extends Controller
                 'history_service.id = ?' => $this->service->id
             ], Sql::ANY);
 
-        $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
+        $url = ServiceLinks::history($this->service, $this->service->host);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
         }
