@@ -5,12 +5,15 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
+use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
 
 class HostgroupsController extends Controller
 {
     public function indexAction()
     {
         $this->setTitle($this->translate('Host Groups'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
@@ -31,6 +34,8 @@ class HostgroupsController extends Controller
 
         $this->filter($hostgroups);
 
+        $hostgroups->peekAhead($compact);
+
         yield $this->export($hostgroups);
 
         $this->addControl($paginationControl);
@@ -38,9 +43,22 @@ class HostgroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($filterControl);
 
+        $results = $hostgroups->execute();
+
         $this->addContent(
-            (new HostgroupList($hostgroups))->setBaseFilter($this->getFilter())
+            (new HostgroupList($results))->setBaseFilter($this->getFilter())
         );
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d hostgroups'),
+                        $hostgroups->count()
+                    ))
+            );
+        }
 
         $this->setAutorefreshInterval(30);
     }
