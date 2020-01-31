@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Icon;
 
@@ -19,6 +20,7 @@ class DowntimesController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('Downtimes'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
@@ -53,6 +55,8 @@ class DowntimesController extends Controller
 
         $this->filter($downtimes);
 
+        $downtimes->peekAhead($compact);
+
         yield $this->export($downtimes);
 
         $this->addControl($paginationControl);
@@ -62,7 +66,20 @@ class DowntimesController extends Controller
         $this->addControl($filterControl);
         $this->addControl(new ContinueWith($this->getFilter(), Links::downtimesDetails()));
 
-        $this->addContent((new DowntimeList($downtimes))->setViewMode($viewModeSwitcher->getViewMode()));
+        $results = $downtimes->execute();
+
+        $this->addContent((new DowntimeList($results))->setViewMode($viewModeSwitcher->getViewMode()));
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d downtimes'),
+                        $downtimes->count()
+                    ))
+            );
+        }
 
         $this->setAutorefreshInterval(10);
     }
