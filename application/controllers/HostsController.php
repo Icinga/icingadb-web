@@ -17,6 +17,7 @@ use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Url;
 
 class HostsController extends Controller
 {
@@ -25,13 +26,14 @@ class HostsController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('Hosts'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
 
         $summary = null;
-        if (! $this->view->compact) {
+        if (! $compact) {
             $summary = HoststateSummary::on($db)->with('state');
         }
 
@@ -49,8 +51,7 @@ class HostsController extends Controller
         $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($hosts);
 
-        $hostList = (new HostList($hosts))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+        $hosts->peekAhead($compact);
 
         $this->filter($hosts);
         if (isset($summary)) {
@@ -67,7 +68,22 @@ class HostsController extends Controller
         $this->addControl($filterControl);
         $this->addControl(new ContinueWith($this->getFilter(), Links::hostsDetails()));
 
+        $results = $hosts->execute();
+        $hostList = (new HostList($results))
+            ->setViewMode($viewModeSwitcher->getViewMode());
+
         $this->addContent($hostList);
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d hosts'),
+                        $hosts->count()
+                    ))
+            );
+        }
 
         if (isset($summary)) {
             $this->addFooter(
