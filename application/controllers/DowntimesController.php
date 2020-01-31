@@ -145,13 +145,11 @@ class DowntimesController extends Controller
 
         $this->addControl((new DowntimeList($rs))->setViewMode('minimal'));
 
-        if ($rs->hasMore()) {
-            $this->addControl(new ShowMore(
-                $rs,
-                Links::downtimes()->setQueryString($this->getFilter()->toQueryString()),
-                sprintf($this->translate('Show all %d downtimes'), $downtimes->count())
-            ));
-        }
+        $this->addControl(new ShowMore(
+            $rs,
+            Links::downtimes()->setQueryString($this->getFilter()->toQueryString()),
+            sprintf($this->translate('Show all %d downtimes'), $downtimes->count())
+        ));
 
         $this->addContent(new ActionLink(
             sprintf($this->translate('Cancel %d downtimes'), $downtimes->count()),
