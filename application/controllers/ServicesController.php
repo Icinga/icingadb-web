@@ -17,6 +17,7 @@ use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Url;
 
 class ServicesController extends Controller
 {
@@ -25,6 +26,7 @@ class ServicesController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('Services'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
@@ -35,7 +37,7 @@ class ServicesController extends Controller
         ]);
 
         $summary = null;
-        if (! $this->view->compact) {
+        if (! $compact) {
             $summary = ServicestateSummary::on($db)->with('state');
         }
 
@@ -54,6 +56,8 @@ class ServicesController extends Controller
         $viewModeSwitcher = $this->createViewModeSwitcher();
         $filterControl = $this->createFilterControl($services);
 
+        $services->peekAhead($compact);
+
         $this->filter($services);
         if (isset($summary)) {
             $this->filter($summary);
@@ -62,9 +66,6 @@ class ServicesController extends Controller
             yield $this->export($services);
         }
 
-        $serviceList = (new ServiceList($services))
-            ->setViewMode($viewModeSwitcher->getViewMode());
-
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -72,7 +73,22 @@ class ServicesController extends Controller
         $this->addControl($filterControl);
         $this->addControl(new ContinueWith($this->getFilter(), Links::servicesDetails()));
 
+        $results = $services->execute();
+        $serviceList = (new ServiceList($results))
+            ->setViewMode($viewModeSwitcher->getViewMode());
+
         $this->addContent($serviceList);
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d services'),
+                        $services->count()
+                    ))
+            );
+        }
 
         if (isset($summary)) {
             $this->addFooter(
