@@ -130,7 +130,7 @@ class HostController extends Controller
                 'history.object_type = ?' => 'host'
             ]);
 
-        $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
+        $url = HostLinks::history($this->host);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
         }
