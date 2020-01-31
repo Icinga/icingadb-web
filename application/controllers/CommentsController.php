@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Icon;
 
@@ -19,6 +20,7 @@ class CommentsController extends Controller
     public function indexAction()
     {
         $this->setTitle($this->translate('Comments'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
@@ -48,6 +50,8 @@ class CommentsController extends Controller
 
         $this->filter($comments);
 
+        $comments->peekAhead($compact);
+
         yield $this->export($comments);
 
         $this->addControl($paginationControl);
@@ -57,7 +61,20 @@ class CommentsController extends Controller
         $this->addControl($filterControl);
         $this->addControl(new ContinueWith($this->getFilter(), Links::commentsDetails()));
 
-        $this->addContent((new CommentList($comments))->setViewMode($viewModeSwitcher->getViewMode()));
+        $results = $comments->execute();
+
+        $this->addContent((new CommentList($results))->setViewMode($viewModeSwitcher->getViewMode()));
+
+        if ($compact) {
+            $this->addContent(
+                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                    ->setAttribute('data-base-target', '_next')
+                    ->setAttribute('title', sprintf(
+                        $this->translate('Show all %d comments'),
+                        $comments->count()
+                    ))
+            );
+        }
 
         $this->setAutorefreshInterval(10);
     }
