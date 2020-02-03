@@ -13,11 +13,14 @@ class HostList extends StateList
 
     protected function getItemClass()
     {
-        if ($this->getViewMode() === 'minimal') {
-            return HostListItemMinimal::class;
+        switch ($this->getViewMode()) {
+            case 'minimal':
+                return HostListItemMinimal::class;
+            case 'detailed':
+                return HostListItemDetailed::class;
+            default:
+                return HostListItem::class;
         }
-
-        return HostListItem::class;
     }
 
     protected function init()
