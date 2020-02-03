@@ -34,8 +34,10 @@ class CheckStatistics extends Card
         $timeline = Html::tag('div', ['class' => 'check-timeline timeline']);
 
         $overdueBar = null;
+        $nextCheckTime = $this->object->state->next_check;
         if ($this->object->state->is_overdue) {
             $leftNow = 100 - $hPadding;
+            $nextCheckTime = $this->object->state->next_update;
             $overdueBar = Html::tag('div', [
                 'class' => 'progress-bar overdue',
                 'style' => 'left: ' .  ($durationScale) . '%; ' .
@@ -43,7 +45,7 @@ class CheckStatistics extends Card
             ]);
         } else {
             $duration = $this->object->check_interval;
-            $leftNow = $hPadding + ($duration - ($this->object->state->next_check - time()))
+            $leftNow = $hPadding + ($duration - ($nextCheckTime - time()))
                 / $duration * (100 - 2 * $hPadding);
             if ($leftNow > 97) {
                 $leftNow = 97;
@@ -70,7 +72,7 @@ class CheckStatistics extends Card
         $markerNext = Html::tag('div', [
             'class' => 'marker next',
             'style' => 'left: ' .  ($durationScale - ($this->object->state->is_overdue ? 0 : $hPadding)) . '%',
-            'title' => DateFormatter::formatDateTime($this->object->state->next_check)
+            'title' => DateFormatter::formatDateTime($nextCheckTime)
         ]);
         $markerNow = Html::tag('div', [
             'class' => 'marker now',
@@ -99,7 +101,7 @@ class CheckStatistics extends Card
         $nextCheck = Html::tag(
             'li',
             ['class' => 'bubble upwards next'],
-            new VerticalKeyValue('Next check', new TimeUntil($this->object->state->next_check))
+            new VerticalKeyValue('Next check', new TimeUntil($nextCheckTime))
         );
 
         $below = Html::tag(
