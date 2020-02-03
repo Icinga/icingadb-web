@@ -10,11 +10,14 @@ class ServiceList extends StateList
 
     protected function getItemClass()
     {
-        if ($this->getViewMode() === 'minimal') {
-            return ServiceListItemMinimal::class;
+        switch ($this->getViewMode()) {
+            case 'minimal':
+                return ServiceListItemMinimal::class;
+            case 'detailed':
+                return ServiceListItemDetailed::class;
+            default:
+                return ServiceListItem::class;
         }
-
-        return ServiceListItem::class;
     }
 
     protected function init()
