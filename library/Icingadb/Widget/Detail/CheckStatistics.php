@@ -6,6 +6,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
+use Icinga\Module\Icingadb\Widget\TimeSince;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
 use Icinga\Util\Format;
@@ -29,36 +30,40 @@ class CheckStatistics extends Card
     protected function assembleBody(BaseHtmlElement $body)
     {
         $hPadding = 10;
-        $durationScale = $this->object->state->is_overdue ? 50 : 100;
+        $durationScale = 80;
 
         $timeline = Html::tag('div', ['class' => 'check-timeline timeline']);
 
         $overdueBar = null;
         $nextCheckTime = $this->object->state->next_check;
         if ($this->object->state->is_overdue) {
-            $leftNow = 100 - $hPadding;
             $nextCheckTime = $this->object->state->next_update;
+            $leftNow = $durationScale + $hPadding / 2;
+
+            $overdueScale = ($durationScale / 2) * (time() - $nextCheckTime) / (10 * $this->object->check_interval);
+            if ($overdueScale > $durationScale / 2) {
+                $overdueScale = $durationScale / 2;
+            }
+
+            $durationScale -= $overdueScale;
             $overdueBar = Html::tag('div', [
                 'class' => 'progress-bar overdue',
-                'style' => 'left: ' .  ($durationScale) . '%; ' .
-                           'width: ' . ($leftNow - $durationScale) . '%'
+                'style' => 'left: ' .  ($hPadding + $durationScale) . '%; ' .
+                           'width: ' . ($overdueScale + $hPadding / 2) . '%'
             ]);
         } else {
-            $duration = $this->object->check_interval;
-            $leftNow = $hPadding + ($duration - ($nextCheckTime - time()))
-                / $duration * (100 - 2 * $hPadding);
-            if ($leftNow > 97) {
-                $leftNow = 97;
-            }
-            if ($leftNow < $hPadding) {
-                $leftNow = $hPadding;
+            $leftNow = $durationScale * (1 - ($nextCheckTime - time()) / $this->object->check_interval);
+            if ($leftNow > $durationScale) {
+                $leftNow = $durationScale;
+            } elseif ($leftNow < 0) {
+                $leftNow = 0;
             }
         }
 
         $above = Html::tag('ul', ['class' => 'above']);
         $now = Html::tag('li', [
             'class' => 'bubble now',
-            'style' => 'left: ' . $leftNow . '%',
+            'style' => 'left: ' . ($hPadding + $leftNow) . '%',
         ], Html::tag('strong', 'Now'));
         $above->add($now);
 
@@ -71,12 +76,12 @@ class CheckStatistics extends Card
         ]);
         $markerNext = Html::tag('div', [
             'class' => 'marker next',
-            'style' => 'left: ' .  ($durationScale - ($this->object->state->is_overdue ? 0 : $hPadding)) . '%',
+            'style' => 'left: ' .  ($hPadding + $durationScale) . '%',
             'title' => DateFormatter::formatDateTime($nextCheckTime)
         ]);
         $markerNow = Html::tag('div', [
             'class' => 'marker now',
-            'style' => 'left: ' . $leftNow . '%',
+            'style' => 'left: ' . ($hPadding + $leftNow) . '%',
         ]);
 
         $timeline->add([
@@ -101,15 +106,16 @@ class CheckStatistics extends Card
         $nextCheck = Html::tag(
             'li',
             ['class' => 'bubble upwards next'],
-            new VerticalKeyValue('Next check', new TimeUntil($nextCheckTime))
+            $this->object->state->is_overdue
+                ? new VerticalKeyValue('Overdue', new TimeSince($nextCheckTime))
+                : new VerticalKeyValue('Next Check', new TimeUntil($nextCheckTime))
         );
 
         $below = Html::tag(
             'ul',
             [
                 'class' => 'below',
-                'style' => 'width: ' . $durationScale . '%; ' . 'padding-right: '
-                    . ($this->object->state->is_overdue ? 0 : $hPadding) . '%; '
+                'style' => 'width: ' . $durationScale . '%;'
             ]
         );
         $below->add([
