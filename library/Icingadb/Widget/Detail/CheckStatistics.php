@@ -111,18 +111,22 @@ class CheckStatistics extends Card
                 : new VerticalKeyValue('Next Check', new TimeUntil($nextCheckTime))
         );
 
-        $below = Html::tag(
+        $intervalLine = Html::tag('hr', ['class' => 'interval-line']);
+
+        $bubbles = Html::tag(
             'ul',
-            [
-                'class' => 'below',
-                'style' => 'width: ' . $durationScale . '%;'
-            ]
+            ['class' => 'below'],
+            [$lastUpdate, $interval, $nextCheck]
         );
-        $below->add([
-            $lastUpdate,
-            $interval,
-            $nextCheck
-        ]);
+
+        $below = Html::tag(
+            'div',
+            [
+                'class' => 'below-wrapper',
+                'style' => 'width: ' . $durationScale . '%;'
+            ],
+            [$intervalLine, $bubbles]
+        );
 
         $body->add([$above, $timeline, $below]);
     }
