@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\Detail\ObjectDetail;
+use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\HostList;
@@ -18,7 +18,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Web\Url;
 
 class HostController extends Controller
 {
@@ -57,7 +56,7 @@ class HostController extends Controller
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl(new QuickActions($this->host));
 
-        $this->addContent(new ObjectDetail($this->host));
+        $this->addContent(new HostDetail($this->host));
 
         $this->setAutorefreshInterval(10);
     }
