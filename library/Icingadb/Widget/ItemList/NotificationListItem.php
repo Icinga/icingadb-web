@@ -105,7 +105,7 @@ class NotificationListItem extends CommonListItem
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
         } else {
-            $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
+            $link = $this->createServiceLink($this->item->service, $this->item->host, true);
         }
 
         $title->add($link);

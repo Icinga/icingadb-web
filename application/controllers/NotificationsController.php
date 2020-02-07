@@ -21,8 +21,6 @@ class NotificationsController extends Controller
             'host',
             'host.state',
             'service',
-            'service.host',
-            'service.host.state',
             'service.state'
         ]);
 

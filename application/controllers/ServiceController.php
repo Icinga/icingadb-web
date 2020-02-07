@@ -122,8 +122,6 @@ class ServiceController extends Controller
             'host.state',
             'service',
             'service.state',
-            'service.host',
-            'service.host.state',
             'comment',
             'downtime',
             'notification',
