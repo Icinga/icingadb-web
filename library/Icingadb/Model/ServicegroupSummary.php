@@ -35,7 +35,7 @@ class ServicegroupSummary extends UnionModel
                 'SUM(CASE WHEN service_state = 99 THEN 1 ELSE 0 END)'
             ),
             'services_total'              => new Expression(
-                'SUM(CASE WHEN service_state IS NOT NULL THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
             'services_unknown_handled'    => new Expression(
                 'SUM(CASE WHEN service_state = 3 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
@@ -77,6 +77,7 @@ class ServicegroupSummary extends UnionModel
                     'servicegroup_id'           => 'servicegroup.id',
                     'servicegroup_name'         => 'servicegroup.name',
                     'servicegroup_display_name' => 'servicegroup.display_name',
+                    'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
                     'service_handled'           => 'state.is_handled',
                     'service_severity'          => 'state.severity'
