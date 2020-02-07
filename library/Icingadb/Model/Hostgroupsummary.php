@@ -31,7 +31,7 @@ class Hostgroupsummary extends UnionModel
                 'SUM(CASE WHEN host_state = 99 THEN 1 ELSE 0 END)'
             ),
             'hosts_total'                 => new Expression(
-                'SUM(CASE WHEN host_state IS NOT NULL THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN host_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
             'hosts_unreachable'           => new Expression(
                 'SUM(CASE WHEN host_state = 2 THEN 1 ELSE 0 END)'
@@ -60,7 +60,7 @@ class Hostgroupsummary extends UnionModel
                 'SUM(CASE WHEN service_state = 99 THEN 1 ELSE 0 END)'
             ),
             'services_total'              => new Expression(
-                'SUM(CASE WHEN service_state IS NOT NULL THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
             'services_unknown_handled'    => new Expression(
                 'SUM(CASE WHEN service_state = 3 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
@@ -101,9 +101,11 @@ class Hostgroupsummary extends UnionModel
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
                     'hostgroup_display_name' => 'hostgroup.display_name',
+                    'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
                     'host_severity'          => 'state.severity',
+                    'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
                     'service_handled'        => new Expression('NULL')
                 ]
@@ -114,9 +116,11 @@ class Hostgroupsummary extends UnionModel
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
                     'hostgroup_display_name' => 'hostgroup.display_name',
+                    'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
+                    'service_id'             => 'service.id',
                     'service_state'          => 'state.soft_state',
                     'service_handled'        => 'state.is_handled'
                 ]
