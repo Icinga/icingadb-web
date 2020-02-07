@@ -5,7 +5,6 @@ namespace Icinga\Module\Icingadb\Widget;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Url;
-use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
 class ViewModeSwitcher extends BaseHtmlElement
@@ -14,9 +13,9 @@ class ViewModeSwitcher extends BaseHtmlElement
 
     /** @var array View mode-icon pairs */
     public static $viewModes = [
-        'minimal'  => 'chat-empty',
-        'common'   => 'th-list',
-        'detailed' => 'chat'
+        'minimal'  => 'minimal',
+        'common'   => 'default',
+        'detailed' => 'detailed'
     ];
 
     /** @var Url */
@@ -76,7 +75,7 @@ class ViewModeSwitcher extends BaseHtmlElement
         foreach (static::$viewModes as $viewMode => $icon) {
             $url = $this->url->with($viewModeParam, $viewMode);
 
-            $link = Html::tag('li', new Link(new Icon($icon), $url));
+            $link = Html::tag('li', new Link(new IcingaIcon($icon), $url));
 
             if ($viewMode === $currentViewMode) {
                 $link->getAttributes()->add('class', 'active');
