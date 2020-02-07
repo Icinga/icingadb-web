@@ -105,7 +105,11 @@ class ServicesController extends Controller
 
         $db = $this->getDb();
 
-        $services = Service::on($db)->with('state');
+        $services = Service::on($db)->with([
+            'state',
+            'host',
+            'host.state'
+        ]);
         $summary = ServicestateSummary::on($db)->with(['state']);
 
         $this->filter($services);
