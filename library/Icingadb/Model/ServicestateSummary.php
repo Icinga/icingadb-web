@@ -48,7 +48,7 @@ class ServicestateSummary extends Service
                     . ' AND service_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
                 ),
                 'services_total'                   => new Expression(
-                    'SUM(CASE WHEN service_state.soft_state IS NOT NULL THEN 1 ELSE 0 END)'
+                    'SUM(CASE WHEN service.id IS NOT NULL THEN 1 ELSE 0 END)'
                 ),
                 'services_unknown_handled'         => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 3'
