@@ -76,11 +76,10 @@ abstract class StateListItem extends BaseListItem
             $since = new TimeSince($this->state->next_update);
             $since->prepend('Overdue ');
             $since->prepend(new Icon(Icons::WARNING));
-        } else {
-            $since = new TimeSince($this->state->last_state_change);
+            return $since;
+        } elseif ($this->state->last_state_change !== null) {
+            return new TimeSince($this->state->last_state_change);
         }
-
-        return $since;
     }
 
     protected function assemble()
