@@ -59,8 +59,8 @@ class History extends Model
         // @TODO(el): Add relation for flapping_history_id
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
-        $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
+        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('service', Service::class);
         $relations->belongsTo('comment', CommentHistory::class)
             ->setCandidateKey('comment_history_id')
             ->setForeignKey('comment_id')
