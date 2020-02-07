@@ -45,7 +45,7 @@ class HoststateSummary extends Host
                     . ' AND host_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
                 ),
                 'hosts_total'                   => new Expression(
-                    'SUM(CASE WHEN host_state.soft_state IS NOT NULL THEN 1 ELSE 0 END)'
+                    'SUM(CASE WHEN host.id IS NOT NULL THEN 1 ELSE 0 END)'
                 ),
                 'hosts_unreachable'             => new Expression(
                     'SUM(CASE WHEN host_state.soft_state = 2 THEN 1 ELSE 0 END)'
