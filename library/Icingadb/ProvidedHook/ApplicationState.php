@@ -68,6 +68,9 @@ class ApplicationState extends ApplicationStateHook
             Session::getSession()->getNamespace('icingadb')->delete('redis.down-since');
 
             $lastIcingaHeartbeat = $this->getLastIcingaHeartbeat($redis);
+            if ($lastIcingaHeartbeat === false) {
+                return;
+            }
 
             switch (true) {
                 /** @noinspection PhpMissingBreakStatementInspection */

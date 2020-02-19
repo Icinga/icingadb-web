@@ -35,6 +35,12 @@ trait IcingaRedis
                 return $this->redis;
             }
 
+            if (! self::streamSupportAvailable()) {
+                $this->redis = $primaryRedis;
+
+                return $this->redis;
+            }
+
             $primaryTimestamp = $this->getLastIcingaHeartbeat($primaryRedis);
 
             if ($primaryTimestamp <= time() - 60) {
@@ -63,6 +69,10 @@ trait IcingaRedis
 
     public function getLastIcingaHeartbeat(Redis $redis)
     {
+        if (! self::streamSupportAvailable()) {
+            return false;
+        }
+
         $rs = $redis->xRead(['icinga:stats' => 0], 1);
 
         if (empty($rs)) {
@@ -106,5 +116,11 @@ trait IcingaRedis
         );
 
         return $redis;
+    }
+
+    private static function streamSupportAvailable()
+    {
+        $extRedisVersion = phpversion('redis');
+        return version_compare($extRedisVersion, '4.3.0', '>=');
     }
 }
