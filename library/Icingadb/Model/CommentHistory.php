@@ -57,7 +57,7 @@ class CommentHistory extends Model
     {
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
-        $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
+        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('service', Service::class);
     }
 }
