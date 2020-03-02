@@ -2,16 +2,14 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Chart\Donut;
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Widget\HostStateBadges;
-use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use Icinga\Module\Icingadb\Widget\Detail\HostStatistics;
+use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlString;
 use ipl\Web\Widget\Link;
 
 /** @property HostgroupList $list */
@@ -20,61 +18,37 @@ class HostgroupListItem extends BaseTableRowItem
     protected function assembleColumns(HtmlDocument $columns)
     {
         if ($this->item->hosts_total > 0) {
-            if ($this->list->getViewMode() !== 'minimal') {
-                $hostsChart = (new Donut())
-                    ->addSlice($this->item->hosts_up, ['class' => 'slice-state-ok'])
-                    ->addSlice($this->item->hosts_down_handled, ['class' => 'slice-state-critical-handled'])
-                    ->addSlice($this->item->hosts_down_unhandled, ['class' => 'slice-state-critical'])
-                    ->addSlice($this->item->hosts_pending, ['class' => 'slice-state-pending']);
+            $hostStats = new HostStatistics($this->item);
 
-                $columns->add($this->createColumn(HtmlString::create($hostsChart->render())));
+            $hostStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+            if ($this->list->hasBaseFilter()) {
+                $hostStats->setBaseFilter(
+                    $hostStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+                );
             }
 
-            $badges = new HostStateBadges($this->item);
-            $badges
-                ->setBaseFilter($this->list->getBaseFilter())
-                ->getUrl()
-                    ->getParams()
-                    ->mergeValues(['hostgroup.name' => $this->item->name]);
-
-            $columns->add([
-                $this->createColumn($badges->createLink(new VerticalKeyValue(
-                    'Host' . ($this->item->hosts_total > 1 ? 's' : ''),
-                    $this->item->hosts_total
-                )))->addAttributes(['class' => 'hosts-total text-center']),
-                $this->createColumn($badges)
-            ]);
+            $columns->addFrom($hostStats, function (BaseHtmlElement $item) {
+                $item->getAttributes()->add(['class' => 'col']);
+                $item->setTag('div');
+                return $item;
+            });
         }
 
         if ($this->item->services_total > 0) {
-            if ($this->list->getViewMode() !== 'minimal') {
-                $servicesChart = (new Donut())
-                    ->addSlice($this->item->services_ok, ['class' => 'slice-state-ok'])
-                    ->addSlice($this->item->services_warning_handled, ['class' => 'slice-state-warning-handled'])
-                    ->addSlice($this->item->services_warning_unhandled, ['class' => 'slice-state-warning'])
-                    ->addSlice($this->item->services_critical_handled, ['class' => 'slice-state-critical-handled'])
-                    ->addSlice($this->item->services_critical_unhandled, ['class' => 'slice-state-critical'])
-                    ->addSlice($this->item->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
-                    ->addSlice($this->item->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
-                    ->addSlice($this->item->services_pending, ['class' => 'slice-state-pending']);
+            $serviceStats = new ServiceStatistics($this->item);
 
-                $columns->add($this->createColumn(HtmlString::create($servicesChart->render())));
+            $serviceStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+            if ($this->list->hasBaseFilter()) {
+                $serviceStats->setBaseFilter(
+                    $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+                );
             }
 
-            $badges = new ServiceStateBadges($this->item);
-            $badges
-                ->setBaseFilter($this->list->getBaseFilter())
-                ->getUrl()
-                    ->getParams()
-                    ->mergeValues(['hostgroup.name' => $this->item->name]);
-
-            $columns->add([
-                $this->createColumn($badges->createLink(new VerticalKeyValue(
-                    'Service' . ($this->item->services_total > 1 ? 's' : ''),
-                    $this->item->services_total
-                )))->addAttributes(['class' => 'services-total text-center']),
-                $this->createColumn($badges)
-            ]);
+            $columns->addFrom($serviceStats, function (BaseHtmlElement $item) {
+                $item->getAttributes()->add(['class' => 'col']);
+                $item->setTag('div');
+                return $item;
+            });
         }
     }
 

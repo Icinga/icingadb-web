@@ -345,31 +345,6 @@
         margin-right: .5em;
       }
     }
-
-    &.hosts-total a,
-    &.services-total a {
-      line-height: 1;
-      position: relative;
-
-      &:hover:before {
-        .rounded-corners();
-        background-color: @gray-lighter;
-        content: "";
-        display: block;
-        z-index: 1;
-
-        position: absolute;
-        bottom: -.4em;
-        left: -.4em;
-        top: -.4em;
-        right: -.4em;
-      }
-
-      .vertical-key-value {
-        position: relative;
-        z-index: 2;
-      }
-    }
   }
 
   .list-item > *:not(.visual) {
@@ -388,13 +363,6 @@
     display: inline-block;
     content: '\00a0';
     width: 1em;
-  }
-}
-
-.hostgroup-list, .servicegroup-list {
-  .donut-graph {
-    height: 2.25em;
-    width:  2.25em;
   }
 }
 
@@ -423,11 +391,6 @@
 .servicegroup-list.minimal {
   .col {
     padding: 0;
-
-    &.hosts-total,
-    &.services-total {
-      padding-right: .417em;
-    }
   }
 
   .title br {

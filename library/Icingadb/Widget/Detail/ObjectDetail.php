@@ -6,11 +6,9 @@ use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
-use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatBackend;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Compat\CompatObject;
@@ -356,23 +354,5 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         return [$users, $usergroups];
-    }
-
-    protected function assemble()
-    {
-        $this->add([
-            $this->createPluginOutput(),
-            $this->createEvents(),
-            $this->createActions(),
-            $this->createNotes(),
-            $this->createGroups(),
-            $this->createComments(),
-            $this->createDowntimes(),
-            $this->createNotifications(),
-            $this->createCheckStatistics(),
-            $this->createPerformanceData(),
-            $this->createCustomVars(),
-            $this->createFeatureToggles()
-        ]);
     }
 }
