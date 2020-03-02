@@ -68,8 +68,12 @@
     a {
       display: block;
       height: 100%;
-      padding: 0.5em 1em;
+      padding: .3em .6em;
       width: 100%;
+
+      .icon:before {
+        font-size: 16px; // Pixels, because the glyphs get blurry otherwise
+      }
     }
   }
 }
