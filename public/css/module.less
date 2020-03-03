@@ -82,6 +82,11 @@
   float: none;
 }
 
+.state-ball.state-not-available {
+  .ball-solid(@gray-light);
+  .animate(pulse 1.5s infinite both);
+}
+
 .icon-ball {
   .ball();
   .ball-outline(@gray);

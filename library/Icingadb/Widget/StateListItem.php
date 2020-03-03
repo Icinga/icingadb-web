@@ -7,6 +7,7 @@ use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
@@ -29,7 +30,11 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $caption->add(CompatPluginOutput::getInstance()->render($this->state->output));
+        if ($this->state->soft_state === null && $this->state->output === null) {
+            $caption->add(Text::create(mt('icingadb', 'Waiting for Icinga DB to synchronize the state.')));
+        } else {
+            $caption->add(CompatPluginOutput::getInstance()->render($this->state->output));
+        }
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
@@ -76,11 +81,10 @@ abstract class StateListItem extends BaseListItem
             $since = new TimeSince($this->state->next_update);
             $since->prepend('Overdue ');
             $since->prepend(new Icon(Icons::WARNING));
-        } else {
-            $since = new TimeSince($this->state->last_state_change);
+            return $since;
+        } elseif ($this->state->last_state_change !== null) {
+            return new TimeSince($this->state->last_state_change);
         }
-
-        return $since;
     }
 
     protected function assemble()

@@ -77,7 +77,7 @@ class CheckStatistics extends Card
         $markerNext = Html::tag('div', [
             'class' => 'marker next',
             'style' => 'left: ' .  ($hPadding + $durationScale) . '%',
-            'title' => DateFormatter::formatDateTime($nextCheckTime)
+            'title' => $nextCheckTime !== null ? DateFormatter::formatDateTime($nextCheckTime) : null
         ]);
         $markerNow = Html::tag('div', [
             'class' => 'marker now',
@@ -108,7 +108,10 @@ class CheckStatistics extends Card
             ['class' => 'bubble upwards next'],
             $this->object->state->is_overdue
                 ? new VerticalKeyValue('Overdue', new TimeSince($nextCheckTime))
-                : new VerticalKeyValue('Next Check', new TimeUntil($nextCheckTime))
+                : new VerticalKeyValue(
+                    'Next Check',
+                    $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : 'PENDING'
+                )
         );
 
         $intervalLine = Html::tag('hr', ['class' => 'interval-line']);

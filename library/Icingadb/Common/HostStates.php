@@ -57,18 +57,21 @@ class HostStates
      */
     public static function text($state)
     {
-        switch ((int) $state) {
-            case self::UP:
+        switch (true) {
+            case $state === self::UP:
                 $text = 'up';
                 break;
-            case self::DOWN:
+            case $state === self::DOWN:
                 $text = 'down';
                 break;
-            case self::UNREACHABLE:
+            case $state === self::UNREACHABLE:
                 $text = 'unreachable';
                 break;
-            case self::PENDING:
+            case $state === self::PENDING:
                 $text = 'pending';
+                break;
+            case $state === null:
+                $text = 'not-available';
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid host state %d', $state));
@@ -88,18 +91,21 @@ class HostStates
      */
     public static function translated($state)
     {
-        switch ((int) $state) {
-            case self::UP:
+        switch (true) {
+            case $state === self::UP:
                 $text = mt('icingadb', 'up');
                 break;
-            case self::DOWN:
+            case $state === self::DOWN:
                 $text = mt('icingadb', 'down');
                 break;
-            case self::UNREACHABLE:
+            case $state === self::UNREACHABLE:
                 $text = mt('icingadb', 'unreachable');
                 break;
-            case self::PENDING:
+            case $state === self::PENDING:
                 $text = mt('icingadb', 'pending');
+                break;
+            case $state === null:
+                $text = mt('icingadb', 'not available');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid host state %d', $state));

@@ -62,21 +62,24 @@ class ServiceStates
      */
     public static function text($state)
     {
-        switch ((int) $state) {
-            case self::OK:
+        switch (true) {
+            case $state === self::OK:
                 $text = 'ok';
                 break;
-            case self::WARNING:
+            case $state === self::WARNING:
                 $text = 'warning';
                 break;
-            case self::CRITICAL:
+            case $state === self::CRITICAL:
                 $text = 'critical';
                 break;
-            case self::UNKNOWN:
+            case $state === self::UNKNOWN:
                 $text = 'unknown';
                 break;
-            case self::PENDING:
+            case $state === self::PENDING:
                 $text = 'pending';
+                break;
+            case $state === null:
+                $text = 'not-available';
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid service state %d', $state));
@@ -96,21 +99,24 @@ class ServiceStates
      */
     public static function translated($state)
     {
-        switch ((int) $state) {
-            case self::OK:
+        switch (true) {
+            case $state === self::OK:
                 $text = mt('icingadb', 'ok');
                 break;
-            case self::WARNING:
+            case $state === self::WARNING:
                 $text = mt('icingadb', 'warning');
                 break;
-            case self::CRITICAL:
+            case $state === self::CRITICAL:
                 $text = mt('icingadb', 'critical');
                 break;
-            case self::UNKNOWN:
+            case $state === self::UNKNOWN:
                 $text = mt('icingadb', 'unknown');
                 break;
-            case self::PENDING:
+            case $state === self::PENDING:
                 $text = mt('icingadb', 'pending');
+                break;
+            case $state === null:
+                $text = mt('icingadb', 'not available');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid service state %d', $state));

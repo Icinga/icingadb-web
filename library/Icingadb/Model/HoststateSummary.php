@@ -12,7 +12,7 @@ class HoststateSummary extends Host
             parent::getColumns(),
             [
                 'hosts_acknowledged'            => new Expression(
-                    'SUM(CASE WHEN host_state.is_acknowledged = \'n\' THEN 0 ELSE 1 END)'
+                    'SUM(CASE WHEN host_state.is_acknowledged = \'y\' THEN 1 ELSE 0 END)'
                 ),
                 'hosts_active_checks_enabled'   => new Expression(
                     'SUM(CASE WHEN host.active_checks_enabled = \'y\' THEN 1 ELSE 0 END)'
@@ -45,7 +45,7 @@ class HoststateSummary extends Host
                     . ' AND host_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
                 ),
                 'hosts_total'                   => new Expression(
-                    'SUM(CASE WHEN host_state.soft_state IS NOT NULL THEN 1 ELSE 0 END)'
+                    'SUM(CASE WHEN host.id IS NOT NULL THEN 1 ELSE 0 END)'
                 ),
                 'hosts_unreachable'             => new Expression(
                     'SUM(CASE WHEN host_state.soft_state = 2 THEN 1 ELSE 0 END)'

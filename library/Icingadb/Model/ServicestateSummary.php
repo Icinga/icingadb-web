@@ -12,7 +12,7 @@ class ServicestateSummary extends Service
             parent::getColumns(),
             [
                 'services_acknowledged'            => new Expression(
-                    'SUM(CASE WHEN service_state.is_acknowledged = \'n\' THEN 0 ELSE 1 END)'
+                    'SUM(CASE WHEN service_state.is_acknowledged = \'y\' THEN 1 ELSE 0 END)'
                 ),
                 'services_active_checks_enabled'   => new Expression(
                     'SUM(CASE WHEN service.active_checks_enabled = \'y\' THEN 1 ELSE 0 END)'
@@ -48,7 +48,7 @@ class ServicestateSummary extends Service
                     . ' AND service_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
                 ),
                 'services_total'                   => new Expression(
-                    'SUM(CASE WHEN service_state.soft_state IS NOT NULL THEN 1 ELSE 0 END)'
+                    'SUM(CASE WHEN service.id IS NOT NULL THEN 1 ELSE 0 END)'
                 ),
                 'services_unknown_handled'         => new Expression(
                     'SUM(CASE WHEN service_state.soft_state = 3'
