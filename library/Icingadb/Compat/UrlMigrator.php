@@ -32,7 +32,8 @@ class UrlMigrator
         'monitoring/list/eventhistory' => ['history', 'icingadb/history'],
         'monitoring/list/notifications' => ['notificationHistory', 'icingadb/notifications'],
         'monitoring/health/info' => [null, 'icingadb/health'],
-        'monitoring/health/stats' => [null, 'icingadb/health']
+        'monitoring/health/stats' => [null, 'icingadb/health'],
+        'monitoring/tactical' => ['services', 'icingadb/tactical']
     ];
 
     public static function isSupportedUrl(Url $url)
