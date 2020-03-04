@@ -38,11 +38,7 @@ trait BaseFilter
      */
     public function setBaseFilter(Filter $baseFilter = null)
     {
-        if ($baseFilter === null) {
-            $this->baseFilter = null;
-        } elseif (! $baseFilter->isEmpty()) {
-            $this->baseFilter = $baseFilter;
-        }
+        $this->baseFilter = $baseFilter;
 
         return $this;
     }
