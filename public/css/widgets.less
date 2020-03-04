@@ -907,6 +907,7 @@ ul.object-statistics {
 .object-statistics-graph .donut-graph {
   height: 2.25em;
   width:  2.25em;
+  vertical-align: middle;
 }
 
 .object-statistics-total a {
@@ -930,5 +931,19 @@ ul.object-statistics {
   .vertical-key-value {
     position: relative;
     z-index: 2;
+  }
+}
+
+.donut-container {
+  h2 {
+    margin: 0;
+  }
+
+  .state-badges {
+    text-align: center;
+  }
+
+  &:not(:last-of-type) {
+    margin-right: 1em;
   }
 }
