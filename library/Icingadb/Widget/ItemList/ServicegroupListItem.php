@@ -16,22 +16,20 @@ class ServicegroupListItem extends BaseTableRowItem
 {
     protected function assembleColumns(HtmlDocument $columns)
     {
-        if ($this->item->services_total > 0) {
-            $serviceStats = new ServiceStatistics($this->item);
+        $serviceStats = new ServiceStatistics($this->item);
 
-            $serviceStats->setBaseFilter(Filter::where('servicegroup.name', $this->item->name));
-            if ($this->list->hasBaseFilter()) {
-                $serviceStats->setBaseFilter(
-                    $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
-                );
-            }
-
-            $columns->addFrom($serviceStats, function (BaseHtmlElement $item) {
-                $item->getAttributes()->add(['class' => 'col']);
-                $item->setTag('div');
-                return $item;
-            });
+        $serviceStats->setBaseFilter(Filter::where('servicegroup.name', $this->item->name));
+        if ($this->list->hasBaseFilter()) {
+            $serviceStats->setBaseFilter(
+                $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+            );
         }
+
+        $columns->addFrom($serviceStats, function (BaseHtmlElement $item) {
+            $item->getAttributes()->add(['class' => 'col']);
+            $item->setTag('div');
+            return $item;
+        });
     }
 
     protected function assembleTitle(BaseHtmlElement $title)

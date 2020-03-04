@@ -17,39 +17,35 @@ class HostgroupListItem extends BaseTableRowItem
 {
     protected function assembleColumns(HtmlDocument $columns)
     {
-        if ($this->item->hosts_total > 0) {
-            $hostStats = new HostStatistics($this->item);
+        $hostStats = new HostStatistics($this->item);
 
-            $hostStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
-            if ($this->list->hasBaseFilter()) {
-                $hostStats->setBaseFilter(
-                    $hostStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
-                );
-            }
-
-            $columns->addFrom($hostStats, function (BaseHtmlElement $item) {
-                $item->getAttributes()->add(['class' => 'col']);
-                $item->setTag('div');
-                return $item;
-            });
+        $hostStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+        if ($this->list->hasBaseFilter()) {
+            $hostStats->setBaseFilter(
+                $hostStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+            );
         }
 
-        if ($this->item->services_total > 0) {
-            $serviceStats = new ServiceStatistics($this->item);
+        $columns->addFrom($hostStats, function (BaseHtmlElement $item) {
+            $item->getAttributes()->add(['class' => 'col']);
+            $item->setTag('div');
+            return $item;
+        });
 
-            $serviceStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
-            if ($this->list->hasBaseFilter()) {
-                $serviceStats->setBaseFilter(
-                    $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
-                );
-            }
+        $serviceStats = new ServiceStatistics($this->item);
 
-            $columns->addFrom($serviceStats, function (BaseHtmlElement $item) {
-                $item->getAttributes()->add(['class' => 'col']);
-                $item->setTag('div');
-                return $item;
-            });
+        $serviceStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+        if ($this->list->hasBaseFilter()) {
+            $serviceStats->setBaseFilter(
+                $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+            );
         }
+
+        $columns->addFrom($serviceStats, function (BaseHtmlElement $item) {
+            $item->getAttributes()->add(['class' => 'col']);
+            $item->setTag('div');
+            return $item;
+        });
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
