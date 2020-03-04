@@ -129,7 +129,10 @@ class ServiceController extends Controller
 
         $history
             ->getSelectBase()
-            ->where(['history_service.id = ?' => $this->service->id]);
+            ->where([
+                'history_host_service.id = ?' => $this->service->id,
+                'history_service.id = ?' => $this->service->id
+            ]);
 
         $url = ServiceLinks::history($this->service, $this->service->host);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
