@@ -47,13 +47,9 @@ class ServicegroupController extends Controller
             'state',
             'host',
             'host.state'
-        ]);
+        ])->utilize('servicegroup');
 
-        FilterProcessor::apply(
-            new FilterExpression('servicegroup.id', '=', $this->servicegroup->id),
-            $services
-        );
-
+        $services->getSelectBase()->where(['service_servicegroup.id = ?' => $this->servicegroup->id]);
         $this->applyMonitoringRestriction($services);
 
         $limitControl = $this->createLimitControl();
