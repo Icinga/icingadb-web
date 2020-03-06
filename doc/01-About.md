@@ -6,18 +6,31 @@ Based on the lessons learnt with the base monitoring module, it offers a modern
 and streamlined design to provide a clear and concise overview of your monitoring
 environment.
 
-It adds new features, such as:
+## New Features
+
+### Multiple List Layouts
+
+The new view switcher widget displayed in the controls of lists allows to change their layout.
+The majority of lists use this to switch between various levels of detail. The service list
+below for example uses it to show a check's output differently.
+
+![View Switcher Preview](res/view-switcher-preview.png)
+
+### Cleaner Detail Views
+
+TODO: A picture of a detail view with a comment, downtime, users/groups and check stats.
+
+### Modal Dialogs
+
+TODO: A picture of a .. modal dialog! (comment?)
+
+### Bulk Operations
+
+TODO: A picture of a complex filter and the corresponding object details.
 
 TODO: Check if there aren't some more fancy features..
 
-- Bulk operations to schedule downtimes for host groups and alike.
-- Enhanced action workflows with In-window modals.
-- View switching to choose how much detail will be displayed.
-- Improved status bar with applied filters.
-
 TODO: Update screenshots
-
-![ListTypes](res/ListTypes.jpg "Different levels of list details")
 
 ![HostServiceList](res/ScreenHostServiceList.jpg "Host and Service list")
 
