@@ -43,13 +43,9 @@ class HostgroupController extends Controller
     {
         $db = $this->getDb();
 
-        $hosts = Host::on($db)->with('state');
+        $hosts = Host::on($db)->with('state')->utilize('hostgroup');
 
-        FilterProcessor::apply(
-            new FilterExpression('hostgroup.id', '=', $this->hostgroup->id),
-            $hosts
-        );
-
+        $hosts->getSelectBase()->where(['host_hostgroup.id = ?' => $this->hostgroup->id]);
         $this->applyMonitoringRestriction($hosts);
 
         $limitControl = $this->createLimitControl();
