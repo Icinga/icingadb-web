@@ -98,6 +98,10 @@ class Hostgroupsummary extends UnionModel
             [
                 Host::class,
                 [
+                    'hostgroup',
+                    'state'
+                ],
+                [
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
                     'hostgroup_display_name' => 'hostgroup.display_name',
@@ -112,6 +116,10 @@ class Hostgroupsummary extends UnionModel
             ],
             [
                 Service::class,
+                [
+                    'hostgroup',
+                    'state'
+                ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',

@@ -74,6 +74,10 @@ class ServicegroupSummary extends UnionModel
             [
                 Service::class,
                 [
+                    'servicegroup',
+                    'state'
+                ],
+                [
                     'servicegroup_id'           => 'servicegroup.id',
                     'servicegroup_name'         => 'servicegroup.name',
                     'servicegroup_display_name' => 'servicegroup.display_name',
