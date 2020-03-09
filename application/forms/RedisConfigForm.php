@@ -40,8 +40,8 @@ class RedisConfigForm extends ConfigForm
                     'Fieldset'
                 ],
                 'description' => $this->translate(
-                    'Redis connection details of your Icinga host. If you are running a master-master'
-                    . ' setup, this is your configuration master.'
+                    'Redis connection details of your Icinga host. If you are running a high'
+                    . ' availability zone with two masters, this is your configuration master.'
                 ),
                 'legend'      => $this->translate('Primary Icinga Master')
             ]
@@ -72,8 +72,8 @@ class RedisConfigForm extends ConfigForm
                     'Fieldset'
                 ],
                 'description' => $this->translate(
-                    'If you are running an Icinga master-master setup, please provide the Redis connection'
-                    . ' details of the secondary master.'
+                    'If you are running a high availability zone with two masters,'
+                    . ' please provide the Redis connection details of the secondary master.'
                 ),
                 'legend'      => $this->translate('Secondary Icinga Master')
             ]
