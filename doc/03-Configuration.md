@@ -27,17 +27,9 @@ Then tell Icinga DB Web which database resource to use. This can be done in
 
 ## Redis [![PHP Support](https://img.shields.io/badge/php-%3E%3D%207.0-777BB4?logo=PHP)](https://php.net/)
 
-To view the most recent state information in Icinga DB Web make sure to configure the connection details to
-[Icinga DB's redis](https://icinga.com/docs/icingadb/latest/doc/02-Installation/#installing-icinga-db-redis).
-
-![Redis Configuration](res/RedisConfiguration.jpg "Form for configuring redis connection")
-
-If you are running a high availability zone with two masters, the primary Icinga master is your configuration master.
-
-Option             | Description
--------------------|------------------------
-Redis Host         | IP address or FQDN, usually this is your Icinga master host
-Redis Port         | The port which the Redis server is listening on (Default: 6380)
+To view the most recent state information in Icinga DB Web, make sure to configure the connection details to
+[Icinga DB's redis](https://icinga.com/docs/icingadb/latest/doc/02-Installation/#installing-icinga-db-redis)
+at `Configuration -> Modules -> icingadb -> Redis`.
 
 ## Command Transports
 
