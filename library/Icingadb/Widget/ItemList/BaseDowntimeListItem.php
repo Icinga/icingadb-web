@@ -97,16 +97,6 @@ abstract class BaseDowntimeListItem extends BaseListItem
         ]);
     }
 
-    protected function assembleMain(BaseHtmlElement $main)
-    {
-        if ($this->item->is_in_effect) {
-            $main->add($this->createProgress());
-        }
-
-        $main->add($this->createHeader());
-        $main->add($this->createCaption());
-    }
-
     protected function assembleTitle(BaseHtmlElement $title)
     {
         if ($this->item->is_flexible) {
