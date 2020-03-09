@@ -6,6 +6,14 @@ Based on the lessons learnt with the base monitoring module, it offers a modern
 and streamlined design to provide a clear and concise overview of your monitoring
 environment.
 
+## Installation
+
+For installing Icinga DB Web please check the [installation](02-Installation.md) chapter.
+
+## Configuration
+
+To configure Icinga DB Web please check the [configuration](03-Configuration.md) chapter.
+
 ## New Features
 
 ### Multiple List Layouts
@@ -39,14 +47,6 @@ now is the time for it. Simply filter for the hosts or services you want to oper
 and then select *Continue with filter*. No more *shift-click* nightmares!
 
 ![Continue With Preview](res/continue-with-preview.png)
-
-## Installation
-
-For installing Icinga DB Web please check the [installation](02-Installation.md) chapter.
-
-## Configuration
-
-To configure Icinga DB Web please check the [configuration](03-Configuration.md) chapter.
 
 ## Concepts
 
