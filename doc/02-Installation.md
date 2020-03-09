@@ -2,14 +2,12 @@
 
 ## Requirements
 
-TODO: Check this
-
-* Icinga Web 2 (&gt;= 2.8 RC1)
-* PHP (&gt;= 5.6, preferably 7.x)
 * [IcingaDB](https://github.com/Icinga/icingadb)
-* Icinga Web 2 modules:
-  * [reactbundle](https://github.com/Icinga/icingaweb2-module-reactbundle) (>= 0.4) (Icinga Web 2 module)
+* [Icinga Web 2](https://github.com/Icinga/icingaweb2) (>= 2.8)
+  * monitoring (>= 2.8) (Core Icinga Web 2 module)
   * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.5) (Icinga Web 2 module)
+* PHP (>= 5.6, 7+ recommended)
+  * [PhpRedis](https://github.com/phpredis/phpredis) (>= 4.3, requires PHP 7+) (PHP Extension)
 
 ## Installation
 
