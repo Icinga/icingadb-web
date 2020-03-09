@@ -6,35 +6,17 @@
 
 ![Icinga Logo](https://icinga.com/wp-content/uploads/2014/06/icinga_logo.png)
 
-1. [About](#about)
-2. [Documentation](README.md#documentation)
-3. [Installation](README.md#installation)
-4. [Configuration](README.md#configuration)
-
-## About
+1. [Documentation](#documentation)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [New Features](#new-features)
+5. [Concepts](#concepts)
 
 **Icinga DB Web** pushes your monitoring stack to the next level.
 
 Based on the lessons learnt with the base monitoring module, it offers a modern
 and streamlined design to provide a clear and concise overview of your monitoring
 environment.
-
-It adds new features, such as:
-
-TODO: Check if there aren't some more fancy features..
-
-- Bulk operations to schedule downtimes for host groups and alike.
-- Enhanced action workflows with In-window modals.
-- View switching to chose how much detail will be displayed.
-- Improved status bar with applied filters.
-
-TODO: Update screenshots
-
-![ListTypes](doc/res/ListTypes.jpg "Different levels of list details")
-
-![HostServiceList](doc/res/ScreenHostServiceList.jpg "Host and Service list")
-
-![HostDetailHistory](doc/res/ScreenHostDetailHistory.jpg "Host deatil and history")
 
 ## Documentation
 
@@ -49,4 +31,44 @@ chapter.
 ## Configuration
 
 To configure Icinga DB Web please check the [configuration](https://icinga.com/docs/icingadb-web/latest/doc/03-Configuration/)
+chapter.
+
+## New Features
+
+### Multiple List Layouts
+
+The new view switcher displayed in the controls of lists allows to change their layout.
+The majority of lists use this to switch between various levels of detail. The service
+list below for example uses it to show a check's output at different lengths.
+
+![View Switcher Preview](doc/res/view-switcher-preview.png)
+
+### Cleaner Detail Views
+
+A host's or service's detail view has been restructured to show more details but also
+to make more use of the available space. Important details also got moved to the top
+so that they are visible right away without having to scroll down.
+
+![Service Detail Preview](doc/res/service-detail-preview.png)
+
+### Modal Dialogs
+
+Acknowledging a problem, scheduling a downtime or sending a custom notification does
+not take you away from where you've been. Instead a modal dialog is shown on top of
+your current view.
+
+![Modal Dialog Preview](doc/res/modal-dialog-preview.png)
+
+### Bulk Operations
+
+If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
+now is the time for it. Simply filter for the hosts or services you want to operate on
+and then select *Continue with filter*. No more *shift-click* nightmares! (Which are
+still possible, for the die-hard)
+
+![Continue With Preview](doc/res/continue-with-preview.png)
+
+## Concepts
+
+To learn more about our widget/view designs check the [concepts](https://icinga.com/docs/icingadb-web/latest/doc/11-Concepts/)
 chapter.
