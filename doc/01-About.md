@@ -1,5 +1,10 @@
 # About Icinga DB Web
 
+1. [Installation](#installation)
+2. [Configuration](#configuration)
+3. [New Features](#new-features)
+4. [Concepts](#concepts)
+
 **Icinga DB Web** pushes your monitoring stack to the next level.
 
 Based on the lessons learnt with the base monitoring module, it offers a modern
