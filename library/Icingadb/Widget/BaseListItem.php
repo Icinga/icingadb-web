@@ -119,6 +119,13 @@ abstract class BaseListItem extends BaseHtmlElement
         return $this;
     }
 
+    protected function setDetailFilter(Filter $filter)
+    {
+        $this->addAttributes(['data-icinga-detail-filter' => $filter->toQueryString()]);
+
+        return $this;
+    }
+
     protected function assemble()
     {
         $this->add([

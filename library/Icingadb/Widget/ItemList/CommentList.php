@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
+use ipl\Web\Url;
 
 class CommentList extends BaseItemList
 {
@@ -30,5 +31,6 @@ class CommentList extends BaseItemList
     protected function init()
     {
         $this->setMultiselectUrl(Links::commentsDetails());
+        $this->setDetailUrl(Url::fromPath('icingadb/comment'));
     }
 }

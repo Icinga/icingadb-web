@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeListItemMinimal;
+use ipl\Web\Url;
 
 class DowntimeList extends BaseItemList
 {
@@ -30,5 +31,6 @@ class DowntimeList extends BaseItemList
     protected function init()
     {
         $this->setMultiselectUrl(Links::downtimesDetails());
+        $this->setDetailUrl(Url::fromPath('icingadb/downtime'));
     }
 }

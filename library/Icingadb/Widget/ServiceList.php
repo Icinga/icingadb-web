@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\Links;
+use ipl\Web\Url;
 
 class ServiceList extends StateList
 {
@@ -23,5 +24,6 @@ class ServiceList extends StateList
     protected function init()
     {
         $this->setMultiselectUrl(Links::servicesDetails());
+        $this->setDetailUrl(Url::fromPath('icingadb/service'));
     }
 }

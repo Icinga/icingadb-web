@@ -24,5 +24,6 @@ abstract class BaseHostListItem extends StateListItem
         parent::init();
 
         $this->setMultiselectFilter(new FilterExpression('host.name', '=', $this->item->name));
+        $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
     }
 }

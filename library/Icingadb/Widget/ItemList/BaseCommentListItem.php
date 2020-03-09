@@ -83,5 +83,6 @@ abstract class BaseCommentListItem extends BaseListItem
     protected function init()
     {
         $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
+        $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
     }
 }
