@@ -10,31 +10,35 @@ environment.
 
 ### Multiple List Layouts
 
-The new view switcher widget displayed in the controls of lists allows to change their layout.
-The majority of lists use this to switch between various levels of detail. The service list
-below for example uses it to show a check's output differently.
+The new view switcher displayed in the controls of lists allows to change their layout.
+The majority of lists use this to switch between various levels of detail. The service
+list below for example uses it to show a check's output at different lengths.
 
 ![View Switcher Preview](res/view-switcher-preview.png)
 
 ### Cleaner Detail Views
 
-TODO: A picture of a detail view with a comment, downtime, users/groups and check stats.
+A host's or service's detail view has been restructured to show more details but also
+to make more use of the available space. Important details also got moved to the top
+so that they are visible right away without having to scroll down.
+
+![Service Detail Preview](res/service-detail-preview.png)
 
 ### Modal Dialogs
 
-TODO: A picture of a .. modal dialog! (comment?)
+Acknowledging a problem, scheduling a downtime or sending a custom notification does
+not take you away from where you've been. Instead a modal dialog is shown on top of
+your current view.
+
+![Modal Dialog Preview](res/modal-dialog-preview.png)
 
 ### Bulk Operations
 
-TODO: A picture of a complex filter and the corresponding object details.
+If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
+now is the time for it. Simply filter for the hosts or services you want to operate on
+and then select *Continue with filter*. No more *shift-click* nightmares!
 
-TODO: Check if there aren't some more fancy features..
-
-TODO: Update screenshots
-
-![HostServiceList](res/ScreenHostServiceList.jpg "Host and Service list")
-
-![HostDetailHistory](res/ScreenHostDetailHistory.jpg "Host deatil and history")
+![Continue With Preview](res/continue-with-preview.png)
 
 ## Installation
 
@@ -44,4 +48,6 @@ For installing Icinga DB Web please check the [installation](02-Installation.md)
 
 To configure Icinga DB Web please check the [configuration](03-Configuration.md) chapter.
 
-TODO: Concepts chapter
+## Concepts
+
+To learn more about our widget/view designs check the [concepts](11-Concepts.md) chapter.
