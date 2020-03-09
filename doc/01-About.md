@@ -44,7 +44,8 @@ your current view.
 
 If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
 now is the time for it. Simply filter for the hosts or services you want to operate on
-and then select *Continue with filter*. No more *shift-click* nightmares!
+and then select *Continue with filter*. No more *shift-click* nightmares! (Which are
+still possible, for the die-hard)
 
 ![Continue With Preview](res/continue-with-preview.png)
 
