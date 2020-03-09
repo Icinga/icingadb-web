@@ -29,7 +29,7 @@
     var ActionList = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('click', '.action-list > .list-item', this.onClick, this);
+        this.on('click', '.action-list > .list-item, .action-list > .list-item a', this.onClick, this);
 
         this.on('rendered', '.container', this.onRendered, this);
     };
@@ -39,7 +39,7 @@
     ActionList.prototype.onClick = function (event) {
         var _this = event.data.self;
         var $activeItems;
-        var $item = $(this);
+        var $item = $(this).closest('.list-item');
         var $list = $item.parent('.action-list');
 
         event.preventDefault();
