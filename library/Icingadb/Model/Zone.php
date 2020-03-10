@@ -35,6 +35,8 @@ class Zone extends Model
     {
         $relations->belongsTo('environment', Environment::class);
 
+        $relations->hasMany('comment', Comment::class);
+        $relations->hasMany('downtime', Downtime::class);
         $relations->hasMany('endpoint', Endpoint::class);
         $relations->hasMany('eventcommand', Eventcommand::class);
         $relations->hasMany('host', Host::class);

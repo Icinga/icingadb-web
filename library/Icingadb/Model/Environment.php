@@ -26,28 +26,37 @@ class Environment extends Model
 
     public function createRelations(Relations $relations)
     {
+        $relations->hasMany('acknowledgement_history', AcknowledgementHistory::class);
         $relations->hasMany('action_url', ActionUrl::class);
         $relations->hasMany('checkcommand', Checkcommand::class);
         $relations->hasMany('checkcommand_argument', CheckcommandArgument::class);
         $relations->hasMany('checkcommand_customvar', CheckcommandCustomvar::class);
         $relations->hasMany('checkcommand_envvar', CheckcommandEnvvar::class);
+        $relations->hasMany('comment', Comment::class);
+        $relations->hasMany('comment_history', CommentHistory::class);
         $relations->hasMany('customvar', Customvar::class);
         $relations->hasMany('customvar_flat', CustomvarFlat::class);
+        $relations->hasMany('downtime', Downtime::class);
+        $relations->hasMany('downtime_history', DowntimeHistory::class);
         $relations->hasMany('endpoint', Endpoint::class);
         $relations->hasMany('eventcommand', Eventcommand::class);
         $relations->hasMany('eventcommand_argument', EventcommandArgument::class);
         $relations->hasMany('eventcommand_customvar', EventcommandCustomvar::class);
         $relations->hasMany('eventcommand_envvar', EventcommandEnvvar::class);
+        $relations->hasMany('history', History::class);
         $relations->hasMany('host', Host::class);
         $relations->hasMany('host_customvar', HostCustomvar::class);
         $relations->hasMany('host_state', HostState::class);
         $relations->hasMany('hostgroup', Hostgroup::class);
         $relations->hasMany('hostgroup_customvar', HostgroupCustomvar::class);
         $relations->hasMany('hostgroup_member', HostgroupMember::class);
+        $relations->hasMany('instance', Instance::class);
         $relations->hasMany('icon_image', IconImage::class);
         $relations->hasMany('notes_url', NotesUrl::class);
         $relations->hasMany('notification', Notification::class);
         $relations->hasMany('notification_customvar', NotificationCustomvar::class);
+        $relations->hasMany('notification_history', NotificationHistory::class);
+        //$relations->hasMany('notification_recipient', NotificationRecipient::class);
         $relations->hasMany('notification_user', NotificationUser::class);
         $relations->hasMany('notification_usergroup', NotificationUsergroup::class);
         $relations->hasMany('notificationcommand', Notificationcommand::class);
@@ -60,6 +69,7 @@ class Environment extends Model
         $relations->hasMany('servicegroup', Servicegroup::class);
         $relations->hasMany('servicegroup_customvar', ServicegroupCustomvar::class);
         $relations->hasMany('servicegroup_member', ServicegroupMember::class);
+        $relations->hasMany('state_history', StateHistory::class);
         $relations->hasMany('timeperiod', Timeperiod::class);
         $relations->hasMany('timeperiod_customvar', TimeperiodCustomvar::class);
         $relations->hasMany('timeperiod_override_exclude', TimeperiodOverrideExclude::class);
@@ -67,6 +77,7 @@ class Environment extends Model
         $relations->hasMany('timeperiod_range', TimeperiodRange::class);
         $relations->hasMany('user', User::class);
         $relations->hasMany('user_customvar', UserCustomvar::class);
+        //$relations->hasMany('user_notification_history', UserNotificationHistory::class);
         $relations->hasMany('usergroup', Usergroup::class);
         $relations->hasMany('usergroup_customvar', UsergroupCustomvar::class);
         $relations->hasMany('usergroup_member', UsergroupMember::class);
