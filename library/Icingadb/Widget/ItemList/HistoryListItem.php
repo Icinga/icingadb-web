@@ -181,12 +181,20 @@ class HistoryListItem extends CommonListItem
                 $title->add('Downtime started');
 
                 break;
+            case 'flapping_start':
+                $title->add('Flapping started');
+
+                break;
+            case 'flapping_end':
+                $title->add('Flapping ended');
+
+                break;
             case 'ack_set':
-                $title->add('Acknowledgement Set');
+                $title->add('Acknowledgement set');
 
                 break;
             case 'ack_clear':
-                $title->add('Acknowledgement Cleared');
+                $title->add('Acknowledgement cleared');
 
                 break;
             case 'notification':
