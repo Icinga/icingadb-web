@@ -63,21 +63,34 @@ class History extends Model
 
     public function createRelations(Relations $relations)
     {
-        // @TODO(el): Add relation for flapping_history_id
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
-        $relations->belongsTo('comment', CommentHistory::class)
+
+        $relations->hasOne('comment', CommentHistory::class)
             ->setCandidateKey('comment_history_id')
             ->setForeignKey('comment_id')
             ->setJoinType('LEFT');
-        $relations->belongsTo('downtime', DowntimeHistory::class)
+        $relations->hasOne('downtime', DowntimeHistory::class)
             ->setCandidateKey('downtime_history_id')
             ->setForeignKey('downtime_id')
             ->setJoinType('LEFT');
-        $relations->belongsTo('notification', NotificationHistory::class)->setJoinType('LEFT');
-        $relations->belongsTo('acknowledgement', AcknowledgementHistory::class)->setJoinType('LEFT');
-        $relations->belongsTo('state', StateHistory::class)->setJoinType('LEFT');
+        $relations->hasOne('flapping', FlappingHistory::class)
+            ->setCandidateKey('flapping_history_id')
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
+        $relations->hasOne('notification', NotificationHistory::class)
+            ->setCandidateKey('notification_history_id')
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
+        $relations->hasOne('acknowledgement', AcknowledgementHistory::class)
+            ->setCandidateKey('acknowledgement_history_id')
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
+        $relations->hasOne('state', StateHistory::class)
+            ->setCandidateKey('state_history_id')
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
     }
 }
