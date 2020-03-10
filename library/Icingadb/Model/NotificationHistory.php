@@ -66,5 +66,8 @@ class NotificationHistory extends Model
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
+
+        $relations->belongsToMany('user', User::class)
+            ->through('user_notification_history');
     }
 }
