@@ -21,9 +21,6 @@ class ServiceState extends State
     {
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('service', Service::class);
-
-        $relations->hasOne('comment', ServiceComment::class)
-            ->setCandidateKey('acknowledgement_comment_id');
     }
 
     /**

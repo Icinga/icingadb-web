@@ -39,9 +39,7 @@ class Environment extends Model
         $relations->hasMany('eventcommand_customvar', EventcommandCustomvar::class);
         $relations->hasMany('eventcommand_envvar', EventcommandEnvvar::class);
         $relations->hasMany('host', Host::class);
-        $relations->hasMany('host_comment', HostComment::class);
         $relations->hasMany('host_customvar', HostCustomvar::class);
-        $relations->hasMany('host_downtime', HostDowntime::class);
         $relations->hasMany('host_state', HostState::class);
         $relations->hasMany('hostgroup', Hostgroup::class);
         $relations->hasMany('hostgroup_customvar', HostgroupCustomvar::class);
@@ -57,9 +55,7 @@ class Environment extends Model
         $relations->hasMany('notificationcommand_customvar', NotificationcommandCustomvar::class);
         $relations->hasMany('notificationcommand_envvar', NotificationcommandEnvvar::class);
         $relations->hasMany('service', Service::class);
-        $relations->hasMany('service_comment', ServiceComment::class);
         $relations->hasMany('service_customvar', ServiceCustomvar::class);
-        $relations->hasMany('service_downtime', ServiceDowntime::class);
         $relations->hasMany('service_state', ServiceState::class);
         $relations->hasMany('servicegroup', Servicegroup::class);
         $relations->hasMany('servicegroup_customvar', ServicegroupCustomvar::class);

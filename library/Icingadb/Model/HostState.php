@@ -24,9 +24,6 @@ class HostState extends State
     {
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
-
-        $relations->hasOne('comment', HostComment::class)
-            ->setCandidateKey('acknowledgement_comment_id');
     }
 
     /**

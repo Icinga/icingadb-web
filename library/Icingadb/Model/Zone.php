@@ -38,13 +38,9 @@ class Zone extends Model
         $relations->hasMany('endpoint', Endpoint::class);
         $relations->hasMany('eventcommand', Eventcommand::class);
         $relations->hasMany('host', Host::class);
-        $relations->hasMany('host_comment', HostComment::class);
-        $relations->hasMany('host_downtime', HostDowntime::class);
         $relations->hasMany('hostgroup', Hostgroup::class);
         $relations->hasMany('notification', Notification::class);
         $relations->hasMany('service', Service::class);
-        $relations->hasMany('service_comment', ServiceComment::class);
-        $relations->hasMany('service_downtime', ServiceDowntime::class);
         $relations->hasMany('servicegroup', Servicegroup::class);
         $relations->hasMany('timeperiod', Timeperiod::class);
         $relations->hasMany('user', User::class);
