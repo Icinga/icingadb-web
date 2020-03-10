@@ -124,6 +124,7 @@ class ServiceController extends Controller
             'comment',
             'downtime',
             'notification',
+            'acknowledgement',
             'state'
         ]);
 
