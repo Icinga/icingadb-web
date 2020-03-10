@@ -43,6 +43,27 @@ class HistoryListItem extends CommonListItem
                 ]);
 
                 break;
+            case 'ack_clear':
+                if (! empty($this->item->acknowledgement->cleared_by)) {
+                    $caption->add([
+                        new Icon(Icons::USER),
+                        'Cleared by: ',
+                        $this->item->acknowledgement->cleared_by
+                    ]);
+
+                    break;
+                }
+
+                // Fallthrough
+            case 'ack_set':
+                $caption->add([
+                    new Icon(Icons::USER),
+                    $this->item->acknowledgement->author,
+                    ': ',
+                    $this->item->acknowledgement->comment
+                ]);
+
+                break;
             case 'notification':
                 $caption->add($this->item->notification->text);
 
@@ -75,12 +96,8 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'comment_remove':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::REMOVE))
-                );
-
-                break;
             case 'downtime_end':
+            case 'ack_clear':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::REMOVE))
                 );
@@ -89,6 +106,12 @@ class HistoryListItem extends CommonListItem
             case 'downtime_start':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME))
+                );
+
+                break;
+            case 'ack_set':
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
                 );
 
                 break;
@@ -140,6 +163,14 @@ class HistoryListItem extends CommonListItem
                 break;
             case 'downtime_start':
                 $title->add('Downtime started');
+
+                break;
+            case 'ack_set':
+                $title->add('Acknowledgement Set');
+
+                break;
+            case 'ack_clear':
+                $title->add('Acknowledgement Cleared');
 
                 break;
             case 'notification':
