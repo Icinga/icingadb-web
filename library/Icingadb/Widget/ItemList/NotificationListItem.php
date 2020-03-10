@@ -55,7 +55,7 @@ class NotificationListItem extends CommonListItem
                 );
 
                 break;
-            case 'Custom':
+            case 'custom':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION))
                 );
