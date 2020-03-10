@@ -32,6 +32,7 @@ class History extends Model
             'downtime_history_id',
             'flapping_history_id',
             'notification_history_id',
+            'acknowledgement_history_id',
             'state_history_id',
             'event_type',
             'event_time'
@@ -70,6 +71,7 @@ class History extends Model
             ->setForeignKey('downtime_id')
             ->setJoinType('LEFT');
         $relations->belongsTo('notification', NotificationHistory::class)->setJoinType('LEFT');
+        $relations->belongsTo('acknowledgement', AcknowledgementHistory::class)->setJoinType('LEFT');
         $relations->belongsTo('state', StateHistory::class)->setJoinType('LEFT');
     }
 }

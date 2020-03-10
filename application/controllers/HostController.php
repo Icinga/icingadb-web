@@ -124,6 +124,7 @@ class HostController extends Controller
             'comment',
             'downtime',
             'notification',
+            'acknowledgement',
             'state'
         ]);
 

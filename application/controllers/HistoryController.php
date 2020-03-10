@@ -25,6 +25,7 @@ class HistoryController extends Controller
             'comment',
             'downtime',
             'notification',
+            'acknowledgement',
             'state'
         ]);
 
