@@ -43,6 +43,11 @@
         var $item = $(this).closest('.list-item');
         var $list = $item.parent('.action-list');
 
+        if ($(event.target).closest('[data-no-icinga-ajax]').length > 0) {
+            // Quickfix? Interferes with loadmore.js otherwise
+            return true;
+        }
+
         event.preventDefault();
         event.stopPropagation();
 
