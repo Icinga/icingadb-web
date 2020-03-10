@@ -85,7 +85,7 @@ class HistoryController extends Controller
         // TODO: Dirty, really dirty, find a better solution (And I don't just mean `getContent()` !)
         $historyList->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
         if ($compact && $page > 1) {
-            $this->document->add($historyList->getContent());
+            $this->document->addFrom($historyList);
         } else {
             $this->addContent($historyList);
         }
