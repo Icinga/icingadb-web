@@ -7,6 +7,12 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * Model for table `state_history`
+ *
+ * Please note that using this model will fetch history entries for decommissioned services. To avoid this,
+ * the query needs a `state_history.service_id IS NULL OR state_history_service.id IS NOT NULL` where.
+ */
 class StateHistory extends Model
 {
     public function getTableName()
@@ -53,6 +59,6 @@ class StateHistory extends Model
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
-        $relations->belongsTo('service', Service::class);
+        $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
     }
 }

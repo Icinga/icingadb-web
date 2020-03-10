@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Sql\Sql;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -35,6 +36,12 @@ class NotificationsController extends Controller
         $filterControl = $this->createFilterControl($notifications);
 
         $this->filter($notifications);
+        $notifications->getSelectBase()
+            // Make sure we'll fetch service history entries only for services which still exist
+            ->where([
+                'notification_history.service_id IS NULL',
+                'notification_history_service.id IS NOT NULL'
+            ], Sql::ANY);
 
         $notifications->peekAhead($compact);
 

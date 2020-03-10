@@ -6,6 +6,7 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Sql\Sql;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -55,6 +56,9 @@ class HistoryController extends Controller
         }
 
         $this->filter($history);
+        $history->getSelectBase()
+            // Make sure we'll fetch service history entries only for services which still exist
+            ->where(['history.service_id IS NULL', 'history_service.id IS NOT NULL'], Sql::ANY);
 
         yield $this->export($history);
 
