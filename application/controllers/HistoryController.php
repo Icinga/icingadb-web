@@ -25,6 +25,7 @@ class HistoryController extends Controller
             'service.state',
             'comment',
             'downtime',
+            'flapping',
             'notification',
             'acknowledgement',
             'state'
