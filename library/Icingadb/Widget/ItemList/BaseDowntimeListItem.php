@@ -60,6 +60,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $this->duration = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
 
         $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
+        $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
     }
 
     protected function createProgress()

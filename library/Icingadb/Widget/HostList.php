@@ -3,6 +3,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\Links;
+use ipl\Web\Url;
 
 /**
  * Host list
@@ -26,5 +27,6 @@ class HostList extends StateList
     protected function init()
     {
         $this->setMultiselectUrl(Links::hostsDetails());
+        $this->setDetailUrl(Url::fromPath('icingadb/host'));
     }
 }

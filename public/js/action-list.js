@@ -29,7 +29,8 @@
     var ActionList = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('click', '.action-list > .list-item', this.onClick, this);
+        this.on('click', '.action-list > .list-item, .action-list > .list-item a', this.onClick, this);
+        this.on('close-column', this.onColumnClose, this);
 
         this.on('rendered', '.container', this.onRendered, this);
     };
@@ -39,7 +40,7 @@
     ActionList.prototype.onClick = function (event) {
         var _this = event.data.self;
         var $activeItems;
-        var $item = $(this);
+        var $item = $(this).closest('.list-item');
         var $list = $item.parent('.action-list');
 
         event.preventDefault();
@@ -102,6 +103,32 @@
         }
     };
 
+    ActionList.prototype.onColumnClose = function (event) {
+        var $target = $(event.target);
+
+        if ($target.attr('id') !== 'col2') {
+            return;
+        }
+
+        var $list = $('#col1').find('.action-list');
+        if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
+            var _this = event.data.self;
+            var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
+
+            if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
+                $.each(parseSelectionQuery(detailUrl.query), function (i, filter) {
+                    $list.find(
+                        '[data-icinga-multiselect-filter="' + filter + '"]'
+                    ).removeClass('active');
+                });
+            } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
+                $list.find(
+                    '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
+                ).removeClass('active');
+            }
+        }
+    };
+
     ActionList.prototype.onRendered = function (event) {
         var $target = $(event.target);
 
@@ -121,6 +148,10 @@
                         '[data-icinga-multiselect-filter="' + filter + '"]'
                     ).addClass('active');
                 });
+            } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
+                $list.find(
+                    '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
+                ).addClass('active');
             }
         }
     };

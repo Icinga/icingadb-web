@@ -58,6 +58,13 @@ abstract class BaseItemList extends BaseHtmlElement
         return $this;
     }
 
+    protected function setDetailUrl(Url $url)
+    {
+        $this->addAttributes(['data-icinga-detail-url' => $url]);
+
+        return $this;
+    }
+
     protected function assemble()
     {
         $itemClass = $this->getItemClass();
