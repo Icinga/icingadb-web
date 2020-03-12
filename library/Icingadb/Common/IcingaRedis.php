@@ -90,7 +90,7 @@ trait IcingaRedis
         $redis = new Redis();
 
         $redis->connect(
-            $config->get('host', 'redis'),
+            $config->get('host', 'localhost'),
             $config->get('port', 6380),
             0.5
         );
