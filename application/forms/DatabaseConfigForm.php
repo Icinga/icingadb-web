@@ -17,11 +17,15 @@ class DatabaseConfigForm extends ConfigForm
         $dbResources = ResourceFactory::getResourceConfigs('db')->keys();
 
         $this->addElement('select', 'icingadb_resource', [
-            'description'  => $this->translate('Database resource'),
-            'label'        => $this->translate('Database'),
-            'multiOptions' => array_combine($dbResources, $dbResources),
-            'required'     => true,
-            'value'        => 'icingadb'
+            'description'   => $this->translate('Database resource'),
+            'label'         => $this->translate('Database'),
+            'multiOptions'  => array_merge(
+                ['' => ' - Please choose - '],
+                array_combine($dbResources, $dbResources)
+            ),
+            'disable'       => [''],
+            'required'      => true,
+            'value'         => ''
         ]);
     }
 }

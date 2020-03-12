@@ -23,10 +23,9 @@ trait Database
      */
     public function getDb()
     {
-
         if ($this->db === null) {
             $config = new SqlConfig(ResourceFactory::getResourceConfig(
-                AppConfig::module('icingadb')->get('icingadb', 'resource', 'icingadb')
+                AppConfig::module('icingadb')->get('icingadb', 'resource')
             ));
 
             $config->options = [
