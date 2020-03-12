@@ -7,6 +7,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
@@ -44,10 +45,24 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'flapping_start':
+                $caption
+                    ->add(
+                        'State Change Rate: ' . $this->item->flapping->percent_state_change_start
+                        . '%; Start Threshold: ' . $this->item->host->flapping_threshold_high . '%'
+                    )
+                    ->getAttributes()
+                    ->add('class', 'plugin-output');
+
+                break;
             case 'flapping_end':
                 $caption
-                    ->add('Low Threshold: ' . $this->item->host->flapping_threshold_low .
-                        ', High Threshold: ' . $this->item->host->flapping_threshold_high)
+                    ->add(
+                        'State Change Rate: ' . $this->item->host->flapping_threshold_low
+                        . '%; End Threshold: ' . $this->item->host->flapping_threshold_high
+                        . '%; Flapping for ' . DateFormatter::formatDuration(
+                            $this->item->flapping->end_time - $this->item->flapping->start_time
+                        )
+                    )
                     ->getAttributes()
                     ->add('class', 'plugin-output');
 
