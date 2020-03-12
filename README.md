@@ -9,8 +9,9 @@
 1. [Documentation](#documentation)
 2. [Installation](#installation)
 3. [Configuration](#configuration)
-4. [New Features](#new-features)
-5. [Concepts](#concepts)
+4. [Migration](#migration)
+5. [New Features](#new-features)
+6. [Concepts](#concepts)
 
 **Icinga DB Web** pushes your monitoring stack to the next level.
 
@@ -31,6 +32,11 @@ chapter.
 ## Configuration
 
 To configure Icinga DB Web please check the [configuration](https://icinga.com/docs/icingadb-web/latest/doc/03-Configuration/)
+chapter.
+
+## Migration
+
+To migrate from the monitoring module to Icinga DB Web check the [migration](https://icinga.com/docs/icingadb-web/latest/doc/10-Migration/)
 chapter.
 
 ## New Features
