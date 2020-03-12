@@ -16,7 +16,7 @@ use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
-use ipl\Stdlib\Contract\PaginationInterface;
+use ipl\Stdlib\Contract\Paginatable;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
@@ -73,7 +73,7 @@ class Controller extends CompatController
      *
      * @return PaginationControl
      */
-    public function createPaginationControl(PaginationInterface $paginatable)
+    public function createPaginationControl(Paginatable $paginatable)
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
 
