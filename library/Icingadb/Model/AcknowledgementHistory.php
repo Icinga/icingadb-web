@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
