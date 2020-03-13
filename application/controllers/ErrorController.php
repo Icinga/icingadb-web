@@ -70,7 +70,8 @@ class ErrorController extends IcingaErrorController
 
         $message = $exception->getMessage();
         if (substr($message, 0, 27) !== 'Cannot load resource config') {
-            return parent::errorAction();
+            $this->forward('error', 'error', 'default');
+            return;
         } else {
             $this->setParam('error_handler', null);
         }
