@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Controllers\ErrorController as IcingaErrorController;

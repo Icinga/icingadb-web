@@ -1,3 +1,5 @@
+/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+
 ;(function(Icinga, $) {
 
     'use strict';
