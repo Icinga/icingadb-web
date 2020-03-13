@@ -7,6 +7,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
@@ -41,6 +42,29 @@ class HistoryListItem extends CommonListItem
                     ': ',
                     $this->item->downtime->comment
                 ]);
+
+                break;
+            case 'flapping_start':
+                $caption
+                    ->add(
+                        'State Change Rate: ' . $this->item->flapping->percent_state_change_start
+                        . '%; Start Threshold: ' . $this->item->host->flapping_threshold_high . '%'
+                    )
+                    ->getAttributes()
+                    ->add('class', 'plugin-output');
+
+                break;
+            case 'flapping_end':
+                $caption
+                    ->add(
+                        'State Change Rate: ' . $this->item->host->flapping_threshold_low
+                        . '%; End Threshold: ' . $this->item->host->flapping_threshold_high
+                        . '%; Flapping for ' . DateFormatter::formatDuration(
+                            $this->item->flapping->end_time - $this->item->flapping->start_time
+                        )
+                    )
+                    ->getAttributes()
+                    ->add('class', 'plugin-output');
 
                 break;
             case 'ack_clear':
@@ -115,6 +139,13 @@ class HistoryListItem extends CommonListItem
                 );
 
                 break;
+            case 'flapping_end':
+            case 'flapping_start':
+                $visual->add(
+                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
+                );
+
+                break;
             case 'notification':
                 $visual->add(
                     Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION))
@@ -165,12 +196,20 @@ class HistoryListItem extends CommonListItem
                 $title->add('Downtime started');
 
                 break;
+            case 'flapping_start':
+                $title->add('Flapping started');
+
+                break;
+            case 'flapping_end':
+                $title->add('Flapping ended');
+
+                break;
             case 'ack_set':
-                $title->add('Acknowledgement Set');
+                $title->add('Acknowledgement set');
 
                 break;
             case 'ack_clear':
-                $title->add('Acknowledgement Cleared');
+                $title->add('Acknowledgement cleared');
 
                 break;
             case 'notification':

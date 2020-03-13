@@ -43,6 +43,7 @@ class Environment extends Model
         $relations->hasMany('eventcommand_argument', EventcommandArgument::class);
         $relations->hasMany('eventcommand_customvar', EventcommandCustomvar::class);
         $relations->hasMany('eventcommand_envvar', EventcommandEnvvar::class);
+        $relations->hasMany('flapping_history', FlappingHistory::class);
         $relations->hasMany('history', History::class);
         $relations->hasMany('host', Host::class);
         $relations->hasMany('host_customvar', HostCustomvar::class);
