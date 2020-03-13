@@ -29,7 +29,7 @@
     var ActionList = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('click', '.action-list > .list-item, .action-list > .list-item a', this.onClick, this);
+        this.on('click', '.action-list > .list-item:not(.page-separator), .action-list > .list-item a[href]', this.onClick, this);
         this.on('close-column', this.onColumnClose, this);
 
         this.on('rendered', '.container', this.onRendered, this);
