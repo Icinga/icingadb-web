@@ -40,15 +40,17 @@
     ActionList.prototype.onClick = function (event) {
         var _this = event.data.self;
         var $activeItems;
-        var $item = $(this).closest('.list-item');
+        var $target = $(this);
+        var $item = $target.closest('.list-item');
         var $list = $item.parent('.action-list');
 
-        if ($(event.target).closest('[data-no-icinga-ajax]').length > 0) {
+        if ($target.closest('[data-no-icinga-ajax]').length > 0) {
             // Quickfix? Interferes with loadmore.js otherwise
             return true;
         }
 
         event.preventDefault();
+        event.stopImmediatePropagation();
         event.stopPropagation();
 
         if ($list.is('[data-icinga-multiselect-url]')) {
@@ -93,7 +95,7 @@
             var url;
 
             if ($activeItems.length === 1) {
-                url = $item.find('[href]').first().attr('href');
+                url = $target.is('a') ? $target.attr('href') : $item.find('[href]').first().attr('href');
             } else {
                 var filters = $activeItems.map(function () {
                     return $(this).attr('data-icinga-multiselect-filter');
