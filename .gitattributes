@@ -1,0 +1,8 @@
+# Exclude files related to git when generating an archive
+.git* export-ignore
+
+# Exclude test files
+.phpcs.xml export-ignore
+
+# Exclude other irrelevant files
+.mailmap export-ignore
