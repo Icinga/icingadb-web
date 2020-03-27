@@ -12,7 +12,6 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
-use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
@@ -92,11 +91,18 @@ abstract class BaseDowntimeListItem extends BaseListItem
     {
         $caption->add([
             Html::tag('span', [
-                new Icon(Icons::USER),
-                $this->item->author
+                Html::tag('span', ['class' => 'user'], [
+                    new Icon(Icons::USER),
+                    $this->item->author
+                ]),
+                new HtmlString(':&nbsp;')
             ]),
-            ': ',
-            new HtmlString(Markdown::text($this->item->comment))
+            /*
+             * @ToDo(fs): Markdown is currently not supported. For proper ellipsisizing
+             * the `<p>` tag has to be omiited
+             */
+            $this->item->comment
+//            Markdown::text($this->item->comment)
         ]);
     }
 
