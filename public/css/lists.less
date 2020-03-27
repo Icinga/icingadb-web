@@ -178,8 +178,13 @@
 .downtime-list .list-item,
 .downtime-detail .list-item {
   .caption {
-    .text-ellipsis();
+    display: block;
     height: 1.5em;
+    white-space: nowrap;
+  }
+
+  .user {
+    white-space: nowrap;
   }
 
   .progress {
@@ -245,6 +250,7 @@
   .caption {
     height: auto;
     max-height: 4.5em;
+    white-space: normal;
   }
 }
 
