@@ -14,8 +14,10 @@ use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
+use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
 class HistoryListItem extends CommonListItem
@@ -32,7 +34,7 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->comment->author,
                     ': ',
-                    $this->item->comment->comment
+                    HtmlString::create(Markdown::line($this->item->comment->comment))
                 ]);
 
                 break;
@@ -42,7 +44,7 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->downtime->author,
                     ': ',
-                    $this->item->downtime->comment
+                    HtmlString::create(Markdown::line($this->item->downtime->comment))
                 ]);
 
                 break;
@@ -86,7 +88,7 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->acknowledgement->author,
                     ': ',
-                    $this->item->acknowledgement->comment
+                    HtmlString::create(Markdown::line($this->item->acknowledgement->comment))
                 ]);
 
                 break;
