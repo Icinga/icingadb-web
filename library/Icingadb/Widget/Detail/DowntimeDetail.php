@@ -8,6 +8,7 @@ use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Date\DateFormatter;
@@ -111,8 +112,7 @@ class DowntimeDetail extends BaseHtmlElement
             new Icon('user'),
             $this->downtime->author,
             ' commented:',
-            Html::tag('br'),
-            $this->downtime->comment
+            new MarkdownText($this->downtime->comment)
         ]));
 
         $this->add(Html::tag('h2', 'Details'));
