@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
@@ -105,10 +106,7 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'state_change':
-                $caption
-                    ->add($this->item->state->output)
-                    ->getAttributes()
-                        ->add('class', 'plugin-output');
+                $caption->add(CompatPluginOutput::getInstance()->render($this->item->state->output));
 
                 break;
         }
