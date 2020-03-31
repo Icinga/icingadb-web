@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatBackend;
 use Icinga\Module\Icingadb\Compat\CompatHost;
@@ -231,15 +232,12 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         if ($notes !== '') {
-            $content[] = Html::tag(
-                'section',
-                [
-                    'class'               => 'markdown collapsible',
+            $content[] = (new MarkdownText($notes))
+                ->addAttributes([
+                    'class'               => 'collapsible',
                     'data-visible-height' => 200,
                     'id'                  => $this->objectType . '-notes'
-                ],
-                Markdown::text($notes)
-            );
+                ]);
         }
 
         if (empty($content)) {
