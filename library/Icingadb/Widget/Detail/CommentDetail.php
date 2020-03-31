@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
@@ -38,7 +39,7 @@ class CommentDetail extends BaseHtmlElement
     {
         return [
             Html::tag('h2', 'Comment'),
-            Html::tag('p', $this->comment->text),
+            new MarkdownText($this->comment->text)
         ];
     }
 
