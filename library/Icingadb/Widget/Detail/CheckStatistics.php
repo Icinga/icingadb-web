@@ -50,8 +50,11 @@ class CheckStatistics extends Card
             $durationScale -= $overdueScale;
             $overdueBar = Html::tag('div', [
                 'class' => 'progress-bar overdue',
-                'style' => 'left: ' .  ($hPadding + $durationScale) . '%; ' .
-                           'width: ' . ($overdueScale + $hPadding / 2) . '%'
+                'style' => sprintf(
+                    'left: %F%%; width: %F%%;',
+                    $hPadding + $durationScale,
+                    $overdueScale + $hPadding / 2
+                )
             ]);
         } else {
             $leftNow = $durationScale * (1 - ($nextCheckTime - time()) / $this->object->check_interval);
@@ -65,7 +68,7 @@ class CheckStatistics extends Card
         $above = Html::tag('ul', ['class' => 'above']);
         $now = Html::tag('li', [
             'class' => 'bubble now',
-            'style' => 'left: ' . ($hPadding + $leftNow) . '%',
+            'style' => sprintf('left: %F%%', $hPadding + $leftNow),
         ], Html::tag('strong', 'Now'));
         $above->add($now);
 
@@ -78,12 +81,12 @@ class CheckStatistics extends Card
         ]);
         $markerNext = Html::tag('div', [
             'class' => 'marker next',
-            'style' => 'left: ' .  ($hPadding + $durationScale) . '%',
+            'style' => sprintf('left: %F%%', $hPadding + $durationScale),
             'title' => $nextCheckTime !== null ? DateFormatter::formatDateTime($nextCheckTime) : null
         ]);
         $markerNow = Html::tag('div', [
             'class' => 'marker now',
-            'style' => 'left: ' . ($hPadding + $leftNow) . '%',
+            'style' => sprintf('left: %F%%', $hPadding + $leftNow),
         ]);
 
         $timeline->add([
@@ -128,7 +131,7 @@ class CheckStatistics extends Card
             'div',
             [
                 'class' => 'below-wrapper',
-                'style' => 'width: ' . $durationScale . '%;'
+                'style' => sprintf('width: %F%%;', $durationScale)
             ],
             [$intervalLine, $bubbles]
         );
