@@ -94,14 +94,15 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'notification':
-                $caption->add($this->item->notification->text);
-
                 if (! empty($this->item->notification->author)) {
-                    $caption->prepend([
+                    $caption->add([
                         new Icon(Icons::USER),
                         $this->item->notification->author,
-                        ': '
+                        ': ',
+                        $this->item->notification->text
                     ]);
+                } else {
+                    $caption->add(CompatPluginOutput::getInstance()->render($this->item->notification->text));
                 }
 
                 break;

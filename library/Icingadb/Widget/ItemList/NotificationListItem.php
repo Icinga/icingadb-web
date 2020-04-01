@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
@@ -36,8 +37,7 @@ class NotificationListItem extends CommonListItem
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
-            $caption->addAttributes(['class' => 'plugin-output']);
-            $caption->add($this->item->text);
+            $caption->add(CompatPluginOutput::getInstance()->render($this->item->text));
         } else {
             $caption->add([
                 new Icon(Icons::USER),
