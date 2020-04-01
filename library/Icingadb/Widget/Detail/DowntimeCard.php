@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
-use Icinga\Module\Icingadb\Widget\TimeSince;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
@@ -120,7 +119,7 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     ['class' => 'bubble start'],
-                    new VerticalKeyValue('Scheduled Start', new TimeSince($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue('Scheduled Start', new TimeAgo($this->downtime->scheduled_start_time))
                 ),
                 Html::tag(
                     'li',
@@ -142,7 +141,7 @@ class DowntimeCard extends BaseHtmlElement
                         'class' => 'bubble upwards start' . ($evade ? ' left' : ''),
                         'style' => sprintf('left: %F%%', $flexStartLeft)
                     ],
-                    new VerticalKeyValue('Start', new TimeSince($this->downtime->start_time))
+                    new VerticalKeyValue('Start', new TimeAgo($this->downtime->start_time))
                 ),
                 Html::tag(
                     'li',
@@ -169,7 +168,7 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     ['class' => 'bubble start'],
-                    new VerticalKeyValue('Scheduled Start', new TimeSince($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue('Scheduled Start', new TimeAgo($this->downtime->scheduled_start_time))
                 ),
                 Html::tag(
                     'li',
@@ -205,7 +204,7 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time)
                         )
                     ],
-                    new VerticalKeyValue('Start', new TimeSince($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue('Start', new TimeAgo($this->downtime->scheduled_start_time))
                 ),
                 Html::tag(
                     'li',
