@@ -21,6 +21,10 @@ class CompatService extends Service
      */
     public function getHost()
     {
-        return new CompatHost($this->object->host);
+        if ($this->host === null) {
+            $this->host = new CompatHost($this->object->host);
+        }
+
+        return $this->host;
     }
 }
