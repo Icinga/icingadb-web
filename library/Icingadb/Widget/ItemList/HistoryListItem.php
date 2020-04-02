@@ -9,13 +9,16 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
+use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
 class HistoryListItem extends CommonListItem
@@ -32,7 +35,7 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->comment->author,
                     ': ',
-                    $this->item->comment->comment
+                    HtmlString::create(Markdown::line($this->item->comment->comment))
                 ]);
 
                 break;
@@ -42,7 +45,7 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->downtime->author,
                     ': ',
-                    $this->item->downtime->comment
+                    HtmlString::create(Markdown::line($this->item->downtime->comment))
                 ]);
 
                 break;
@@ -86,27 +89,25 @@ class HistoryListItem extends CommonListItem
                     new Icon(Icons::USER),
                     $this->item->acknowledgement->author,
                     ': ',
-                    $this->item->acknowledgement->comment
+                    HtmlString::create(Markdown::line($this->item->acknowledgement->comment))
                 ]);
 
                 break;
             case 'notification':
-                $caption->add($this->item->notification->text);
-
                 if (! empty($this->item->notification->author)) {
-                    $caption->prepend([
+                    $caption->add([
                         new Icon(Icons::USER),
                         $this->item->notification->author,
-                        ': '
+                        ': ',
+                        $this->item->notification->text
                     ]);
+                } else {
+                    $caption->add(CompatPluginOutput::getInstance()->render($this->item->notification->text));
                 }
 
                 break;
             case 'state_change':
-                $caption
-                    ->add($this->item->state->output)
-                    ->getAttributes()
-                        ->add('class', 'plugin-output');
+                $caption->add(CompatPluginOutput::getInstance()->render($this->item->state->output));
 
                 break;
         }

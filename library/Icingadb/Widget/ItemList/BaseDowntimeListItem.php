@@ -96,7 +96,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 $this->item->author
             ]),
             ': ',
-            new HtmlString(Markdown::text($this->item->comment))
+            new HtmlString(Markdown::line($this->item->comment))
         ]);
     }
 
