@@ -5,6 +5,8 @@
 namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Model\Customvar;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
@@ -15,7 +17,11 @@ use function ipl\Stdlib\get_php_type;
 
 trait CompatObject
 {
-    private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
+    use Database;
+
+    private $defaultLegacyColumns = [
+        'flap_detection_enabled' => 'flapping_enabled'
+    ];
 
     /** @var Model $object */
     private $object;
@@ -23,6 +29,8 @@ trait CompatObject
     public function __construct(Model $object)
     {
         $this->object = $object;
+
+        $this->legacyColumns = $this->legacyColumns + $this->defaultLegacyColumns;
     }
 
     public static function fromModel(Model $object)
@@ -76,13 +84,40 @@ trait CompatObject
         );
     }
 
+    public function fetchCustomvars()
+    {
+        $query = Customvar::on($this->getDb())
+            ->columns(['name', 'value'])
+            ->with($this->type);
+        $query->getSelectBase()->where(['customvar_' . $this->type . '.id = ?' => $this->object->id]);
+
+        $customvars = [];
+        foreach ($query as $row) {
+            $customvars[$row->name] = $row->value;
+        }
+
+        $this->object->customvars = $customvars;
+        return $this;
+    }
+
     public function __get($name)
     {
         if (isset($this->legacyColumns[$name])) {
             $name = $this->legacyColumns[$name];
         }
 
-        return $this->object->$name;
+        if (is_array($name)) {
+            $value = $this->object;
+
+            do {
+                $col = array_shift($name);
+                $value = $value->$col;
+            } while (! empty($name));
+        } else {
+            $value = $this->object->$name;
+        }
+
+        return $value;
     }
 
     public function __isset($name)

@@ -10,6 +10,10 @@ class CompatService extends Service
 {
     use CompatObject;
 
+    private $legacyColumns = [
+        'host_name' => ['host', 'name']
+    ];
+
     /**
      * Get this service's host
      *
