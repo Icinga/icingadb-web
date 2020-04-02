@@ -4,7 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
+use Icinga\Application\Config;
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Customvar;
 use Icinga\Module\Icingadb\Model\Host;
@@ -17,6 +19,7 @@ use function ipl\Stdlib\get_php_type;
 
 trait CompatObject
 {
+    use Auth;
     use Database;
 
     private $defaultLegacyColumns = [
@@ -91,8 +94,15 @@ trait CompatObject
             ->with($this->type);
         $query->getSelectBase()->where(['customvar_' . $this->type . '.id = ?' => $this->object->id]);
 
+        $vars = new CustomvarFilter(
+            $query->execute(),
+            $this->type,
+            $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
+            Config::module('monitoring')->get('security', 'protected_customvars', '')
+        );
+
         $customvars = [];
-        foreach ($query as $row) {
+        foreach ($vars as $row) {
             $customvars[$row->name] = $row->value;
         }
 
