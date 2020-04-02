@@ -106,7 +106,7 @@ trait CompatObject
             $customvars[$row->name] = $row->value;
         }
 
-        $this->object->customvars = $customvars;
+        $this->customvars = $customvars;
         return $this;
     }
 
@@ -123,6 +123,13 @@ trait CompatObject
                 $col = array_shift($name);
                 $value = $value->$col;
             } while (! empty($name));
+        } elseif (property_exists($this, $name)) {
+            if ($this->$name === null) {
+                $fetchMethod = 'fetch' . ucfirst($name);
+                $this->$fetchMethod();
+            }
+
+            return $this->$name;
         } else {
             $value = $this->object->$name;
         }
