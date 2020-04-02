@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use LogicException;
 
 use function ipl\Stdlib\get_php_type;
 
@@ -104,6 +105,26 @@ trait CompatObject
 
     public function __get($name)
     {
+        if (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
+            switch (strtolower($matches[1])) {
+                case $this->type:
+                    $customvars = $this->customvars;
+                    break;
+                case self::TYPE_HOST:
+                    $customvars = $this->getHost()->customvars;
+                    break;
+                case self::TYPE_SERVICE:
+                    throw new LogicException('Cannot fetch service custom variables for non-service objects');
+            }
+
+            $variableName = strtolower($matches[2]);
+            if (isset($customvars[$variableName])) {
+                return $customvars[$variableName];
+            }
+
+            return null; // Unknown custom variables MUST NOT throw an error
+        }
+
         if (isset($this->legacyColumns[$name])) {
             $name = $this->legacyColumns[$name];
         }
