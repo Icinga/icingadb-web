@@ -43,6 +43,8 @@ class ObjectDetail extends BaseHtmlElement
 
     protected $object;
 
+    protected $compatObject;
+
     protected $objectType;
 
     protected $defaultAttributes = ['class' => 'host-detail'];
@@ -52,19 +54,19 @@ class ObjectDetail extends BaseHtmlElement
     public function __construct($object)
     {
         $this->object = $object;
+        $this->compatObject = CompatObject::fromModel($object);
         $this->objectType = $object instanceof Host ? 'host' : 'service';
     }
 
     protected function createActions()
     {
-        $compatObject = CompatObject::fromModel($this->object);
         $navigation = new Navigation();
         $navigation->load($this->objectType . '-action');
         foreach ($navigation as $item) {
-            $item->setObject($compatObject);
+            $item->setObject($this->compatObject);
         }
 
-        foreach ($compatObject->getActionUrls() as $i => $url) {
+        foreach ($this->compatObject->getActionUrls() as $i => $url) {
             $navigation->addItem(
                 'Action ' . ($i + 1),
                 [
@@ -80,7 +82,7 @@ class ObjectDetail extends BaseHtmlElement
 
         /** @var ObjectActionsHook $hook */
         foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
-            $navigation->merge($hook->getNavigation($compatObject));
+            $navigation->merge($hook->getNavigation($this->compatObject));
         }
 
         if ($navigation->isEmpty() || ! $navigation->hasRenderableItems()) {
@@ -210,11 +212,10 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createNotes()
     {
-        $compatObject = CompatObject::fromModel($this->object);
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        foreach ($compatObject->getNotesUrls() as $i => $url) {
+        foreach ($this->compatObject->getNotesUrls() as $i => $url) {
             $navigation->addItem(
                 'Notes ' . ($i + 1),
                 [
