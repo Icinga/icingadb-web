@@ -105,6 +105,15 @@ trait CompatObject
 
     public function __get($name)
     {
+        if (property_exists($this, $name)) {
+            if ($this->$name === null) {
+                $fetchMethod = 'fetch' . ucfirst($name);
+                $this->$fetchMethod();
+            }
+
+            return $this->$name;
+        }
+
         if (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
             switch (strtolower($matches[1])) {
                 case $this->type:
@@ -125,29 +134,32 @@ trait CompatObject
             return null; // Unknown custom variables MUST NOT throw an error
         }
 
-        if (isset($this->legacyColumns[$name])) {
-            $name = $this->legacyColumns[$name];
-        }
-
-        if (is_array($name)) {
-            $value = $this->object;
-
-            do {
-                $col = array_shift($name);
-                $value = $value->$col;
-            } while (! empty($name));
-        } elseif (property_exists($this, $name)) {
-            if ($this->$name === null) {
-                $fetchMethod = 'fetch' . ucfirst($name);
-                $this->$fetchMethod();
+        if (! isset($this->legacyColumns[$name]) && ! $this->object->hasProperty($name)) {
+            if (isset($this->customvars[$name])) {
+                return $this->customvars[$name];
             }
 
-            return $this->$name;
-        } else {
-            $value = $this->object->$name;
+            if (substr($name, 0, strlen($this->prefix)) !== $this->prefix) {
+                $name = $this->prefix . $name;
+            }
         }
 
-        return $value;
+        if (isset($this->legacyColumns[$name])) {
+            $name = $this->legacyColumns[$name];
+
+            if (is_array($name)) {
+                $value = $this->object;
+
+                do {
+                    $col = array_shift($name);
+                    $value = $value->$col;
+                } while (! empty($name));
+
+                return $value;
+            }
+        }
+
+        return $this->object->$name;
     }
 
     public function __isset($name)
