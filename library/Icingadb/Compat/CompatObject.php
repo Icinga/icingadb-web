@@ -164,7 +164,15 @@ trait CompatObject
 
     public function __isset($name)
     {
-        return isset($this->object->$name);
+        if (property_exists($this, $name)) {
+            return isset($this->$name);
+        }
+
+        if (isset($this->legacyColumns[$name]) || isset($this->object->$name)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
