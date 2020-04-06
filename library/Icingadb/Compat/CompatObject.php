@@ -148,7 +148,7 @@ trait CompatObject
                 do {
                     $col = array_shift($path);
                     $value = $value->$col;
-                } while (! empty($path));
+                } while (! empty($path) && $value !== null);
             }
 
             if (isset($opts['type'])) {
