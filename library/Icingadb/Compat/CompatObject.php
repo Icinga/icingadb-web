@@ -46,19 +46,6 @@ trait CompatObject
         }
     }
 
-    public function getActionUrls()
-    {
-        $actionUrl = $this->object->action_url;
-
-        if ($actionUrl === null) {
-            return [];
-        }
-
-        return $this->resolveAllStrings(
-            MonitoredObject::parseAttributeUrls($actionUrl->action_url)
-        );
-    }
-
     /**
      * Get this object's name
      *
@@ -67,19 +54,6 @@ trait CompatObject
     public function getName()
     {
         return $this->object->name;
-    }
-
-    public function getNotesUrls()
-    {
-        $notesUrl = $this->object->notes_url;
-
-        if ($notesUrl === null) {
-            return [];
-        }
-
-        return $this->resolveAllStrings(
-            MonitoredObject::parseAttributeUrls($notesUrl->notes_url)
-        );
     }
 
     public function fetchCustomvars()
