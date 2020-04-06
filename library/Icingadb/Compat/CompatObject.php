@@ -20,6 +20,9 @@ trait CompatObject
 {
     use Auth;
 
+    /** @var array Non-obscured custom variables */
+    protected $rawCustomvars;
+
     /** @var Model $object */
     private $object;
 
@@ -81,19 +84,32 @@ trait CompatObject
 
     public function fetchCustomvars()
     {
-        $vars = new CustomvarFilter(
-            $this->object->customvar->execute(),
+        if ($this->customvars !== null) {
+            return $this;
+        }
+
+        $vars = $this->object->customvar->execute();
+
+        $customVars = [];
+        foreach ($vars as $row) {
+            $customVars[$row->name] = $row->value;
+        }
+
+        $this->rawCustomvars = $customVars;
+
+        $filter = new CustomvarFilter(
+            $vars,
             $this->type,
             $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
             Config::module('monitoring')->get('security', 'protected_customvars', '')
         );
 
-        $customvars = [];
-        foreach ($vars as $row) {
-            $customvars[$row->name] = $row->value;
+        $obscuredVars = [];
+        foreach ($filter as $row) {
+            $obscuredVars[$row->name] = $row->value;
         }
 
-        $this->customvars = $customvars;
+        $this->customvars = $obscuredVars;
         return $this;
     }
 
@@ -111,10 +127,10 @@ trait CompatObject
         if (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
             switch (strtolower($matches[1])) {
                 case $this->type:
-                    $customvars = $this->customvars;
+                    $customvars = $this->fetchCustomvars()->rawCustomvars;
                     break;
                 case self::TYPE_HOST:
-                    $customvars = $this->getHost()->customvars;
+                    $customvars = $this->getHost()->fetchCustomvars()->rawCustomvars;
                     break;
                 case self::TYPE_SERVICE:
                     throw new LogicException('Cannot fetch service custom variables for non-service objects');
