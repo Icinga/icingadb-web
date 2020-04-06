@@ -20,18 +20,12 @@ trait CompatObject
 {
     use Auth;
 
-    private $defaultLegacyColumns = [
-        'flap_detection_enabled' => 'flapping_enabled'
-    ];
-
     /** @var Model $object */
     private $object;
 
     public function __construct(Model $object)
     {
         $this->object = $object;
-
-        $this->legacyColumns = $this->legacyColumns + $this->defaultLegacyColumns;
     }
 
     public static function fromModel(Model $object)
