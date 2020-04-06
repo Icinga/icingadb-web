@@ -145,18 +145,29 @@ trait CompatObject
         }
 
         if (isset($this->legacyColumns[$name])) {
-            $name = $this->legacyColumns[$name];
+            $opts = $this->legacyColumns[$name];
+            if ($opts === null) {
+                return null;
+            }
 
-            if (is_array($name)) {
+            $path = $opts['path'];
+            $value = null;
+
+            if (! empty($path)) {
                 $value = $this->object;
 
                 do {
-                    $col = array_shift($name);
+                    $col = array_shift($path);
                     $value = $value->$col;
-                } while (! empty($name));
-
-                return $value;
+                } while (! empty($path));
             }
+
+            if (isset($opts['type'])) {
+                $method = 'get' . ucfirst($opts['type']) . 'Type';
+                $value = $this->$method($value);
+            }
+
+            return $value;
         }
 
         return $this->object->$name;
