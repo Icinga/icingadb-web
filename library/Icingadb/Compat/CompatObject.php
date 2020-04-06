@@ -123,7 +123,7 @@ trait CompatObject
             return null; // Unknown custom variables MUST NOT throw an error
         }
 
-        if (! isset($this->legacyColumns[$name]) && ! $this->object->hasProperty($name)) {
+        if (! array_key_exists($name, $this->legacyColumns) && ! $this->object->hasProperty($name)) {
             if (isset($this->customvars[$name])) {
                 return $this->customvars[$name];
             }
@@ -133,7 +133,7 @@ trait CompatObject
             }
         }
 
-        if (isset($this->legacyColumns[$name])) {
+        if (array_key_exists($name, $this->legacyColumns)) {
             $opts = $this->legacyColumns[$name];
             if ($opts === null) {
                 return null;
