@@ -179,4 +179,16 @@ trait CompatObject
     {
         throw new NotImplementedError('getDataView() is not supported');
     }
+
+    private function getBoolType($value)
+    {
+        switch ($value) {
+            case false:
+                return 0;
+            case true:
+                return 1;
+            case 'sticky':
+                return 2;
+        }
+    }
 }
