@@ -56,6 +56,11 @@ trait CompatObject
         return $this->object->name;
     }
 
+    public function fetch()
+    {
+        return true;
+    }
+
     public function fetchCustomvars()
     {
         if ($this->customvars !== null) {
