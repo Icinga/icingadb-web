@@ -150,4 +150,9 @@ class CompatService extends Service
 
         return $this->host;
     }
+
+    protected function fetchHost()
+    {
+        $this->getHost();
+    }
 }
