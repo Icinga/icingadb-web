@@ -11,7 +11,7 @@ class HostStatusBar extends BaseStatusBar
 {
     protected function assembleTotal(BaseHtmlElement $total)
     {
-        $total->add(sprintf('%d Hosts', $this->summary->hosts_total));
+        $total->add(sprintf(tp('%d Host', '%d Hosts', $this->summary->hosts_total), $this->summary->hosts_total));
     }
 
     protected function createStateBadges()

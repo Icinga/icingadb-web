@@ -19,7 +19,7 @@ class UserController extends Controller
     public function init()
     {
         if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+            throw new SecurityException($this->translate('No permission for %s'), 'monitoring/contacts');
         }
 
         $this->setTitle($this->translate('User'));
@@ -44,22 +44,22 @@ class UserController extends Controller
     {
         $this->addControl(new UserList([$this->user]));
 
-        $this->addContent(Html::tag('h2', 'Details'));
+        $this->addContent(Html::tag('h2', $this->translate('Details')));
         $this->addContent(Html::tag('ul', ['class' => 'key-value-list'], [
             Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], 'E-Mail'),
+                Html::tag('span', ['class' => 'label'], $this->translate('E-Mail')),
                 Html::tag(
                     'span',
                     ['class' => 'value'],
-                    $this->user->email ?: Html::tag('span', ['class' => 'text-muted'], 'Unset')
+                    $this->user->email ?: Html::tag('span', ['class' => 'text-muted'], $this->translate('Unset'))
                 )
             ]),
             Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], 'Pager'),
+                Html::tag('span', ['class' => 'label'], $this->translate('Pager')),
                 Html::tag(
                     'span',
                     ['class' => 'value'],
-                    $this->user->pager ?: Html::tag('span', ['class' => 'text-muted'], 'Unset')
+                    $this->user->pager ?: Html::tag('span', ['class' => 'text-muted'], $this->translate('Unset'))
                 )
             ])
         ]));

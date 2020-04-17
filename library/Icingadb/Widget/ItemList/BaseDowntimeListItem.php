@@ -102,12 +102,6 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        if ($this->item->is_flexible) {
-            $type = 'Flexible';
-        } else {
-            $type = 'Fixed';
-        }
-
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
         } else {
@@ -115,7 +109,12 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
 
         $title->add([
-            new Link("{$type} Downtime", Links::downtime($this->item)),
+            new Link(
+                $this->item->is_flexible
+                    ? t('Flexible Downtime')
+                    : t('Fixed Downtime'),
+                Links::downtime($this->item)
+            ),
             ': ',
             $link
         ]);
@@ -129,7 +128,9 @@ abstract class BaseDowntimeListItem extends BaseListItem
             if ($this->item->is_in_effect) {
                 $visual->addAttributes(['class' => 'active']);
             }
-            $visual->add([
+
+            $visual->add(Html::sprintf(
+                t('%s left', '<timespan>..'),
                 Html::tag(
                     'strong',
                     Html::tag(
@@ -140,10 +141,8 @@ abstract class BaseDowntimeListItem extends BaseListItem
                         ],
                         DateFormatter::formatDuration($this->duration, true)
                     )
-                ),
-                ' ',
-                'left'
-            ]);
+                )
+            ));
         } else {
             $visual->add([
                 'in',

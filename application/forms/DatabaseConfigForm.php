@@ -22,7 +22,7 @@ class DatabaseConfigForm extends ConfigForm
             'description'   => $this->translate('Database resource'),
             'label'         => $this->translate('Database'),
             'multiOptions'  => array_merge(
-                ['' => ' - Please choose - '],
+                ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
                 array_combine($dbResources, $dbResources)
             ),
             'disable'       => [''],

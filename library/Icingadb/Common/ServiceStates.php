@@ -103,22 +103,22 @@ class ServiceStates
     {
         switch (true) {
             case $state === self::OK:
-                $text = mt('icingadb', 'ok');
+                $text = t('ok');
                 break;
             case $state === self::WARNING:
-                $text = mt('icingadb', 'warning');
+                $text = t('warning');
                 break;
             case $state === self::CRITICAL:
-                $text = mt('icingadb', 'critical');
+                $text = t('critical');
                 break;
             case $state === self::UNKNOWN:
-                $text = mt('icingadb', 'unknown');
+                $text = t('unknown');
                 break;
             case $state === self::PENDING:
-                $text = mt('icingadb', 'pending');
+                $text = t('pending');
                 break;
             case $state === null:
-                $text = mt('icingadb', 'not available');
+                $text = t('not available');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid service state %d', $state));

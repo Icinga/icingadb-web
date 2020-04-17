@@ -80,7 +80,7 @@ abstract class BaseItemList extends BaseHtmlElement
 
         if ($this->isEmpty()) {
             $this->setTag('div');
-            $this->add(new EmptyState('No items found.'));
+            $this->add(new EmptyState(t('No items found.')));
         }
     }
 }

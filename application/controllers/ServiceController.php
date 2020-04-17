@@ -163,7 +163,7 @@ class ServiceController extends Controller
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
-            ->setLabel('Load More')
+            ->setLabel($this->translate('Load More'))
             ->setAttribute('data-no-icinga-ajax', true);
 
         $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));

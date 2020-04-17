@@ -68,7 +68,7 @@ class ObjectDetail extends BaseHtmlElement
 
         foreach ($this->compatObject->getActionUrls() as $i => $url) {
             $navigation->addItem(
-                'Action ' . ($i + 1),
+                sprintf(t('Action %d'), $i + 1),
                 [
                     'renderer' => [
                         'NavigationItemRenderer',
@@ -90,7 +90,7 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         return [
-            Html::tag('h2', 'Actions'),
+            Html::tag('h2', t('Actions')),
             new HtmlString($navigation->getRenderer()->setCssClass('actions')->render())
         ];
     }
@@ -98,7 +98,7 @@ class ObjectDetail extends BaseHtmlElement
     protected function createCheckStatistics()
     {
         return [
-            Html::tag('h2', 'Check Statistics'),
+            Html::tag('h2', t('Check Statistics')),
             new CheckStatistics($this->object)
         ];
     }
@@ -116,13 +116,13 @@ class ObjectDetail extends BaseHtmlElement
         /** @var ResultSet $comments */
         $comments = $this->object->comment->with($relations)->limit(3)->peekAhead()->execute();
 
-        $content = [Html::tag('h2', 'Comments')];
+        $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
             $content[] = new CommentList($comments);
             $content[] = new ShowMore($comments, $link);
         } else {
-            $content[] = new EmptyState('No comments created.');
+            $content[] = new EmptyState(t('No comments created.'));
         }
 
         return $content;
@@ -130,7 +130,7 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createCustomVars()
     {
-        $content = [Html::tag('h2', 'Custom Variables')];
+        $content = [Html::tag('h2', t('Custom Variables'))];
         $vars = $this->object->customvar->execute();
 
         if ($vars->hasResult()) {
@@ -143,7 +143,7 @@ class ObjectDetail extends BaseHtmlElement
 
             $content[] = new CustomVarTable($vars);
         } else {
-            $content[] = new EmptyState('No custom variables configured.');
+            $content[] = new EmptyState(t('No custom variables configured.'));
         }
 
         return $content;
@@ -159,13 +159,13 @@ class ObjectDetail extends BaseHtmlElement
 
         $downtimes = $this->object->downtime->limit(3)->peekAhead()->execute();
 
-        $content = [Html::tag('h2', 'Downtimes')];
+        $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
             $content[] = new DowntimeList($downtimes);
             $content[] = new ShowMore($downtimes, $link);
         } else {
-            $content[] = new EmptyState('No downtimes scheduled.');
+            $content[] = new EmptyState(t('No downtimes scheduled.'));
         }
 
         return $content;
@@ -177,7 +177,7 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createGroups()
     {
-        $groups = [Html::tag('h2', 'Groups')];
+        $groups = [Html::tag('h2', t('Groups'))];
 
         if ($this->objectType === 'host') {
             $hostgroupList = new TagList();
@@ -187,10 +187,10 @@ class ObjectDetail extends BaseHtmlElement
             }
 
             $groups[] = new HorizontalKeyValue(
-                'Host Groups',
+                t('Host Groups'),
                 $hostgroupList->hasContent()
                     ? $hostgroupList
-                    : new EmptyState('Not a member of any host group.')
+                    : new EmptyState(t('Not a member of any host group.'))
             );
         } else {
             $servicegroupList = new TagList();
@@ -200,10 +200,10 @@ class ObjectDetail extends BaseHtmlElement
             }
 
             $groups[] = new HorizontalKeyValue(
-                'Service Groups',
+                t('Service Groups'),
                 $servicegroupList->hasContent()
                     ? $servicegroupList
-                    : new EmptyState('Not a member of any service group.')
+                    : new EmptyState(t('Not a member of any service group.'))
             );
         }
 
@@ -217,7 +217,7 @@ class ObjectDetail extends BaseHtmlElement
 
         foreach ($this->compatObject->getNotesUrls() as $i => $url) {
             $navigation->addItem(
-                'Notes ' . ($i + 1),
+                sprintf(t('Note %d'), $i + 1),
                 [
                     'renderer' => 'NavigationItemRenderer',
                     'target'   => '_blank',
@@ -245,7 +245,7 @@ class ObjectDetail extends BaseHtmlElement
             return null;
         }
 
-        array_unshift($content, Html::tag('h2', 'Notes'));
+        array_unshift($content, Html::tag('h2', t('Notes')));
 
         return $content;
     }
@@ -269,14 +269,16 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         return [
-            Html::tag('h2', 'Notifications'),
+            Html::tag('h2', t('Notifications')),
             new HorizontalKeyValue(
-                'Users',
-                $userList->hasContent() ? $userList : new EmptyState('No users configured.')
+                t('Users'),
+                $userList->hasContent() ? $userList : new EmptyState(t('No users configured.'))
             ),
             new HorizontalKeyValue(
-                'User Groups',
-                $usergroupList->hasContent() ? $usergroupList : new EmptyState('No user groups configured.')
+                t('User Groups'),
+                $usergroupList->hasContent()
+                    ? $usergroupList
+                    : new EmptyState(t('No user groups configured.'))
             )
         ];
     }
@@ -289,10 +291,10 @@ class ObjectDetail extends BaseHtmlElement
         $helper = new Zend_View_Helper_Perfdata();
         $helper->view = Icinga::app()->getViewRenderer()->view;
 
-        $content[] = Html::tag('h2', 'Performance Data');
+        $content[] = Html::tag('h2', t('Performance Data'));
 
         if (empty($this->object->state->performance_data)) {
-            $content[] = new EmptyState('No performance data available.');
+            $content[] = new EmptyState(t('No performance data available.'));
         } else {
             $content[] = new HtmlString($helper->perfdata($this->object->state->performance_data));
         }
@@ -303,7 +305,7 @@ class ObjectDetail extends BaseHtmlElement
     protected function createPluginOutput()
     {
         return [
-            Html::tag('h2', 'Plugin Output'),
+            Html::tag('h2', t('Plugin Output')),
             Html::tag(
                 'div',
                 ['class' => 'collapsible'],
@@ -329,7 +331,7 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         return [
-            Html::tag('h2', 'Feature Commands'),
+            Html::tag('h2', t('Feature Commands')),
             HtmlString::create($form->render())
         ];
     }

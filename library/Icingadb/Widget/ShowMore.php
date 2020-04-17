@@ -37,7 +37,7 @@ class ShowMore extends BaseHtmlElement
 
     public function getLabel()
     {
-        return $this->label ?: 'Show More';
+        return $this->label ?: t('Show More');
     }
 
     protected function assemble()

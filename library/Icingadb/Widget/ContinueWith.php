@@ -29,7 +29,7 @@ class ContinueWith implements ValidHtml
         }
 
         $continue = new ActionLink(
-            'Continue with filter',
+            t('Continue with filter'),
             $this->url->setQueryString($this->filter->toQueryString()),
             'forward',
             ['class' => 'continue-with', 'data-base-target' => '_next']

@@ -95,19 +95,19 @@ class HostStates
     {
         switch (true) {
             case $state === self::UP:
-                $text = mt('icingadb', 'up');
+                $text = t('up');
                 break;
             case $state === self::DOWN:
-                $text = mt('icingadb', 'down');
+                $text = t('down');
                 break;
             case $state === self::UNREACHABLE:
-                $text = mt('icingadb', 'unreachable');
+                $text = t('unreachable');
                 break;
             case $state === self::PENDING:
-                $text = mt('icingadb', 'pending');
+                $text = t('pending');
                 break;
             case $state === null:
-                $text = mt('icingadb', 'not available');
+                $text = t('not available');
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid host state %d', $state));

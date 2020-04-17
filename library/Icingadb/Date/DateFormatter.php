@@ -20,6 +20,7 @@ class DateFormatter
             $seconds = $seconds + (3600 - ($seconds % 3600));
         }
 
+        // TODO: tranlsation necessary?
         $minutes = floor((float) $seconds / 60);
         if ($minutes < 60) {
             $formatted = sprintf('%dm %ds', $minutes, $seconds % 60);

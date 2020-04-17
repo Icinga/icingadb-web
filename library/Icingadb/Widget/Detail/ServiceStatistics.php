@@ -44,7 +44,7 @@ class ServiceStatistics extends ObjectStatistics
 
         return new Link(
             new VerticalKeyValue(
-                mtp('icingadb', 'Service', 'Services', $this->summary->services_total),
+                tp('Service', 'Services', $this->summary->services_total),
                 $this->summary->services_total
             ),
             $url

@@ -51,23 +51,25 @@ class HistoryListItem extends CommonListItem
                 break;
             case 'flapping_start':
                 $caption
-                    ->add(
-                        'State Change Rate: ' . $this->item->flapping->percent_state_change_start
-                        . '%; Start Threshold: ' . $this->item->host->flapping_threshold_high . '%'
-                    )
+                    ->add(sprintf(
+                        t('State Change Rate: %.2f%%; Start Threshold: %.2f%%'),
+                        $this->item->flapping->percent_state_change_start,
+                        $this->item->host->flapping_threshold_high
+                    ))
                     ->getAttributes()
                     ->add('class', 'plugin-output');
 
                 break;
             case 'flapping_end':
                 $caption
-                    ->add(
-                        'State Change Rate: ' . $this->item->host->flapping_threshold_low
-                        . '%; End Threshold: ' . $this->item->host->flapping_threshold_high
-                        . '%; Flapping for ' . DateFormatter::formatDuration(
+                    ->add(sprintf(
+                        t('State Change Rate: %.2f%%; End Threshold: %.2f%%; Flapping for %s'),
+                        $this->item->host->flapping_threshold_low,
+                        $this->item->host->flapping_threshold_high,
+                        DateFormatter::formatDuration(
                             $this->item->flapping->end_time - $this->item->flapping->start_time
                         )
-                    )
+                    ))
                     ->getAttributes()
                     ->add('class', 'plugin-output');
 
@@ -76,8 +78,10 @@ class HistoryListItem extends CommonListItem
                 if (! empty($this->item->acknowledgement->cleared_by)) {
                     $caption->add([
                         new Icon(Icons::USER),
-                        'Cleared by: ',
-                        $this->item->acknowledgement->cleared_by
+                        sprintf(
+                            t('Cleared by: %s', '..<username>'),
+                            $this->item->acknowledgement->cleared_by
+                        )
                     ]);
 
                     break;
@@ -184,40 +188,40 @@ class HistoryListItem extends CommonListItem
     {
         switch ($this->item->event_type) {
             case 'comment_add':
-                $title->add('Comment added');
+                $title->add(t('Comment added'));
 
                 break;
             case 'comment_remove':
-                $title->add('Comment removed');
+                $title->add(t('Comment removed'));
 
                 break;
             case 'downtime_end':
-                $title->add('Downtime ended');
+                $title->add(t('Downtime ended'));
 
                 break;
             case 'downtime_start':
-                $title->add('Downtime started');
+                $title->add(t('Downtime started'));
 
                 break;
             case 'flapping_start':
-                $title->add('Flapping started');
+                $title->add(t('Flapping started'));
 
                 break;
             case 'flapping_end':
-                $title->add('Flapping ended');
+                $title->add(t('Flapping ended'));
 
                 break;
             case 'ack_set':
-                $title->add('Acknowledgement set');
+                $title->add(t('Acknowledgement set'));
 
                 break;
             case 'ack_clear':
-                $title->add('Acknowledgement cleared');
+                $title->add(t('Acknowledgement cleared'));
 
                 break;
             case 'notification':
                 $title->add([
-                    'Notification',
+                    t('Notification'),
                     ': ',
                     sprintf(
                         NotificationListItem::PHRASES[$this->item->notification->type],
@@ -227,7 +231,11 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'state_change':
-                $title->add(sprintf('%s state changed', ucfirst($this->item->state->state_type)));
+                if ($this->item->state->state_type === 'hard') {
+                    $title->add(t('Hard state changed'));
+                } else {
+                    $title->add(t('Soft state changed'));
+                }
 
                 break;
             default:

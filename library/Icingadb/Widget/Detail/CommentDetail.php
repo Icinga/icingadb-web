@@ -38,7 +38,7 @@ class CommentDetail extends BaseHtmlElement
     protected function createComment()
     {
         return [
-            Html::tag('h2', 'Comment'),
+            Html::tag('h2', t('Comment')),
             new MarkdownText($this->comment->text)
         ];
     }
@@ -50,16 +50,19 @@ class CommentDetail extends BaseHtmlElement
         if ($this->comment->expire_time != 0) {
             $details[] = Html::tag(
                 'p',
-                ['This acknowledgement expires', ' ', new TimeUntil($this->comment->expire_time), '.']
+                Html::sprintf(
+                    t('This acknowledgement expires %s.', '..<time-until>'),
+                    new TimeUntil($this->comment->expire_time)
+                )
             );
         }
 
         if ($this->comment->is_sticky) {
-            $details[] = Html::tag('p', 'This acknowledgement is sticky.');
+            $details[] = Html::tag('p', t('This acknowledgement is sticky.'));
         }
 
         if (! empty($details)) {
-            array_unshift($details, Html::tag('h2', 'Details'));
+            array_unshift($details, Html::tag('h2', t('Details')));
         }
 
         return $details;
@@ -88,7 +91,7 @@ class CommentDetail extends BaseHtmlElement
 
         $submitButton = $removeCommentForm->getElement('btn_submit');
         $submitButton->content = (new HtmlDocument())
-            ->add([new Icon('trash'), 'Remove Comment'])
+            ->add([new Icon('trash'), t('Remove Comment')])
             ->setSeparator(' ')
             ->render();
 

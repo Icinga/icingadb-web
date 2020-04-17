@@ -40,7 +40,7 @@ class HostStatistics extends ObjectStatistics
 
         return new Link(
             new VerticalKeyValue(
-                mtp('icingadb', 'Host', 'Hosts', $this->summary->hosts_total),
+                tp('Host', 'Hosts', $this->summary->hosts_total),
                 $this->summary->hosts_total
             ),
             $url

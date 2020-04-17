@@ -67,7 +67,7 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                $this->translate('Command transport successfully created');
+                Notification::success($this->translate('Command transport successfully created'));
 
                 return true;
             }

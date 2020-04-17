@@ -26,11 +26,11 @@ class HostDetail extends ObjectDetail
             $services = new ServiceStatistics($this->serviceSummary);
             $services->setBaseFilter(Filter::where('host.name', $this->object->name));
         } else {
-            $services = new EmptyState(mt('icingadb', 'This host has no services'));
+            $services = new EmptyState(t('This host has no services'));
         }
 
-        $stats = [Html::tag('h2', mt('icingadb', 'Services'))];
-        $stats[] = new HorizontalKeyValue(mt('icingadb', 'Services'), $services);
+        $stats = [Html::tag('h2', t('Services'))];
+        $stats[] = new HorizontalKeyValue(t('Services'), $services);
         return $stats;
     }
 

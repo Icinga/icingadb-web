@@ -119,7 +119,10 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     ['class' => 'bubble start'],
-                    new VerticalKeyValue('Scheduled Start', new TimeAgo($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue(
+                        t('Scheduled Start'),
+                        new TimeAgo($this->downtime->scheduled_start_time)
+                    )
                 ),
                 Html::tag(
                     'li',
@@ -130,7 +133,7 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue('Scheduled End', $endTime)
+                    new VerticalKeyValue(t('Scheduled End'), $endTime)
                 )
             ]);
 
@@ -141,7 +144,7 @@ class DowntimeCard extends BaseHtmlElement
                         'class' => 'bubble upwards start' . ($evade ? ' left' : ''),
                         'style' => sprintf('left: %F%%', $flexStartLeft)
                     ],
-                    new VerticalKeyValue('Start', new TimeAgo($this->downtime->start_time))
+                    new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->start_time))
                 ),
                 Html::tag(
                     'li',
@@ -149,7 +152,7 @@ class DowntimeCard extends BaseHtmlElement
                         'class' => 'bubble upwards end' . ($evade ? ' right' : ''),
                         'style' => sprintf('left: %F%%', $flexEndLeft)
                     ],
-                    new VerticalKeyValue('End', new TimeUntil($this->downtime->end_time))
+                    new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->end_time))
                 )
             ]);
         } elseif ($this->downtime->is_flexible) {
@@ -168,7 +171,10 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     ['class' => 'bubble start'],
-                    new VerticalKeyValue('Scheduled Start', new TimeAgo($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue(
+                        t('Scheduled Start'),
+                        new TimeAgo($this->downtime->scheduled_start_time)
+                    )
                 ),
                 Html::tag(
                     'li',
@@ -179,7 +185,7 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue('Scheduled End', $endTime)
+                    new VerticalKeyValue(t('Scheduled End'), $endTime)
                 )
             ]);
 
@@ -204,7 +210,7 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time)
                         )
                     ],
-                    new VerticalKeyValue('Start', new TimeAgo($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->scheduled_start_time))
                 ),
                 Html::tag(
                     'li',
@@ -215,7 +221,7 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue('End', new TimeUntil($this->downtime->scheduled_end_time))
+                    new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->scheduled_end_time))
                 )
             ]);
         }
@@ -229,7 +235,7 @@ class DowntimeCard extends BaseHtmlElement
                     $hPadding + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3)
                 )
             ],
-            Html::tag('strong', 'Now')
+            Html::tag('strong', t('Now'))
         );
         $above->add($now);
 

@@ -16,7 +16,7 @@ class UsergroupsController extends Controller
         parent::init();
 
         if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+            throw new SecurityException($this->translate('No permission for %s'), 'monitoring/contacts');
         }
     }
 

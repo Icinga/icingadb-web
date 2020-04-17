@@ -11,7 +11,10 @@ class ServiceStatusBar extends BaseStatusBar
 {
     protected function assembleTotal(BaseHtmlElement $total)
     {
-        $total->add(sprintf('%d Services', $this->summary->services_total));
+        $total->add(sprintf(
+            tp('%d Service', '%d Services', $this->summary->services_total),
+            $this->summary->services_total
+        ));
     }
 
     protected function createStateBadges()

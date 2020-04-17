@@ -44,7 +44,9 @@ class ServiceSummaryDonut extends Card
                 'sort' => 'service.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->services_critical_unhandled > 0)
-            ->setLabelSmall(mt('icingadb', 'Services Critical'));
+            ->setLabelSmall(
+                tp('Service Critical', 'Services Critical', $this->summary->services_critical_unhandled)
+            );
 
         $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
     }
@@ -56,6 +58,6 @@ class ServiceSummaryDonut extends Card
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add(new HtmlElement('h2', null, mt('icingadb', 'Service Summary')));
+        $header->add(new HtmlElement('h2', null, t('Service Summary')));
     }
 }

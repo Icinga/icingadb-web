@@ -22,34 +22,40 @@ class Health extends BaseHtmlElement
     {
         if ($this->data->heartbeat > time() - 60) {
             $this->add(Html::tag('div', ['class' => 'icinga-health up'], [
-                'Icinga 2 is up and running ', new TimeSince($this->data->icinga2_start_time)
+                Html::sprintf(
+                    t('Icinga 2 is up and running %s', '...since <timespan>'),
+                    new TimeSince($this->data->icinga2_start_time)
+                )
             ]));
         } else {
             $this->add(Html::tag('div', ['class' => 'icinga-health down'], [
-                'Icinga 2 or Icinga DB is not running ', new TimeSince($this->data->heartbeat)
+                Html::sprintf(
+                    t('Icinga 2 or Icinga DB is not running %s', '...since <timespan>'),
+                    new TimeSince($this->data->heartbeat)
+                )
             ]));
         }
 
         $icingaInfo = Html::tag('div', ['class' => 'icinga-info'], [
             new VerticalKeyValue(
-                'Icinga 2 Version',
+                t('Icinga 2 Version'),
                 $this->data->icinga2_version
             ),
             new VerticalKeyValue(
-                'Icinga 2 Start Time',
+                t('Icinga 2 Start Time'),
                 new TimeAgo($this->data->icinga2_start_time)
             ),
             new VerticalKeyValue(
-                'Last Heartbeat',
+                t('Last Heartbeat'),
                 new TimeAgo($this->data->heartbeat)
             ),
             new VerticalKeyValue(
-                'Active Icinga 2 Endpoint',
-                $this->data->endpoint->name ?: 'N/A'
+                t('Active Icinga 2 Endpoint'),
+                $this->data->endpoint->name ?: t('N/A')
             ),
             new VerticalKeyValue(
-                'Active Icinga Web Endpoint',
-                gethostname() ?: 'N/A'
+                t('Active Icinga Web Endpoint'),
+                gethostname() ?: t('N/A')
             )
         ]);
         $this->add($icingaInfo);
