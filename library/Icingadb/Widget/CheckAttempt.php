@@ -41,7 +41,7 @@ class CheckAttempt extends BaseHtmlElement
         }
 
         if ($this->maxAttempts > 5) {
-            $this->add(new FormattedString('%d/%d', $this->attempt, $this->maxAttempts));
+            $this->add(FormattedString::create('%d/%d', $this->attempt, $this->maxAttempts));
         } else {
             for ($i = 0; $i < $this->attempt; ++$i) {
                 $this->add(new AttemptBall(true));
