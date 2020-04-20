@@ -10,7 +10,14 @@ class BoolCast extends PropertyBehavior
 {
     public function fromDb($value, $key, $_)
     {
-        return $value === 'y';
+        switch ($value) {
+            case 'y':
+                return true;
+            case 'n':
+                return false;
+            default:
+                return $value;
+        }
     }
 
     public function toDb($value, $key, $_)
