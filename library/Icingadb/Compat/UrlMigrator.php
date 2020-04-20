@@ -703,7 +703,7 @@ class UrlMigrator
                 // Doesn't get dropped because there's a default dashlet using it..
                 // Though since this dashlet uses it to check for overdue services we'll
                 // replace it as next_update is volatile (only in redis up2date)
-                return Filter::where('host.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
+                return Filter::where('service.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
             },
             'service_no_more_notifications' => self::DROP,
             'service_normal_check_interval' => self::DROP,
