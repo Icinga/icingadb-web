@@ -4,18 +4,24 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
+use Icinga\Application\Config;
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use LogicException;
 
 use function ipl\Stdlib\get_php_type;
 
 trait CompatObject
 {
-    private $legacyColumns = ['flap_detection_enabled' => 'flapping_enabled'];
+    use Auth;
+
+    /** @var array Non-obscured custom variables */
+    protected $rawCustomvars;
 
     /** @var Model $object */
     private $object;
@@ -40,19 +46,6 @@ trait CompatObject
         }
     }
 
-    public function getActionUrls()
-    {
-        $actionUrl = $this->object->action_url;
-
-        if ($actionUrl === null) {
-            return [];
-        }
-
-        return $this->resolveAllStrings(
-            MonitoredObject::parseAttributeUrls($actionUrl->action_url)
-        );
-    }
-
     /**
      * Get this object's name
      *
@@ -63,23 +56,107 @@ trait CompatObject
         return $this->object->name;
     }
 
-    public function getNotesUrls()
+    public function fetch()
     {
-        $notesUrl = $this->object->notes_url;
+        return true;
+    }
 
-        if ($notesUrl === null) {
-            return [];
+    public function fetchCustomvars()
+    {
+        if ($this->customvars !== null) {
+            return $this;
         }
 
-        return $this->resolveAllStrings(
-            MonitoredObject::parseAttributeUrls($notesUrl->notes_url)
+        $vars = $this->object->customvar->execute();
+
+        $customVars = [];
+        foreach ($vars as $row) {
+            $customVars[$row->name] = $row->value;
+        }
+
+        $this->rawCustomvars = $customVars;
+
+        $filter = new CustomvarFilter(
+            $vars,
+            $this->type,
+            $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
+            Config::module('monitoring')->get('security', 'protected_customvars', '')
         );
+
+        $obscuredVars = [];
+        foreach ($filter as $row) {
+            $obscuredVars[$row->name] = $row->value;
+        }
+
+        $this->customvars = $obscuredVars;
+        return $this;
     }
 
     public function __get($name)
     {
-        if (isset($this->legacyColumns[$name])) {
-            $name = $this->legacyColumns[$name];
+        if (property_exists($this, $name)) {
+            if ($this->$name === null) {
+                $fetchMethod = 'fetch' . ucfirst($name);
+                $this->$fetchMethod();
+            }
+
+            return $this->$name;
+        }
+
+        if (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
+            switch (strtolower($matches[1])) {
+                case $this->type:
+                    $customvars = $this->fetchCustomvars()->rawCustomvars;
+                    break;
+                case self::TYPE_HOST:
+                    $customvars = $this->getHost()->fetchCustomvars()->rawCustomvars;
+                    break;
+                case self::TYPE_SERVICE:
+                    throw new LogicException('Cannot fetch service custom variables for non-service objects');
+            }
+
+            $variableName = strtolower($matches[2]);
+            if (isset($customvars[$variableName])) {
+                return $customvars[$variableName];
+            }
+
+            return null; // Unknown custom variables MUST NOT throw an error
+        }
+
+        if (! array_key_exists($name, $this->legacyColumns) && ! $this->object->hasProperty($name)) {
+            if (isset($this->customvars[$name])) {
+                return $this->customvars[$name];
+            }
+
+            if (substr($name, 0, strlen($this->prefix)) !== $this->prefix) {
+                $name = $this->prefix . $name;
+            }
+        }
+
+        if (array_key_exists($name, $this->legacyColumns)) {
+            $opts = $this->legacyColumns[$name];
+            if ($opts === null) {
+                return null;
+            }
+
+            $path = $opts['path'];
+            $value = null;
+
+            if (! empty($path)) {
+                $value = $this->object;
+
+                do {
+                    $col = array_shift($path);
+                    $value = $value->$col;
+                } while (! empty($path) && $value !== null);
+            }
+
+            if (isset($opts['type'])) {
+                $method = 'get' . ucfirst($opts['type']) . 'Type';
+                $value = $this->$method($value);
+            }
+
+            return $value;
         }
 
         return $this->object->$name;
@@ -87,7 +164,15 @@ trait CompatObject
 
     public function __isset($name)
     {
-        return isset($this->object->$name);
+        if (property_exists($this, $name)) {
+            return isset($this->$name);
+        }
+
+        if (isset($this->legacyColumns[$name]) || isset($this->object->$name)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -96,5 +181,17 @@ trait CompatObject
     protected function getDataView()
     {
         throw new NotImplementedError('getDataView() is not supported');
+    }
+
+    private function getBoolType($value)
+    {
+        switch ($value) {
+            case false:
+                return 0;
+            case true:
+                return 1;
+            case 'sticky':
+                return 2;
+        }
     }
 }
