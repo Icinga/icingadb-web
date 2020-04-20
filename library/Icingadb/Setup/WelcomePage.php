@@ -34,7 +34,8 @@ class WelcomePage extends Form
             'description_1',
             array(
                 'value'         => '<p>' . t(
-                    'Icinga DB Web is the UI for Icinga DB and lets you access your monitoring environment.'
+                    'Icinga DB Web is the UI for Icinga DB and provides'
+                    . ' a graphical interface to your monitoring environment.'
                 ) . '</p>',
                 'decorators'    => array('ViewHelper')
             )
