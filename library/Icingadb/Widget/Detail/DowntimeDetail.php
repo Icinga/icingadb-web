@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
@@ -11,7 +12,6 @@ use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;

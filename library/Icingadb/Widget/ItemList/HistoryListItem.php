@@ -4,13 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
