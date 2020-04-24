@@ -34,19 +34,19 @@ class NotificationListItem extends CommonListItem
     {
         switch ($type) {
             case 'acknowledgement':
-                return t('Problem was acknowledged');
+                return t('Problem acknowledged');
             case 'custom':
-                return t('Custom Notification was triggered');
+                return t('Custom Notification triggered');
             case 'downtime_end':
                 return t('Downtime ended');
             case 'downtime_removed':
-                return t('Downtime was removed');
+                return t('Downtime removed');
             case 'downtime_start':
-                return t('Downtime was started');
+                return t('Downtime started');
             case 'flapping_end':
-                return t('Flapping ended');
+                return t('Flapping stopped');
             case 'flapping_start':
-                return t('Flapping detected');
+                return t('Flapping started');
             case 'problem':
                 return t('%s ran into a problem');
             case 'recovery':

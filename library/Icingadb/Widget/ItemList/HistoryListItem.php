@@ -208,7 +208,7 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'flapping_end':
-                $title->add(t('Flapping ended'));
+                $title->add(t('Flapping stopped'));
 
                 break;
             case 'ack_set':
