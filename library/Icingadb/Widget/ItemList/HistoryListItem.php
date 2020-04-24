@@ -224,7 +224,7 @@ class HistoryListItem extends CommonListItem
                     t('Notification'),
                     ': ',
                     sprintf(
-                        NotificationListItem::PHRASES[$this->item->notification->type],
+                        NotificationListItem::phraseForType($this->item->notification->type),
                         ucfirst($this->item->object_type)
                     )
                 ]);
