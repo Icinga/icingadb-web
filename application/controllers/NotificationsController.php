@@ -15,7 +15,7 @@ class NotificationsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Notifications'));
+        $this->setTitle(t('Notifications'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -32,7 +32,7 @@ class NotificationsController extends Controller
         $sortControl = $this->createSortControl(
             $notifications,
             [
-                'notification_history.send_time desc' => $this->translate('Send Time')
+                'notification_history.send_time desc' => t('Send Time')
             ]
         );
         $filterControl = $this->createFilterControl($notifications);
@@ -63,7 +63,7 @@ class NotificationsController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d notifications'),
+                        t('Show all %d notifications'),
                         $notifications->count()
                     ))
             );

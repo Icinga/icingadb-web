@@ -21,7 +21,7 @@ class CommentsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Comments'));
+        $this->setTitle(t('Comments'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -40,11 +40,11 @@ class CommentsController extends Controller
         $sortControl = $this->createSortControl(
             $comments,
             [
-                'comment.entry_time desc'                 => $this->translate('Entry Time'),
-                'host.display_name, service.display_name' => $this->translate('Host'),
-                'service.display_name, host.display_name' => $this->translate('Service'),
-                'comment.author'                          => $this->translate('Author'),
-                'comment.expire_time desc'                => $this->translate('Expire Time')
+                'comment.entry_time desc'                 => t('Entry Time'),
+                'host.display_name, service.display_name' => t('Host'),
+                'service.display_name, host.display_name' => t('Service'),
+                'comment.author'                          => t('Author'),
+                'comment.expire_time desc'                => t('Expire Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
@@ -72,7 +72,7 @@ class CommentsController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d comments'),
+                        t('Show all %d comments'),
                         $comments->count()
                     ))
             );
@@ -83,7 +83,7 @@ class CommentsController extends Controller
 
     public function deleteAction()
     {
-        $this->setTitle($this->translate('Remove Comments'));
+        $this->setTitle(t('Remove Comments'));
 
         $db = $this->getDb();
 
@@ -100,7 +100,7 @@ class CommentsController extends Controller
 
         $deleteCommentsForm = (new DeleteCommentsCommandForm())
             ->addDescription(sprintf(
-                $this->translate('Confirm removal of %d comments.'),
+                t('Confirm removal of %d comments.'),
                 $comments->count()
             ))
             ->setComments($comments)
@@ -121,10 +121,10 @@ class CommentsController extends Controller
                 'escape'     => false,
                 'ignore'     => true,
                 'label'      => (new HtmlDocument())
-                    ->add([new Icon('trash'), $this->translate('Remove Comments')])
+                    ->add([new Icon('trash'), t('Remove Comments')])
                     ->setSeparator(' ')
                     ->render(),
-                'title'      => $this->translate('Remove comments'),
+                'title'      => t('Remove comments'),
                 'type'       => 'submit'
             ]
         );
@@ -136,7 +136,7 @@ class CommentsController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle($this->translate('Comments'));
+        $this->setTitle(t('Comments'));
 
         $db = $this->getDb();
 
@@ -162,11 +162,11 @@ class CommentsController extends Controller
         $this->addControl(new ShowMore(
             $rs,
             Links::comments()->setQueryString($this->getFilter()->toQueryString()),
-            sprintf($this->translate('Show all %d comments'), $comments->count())
+            sprintf(t('Show all %d comments'), $comments->count())
         ));
 
         $this->addContent(new ActionLink(
-            sprintf($this->translate('Remove %d comments'), $comments->count()),
+            sprintf(t('Remove %d comments'), $comments->count()),
             Links::commentsDelete()->setQueryString($this->getFilter()->toQueryString()),
             'trash',
             [

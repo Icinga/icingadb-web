@@ -69,23 +69,23 @@ namespace Icinga\Module\Icingadb
     ]);
 
     $this->provideConfigTab('database', [
-        'label' => $this->translate('Database'),
-        'title' => $this->translate('Configure the database backend'),
+        'label' => t('Database'),
+        'title' => t('Configure the database backend'),
         'url'   => 'config/database'
     ]);
     $this->provideConfigTab('redis', [
-        'label' => $this->translate('Redis'),
-        'title' => $this->translate('Configure the Redis connections'),
+        'label' => t('Redis'),
+        'title' => t('Configure the Redis connections'),
         'url'   => 'config/redis'
     ]);
     $this->provideConfigTab('command-transports', [
-        'label' => $this->translate('Command Transports'),
-        'title' => $this->translate('Configure command transports'),
+        'label' => t('Command Transports'),
+        'title' => t('Configure command transports'),
         'url'   => 'config/command-transports'
     ]);
     $this->provideConfigTab('security', [
-        'label' => $this->translate('Security'),
-        'title' => $this->translate('Configure security related settings'),
+        'label' => t('Security'),
+        'title' => t('Configure security related settings'),
         'url'   => 'config/security'
     ]);
 

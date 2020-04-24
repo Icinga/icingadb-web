@@ -27,7 +27,7 @@ class ServicesController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle($this->translate('Services'));
+        $this->setTitle(t('Services'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -48,11 +48,11 @@ class ServicesController extends Controller
         $sortControl = $this->createSortControl(
             $services,
             [
-                'service.display_name, host.display_name' => $this->translate('Name'),
-                'service.state.severity desc'             => $this->translate('Severity'),
-                'service.state.soft_state'                => $this->translate('Current State'),
-                'service.state.last_state_change desc'    => $this->translate('Last State Change'),
-                'host.display_name, service.display_name' => $this->translate('Host')
+                'service.display_name, host.display_name' => t('Name'),
+                'service.state.severity desc'             => t('Severity'),
+                'service.state.soft_state'                => t('Current State'),
+                'service.state.last_state_change desc'    => t('Last State Change'),
+                'host.display_name, service.display_name' => t('Host')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
@@ -86,7 +86,7 @@ class ServicesController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d services'),
+                        t('Show all %d services'),
                         $services->count()
                     ))
             );
@@ -103,7 +103,7 @@ class ServicesController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle($this->translate('Services'));
+        $this->setTitle(t('Services'));
 
         $db = $this->getDb();
 
@@ -142,7 +142,7 @@ class ServicesController extends Controller
         $this->addControl(new ShowMore(
             $results,
             Links::services()->setQueryString($this->getFilter()->toQueryString()),
-            sprintf($this->translate('Show all %d services'), $services->count())
+            sprintf(t('Show all %d services'), $services->count())
         ));
         $this->addControl(
             (new MultiselectQuickActions('service', $summary))

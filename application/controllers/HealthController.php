@@ -19,7 +19,7 @@ class HealthController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Health'));
+        $this->setTitle(t('Health'));
 
         $db = $this->getDb();
 
@@ -35,7 +35,7 @@ class HealthController extends Controller
         $instance = $instance->first();
 
         if ($instance === null) {
-            $this->addContent(Html::tag('p', $this->translate(
+            $this->addContent(Html::tag('p', t(
                 'It seems that Icinga DB is not running.'
                 . ' Make sure Icinga DB is running and writing into the database.'
             )));
@@ -51,27 +51,27 @@ class HealthController extends Controller
         $this->addContent(new Health($instance));
         $this->addContent(Html::tag('section', ['class' => 'check-summary'], [
                 Html::tag('div', ['class' => 'col'], [
-                    Html::tag('h3', $this->translate('Host Checks')),
+                    Html::tag('h3', t('Host Checks')),
                     Html::tag('div', ['class' => 'col-content'], [
                         new VerticalKeyValue(
-                            $this->translate('Active'),
+                            t('Active'),
                             $hoststateSummary->hosts_active_checks_enabled
                         ),
                         new VerticalKeyValue(
-                            $this->translate('Passive'),
+                            t('Passive'),
                             $hoststateSummary->hosts_passive_checks_enabled
                         )
                     ])
                 ]),
                 Html::tag('div', ['class' => 'col'], [
-                    Html::tag('h3', $this->translate('Service Checks')),
+                    Html::tag('h3', t('Service Checks')),
                     Html::tag('div', ['class' => 'col-content'], [
                         new VerticalKeyValue(
-                            $this->translate('Active'),
+                            t('Active'),
                             $servicestateSummary->services_active_checks_enabled
                         ),
                         new VerticalKeyValue(
-                            $this->translate('Passive'),
+                            t('Passive'),
                             $servicestateSummary->services_passive_checks_enabled
                         )
                     ])
@@ -81,7 +81,7 @@ class HealthController extends Controller
         $featureCommands = Html::tag(
             'section',
             ['class' => 'instance-commands'],
-            Html::tag('h2', $this->translate('Feature Commands'))
+            Html::tag('h2', t('Feature Commands'))
         );
         $programStatus = (object) [
             'active_host_checks_enabled'    => $instance->icinga2_active_host_checks_enabled,

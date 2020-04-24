@@ -19,10 +19,10 @@ class UserController extends Controller
     public function init()
     {
         if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException($this->translate('No permission for %s'), 'monitoring/contacts');
+            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
         }
 
-        $this->setTitle($this->translate('User'));
+        $this->setTitle(t('User'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -34,7 +34,7 @@ class UserController extends Controller
 
         $user = $query->first();
         if ($user === null) {
-            throw new NotFoundError($this->translate('User not found'));
+            throw new NotFoundError(t('User not found'));
         }
 
         $this->user = $user;
@@ -44,22 +44,22 @@ class UserController extends Controller
     {
         $this->addControl(new UserList([$this->user]));
 
-        $this->addContent(Html::tag('h2', $this->translate('Details')));
+        $this->addContent(Html::tag('h2', t('Details')));
         $this->addContent(Html::tag('ul', ['class' => 'key-value-list'], [
             Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], $this->translate('E-Mail')),
+                Html::tag('span', ['class' => 'label'], t('E-Mail')),
                 Html::tag(
                     'span',
                     ['class' => 'value'],
-                    $this->user->email ?: Html::tag('span', ['class' => 'text-muted'], $this->translate('Unset'))
+                    $this->user->email ?: Html::tag('span', ['class' => 'text-muted'], t('Unset'))
                 )
             ]),
             Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], $this->translate('Pager')),
+                Html::tag('span', ['class' => 'label'], t('Pager')),
                 Html::tag(
                     'span',
                     ['class' => 'value'],
-                    $this->user->pager ?: Html::tag('span', ['class' => 'text-muted'], $this->translate('Unset'))
+                    $this->user->pager ?: Html::tag('span', ['class' => 'text-muted'], t('Unset'))
                 )
             ])
         ]));

@@ -126,14 +126,14 @@ trait CommandActions
     public function acknowledgeAction()
     {
         $this->assertPermission('monitoring/command/acknowledge-problem');
-        $this->setTitle($this->translate('Acknowledge Problem'));
+        $this->setTitle(t('Acknowledge Problem'));
         $this->handleCommandForm(AcknowledgeProblemCommandForm::class);
     }
 
     public function addCommentAction()
     {
         $this->assertPermission('monitoring/command/comment/add');
-        $this->setTitle($this->translate('Add Comment'));
+        $this->setTitle(t('Add Comment'));
         $this->handleCommandForm(AddCommentCommandForm::class);
     }
 
@@ -170,7 +170,7 @@ trait CommandActions
     public function processCheckresultAction()
     {
         $this->assertPermission('monitoring/command/process-check-result');
-        $this->setTitle($this->translate('Submit Passive Check Result'));
+        $this->setTitle(t('Submit Passive Check Result'));
         $this->handleCommandForm(ProcessCheckResultCommandForm::class);
     }
 
@@ -186,11 +186,11 @@ trait CommandActions
 
         switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
-                $this->setTitle($this->translate('Reschedule Host Check'));
+                $this->setTitle(t('Reschedule Host Check'));
                 $this->handleCommandForm(ScheduleHostCheckCommandForm::class);
                 break;
             case 'service':
-                $this->setTitle($this->translate('Reschedule Service Check'));
+                $this->setTitle(t('Reschedule Service Check'));
                 $this->handleCommandForm(ScheduleServiceCheckCommandForm::class);
                 break;
         }
@@ -202,11 +202,11 @@ trait CommandActions
 
         switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
-                $this->setTitle($this->translate('Schedule Host Downtime'));
+                $this->setTitle(t('Schedule Host Downtime'));
                 $this->handleCommandForm(ScheduleHostDowntimeCommandForm::class);
                 break;
             case 'service':
-                $this->setTitle($this->translate('Schedule Service Downtime'));
+                $this->setTitle(t('Schedule Service Downtime'));
                 $this->handleCommandForm(ScheduleServiceDowntimeCommandForm::class);
                 break;
         }
@@ -215,7 +215,7 @@ trait CommandActions
     public function sendCustomNotificationAction()
     {
         $this->assertPermission('monitoring/command/send-custom-notification');
-        $this->setTitle($this->translate('Send Custom Notification'));
+        $this->setTitle(t('Send Custom Notification'));
         $this->handleCommandForm(SendCustomNotificationCommandForm::class);
     }
 

@@ -27,7 +27,7 @@ class HostsController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle($this->translate('Hosts'));
+        $this->setTitle(t('Hosts'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -44,10 +44,10 @@ class HostsController extends Controller
         $sortControl = $this->createSortControl(
             $hosts,
             [
-                'host.display_name'                 => $this->translate('Name'),
-                'host.state.severity desc'          => $this->translate('Severity'),
-                'host.state.soft_state'             => $this->translate('Current State'),
-                'host.state.last_state_change desc' => $this->translate('Last State Change')
+                'host.display_name'                 => t('Name'),
+                'host.state.severity desc'          => t('Severity'),
+                'host.state.soft_state'             => t('Current State'),
+                'host.state.last_state_change desc' => t('Last State Change')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
@@ -81,7 +81,7 @@ class HostsController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d hosts'),
+                        t('Show all %d hosts'),
                         $hosts->count()
                     ))
             );
@@ -98,7 +98,7 @@ class HostsController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle($this->translate('Hosts'));
+        $this->setTitle(t('Hosts'));
 
         $db = $this->getDb();
 
@@ -133,7 +133,7 @@ class HostsController extends Controller
         $this->addControl(new ShowMore(
             $results,
             Links::hosts()->setQueryString($this->getFilter()->toQueryString()),
-            sprintf($this->translate('Show all %d hosts'), $hosts->count())
+            sprintf(t('Show all %d hosts'), $hosts->count())
         ));
         $this->addControl(
             (new MultiselectQuickActions('host', $summary))

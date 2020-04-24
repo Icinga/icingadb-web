@@ -20,7 +20,7 @@ class HostgroupController extends Controller
 
     public function init()
     {
-        $this->setTitle($this->translate('Host Group'));
+        $this->setTitle(t('Host Group'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -35,7 +35,7 @@ class HostgroupController extends Controller
 
         $hostgroup = $query->first();
         if ($hostgroup === null) {
-            throw new NotFoundError($this->translate('Host group not found'));
+            throw new NotFoundError(t('Host group not found'));
         }
 
         $this->hostgroup = $hostgroup;

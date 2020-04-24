@@ -25,7 +25,7 @@ class CommentController extends Controller
 
     public function init()
     {
-        $this->setTitle($this->translate('Comment'));
+        $this->setTitle(t('Comment'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -45,7 +45,7 @@ class CommentController extends Controller
 
         $comment = $query->first();
         if ($comment === null) {
-            throw new NotFoundError($this->translate('Comment not found'));
+            throw new NotFoundError(t('Comment not found'));
         }
 
         $this->comment = $comment;

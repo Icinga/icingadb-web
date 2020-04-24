@@ -46,7 +46,7 @@ class ServiceController extends Controller
         /** @var Service $service */
         $service = $query->first();
         if ($service === null) {
-            throw new NotFoundError($this->translate('Service not found'));
+            throw new NotFoundError(t('Service not found'));
         }
 
         $this->service = $service;
@@ -69,7 +69,7 @@ class ServiceController extends Controller
 
     public function commentsAction()
     {
-        $this->setTitle($this->translate('Comments'));
+        $this->setTitle(t('Comments'));
 
         $comments = $this->service->comment;
 
@@ -89,7 +89,7 @@ class ServiceController extends Controller
 
     public function downtimesAction()
     {
-        $this->setTitle($this->translate('Downtimes'));
+        $this->setTitle(t('Downtimes'));
 
         $downtimes = $this->service->downtime;
 
@@ -163,7 +163,7 @@ class ServiceController extends Controller
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
-            ->setLabel($this->translate('Load More'))
+            ->setLabel(t('Load More'))
             ->setAttribute('data-no-icinga-ajax', true);
 
         $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
@@ -189,11 +189,11 @@ class ServiceController extends Controller
         return $this
             ->getTabs()
             ->add('index', [
-                'label'  => $this->translate('Service'),
+                'label'  => t('Service'),
                 'url'    => Links::service($this->service, $this->service->host)
             ])
             ->add('history', [
-                'label'  => $this->translate('History'),
+                'label'  => t('History'),
                 'url'    => ServiceLinks::history($this->service, $this->service->host)
             ]);
     }

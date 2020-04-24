@@ -79,7 +79,7 @@ class ErrorController extends IcingaErrorController
         }
 
         // TODO: Find a native way for ipl-html to support enriching text with html
-        $heading = Html::tag('h2', $this->translate('Database not configured'));
+        $heading = Html::tag('h2', t('Database not configured'));
         $intro = Html::tag('p', ['data-base-target' => '_next'], Html::sprintf(
             'You seem to not have configured a resource for Icinga DB yet. Please %s and then tell Icinga DB Web %s.',
             new Link(
