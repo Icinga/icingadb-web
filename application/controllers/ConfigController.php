@@ -40,7 +40,7 @@ class ConfigController extends Controller
 
         $this->addControl(
             (new ButtonLink(
-                $this->translate('Create Command Transport'),
+                t('Create Command Transport'),
                 'icingadb/config/create-command-transport',
                 'plus'
             ))->setBaseTarget('_next')
@@ -51,7 +51,7 @@ class ConfigController extends Controller
 
     public function createCommandTransportAction()
     {
-        $this->setTitle($this->translate('Create Command Transport'));
+        $this->setTitle(t('Create Command Transport'));
 
         $form = (new TransportConfigForm())
             ->setIniConfig(Config::module('monitoring', 'commandtransports'))
@@ -67,7 +67,7 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                $this->translate('Command transport successfully created');
+                Notification::success(t('Command transport successfully created'));
 
                 return true;
             }
@@ -82,7 +82,7 @@ class ConfigController extends Controller
 
     public function deleteCommandTransportAction()
     {
-        $this->setTitle($this->translate('Delete Command Transport'));
+        $this->setTitle(t('Delete Command Transport'));
 
         $transportName = $this->params->getRequired('transport');
 
@@ -104,7 +104,7 @@ class ConfigController extends Controller
 
                 if ($transportConfigForm->save()) {
                     Notification::success(sprintf(
-                        $this->translate('Command transport "%s" successfully removed'),
+                        t('Command transport "%s" successfully removed'),
                         $transportName
                     ));
 
@@ -122,7 +122,7 @@ class ConfigController extends Controller
 
     public function updateCommandTransportAction()
     {
-        $this->setTitle($this->translate('Update Command Transport'));
+        $this->setTitle(t('Update Command Transport'));
 
         $transportName = $this->params->getRequired('transport');
 
@@ -146,7 +146,7 @@ class ConfigController extends Controller
 
             if ($form->save()) {
                 Notification::success(sprintf(
-                    $this->translate('Command transport "%s" successfully updated'),
+                    t('Command transport "%s" successfully updated'),
                     $transportName
                 ));
 
@@ -160,7 +160,7 @@ class ConfigController extends Controller
             $form->load($transportName);
             $form->handleRequest();
         } catch (NotFoundError $_) {
-            $this->httpNotFound(sprintf($this->translate('Command transport "%s" not found'), $transportName));
+            $this->httpNotFound(sprintf(t('Command transport "%s" not found'), $transportName));
         }
 
         $this->addFormToContent($form);

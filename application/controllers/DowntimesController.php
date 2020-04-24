@@ -21,7 +21,7 @@ class DowntimesController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Downtimes'));
+        $this->setTitle(t('Downtimes'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -40,16 +40,16 @@ class DowntimesController extends Controller
         $sortControl = $this->createSortControl(
             $downtimes,
             [
-                'downtime.is_in_effect, downtime.start_time desc' => $this->translate('Is In Effect'),
-                'downtime.entry_time'                             => $this->translate('Entry Time'),
-                'host.display_name, service.display_name'         => $this->translate('Host'),
-                'service.display_name, host.display_name'         => $this->translate('Service'),
-                'downtime.author'                                 => $this->translate('Author'),
-                'downtime.start_time desc'                        => $this->translate('Start Time'),
-                'downtime.end_time desc'                          => $this->translate('End Time'),
-                'downtime.scheduled_start_time desc'              => $this->translate('Scheduled Start Time'),
-                'downtime.scheduled_end_time desc'                => $this->translate('Scheduled End Time'),
-                'downtime.duration desc'                          => $this->translate('Duration')
+                'downtime.is_in_effect, downtime.start_time desc' => t('Is In Effect'),
+                'downtime.entry_time'                             => t('Entry Time'),
+                'host.display_name, service.display_name'         => t('Host'),
+                'service.display_name, host.display_name'         => t('Service'),
+                'downtime.author'                                 => t('Author'),
+                'downtime.start_time desc'                        => t('Start Time'),
+                'downtime.end_time desc'                          => t('End Time'),
+                'downtime.scheduled_start_time desc'              => t('Scheduled Start Time'),
+                'downtime.scheduled_end_time desc'                => t('Scheduled End Time'),
+                'downtime.duration desc'                          => t('Duration')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
@@ -77,7 +77,7 @@ class DowntimesController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d downtimes'),
+                        t('Show all %d downtimes'),
                         $downtimes->count()
                     ))
             );
@@ -88,7 +88,7 @@ class DowntimesController extends Controller
 
     public function deleteAction()
     {
-        $this->setTitle($this->translate('Cancel Downtimes'));
+        $this->setTitle(t('Cancel Downtimes'));
 
         $db = $this->getDb();
 
@@ -105,7 +105,7 @@ class DowntimesController extends Controller
 
         $cancelDowntimesForm = (new DeleteDowntimesCommandForm())
             ->addDescription(sprintf(
-                $this->translate('Confirm cancellation of %d downtimes.'),
+                t('Confirm cancellation of %d downtimes.'),
                 $downtimes->count()
             ))
             ->setDowntimes($downtimes)
@@ -126,10 +126,10 @@ class DowntimesController extends Controller
                 'escape'     => false,
                 'ignore'     => true,
                 'label'      => (new HtmlDocument())
-                    ->add([new Icon('trash'), $this->translate('Cancel Downtimes')])
+                    ->add([new Icon('trash'), t('Cancel Downtimes')])
                     ->setSeparator(' ')
                     ->render(),
-                'title'      => $this->translate('Cancel downtimes'),
+                'title'      => t('Cancel downtimes'),
                 'type'       => 'submit'
             ]
         );
@@ -141,7 +141,7 @@ class DowntimesController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle($this->translate('Downtimes'));
+        $this->setTitle(t('Downtimes'));
 
         $db = $this->getDb();
 
@@ -167,11 +167,11 @@ class DowntimesController extends Controller
         $this->addControl(new ShowMore(
             $rs,
             Links::downtimes()->setQueryString($this->getFilter()->toQueryString()),
-            sprintf($this->translate('Show all %d downtimes'), $downtimes->count())
+            sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
         $this->addContent(new ActionLink(
-            sprintf($this->translate('Cancel %d downtimes'), $downtimes->count()),
+            sprintf(t('Cancel %d downtimes'), $downtimes->count()),
             Links::downtimesDelete()->setQueryString($this->getFilter()->toQueryString()),
             'trash',
             [

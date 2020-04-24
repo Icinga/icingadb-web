@@ -33,7 +33,7 @@ abstract class StateListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if ($this->state->soft_state === null && $this->state->output === null) {
-            $caption->add(Text::create(mt('icingadb', 'Waiting for Icinga DB to synchronize the state.')));
+            $caption->add(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
         } else {
             $caption->add(CompatPluginOutput::getInstance()->render($this->state->output));
         }
@@ -41,11 +41,11 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        $title->add([
+        $title->add(Html::sprintf(
+            t('%s is %s', '<hostname> is <state-text>'),
             $this->createSubject(),
-            ' is ',
             Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
-        ]);
+        ));
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
@@ -81,7 +81,7 @@ abstract class StateListItem extends BaseListItem
     {
         if ($this->state->is_overdue) {
             $since = new TimeSince($this->state->next_update);
-            $since->prepend('Overdue ');
+            $since->prepend(t('Overdue') . ' ');
             $since->prepend(new Icon(Icons::WARNING));
             return $since;
         } elseif ($this->state->last_state_change !== null) {

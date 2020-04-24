@@ -16,13 +16,13 @@ class UsersController extends Controller
         parent::init();
 
         if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
         }
     }
 
     public function indexAction()
     {
-        $this->setTitle($this->translate('Users'));
+        $this->setTitle(t('Users'));
 
         $db = $this->getDb();
 
@@ -33,9 +33,9 @@ class UsersController extends Controller
         $sortControl = $this->createSortControl(
             $users,
             [
-                'user.display_name' => $this->translate('Name'),
-                'user.email'        => $this->translate('Email'),
-                'user.pager'        => $this->translate('Pager Address / Number')
+                'user.display_name' => t('Name'),
+                'user.email'        => t('Email'),
+                'user.pager'        => t('Pager Address / Number')
             ]
         );
         $filterControl = $this->createFilterControl($users);

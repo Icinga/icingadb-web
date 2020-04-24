@@ -36,11 +36,10 @@ abstract class BaseCommentListItem extends BaseListItem
         $header->add([
             new Icon(Icons::USER),
             new Link(
-                [
-                    $this->item->author,
-                    ' ',
-                    ($isAck ? 'acknowledged' : 'commented')
-                ],
+                sprintf(
+                    $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
+                    $this->item->author
+                ),
                 Links::comment($this->item)
             )
         ]);
@@ -56,7 +55,7 @@ abstract class BaseCommentListItem extends BaseListItem
         }
 
         if ($expires != 0) {
-            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], 'EXPIRES'));
+            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES')));
         }
 
         $header->add(Html::tag('br'));

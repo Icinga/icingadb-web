@@ -20,7 +20,7 @@ class ServicegroupController extends Controller
 
     public function init()
     {
-        $this->setTitle($this->translate('Service Group'));
+        $this->setTitle(t('Service Group'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -35,7 +35,7 @@ class ServicegroupController extends Controller
 
         $servicegroup = $query->first();
         if ($servicegroup === null) {
-            throw new NotFoundError($this->translate('Service group not found'));
+            throw new NotFoundError(t('Service group not found'));
         }
 
         $this->servicegroup = $servicegroup;

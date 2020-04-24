@@ -14,7 +14,7 @@ class HostgroupsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Host Groups'));
+        $this->setTitle(t('Host Groups'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -26,10 +26,10 @@ class HostgroupsController extends Controller
         $sortControl = $this->createSortControl(
             $hostgroups,
             [
-                'display_name'        => $this->translate('Name'),
-                'hosts_severity desc' => $this->translate('Severity'),
-                'hosts_total desc'    => $this->translate('Total Hosts'),
-                'services_total desc' => $this->translate('Total Services')
+                'display_name'        => t('Name'),
+                'hosts_severity desc' => t('Severity'),
+                'hosts_total desc'    => t('Total Hosts'),
+                'services_total desc' => t('Total Services')
             ]
         );
         $filterControl = $this->createFilterControl($hostgroups);
@@ -56,7 +56,7 @@ class HostgroupsController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d hostgroups'),
+                        t('Show all %d hostgroups'),
                         $hostgroups->count()
                     ))
             );

@@ -14,7 +14,7 @@ class ServicegroupsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('Service Groups'));
+        $this->setTitle(t('Service Groups'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -26,9 +26,9 @@ class ServicegroupsController extends Controller
         $sortControl = $this->createSortControl(
             $servicegroups,
             [
-                'display_name'           => $this->translate('Name'),
-                'services_severity desc' => $this->translate('Severity'),
-                'services_total desc'    => $this->translate('Total Services')
+                'display_name'           => t('Name'),
+                'services_severity desc' => t('Severity'),
+                'services_total desc'    => t('Total Services')
             ]
         );
         $filterControl = $this->createFilterControl($servicegroups);
@@ -55,7 +55,7 @@ class ServicegroupsController extends Controller
                 (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
-                        $this->translate('Show all %d servicegroups'),
+                        t('Show all %d servicegroups'),
                         $servicegroups->count()
                     ))
             );

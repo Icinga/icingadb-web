@@ -11,7 +11,7 @@ class DatabaseConfigForm extends ConfigForm
 {
     public function init()
     {
-        $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     public function createElements(array $formData)
@@ -19,10 +19,10 @@ class DatabaseConfigForm extends ConfigForm
         $dbResources = ResourceFactory::getResourceConfigs('db')->keys();
 
         $this->addElement('select', 'icingadb_resource', [
-            'description'   => $this->translate('Database resource'),
-            'label'         => $this->translate('Database'),
+            'description'   => t('Database resource'),
+            'label'         => t('Database'),
             'multiOptions'  => array_merge(
-                ['' => ' - Please choose - '],
+                ['' => sprintf(' - %s - ', t('Please choose'))],
                 array_combine($dbResources, $dbResources)
             ),
             'disable'       => [''],

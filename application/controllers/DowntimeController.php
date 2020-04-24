@@ -21,7 +21,7 @@ class DowntimeController extends Controller
 
     public function init()
     {
-        $this->setTitle($this->translate('Downtime'));
+        $this->setTitle(t('Downtime'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -40,7 +40,7 @@ class DowntimeController extends Controller
 
         $downtime = $query->first();
         if ($downtime === null) {
-            throw new NotFoundError($this->translate('Downtime not found'));
+            throw new NotFoundError(t('Downtime not found'));
         }
 
         $this->downtime = $downtime;

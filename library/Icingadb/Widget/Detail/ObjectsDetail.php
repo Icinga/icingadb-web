@@ -53,7 +53,10 @@ class ObjectsDetail extends BaseHtmlElement
 
             $content->add([
                 HtmlString::create($hostsChart->render()),
-                new VerticalKeyValue('Hosts', $this->summary->hosts_total),
+                new VerticalKeyValue(
+                    tp('Host', 'Hosts', $this->summary->hosts_total),
+                    $this->summary->hosts_total
+                ),
                 new HostStateBadges($badges)
             ]);
         } else {
@@ -72,7 +75,10 @@ class ObjectsDetail extends BaseHtmlElement
 
             $content->add([
                 HtmlString::create($servicesChart->render()),
-                new VerticalKeyValue('Services', $this->summary->services_total),
+                new VerticalKeyValue(
+                    tp('Service', 'Services', $this->summary->services_total),
+                    $this->summary->services_total
+                ),
                 $badges
             ]);
         }
@@ -82,15 +88,18 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected function createComments()
     {
-        $content = [Html::tag('h2', 'Comments')];
+        $content = [Html::tag('h2', t('Comments'))];
 
         if ($this->summary->comments_total > 0) {
             $content[] = new ActionLink(
-                sprintf('Show %d comments', $this->summary->comments_total),
+                sprintf(
+                    tp('Show %d comment', 'Show %d comments', $this->summary->comments_total),
+                    $this->summary->comments_total
+                ),
                 Links::comments()->setQueryString($this->getBaseFilter()->toQueryString())
             );
         } else {
-            $content[] = new EmptyState('No comments created.');
+            $content[] = new EmptyState(t('No comments created.'));
         }
 
         return $content;
@@ -98,15 +107,18 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected function createDowntimes()
     {
-        $content = [Html::tag('h2', 'Downtimes')];
+        $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($this->summary->downtimes_total > 0) {
             $content[] = new ActionLink(
-                sprintf('Show %d downtimes', $this->summary->downtimes_total),
+                sprintf(
+                    tp('Show %d downtime', 'Show %d downtimes', $this->summary->downtimes_total),
+                    $this->summary->downtimes_total
+                ),
                 Links::downtimes()->setQueryString($this->getBaseFilter()->toQueryString())
             );
         } else {
-            $content[] = new EmptyState('No downtimes scheduled.');
+            $content[] = new EmptyState(t('No downtimes scheduled.'));
         }
 
         return $content;
@@ -127,7 +139,7 @@ class ObjectsDetail extends BaseHtmlElement
         }
 
         return [
-            Html::tag('h2', 'Feature Commands'),
+            Html::tag('h2', t('Feature Commands')),
             HtmlString::create($form->render())
         ];
     }
@@ -135,7 +147,7 @@ class ObjectsDetail extends BaseHtmlElement
     protected function createSummary()
     {
         return [
-            Html::tag('h2', 'Summary'),
+            Html::tag('h2', t('Summary')),
             $this->createChart()
         ];
     }

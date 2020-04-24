@@ -44,9 +44,9 @@ class MultiselectQuickActions extends BaseHtmlElement
         ) {
             $this->assembleAction(
                 'acknowledge',
-                'Acknowledge',
+                t('Acknowledge'),
                 'icon-edit',
-                'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
+                t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
             );
         }
 
@@ -78,27 +78,27 @@ class MultiselectQuickActions extends BaseHtmlElement
         if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
             $this->assembleAction(
                 'addComment',
-                'Comment',
+                t('Comment'),
                 'icon-comment-empty',
-                'Add a new comment'
+                t('Add a new comment')
             );
         }
 
         if ($this->getAuth()->hasPermission('monitoring/command/send-custom-notification')) {
             $this->assembleAction(
                 'sendCustomNotification',
-                'Notification',
+                t('Notification'),
                 'icon-bell',
-                'Send a custom notification'
+                t('Send a custom notification')
             );
         }
 
         if ($this->getAuth()->hasPermission('monitoring/command/downtime/schedule')) {
             $this->assembleAction(
                 'scheduleDowntime',
-                'Downtime',
+                t('Downtime'),
                 'icon-plug',
-                'Schedule a downtime to suppress all problem notifications within a specific period of time'
+                t('Schedule a downtime to suppress all problem notifications within a specific period of time')
             );
         }
 
@@ -111,18 +111,18 @@ class MultiselectQuickActions extends BaseHtmlElement
         ) {
             $this->assembleAction(
                 'scheduleCheck',
-                'Reschedule',
+                t('Reschedule'),
                 'icon-calendar-empty',
-                'Schedule the next active check at a different time than the current one'
+                t('Schedule the next active check at a different time than the current one')
             );
         }
 
         if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
             $this->assembleAction(
                 'processCheckresult',
-                'Process check result',
+                t('Process check result'),
                 'icon-edit',
-                'Submit passive check result'
+                t('Submit passive check result')
             );
         }
     }

@@ -32,7 +32,7 @@ class StaticController extends Controller
         $filePath = realpath($moduleRoot . '/public/' . rawurldecode($file));
 
         if ($filePath === false) {
-            $this->httpNotFound('%s does not exist', $filePath);
+            $this->httpNotFound(t('%s does not exist'), $filePath);
         }
 
         $s = stat($filePath);

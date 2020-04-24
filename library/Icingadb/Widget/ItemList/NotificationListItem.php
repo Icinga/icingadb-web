@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
+use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;
@@ -22,17 +23,38 @@ class NotificationListItem extends CommonListItem
     use HostLink;
     use ServiceLink;
 
-    const PHRASES = [
-        'acknowledgement'  => 'Problem was acknowledged',
-        'custom'           => 'Custom Notification was triggered',
-        'downtime_end'     => 'Downtime ended',
-        'downtime_removed' => 'Downtime was removed',
-        'downtime_start'   => 'Downtime was started',
-        'flapping_end'     => 'Flapping ended',
-        'flapping_start'   => 'Flapping detected',
-        'problem'          => '%s ran into a problem',
-        'recovery'         => '%s recovered'
-    ];
+    /**
+     * Get a localized phrase for the given notification type
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public static function phraseForType($type)
+    {
+        switch ($type) {
+            case 'acknowledgement':
+                return t('Problem acknowledged');
+            case 'custom':
+                return t('Custom Notification triggered');
+            case 'downtime_end':
+                return t('Downtime ended');
+            case 'downtime_removed':
+                return t('Downtime removed');
+            case 'downtime_start':
+                return t('Downtime started');
+            case 'flapping_end':
+                return t('Flapping stopped');
+            case 'flapping_start':
+                return t('Flapping started');
+            case 'problem':
+                return t('%s ran into a problem');
+            case 'recovery':
+                return t('%s recovered');
+            default:
+                throw new InvalidArgumentException(sprintf('Type %s is not a valid notification type', $type));
+        }
+    }
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
@@ -100,7 +122,7 @@ class NotificationListItem extends CommonListItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            sprintf(self::PHRASES[$this->item->type], ucfirst($this->item->object_type)),
+            sprintf(self::phraseForType($this->item->type), ucfirst($this->item->object_type)),
             Html::tag('br')
         ]);
 

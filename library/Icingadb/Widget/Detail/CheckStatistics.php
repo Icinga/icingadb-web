@@ -69,7 +69,7 @@ class CheckStatistics extends Card
         $now = Html::tag('li', [
             'class' => 'bubble now',
             'style' => sprintf('left: %F%%', $hPadding + $leftNow),
-        ], Html::tag('strong', 'Now'));
+        ], Html::tag('strong', t('Now')));
         $above->add($now);
 
         $markerLast = Html::tag('div', [
@@ -99,9 +99,9 @@ class CheckStatistics extends Card
         $lastUpdate = Html::tag(
             'li',
             ['class' => 'bubble upwards last'],
-            new VerticalKeyValue('Last update', $this->object->state->last_update !== null
+            new VerticalKeyValue(t('Last update'), $this->object->state->last_update !== null
                 ? new TimeAgo($this->object->state->last_update)
-                : 'PENDING')
+                : t('PENDING'))
         );
         $interval = Html::tag(
             'li',
@@ -112,10 +112,10 @@ class CheckStatistics extends Card
             'li',
             ['class' => 'bubble upwards next'],
             $this->object->state->is_overdue
-                ? new VerticalKeyValue('Overdue', new TimeSince($nextCheckTime))
+                ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
                 : new VerticalKeyValue(
-                    'Next Check',
-                    $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : 'PENDING'
+                    t('Next Check'),
+                    $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : t('PENDING')
                 )
         );
 
@@ -152,14 +152,17 @@ class CheckStatistics extends Card
         ];
 
         $header->add([
-            new VerticalKeyValue('Command', $this->object->checkcommand),
+            new VerticalKeyValue(t('Command'), $this->object->checkcommand),
             new VerticalKeyValue(
-                'Attempts',
+                t('Attempts'),
                 new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
             ),
-            new VerticalKeyValue('Check source', $checkSource),
-            new VerticalKeyValue('Execution time', Format::seconds($this->object->state->execution_time)),
-            new VerticalKeyValue('Latency', Format::seconds($this->object->state->latency))
+            new VerticalKeyValue(t('Check source'), $checkSource),
+            new VerticalKeyValue(
+                t('Execution time'),
+                Format::seconds($this->object->state->execution_time)
+            ),
+            new VerticalKeyValue(t('Latency'), Format::seconds($this->object->state->latency))
         ]);
     }
 }

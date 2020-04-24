@@ -17,7 +17,8 @@ abstract class BaseServiceListItem extends StateListItem
 {
     protected function createSubject()
     {
-        return [
+        return [Html::sprintf(
+            t('%s on %s', '<service> on <host>'),
             Html::tag(
                 'a',
                 [
@@ -26,7 +27,6 @@ abstract class BaseServiceListItem extends StateListItem
                 ],
                 $this->item->display_name
             ),
-            ' on ',
             Html::tag(
                 'a',
                 [
@@ -39,7 +39,7 @@ abstract class BaseServiceListItem extends StateListItem
                     $this->item->host->display_name
                 ]
             )
-        ];
+        )];
     }
 
     protected function init()

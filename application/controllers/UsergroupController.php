@@ -19,10 +19,10 @@ class UsergroupController extends Controller
     public function init()
     {
         if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
         }
 
-        $this->setTitle($this->translate('User Group'));
+        $this->setTitle(t('User Group'));
 
         $name = $this->params->shiftRequired('name');
 
@@ -34,7 +34,7 @@ class UsergroupController extends Controller
 
         $usergroup = $query->first();
         if ($usergroup === null) {
-            throw new NotFoundError($this->translate('User group not found'));
+            throw new NotFoundError(t('User group not found'));
         }
 
         $this->usergroup = $usergroup;

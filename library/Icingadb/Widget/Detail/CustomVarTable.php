@@ -45,7 +45,8 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderArray($name, array $array)
     {
-        $this->addRow("$name (Array)", count($array) . ' items');
+        $numItems = count($array);
+        $this->addRow("$name (Array)", sprintf(tp('%d item', '%d items', $numItems), $numItems));
 
         ++$this->level;
 
@@ -58,7 +59,8 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderObject($name, $object)
     {
-        $this->addRow($name, count(get_object_vars($object)) . ' items');
+        $numItems = count(get_object_vars($object));
+        $this->addRow($name, sprintf(tp('%d item', '%d items', $numItems), $numItems));
 
         ++$this->level;
 

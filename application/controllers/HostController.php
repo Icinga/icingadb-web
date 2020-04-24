@@ -42,7 +42,7 @@ class HostController extends Controller
         /** @var Host $host */
         $host = $query->first();
         if ($host === null) {
-            throw new NotFoundError($this->translate('Host not found'));
+            throw new NotFoundError(t('Host not found'));
         }
 
         $this->host = $host;
@@ -70,7 +70,7 @@ class HostController extends Controller
 
     public function commentsAction()
     {
-        $this->setTitle($this->translate('Comments'));
+        $this->setTitle(t('Comments'));
 
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
@@ -91,7 +91,7 @@ class HostController extends Controller
 
     public function downtimesAction()
     {
-        $this->setTitle($this->translate('Downtimes'));
+        $this->setTitle(t('Downtimes'));
 
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
 
@@ -163,7 +163,7 @@ class HostController extends Controller
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
-            ->setLabel('Load More')
+            ->setLabel(t('Load More'))
             ->setAttribute('data-no-icinga-ajax', true);
 
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
@@ -228,15 +228,15 @@ class HostController extends Controller
         return $this
             ->getTabs()
             ->add('index', [
-                'label'  => $this->translate('Host'),
+                'label'  => t('Host'),
                 'url'    => Links::host($this->host)
             ])
             ->add('services', [
-                'label'  => $this->translate('Services'),
+                'label'  => t('Services'),
                 'url'    => HostLinks::services($this->host)
             ])
             ->add('history', [
-                'label'  => $this->translate('History'),
+                'label'  => t('History'),
                 'url'    => HostLinks::history($this->host)
             ]);
     }

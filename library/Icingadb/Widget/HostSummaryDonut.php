@@ -42,7 +42,7 @@ class HostSummaryDonut extends Card
                 'sort' => 'host.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)
-            ->setLabelSmall(mt('icingadb', 'Hosts Down'));
+            ->setLabelSmall(tp('Host Down', 'Hosts Down', $this->summary->hosts_down_unhandled));
 
         $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
     }
@@ -54,6 +54,6 @@ class HostSummaryDonut extends Card
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add(new HtmlElement('h2', null, mt('icingadb', 'Host Summary')));
+        $header->add(new HtmlElement('h2', null, t('Host Summary')));
     }
 }

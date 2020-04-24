@@ -11,20 +11,20 @@ class RedisConfigForm extends ConfigForm
 {
     public function init()
     {
-        $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setSubmitLabel(t('Save Changes'));
     }
 
     public function createElements(array $formData)
     {
         $this->addElement('text', 'redis1_host', [
-            'description' => $this->translate('Redis Host'),
-            'label'       => $this->translate('Redis Host'),
+            'description' => t('Redis Host'),
+            'label'       => t('Redis Host'),
             'required'    => true
         ]);
 
         $this->addElement('number', 'redis1_port', [
-            'description' => $this->translate('Redis Port'),
-            'label'       => $this->translate('Redis Port'),
+            'description' => t('Redis Port'),
+            'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
 
@@ -41,22 +41,22 @@ class RedisConfigForm extends ConfigForm
                     ],
                     'Fieldset'
                 ],
-                'description' => $this->translate(
+                'description' => t(
                     'Redis connection details of your Icinga host. If you are running a high'
                     . ' availability zone with two masters, this is your configuration master.'
                 ),
-                'legend'      => $this->translate('Primary Icinga Master')
+                'legend'      => t('Primary Icinga Master')
             ]
         );
 
         $this->addElement('text', 'redis2_host', [
-            'description' => $this->translate('Redis Host'),
-            'label'       => $this->translate('Redis Host'),
+            'description' => t('Redis Host'),
+            'label'       => t('Redis Host'),
         ]);
 
         $this->addElement('number', 'redis2_port', [
-            'description' => $this->translate('Redis Port'),
-            'label'       => $this->translate('Redis Port'),
+            'description' => t('Redis Port'),
+            'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
 
@@ -73,11 +73,11 @@ class RedisConfigForm extends ConfigForm
                     ],
                     'Fieldset'
                 ],
-                'description' => $this->translate(
+                'description' => t(
                     'If you are running a high availability zone with two masters,'
                     . ' please provide the Redis connection details of the secondary master.'
                 ),
-                'legend'      => $this->translate('Secondary Icinga Master')
+                'legend'      => t('Secondary Icinga Master')
             ]
         );
     }

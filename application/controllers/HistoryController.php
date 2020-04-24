@@ -15,7 +15,7 @@ class HistoryController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle($this->translate('History'));
+        $this->setTitle(t('History'));
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
         $db = $this->getDb();
@@ -43,7 +43,7 @@ class HistoryController extends Controller
         $sortControl = $this->createSortControl(
             $history,
             [
-                'history.event_time desc' => $this->translate('Event Time')
+                'history.event_time desc' => t('Event Time')
             ]
         );
         $filterControl = $this->createFilterControl($history);
@@ -72,7 +72,7 @@ class HistoryController extends Controller
             $url->setParam('page', $page + 1)
                 ->setAnchor('page-' . ($page + 1))
         ))
-            ->setLabel('Load More')
+            ->setLabel(t('Load More'))
             ->setAttribute('data-no-icinga-ajax', true);
 
         $this->addControl($sortControl);

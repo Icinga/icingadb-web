@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
@@ -11,7 +12,6 @@ use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -93,7 +93,7 @@ class DowntimeDetail extends BaseHtmlElement
 
         $submitButton = $cancelDowntimeForm->getElement('btn_submit');
         $submitButton->content = (new HtmlDocument())
-            ->add([new Icon('trash'), 'Cancel Downtime'])
+            ->add([new Icon('trash'), t('Cancel Downtime')])
             ->setSeparator(' ')
             ->render();
 
@@ -107,47 +107,51 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->add(Html::tag('h2', 'Comment'));
+        $this->add(Html::tag('h2', t('Comment')));
         $this->add(Html::tag('div', [
             new Icon('user'),
-            $this->downtime->author,
-            ' commented:',
-            new MarkdownText($this->downtime->comment)
+            Html::sprintf(
+                t('%s commented: %s', '<username> ..: <comment>'),
+                $this->downtime->author,
+                new MarkdownText($this->downtime->comment)
+            )
         ]));
 
-        $this->add(Html::tag('h2', 'Details'));
-        $this->add(
-            new HorizontalKeyValue('Created', WebDateFormatter::formatDateTime($this->downtime->entry_time))
-        );
-        $this->add(
-            new HorizontalKeyValue('Start time', WebDateFormatter::formatDateTime($this->downtime->start_time))
-        );
+        $this->add(Html::tag('h2', t('Details')));
         $this->add(new HorizontalKeyValue(
-            'End time',
+            t('Created'),
+            WebDateFormatter::formatDateTime($this->downtime->entry_time)
+        ));
+        $this->add(new HorizontalKeyValue(
+            t('Start time'),
+            WebDateFormatter::formatDateTime($this->downtime->start_time)
+        ));
+        $this->add(new HorizontalKeyValue(
+            t('End time'),
             WebDateFormatter::formatDateTime($this->downtime->end_time)
         ));
         $this->add(new HorizontalKeyValue(
-            'Scheduled Start',
+            t('Scheduled Start'),
             WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
         ));
         $this->add(new HorizontalKeyValue(
-            'Scheduled End',
+            t('Scheduled End'),
             WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
         ));
         $this->add(new HorizontalKeyValue(
-            'Scheduled Duration',
+            t('Scheduled Duration'),
             DateFormatter::formatDuration(
                 $this->downtime->scheduled_end_time - $this->downtime->scheduled_start_time
             )
         ));
         if ($this->downtime->is_flexible) {
             $this->add(new HorizontalKeyValue(
-                'Flexible Duration',
+                t('Flexible Duration'),
                 DateFormatter::formatDuration($this->downtime->flexible_duration)
             ));
         }
 
-        $this->add(Html::tag('h2', 'Progress'));
+        $this->add(Html::tag('h2', t('Progress')));
         $this->add($this->createTimeline());
 
         if ($this->getAuth()->hasPermission('monitoring/command/downtime/delete')) {

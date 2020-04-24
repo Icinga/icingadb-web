@@ -54,10 +54,7 @@ class MonitoringRestrictions
                 $restriction->addFilter(Filter::fromQueryString($filter));
             } catch (QueryException $e) {
                 throw new ConfigurationError(
-                    mt(
-                        'monitoring',
-                        'Cannot apply restriction %s using the filter %s. You can only use the following columns: %s'
-                    ),
+                    t('Cannot apply restriction %s using the filter %s. You can only use the following columns: %s'),
                     $name,
                     $filter,
                     implode(', ', array(

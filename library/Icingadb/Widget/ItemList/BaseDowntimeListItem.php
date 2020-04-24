@@ -5,12 +5,11 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Data\Filter\FilterExpression;
-use Icinga\Date\DateFormatter as WebDateFormatter;
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLink;
-use Icinga\Module\Icingadb\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
@@ -59,7 +58,10 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $this->isActive = $this->item->is_in_effect
             || $this->item->is_flexible && $this->item->scheduled_start_time <= $this->currentTime;
 
-        $this->duration = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
+        $until = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
+        $this->duration = explode(' ', DateFormatter::formatDuration(
+            $until <= 3600 ? $until : $until + (3600 - ($until % 3600))
+        ), 2)[0];
 
         $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
         $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
@@ -102,12 +104,6 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        if ($this->item->is_flexible) {
-            $type = 'Flexible';
-        } else {
-            $type = 'Fixed';
-        }
-
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
         } else {
@@ -115,7 +111,12 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
 
         $title->add([
-            new Link("{$type} Downtime", Links::downtime($this->item)),
+            new Link(
+                $this->item->is_flexible
+                    ? t('Flexible Downtime')
+                    : t('Fixed Downtime'),
+                Links::downtime($this->item)
+            ),
             ': ',
             $link
         ]);
@@ -123,13 +124,15 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $dateTime = WebDateFormatter::formatDateTime($this->endTime);
+        $dateTime = DateFormatter::formatDateTime($this->endTime);
 
         if ($this->isActive) {
             if ($this->item->is_in_effect) {
                 $visual->addAttributes(['class' => 'active']);
             }
-            $visual->add([
+
+            $visual->add(Html::sprintf(
+                t('%s left', '<timespan>..'),
                 Html::tag(
                     'strong',
                     Html::tag(
@@ -138,24 +141,21 @@ abstract class BaseDowntimeListItem extends BaseListItem
                             'datetime' => $dateTime,
                             'title'    => $dateTime
                         ],
-                        DateFormatter::formatDuration($this->duration, true)
+                        $this->duration
                     )
-                ),
-                ' ',
-                'left'
-            ]);
+                )
+            ));
         } else {
-            $visual->add([
-                'in',
-                ' ',
-                Html::tag('strong', DateFormatter::formatDuration($this->duration, true))
-            ]);
+            $visual->add(Html::sprintf(
+                t('in %s', '..<timespan>'),
+                Html::tag('strong', $this->duration)
+            ));
         }
     }
 
     protected function createTimestamp()
     {
-        $dateTime = WebDateFormatter::formatDateTime($this->endTime);
+        $dateTime = DateFormatter::formatDateTime($this->endTime);
 
         return Html::tag(
             'time',
@@ -163,11 +163,12 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 'datetime' => $dateTime,
                 'title'    => $dateTime
             ],
-            [
-               $this->isActive ? 'expires in' : 'starts in',
-                ' ',
-                DateFormatter::formatDuration($this->duration)
-            ]
+            sprintf(
+                $this->isActive
+                   ? t('expires in %s', '..<timespan>')
+                   : t('starts in %s', '..<timespan>'),
+                $this->duration
+            )
         );
     }
 }
