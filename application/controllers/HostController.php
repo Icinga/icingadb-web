@@ -125,6 +125,7 @@ class HostController extends Controller
             'host.state',
             'comment',
             'downtime',
+            'flapping',
             'notification',
             'acknowledgement',
             'state'

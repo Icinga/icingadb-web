@@ -125,6 +125,7 @@ class ServiceController extends Controller
             'service.state',
             'comment',
             'downtime',
+            'flapping',
             'notification',
             'acknowledgement',
             'state'
