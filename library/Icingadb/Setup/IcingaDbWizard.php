@@ -11,6 +11,7 @@ use Icinga\Module\Setup\Requirement\WebModuleRequirement;
 use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
+use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Wizard;
@@ -42,6 +43,7 @@ class IcingaDbWizard extends Wizard implements SetupWizard
         $setup->addStep(new DbResourceStep($pageData['setup_icingadb_resource']));
         $setup->addStep(new RedisStep($pageData['setup_icingadb_redis']));
         $setup->addStep(new ApiTransportStep($pageData['setup_icingadb_api_transport']));
+        $setup->addStep(new EnableModuleStep(['ipl']));
 
         return $setup;
     }
