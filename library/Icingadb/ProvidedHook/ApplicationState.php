@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Exception;
 use Icinga\Application\Hook\ApplicationStateHook;
+use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
@@ -18,6 +19,16 @@ class ApplicationState extends ApplicationStateHook
 
     public function collectMessages()
     {
+        if (! Icinga::app()->getModuleManager()->hasEnabled('ipl')) {
+            // TODO: Replace this once we have proper dependency management
+            $this->addError(
+                'icingadb/ipl-missing',
+                time(),
+                t('Module "ipl" is not enabled. This module is mandatory for Icinga DB Web')
+            );
+            return;
+        }
+
         $this->checkDatabase();
         $this->checkRedis();
     }
