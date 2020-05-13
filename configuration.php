@@ -95,6 +95,7 @@ namespace Icinga\Module\Icingadb
 
     $this->requireCssFile('balls.less', 'ipl');
 
+    $this->provideCssFile('common.less');
     $this->provideCssFile('lists.less');
     $this->provideCssFile('mixins.less');
     $this->provideCssFile('widgets.less');
