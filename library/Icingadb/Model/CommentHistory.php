@@ -38,6 +38,7 @@ class CommentHistory extends Model
             'service_id',
             'entry_time',
             'author',
+            'removed_by',
             'comment',
             'entry_type',
             'is_persistent',
