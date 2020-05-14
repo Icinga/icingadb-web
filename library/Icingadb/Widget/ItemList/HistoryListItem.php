@@ -231,7 +231,8 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'state_change':
-                $state = $this->item->state === 'hard' ? $this->item->state->hard_state : $this->item->state->soft_state;
+                $state = $this->item->state === 'hard' ?
+                    $this->item->state->hard_state : $this->item->state->soft_state;
                 if ($state === 0) {
                     if ($this->item->object_type === 'service') {
                         $title->add(t('Service recovered'));
