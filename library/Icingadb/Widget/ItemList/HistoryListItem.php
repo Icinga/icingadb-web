@@ -75,19 +75,6 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'ack_clear':
-                if (! empty($this->item->acknowledgement->cleared_by)) {
-                    $caption->add([
-                        new Icon(Icons::USER),
-                        sprintf(
-                            t('Cleared by: %s', '..<username>'),
-                            $this->item->acknowledgement->cleared_by
-                        )
-                    ]);
-
-                    break;
-                }
-
-                // Fallthrough
             case 'ack_set':
                 $caption->add([
                     new Icon(Icons::USER),
@@ -192,11 +179,37 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'comment_remove':
-                $title->add(t('Comment removed'));
+                if (! empty($this->item->comment->removed_by)) {
+                    if ($this->item->comment->removed_by !== $this->item->comment->author) {
+                        $title->add(sprintf(
+                            t('Comment removed by %s', '..<username>'),
+                            $this->item->comment->removed_by
+                        ));
+                    } else {
+                        $title->add(t('Comment removed by author'));
+                    }
+                } elseif (isset($this->item->comment->expire_time)) {
+                    $title->add(t('Comment expired'));
+                } else {
+                    $title->add(t('Comment removed'));
+                }
 
                 break;
             case 'downtime_end':
-                $title->add(t('Downtime ended'));
+                if (! empty($this->item->downtime->cancelled_by)) {
+                    if ($this->item->downtime->cancelled_by !== $this->item->downtime->author) {
+                        $title->add(sprintf(
+                            t('Downtime cancelled by %s', '..<username>'),
+                            $this->item->downtime->cancelled_by
+                        ));
+                    } else {
+                        $title->add(t('Downtime cancelled by author'));
+                    }
+                } elseif (isset($this->item->downtime->cancel_time)) {
+                    $title->add(t('Downtime cancelled'));
+                } else {
+                    $title->add(t('Downtime ended'));
+                }
 
                 break;
             case 'downtime_start':
@@ -216,7 +229,20 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'ack_clear':
-                $title->add(t('Acknowledgement cleared'));
+                if (! empty($this->item->acknowledgement->cleared_by)) {
+                    if ($this->item->acknowledgement->cleared_by !== $this->item->acknowledgement->author) {
+                        $title->add(sprintf(
+                            t('Acknowledgement cleared by %s', '..<username>'),
+                            $this->item->acknowledgement->cleared_by
+                        ));
+                    } else {
+                        $title->add(t('Acknowledgement cleared by author'));
+                    }
+                } elseif (isset($this->item->acknowledgement->expire_time)) {
+                    $title->add(t('Acknowledgement expired'));
+                } else {
+                    $title->add(t('Acknowledgement cleared'));
+                }
 
                 break;
             case 'notification':
