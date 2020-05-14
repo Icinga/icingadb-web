@@ -231,10 +231,21 @@ class HistoryListItem extends CommonListItem
 
                 break;
             case 'state_change':
-                if ($this->item->state->state_type === 'hard') {
-                    $title->add(t('Hard state changed'));
+                $state = $this->item->state === 'hard'
+                    ? $this->item->state->hard_state
+                    : $this->item->state->soft_state;
+                if ($state === 0) {
+                    if ($this->item->object_type === 'service') {
+                        $title->add(t('Service recovered'));
+                    } else {
+                        $title->add(t('Host recovered'));
+                    }
                 } else {
-                    $title->add(t('Soft state changed'));
+                    if ($this->item->state->state_type === 'hard') {
+                        $title->add(t('Hard state changed'));
+                    } else {
+                        $title->add(t('Soft state changed'));
+                    }
                 }
 
                 break;
