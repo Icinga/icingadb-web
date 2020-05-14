@@ -39,6 +39,7 @@ class DowntimeHistory extends Model
             'service_id',
             'entry_time',
             'author',
+            'cancelled_by',
             'comment',
             'is_flexible',
             'flexible_duration',
