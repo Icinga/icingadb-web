@@ -240,11 +240,11 @@ class HistoryListItem extends CommonListItem
                     }
                 } else {
                     if ($this->item->state->state_type === 'hard') {
-                    	$title->add(t('Hard state changed'));
-                	} else {
-                    	$title->add(t('Soft state changed'));
-                	}
-				}
+                        $title->add(t('Hard state changed'));
+                    } else {
+                        $title->add(t('Soft state changed'));
+                    }
+                }
 
                 break;
             default:
