@@ -3,13 +3,13 @@
 .cancel-button {
   .button();
 
-  background-color: white;
+  background: @body-bg-color;
   border: 1px solid @color-critical;
   color: @color-critical;
 
   &:hover {
     background-color: @color-critical;
-    color: white;
+    color: @text-color-on-icinga-blue;
   }
 }
 
@@ -71,7 +71,7 @@
 
   .bubble {
     .rounded-corners(.25em);
-    background-color: white;
+    background-color: @body-bg-color;
     border: 1px solid @gray-light;
     bottom: 0;
     box-shadow: 0 0 1em 0 rgba(0,0,0,.1);
@@ -102,7 +102,7 @@
     }
 
     &:before {
-      background-color: white;
+      background-color: @body-bg-color;
       border-bottom: 1px solid @gray-light;
       border-right: 1px solid  @gray-light;
       content: "";
@@ -400,9 +400,9 @@
 
 .event-box {
   .rounded-corners(.5em);
-  background-color: fade(@gray, 80);
+  background-color: @gray-lighter;
   border: 1px solid @gray-light;
-  color: white;
+  color: @text-color-inverted;
   margin-bottom: .25em;
   padding: .5em;
 
@@ -593,7 +593,7 @@ form.object-features {
 
 .state-change {
   .state-ball {
-    box-shadow: 0 0 0 1px white;
+    box-shadow: 0 0 0 1px @body-bg-color;
   }
 
   .state-ball ~ .state-ball {
@@ -602,7 +602,7 @@ form.object-features {
 
   .state-ball.state-ok,
   .state-ball.state-up {
-    background-color: white;
+    background-color: @body-bg-color;
   }
 }
 
@@ -852,7 +852,6 @@ form.object-features {
 
     &.up {
       border: 1px solid @color-up;
-      color: #399c63;
       color: darken(@color-up, 5);
     }
 

@@ -2,7 +2,7 @@
 
 .action-list {
   > .list-item:hover {
-    background-color: #f5fdff;
+    background-color: @gray-lightest;
     cursor: pointer;
   }
 
@@ -46,7 +46,7 @@
   &.overdue time {
     .rounded-corners();
     background-color: @color-critical;
-    color: white;
+    color: @text-color-on-icinga-blue;
     margin-right: -.5em;
     padding: 0 0.5em;
   }
@@ -219,7 +219,7 @@
 
   .visual.active {
     background-color: @color-ok;
-    color: white;
+    color: @text-color-on-icinga-blue;
   }
 }
 
@@ -290,7 +290,7 @@
     text-align: center;
 
     .state-ball {
-      box-shadow: 0 0 0 1px white;
+      box-shadow: 0 0 0 1px @body-bg-color;
     }
 
     .state-ball ~ .state-ball {
@@ -299,7 +299,7 @@
 
     .state-ball.state-ok,
     .state-ball.state-up {
-      background-color: white;
+      background-color: @body-bg-color;
     }
   }
 

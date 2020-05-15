@@ -1,8 +1,5 @@
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-@gray-dark: #777;
-@gray-light: #d8d8d8;
-
 & > .content.full-width {
   padding-left: 0;
   padding-right: 0;
@@ -22,7 +19,7 @@
   }
 
   &.taken {
-    background-color: @gray-dark;
+    background-color: @gray;
   }
 }
 
@@ -50,7 +47,7 @@
 
     &.active {
       background-color: @icinga-blue;
-      color: white;
+      color: @text-color-on-icinga-blue;
     }
 
     &:first-child {
@@ -214,7 +211,7 @@
 
 .state-badge {
   .rounded-corners();
-  color: white;
+  color: @text-color-on-icinga-blue;
   display: inline-block;
   font-size: 1em;
   min-width: 2em;
@@ -324,13 +321,14 @@
 .comment-detail button,
 .downtime-detail button {
   .button();
-  background-color: white;
+
+  background: @body-bg-color;
   border: 1px solid @color-critical;
   color: @color-critical;
 
   &:hover {
     background-color: @color-critical;
-    color: white;
+    color: @text-color-on-icinga-blue;
   }
 }
 
