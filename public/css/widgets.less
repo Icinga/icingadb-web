@@ -514,11 +514,9 @@
 
 .quick-actions {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   list-style-type: none;
-  margin: 0 -.25em;
-  max-width: 60em;
+  margin: 0 -1.25em 0 -.25em;
   padding: 0;
 
   a {
@@ -527,6 +525,7 @@
 
   li {
     .rounded-corners();
+    margin-right: 1em;
     padding: .25em;
     vertical-align: middle;
     white-space: nowrap;
@@ -534,6 +533,12 @@
     &:hover {
       background: @gray-lighter;
     }
+  }
+}
+
+#layout.twocols:not(.wide-layout) {
+  .quick-actions {
+    justify-content: space-between;
   }
 }
 
