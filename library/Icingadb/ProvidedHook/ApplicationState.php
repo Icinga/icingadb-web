@@ -21,12 +21,21 @@ class ApplicationState extends ApplicationStateHook
     {
         if (! Icinga::app()->getModuleManager()->hasEnabled('ipl')) {
             // TODO: Replace this once we have proper dependency management
+            $noIplSince = Session::getSession()->getNamespace('icingadb')->get('icingadb.no-ipl-since');
+            if ($noIplSince === null) {
+                $noIplSince = time();
+                Session::getSession()->getNamespace('icingadb')->set('icingadb.no-ipl-since', $noIplSince);
+            }
+
             $this->addError(
                 'icingadb/ipl-missing',
-                time(),
+                $noIplSince,
                 t('Module "ipl" is not enabled. This module is mandatory for Icinga DB Web')
             );
+
             return;
+        } else {
+            Session::getSession()->getNamespace('icingadb')->delete('db.no-ipl-since');
         }
 
         $this->checkDatabase();
