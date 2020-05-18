@@ -38,12 +38,6 @@ class ApplicationState extends ApplicationStateHook
             Session::getSession()->getNamespace('icingadb')->delete('db.no-ipl-since');
         }
 
-        $this->checkDatabase();
-        $this->checkRedis();
-    }
-
-    private function checkDatabase()
-    {
         $instance = Instance::on($this->getDb())->with(['endpoint'])->first();
 
         if ($instance === null) {
@@ -64,24 +58,14 @@ class ApplicationState extends ApplicationStateHook
                     . ' Make sure Icinga DB is running and writing into the database.'
                 )
             );
+
+            return;
         } else {
             Session::getSession()->getNamespace('icingadb')->delete('db.no-instance-since');
-
-            if ($instance->heartbeat < time() - 60) {
-                $this->addError(
-                    'icingadb/icingadb-down',
-                    $instance->heartbeat,
-                    t(
-                        'It seems that Icinga DB is not running.'
-                        . ' Make sure Icinga DB is running and writing into the database.'
-                    )
-                );
-            }
         }
-    }
 
-    private function checkRedis()
-    {
+        $outdatedDbHeartbeat = $instance->heartbeat < time() - 60;
+
         try {
             $redis = $this->getIcingaRedis();
 
@@ -89,24 +73,35 @@ class ApplicationState extends ApplicationStateHook
 
             $lastIcingaHeartbeat = $this->getLastIcingaHeartbeat($redis);
             if ($lastIcingaHeartbeat === false) {
+                if ($outdatedDbHeartbeat) {
+                    $this->addError(
+                        'icingadb/icingadb-down',
+                        $instance->heartbeat,
+                        t(
+                            'It seems that Icinga DB is not running.'
+                            . ' Make sure Icinga DB is running and writing into the database.'
+                        )
+                    );
+                }
+
                 return;
+            } elseif ($lastIcingaHeartbeat === null) {
+                $missingSince = Session::getSession()
+                    ->getNamespace('icingadb')->get('redis.heartbeat-missing-since');
+
+                if ($missingSince === null) {
+                    $missingSince = time();
+                    Session::getSession()
+                        ->getNamespace('icingadb')->set('redis.heartbeat-missing-since', $missingSince);
+                }
+
+                $lastIcingaHeartbeat = $missingSince;
+            } else {
+                Session::getSession()->getNamespace('icingadb')->delete('redis.heartbeat-missing-since');
             }
 
             switch (true) {
-                /** @noinspection PhpMissingBreakStatementInspection */
-                case $lastIcingaHeartbeat === null:
-                    $missingSince = Session::getSession()
-                        ->getNamespace('icingadb')->get('redis.heartbeat-missing-since');
-
-                    if ($missingSince === null) {
-                        $missingSince = time();
-                        Session::getSession()
-                            ->getNamespace('icingadb')->set('redis.heartbeat-missing-since', $missingSince);
-                    }
-
-                    $lastIcingaHeartbeat = $missingSince;
-                    // Fallthrough
-                case $lastIcingaHeartbeat <= time() - 60:
+                case $outdatedDbHeartbeat && $instance->heartbeat > $lastIcingaHeartbeat:
                     $this->addError(
                         'icingadb/redis-outdated',
                         $lastIcingaHeartbeat,
@@ -114,8 +109,17 @@ class ApplicationState extends ApplicationStateHook
                     );
 
                     break;
-                default:
-                    Session::getSession()->getNamespace('icingadb')->delete('redis.heartbeat-missing-since');
+                case $outdatedDbHeartbeat:
+                    $this->addError(
+                        'icingadb/icingadb-down',
+                        $instance->heartbeat,
+                        t(
+                            'It seems that Icinga DB is not running.'
+                            . ' Make sure Icinga DB is running and writing into the database.'
+                        )
+                    );
+
+                    break;
             }
         } catch (Exception $e) {
             $downSince = Session::getSession()->getNamespace('icingadb')->get('redis.down-since');
