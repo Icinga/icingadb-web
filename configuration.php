@@ -17,6 +17,37 @@ namespace Icinga\Module\Icingadb
         return;
     }
 
+    if (! $this::exists('monitoring')) {
+        /**
+         * Search urls
+         */
+        $this->provideSearchUrl(
+            $this->translate('Tactical Overview'),
+            'icingadb/tactical',
+            100
+        );
+        $this->provideSearchUrl(
+            $this->translate('Hosts'),
+            'icingadb/hosts?sort=host.state.severity&limit=10',
+            99
+        );
+        $this->provideSearchUrl(
+            $this->translate('Services'),
+            'icingadb/services?sort=service.state.severity&limit=10',
+            98
+        );
+        $this->provideSearchUrl(
+            $this->translate('Hostgroups'),
+            'icingadb/hostgroups?limit=10',
+            97
+        );
+        $this->provideSearchUrl(
+            $this->translate('Servicegroups'),
+            'icingadb/servicegroups?limit=10',
+            96
+        );
+    }
+
     /** @var \Icinga\Application\Modules\Module $this */
     $section = $this->menuSection('Icinga DB', [
         'icon'     => 'database',
