@@ -124,14 +124,26 @@ class Controller extends CompatController
      * Create and return the FilterControl
      *
      * @param Query $query
+     * @param array $preserveParams
+     *
      * @return FilterControl
      */
-    public function createFilterControl(Query $query)
+    public function createFilterControl(Query $query, array $preserveParams = null)
     {
         $request = clone $this->getRequest();
-        $request->getUrl()->setParams($this->params);
+        $params = clone $this->params;
 
-        $filterControl = new FilterControl($query);
+        if (! empty($preserveParams)) {
+            foreach ($preserveParams as $param) {
+                if (! $params->has($param) && ($value = $request->getUrl()->getParam($param)) !== null) {
+                    $params->set($param, $value);
+                }
+            }
+        }
+
+        $request->getUrl()->setParams($params);
+
+        $filterControl = new FilterControl($query, $preserveParams);
         $filterControl->handleRequest($request);
 
         return $filterControl;
