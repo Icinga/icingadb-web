@@ -31,7 +31,10 @@ class ServicegroupsController extends Controller
                 'services_total desc'    => t('Total Services')
             ]
         );
-        $filterControl = $this->createFilterControl($servicegroups);
+        $filterControl = $this->createFilterControl($servicegroups, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam()
+        ]);
 
         $this->filter($servicegroups);
 
