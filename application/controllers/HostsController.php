@@ -51,7 +51,11 @@ class HostsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($hosts);
+        $filterControl = $this->createFilterControl($hosts, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
+        ]);
 
         $hosts->peekAhead($compact);
 
