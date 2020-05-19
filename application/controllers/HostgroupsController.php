@@ -32,7 +32,10 @@ class HostgroupsController extends Controller
                 'services_total desc' => t('Total Services')
             ]
         );
-        $filterControl = $this->createFilterControl($hostgroups);
+        $filterControl = $this->createFilterControl($hostgroups, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam()
+        ]);
 
         $this->filter($hostgroups);
 
