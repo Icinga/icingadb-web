@@ -141,7 +141,9 @@ class ObjectDetail extends BaseHtmlElement
                 Config::module('monitoring')->get('security', 'protected_customvars', '')
             );
 
-            $content[] = new CustomVarTable($vars);
+            $customvarTable = new CustomVarTable($vars);
+            $customvarTable->setAttribute('id', $this->objectType . '-customvars');
+            $content[] = $customvarTable;
         } else {
             $content[] = new EmptyState(t('No custom variables configured.'));
         }
