@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 
@@ -58,6 +59,12 @@ class ServiceSummaryDonut extends Card
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add(new HtmlElement('h2', null, t('Service Summary')));
+        $header->add([
+            new HtmlElement('h2', null, t('Service Summary')),
+            Html::tag('span', ['class' => 'meta'], [
+                Html::tag('span', t('Total')),
+                ' ' . $this->summary->services_total
+            ])
+        ]);
     }
 }
