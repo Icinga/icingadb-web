@@ -26,6 +26,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
 use Icinga\Web\Helper\Markdown;
 use Icinga\Web\Hook;
@@ -325,6 +326,38 @@ class ObjectDetail extends BaseHtmlElement
                 )
             )
         ];
+    }
+
+    protected function createExtensions()
+    {
+        $extensions = Hook::all('Monitoring\DetailviewExtension');
+
+        $html = [];
+        foreach ($extensions as $extension) {
+            /** @var DetailviewExtensionHook $extension */
+
+            try {
+                $renderedExtension = $extension
+                    ->setView(Icinga::app()->getViewRenderer()->view)
+                    ->getHtmlForObject($this->compatObject);
+
+                $extensionHtml = new HtmlElement(
+                    'div',
+                    [
+                        'class' => 'icinga-module module-' . $extension->getModule()->getName(),
+                        'data-icinga-module' => $extension->getModule()->getName()
+                    ],
+                    HtmlString::create($renderedExtension)
+                );
+            } catch (Exception $e) {
+                Logger::error("Failed to load extension: %s\n%s", $e, $e->getTraceAsString());
+                $extensionHtml = Text::create(IcingaException::describe($e));
+            }
+
+            $html[] = $extensionHtml;
+        }
+
+        return $html;
     }
 
     protected function createFeatureToggles()
