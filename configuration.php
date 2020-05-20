@@ -17,6 +17,130 @@ namespace Icinga\Module\Icingadb
         return;
     }
 
+    if (! $this::exists('monitoring')) {
+        /**
+         * Search urls
+         */
+        $this->provideSearchUrl(
+            $this->translate('Tactical Overview'),
+            'icingadb/tactical',
+            100
+        );
+        $this->provideSearchUrl(
+            $this->translate('Hosts'),
+            'icingadb/hosts?sort=host.state.severity&limit=10',
+            99
+        );
+        $this->provideSearchUrl(
+            $this->translate('Services'),
+            'icingadb/services?sort=service.state.severity&limit=10',
+            98
+        );
+        $this->provideSearchUrl(
+            $this->translate('Hostgroups'),
+            'icingadb/hostgroups?limit=10',
+            97
+        );
+        $this->provideSearchUrl(
+            $this->translate('Servicegroups'),
+            'icingadb/servicegroups?limit=10',
+            96
+        );
+
+        /**
+         * Current Incidents
+         */
+        $dashboard = $this->dashboard(N_('Current Incidents'), ['priority' => 50]);
+        $dashboard->add(
+            N_('Service Problems'),
+            'icingadb/services?service.state.is_problem=y'
+            . '&view=minimal&limit=32&sort=service.state.severity desc',
+            100
+        );
+        $dashboard->add(
+            N_('Recently Recovered Services'),
+            'icingadb/services?service.state.soft_state=0'
+            . '&view=minimal&limit=32&sort=service.state.last_state_change desc',
+            110
+        );
+        $dashboard->add(
+            N_('Host Problems'),
+            'icingadb/hosts?host.state.is_problem=y'
+            . '&view=minimal&limit=32&sort=host.state.severity desc',
+            120
+        );
+
+        /**
+         * Overdue
+         */
+        $dashboard = $this->dashboard(N_('Overdue'), ['priority' => 70]);
+        $dashboard->add(
+            N_('Late Host Check Results'),
+            'icingadb/hosts?host.state.is_overdue=y'
+            . '&view=minimal&limit=15&sort=host.state.severity desc',
+            100
+        );
+        $dashboard->add(
+            N_('Late Service Check Results'),
+            'icingadb/services?service.state.is_overdue=y'
+            . '&view=minimal&limit=15&sort=service.state.severity desc',
+            110
+        );
+        $dashboard->add(
+            N_('Acknowledgements Active For At Least Three Days'),
+            'icingadb/comments?comment.entry_type=ack&comment.entry_time<-3 days'
+            . '&view=minimal&limit=15&sort=comment.entry_time',
+            120
+        );
+        $dashboard->add(
+            N_('Downtimes Active For At Least Three Days'),
+            'icingadb/downtimes?downtime.is_in_effect=y&downtime.scheduled_start_time<-3 days'
+            . '&view=minimal&limit=15&sort=downtime.start_time',
+            130
+        );
+
+        /**
+         * Muted
+         */
+        $dashboard = $this->dashboard(N_('Muted'), ['priority' => 80]);
+        $dashboard->add(
+            N_('Disabled Service Notifications'),
+            'icingadb/services?service.notifications_enabled=n'
+            . '&view=minimal&limit=15&sort=service.state.severity desc',
+            100
+        );
+        $dashboard->add(
+            N_('Disabled Host Notifications'),
+            'icingadb/hosts?host.notifications_enabled=n'
+            . '&view=minimal&limit=15&sort=host.state.severity desc',
+            110
+        );
+        $dashboard->add(
+            N_('Disabled Service Checks'),
+            'icingadb/services?service.active_checks_enabled=n'
+            . '&view=minimal&limit=15&sort=service.state.last_state_change',
+            120
+        );
+        $dashboard->add(
+            N_('Disabled Host Checks'),
+            'icingadb/hosts?host.active_checks_enabled=n'
+            . '&view=minimal&limit=15&sort=host.state.last_state_change',
+            130
+        );
+        $dashboard->add(
+            N_('Acknowledged Problem Services'),
+            'icingadb/services?service.state.is_acknowledged!=n&service.state.is_problem=y'
+            . '&view=minimal&limit=15&sort=service.state.severity desc',
+            140
+        );
+        $dashboard->add(
+            N_('Acknowledged Problem Hosts'),
+            'icingadb/hosts?host.state.is_acknowledged!=n&host.state.is_problem=y'
+            . '&view=minimal&limit=15&sort=host.state.severity desc',
+            150
+        );
+    }
+
     /** @var \Icinga\Application\Modules\Module $this */
     $section = $this->menuSection('Icinga DB', [
         'icon'     => 'database',

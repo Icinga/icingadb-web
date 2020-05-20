@@ -18,13 +18,18 @@ class FilterControl extends HtmlDocument
     /** @var FilterEditor */
     protected $filterEditor;
 
+    /** @var array */
+    protected $preserveParams;
+
     /**
      * FilterControl constructor.
      * @param Query $query
+     * @param array $preserveParams
      */
-    public function __construct(Query $query)
+    public function __construct(Query $query, array $preserveParams = null)
     {
         $this->query = $query;
+        $this->preserveParams = $preserveParams;
     }
 
     /**
@@ -72,6 +77,10 @@ class FilterControl extends HtmlDocument
             $this->filterEditor = (new FilterEditor([]))
                 ->setSearchColumns($searchColumns)
                 ->setColumns($columns);
+
+            if (! empty($this->preserveParams)) {
+                $this->filterEditor->preserveParams(...$this->preserveParams);
+            }
         }
 
         return $this->filterEditor;

@@ -56,7 +56,11 @@ class ServicesController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($services);
+        $filterControl = $this->createFilterControl($services, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
+        ]);
 
         $services->peekAhead($compact);
 
