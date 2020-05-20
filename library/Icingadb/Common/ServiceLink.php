@@ -22,9 +22,9 @@ trait ServiceLink
 
         $content[] = $service->display_name;
 
-        return [
+        return [Html::sprintf(
+            t('%s on %s', '<service> on <host>'),
             Html::tag('a', ['href' => Links::service($service, $host)], $content),
-            ' on ',
             Html::tag(
                 'a',
                 ['href' => Links::host($host)],
@@ -34,6 +34,6 @@ trait ServiceLink
                     $host->display_name
                 ]
             )
-        ];
+        )];
     }
 }
