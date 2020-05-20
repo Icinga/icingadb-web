@@ -315,7 +315,11 @@ class ObjectDetail extends BaseHtmlElement
             Html::tag('h2', t('Plugin Output')),
             Html::tag(
                 'div',
-                ['class' => 'collapsible'],
+                [
+                    'id'    => 'check-output-' . $this->object->checkcommand,
+                    'class' => 'collapsible',
+                    'data-visible-height' => 100
+                ],
                 CompatPluginOutput::getInstance()->render(
                     $this->object->state->output . "\n" . $this->object->state->long_output
                 )
