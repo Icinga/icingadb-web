@@ -32,6 +32,7 @@ use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Orm\ResultSet;
 use ipl\Web\Widget\Icon;
@@ -141,7 +142,9 @@ class ObjectDetail extends BaseHtmlElement
                 Config::module('monitoring')->get('security', 'protected_customvars', '')
             );
 
-            $content[] = new CustomVarTable($vars);
+            $customvarTable = new CustomVarTable($vars);
+            $customvarTable->setAttribute('id', $this->objectType . '-customvars');
+            $content[] = $customvarTable;
         } else {
             $content[] = new EmptyState(t('No custom variables configured.'));
         }
@@ -296,7 +299,11 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($this->object->state->performance_data)) {
             $content[] = new EmptyState(t('No performance data available.'));
         } else {
-            $content[] = new HtmlString($helper->perfdata($this->object->state->performance_data));
+            $content[] = new HtmlElement(
+                'div',
+                ['id' => 'check-perfdata-' . $this->object->checkcommand],
+                new HtmlString($helper->perfdata($this->object->state->performance_data))
+            );
         }
 
         return $content;
@@ -308,7 +315,11 @@ class ObjectDetail extends BaseHtmlElement
             Html::tag('h2', t('Plugin Output')),
             Html::tag(
                 'div',
-                ['class' => 'collapsible'],
+                [
+                    'id'    => 'check-output-' . $this->object->checkcommand,
+                    'class' => 'collapsible',
+                    'data-visible-height' => 100
+                ],
                 CompatPluginOutput::getInstance()->render(
                     $this->object->state->output . "\n" . $this->object->state->long_output
                 )

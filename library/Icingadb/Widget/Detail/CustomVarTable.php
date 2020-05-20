@@ -15,7 +15,10 @@ class CustomVarTable extends BaseHtmlElement
 
     protected $tag = 'table';
 
-    protected $defaultAttributes = ['class' => 'custom-var-table name-value-table'];
+    protected $defaultAttributes = [
+        'data-visible-height'   => 200,
+        'class'                 => 'custom-var-table name-value-table collapsible'
+    ];
 
     public function __construct($data)
     {
