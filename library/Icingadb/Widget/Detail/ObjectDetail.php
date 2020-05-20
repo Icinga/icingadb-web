@@ -32,6 +32,7 @@ use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Orm\ResultSet;
 use ipl\Web\Widget\Icon;
@@ -298,7 +299,11 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($this->object->state->performance_data)) {
             $content[] = new EmptyState(t('No performance data available.'));
         } else {
-            $content[] = new HtmlString($helper->perfdata($this->object->state->performance_data));
+            $content[] = new HtmlElement(
+                'div',
+                ['id' => 'check-perfdata-' . $this->object->checkcommand],
+                new HtmlString($helper->perfdata($this->object->state->performance_data))
+            );
         }
 
         return $content;
