@@ -312,6 +312,14 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createPluginOutput()
     {
+        if (empty($this->object->state->output) && empty($this->object->state->long_output)) {
+            $pluginOutput = new EmptyState(t('Output unavailable.'));
+        } else {
+            $pluginOutput = CompatPluginOutput::getInstance()->render(
+                $this->object->state->output . "\n" . $this->object->state->long_output
+            );
+        }
+
         return [
             Html::tag('h2', t('Plugin Output')),
             Html::tag(
@@ -321,9 +329,7 @@ class ObjectDetail extends BaseHtmlElement
                     'class' => 'collapsible',
                     'data-visible-height' => 100
                 ],
-                CompatPluginOutput::getInstance()->render(
-                    $this->object->state->output . "\n" . $this->object->state->long_output
-                )
+                $pluginOutput
             )
         ];
     }
