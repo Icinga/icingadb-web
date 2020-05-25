@@ -35,7 +35,13 @@ abstract class StateListItem extends BaseListItem
         if ($this->state->soft_state === null && $this->state->output === null) {
             $caption->add(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
         } else {
-            $caption->add(CompatPluginOutput::getInstance()->render($this->state->output));
+            if ($this->state->output === null) {
+                $pluginOutput = new EmptyState(t('Output unavailable.'));
+            } else {
+                $pluginOutput = CompatPluginOutput::getInstance()->render($this->state->output);
+            }
+
+            $caption->add($pluginOutput);
         }
     }
 
