@@ -135,7 +135,7 @@
   padding-right: 1em;
 }
 
-.common .list-item {
+:not(.downtime-list).common .list-item {
   .caption {
     .line-clamp();
   }
@@ -182,6 +182,12 @@
   .caption {
     display: block;
     height: auto;
+  }
+}
+
+.downtime-list .list-item {
+  .caption > * {
+    display: inline;
   }
 }
 
