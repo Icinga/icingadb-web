@@ -38,14 +38,6 @@ class FilterControl extends HtmlDocument
     public function handleRequest(Request $request)
     {
         $this->getFilterEditor()->handleRequest($request);
-
-        // The editor clones the url prior shifting these so we have to do it again here
-        $params = $request->getUrl()->getParams();
-        $params->shift('addFilter');
-        $params->shift('removeFilter');
-        $params->shift('stripFilter');
-        $params->shift('modifyFilter');
-        $params->shift('q');
     }
 
     /**

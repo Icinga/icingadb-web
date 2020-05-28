@@ -146,6 +146,13 @@ class Controller extends CompatController
         $filterControl = new FilterControl($query, $preserveParams);
         $filterControl->handleRequest($request);
 
+        // We're cloning the params, the editor does it, so we have to shift these ourselves
+        $this->params->shift('addFilter');
+        $this->params->shift('removeFilter');
+        $this->params->shift('stripFilter');
+        $this->params->shift('modifyFilter');
+        $this->params->shift('q');
+
         return $filterControl;
     }
 
