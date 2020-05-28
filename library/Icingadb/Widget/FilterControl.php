@@ -92,6 +92,7 @@ class FilterControl extends HtmlDocument
             });
             if (count($titlePath) > 1 && $titlePath[1] === 'host' && $titlePath[0] === 'service') {
                 array_shift($titlePath);
+                array_shift($path);
             }
         }
 
