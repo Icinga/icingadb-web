@@ -51,11 +51,11 @@ abstract class BaseCommentListItem extends BaseListItem
                 array_unshift($label, new Icon(Icons::IS_PERSISTENT));
             }
 
-            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], $label));
+            $header->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], $label)]);
         }
 
         if ($expires != 0) {
-            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES')));
+            $header->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES'))]);
         }
 
         $header->add(Html::tag('br'));
