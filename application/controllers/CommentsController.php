@@ -69,7 +69,7 @@ class CommentsController extends Controller
 
         if ($compact) {
             $this->addContent(
-                (new ShowMore($results, Url::fromRequest()->without(['view', 'limit'])))
+                (new ShowMore($results, Url::fromRequest()->without(['showCompact', 'limit'])))
                     ->setAttribute('data-base-target', '_next')
                     ->setAttribute('title', sprintf(
                         t('Show all %d comments'),
