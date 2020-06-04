@@ -167,7 +167,7 @@
             _this.previousMigrations[$suggestion.data('containerId')] = containerUrl;
 
             if ($container.parent().is('.dashboard')) {
-                $container.find('h1 a').attr('href', _this.icinga.utils.removeUrlParams(newHref, ['view']));
+                $container.find('h1 a').attr('href', _this.icinga.utils.removeUrlParams(newHref, ['showCompact']));
             }
         } else {
             // No
