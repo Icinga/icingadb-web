@@ -43,9 +43,6 @@ class Controller extends CompatController
     public function getFilter()
     {
         if ($this->filter === null) {
-            // TODO: Do this elsewhere or solve this differently. This is only a quick-fix, it shouldn't be necessary
-            $this->params->remove('view');
-
             $this->filter = Filter::fromQueryString((string) $this->params);
         }
 
