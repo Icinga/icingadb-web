@@ -52,8 +52,8 @@
 
         var url = $anchor.attr('href');
         var req = _this.icinga.loader.loadUrl(
-            // Add view=compact, we don't want controls in paged results
-            _this.icinga.utils.addUrlParams(url, { view: 'compact' }),
+            // Add showCompact, we don't want controls in paged results
+            _this.icinga.utils.addUrlFlag(url, 'showCompact'),
             $showMore.parent(),
             undefined,
             undefined,
