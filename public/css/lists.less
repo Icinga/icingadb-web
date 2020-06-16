@@ -119,6 +119,10 @@
         text-decoration: none;
       }
     }
+
+    p {
+      margin: 0;
+    }
   }
 }
 
@@ -148,6 +152,14 @@
 
   .title {
     white-space: nowrap;
+
+    p {
+      display: inline;
+
+      & + p {
+        margin-left: .417em;
+      }
+    }
   }
 
   .caption {
