@@ -28,7 +28,7 @@ abstract class BaseCommentListItem extends BaseListItem
         $caption->add(new HtmlString(Markdown::line($this->item->text)));
     }
 
-    protected function assembleTitle(BaseHtmlElement $header)
+    protected function assembleTitle(BaseHtmlElement $title)
     {
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
@@ -60,7 +60,7 @@ abstract class BaseCommentListItem extends BaseListItem
             $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES'))]);
         }
 
-        $header->add($headerLineOne);
+        $title->add($headerLineOne);
 
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
@@ -68,7 +68,7 @@ abstract class BaseCommentListItem extends BaseListItem
             $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $header->add(Html::tag('p', $link));
+        $title->add(Html::tag('p', $link));
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
