@@ -28,12 +28,14 @@ abstract class BaseCommentListItem extends BaseListItem
         $caption->add(new HtmlString(Markdown::line($this->item->text)));
     }
 
-    protected function assembleTitle(BaseHtmlElement $header)
+    protected function assembleTitle(BaseHtmlElement $title)
     {
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
 
-        $header->add([
+        $headerLineOne = Html::tag('p');
+
+        $headerLineOne->add([
             new Icon(Icons::USER),
             new Link(
                 sprintf(
@@ -51,14 +53,14 @@ abstract class BaseCommentListItem extends BaseListItem
                 array_unshift($label, new Icon(Icons::IS_PERSISTENT));
             }
 
-            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], $label));
+            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], $label)]);
         }
 
         if ($expires != 0) {
-            $header->add(HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES')));
+            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES'))]);
         }
 
-        $header->add(Html::tag('br'));
+        $title->add($headerLineOne);
 
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
@@ -66,7 +68,7 @@ abstract class BaseCommentListItem extends BaseListItem
             $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $header->add($link);
+        $title->add(Html::tag('p', $link));
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
