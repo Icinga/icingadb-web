@@ -56,7 +56,7 @@ class HostSummaryDonut extends Card
     protected function assembleHeader(BaseHtmlElement $header)
     {
         $header->add([
-            new HtmlElement('h2', null, t('Host Summary')),
+            new HtmlElement('h2', null, t('Hosts')),
             Html::tag('span', ['class' => 'meta'], [
                 Html::tag('span', t('Total')),
                 ' ' . $this->summary->hosts_total
