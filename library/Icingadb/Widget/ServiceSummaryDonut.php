@@ -60,7 +60,7 @@ class ServiceSummaryDonut extends Card
     protected function assembleHeader(BaseHtmlElement $header)
     {
         $header->add([
-            new HtmlElement('h2', null, t('Service Summary')),
+            new HtmlElement('h2', null, t('Services')),
             Html::tag('span', ['class' => 'meta'], [
                 Html::tag('span', t('Total')),
                 ' ' . $this->summary->services_total
