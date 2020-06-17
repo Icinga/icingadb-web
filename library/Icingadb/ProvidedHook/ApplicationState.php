@@ -19,7 +19,7 @@ class ApplicationState extends ApplicationStateHook
 
     public function collectMessages()
     {
-        if (! Icinga::app()->getModuleManager()->hasEnabled('ipl')) {
+        if (! Icinga::app()->getModuleManager()->hasLoaded('ipl')) {
             // TODO: Replace this once we have proper dependency management
             $noIplSince = Session::getSession()->getNamespace('icingadb')->get('icingadb.no-ipl-since');
             if ($noIplSince === null) {

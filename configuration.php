@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb
 {
+    use Icinga\Application\Icinga;
     use Icinga\Application\Logger;
     use Icinga\Authentication\Auth;
 
@@ -11,7 +12,7 @@ namespace Icinga\Module\Icingadb
 
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
 
-    if (! $this::exists('ipl')) {
+    if (! Icinga::app()->getModuleManager()->hasLoaded('ipl')) {
         // TODO: Replace this once we have proper dependency management
         Logger::warning(t('Module "ipl" is not enabled. This module is mandatory for Icinga DB Web'));
         return;
