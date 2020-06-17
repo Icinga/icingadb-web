@@ -45,9 +45,7 @@ class ServiceSummaryDonut extends Card
                 'sort' => 'service.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->services_critical_unhandled > 0)
-            ->setLabelSmall(
-                tp('Service Critical', 'Services Critical', $this->summary->services_critical_unhandled)
-            );
+            ->setLabelSmall(t('Critical'));
 
         $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
     }
