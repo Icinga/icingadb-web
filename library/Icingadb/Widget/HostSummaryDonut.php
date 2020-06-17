@@ -43,7 +43,7 @@ class HostSummaryDonut extends Card
                 'sort' => 'host.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)
-            ->setLabelSmall(tp('Host Down', 'Hosts Down', $this->summary->hosts_down_unhandled));
+            ->setLabelSmall(t('Down'));
 
         $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
     }
