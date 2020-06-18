@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 
@@ -42,7 +43,7 @@ class HostSummaryDonut extends Card
                 'sort' => 'host.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)
-            ->setLabelSmall(tp('Host Down', 'Hosts Down', $this->summary->hosts_down_unhandled));
+            ->setLabelSmall(t('Down'));
 
         $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
     }
@@ -54,6 +55,12 @@ class HostSummaryDonut extends Card
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add(new HtmlElement('h2', null, t('Host Summary')));
+        $header->add([
+            new HtmlElement('h2', null, t('Hosts')),
+            Html::tag('span', ['class' => 'meta'], [
+                Html::tag('span', t('Total')),
+                ' ' . $this->summary->hosts_total
+            ])
+        ]);
     }
 }
