@@ -136,6 +136,7 @@ class DbResourcePage extends Form
             'checkbox',
             'skip_validation',
             [
+                'ignore'        => true,
                 'label'         => t('Skip Validation'),
                 'description'   => t('Check this to not to validate the configuration')
             ]
