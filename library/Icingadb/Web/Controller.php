@@ -146,7 +146,7 @@ class Controller extends CompatController
 
         $editor->on(FilterEditor::ON_SUCCESS, function (FilterEditor $form) use ($requestUrl) {
             $this->getResponse()->redirectAndExit(
-                $requestUrl->setParams([])->addFilter($form->assembleFilter())
+                $requestUrl->setQueryString($form->assembleFilter()->toQueryString())
             );
         })->handleRequest(ServerRequest::fromGlobals());
 
