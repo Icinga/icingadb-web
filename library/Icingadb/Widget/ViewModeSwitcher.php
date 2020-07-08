@@ -15,9 +15,9 @@ class ViewModeSwitcher extends BaseHtmlElement
 
     /** @var array View mode-icon pairs */
     public static $viewModes = [
-        'minimal'  => 'minimal',
-        'common'   => 'default',
-        'detailed' => 'detailed'
+        'minimal'  => 'list-view-minimal',
+        'common'   => 'list-view-default',
+        'detailed' => 'list-view-detailed'
     ];
 
     /** @var Url */
