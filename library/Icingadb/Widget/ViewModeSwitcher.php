@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Url;
+use ipl\Web\Widget\IcingaIcon;
 use ipl\Web\Widget\Link;
 
 class ViewModeSwitcher extends BaseHtmlElement

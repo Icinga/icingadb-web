@@ -221,7 +221,6 @@ namespace Icinga\Module\Icingadb
     $this->provideCssFile('lists.less');
     $this->provideCssFile('mixins.less');
     $this->provideCssFile('widgets.less');
-    $this->provideCssFile('icinga-icons.less');
 
     $this->provideJsFile('action-list.js');
     $this->provideJsFile('migrate.js');
