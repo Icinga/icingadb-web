@@ -14,6 +14,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Web\Widget\Icon;
 
 class QuickActions extends BaseHtmlElement
 {
@@ -47,7 +48,7 @@ class QuickActions extends BaseHtmlElement
                 $this->assembleAction(
                     'acknowledge',
                     t('Acknowledge'),
-                    'icon-edit',
+                    'edit',
                     t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
                 );
             }
@@ -70,7 +71,7 @@ class QuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'addComment',
                 t('Comment', 'verb'),
-                'icon-comment-empty',
+                'comment',
                 t('Add a new comment')
             );
         }
@@ -79,7 +80,7 @@ class QuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
-                'icon-bell',
+                'bell',
                 t('Send a custom notification')
             );
         }
@@ -88,7 +89,7 @@ class QuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
-                'icon-plug',
+                'plug',
                 t('Schedule a downtime to suppress all problem notifications within a specific period of time')
             );
         }
@@ -103,7 +104,7 @@ class QuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'scheduleCheck',
                 t('Reschedule'),
-                'icon-calendar-empty',
+                'calendar',
                 t('Schedule the next active check at a different time than the current one')
             );
         }
@@ -112,7 +113,7 @@ class QuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),
-                'icon-edit',
+                'edit',
                 sprintf(
                     t('Submit a one time or so called passive result for the %s check'),
                     $this->object->checkcommand
@@ -133,7 +134,7 @@ class QuickActions extends BaseHtmlElement
                 'data-no-icinga-ajax' => true
             ],
             [
-                Html::tag('i', ['class' => $icon]),
+                new Icon($icon),
                 $label
             ]
         );
