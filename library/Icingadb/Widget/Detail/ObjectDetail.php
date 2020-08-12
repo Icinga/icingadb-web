@@ -35,6 +35,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\Text;
 use ipl\Orm\ResultSet;
 use ipl\Web\Widget\Icon;
 use Zend_View_Helper_Perfdata;
@@ -221,9 +222,15 @@ class ObjectDetail extends BaseHtmlElement
 
         foreach ($this->compatObject->getNotesUrls() as $i => $url) {
             $navigation->addItem(
-                sprintf(t('Note %d'), $i + 1),
+                (string) new Icon('forward', [
+                    'title' => t('Link opens in new window')
+                ]) . (string) new Text(" " . $url),
+
                 [
-                    'renderer' => 'NavigationItemRenderer',
+                    'renderer' => array(
+                        'NavigationItemRenderer',
+                        'escape_label' => false
+                    ),
                     'target'   => '_blank',
                     'url'      => $url
                 ]
@@ -248,7 +255,6 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($content)) {
             return null;
         }
-
         array_unshift($content, Html::tag('h2', t('Notes')));
 
         return $content;
