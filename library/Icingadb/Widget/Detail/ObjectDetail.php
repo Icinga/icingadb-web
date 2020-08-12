@@ -225,7 +225,6 @@ class ObjectDetail extends BaseHtmlElement
                 (string) new Icon('forward', [
                     'title' => t('Link opens in new window')
                 ]) . (string) new Text(" " . $url),
-
                 [
                     'renderer' => array(
                         'NavigationItemRenderer',
