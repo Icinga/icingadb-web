@@ -25,7 +25,7 @@ class HorizontalKeyValue extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->add([
+        $this->key === null ? $this->add([Html::tag('div', ['class' => 'value'], $this->value)]) : $this->add([
             Html::tag('div', ['class' => 'key'], $this->key),
             Html::tag('div', ['class' => 'value'], $this->value)
         ]);

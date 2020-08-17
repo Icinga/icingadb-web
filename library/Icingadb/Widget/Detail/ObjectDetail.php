@@ -177,8 +177,6 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createGroups()
     {
-        $groups = [Html::tag('h2', t('Groups'))];
-
         if ($this->objectType === 'host') {
             $hostgroupList = new TagList();
 
@@ -187,7 +185,7 @@ class ObjectDetail extends BaseHtmlElement
             }
 
             $groups[] = new HorizontalKeyValue(
-                t('Host Groups'),
+                'Groups',
                 $hostgroupList->hasContent()
                     ? $hostgroupList
                     : new EmptyState(t('Not a member of any host group.'))
@@ -199,8 +197,10 @@ class ObjectDetail extends BaseHtmlElement
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
+            $groups = [Html::tag('h2', t('Relations'))];
+
             $groups[] = new HorizontalKeyValue(
-                t('Service Groups'),
+                'Groups',
                 $servicegroupList->hasContent()
                     ? $servicegroupList
                     : new EmptyState(t('Not a member of any service group.'))

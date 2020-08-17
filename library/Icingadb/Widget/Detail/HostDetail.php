@@ -29,8 +29,8 @@ class HostDetail extends ObjectDetail
             $services = new EmptyState(t('This host has no services'));
         }
 
-        $stats = [Html::tag('h2', t('Services'))];
-        $stats[] = new HorizontalKeyValue(t('Services'), $services);
+        $stats = [Html::tag('h2', t('Relations'))];
+        $stats[] = new HorizontalKeyValue('Services', $services);
         return $stats;
     }
 
