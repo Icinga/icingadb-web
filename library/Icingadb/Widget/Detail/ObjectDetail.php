@@ -75,10 +75,10 @@ class ObjectDetail extends BaseHtmlElement
                     'title' => t('Link opens in new window')
                 ]) . (string) new Text(" " . $url),
                 [
-                    'renderer' => array(
+                    'renderer' => [
                         'NavigationItemRenderer',
                         'escape_label' => false
-                    ),
+                    ],
                     'target'   => '_blank',
                     'url'      => $url
                 ]
@@ -228,10 +228,10 @@ class ObjectDetail extends BaseHtmlElement
                     'title' => t('Link opens in new window')
                 ]) . (string) new Text(" " . $url),
                 [
-                    'renderer' => array(
+                    'renderer' => [
                         'NavigationItemRenderer',
                         'escape_label' => false
-                    ),
+                    ],
                     'target'   => '_blank',
                     'url'      => $url
                 ]
@@ -256,6 +256,7 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($content)) {
             return null;
         }
+        
         array_unshift($content, Html::tag('h2', t('Notes')));
 
         return $content;
