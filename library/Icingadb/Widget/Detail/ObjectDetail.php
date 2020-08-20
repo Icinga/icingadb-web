@@ -71,12 +71,14 @@ class ObjectDetail extends BaseHtmlElement
 
         foreach ($this->compatObject->getActionUrls() as $i => $url) {
             $navigation->addItem(
-                sprintf(t('Action %d'), $i + 1),
+                (string) new Icon('forward', [
+                    'title' => t('Link opens in new window')
+                ]) . (string) new Text(" " . $url),
                 [
-                    'renderer' => [
+                    'renderer' => array(
                         'NavigationItemRenderer',
                         'escape_label' => false
-                    ],
+                    ),
                     'target'   => '_blank',
                     'url'      => $url
                 ]
