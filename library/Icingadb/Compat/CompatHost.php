@@ -12,6 +12,7 @@ class CompatHost extends Host
 
     private $legacyColumns = [
         'host_action_url'                       => ['path' => ['action_url', 'action_url']],
+        'action_url'                            => ['path' => ['action_url', 'action_url']],
         'host_address'                          => ['path' => ['address']],
         'host_address6'                         => ['path' => ['address6']],
         'host_alias'                            => ['path' => ['display_name']],
