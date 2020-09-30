@@ -135,7 +135,6 @@ class Controller extends CompatController
 
         $searchBar = new SearchBar();
         $searchBar->setAction($requestUrl->setParams([])->getAbsoluteUrl());
-        $searchBar->setSearchColumns($query->getModel()->getSearchColumns());
         $searchBar->setSubmitLabel(t('Search'));
         $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
         $searchBar->setFilter($this->getFilter());
