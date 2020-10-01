@@ -213,6 +213,34 @@ class Controller extends CompatController
         return $viewModeSwitcher;
     }
 
+    /**
+     * Process a search request
+     *
+     * @param Query $query
+     */
+    public function handleSearchRequest(Query $query)
+    {
+        $q = trim($this->params->shift('q', ''), ' *');
+        if (! $q) {
+            return;
+        }
+
+        $filter = Filter::matchAny();
+        foreach ($query->getModel()->getSearchColumns() as $column) {
+            $filter->addFilter(Filter::where($column, "*$q*"));
+        }
+
+        $requestUrl = Url::fromRequest();
+
+        $existingParams = $requestUrl->getParams()->without('q');
+        $requestUrl->setQueryString($filter->toQueryString());
+        foreach ($existingParams->toArray(false) as $name => $value) {
+            $requestUrl->getParams()->addEncoded($name, $value);
+        }
+
+        $this->getResponse()->redirectAndExit($requestUrl);
+    }
+
     public function export(Query ...$queries)
     {
         if ($this->format === 'sql') {
