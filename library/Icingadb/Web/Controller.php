@@ -21,9 +21,9 @@ use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Web\Compat\CompatController;
-use ipl\Web\Control\SearchBar;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
+use ipl\Web\Control\SearchBar;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
@@ -120,6 +120,48 @@ class Controller extends CompatController
     }
 
     /**
+     * Create and return the SearchBar
+     *
+     * @param array $preserveParams Query params to preserve when redirecting
+     *
+     * @return SearchBar
+     */
+    public function createSearchBar(array $preserveParams = null)
+    {
+        $requestUrl = Url::fromRequest();
+        if ($preserveParams !== null) {
+            $requestUrl = $requestUrl->onlyWith($preserveParams);
+        }
+
+        $searchBar = new SearchBar();
+        $searchBar->setSubmitLabel(t('Search'));
+        $searchBar->setFilter($this->getFilter());
+        $searchBar->setAction($requestUrl->getAbsoluteUrl());
+        $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
+
+        if (method_exists($this, 'completeAction')) {
+            $searchBar->setSuggestionUrl(Url::fromPath(
+                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+                ['_disableLayout' => true]
+            ));
+        }
+
+        $searchBar->on(SearchBar::ON_SUCCESS, function (SearchBar $form) use ($requestUrl) {
+            $existingParams = $requestUrl->getParams();
+            $requestUrl->setQueryString($form->getFilter()->toQueryString());
+            foreach ($existingParams->toArray(false) as $name => $value) {
+                $requestUrl->getParams()->addEncoded($name, $value);
+            }
+
+            $this->getResponse()->redirectAndExit($requestUrl);
+        })->handleRequest(ServerRequest::fromGlobals());
+
+        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
+
+        return $searchBar;
+    }
+
+    /**
      * Create and return the FilterControl
      *
      * @param Query $query
@@ -129,32 +171,6 @@ class Controller extends CompatController
      */
     public function createFilterControl(Query $query, array $preserveParams = null)
     {
-        $requestUrl = Url::fromRequest();
-
-        $this->params->shift('q');
-
-        $searchBar = new SearchBar();
-        $searchBar->setAction($requestUrl->setParams([])->getAbsoluteUrl());
-        $searchBar->setSubmitLabel(t('Search'));
-        $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
-        $searchBar->setFilter($this->getFilter());
-        $searchBar->setSuggestionUrl(Url::fromPath(
-            'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
-            ['_disableLayout' => true]
-        ));
-
-        $searchBar->on(SearchBar::ON_SUCCESS, function (SearchBar $form) use ($requestUrl) {
-            $this->getResponse()->redirectAndExit(
-                $requestUrl->setQueryString($form->getFilter()->toQueryString())
-            );
-        })->handleRequest(ServerRequest::fromGlobals());
-
-        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
-
-        return $searchBar;
-
-
-
         $request = clone $this->getRequest();
         $params = clone $this->params;
 
