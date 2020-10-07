@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use ipl\Html\HtmlElement;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Model;
 use ipl\Orm\Relation\BelongsToMany;
@@ -130,6 +131,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
+        $titleAdded = false;
         foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
             $search = $name = $customVar->flatname;
             if (preg_match('/\w+\[(\d+)]$/', $search, $matches)) {
@@ -144,6 +146,15 @@ class ObjectSuggestions extends Suggestions
 
             foreach ($this->customVarSources as $relation => $label) {
                 if (isset($customVar->$relation)) {
+                    if (! $titleAdded) {
+                        $titleAdded = true;
+                        $this->add(new HtmlElement(
+                            'li',
+                            ['class' => static::SUGGESTION_TITLE_CLASS],
+                            t('Custom Variables')
+                        ));
+                    }
+
                     yield $relation . '.vars.' . $search => sprintf($label, $name);
                 }
             }
