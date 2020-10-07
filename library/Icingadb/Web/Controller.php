@@ -142,7 +142,7 @@ class Controller extends CompatController
         if (method_exists($this, 'completeAction')) {
             $searchBar->setSuggestionUrl(Url::fromPath(
                 'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
-                ['_disableLayout' => true]
+                ['_disableLayout' => true, 'showCompact' => true]
             ));
         }
 
