@@ -6,9 +6,14 @@ namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Orm\Model;
+use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Resolver;
 use ipl\Sql\Cursor;
+use ipl\Sql\Expression;
+use ipl\Sql\Select;
 use ipl\Web\Control\SearchBar\Suggestions;
 use PDO;
 
@@ -16,18 +21,42 @@ class ObjectSuggestions extends Suggestions
 {
     use Database;
 
-    /** @var string */
+    /** @var Model */
     protected $model;
+
+    /** @var array */
+    protected $customVarSources;
+
+    public function __construct()
+    {
+        $this->customVarSources = [
+            'checkcommand'          => t('Checkcommand %s', '..<customvar-name>'),
+            'eventcommand'          => t('Eventcommand %s', '..<customvar-name>'),
+            'host'                  => t('Host %s', '..<customvar-name>'),
+            'hostgroup'             => t('Hostgroup %s', '..<customvar-name>'),
+            'notification'          => t('Notification %s', '..<customvar-name>'),
+            'notificationcommand'   => t('Notificationcommand %s', '..<customvar-name>'),
+            'service'               => t('Service %s', '..<customvar-name>'),
+            'servicegroup'          => t('Servicegroup %s', '..<customvar-name>'),
+            'timeperiod'            => t('Timeperiod %s', '..<customvar-name>'),
+            'user'                  => t('User %s', '..<customvar-name>'),
+            'usergroup'             => t('Usergroup %s', '..<customvar-name>')
+        ];
+    }
 
     /**
      * Set the model to show suggestions for
      *
-     * @param string $model
+     * @param string|Model $model
      *
      * @return $this
      */
     public function setModel($model)
     {
+        if (is_string($model)) {
+            $model = new $model();
+        }
+
         $this->model = $model;
 
         return $this;
@@ -36,7 +65,7 @@ class ObjectSuggestions extends Suggestions
     /**
      * Get the model to show suggestions for
      *
-     * @return string
+     * @return Model
      */
     public function getModel()
     {
@@ -46,34 +75,79 @@ class ObjectSuggestions extends Suggestions
     protected function createQuickSearchFilter($searchTerm)
     {
         $model = $this->getModel();
-        $table = new $model();
 
         $quickFilter = Filter::matchAny();
-        foreach ($table->getSearchColumns() as $column) {
-            $where = Filter::where($table->getTableName() . '.' . $column, $searchTerm);
-            $where->metaData['label'] = $table->getMetaData()[$column];
+        foreach ($model->getSearchColumns() as $column) {
+            $where = Filter::where($model->getTableName() . '.' . $column, $searchTerm);
+            $where->metaData['label'] = $model->getMetaData()[$column];
             $quickFilter->addFilter($where);
         }
 
         return $quickFilter;
     }
 
+    /**
+     * @todo Don't suggest obfuscated (protected) custom variables
+     */
     protected function fetchValueSuggestions($column, $searchTerm)
     {
         $model = $this->getModel();
-        $data = $model::on($this->getDb())->columns($column);
-        FilterProcessor::apply(Filter::where($column, $searchTerm), $data);
-        $data = new Cursor($data->getDb(), $data->assembleSelect()->distinct());
-        $data->setFetchMode(PDO::FETCH_COLUMN);
+        $query = $model::on($this->getDb());
 
-        return $data;
+        $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
+        list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
+
+        if (strpos($targetPath, '.') !== false) {
+            $target = $query->getResolver()->resolveRelation($targetPath)->getTarget();
+            if ($target instanceof CustomvarFlat) {
+                $query = $target::on($this->getDb())->columns('flatvalue');
+                FilterProcessor::apply(Filter::where('flatname', $columnName), $query);
+                $columnName = 'flatvalue';
+            } else {
+                $query = $target::on($this->getDb())->columns($columnName);
+            }
+        } else {
+            $query->columns($columnName);
+        }
+
+        if (trim($searchTerm, ' *')) {
+            FilterProcessor::apply(Filter::where($columnName, $searchTerm), $query);
+        }
+
+        return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
+            ->setFetchMode(PDO::FETCH_COLUMN);
     }
 
-    protected function fetchColumnSuggestions()
+    /**
+     * @todo Don't suggest blacklisted custom variables
+     */
+    protected function fetchColumnSuggestions($searchTerm)
     {
-        $model = $this->getModel();
+        // Ordinary columns first
+        $metaData = (new Resolver())->getMetaData($this->getModel());
+        foreach ($metaData as $columnName => $columnMeta) {
+            yield $columnName => $columnMeta;
+        }
 
-        return (new Resolver())->getMetaData(new $model());
+        // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
+        foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
+            $search = $name = $customVar->flatname;
+            if (preg_match('/\w+\[(\d+)]$/', $search, $matches)) {
+                // array vars need to be specifically handled
+                if ($matches[1] !== '0') {
+                    continue;
+                }
+
+                $name = substr($search, 0, -3);
+                $search = $name . '[*]';
+            }
+
+            foreach ($this->customVarSources as $relation => $label) {
+                if (isset($customVar->$relation)) {
+                    yield $relation . '.vars.' . $search => sprintf($label, $name);
+                }
+            }
+        }
     }
 
     protected function matchSuggestion($path, $label, $searchTerm)
@@ -85,5 +159,47 @@ class ObjectSuggestions extends Suggestions
         }
 
         return parent::matchSuggestion($path, $label, $searchTerm);
+    }
+
+    /**
+     * Create a query to fetch all available custom variables matching the given term
+     *
+     * @param string $searchTerm
+     *
+     * @return Select
+     */
+    protected function queryCustomvarConfig($searchTerm)
+    {
+        $customVars = CustomvarFlat::on($this->getDb());
+
+        $columns = ['flatname'];
+        foreach ($customVars->getResolver()->getRelations($customVars->getModel()) as $name => $relation) {
+            if (isset($this->customVarSources[$name]) && $relation instanceof BelongsToMany) {
+                $junction = $relation->getThrough();
+
+                $foreignKey = $customVars->getResolver()->qualifyColumn(
+                    $relation->getForeignKey(),
+                    $junction->getTableName()
+                );
+                $candidateKey = $customVars->getResolver()->qualifyColumn(
+                    $relation->getCandidateKey(),
+                    $customVars->getModel()->getTableName()
+                );
+
+                $columns[$name] = $junction::on($customVars->getDb())->assembleSelect()
+                    ->resetColumns()->columns(new Expression('1'))
+                    ->where("$foreignKey = $candidateKey")
+                    ->limit(1);
+            }
+        }
+
+        FilterProcessor::apply(Filter::where('flatname', $searchTerm), $customVars);
+        $customVars = $customVars->assembleSelect();
+
+        $customVars->resetColumns()->columns($columns);
+        $customVars->groupBy('flatname');
+        $customVars->limit(static::DEFAULT_LIMIT);
+
+        return $customVars;
     }
 }
