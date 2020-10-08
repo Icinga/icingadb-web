@@ -150,6 +150,11 @@ class Controller extends CompatController
             $existingParams = $requestUrl->getParams();
             $requestUrl->setQueryString($form->getFilter()->toQueryString());
             foreach ($existingParams->toArray(false) as $name => $value) {
+                if (is_int($name)) {
+                    $name = $value;
+                    $value = true;
+                }
+
                 $requestUrl->getParams()->addEncoded($name, $value);
             }
 
