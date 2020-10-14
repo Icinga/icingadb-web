@@ -317,12 +317,12 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query)
+    public function filter(Query $query, Filter $filter = null)
     {
         $this->applyMonitoringRestriction($query);
 
         FilterProcessor::apply(
-            $this->getFilter(),
+            $filter ?: $this->getFilter(),
             $query
         );
 
