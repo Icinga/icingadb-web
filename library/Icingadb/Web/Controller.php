@@ -147,7 +147,7 @@ class Controller extends CompatController
             ));
         }
 
-        $searchBar->on(SearchBar::ON_SUCCESS, function (SearchBar $form) use ($requestUrl) {
+        $searchBar->on(SearchBar::ON_SENT, function (SearchBar $form) use ($requestUrl) {
             $existingParams = $requestUrl->getParams();
             $requestUrl->setQueryString($form->getFilter()->toQueryString());
             foreach ($existingParams->toArray(false) as $name => $value) {
@@ -159,7 +159,9 @@ class Controller extends CompatController
                 $requestUrl->getParams()->addEncoded($name, $value);
             }
 
-            $this->getResponse()->redirectAndExit($requestUrl);
+            $form->setRedirectUrl($requestUrl);
+        })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
+            $this->getResponse()->redirectAndExit($form->getRedirectUrl());
         })->handleRequest(ServerRequest::fromGlobals());
 
         Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
