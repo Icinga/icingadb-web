@@ -17,6 +17,7 @@ use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use ipl\Stdlib\Filter as StdlibFilter;
 use ipl\Web\Control\SearchBar\Suggestions;
+use ipl\Web\Filter\QueryString;
 use PDO;
 
 class ObjectSuggestions extends Suggestions
@@ -91,7 +92,7 @@ class ObjectSuggestions extends Suggestions
     /**
      * @todo Don't suggest obfuscated (protected) custom variables
      */
-    protected function fetchValueSuggestions($column, $searchTerm)
+    protected function fetchValueSuggestions($column, $searchTerm, StdlibFilter\Chain $searchFilter)
     {
         $model = $this->getModel();
         $query = $model::on($this->getDb());
@@ -100,21 +101,23 @@ class ObjectSuggestions extends Suggestions
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
 
         if (strpos($targetPath, '.') !== false) {
-            $target = $query->getResolver()->resolveRelation($targetPath)->getTarget();
-            if ($target instanceof CustomvarFlat) {
-                $query = $target::on($this->getDb())->columns('flatvalue');
-                FilterProcessor::apply(Filter::where('flatname', $columnName), $query);
-                $columnName = 'flatvalue';
-            } else {
-                $query = $target::on($this->getDb())->columns($columnName);
-            }
-        } else {
-            $query->columns($columnName);
+            $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
         }
 
-        if (trim($searchTerm, ' *')) {
-            FilterProcessor::apply(Filter::where($columnName, $searchTerm), $query);
+        if (substr($targetPath, -5) === '.vars') {
+            $columnPath = $targetPath . '.flatvalue';
+            FilterProcessor::apply(Filter::where($targetPath . '.flatname', $columnName), $query);
         }
+
+        $query->columns($columnPath);
+
+        if ($searchFilter instanceof StdlibFilter\None) {
+            FilterProcessor::apply(Filter::where($columnPath, $searchTerm), $query);
+        } else {
+            $searchFilter->add(StdlibFilter::equal($columnPath, $searchTerm));
+        }
+
+        FilterProcessor::apply(Filter::fromQueryString(QueryString::render($searchFilter)), $query);
 
         return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
             ->setFetchMode(PDO::FETCH_COLUMN);
