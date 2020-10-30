@@ -20,11 +20,14 @@ use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
+use ipl\Stdlib\Filter\Condition;
+use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SearchBar;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class Controller extends CompatController
@@ -127,16 +130,34 @@ class Controller extends CompatController
      *
      * @return SearchBar
      */
-    public function createSearchBar(array $preserveParams = null)
+    public function createSearchBar(Query $query, array $preserveParams = null)
     {
         $requestUrl = Url::fromRequest();
         if ($preserveParams !== null) {
             $requestUrl = $requestUrl->onlyWith($preserveParams);
         }
 
+        $filter = QueryString::fromString($this->getFilter()->toQueryString())
+            ->on(QueryString::ON_CONDITION, function (Condition $condition) use ($query) {
+                $path = $condition->getColumn();
+                if (strpos($path, '.vars.') !== false) {
+                    list($target, $varName) = explode('.vars.', $path);
+                    if (strpos($target, '.') === false) {
+                        // Programmatically translated since the full definition is available in class ObjectSuggestions
+                        $condition->columnLabel = sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName);
+                    }
+                } else {
+                    $metaData = $query->getResolver()->getMetaData($query->getModel());
+                    if (isset($metaData[$path])) {
+                        $condition->columnLabel = $metaData[$path];
+                    }
+                }
+            })
+            ->parse();
+
         $searchBar = new SearchBar();
         $searchBar->setSubmitLabel(t('Search'));
-        $searchBar->setFilter($this->getFilter());
+        $searchBar->setFilter($filter);
         $searchBar->setAction($requestUrl->getAbsoluteUrl());
         $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -149,7 +170,7 @@ class Controller extends CompatController
 
         $searchBar->on(SearchBar::ON_SENT, function (SearchBar $form) use ($requestUrl) {
             $existingParams = $requestUrl->getParams();
-            $requestUrl->setQueryString($form->getFilter()->toQueryString());
+            $requestUrl->setQueryString(QueryString::render($form->getFilter()));
             foreach ($existingParams->toArray(false) as $name => $value) {
                 if (is_int($name)) {
                     $name = $value;
@@ -320,12 +341,12 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query, Filter $filter = null)
+    public function filter(Query $query, Rule $filter = null)
     {
         $this->applyMonitoringRestriction($query);
 
         FilterProcessor::apply(
-            $filter ?: $this->getFilter(),
+            $filter ? Filter::fromQueryString(QueryString::render($filter)) : $this->getFilter(),
             $query
         );
 
