@@ -21,7 +21,7 @@ use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Web\Compat\CompatController;
-use ipl\Web\Control\FilterEditor;
+use ipl\Web\Control\SearchBar;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SortControl;
@@ -133,26 +133,26 @@ class Controller extends CompatController
 
         $this->params->shift('q');
 
-        $editor = new FilterEditor();
-        $editor->setAction($requestUrl->setParams([])->getAbsoluteUrl());
-        $editor->setSearchColumns($query->getModel()->getSearchColumns());
-        $editor->setSubmitLabel(t('Search'));
-        $editor->setIdProtector([$this->getRequest(), 'protectId']);
-        $editor->setFilter($this->getFilter());
-        $editor->setSuggestionUrl(Url::fromPath(
+        $searchBar = new SearchBar();
+        $searchBar->setAction($requestUrl->setParams([])->getAbsoluteUrl());
+        $searchBar->setSearchColumns($query->getModel()->getSearchColumns());
+        $searchBar->setSubmitLabel(t('Search'));
+        $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
+        $searchBar->setFilter($this->getFilter());
+        $searchBar->setSuggestionUrl(Url::fromPath(
             'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
             ['_disableLayout' => true]
         ));
 
-        $editor->on(FilterEditor::ON_SUCCESS, function (FilterEditor $form) use ($requestUrl) {
+        $searchBar->on(SearchBar::ON_SUCCESS, function (SearchBar $form) use ($requestUrl) {
             $this->getResponse()->redirectAndExit(
                 $requestUrl->setQueryString($form->getFilter()->toQueryString())
             );
         })->handleRequest(ServerRequest::fromGlobals());
 
-        Html::tag('div', ['class' => 'filter'])->wrap($editor);
+        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
 
-        return $editor;
+        return $searchBar;
 
 
 
