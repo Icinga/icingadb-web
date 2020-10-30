@@ -77,6 +77,7 @@ class Controller extends CompatController
     public function createPaginationControl(Paginatable $paginatable)
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
+        $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
 
         $this->params->shift($paginationControl->getPageParam());
         $this->params->shift($paginationControl->getPageSizeParam());
