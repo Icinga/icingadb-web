@@ -236,6 +236,7 @@ class Controller extends CompatController
     public function createViewModeSwitcher()
     {
         $viewModeSwitcher = new ViewModeSwitcher(Url::fromRequest());
+        $viewModeSwitcher->setAttribute('id', $this->getRequest()->protectId('view-switcher'));
 
         $this->params->shift($viewModeSwitcher->getViewModeParam());
 
