@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Web;
 
 use Generator;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
@@ -20,6 +21,7 @@ use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Web\Compat\CompatController;
+use ipl\Web\Control\FilterEditor;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SortControl;
@@ -127,6 +129,33 @@ class Controller extends CompatController
      */
     public function createFilterControl(Query $query, array $preserveParams = null)
     {
+        $requestUrl = Url::fromRequest();
+
+        $this->params->shift('q');
+
+        $editor = new FilterEditor();
+        $editor->setAction($requestUrl->setParams([])->getAbsoluteUrl());
+        $editor->setSearchColumns($query->getModel()->getSearchColumns());
+        $editor->setSubmitLabel(t('Search'));
+        $editor->setIdProtector([$this->getRequest(), 'protectId']);
+        $editor->setFilter($this->getFilter());
+        $editor->setSuggestionUrl(Url::fromPath(
+            'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+            ['_disableLayout' => true]
+        ));
+
+        $editor->on(FilterEditor::ON_SUCCESS, function (FilterEditor $form) use ($requestUrl) {
+            $this->getResponse()->redirectAndExit(
+                $requestUrl->setParams([])->addFilter($form->assembleFilter())
+            );
+        })->handleRequest(ServerRequest::fromGlobals());
+
+        Html::tag('div', ['class' => 'filter'])->wrap($editor);
+
+        return $editor;
+
+
+
         $request = clone $this->getRequest();
         $params = clone $this->params;
 
