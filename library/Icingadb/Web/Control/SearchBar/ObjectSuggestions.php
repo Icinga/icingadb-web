@@ -15,6 +15,7 @@ use ipl\Orm\Resolver;
 use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
+use ipl\Stdlib\Filter as StdlibFilter;
 use ipl\Web\Control\SearchBar\Suggestions;
 use PDO;
 
@@ -77,11 +78,11 @@ class ObjectSuggestions extends Suggestions
     {
         $model = $this->getModel();
 
-        $quickFilter = Filter::matchAny();
+        $quickFilter = StdlibFilter::any();
         foreach ($model->getSearchColumns() as $column) {
-            $where = Filter::where($model->getTableName() . '.' . $column, $searchTerm);
-            $where->metaData['label'] = $model->getMetaData()[$column];
-            $quickFilter->addFilter($where);
+            $where = StdlibFilter::equal($model->getTableName() . '.' . $column, $searchTerm);
+            $where->columnLabel = $model->getMetaData()[$column];
+            $quickFilter->add($where);
         }
 
         return $quickFilter;
