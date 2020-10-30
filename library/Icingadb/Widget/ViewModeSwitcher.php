@@ -36,6 +36,30 @@ class ViewModeSwitcher extends BaseHtmlElement
     }
 
     /**
+     * Get the base url
+     *
+     * @return Url
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set the base url
+     *
+     * @param Url $url
+     *
+     * @return $this
+     */
+    public function setUrl(Url $url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
      * Get the view mode URL parameter
      *
      * @return string
