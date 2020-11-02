@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
@@ -11,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
@@ -19,6 +21,7 @@ use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
@@ -38,6 +41,8 @@ class ServicesController extends Controller
             'host.state'
         ]);
 
+        $this->handleSearchRequest($services);
+
         $summary = null;
         if (! $compact) {
             $summary = ServicestateSummary::on($db)->with('state');
@@ -56,17 +61,19 @@ class ServicesController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($services, [
+        $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam()
         ]);
 
+        $filter = $searchBar->getFilter();
+
         $services->peekAhead($compact);
 
-        $this->filter($services);
-        if (isset($summary)) {
-            $this->filter($summary);
+        $this->filter($services, $filter);
+        if (! $compact) {
+            $this->filter($summary, $filter);
             yield $this->export($services, $summary);
         } else {
             yield $this->export($services);
@@ -76,7 +83,7 @@ class ServicesController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
         $this->addControl(new ContinueWith($this->getFilter(), Links::servicesDetails()));
 
         $results = $services->execute();
@@ -94,12 +101,17 @@ class ServicesController extends Controller
                         $services->count()
                     ))
             );
+        } else {
+            $this->addFooter(
+                (new ServiceStatusBar($summary->first()))->setBaseFilter(
+                    Filter::fromQueryString(QueryString::render($filter))
+                )
+            );
         }
 
-        if (isset($summary)) {
-            $this->addFooter(
-                (new ServiceStatusBar($summary->first()))->setBaseFilter($this->getFilter())
-            );
+        if ($searchBar->hasBeenSent()) {
+            $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
+            $this->sendMultipartUpdate($viewModeSwitcher);
         }
 
         $this->setAutorefreshInterval(10);
@@ -157,6 +169,14 @@ class ServicesController extends Controller
             (new ObjectsDetail('service', $summary))
                 ->setBaseFilter($this->getFilter())
         );
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Service::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 
     public function fetchCommandTargets()
