@@ -62,6 +62,47 @@ class Service extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'            => t('Service Environment Id'),
+            'name_checksum'             => t('Service Name Checksum'),
+            'properties_checksum'       => t('Service Properties Checksum'),
+            'host_id'                   => t('Service Host Id'),
+            'name'                      => t('Service Name'),
+            'name_ci'                   => t('Service Name (CI)'),
+            'display_name'              => t('Service Display Name'),
+            'checkcommand'              => t('Service Checkcommand'),
+            'checkcommand_id'           => t('Service Checkcommand Id'),
+            'max_check_attempts'        => t('Service Max Check Attempts'),
+            'check_timeperiod'          => t('Service Check Timeperiod'),
+            'check_timeperiod_id'       => t('Service Check Timeperiod Id'),
+            'check_timeout'             => t('Service Check Timeout'),
+            'check_interval'            => t('Service Check Interval'),
+            'check_retry_interval'      => t('Service Check Retry Inverval'),
+            'active_checks_enabled'     => t('Service Active Checks Enabled'),
+            'passive_checks_enabled'    => t('Service Passive Checks Enabled'),
+            'event_handler_enabled'     => t('Service Event Handler Enabled'),
+            'notifications_enabled'     => t('Service Notifications Enabled'),
+            'flapping_enabled'          => t('Service Flapping Enabled'),
+            'flapping_threshold_low'    => t('Service Flapping Threshold Low'),
+            'flapping_threshold_high'   => t('Service Flapping Threshold High'),
+            'perfdata_enabled'          => t('Service Performance Data Enabled'),
+            'eventcommand'              => t('Service Eventcommand'),
+            'eventcommand_id'           => t('Service Eventcommand Id'),
+            'is_volatile'               => t('Service Is Volatile'),
+            'action_url_id'             => t('Service Action Url Id'),
+            'notes_url_id'              => t('Service Notes Url Id'),
+            'notes'                     => t('Service Notes'),
+            'icon_image_id'             => t('Service Icon Image Id'),
+            'icon_image_alt'            => t('Service Icon Image Alt'),
+            'zone'                      => t('Service Zone'),
+            'zone_id'                   => t('Service Zone Id'),
+            'command_endpoint'          => t('Service Command Endpoint'),
+            'command_endpoint_id'       => t('Service Command Endpoint Id')
+        ];
+    }
+
     public function getSearchColumns()
     {
         return ['name_ci'];
