@@ -52,6 +52,30 @@ class Downtime extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Downtime Environment Id'),
+            'object_type'           => t('Downtime Object Type'),
+            'host_id'               => t('Downtime Host Id'),
+            'service_id'            => t('Downtime Service Id'),
+            'name_checksum'         => t('Downtime Name Checksum'),
+            'properties_checksum'   => t('Downtime Properties Checksum'),
+            'name'                  => t('Downtime Name'),
+            'author'                => t('Downtime Author'),
+            'comment'               => t('Downtime Comment'),
+            'entry_time'            => t('Downtime Entry Time'),
+            'scheduled_start_time'  => t('Downtime Scheduled Start'),
+            'scheduled_end_time'    => t('Downtime Scheduled End'),
+            'is_flexible'           => t('Downtime Is Flexible'),
+            'is_in_effect'          => t('Downtime Is In Effect'),
+            'start_time'            => t('Downtime Actual Start'),
+            'end_time'              => t('Downtime Actual End'),
+            'zone_id'               => t('Downtime Zone Id'),
+            'duration'              => t('Downtime Duration')
+        ];
+    }
+
     public function getDefaultSort()
     {
         return ['downtime.is_in_effect', 'downtime.start_time desc'];
