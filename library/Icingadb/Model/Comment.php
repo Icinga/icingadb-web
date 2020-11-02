@@ -44,6 +44,27 @@ class Comment extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Comment Environment Id'),
+            'object_type'           => t('Comment Object Type'),
+            'host_id'               => t('Comment Host Id'),
+            'service_id'            => t('Comment Service Id'),
+            'name_checksum'         => t('Comment Name Checksum'),
+            'properties_checksum'   => t('Comment Properties Checksum'),
+            'name'                  => t('Comment Name'),
+            'author'                => t('Comment Author'),
+            'text'                  => t('Comment Text'),
+            'entry_type'            => t('Comment Type'),
+            'entry_time'            => t('Comment Entry Time'),
+            'is_persistent'         => t('Comment Is Persistent'),
+            'is_sticky'             => t('Comment Is Sticky'),
+            'expire_time'           => t('Comment Expire Time'),
+            'zone_id'               => t('Comment Zone Id')
+        ];
+    }
+
     public function getDefaultSort()
     {
         return 'comment.entry_time desc';
