@@ -47,6 +47,25 @@ class NotificationHistory extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Notification Environment Id'),
+            'endpoint_id'           => t('Notification Endpoint Id'),
+            'object_type'           => t('Notification Object Type'),
+            'host_id'               => t('Notification Host Id'),
+            'service_id'            => t('Notification Service Id'),
+            'notification_id'       => t('Notification Id'),
+            'type'                  => t('Notification Type'),
+            'send_time'             => t('Notification Sent On'),
+            'state'                 => t('Notification Object State'),
+            'previous_hard_state'   => t('Notification Previous Object State'),
+            'author'                => t('Notification Author'),
+            'text'                  => t('Notification Text'),
+            'users_notified'        => t('Notification Users Notified')
+        ];
+    }
+
     public function getDefaultSort()
     {
         return 'notification_history.send_time desc';
