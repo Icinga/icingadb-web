@@ -4,8 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
@@ -35,6 +37,8 @@ class DowntimesController extends Controller
             'service.state'
         ]);
 
+        $this->handleSearchRequest($downtimes);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($downtimes);
         $sortControl = $this->createSortControl(
@@ -53,9 +57,13 @@ class DowntimesController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($downtimes);
+        $searchBar = $this->createSearchBar($downtimes, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
+        ]);
 
-        $this->filter($downtimes);
+        $this->filter($downtimes, $searchBar->getFilter());
 
         $downtimes->peekAhead($compact);
 
@@ -65,7 +73,7 @@ class DowntimesController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
         $this->addControl(new ContinueWith($this->getFilter(), Links::downtimesDetails()));
 
         $results = $downtimes->execute();
@@ -81,6 +89,11 @@ class DowntimesController extends Controller
                         $downtimes->count()
                     ))
             );
+        }
+
+        if ($searchBar->hasBeenSent()) {
+            $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
+            $this->sendMultipartUpdate($viewModeSwitcher);
         }
 
         $this->setAutorefreshInterval(10);
@@ -180,5 +193,13 @@ class DowntimesController extends Controller
                 'data-no-icinga-ajax' => true
             ]
         ));
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Downtime::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }
