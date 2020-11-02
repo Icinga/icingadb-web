@@ -4,7 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -27,6 +29,8 @@ class NotificationsController extends Controller
             'service.state'
         ]);
 
+        $this->handleSearchRequest($notifications);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
@@ -35,9 +39,12 @@ class NotificationsController extends Controller
                 'notification_history.send_time desc' => t('Send Time')
             ]
         );
-        $filterControl = $this->createFilterControl($notifications);
+        $searchBar = $this->createSearchBar($notifications, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam()
+        ]);
 
-        $this->filter($notifications);
+        $this->filter($notifications, $searchBar->getFilter());
         $notifications->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
             ->where([
@@ -52,7 +59,7 @@ class NotificationsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $results = $notifications->execute();
 
@@ -69,6 +76,18 @@ class NotificationsController extends Controller
             );
         }
 
+        if ($searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
         $this->setAutorefreshInterval(10);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(NotificationHistory::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }
