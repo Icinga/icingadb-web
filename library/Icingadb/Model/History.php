@@ -47,6 +47,19 @@ class History extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'    => t('History Environment Id'),
+            'endpoint_id'       => t('History Endpoint Id'),
+            'object_type'       => t('History Object Type'),
+            'host_id'           => t('History Host Id'),
+            'service_id'        => t('History Service Id'),
+            'event_type'        => t('History Event Type'),
+            'event_time'        => t('History Event Time')
+        ];
+    }
+
     public function getDefaultSort()
     {
         return 'history.event_time desc';
