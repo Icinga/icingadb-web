@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
@@ -11,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Compat\FeatureStatus;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
@@ -19,6 +21,7 @@ use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HostsController extends Controller
@@ -33,6 +36,8 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
+
+        $this->handleSearchRequest($hosts);
 
         $summary = null;
         if (! $compact) {
@@ -51,17 +56,19 @@ class HostsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($hosts, [
+        $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam()
         ]);
 
+        $filter = $searchBar->getFilter();
+
         $hosts->peekAhead($compact);
 
-        $this->filter($hosts);
+        $this->filter($hosts, $filter);
         if (isset($summary)) {
-            $this->filter($summary);
+            $this->filter($summary, $filter);
             yield $this->export($hosts, $summary);
         } else {
             yield $this->export($hosts);
@@ -71,7 +78,7 @@ class HostsController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
         $this->addControl(new ContinueWith($this->getFilter(), Links::hostsDetails()));
 
         $results = $hosts->execute();
@@ -89,12 +96,17 @@ class HostsController extends Controller
                         $hosts->count()
                     ))
             );
+        } else {
+            $this->addFooter(
+                (new HostStatusBar($summary->first()))->setBaseFilter(
+                    Filter::fromQueryString(QueryString::render($filter))
+                )
+            );
         }
 
-        if (isset($summary)) {
-            $this->addFooter(
-                (new HostStatusBar($summary->first()))->setBaseFilter($this->getFilter())
-            );
+        if ($searchBar->hasBeenSent()) {
+            $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
+            $this->sendMultipartUpdate($viewModeSwitcher);
         }
 
         $this->setAutorefreshInterval(10);
@@ -148,6 +160,14 @@ class HostsController extends Controller
             (new ObjectsDetail('host', $summary))
                 ->setBaseFilter($this->getFilter())
         );
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Host::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 
     public function fetchCommandTargets()
