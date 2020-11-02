@@ -4,7 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -21,6 +24,8 @@ class HostgroupsController extends Controller
 
         $hostgroups = Hostgroupsummary::on($db);
 
+        $this->handleSearchRequest($hostgroups);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
         $sortControl = $this->createSortControl(
@@ -32,12 +37,12 @@ class HostgroupsController extends Controller
                 'services_total desc' => t('Total Services')
             ]
         );
-        $filterControl = $this->createFilterControl($hostgroups, [
+        $searchBar = $this->createSearchBar($hostgroups, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($hostgroups);
+        $this->filter($hostgroups, $searchBar->getFilter());
 
         $hostgroups->peekAhead($compact);
 
@@ -46,7 +51,7 @@ class HostgroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $results = $hostgroups->execute();
 
@@ -65,6 +70,18 @@ class HostgroupsController extends Controller
             );
         }
 
+        if ($searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
         $this->setAutorefreshInterval(30);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Hostgroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }
