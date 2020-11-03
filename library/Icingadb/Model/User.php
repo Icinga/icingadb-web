@@ -111,6 +111,8 @@ class User extends Model
             ->through(UserCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(UserCustomvar::class);
+        $relations->belongsToMany('vars', CustomvarFlat::class)
+            ->through(UserCustomvar::class);
         $relations->belongsToMany('notification', Notification::class)
             ->through('notification_recipient');
         $relations->belongsToMany('notification_history', NotificationHistory::class)

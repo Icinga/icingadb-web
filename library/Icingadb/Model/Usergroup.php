@@ -76,6 +76,8 @@ class Usergroup extends Model
             ->through(UsergroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(UsergroupCustomvar::class);
+        $relations->belongsToMany('vars', CustomvarFlat::class)
+            ->through(UsergroupCustomvar::class);
         $relations->belongsToMany('user', User::class)
             ->through(UsergroupMember::class);
         $relations->belongsToMany('notification', Notification::class)

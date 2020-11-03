@@ -157,6 +157,8 @@ class Host extends Model
 
         $relations->belongsToMany('customvar', Customvar::class)
             ->through(HostCustomvar::class);
+        $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
+            ->through(HostCustomvar::class);
         $relations->belongsToMany('vars', CustomvarFlat::class)
             ->through(HostCustomvar::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)

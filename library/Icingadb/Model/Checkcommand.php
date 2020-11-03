@@ -42,6 +42,8 @@ class Checkcommand extends Model
             ->through(CheckcommandCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(CheckcommandCustomvar::class);
+        $relations->belongsToMany('vars', CustomvarFlat::class)
+            ->through(CheckcommandCustomvar::class);
 
         $relations->hasMany('argument', CheckcommandArgument::class)
             ->setForeignKey('command_id');
