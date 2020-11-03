@@ -34,6 +34,7 @@ class NotificationCustomvar extends Model
         $relations->belongsTo('notification', Notification::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
-            ->setCandidateKey('customvar_id');
+            ->setCandidateKey('customvar_id')
+            ->setForeignKey('customvar_id');
     }
 }
