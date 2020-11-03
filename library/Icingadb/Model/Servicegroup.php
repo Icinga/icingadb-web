@@ -47,6 +47,11 @@ class Servicegroup extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['name_ci'];
+    }
+
     public function getDefaultSort()
     {
         return 'display_name';

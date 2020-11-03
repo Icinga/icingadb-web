@@ -66,6 +66,11 @@ class NotificationHistory extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['text'];
+    }
+
     public function getDefaultSort()
     {
         return 'notification_history.send_time desc';

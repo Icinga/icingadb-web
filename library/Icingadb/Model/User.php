@@ -60,6 +60,11 @@ class User extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['name_ci'];
+    }
+
     public function getDefaultSort()
     {
         return 'user.display_name';

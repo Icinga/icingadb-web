@@ -47,6 +47,11 @@ class Usergroup extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['name_ci'];
+    }
+
     public function getDefaultSort()
     {
         return 'usergroup.display_name';
