@@ -34,6 +34,7 @@ class UsergroupCustomvar extends Model
         $relations->belongsTo('usergroup', Usergroup::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
-            ->setCandidateKey('customvar_id');
+            ->setCandidateKey('customvar_id')
+            ->setForeignKey('customvar_id');
     }
 }

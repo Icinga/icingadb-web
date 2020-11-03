@@ -34,6 +34,7 @@ class HostgroupCustomvar extends Model
         $relations->belongsTo('hostgroup', Hostgroup::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
-            ->setCandidateKey('customvar_id');
+            ->setCandidateKey('customvar_id')
+            ->setForeignKey('customvar_id');
     }
 }
