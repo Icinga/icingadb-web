@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Compat\FilterProcessor;
@@ -97,6 +98,19 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
+        // TODO: Remove this once https://github.com/Icinga/ipl-orm/issues/9 is done
+        foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
+            if ($behavior instanceof ReRoute) {
+                $expr = Filter::where('', '');
+                $expr->metaData['relationCol'] = $column;
+                $expr = $behavior->rewriteCondition($expr, '');
+                if ($expr !== null) {
+                    $column = $expr->getColumn();
+                    break;
+                }
+            }
+        }
+
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
 
@@ -128,10 +142,28 @@ class ObjectSuggestions extends Suggestions
      */
     protected function fetchColumnSuggestions($searchTerm)
     {
+        $resolver = new Resolver();
+        $model = $this->getModel();
+
         // Ordinary columns first
-        $metaData = (new Resolver())->getMetaData($this->getModel());
+        $metaData = $resolver->getMetaData($model);
         foreach ($metaData as $columnName => $columnMeta) {
             yield $columnName => $columnMeta;
+        }
+
+        // Re-routed columns next
+        foreach ($resolver->getBehaviors($model) as $behavior) {
+            if ($behavior instanceof ReRoute) {
+                foreach ($behavior->getRoutes() as $name => $route) {
+                    $relation = $resolver->resolveRelation(
+                        $resolver->qualifyPath($route, $model->getTableName()),
+                        $model
+                    );
+                    foreach ($relation->getTarget()->getMetaData() as $columnName => $columnMeta) {
+                        yield $name . '.' . $columnName => $columnMeta;
+                    }
+                }
+            }
         }
 
         // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
