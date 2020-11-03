@@ -76,6 +76,11 @@ class Downtime extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['comment'];
+    }
+
     public function getDefaultSort()
     {
         return ['downtime.is_in_effect', 'downtime.start_time desc'];

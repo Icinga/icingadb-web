@@ -65,6 +65,11 @@ class Comment extends Model
         ];
     }
 
+    public function getSearchColumns()
+    {
+        return ['text'];
+    }
+
     public function getDefaultSort()
     {
         return 'comment.entry_time desc';
