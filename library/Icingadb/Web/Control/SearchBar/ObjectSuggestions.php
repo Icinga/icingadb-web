@@ -218,6 +218,7 @@ class ObjectSuggestions extends Suggestions
     protected function queryCustomvarConfig($searchTerm)
     {
         $customVars = CustomvarFlat::on($this->getDb());
+        $tableName = $customVars->getModel()->getTableName();
 
         $columns = ['flatname'];
         foreach ($customVars->getResolver()->getRelations($customVars->getModel()) as $name => $relation) {
@@ -225,12 +226,12 @@ class ObjectSuggestions extends Suggestions
                 $junction = $relation->getThrough();
 
                 $foreignKey = $customVars->getResolver()->qualifyColumn(
-                    $relation->getForeignKey(),
+                    $customVars->getResolver()->getRelations($junction)->get($tableName)->getForeignKey(),
                     $junction->getTableName()
                 );
                 $candidateKey = $customVars->getResolver()->qualifyColumn(
                     $relation->getCandidateKey(),
-                    $customVars->getModel()->getTableName()
+                    $tableName
                 );
 
                 $columns[$name] = $junction::on($customVars->getDb())->assembleSelect()
