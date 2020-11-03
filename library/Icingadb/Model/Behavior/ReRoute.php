@@ -16,6 +16,11 @@ class ReRoute implements RewriteFilterBehavior
         $this->routes = $routes;
     }
 
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
+
     public function rewriteCondition(FilterExpression $expression, $relation = null)
     {
         if (! isset($expression->metaData['relationCol'])) {
