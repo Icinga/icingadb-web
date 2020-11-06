@@ -132,10 +132,13 @@ class ObjectSuggestions extends Suggestions
 
         $query->columns($columnPath);
 
+        // This had so many iterations, if it still doesn't work, consider removing it entirely :(
         if ($searchFilter instanceof StdlibFilter\None) {
             FilterProcessor::apply(Filter::where($columnPath, $searchTerm), $query);
-        } else {
+        } elseif ($searchFilter instanceof StdlibFilter\All) {
             $searchFilter->add(StdlibFilter::equal($columnPath, $searchTerm));
+        } else {
+            $searchFilter = StdlibFilter::equal($columnPath, $searchTerm);
         }
 
         FilterProcessor::apply(Filter::fromQueryString(QueryString::render($searchFilter)), $query);
