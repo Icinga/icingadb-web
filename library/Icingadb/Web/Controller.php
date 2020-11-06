@@ -141,6 +141,11 @@ class Controller extends CompatController
         $filter = QueryString::fromString($this->getFilter()->toQueryString())
             ->on(QueryString::ON_CONDITION, function (Condition $condition) use ($query) {
                 $path = $condition->getColumn();
+                if (strpos($path, '.') === false) {
+                    $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
+                    $condition->setColumn($path);
+                }
+
                 if (strpos($path, '.vars.') !== false) {
                     list($target, $varName) = explode('.vars.', $path);
                     if (strpos($target, '.') === false) {
