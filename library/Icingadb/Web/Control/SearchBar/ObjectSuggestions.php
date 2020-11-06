@@ -8,6 +8,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use InvalidArgumentException;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Model;
@@ -17,9 +18,11 @@ use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use ipl\Stdlib\Filter as StdlibFilter;
+use ipl\Web\Control\SearchBar\SearchException;
 use ipl\Web\Control\SearchBar\Suggestions;
 use ipl\Web\Filter\QueryString;
 use PDO;
+use RuntimeException;
 
 class ObjectSuggestions extends Suggestions
 {
@@ -115,7 +118,11 @@ class ObjectSuggestions extends Suggestions
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
 
         if (strpos($targetPath, '.') !== false) {
-            $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
+            try {
+                $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
+            } catch (InvalidArgumentException $_) {
+                throw new SearchException(sprintf(t('"%s" is not a valid relation'), $targetPath));
+            }
         }
 
         if (substr($targetPath, -5) === '.vars') {
@@ -133,8 +140,12 @@ class ObjectSuggestions extends Suggestions
 
         FilterProcessor::apply(Filter::fromQueryString(QueryString::render($searchFilter)), $query);
 
-        return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
-            ->setFetchMode(PDO::FETCH_COLUMN);
+        try {
+            return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
+                ->setFetchMode(PDO::FETCH_COLUMN);
+        } catch (RuntimeException $_) {
+            throw new SearchException(sprintf(t('"%s" is not a valid column'), $columnName));
+        }
     }
 
     /**
