@@ -134,9 +134,7 @@ class Controller extends CompatController
     public function createSearchBar(Query $query, array $preserveParams = null)
     {
         $requestUrl = Url::fromRequest();
-        if ($preserveParams !== null) {
-            $requestUrl = $requestUrl->onlyWith($preserveParams);
-        }
+        $redirectUrl = $preserveParams !== null ? $requestUrl->onlyWith($preserveParams) : $requestUrl;
 
         $filter = QueryString::fromString($this->getFilter()->toQueryString())
             ->on(QueryString::ON_CONDITION, function (Condition $condition) use ($query) {
@@ -209,19 +207,19 @@ class Controller extends CompatController
                     }
                 }
             }
-        })->on(SearchBar::ON_SENT, function (SearchBar $form) use ($requestUrl) {
-            $existingParams = $requestUrl->getParams();
-            $requestUrl->setQueryString(QueryString::render($form->getFilter()));
+        })->on(SearchBar::ON_SENT, function (SearchBar $form) use ($redirectUrl) {
+            $existingParams = $redirectUrl->getParams();
+            $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
             foreach ($existingParams->toArray(false) as $name => $value) {
                 if (is_int($name)) {
                     $name = $value;
                     $value = true;
                 }
 
-                $requestUrl->getParams()->addEncoded($name, $value);
+                $redirectUrl->getParams()->addEncoded($name, $value);
             }
 
-            $form->setRedirectUrl($requestUrl);
+            $form->setRedirectUrl($redirectUrl);
         })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
             $this->getResponse()->redirectAndExit($form->getRedirectUrl());
         })->handleRequest(ServerRequest::fromGlobals());
