@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\FilterControl;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
@@ -168,7 +169,42 @@ class Controller extends CompatController
             ));
         }
 
-        $searchBar->on(SearchBar::ON_SENT, function (SearchBar $form) use ($requestUrl) {
+        $searchBar->on(SearchBar::ON_CHANGE, function (array &$changes) use ($query) {
+            if ($changes['type'] === 'remove') {
+                return;
+            }
+
+            $metaData = $query->getResolver()->getMetaData($query->getModel());
+            foreach ($changes['terms'] as &$termData) {
+                if (($pos = strpos($termData['search'], '.vars.')) !== false) {
+                    try {
+                        $query->getResolver()->resolveRelation(substr($termData['search'], 0, $pos + 5));
+                    } catch (InvalidArgumentException $_) {
+                        $termData['invalidMsg'] = sprintf(
+                            t('"%s" is not a valid relation'),
+                            substr($termData['search'], 0, $pos)
+                        );
+                    }
+                } elseif ($termData['type'] === 'column') {
+                    $column = $termData['search'];
+                    if (strpos($column, '.') === false) {
+                        $column = $query->getResolver()->qualifyPath($column, $query->getModel()->getTableName());
+                        // TODO: Also apply this change, though not until.. (see below)
+                    }
+
+                    if (! isset($metaData[$column])) {
+                        // TODO: Enable once https://github.com/Icinga/ipl-stdlib/issues/17 is done and
+                        //       used by the search bar so that not every "change" makes it invalid
+                        $path = false; //array_search($column, $metaData, true);
+                        if ($path === false) {
+                            $termData['invalidMsg'] = t('Is not a valid column');
+                        } else {
+                            $termData['search'] = $path;
+                        }
+                    }
+                }
+            }
+        })->on(SearchBar::ON_SENT, function (SearchBar $form) use ($requestUrl) {
             $existingParams = $requestUrl->getParams();
             $requestUrl->setQueryString(QueryString::render($form->getFilter()));
             foreach ($existingParams->toArray(false) as $name => $value) {
