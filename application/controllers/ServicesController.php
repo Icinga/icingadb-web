@@ -67,7 +67,17 @@ class ServicesController extends Controller
             $viewModeSwitcher->getViewModeParam()
         ]);
 
-        $filter = $searchBar->getFilter();
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
 
         $services->peekAhead($compact);
 
@@ -109,7 +119,7 @@ class ServicesController extends Controller
             );
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
             $this->sendMultipartUpdate($viewModeSwitcher);
         }

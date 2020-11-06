@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Sql;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -44,7 +45,19 @@ class NotificationsController extends Controller
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($notifications, $searchBar->getFilter());
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($notifications, $filter);
         $notifications->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
             ->where([
@@ -76,7 +89,7 @@ class NotificationsController extends Controller
             );
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
 
