@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
 use Icinga\Security\SecurityException;
+use ipl\Web\Filter\QueryString;
 
 class UsergroupsController extends Controller
 {
@@ -45,7 +46,19 @@ class UsergroupsController extends Controller
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($usergroups, $searchBar->getFilter());
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($usergroups, $filter);
 
         yield $this->export($usergroups);
 
@@ -56,7 +69,7 @@ class UsergroupsController extends Controller
 
         $this->addContent(new UsergroupList($usergroups));
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
 

@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Security\SecurityException;
+use ipl\Web\Filter\QueryString;
 
 class UsersController extends Controller
 {
@@ -47,7 +48,19 @@ class UsersController extends Controller
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($users, $searchBar->getFilter());
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($users, $filter);
 
         yield $this->export($users);
 
@@ -58,7 +71,7 @@ class UsersController extends Controller
 
         $this->addContent(new UserList($users));
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
 

@@ -29,8 +29,17 @@ class TacticalController extends Controller
         $this->handleSearchRequest($servicestateSummary);
 
         $searchBar = $this->createSearchBar($servicestateSummary);
-
-        $filter = $searchBar->getFilter();
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
 
         $this->filter($hoststateSummary, $filter);
         $this->filter($servicestateSummary, $filter);
@@ -49,7 +58,7 @@ class TacticalController extends Controller
                 ->setBaseFilter(Filter::fromQueryString(QueryString::render($filter)))
         );
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
 

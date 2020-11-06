@@ -62,7 +62,17 @@ class HostsController extends Controller
             $viewModeSwitcher->getViewModeParam()
         ]);
 
-        $filter = $searchBar->getFilter();
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
 
         $hosts->peekAhead($compact);
 
@@ -104,7 +114,7 @@ class HostsController extends Controller
             );
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
             $this->sendMultipartUpdate($viewModeSwitcher);
         }

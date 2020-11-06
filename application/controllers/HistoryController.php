@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Sql;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -52,6 +53,18 @@ class HistoryController extends Controller
             $sortControl->getSortParam()
         ]);
 
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
         $history->peekAhead();
         $history->limit($limitControl->getLimit());
         if ($page > 1) {
@@ -62,7 +75,7 @@ class HistoryController extends Controller
             }
         }
 
-        $this->filter($history, $searchBar->getFilter());
+        $this->filter($history, $filter);
         $history->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
             ->where(['history.service_id IS NULL', 'history_service.id IS NOT NULL'], Sql::ANY);
@@ -97,7 +110,7 @@ class HistoryController extends Controller
             $this->addContent($historyList);
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
     }

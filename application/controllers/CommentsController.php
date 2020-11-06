@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Icon;
@@ -58,7 +59,19 @@ class CommentsController extends Controller
             $viewModeSwitcher->getViewModeParam()
         ]);
 
-        $this->filter($comments, $searchBar->getFilter());
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($comments, $filter);
 
         $comments->peekAhead($compact);
 
@@ -86,7 +99,7 @@ class CommentsController extends Controller
             );
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
             $this->sendMultipartUpdate($viewModeSwitcher);
         }

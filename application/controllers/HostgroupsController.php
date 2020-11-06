@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HostgroupsController extends Controller
@@ -42,7 +43,19 @@ class HostgroupsController extends Controller
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($hostgroups, $searchBar->getFilter());
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($hostgroups, $filter);
 
         $hostgroups->peekAhead($compact);
 
@@ -70,7 +83,7 @@ class HostgroupsController extends Controller
             );
         }
 
-        if ($searchBar->hasBeenSent()) {
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
 
