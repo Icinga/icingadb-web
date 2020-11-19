@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Exception;
 use Icinga\Application\Hook\ApplicationStateHook;
-use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
@@ -19,25 +18,6 @@ class ApplicationState extends ApplicationStateHook
 
     public function collectMessages()
     {
-        if (! Icinga::app()->getModuleManager()->hasLoaded('ipl')) {
-            // TODO: Replace this once we have proper dependency management
-            $noIplSince = Session::getSession()->getNamespace('icingadb')->get('icingadb.no-ipl-since');
-            if ($noIplSince === null) {
-                $noIplSince = time();
-                Session::getSession()->getNamespace('icingadb')->set('icingadb.no-ipl-since', $noIplSince);
-            }
-
-            $this->addError(
-                'icingadb/ipl-missing',
-                $noIplSince,
-                t('Module "ipl" is not enabled. This module is mandatory for Icinga DB Web')
-            );
-
-            return;
-        } else {
-            Session::getSession()->getNamespace('icingadb')->delete('db.no-ipl-since');
-        }
-
         $instance = Instance::on($this->getDb())->with(['endpoint'])->first();
 
         if ($instance === null) {

@@ -1,5 +1,7 @@
 Module: icingadb
 Version: 1.0.0-rc1
-Depends: monitoring (>=2.8.0), ipl (>=0.5.0)
+Requires:
+  Libraries: ipl (>=0.5.0)
+  Modules: monitoring (>=2.8.0)
 Description: Icinga DB Web
   UI for Icinga DB – Provides a graphical interface to your Icinga monitoring

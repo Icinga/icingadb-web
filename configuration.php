@@ -4,19 +4,11 @@
 
 namespace Icinga\Module\Icingadb
 {
-    use Icinga\Application\Icinga;
-    use Icinga\Application\Logger;
     use Icinga\Authentication\Auth;
 
     /** @var \Icinga\Application\Modules\Module $this */
 
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
-
-    if (! Icinga::app()->getModuleManager()->hasLoaded('ipl')) {
-        // TODO: Replace this once we have proper dependency management
-        Logger::warning(t('Module "ipl" is not enabled. This module is mandatory for Icinga DB Web'));
-        return;
-    }
 
     if (! $this::exists('monitoring')) {
         /**
@@ -224,8 +216,6 @@ namespace Icinga\Module\Icingadb
         'title' => t('Configure security related settings'),
         'url'   => 'config/security'
     ]);
-
-    $this->requireCssFile('balls.less', 'ipl');
 
     $this->provideCssFile('common.less');
     $this->provideCssFile('lists.less');
