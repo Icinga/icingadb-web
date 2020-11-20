@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb
 {
+    use Exception;
     use Icinga\Authentication\Auth;
 
     /** @var \Icinga\Application\Modules\Module $this */
@@ -216,6 +217,13 @@ namespace Icinga\Module\Icingadb
         'title' => t('Configure security related settings'),
         'url'   => 'config/security'
     ]);
+
+    try {
+        // TODO: Remove this before the stable release!!!1!11
+        $this->requireCssFile('*', 'ipl');
+    } catch (Exception $_) {
+        // Ignored
+    }
 
     $this->provideCssFile('common.less');
     $this->provideCssFile('lists.less');
