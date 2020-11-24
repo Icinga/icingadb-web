@@ -27,6 +27,8 @@ class HostStateBadges extends StateBadges
 
     protected function assemble()
     {
+        $this->addAttributes(['class' => 'host-state-badges']);
+
         $this->add(array_filter([
             $this->createGroup('down'),
             $this->createBadge('unknown'),
