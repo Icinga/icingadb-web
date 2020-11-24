@@ -1,0 +1,17 @@
+.check-attempt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-attempt .ball {
+  background-color: @gray-light;
+
+  &:not(:last-child) {
+    margin-right: 1/6em;
+  }
+
+  &.taken {
+    background-color: @gray;
+  }
+}
