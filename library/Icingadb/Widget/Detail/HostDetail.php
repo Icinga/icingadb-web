@@ -39,7 +39,6 @@ class HostDetail extends ObjectDetail
         $this->add([
             $this->createPluginOutput(),
             $this->createExtensions(),
-            $this->createEvents(),
             $this->createActions(),
             $this->createNotes(),
             $this->createServiceStatistics(),
