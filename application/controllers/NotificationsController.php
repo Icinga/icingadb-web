@@ -11,7 +11,6 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Sql;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -47,7 +46,7 @@ class NotificationsController extends Controller
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();

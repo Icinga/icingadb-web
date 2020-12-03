@@ -66,7 +66,7 @@ class DowntimesController extends Controller
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
@@ -192,13 +192,13 @@ class DowntimesController extends Controller
 
         $this->addControl(new ShowMore(
             $rs,
-            Links::downtimes()->setQueryString($this->getFilter()->toQueryString()),
+            Links::downtimes()->setQueryString(QueryString::render($this->getFilter())),
             sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
         $this->addContent(new ActionLink(
             sprintf(t('Cancel %d downtimes'), $downtimes->count()),
-            Links::downtimesDelete()->setQueryString($this->getFilter()->toQueryString()),
+            Links::downtimesDelete()->setQueryString(QueryString::render($this->getFilter())),
             'trash',
             [
                 'class'               => 'cancel-button',

@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -15,6 +14,7 @@ use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
@@ -85,7 +85,7 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function init()
     {
-        $this->setMultiselectFilter(new FilterExpression('name', '=', $this->item->name));
-        $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
+        $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
+        $this->setDetailFilter(Filter::equal('name', $this->item->name));
     }
 }

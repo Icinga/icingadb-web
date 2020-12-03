@@ -5,8 +5,6 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Compat\FeatureStatus;
@@ -21,6 +19,7 @@ use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -64,7 +63,7 @@ class HostsController extends Controller
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
@@ -107,11 +106,7 @@ class HostsController extends Controller
                     ))
             );
         } else {
-            $this->addFooter(
-                (new HostStatusBar($summary->first()))->setBaseFilter(
-                    Filter::fromQueryString(QueryString::render($filter))
-                )
-            );
+            $this->addFooter((new HostStatusBar($summary->first()))->setBaseFilter($filter));
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
@@ -158,7 +153,7 @@ class HostsController extends Controller
         );
         $this->addControl(new ShowMore(
             $results,
-            Links::hosts()->setQueryString($this->getFilter()->toQueryString()),
+            Links::hosts()->setQueryString(QueryString::render($this->getFilter())),
             sprintf(t('Show all %d hosts'), $hosts->count())
         ));
         $this->addControl(
@@ -189,9 +184,9 @@ class HostsController extends Controller
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':
                 FilterProcessor::apply(
-                    Filter::matchAll([
-                        new FilterExpression('state.is_problem', '=', 'y'),
-                        new FilterExpression('state.is_acknowledged', '=', 'n')
+                    Filter::all([
+                        Filter::equal('state.is_problem', 'y'),
+                        Filter::equal('state.is_acknowledged', 'n')
                     ]),
                     $hosts
                 );
@@ -206,7 +201,7 @@ class HostsController extends Controller
 
     public function getCommandTargetsUrl()
     {
-        return Links::hostsDetails()->setQueryString($this->getFilter()->toQueryString());
+        return Links::hostsDetails()->setQueryString(QueryString::render($this->getFilter()));
     }
 
     protected function getFeatureStatus()

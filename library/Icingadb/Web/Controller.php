@@ -7,7 +7,6 @@ namespace Icinga\Module\Icingadb\Web;
 use Generator;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
@@ -20,8 +19,7 @@ use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
-use ipl\Stdlib\Filter\Condition;
-use ipl\Stdlib\Filter\Rule;
+use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
@@ -43,12 +41,12 @@ class Controller extends CompatController
     /**
      * Get the filter created from query string parameters
      *
-     * @return Filter
+     * @return Filter\Rule
      */
     public function getFilter()
     {
         if ($this->filter === null) {
-            $this->filter = Filter::fromQueryString((string) $this->params);
+            $this->filter = QueryString::parse((string) $this->params);
         }
 
         return $this->filter;
@@ -135,8 +133,8 @@ class Controller extends CompatController
         $requestUrl = Url::fromRequest();
         $redirectUrl = $preserveParams !== null ? $requestUrl->onlyWith($preserveParams) : $requestUrl;
 
-        $filter = QueryString::fromString($this->getFilter()->toQueryString())
-            ->on(QueryString::ON_CONDITION, function (Condition $condition) use ($query) {
+        $filter = QueryString::fromString((string) $this->params)
+            ->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
                 $path = $condition->getColumn();
                 if (strpos($path, '.') === false) {
                     $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
@@ -187,7 +185,7 @@ class Controller extends CompatController
                             substr($termData['search'], 0, $pos)
                         );
                     }
-                } else if ($termData['type'] === 'column') {
+                } elseif ($termData['type'] === 'column') {
                     $column = $termData['search'];
                     if (strpos($column, '.') === false) {
                         $column = $query->getResolver()->qualifyPath($column, $query->getModel()->getTableName());
@@ -257,15 +255,15 @@ class Controller extends CompatController
             return;
         }
 
-        $filter = Filter::matchAny();
+        $filter = Filter::any();
         foreach ($query->getModel()->getSearchColumns() as $column) {
-            $filter->addFilter(Filter::where($column, "*$q*"));
+            $filter->add(Filter::equal($column, "*$q*"));
         }
 
         $requestUrl = Url::fromRequest();
 
         $existingParams = $requestUrl->getParams()->without('q');
-        $requestUrl->setQueryString($filter->toQueryString());
+        $requestUrl->setQueryString(QueryString::render($filter));
         foreach ($existingParams->toArray(false) as $name => $value) {
             $requestUrl->getParams()->addEncoded($name, $value);
         }
@@ -344,14 +342,11 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query, Rule $filter = null)
+    public function filter(Query $query, Filter\Rule $filter = null)
     {
         $this->applyMonitoringRestriction($query);
 
-        FilterProcessor::apply(
-            $filter ? Filter::fromQueryString(QueryString::render($filter)) : $this->getFilter(),
-            $query
-        );
+        FilterProcessor::apply($filter ?: $this->getFilter(), $query);
 
         return $this;
     }

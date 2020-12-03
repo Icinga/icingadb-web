@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use ipl\Html\Html;
+use ipl\Stdlib\Filter;
 
 class HostDetail extends ObjectDetail
 {
@@ -24,7 +24,7 @@ class HostDetail extends ObjectDetail
     {
         if ($this->serviceSummary->services_total > 0) {
             $services = new ServiceStatistics($this->serviceSummary);
-            $services->setBaseFilter(Filter::where('host.name', $this->object->name));
+            $services->setBaseFilter(Filter::equal('host.name', $this->object->name));
         } else {
             $services = new EmptyState(t('This host has no services'));
         }
