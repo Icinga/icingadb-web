@@ -4,11 +4,11 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Data\Filter\Filter;
+use ipl\Stdlib\Filter\Rule;
 
 trait BaseFilter
 {
-    /** @var Filter Base filter */
+    /** @var Rule Base filter */
     private $baseFilter;
 
     /**
@@ -24,7 +24,7 @@ trait BaseFilter
     /**
      * Get the base filter
      *
-     * @return Filter
+     * @return Rule
      */
     public function getBaseFilter()
     {
@@ -34,11 +34,11 @@ trait BaseFilter
     /**
      * Set the base filter
      *
-     * @param Filter $baseFilter
+     * @param Rule $baseFilter
      *
      * @return $this
      */
-    public function setBaseFilter(Filter $baseFilter = null)
+    public function setBaseFilter(Rule $baseFilter = null)
     {
         $this->baseFilter = $baseFilter;
 

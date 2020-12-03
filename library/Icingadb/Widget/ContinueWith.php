@@ -4,8 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Data\Filter\Filter;
 use ipl\Html\ValidHtml;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 
@@ -15,7 +16,7 @@ class ContinueWith implements ValidHtml
 
     protected $url;
 
-    public function __construct(Filter $filter, Url $url)
+    public function __construct(Filter\Rule $filter, Url $url)
     {
         $this->filter = $filter;
 
@@ -24,13 +25,13 @@ class ContinueWith implements ValidHtml
 
     public function render()
     {
-        if ($this->filter->isEmpty()) {
+        if ($this->filter instanceof Filter\Chain && $this->filter->isEmpty()) {
             return null;
         }
 
         $continue = new ActionLink(
             t('Continue with filter'),
-            $this->url->setQueryString($this->filter->toQueryString()),
+            $this->url->setQueryString(QueryString::render($this->filter)),
             'forward',
             ['class' => 'continue-with', 'data-base-target' => '_next']
         );

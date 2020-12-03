@@ -4,28 +4,25 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterExpression;
 use ipl\Orm\Contract\RewriteFilterBehavior;
+use ipl\Stdlib\Filter;
 
 class FlattenedObjectVars implements RewriteFilterBehavior
 {
-    public function rewriteCondition(FilterExpression $expression, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null)
     {
-        if (! isset($expression->metaData['relationCol'])) {
+        if (! isset($condition->relationCol)) {
             // TODO: Shouldn't be necessary. Solve this intelligently or do it elsewhere.
             return;
         }
 
-        $column = $expression->metaData['relationCol'];
+        $column = $condition->relationCol;
         if ($column !== 'flatname' && $column !== 'flatvalue') {
-            $nameFilter = Filter::where($relation . 'flatname', $column);
-            $valueFilter = Filter::expression(
-                $relation . 'flatvalue',
-                $expression->getSign(),
-                $expression->getExpression()
-            );
-            return Filter::matchAll($nameFilter, $valueFilter);
+            $nameFilter = Filter::equal($relation . 'flatname', $column);
+            $class = get_class($condition);
+            $valueFilter = new $class($relation . 'flatvalue', $condition->getValue());
+
+            return Filter::all($nameFilter, $valueFilter);
         }
     }
 }

@@ -4,8 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
-use Icinga\Data\Filter\Filter;
 use InvalidArgumentException;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class UrlMigrator
@@ -61,15 +62,15 @@ class UrlMigrator
         $url->setPath($dbRoute);
 
         if (! $url->getParams()->isEmpty()) {
-            $filter = Filter::fromQueryString((string) $url->getParams());
+            $filter = QueryString::parse((string) $url->getParams());
             $filter = self::transformFilter($filter, $queryTransformer);
-            $url->setQueryString($filter ? $filter->toQueryString() : '');
+            $url->setQueryString(QueryString::render($filter));
         }
 
         return $url;
     }
 
-    public static function transformFilter(Filter $filter, $queryTransformer = null)
+    public static function transformFilter(Filter\Rule $filter, $queryTransformer = null)
     {
         $transformer = new self();
 
@@ -83,13 +84,13 @@ class UrlMigrator
         }
 
         $rewritten = $transformer->rewrite($filter, $columns);
-        return $rewritten === false ? false : ($rewritten instanceof Filter ? $rewritten : $filter);
+        return $rewritten === false ? false : ($rewritten instanceof Filter\Rule ? $rewritten : $filter);
     }
 
-    protected function rewrite(Filter $filter, array $legacyColumns, $parent = null)
+    protected function rewrite(Filter\Rule $filter, array $legacyColumns, Filter\Chain $parent = null)
     {
         $rewritten = null;
-        if ($filter->isExpression()) {
+        if ($filter instanceof Filter\Condition) {
             $column = $filter->getColumn();
 
             if (isset($legacyColumns[$column])) {
@@ -110,14 +111,14 @@ class UrlMigrator
                 switch (true) {
                     case $exprRule === self::USE_EXPR:
                         break;
-                    case is_array($exprRule) && isset($exprRule[$filter->getExpression()]):
-                        $filter->setExpression($exprRule[$filter->getExpression()]);
+                    case is_array($exprRule) && isset($exprRule[$filter->getValue()]):
+                        $filter->setValue($exprRule[$filter->getValue()]);
                         break;
                     default:
-                        $filter->setExpression($exprRule);
+                        $filter->setValue($exprRule);
                 }
             } elseif ($column === 'sort') {
-                $column = $filter->getExpression();
+                $column = $filter->getValue();
                 if (isset($legacyColumns[$column])) {
                     if ($legacyColumns[$column] === self::DROP) {
                         return false;
@@ -127,24 +128,24 @@ class UrlMigrator
 
                     $column = key($legacyColumns[$column]);
 
-                    $rewritten = $filter->setExpression($column);
+                    $rewritten = $filter->setValue($column);
                 }
 
                 if ($parent !== null) {
-                    foreach ($parent->filters() as $child) {
-                        if ($child->isExpression() && $child->getColumn() === 'dir') {
-                            $dir = $child->getExpression();
+                    foreach ($parent as $child) {
+                        if ($child instanceof Filter\Condition && $child->getColumn() === 'dir') {
+                            $dir = $child->getValue();
 
-                            $rewritten = $filter->setExpression("{$column} {$dir}");
+                            $rewritten = $filter->setValue("{$column} {$dir}");
 
-                            $parent->removeId($child->getId());
+                            $parent->remove($child);
                         }
                     }
                 }
             } elseif ($column === 'dir') {
                 if ($parent !== null) {
-                    foreach ($parent->filters() as $child) {
-                        if ($child->isExpression() && $child->getColumn() === 'sort') {
+                    foreach ($parent as $child) {
+                        if ($child instanceof Filter\Condition && $child->getColumn() === 'sort') {
                             return null;
                         }
                     }
@@ -155,12 +156,17 @@ class UrlMigrator
                 $rewritten = $filter->setColumn($groups[1] . '.vars.' . $groups[2]);
             }
         } else {
-            foreach ($filter->filters() as $child) {
-                $retVal = $this->rewrite($child->isExpression() ? clone $child : $child, $legacyColumns, $filter);
+            /** @var Filter\Chain $filter */
+            foreach ($filter as $child) {
+                $retVal = $this->rewrite(
+                    $child instanceof Filter\Condition ? clone $child : $child,
+                    $legacyColumns,
+                    $filter
+                );
                 if ($retVal === false) {
-                    $filter->removeId($child->getId());
-                } elseif ($retVal instanceof Filter) {
-                    $filter->replaceById($child->getId(), $retVal);
+                    $filter->remove($child);
+                } elseif ($retVal instanceof Filter\Rule) {
+                    $filter->replace($child, $retVal);
                 }
             }
         }
@@ -375,15 +381,15 @@ class UrlMigrator
             'host_last_time_up' => self::DROP,
             'host_next_notification' => self::DROP,
             'host_next_update' => function ($filter) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
-                if ($filter->getExpression() !== 'now') {
+                /** @var Filter\Condition $filter */
+                if ($filter->getValue() !== 'now') {
                     return false;
                 }
 
                 // Doesn't get dropped because there's a default dashlet using it..
                 // Though since this dashlet uses it to check for overdue hosts we'll
                 // replace it as next_update is volatile (only in redis up2date)
-                return Filter::where('host.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
+                return Filter::equal('host.state.is_overdue', $filter instanceof Filter\LessThan ? 'y' : 'n');
             },
             'host_no_more_notifications' => self::DROP,
             'host_normal_check_interval' => self::DROP,
@@ -695,15 +701,15 @@ class UrlMigrator
             'service_is_passive_checked' => self::DROP,
             'service_next_notification' => self::DROP,
             'service_next_update' => function ($filter) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
-                if ($filter->getExpression() !== 'now') {
+                /** @var Filter\Condition $filter */
+                if ($filter->getValue() !== 'now') {
                     return false;
                 }
 
                 // Doesn't get dropped because there's a default dashlet using it..
                 // Though since this dashlet uses it to check for overdue services we'll
                 // replace it as next_update is volatile (only in redis up2date)
-                return Filter::where('service.state.is_overdue', $filter->getSign() === '<' ? 'y' : 'n');
+                return Filter::equal('service.state.is_overdue', $filter instanceof Filter\LessThan ? 'y' : 'n');
             },
             'service_no_more_notifications' => self::DROP,
             'service_normal_check_interval' => self::DROP,
@@ -817,26 +823,26 @@ class UrlMigrator
     {
         $receivesStateNotifications = function ($state, $type = null) {
             return function ($filter) use ($state, $type) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
-                $negate = $filter->getSign() === '!=';
-                switch ($filter->getExpression()) {
+                /** @var Filter\Condition $filter */
+                $negate = $filter instanceof Filter\Unequal;
+                switch ($filter->getValue()) {
                     case '0':
-                        $filter = Filter::matchAny(
-                            Filter::where('user.notifications_enabled', 'n'),
-                            Filter::expression('user.states', '!=', $state)
+                        $filter = Filter::any(
+                            Filter::equal('user.notifications_enabled', 'n'),
+                            Filter::unequal('user.states', $state)
                         );
                         if ($type !== null) {
-                            $filter->addFilter(Filter::expression('user.types', '!=', $type));
+                            $filter->add(Filter::unequal('user.types', $type));
                         }
 
                         break;
                     case '1':
-                        $filter = Filter::matchAll(
-                            Filter::where('user.notifications_enabled', 'y'),
-                            Filter::where('user.states', $state)
+                        $filter = Filter::all(
+                            Filter::equal('user.notifications_enabled', 'y'),
+                            Filter::equal('user.states', $state)
                         );
                         if ($type !== null) {
-                            $filter->addFilter(Filter::where('user.types', $type));
+                            $filter->add(Filter::equal('user.types', $type));
                         }
 
                         break;
@@ -845,7 +851,7 @@ class UrlMigrator
                 }
 
                 if ($negate) {
-                    $filter = Filter::not($filter);
+                    $filter = Filter::none($filter);
                 }
 
                 return $filter;
@@ -901,17 +907,19 @@ class UrlMigrator
                 ['downtime_start', 'downtime_end', 'downtime_removed']
             ),
             'contact_notify_host_timeperiod' => function ($filter) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
+                /** @var Filter\Condition $filter */
                 $filter->setColumn('user.timeperiod.name_ci');
-                return $filter->andFilter(
-                    Filter::expression('user.states', '=', ['up', 'down'])
+                return Filter::all(
+                    $filter,
+                    Filter::equal('user.states', ['up', 'down'])
                 );
             },
             'contact_notify_service_timeperiod' => function ($filter) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
+                /** @var Filter\Condition $filter */
                 $filter->setColumn('user.timeperiod.name_ci');
-                return $filter->andFilter(
-                    Filter::expression('user.states', '=', ['ok', 'warning', 'critical', 'unknown'])
+                return Filter::all(
+                    $filter,
+                    Filter::equal('user.states', ['ok', 'warning', 'critical', 'unknown'])
                 );
             },
 
@@ -1065,14 +1073,14 @@ class UrlMigrator
                 'history.state.output' => self::USE_EXPR
             ],
             'type' => function ($filter) {
-                /** @var \Icinga\Data\Filter\FilterExpression $filter */
-                $expr = $filter->getExpression();
+                /** @var Filter\Condition $filter */
+                $expr = $filter->getValue();
 
                 switch (true) {
                     // NotificationhistoryQuery
                     case substr($expr, 0, 13) === 'notification_':
                         $filter->setColumn('history.notification.type');
-                        $filter->setExpression([
+                        $filter->setValue([
                             'notification_ack' => 'acknowledgement',
                             'notification_flapping' => 'flapping_start',
                             'notification_flapping_end' => 'flapping_end',
@@ -1081,29 +1089,29 @@ class UrlMigrator
                             'notification_custom' => 'custom',
                             'notification_state' => ['problem', 'recovery']
                         ][$expr]);
-                        return $filter->andFilter(Filter::where('history.event_type', 'notification'));
+                        return Filter::all($filter, Filter::equal('history.event_type', 'notification'));
                     // StatehistoryQuery
                     case in_array($expr, ['soft_state', 'hard_state'], true):
                         $filter->setColumn('history.state.state_type');
-                        $filter->setExpression(substr($expr, 0, 4));
-                        return $filter->andFilter(Filter::where('history.event_type', 'state_change'));
+                        $filter->setValue(substr($expr, 0, 4));
+                        return Filter::all($filter, Filter::equal('history.event_type', 'state_change'));
                      // DowntimestarthistoryQuery and DowntimeendhistoryQuery
                     case in_array($expr, ['dt_start', 'dt_end'], true):
                         $filter->setColumn('history.event_type');
-                        $filter->setExpression('downtime_' . substr($expr, 3));
+                        $filter->setValue('downtime_' . substr($expr, 3));
                         return $filter;
                     // CommenthistoryQuery
                     case in_array($expr, ['comment', 'ack'], true):
                         $filter->setColumn('history.comment.entry_type');
-                        return $filter->andFilter(Filter::where('history.event_type', 'comment_add'));
+                        return Filter::all($filter, Filter::equal('history.event_type', 'comment_add'));
                     // CommentdeletionhistoryQuery
                     case in_array($expr, ['comment_deleted', 'ack_deleted'], true):
                         $filter->setColumn('history.comment.entry_type');
-                        return $filter->andFilter(Filter::where('history.event_type', 'comment_remove'));
+                        return Filter::all($filter, Filter::equal('history.event_type', 'comment_remove'));
                     // FlappingstarthistoryQuery and CommenthistoryQuery
                     case in_array($expr, ['flapping', 'flapping_deleted'], true):
                         $filter->setColumn('history.event_type');
-                        return $filter->setExpression($expr === 'flapping' ? 'flapping_start' : 'flapping_end');
+                        return $filter->setValue($expr === 'flapping' ? 'flapping_start' : 'flapping_end');
                 }
             }
         ];

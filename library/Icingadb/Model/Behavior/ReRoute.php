@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use Icinga\Data\Filter\FilterExpression;
 use ipl\Orm\Contract\RewriteFilterBehavior;
+use ipl\Stdlib\Filter;
 
 class ReRoute implements RewriteFilterBehavior
 {
@@ -21,14 +21,14 @@ class ReRoute implements RewriteFilterBehavior
         return $this->routes;
     }
 
-    public function rewriteCondition(FilterExpression $expression, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null)
     {
-        if (! isset($expression->metaData['relationCol'])) {
+        if (! isset($condition->relationCol)) {
             // TODO: Shouldn't be necessary. Solve this intelligently or do it elsewhere.
             return;
         }
 
-        $column = $expression->metaData['relationCol'];
+        $column = $condition->relationCol;
         $dot = strpos($column, '.');
         if ($dot === false) {
             return;
@@ -36,10 +36,10 @@ class ReRoute implements RewriteFilterBehavior
 
         $leftMostRelationName = substr($column, 0, $dot);
         if (isset($this->routes[$leftMostRelationName])) {
-            return new FilterExpression(
+            $class = get_class($condition);
+            return new $class(
                 $relation . $this->routes[$leftMostRelationName] . substr($column, $dot),
-                $expression->getSign(),
-                $expression->getExpression()
+                $condition->getValue()
             );
         }
     }

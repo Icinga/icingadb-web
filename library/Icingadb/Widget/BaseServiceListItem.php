@@ -4,10 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Data\Filter\FilterAnd;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\Links;
 use ipl\Html\Html;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\StateBall;
 
 /**
@@ -47,14 +46,16 @@ abstract class BaseServiceListItem extends StateListItem
         parent::init();
 
         $this->setMultiselectFilter(
-            (new FilterAnd())
-                ->addFilter(new FilterExpression('service.name', '=', $this->item->name))
-                ->addFilter(new FilterExpression('host.name', '=', $this->item->host->name))
+            Filter::all(
+                Filter::equal('service.name', $this->item->name),
+                Filter::equal('host.name', $this->item->host->name)
+            )
         );
         $this->setDetailFilter(
-            (new FilterAnd())
-                ->addFilter(new FilterExpression('name', '=', $this->item->name))
-                ->addFilter(new FilterExpression('host.name', '=', $this->item->host->name))
+            Filter::all(
+                Filter::equal('name', $this->item->name),
+                Filter::equal('host.name', $this->item->host->name)
+            )
         );
     }
 }

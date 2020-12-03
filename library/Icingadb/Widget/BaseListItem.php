@@ -4,9 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Data\Filter\Filter;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Stdlib\Filter\Rule;
+use ipl\Web\Filter\QueryString;
 
 /**
  * Base class for list items
@@ -114,16 +115,16 @@ abstract class BaseListItem extends BaseHtmlElement
     {
     }
 
-    protected function setMultiselectFilter(Filter $filter)
+    protected function setMultiselectFilter(Rule $filter)
     {
-        $this->addAttributes(['data-icinga-multiselect-filter' => '(' . $filter->toQueryString() . ')']);
+        $this->addAttributes(['data-icinga-multiselect-filter' => '(' . QueryString::render($filter) . ')']);
 
         return $this;
     }
 
-    protected function setDetailFilter(Filter $filter)
+    protected function setDetailFilter(Rule $filter)
     {
-        $this->addAttributes(['data-icinga-detail-filter' => $filter->toQueryString()]);
+        $this->addAttributes(['data-icinga-detail-filter' => QueryString::render($filter)]);
 
         return $this;
     }

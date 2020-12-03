@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
@@ -12,6 +11,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Stdlib\Filter;
 
 class HostgroupController extends Controller
 {
@@ -27,7 +27,7 @@ class HostgroupController extends Controller
         $query = Hostgroupsummary::on($this->getDb());
 
         FilterProcessor::apply(
-            new FilterExpression('hostgroup.name', '=', $name),
+            Filter::equal('hostgroup.name', $name),
             $query
         );
 

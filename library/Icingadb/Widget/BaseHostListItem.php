@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\Links;
 use ipl\Html\Html;
+use ipl\Stdlib\Filter;
 
 /**
  * Host item of a host list. Represents one database row.
@@ -25,7 +25,7 @@ abstract class BaseHostListItem extends StateListItem
     {
         parent::init();
 
-        $this->setMultiselectFilter(new FilterExpression('host.name', '=', $this->item->name));
-        $this->setDetailFilter(new FilterExpression('name', '=', $this->item->name));
+        $this->setMultiselectFilter(Filter::equal('host.name', $this->item->name));
+        $this->setDetailFilter(Filter::equal('name', $this->item->name));
     }
 }

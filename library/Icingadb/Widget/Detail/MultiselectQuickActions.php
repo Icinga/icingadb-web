@@ -11,6 +11,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class MultiselectQuickActions extends BaseHtmlElement
@@ -150,6 +151,6 @@ class MultiselectQuickActions extends BaseHtmlElement
     protected function getLink($action)
     {
         return Url::fromPath("icingadb/{$this->type}s/$action")
-            ->setQueryString($this->getBaseFilter()->toQueryString());
+            ->setQueryString(QueryString::render($this->getBaseFilter()));
     }
 }

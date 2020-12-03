@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use Icinga\Data\Filter\FilterExpression;
 use ipl\Orm\Contract\PropertyBehavior;
 use ipl\Orm\Contract\RewriteFilterBehavior;
+use ipl\Stdlib\Filter\Condition;
 
 /**
  * Class Bitmask
@@ -53,19 +53,19 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
         return $bits;
     }
 
-    public function rewriteCondition(FilterExpression $expression, $relation = null)
+    public function rewriteCondition(Condition $condition, $relation = null)
     {
-        if (! isset($expression->metaData['relationCol'])) {
+        if (! isset($condition->relationCol)) {
             // TODO: Shouldn't be necessary. Solve this intelligently or do it elsewhere.
             return;
         }
 
-        $column = $expression->metaData['relationCol'];
+        $column = $condition->relationCol;
         if (! isset($this->properties[$column])) {
             return;
         }
 
-        $values = $expression->getExpression();
+        $values = $condition->getValue();
         if (! is_array($values)) {
             if (ctype_digit($values)) {
                 return;
@@ -83,6 +83,6 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
             }
         }
 
-        $expression->setColumn(sprintf('%s & %s', $expression->getColumn(), $bits));
+        $condition->setColumn(sprintf('%s & %s', $condition->getColumn(), $bits));
     }
 }

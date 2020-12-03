@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Chart\Donut;
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
@@ -12,6 +13,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Web\Filter\QueryString;
 
 class ServiceSummaryDonut extends Card
 {
@@ -39,7 +41,9 @@ class ServiceSummaryDonut extends Card
             ->addSlice($this->summary->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
             ->addSlice($this->summary->services_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->services_critical_unhandled)
-            ->setLabelBigUrl(Links::services()->addFilter($this->getBaseFilter())->addParams([
+            ->setLabelBigUrl(Links::services()->addFilter(
+                Filter::fromQueryString(QueryString::render($this->getBaseFilter()))
+            )->addParams([
                 'service.state.soft_state' => 2,
                 'service.state.is_handled' => 'n',
                 'sort' => 'service.state.last_state_change'
