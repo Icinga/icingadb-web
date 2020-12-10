@@ -16,17 +16,19 @@ trait IcingaRedis
     /**
      * Get the connection to the Icinga Redis
      *
+     * @param  Config|null  $config Override the configured Redis.
+     *
      * @return Redis
      *
      * @throws Exception
      */
-    public function getIcingaRedis()
+    public function getIcingaRedis(Config $config = null)
     {
         if ($this->redis === null) {
             try {
-                $primaryRedis = $this->getPrimaryRedis();
+                $primaryRedis = $this->getPrimaryRedis($config);
             } catch (Exception $e) {
-                $secondaryRedis = $this->getSecondaryRedis();
+                $secondaryRedis = $this->getSecondaryRedis($config);
 
                 if ($secondaryRedis === null) {
                     throw $e;
@@ -40,7 +42,7 @@ trait IcingaRedis
             $primaryTimestamp = $this->getLastIcingaHeartbeat($primaryRedis);
 
             if ($primaryTimestamp <= time() - 60) {
-                $secondaryRedis = $this->getSecondaryRedis();
+                $secondaryRedis = $this->getSecondaryRedis($config);
 
                 if ($secondaryRedis === null) {
                     $this->redis = $primaryRedis;
@@ -63,7 +65,7 @@ trait IcingaRedis
         return $this->redis;
     }
 
-    public function getLastIcingaHeartbeat(Redis $redis)
+    public static function getLastIcingaHeartbeat(Redis $redis)
     {
         // https://github.com/predis/predis/issues/607#event-3640855190
         $rs = $redis->executeRaw(['XREAD', 'COUNT', '1', 'STREAMS', 'icinga:stats', '0']);
@@ -87,25 +89,33 @@ trait IcingaRedis
         return $fields['timestamp'] / 1000;
     }
 
-    private function getPrimaryRedis()
+    private static function getPrimaryRedis(Config $config = null)
     {
-        $config = Config::module('icingadb')->getSection('redis1');
+        if ($config === null) {
+            $config = Config::module('icingadb');
+        }
+
+        $section = $config->getSection('redis1');
 
         $redis = new Redis([
-            'host'      => $config->get('host', 'localhost'),
-            'port'      => $config->get('port', 6380),
+            'host'      => $section->get('host', 'localhost'),
+            'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ]);
+        ] + static::getTlsParams($config));
 
         $redis->ping();
 
         return $redis;
     }
 
-    private function getSecondaryRedis()
+    private static function getSecondaryRedis(Config $config = null)
     {
-        $config = Config::module('icingadb')->getSection('redis2');
-        $host = $config->host;
+        if ($config === null) {
+            $config = Config::module('icingadb');
+        }
+
+        $section = $config->getSection('redis2');
+        $host = $section->host;
 
         if (empty($host)) {
             return null;
@@ -113,12 +123,60 @@ trait IcingaRedis
 
         $redis = new Redis([
             'host'      => $host,
-            'port'      => $config->get('port', 6380),
+            'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ]);
+        ] + static::getTlsParams($config));
 
         $redis->ping();
 
         return $redis;
+    }
+
+    private static function getTlsParams(Config $config)
+    {
+        $config = $config->getSection('redis');
+
+        if (! $config->get('tls', false)) {
+            return [];
+        }
+
+        $ssl = [];
+        $ca = $config->get('ca');
+
+        if ($ca === null) {
+            $ssl['verify_peer'] = false;
+            $ssl['verify_peer_name'] = false;
+        } else {
+            $ssl['cafile'] = static::ensurePemOnDisk($ca);
+        }
+
+        $cert = $config->get('cert');
+        $key = $config->get('key');
+
+        if ($cert !== null && $key !== null) {
+            $ssl['local_cert'] = static::ensurePemOnDisk($cert . PHP_EOL . $key);
+        }
+
+        return ['scheme' => 'tls', 'ssl' => $ssl];
+    }
+
+    private static function ensurePemOnDisk($pem)
+    {
+        $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . sha1($pem);
+        $target = $dir . DIRECTORY_SEPARATOR . 'file.pem';
+
+        if (! file_exists($target)) {
+            $temp = $dir . DIRECTORY_SEPARATOR . uniqid();
+
+            try {
+                mkdir($dir, 0700);
+            } catch (Exception $_) {
+            }
+
+            file_put_contents($temp, $pem);
+            rename($temp, $target);
+        }
+
+        return $target;
     }
 }
