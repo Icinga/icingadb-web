@@ -175,10 +175,6 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createEvents()
-    {
-    }
-
     protected function createGroups()
     {
         $groups = [Html::tag('h2', t('Groups'))];

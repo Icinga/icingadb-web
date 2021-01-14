@@ -11,7 +11,6 @@ class ServiceDetail extends ObjectDetail
         $this->add([
             $this->createPluginOutput(),
             $this->createExtensions(),
-            $this->createEvents(),
             $this->createActions(),
             $this->createNotes(),
             $this->createGroups(),
