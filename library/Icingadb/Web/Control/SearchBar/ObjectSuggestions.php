@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
@@ -17,10 +16,9 @@ use ipl\Orm\Resolver;
 use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
-use ipl\Stdlib\Filter as StdlibFilter;
+use ipl\Stdlib\Filter;
 use ipl\Web\Control\SearchBar\SearchException;
 use ipl\Web\Control\SearchBar\Suggestions;
-use ipl\Web\Filter\QueryString;
 use PDO;
 use RuntimeException;
 
@@ -83,9 +81,9 @@ class ObjectSuggestions extends Suggestions
     {
         $model = $this->getModel();
 
-        $quickFilter = StdlibFilter::any();
+        $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
-            $where = StdlibFilter::equal($model->getTableName() . '.' . $column, $searchTerm);
+            $where = Filter::equal($model->getTableName() . '.' . $column, $searchTerm);
             $where->columnLabel = $model->getMetaData()[$column];
             $quickFilter->add($where);
         }
@@ -96,7 +94,7 @@ class ObjectSuggestions extends Suggestions
     /**
      * @todo Don't suggest obfuscated (protected) custom variables
      */
-    protected function fetchValueSuggestions($column, $searchTerm, StdlibFilter\Chain $searchFilter)
+    protected function fetchValueSuggestions($column, $searchTerm, Filter\Chain $searchFilter)
     {
         $model = $this->getModel();
         $query = $model::on($this->getDb());
@@ -104,8 +102,8 @@ class ObjectSuggestions extends Suggestions
         // TODO: Remove this once https://github.com/Icinga/ipl-orm/issues/9 is done
         foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
             if ($behavior instanceof ReRoute) {
-                $expr = Filter::where('', '');
-                $expr->metaData['relationCol'] = $column;
+                $expr = Filter::equal('', '');
+                $expr->relationCol = $column;
                 $expr = $behavior->rewriteCondition($expr, '');
                 if ($expr !== null) {
                     $column = $expr->getColumn();
@@ -127,21 +125,21 @@ class ObjectSuggestions extends Suggestions
 
         if (substr($targetPath, -5) === '.vars') {
             $columnPath = $targetPath . '.flatvalue';
-            FilterProcessor::apply(Filter::where($targetPath . '.flatname', $columnName), $query);
+            FilterProcessor::apply(Filter::equal($targetPath . '.flatname', $columnName), $query);
         }
 
         $query->columns($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
-        if ($searchFilter instanceof StdlibFilter\None) {
-            FilterProcessor::apply(Filter::where($columnPath, $searchTerm), $query);
-        } elseif ($searchFilter instanceof StdlibFilter\All) {
-            $searchFilter->add(StdlibFilter::equal($columnPath, $searchTerm));
+        if ($searchFilter instanceof Filter\None) {
+            FilterProcessor::apply(Filter::equal($columnPath, $searchTerm), $query);
+        } elseif ($searchFilter instanceof Filter\All) {
+            $searchFilter->add(Filter::equal($columnPath, $searchTerm));
         } else {
-            $searchFilter = StdlibFilter::equal($columnPath, $searchTerm);
+            $searchFilter = Filter::equal($columnPath, $searchTerm);
         }
 
-        FilterProcessor::apply(Filter::fromQueryString(QueryString::render($searchFilter)), $query);
+        FilterProcessor::apply($searchFilter, $query);
 
         try {
             return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
@@ -255,7 +253,7 @@ class ObjectSuggestions extends Suggestions
             }
         }
 
-        FilterProcessor::apply(Filter::where('flatname', $searchTerm), $customVars);
+        FilterProcessor::apply(Filter::equal('flatname', $searchTerm), $customVars);
         $customVars = $customVars->assembleSelect();
 
         $customVars->resetColumns()->columns($columns);

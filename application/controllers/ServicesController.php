@@ -5,8 +5,6 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Compat\FeatureStatus;
@@ -21,6 +19,7 @@ use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -69,7 +68,7 @@ class ServicesController extends Controller
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
@@ -112,11 +111,7 @@ class ServicesController extends Controller
                     ))
             );
         } else {
-            $this->addFooter(
-                (new ServiceStatusBar($summary->first()))->setBaseFilter(
-                    Filter::fromQueryString(QueryString::render($filter))
-                )
-            );
+            $this->addFooter((new ServiceStatusBar($summary->first()))->setBaseFilter($filter));
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
@@ -167,7 +162,7 @@ class ServicesController extends Controller
         );
         $this->addControl(new ShowMore(
             $results,
-            Links::services()->setQueryString($this->getFilter()->toQueryString()),
+            Links::services()->setQueryString(QueryString::render($this->getFilter())),
             sprintf(t('Show all %d services'), $services->count())
         ));
         $this->addControl(
@@ -202,9 +197,9 @@ class ServicesController extends Controller
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':
                 FilterProcessor::apply(
-                    Filter::matchAll([
-                        new FilterExpression('state.is_problem', '=', 'y'),
-                        new FilterExpression('state.is_acknowledged', '=', 'n')
+                    Filter::all([
+                        Filter::equal('state.is_problem', 'y'),
+                        Filter::equal('state.is_acknowledged', 'n')
                     ]),
                     $services
                 );
@@ -219,7 +214,7 @@ class ServicesController extends Controller
 
     public function getCommandTargetsUrl()
     {
-        return Links::servicesDetails()->setQueryString($this->getFilter()->toQueryString());
+        return Links::servicesDetails()->setQueryString(QueryString::render($this->getFilter()));
     }
 
     protected function getFeatureStatus()

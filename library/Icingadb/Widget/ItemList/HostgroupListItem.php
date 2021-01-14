@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Widget\Detail\HostStatistics;
@@ -12,6 +11,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
 /** @property HostgroupList $list */
@@ -21,10 +21,10 @@ class HostgroupListItem extends BaseTableRowItem
     {
         $hostStats = new HostStatistics($this->item);
 
-        $hostStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+        $hostStats->setBaseFilter(Filter::equal('hostgroup.name', $this->item->name));
         if ($this->list->hasBaseFilter()) {
             $hostStats->setBaseFilter(
-                $hostStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+                Filter::all($hostStats->getBaseFilter(), $this->list->getBaseFilter())
             );
         }
 
@@ -36,10 +36,10 @@ class HostgroupListItem extends BaseTableRowItem
 
         $serviceStats = new ServiceStatistics($this->item);
 
-        $serviceStats->setBaseFilter(Filter::where('hostgroup.name', $this->item->name));
+        $serviceStats->setBaseFilter(Filter::equal('hostgroup.name', $this->item->name));
         if ($this->list->hasBaseFilter()) {
             $serviceStats->setBaseFilter(
-                $serviceStats->getBaseFilter()->andFilter($this->list->getBaseFilter())
+                Filter::all($serviceStats->getBaseFilter(), $this->list->getBaseFilter())
             );
         }
 

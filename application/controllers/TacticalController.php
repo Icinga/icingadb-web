@@ -5,14 +5,12 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
-use ipl\Web\Filter\QueryString;
 
 class TacticalController extends Controller
 {
@@ -31,7 +29,7 @@ class TacticalController extends Controller
         $searchBar = $this->createSearchBar($servicestateSummary);
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
@@ -50,12 +48,12 @@ class TacticalController extends Controller
 
         $this->addContent(
             (new HostSummaryDonut($hoststateSummary->first()))
-                ->setBaseFilter(Filter::fromQueryString(QueryString::render($filter)))
+                ->setBaseFilter($filter)
         );
 
         $this->addContent(
             (new ServiceSummaryDonut($servicestateSummary->first()))
-                ->setBaseFilter(Filter::fromQueryString(QueryString::render($filter)))
+                ->setBaseFilter($filter)
         );
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {

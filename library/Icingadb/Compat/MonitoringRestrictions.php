@@ -5,9 +5,9 @@
 namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Authentication\Auth;
-use Icinga\Data\Filter\Filter;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\QueryException;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 
 class MonitoringRestrictions
 {
@@ -28,53 +28,55 @@ class MonitoringRestrictions
      *
      * @param   string $name        Name of the restriction
      *
-     * @return  Filter              Filter object
+     * @return  Filter\Rule         Filter rule
      * @throws  ConfigurationError  If the restriction contains invalid filter columns
      */
     public static function getRestriction($name)
     {
-        $restriction = Filter::matchAny();
-        $restriction->setAllowedFilterColumns(array(
+        $restriction = Filter::any();
+
+        $allowedColumns = [
             'host_name',
             'hostgroup_name',
             'instance_name',
             'service_description',
             'servicegroup_name',
-            function ($c) {
+            '_(host|service)_<customvar-name>' => function ($c) {
                 return preg_match('/^_(?:host|service)_/i', $c);
             }
-        ));
+        ];
 
-        foreach (self::getRestrictions($name) as $filter) {
-            if ($filter === '*') {
-                return Filter::matchAll();
+        foreach (self::getRestrictions($name) as $queryString) {
+            if ($queryString === '*') {
+                return Filter::all();
             }
 
-            try {
-                $restriction->addFilter(Filter::fromQueryString($filter));
-            } catch (QueryException $e) {
-                throw new ConfigurationError(
-                    t('Cannot apply restriction %s using the filter %s. You can only use the following columns: %s'),
+            $restriction->add(QueryString::fromString($queryString)
+                ->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use (
                     $name,
-                    $filter,
-                    implode(', ', array(
-                        'instance_name',
-                        'host_name',
-                        'hostgroup_name',
-                        'service_description',
-                        'servicegroup_name',
-                        '_(host|service)_<customvar-name>'
-                    )),
-                    $e
-                );
-            }
+                    $queryString,
+                    $allowedColumns
+                ) {
+                    foreach ($allowedColumns as $column) {
+                        if (is_callable($column)) {
+                            if ($column($condition->getColumn())) {
+                                return;
+                            }
+                        } elseif ($column === $condition->getColumn()) {
+                            return;
+                        }
+
+                        throw new ConfigurationError(
+                            t('Cannot apply restriction %s using the filter %s.'
+                                . ' You can only use the following columns: %s'),
+                            $name,
+                            $queryString,
+                            implode(', ', array_keys($allowedColumns))
+                        );
+                    }
+                })->parse());
         }
 
-        if ($restriction->isEmpty()) {
-            return Filter::matchAll();
-        }
-
-        $restriction->setAllowedFilterColumns([]);
-        return $restriction;
+        return $restriction->isEmpty() ? Filter::all() : $restriction;
     }
 }

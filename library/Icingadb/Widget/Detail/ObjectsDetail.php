@@ -17,6 +17,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\ActionLink;
 
 class ObjectsDetail extends BaseHtmlElement
@@ -96,7 +97,7 @@ class ObjectsDetail extends BaseHtmlElement
                     tp('Show %d comment', 'Show %d comments', $this->summary->comments_total),
                     $this->summary->comments_total
                 ),
-                Links::comments()->setQueryString($this->getBaseFilter()->toQueryString())
+                Links::comments()->setQueryString(QueryString::render($this->getBaseFilter()))
             );
         } else {
             $content[] = new EmptyState(t('No comments created.'));
@@ -115,7 +116,7 @@ class ObjectsDetail extends BaseHtmlElement
                     tp('Show %d downtime', 'Show %d downtimes', $this->summary->downtimes_total),
                     $this->summary->downtimes_total
                 ),
-                Links::downtimes()->setQueryString($this->getBaseFilter()->toQueryString())
+                Links::downtimes()->setQueryString(QueryString::render($this->getBaseFilter()))
             );
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));
@@ -133,9 +134,13 @@ class ObjectsDetail extends BaseHtmlElement
         $form->load(new FeatureStatus($this->type, $this->summary));
 
         if ($this->type === 'host') {
-            $form->setAction(Links::toggleHostsFeatures()->setQueryString($this->getBaseFilter()->toQueryString()));
+            $form->setAction(
+                Links::toggleHostsFeatures()->setQueryString(QueryString::render($this->getBaseFilter()))
+            );
         } else {
-            $form->setAction(Links::toggleServicesFeatures()->setQueryString($this->getBaseFilter()->toQueryString()));
+            $form->setAction(
+                Links::toggleServicesFeatures()->setQueryString(QueryString::render($this->getBaseFilter()))
+            );
         }
 
         return [

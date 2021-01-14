@@ -61,7 +61,7 @@ class CommentsController extends Controller
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
-                $filter = QueryString::parse($this->getFilter()->toQueryString());
+                $filter = $this->getFilter();
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
@@ -187,13 +187,13 @@ class CommentsController extends Controller
 
         $this->addControl(new ShowMore(
             $rs,
-            Links::comments()->setQueryString($this->getFilter()->toQueryString()),
+            Links::comments()->setQueryString(QueryString::render($this->getFilter())),
             sprintf(t('Show all %d comments'), $comments->count())
         ));
 
         $this->addContent(new ActionLink(
             sprintf(t('Remove %d comments'), $comments->count()),
-            Links::commentsDelete()->setQueryString($this->getFilter()->toQueryString()),
+            Links::commentsDelete()->setQueryString(QueryString::render($this->getFilter())),
             'trash',
             [
                 'class'               => 'cancel-button',
