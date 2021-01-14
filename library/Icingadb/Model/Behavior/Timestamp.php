@@ -24,7 +24,12 @@ class Timestamp extends PropertyBehavior
         }
 
         if (! ctype_digit($value)) {
-            $value = strtotime($value);
+            $timestamp = strtotime($value);
+            if ($timestamp === false) {
+                return $value;
+            } else {
+                $value = $timestamp;
+            }
         }
 
         return $value * 1000.0;
