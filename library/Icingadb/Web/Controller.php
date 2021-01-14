@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Web;
 
 use Generator;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
@@ -13,16 +14,21 @@ use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\FilterControl;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
+use ipl\Stdlib\Filter\Condition;
+use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
+use ipl\Web\Control\SearchBar;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class Controller extends CompatController
@@ -75,6 +81,7 @@ class Controller extends CompatController
     public function createPaginationControl(Paginatable $paginatable)
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
+        $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
 
         $this->params->shift($paginationControl->getPageParam());
         $this->params->shift($paginationControl->getPageSizeParam());
@@ -115,6 +122,111 @@ class Controller extends CompatController
         $this->params->shift($sortControl->getSortParam());
 
         return $sortControl;
+    }
+
+    /**
+     * Create and return the SearchBar
+     *
+     * @param array $preserveParams Query params to preserve when redirecting
+     *
+     * @return SearchBar
+     */
+    public function createSearchBar(Query $query, array $preserveParams = null)
+    {
+        $requestUrl = Url::fromRequest();
+        $redirectUrl = $preserveParams !== null ? $requestUrl->onlyWith($preserveParams) : $requestUrl;
+
+        $filter = QueryString::fromString($this->getFilter()->toQueryString())
+            ->on(QueryString::ON_CONDITION, function (Condition $condition) use ($query) {
+                $path = $condition->getColumn();
+                if (strpos($path, '.') === false) {
+                    $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
+                    $condition->setColumn($path);
+                }
+
+                if (strpos($path, '.vars.') !== false) {
+                    list($target, $varName) = explode('.vars.', $path);
+                    if (strpos($target, '.') === false) {
+                        // Programmatically translated since the full definition is available in class ObjectSuggestions
+                        $condition->columnLabel = sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName);
+                    }
+                } else {
+                    $metaData = $query->getResolver()->getMetaData($query->getModel());
+                    if (isset($metaData[$path])) {
+                        $condition->columnLabel = $metaData[$path];
+                    }
+                }
+            })
+            ->parse();
+
+        $searchBar = new SearchBar();
+        $searchBar->setSubmitLabel(t('Search'));
+        $searchBar->setFilter($filter);
+        $searchBar->setAction($requestUrl->getAbsoluteUrl());
+        $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
+
+        if (method_exists($this, 'completeAction')) {
+            $searchBar->setSuggestionUrl(Url::fromPath(
+                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+                ['_disableLayout' => true, 'showCompact' => true]
+            ));
+        }
+
+        $searchBar->on(SearchBar::ON_CHANGE, function (array &$changes) use ($query) {
+            if ($changes['type'] === 'remove') {
+                return;
+            }
+
+            $metaData = $query->getResolver()->getMetaData($query->getModel());
+            foreach ($changes['terms'] as &$termData) {
+                if (($pos = strpos($termData['search'], '.vars.')) !== false) {
+                    try {
+                        $query->getResolver()->resolveRelation(substr($termData['search'], 0, $pos + 5));
+                    } catch (InvalidArgumentException $_) {
+                        $termData['invalidMsg'] = sprintf(
+                            t('"%s" is not a valid relation'),
+                            substr($termData['search'], 0, $pos)
+                        );
+                    }
+                } elseif ($termData['type'] === 'column') {
+                    $column = $termData['search'];
+                    if (strpos($column, '.') === false) {
+                        $column = $query->getResolver()->qualifyPath($column, $query->getModel()->getTableName());
+                        // TODO: Also apply this change, though not until.. (see below)
+                    }
+
+                    if (! isset($metaData[$column])) {
+                        // TODO: Enable once https://github.com/Icinga/ipl-stdlib/issues/17 is done and
+                        //       used by the search bar so that not every "change" makes it invalid
+                        $path = false; //array_search($column, $metaData, true);
+                        if ($path === false) {
+                            $termData['invalidMsg'] = t('Is not a valid column');
+                        } else {
+                            $termData['search'] = $path;
+                        }
+                    }
+                }
+            }
+        })->on(SearchBar::ON_SENT, function (SearchBar $form) use ($redirectUrl) {
+            $existingParams = $redirectUrl->getParams();
+            $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
+            foreach ($existingParams->toArray(false) as $name => $value) {
+                if (is_int($name)) {
+                    $name = $value;
+                    $value = true;
+                }
+
+                $redirectUrl->getParams()->addEncoded($name, $value);
+            }
+
+            $form->setRedirectUrl($redirectUrl);
+        })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
+            $this->getResponse()->redirectAndExit($form->getRedirectUrl());
+        })->handleRequest(ServerRequest::fromGlobals());
+
+        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
+
+        return $searchBar;
     }
 
     /**
@@ -163,10 +275,39 @@ class Controller extends CompatController
     public function createViewModeSwitcher()
     {
         $viewModeSwitcher = new ViewModeSwitcher(Url::fromRequest());
+        $viewModeSwitcher->setAttribute('id', $this->getRequest()->protectId('view-switcher'));
 
         $this->params->shift($viewModeSwitcher->getViewModeParam());
 
         return $viewModeSwitcher;
+    }
+
+    /**
+     * Process a search request
+     *
+     * @param Query $query
+     */
+    public function handleSearchRequest(Query $query)
+    {
+        $q = trim($this->params->shift('q', ''), ' *');
+        if (! $q) {
+            return;
+        }
+
+        $filter = Filter::matchAny();
+        foreach ($query->getModel()->getSearchColumns() as $column) {
+            $filter->addFilter(Filter::where($column, "*$q*"));
+        }
+
+        $requestUrl = Url::fromRequest();
+
+        $existingParams = $requestUrl->getParams()->without('q');
+        $requestUrl->setQueryString($filter->toQueryString());
+        foreach ($existingParams->toArray(false) as $name => $value) {
+            $requestUrl->getParams()->addEncoded($name, $value);
+        }
+
+        $this->getResponse()->redirectAndExit($requestUrl);
     }
 
     public function export(Query ...$queries)
@@ -240,12 +381,12 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query)
+    public function filter(Query $query, Rule $filter = null)
     {
         $this->applyMonitoringRestriction($query);
 
         FilterProcessor::apply(
-            $this->getFilter(),
+            $filter ? Filter::fromQueryString(QueryString::render($filter)) : $this->getFilter(),
             $query
         );
 
