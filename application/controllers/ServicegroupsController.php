@@ -4,10 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class ServicegroupsController extends Controller
@@ -21,6 +25,8 @@ class ServicegroupsController extends Controller
 
         $servicegroups = ServicegroupSummary::on($db);
 
+        $this->handleSearchRequest($servicegroups);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
         $sortControl = $this->createSortControl(
@@ -31,12 +37,24 @@ class ServicegroupsController extends Controller
                 'services_total desc'    => t('Total Services')
             ]
         );
-        $filterControl = $this->createFilterControl($servicegroups, [
+        $searchBar = $this->createSearchBar($servicegroups, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($servicegroups);
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($servicegroups, $filter);
 
         $servicegroups->peekAhead($compact);
 
@@ -45,7 +63,7 @@ class ServicegroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $results = $servicegroups->execute();
 
@@ -64,6 +82,18 @@ class ServicegroupsController extends Controller
             );
         }
 
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
         $this->setAutorefreshInterval(30);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Servicegroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }

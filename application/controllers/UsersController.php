@@ -4,10 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Security\SecurityException;
+use ipl\Web\Filter\QueryString;
 
 class UsersController extends Controller
 {
@@ -28,6 +31,8 @@ class UsersController extends Controller
 
         $users = User::on($db);
 
+        $this->handleSearchRequest($users);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($users);
         $sortControl = $this->createSortControl(
@@ -38,19 +43,46 @@ class UsersController extends Controller
                 'user.pager'        => t('Pager Address / Number')
             ]
         );
-        $filterControl = $this->createFilterControl($users);
+        $searchBar = $this->createSearchBar($users, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam()
+        ]);
 
-        $this->filter($users);
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($users, $filter);
 
         yield $this->export($users);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $this->addContent(new UserList($users));
 
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
         $this->setAutorefreshInterval(10);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(User::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }

@@ -4,10 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HostgroupsController extends Controller
@@ -21,6 +25,8 @@ class HostgroupsController extends Controller
 
         $hostgroups = Hostgroupsummary::on($db);
 
+        $this->handleSearchRequest($hostgroups);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
         $sortControl = $this->createSortControl(
@@ -32,12 +38,24 @@ class HostgroupsController extends Controller
                 'services_total desc' => t('Total Services')
             ]
         );
-        $filterControl = $this->createFilterControl($hostgroups, [
+        $searchBar = $this->createSearchBar($hostgroups, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam()
         ]);
 
-        $this->filter($hostgroups);
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($hostgroups, $filter);
 
         $hostgroups->peekAhead($compact);
 
@@ -46,7 +64,7 @@ class HostgroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $results = $hostgroups->execute();
 
@@ -65,6 +83,18 @@ class HostgroupsController extends Controller
             );
         }
 
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
         $this->setAutorefreshInterval(30);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Hostgroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }

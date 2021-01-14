@@ -34,6 +34,24 @@ class Servicegroup extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Servicegroup Environment Id'),
+            'name_checksum'         => t('Servicegroup Name Checksum'),
+            'properties_checksum'   => t('Servicegroup Properties Checksum'),
+            'name'                  => t('Servicegroup Name'),
+            'name_ci'               => t('Servicegroup Name (CI)'),
+            'display_name'          => t('Servicegroup Display Name'),
+            'zone_id'               => t('Servicegroup Zone Id')
+        ];
+    }
+
+    public function getSearchColumns()
+    {
+        return ['name_ci'];
+    }
+
     public function getDefaultSort()
     {
         return 'display_name';
@@ -55,6 +73,8 @@ class Servicegroup extends Model
         $relations->belongsToMany('customvar', Customvar::class)
             ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
+            ->through(ServicegroupCustomvar::class);
+        $relations->belongsToMany('vars', CustomvarFlat::class)
             ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('service', Service::class)
             ->through(ServicegroupMember::class);

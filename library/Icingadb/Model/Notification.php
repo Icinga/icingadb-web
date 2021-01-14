@@ -83,6 +83,10 @@ class Notification extends Model
 
         $relations->belongsToMany('customvar', Customvar::class)
             ->through(NotificationCustomvar::class);
+        $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
+            ->through(NotificationCustomvar::class);
+        $relations->belongsToMany('vars', CustomvarFlat::class)
+            ->through(NotificationCustomvar::class);
         $relations->belongsToMany('user', User::class)
             ->through('notification_recipient');
         $relations->belongsToMany('usergroup', Usergroup::class)

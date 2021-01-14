@@ -4,8 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
@@ -13,6 +15,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Icon;
@@ -35,6 +38,8 @@ class CommentsController extends Controller
             'service.state'
         ]);
 
+        $this->handleSearchRequest($comments);
+
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($comments);
         $sortControl = $this->createSortControl(
@@ -48,9 +53,25 @@ class CommentsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher();
-        $filterControl = $this->createFilterControl($comments);
+        $searchBar = $this->createSearchBar($comments, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
+        ]);
 
-        $this->filter($comments);
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $this->filter($comments, $filter);
 
         $comments->peekAhead($compact);
 
@@ -60,7 +81,7 @@ class CommentsController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
         $this->addControl(new ContinueWith($this->getFilter(), Links::commentsDetails()));
 
         $results = $comments->execute();
@@ -76,6 +97,11 @@ class CommentsController extends Controller
                         $comments->count()
                     ))
             );
+        }
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
+            $this->sendMultipartUpdate($viewModeSwitcher);
         }
 
         $this->setAutorefreshInterval(10);
@@ -175,5 +201,13 @@ class CommentsController extends Controller
                 'data-no-icinga-ajax' => true
             ]
         ));
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Comment::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }

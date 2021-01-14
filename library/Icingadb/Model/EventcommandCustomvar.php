@@ -35,6 +35,7 @@ class EventcommandCustomvar extends Model
             ->setCandidateKey('command_id');
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
-            ->setCandidateKey('customvar_id');
+            ->setCandidateKey('customvar_id')
+            ->setForeignKey('customvar_id');
     }
 }

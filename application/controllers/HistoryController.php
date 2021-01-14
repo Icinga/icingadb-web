@@ -4,11 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Sql;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -45,7 +48,22 @@ class HistoryController extends Controller
                 'history.event_time desc' => t('Event Time')
             ]
         );
-        $filterControl = $this->createFilterControl($history);
+        $searchBar = $this->createSearchBar($history, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam()
+        ]);
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = QueryString::parse($this->getFilter()->toQueryString());
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
 
         $history->peekAhead();
         $history->limit($limitControl->getLimit());
@@ -57,7 +75,7 @@ class HistoryController extends Controller
             }
         }
 
-        $this->filter($history);
+        $this->filter($history, $filter);
         $history->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
             ->where(['history.service_id IS NULL', 'history_service.id IS NOT NULL'], Sql::ANY);
@@ -76,7 +94,7 @@ class HistoryController extends Controller
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
-        $this->addControl($filterControl);
+        $this->addControl($searchBar);
 
         $historyList = (new HistoryList($results))
             ->setPageSize($limitControl->getLimit());
@@ -91,5 +109,17 @@ class HistoryController extends Controller
         } else {
             $this->addContent($historyList);
         }
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(History::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
     }
 }
