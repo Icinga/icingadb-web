@@ -28,7 +28,7 @@ class UsergroupsController extends Controller
 
         $db = $this->getDb();
 
-        $usergroups = Usergroup::on($db)->with('user');
+        $usergroups = Usergroup::on($db);
 
         $this->handleSearchRequest($usergroups);
 
