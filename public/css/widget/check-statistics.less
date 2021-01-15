@@ -1,0 +1,55 @@
+.check-statistics {
+  .card();
+  .progress-bar();
+
+  .check-attempt {
+    display: inline-flex;
+  }
+
+  .below-wrapper {
+    // The wrapper is needed because IE11 doesn't ignore absolutely positioned elements with
+    // justify-content:space-between: https://github.com/philipwalton/flexbugs/issues/111
+    position: relative;
+    margin-left: 10%;
+    margin-right: auto;
+
+    .below {
+      padding: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .bubble {
+        position: relative;
+      }
+    }
+
+    .interval-line {
+      position: absolute;
+      top: ~"calc(50% - .125em)";
+
+      width: 100%;
+      margin: 0;
+
+      border-style: solid;
+      border-color: @gray;
+      border-width: .25em 0 0 0;
+    }
+  }
+
+  .interval {
+    background-color: @body-bg-color;
+    position: relative;
+  }
+
+  .check-overdue {
+    background-color: @color-down;
+    opacity: 1;
+
+    &:before,
+    &:after {
+      background-color: @color-down;
+    }
+  }
+}

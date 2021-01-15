@@ -191,16 +191,15 @@ class CommentsController extends Controller
             sprintf(t('Show all %d comments'), $comments->count())
         ));
 
-        $this->addContent(new ActionLink(
+        $this->addContent((new ActionLink(
             sprintf(t('Remove %d comments'), $comments->count()),
             Links::commentsDelete()->setQueryString(QueryString::render($this->getFilter())),
             'trash',
             [
-                'class'               => 'cancel-button',
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
             ]
-        ));
+        ))->setAttribute('class', 'cancel-button'));
     }
 
     public function completeAction()

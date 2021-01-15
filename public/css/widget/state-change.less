@@ -1,0 +1,14 @@
+.state-change {
+  .state-ball {
+    box-shadow: 0 0 0 1px @body-bg-color;
+  }
+
+  .state-ball ~ .state-ball {
+    margin-left: -.875em;
+  }
+
+  .state-ball.state-ok,
+  .state-ball.state-up {
+    background-color: @body-bg-color;
+  }
+}

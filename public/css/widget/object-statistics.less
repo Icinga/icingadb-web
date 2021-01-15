@@ -1,0 +1,43 @@
+ul.object-statistics {
+  // Reset defaults
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+
+  > li:not(:last-child) {
+    margin-right: 1em;
+  }
+}
+
+.object-statistics-graph .donut-graph {
+  height: 2.25em;
+  width:  2.25em;
+  vertical-align: middle;
+}
+
+.object-statistics-total a {
+  line-height: 1;
+  position: relative;
+
+  &:hover:before {
+    .rounded-corners();
+    background-color: @gray-lighter;
+    content: "";
+    display: block;
+    z-index: 1;
+
+    position: absolute;
+    bottom: -.4em;
+    left: -.4em;
+    top: -.4em;
+    right: -.4em;
+  }
+
+  .vertical-key-value {
+    position: relative;
+    z-index: 2;
+  }
+}

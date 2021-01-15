@@ -27,6 +27,8 @@ class ServiceStateBadges extends StateBadges
 
     protected function assemble()
     {
+        $this->addAttributes(['class' => 'service-state-badges']);
+
         $this->add(array_filter([
             $this->createGroup('critical'),
             $this->createGroup('warning'),

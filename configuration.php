@@ -6,6 +6,8 @@ namespace Icinga\Module\Icingadb
 {
     use Exception;
     use Icinga\Authentication\Auth;
+    use RecursiveDirectoryIterator;
+    use RecursiveIteratorIterator;
 
     /** @var \Icinga\Application\Modules\Module $this */
 
@@ -225,10 +227,14 @@ namespace Icinga\Module\Icingadb
         // Ignored
     }
 
-    $this->provideCssFile('common.less');
-    $this->provideCssFile('lists.less');
-    $this->provideCssFile('mixins.less');
-    $this->provideCssFile('widgets.less');
+    $cssDirectory = $this->getCssDir();
+    $cssFiles = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
+        $cssDirectory,
+        RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
+    ));
+    foreach ($cssFiles as $path) {
+        $this->provideCssFile(ltrim(substr($path, strlen($cssDirectory)), DIRECTORY_SEPARATOR));
+    }
 
     $this->provideJsFile('action-list.js');
     $this->provideJsFile('migrate.js');

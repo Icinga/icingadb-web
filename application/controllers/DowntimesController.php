@@ -196,16 +196,15 @@ class DowntimesController extends Controller
             sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
-        $this->addContent(new ActionLink(
+        $this->addContent((new ActionLink(
             sprintf(t('Cancel %d downtimes'), $downtimes->count()),
             Links::downtimesDelete()->setQueryString(QueryString::render($this->getFilter())),
             'trash',
             [
-                'class'               => 'cancel-button',
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
             ]
-        ));
+        ))->setAttribute('class', 'cancel-button'));
     }
 
     public function completeAction()

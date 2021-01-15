@@ -9,27 +9,13 @@
   padding-right: 0;
 }
 
-.check-attempt {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.check-attempt .ball {
-  background-color: @gray-light;
-
-  &:not(:last-child) {
-    margin-right: 1/6em;
-  }
-
-  &.taken {
-    background-color: @gray;
-  }
-}
-
 .plugin-output {
   .monospace();
   word-break: break-word;
+}
+
+.empty-state {
+  color: @gray-semilight;
 }
 
 .host-detail .plugin-output,
@@ -39,51 +25,13 @@
   padding: .5em;
 }
 
-.view-mode-switcher {
-  list-style-type: none;
-  margin: 0 0 0.25em 0;
-  padding: 0;
-
-  li {
-    display: inline-block;
-    color: @icinga-blue;
-    line-height: 1;
-    background: @low-sat-blue;
-
-    &.active {
-      background-color: @icinga-blue;
-      color: @text-color-on-icinga-blue;
-    }
-
-    &:first-child {
-      border-top-left-radius: 0.25em;
-      border-bottom-left-radius: 0.25em;
-    }
-
-    &:last-child {
-      border-top-right-radius: 0.25em;
-      border-bottom-right-radius: 0.25em;
-    }
-
-    &:not(:last-child) {
-      border-right: 1px solid @low-sat-blue-dark;
-    }
-
-    a {
-      display: block;
-      height: 100%;
-      padding: .3em .6em;
-      width: 100%;
-
-      .icon:before {
-        font-size: 16px; // Pixels, because the glyphs get blurry otherwise
-      }
-    }
-  }
-}
-
 .pagination-control {
   float: none;
+}
+
+div.show-more {
+  .clearfix();
+  float: right;
 }
 
 .state-ball.state-not-available {
@@ -210,103 +158,6 @@
 
   svg:not(:last-child) {
     margin-bottom: 1em;
-  }
-}
-
-.state-badge {
-  .rounded-corners();
-  color: @text-color-on-icinga-blue;
-  display: inline-block;
-  font-size: 1em;
-  min-width: 2em;
-  padding: .25em;
-  text-align: center;
-
-  &.state-critical {
-    background-color: @color-critical
-  }
-
-  &.state-critical.handled {
-    background-color: @color-critical-handled
-  }
-
-  &.state-down {
-    background-color: @color-down
-  }
-
-  &.state-down.handled {
-    background-color: @color-down-handled
-  }
-
-  &.state-ok {
-    background-color: @color-ok
-  }
-
-  &.state-pending {
-    background-color: @color-pending
-  }
-
-  &.state-unknown {
-    background-color: @color-unknown
-  }
-
-  &.state-unknown.handled {
-    background-color: @color-unknown-handled
-  }
-
-  &.state-up {
-    background-color: @color-up
-  }
-
-  &.state-warning {
-    background-color: @color-warning
-  }
-
-  &.state-warning.handled {
-    background-color: @color-warning-handled
-  }
-}
-
-.state-badges {
-  padding: 0;
-
-  ul {
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-  }
-
-  li > ul > li:first-child:not(:last-child) .state-badge {
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-  }
-
-  li > ul > li:last-child:not(:first-child) .state-badge {
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-  }
-
-  > li:not(:last-child) {
-    margin-right: .25em;
-  }
-}
-
-.vertical-key-value {
-  display: inline-block;
-  line-height: .75;
-  text-align: center;
-  vertical-align: middle;
-
-  .value {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: @text-color;
-  }
-
-  .key {
-    font-size: 10/12em;
   }
 }
 

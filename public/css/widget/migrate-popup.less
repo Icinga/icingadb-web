@@ -1,0 +1,147 @@
+#migrate-popup {
+  @transitionLength: 350ms;
+
+  display: flex;
+  min-width: 16em;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  right: 4em;
+  pointer-events: none;
+
+  .transform(translateY(-100%));
+  .transition(transform @transitionLength ease-in);
+
+  &.active {
+    .transform(translateY(0%));
+    .transition(transform @transitionLength ease-out);
+  }
+
+  .suggestion-area {
+    .transform(translateY(0%));
+    .transition(transform 0s linear @transitionLength);
+  }
+
+  &.active .suggestion-area {
+    .transition(transform @transitionLength ease-out);
+  }
+
+  &.minimized .suggestion-area {
+    .transform(translateY(-100%));
+    .transition(transform @transitionLength ease-in);
+  }
+
+  &.hidden .suggestion-area {
+    .transition(none);
+  }
+
+  .minimizer {
+    width: 1.25em;
+    height: 1.5em;
+    margin-left: -1px;
+    z-index: 1;
+    pointer-events: auto;
+
+    border-bottom-right-radius: 4px;
+    background-color: @body-bg-color;
+
+    .transition(none);
+
+    i:before {
+      width: 1em;
+      margin: .1em 0 0 0;
+      content: '\f102';
+      font-size: 1.25em;
+      cursor: pointer;
+      color: @gray-light;
+    }
+
+    i:hover:before {
+      color: @menu-highlight-color;
+    }
+  }
+
+  &.minimized .minimizer {
+    border-bottom-left-radius: 4px;
+    .transition(border-bottom-left-radius 0s linear @transitionLength);
+  }
+
+  &.hidden .minimizer i:before {
+    content: '\f103';
+  }
+
+  &:not(.active) .suggestion-area, &.hidden .suggestion-area {
+    box-shadow: none;
+  }
+
+  .suggestion-area {
+    padding: .75em .75em .25em;
+    flex-grow: 1;
+    pointer-events: auto;
+
+    background: @body-bg-color;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.3);
+
+    button {
+      .link-button();
+    }
+
+    p {
+      margin-bottom: .5em;
+      font-size: 90%;
+      color: @text-color-light;
+    }
+
+    & > button.close {
+      float: right;
+      margin-top: 1em;
+      font-size: 75%;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    ul {
+      padding: 0;
+      margin: .5em 0 0;
+      list-style-type: none;
+    }
+
+    li {
+      margin: .5em 0;
+      display: flex;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+
+    li {
+      :not(:last-child) {
+        margin-right: .5em;
+      }
+
+      button[value="1"] {
+        flex-grow: 1;
+
+        color: @text-color;
+        font-weight: bold;
+        font-size: 90%;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      button[value="0"] {
+        i:before {
+          margin: 0;
+          content: '\e804';
+          font-size: 80%;
+        }
+      }
+    }
+  }
+}
