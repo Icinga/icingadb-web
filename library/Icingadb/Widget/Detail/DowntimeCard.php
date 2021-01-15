@@ -17,7 +17,7 @@ class DowntimeCard extends BaseHtmlElement
 
     protected $duration;
 
-    protected $defaultAttributes = ['class' => 'downtime-progress'];
+    protected $defaultAttributes = ['class' => 'progress-bar downtime-progress'];
 
     protected $tag = 'div';
 
@@ -89,7 +89,7 @@ class DowntimeCard extends BaseHtmlElement
 
             if (time() > $this->downtime->scheduled_end_time) {
                 $timelineProgress = Html::tag('div', [
-                    'class' => 'progress-bar',
+                    'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
                         $hPadding + $this->calcRelativeLeft($this->downtime->start_time),
@@ -97,7 +97,7 @@ class DowntimeCard extends BaseHtmlElement
                     )
                 ]);
                 $flexProgress = Html::tag('div', [
-                    'class' => 'progress-in-effect',
+                    'class' => 'timeline-overlay downtime-overrun',
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
                         $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time),
@@ -106,7 +106,7 @@ class DowntimeCard extends BaseHtmlElement
                 ]);
             } else {
                 $timelineProgress = Html::tag('div', [
-                    'class' => 'progress-bar',
+                    'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
                         $hPadding + $this->calcRelativeLeft($this->downtime->start_time),
@@ -159,7 +159,7 @@ class DowntimeCard extends BaseHtmlElement
             $this->addAttributes(['class' => 'flexible']);
 
             $timelineProgress = Html::tag('div', [
-                'class' => 'progress-bar',
+                'class' => 'timeline-overlay downtime-elapsed',
                 'style' => sprintf(
                     'left: %F%%; width: %F%%;',
                     $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time),
@@ -192,7 +192,7 @@ class DowntimeCard extends BaseHtmlElement
             $below = null;
         } else {
             $timelineProgress = Html::tag('div', [
-                'class' => 'progress-bar',
+                'class' => 'timeline-overlay downtime-elapsed',
                 'style' => sprintf(
                     'left: %F%%; width: %F%%;',
                     $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time),

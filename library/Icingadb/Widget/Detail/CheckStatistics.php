@@ -22,7 +22,7 @@ class CheckStatistics extends Card
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'check-statistics'];
+    protected $defaultAttributes = ['class' => 'progress-bar check-statistics'];
 
     public function __construct($object)
     {
@@ -49,7 +49,7 @@ class CheckStatistics extends Card
 
             $durationScale -= $overdueScale;
             $overdueBar = Html::tag('div', [
-                'class' => 'progress-bar overdue',
+                'class' => 'timeline-overlay check-overdue',
                 'style' => sprintf(
                     'left: %F%%; width: %F%%;',
                     $hPadding + $durationScale,
@@ -73,14 +73,14 @@ class CheckStatistics extends Card
         $above->add($now);
 
         $markerLast = Html::tag('div', [
-            'class' => 'marker last',
+            'class' => 'marker start',
             'style' => 'left: ' . $hPadding . '%',
             'title' => $this->object->state->last_update !== null
                 ? DateFormatter::formatDateTime($this->object->state->last_update)
                 : null
         ]);
         $markerNext = Html::tag('div', [
-            'class' => 'marker next',
+            'class' => 'marker end',
             'style' => sprintf('left: %F%%', $hPadding + $durationScale),
             'title' => $nextCheckTime !== null ? DateFormatter::formatDateTime($nextCheckTime) : null
         ]);
@@ -98,7 +98,7 @@ class CheckStatistics extends Card
 
         $lastUpdate = Html::tag(
             'li',
-            ['class' => 'bubble upwards last'],
+            ['class' => 'bubble upwards start'],
             new VerticalKeyValue(t('Last update'), $this->object->state->last_update !== null
                 ? new TimeAgo($this->object->state->last_update)
                 : t('PENDING'))
@@ -110,7 +110,7 @@ class CheckStatistics extends Card
         );
         $nextCheck = Html::tag(
             'li',
-            ['class' => 'bubble upwards next'],
+            ['class' => 'bubble upwards end'],
             $this->object->state->is_overdue
                 ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
                 : new VerticalKeyValue(
