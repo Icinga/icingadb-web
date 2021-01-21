@@ -147,15 +147,17 @@ class ObjectSuggestions extends Suggestions
             FilterProcessor::apply($flatnameFilter, $query);
         }
 
+        $inputFilter = Filter::equal($columnPath, $searchTerm);
+        $inputFilter->noOptimization = true;
         $query->columns($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
         if ($searchFilter instanceof Filter\None) {
-            FilterProcessor::apply(Filter::equal($columnPath, $searchTerm), $query);
+            FilterProcessor::apply($inputFilter, $query);
         } elseif ($searchFilter instanceof Filter\All) {
-            $searchFilter->add(Filter::equal($columnPath, $searchTerm));
+            $searchFilter->add($inputFilter);
         } else {
-            $searchFilter = Filter::equal($columnPath, $searchTerm);
+            $searchFilter = $inputFilter;
         }
 
         FilterProcessor::apply($searchFilter, $query);
