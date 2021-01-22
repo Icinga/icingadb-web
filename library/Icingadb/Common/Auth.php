@@ -5,7 +5,9 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Exception\ConfigurationError;
+use Icinga\Module\Icingadb\Authentication\ObjectAuthorization;
 use ipl\Orm\Compat\FilterProcessor;
+use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Sql\Expression;
@@ -17,6 +19,37 @@ trait Auth
     public function getAuth()
     {
         return \Icinga\Authentication\Auth::getInstance();
+    }
+
+    /**
+     * Check whether the permission is granted on the object
+     *
+     * @param string $permission
+     * @param Model $object
+     *
+     * @return bool
+     */
+    public function isGrantedOn($permission, Model $object)
+    {
+        return ObjectAuthorization::grantsOn($permission, $object);
+    }
+
+    /**
+     * Check whether the permission is granted on objects matching the type and filter
+     *
+     * The check will not be performed on every object matching the filter. The result
+     * only allows to determine whether the permission is granted on **any** or *none*
+     * of the objects in question.
+     *
+     * @param string $permission
+     * @param string $type
+     * @param Filter\Rule $filter
+     *
+     * @return bool
+     */
+    public function isGrantedOnType($permission, $type, Filter\Rule $filter)
+    {
+        return ObjectAuthorization::grantsOnType($permission, $type, $filter);
     }
 
     /**
