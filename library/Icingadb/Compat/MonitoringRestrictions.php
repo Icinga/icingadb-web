@@ -65,15 +65,17 @@ class MonitoringRestrictions
                         } elseif ($column === $condition->getColumn()) {
                             return;
                         }
-
-                        throw new ConfigurationError(
-                            t('Cannot apply restriction %s using the filter %s.'
-                                . ' You can only use the following columns: %s'),
-                            $name,
-                            $queryString,
-                            implode(', ', array_keys($allowedColumns))
-                        );
                     }
+
+                    throw new ConfigurationError(
+                        t('Cannot apply restriction %s using the filter %s.'
+                          . ' You can only use the following columns: %s'),
+                        $name,
+                        $queryString,
+                        join(', ', array_map(function ($k, $v) {
+                            return is_string($k) ? $k : $v;
+                        }, array_keys($allowedColumns), $allowedColumns))
+                    );
                 })->parse());
         }
 
