@@ -40,7 +40,11 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
-            && $this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')
+            && $this->isGrantedOnType(
+                'monitoring/command/acknowledge-problem',
+                $this->type,
+                $this->getBaseFilter()
+            )
         ) {
             $this->assembleAction(
                 'acknowledge',
@@ -52,7 +56,11 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->summary->$acks > 0
-            && $this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')
+            && $this->isGrantedOnType(
+                'monitoring/command/remove-acknowledgement',
+                $this->type,
+                $this->getBaseFilter()
+            )
         ) {
             $removeAckForm = (new RemoveAcknowledgementForm())
                 ->setAction($this->getLink('removeAcknowledgement'))
@@ -62,16 +70,20 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter())
             || (
                 $this->summary->$activeChecks > 0
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOnType(
+                    'monitoring/command/schedule-check/active-only',
+                    $this->type,
+                    $this->getBaseFilter()
+                )
             )
         ) {
             $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
+        if ($this->isGrantedOnType('monitoring/command/comment/add', $this->type, $this->getBaseFilter())) {
             $this->assembleAction(
                 'addComment',
                 t('Comment'),
@@ -80,7 +92,13 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/send-custom-notification')) {
+        if (
+            $this->isGrantedOnType(
+                'monitoring/command/send-custom-notification',
+                $this->type,
+                $this->getBaseFilter()
+            )
+        ) {
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
@@ -89,7 +107,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/downtime/schedule')) {
+        if ($this->isGrantedOnType('monitoring/command/downtime/schedule', $this->type, $this->getBaseFilter())) {
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
@@ -99,10 +117,14 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter())
             || (
                 $this->summary->$activeChecks > 0
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOnType(
+                    'monitoring/command/schedule-check/active-only',
+                    $this->type,
+                    $this->getBaseFilter()
+                )
             )
         ) {
             $this->assembleAction(
@@ -113,7 +135,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
+        if ($this->isGrantedOnType('monitoring/command/process-check-result', $this->type, $this->getBaseFilter())) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),

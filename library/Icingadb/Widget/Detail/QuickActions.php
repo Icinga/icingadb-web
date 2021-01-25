@@ -35,14 +35,14 @@ class QuickActions extends BaseHtmlElement
     {
         if ($this->object->state->is_problem) {
             if ($this->object->state->is_acknowledged) {
-                if ($this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')) {
+                if ($this->isGrantedOn('monitoring/command/remove-acknowledgement', $this->object)) {
                     $removeAckForm = (new RemoveAcknowledgementForm())
                         ->setAction($this->getLink('removeAcknowledgement'))
                         ->setObjects([$this->object]);
 
                     $this->add(Html::tag('li', $removeAckForm));
                 }
-            } elseif ($this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')) {
+            } elseif ($this->isGrantedOn('monitoring/command/acknowledge-problem', $this->object)) {
                 $this->assembleAction(
                     'acknowledge',
                     t('Acknowledge'),
@@ -53,16 +53,16 @@ class QuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOn('monitoring/command/schedule-check', $this->object)
             || (
                 $this->object->active_checks_enabled
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOn('monitoring/command/schedule-check/active-only', $this->object)
             )
         ) {
             $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
+        if ($this->isGrantedOn('monitoring/command/comment/add', $this->object)) {
             $this->assembleAction(
                 'addComment',
                 t('Comment', 'verb'),
@@ -71,7 +71,7 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/send-custom-notification')) {
+        if ($this->isGrantedOn('monitoring/command/send-custom-notification', $this->object)) {
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
@@ -80,7 +80,7 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/downtime/schedule')) {
+        if ($this->isGrantedOn('monitoring/command/downtime/schedule', $this->object)) {
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
@@ -90,10 +90,10 @@ class QuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOn('monitoring/command/schedule-check', $this->object)
             || (
                 $this->object->active_checks_enabled
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOn('monitoring/command/schedule-check/active-only', $this->object)
             )
         ) {
             $this->assembleAction(
@@ -104,7 +104,7 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
+        if ($this->isGrantedOn('monitoring/command/process-check-result', $this->object)) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),

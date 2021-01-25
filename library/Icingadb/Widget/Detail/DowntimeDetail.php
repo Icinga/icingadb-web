@@ -136,7 +136,7 @@ class DowntimeDetail extends BaseHtmlElement
         $this->add(Html::tag('h2', t('Progress')));
         $this->add($this->createTimeline());
 
-        if ($this->getAuth()->hasPermission('monitoring/command/downtime/delete')) {
+        if ($this->isGrantedOn('monitoring/command/downtime/delete', $this->downtime)) {
             $this->add($this->createCancelDowntimeForm());
         }
     }
