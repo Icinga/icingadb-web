@@ -86,7 +86,7 @@ class CommentDetail extends BaseHtmlElement
             $this->add($details);
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/comment/delete')) {
+        if ($this->isGrantedOn('monitoring/command/comment/delete', $this->comment)) {
             $this->add($this->createRemoveCommentForm());
         }
     }

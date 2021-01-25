@@ -24,6 +24,7 @@ use LogicException;
 /**
  * Trait CommandActions
  *
+ * @todo Handle `Auth::isGrantedOn` for each object separately in a command's form
  * @method mixed fetchCommandTargets() Fetch command targets, \ipl\Orm\Query or \ipl\Orm\Model[]
  * @method object getFeatureStatus() Get status of toggleable features
  * @method Url getCommandTargetsUrl() Get url to view command targets, used as redirection target
