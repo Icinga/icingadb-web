@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -17,6 +18,8 @@ use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
@@ -41,6 +44,7 @@ use Zend_View_Helper_Perfdata;
 class ObjectDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
 
     protected $object;
 
@@ -407,18 +411,23 @@ class ObjectDetail extends BaseHtmlElement
             $this->getAuth()->hasPermission('*')
             || ! $this->getAuth()->hasPermission('no-monitoring/contacts')
         ) {
-            foreach ($this->object->notification as $notification) {
-                $recipients = $notification->user;
-                $this->applyRestrictions($recipients);
-                foreach ($recipients as $user) {
-                    $users[$user->name] = $user;
-                }
+            $objectFilter = Filter::equal(
+                'notification.' . ($this->objectType === 'host' ? 'host_id' : 'service_id'),
+                $this->object->id
+            );
 
-                $recipientGroups = $notification->usergroup;
-                $this->applyRestrictions($recipientGroups);
-                foreach ($recipientGroups as $usergroup) {
-                    $usergroups[$usergroup->name] = $usergroup;
-                }
+            $userQuery = User::on($this->getDb());
+            FilterProcessor::apply($objectFilter, $userQuery);
+            $this->applyRestrictions($userQuery);
+            foreach ($userQuery as $user) {
+                $users[$user->name] = $user;
+            }
+
+            $usergroupQuery = Usergroup::on($this->getDb());
+            FilterProcessor::apply($objectFilter, $usergroupQuery);
+            $this->applyRestrictions($usergroupQuery);
+            foreach ($usergroupQuery as $usergroup) {
+                $usergroups[$usergroup->name] = $usergroup;
             }
         }
 
