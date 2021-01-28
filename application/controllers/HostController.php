@@ -56,6 +56,8 @@ class HostController extends Controller
         $serviceSummary->getSelectBase()
             ->where(['host_id = ?' => $this->host->id]);
 
+        $this->applyRestrictions($serviceSummary);
+
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
