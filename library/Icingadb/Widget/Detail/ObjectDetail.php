@@ -32,7 +32,9 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\ResultSet;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use Zend_View_Helper_Perfdata;
 
@@ -112,8 +114,15 @@ class ObjectDetail extends BaseHtmlElement
             $relations = ['service', 'service.state', 'service.host', 'service.host.state'];
         }
 
+        $comments = $this->object->comment
+            ->with($relations)
+            ->limit(3)
+            ->peekAhead();
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $comments);
+
+        $comments = $comments->execute();
         /** @var ResultSet $comments */
-        $comments = $this->object->comment->with($relations)->limit(3)->peekAhead()->execute();
 
         $content = [Html::tag('h2', t('Comments'))];
 
@@ -158,7 +167,14 @@ class ObjectDetail extends BaseHtmlElement
             $link = ServiceLinks::downtimes($this->object, $this->object->host);
         }
 
-        $downtimes = $this->object->downtime->limit(3)->peekAhead()->execute();
+        $downtimes = $this->object->downtime
+            ->limit(3)
+            ->peekAhead();
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $downtimes);
+
+        $downtimes = $downtimes->execute();
+        /** @var ResultSet $downtimes */
 
         $content = [Html::tag('h2', t('Downtimes'))];
 
