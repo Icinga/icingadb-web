@@ -4,14 +4,20 @@
 
 namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 
 class HostProblemsBadge extends ProblemsBadge
 {
+    use Auth;
+
     protected function fetchProblemsCount()
     {
-        return HoststateSummary::on($this->getDb())->with('state')->first()->hosts_down_unhandled;
+        $summary = HoststateSummary::on($this->getDb())->with('state');
+        $this->applyRestrictions($summary);
+
+        return $summary->first()->hosts_down_unhandled;
     }
 
     protected function getUrl()
