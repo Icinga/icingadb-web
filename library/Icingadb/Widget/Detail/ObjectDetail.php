@@ -163,11 +163,14 @@ class ObjectDetail extends BaseHtmlElement
     {
         if ($this->objectType === 'host') {
             $link = HostLinks::downtimes($this->object);
+            $relations = ['host', 'host.state'];
         } else {
             $link = ServiceLinks::downtimes($this->object, $this->object->host);
+            $relations = ['service', 'service.state', 'service.host', 'service.host.state'];
         }
 
         $downtimes = $this->object->downtime
+            ->with($relations)
             ->limit(3)
             ->peekAhead();
         // TODO: This should be automatically done by the model/resolver and added as ON condition
