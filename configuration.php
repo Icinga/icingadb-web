@@ -13,6 +13,21 @@ namespace Icinga\Module\Icingadb
 
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
 
+    $this->provideRestriction(
+        'icingadb/filter/objects',
+        $this->translate('Restrict access to the Icinga objects that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/filter/hosts',
+        $this->translate('Restrict access to the Icinga hosts and services that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/filter/services',
+        $this->translate('Restrict access to the Icinga services that match the filter')
+    );
+
     if (! $this::exists('monitoring')) {
         /**
          * Search urls
