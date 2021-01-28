@@ -98,6 +98,22 @@ class Hostgroupsummary extends UnionModel
     {
         $unions = [
             [
+                Hostgroup::class,
+                [],
+                [
+                    'hostgroup_id'           => 'hostgroup.id',
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
+                    'host_id'                => new Expression('NULL'),
+                    'host_state'             => new Expression('NULL'),
+                    'host_handled'           => new Expression('NULL'),
+                    'host_severity'          => new Expression('0'),
+                    'service_id'             => new Expression('NULL'),
+                    'service_state'          => new Expression('NULL'),
+                    'service_handled'        => new Expression('NULL')
+                ]
+            ],
+            [
                 Host::class,
                 [
                     'hostgroup',
@@ -105,8 +121,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => 'hostgroup.name',
-                    'hostgroup_display_name' => 'hostgroup.display_name',
+                    'hostgroup_name'         => new Expression('NULL'),
+                    'hostgroup_display_name' => new Expression('NULL'),
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
@@ -124,8 +140,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => 'hostgroup.name',
-                    'hostgroup_display_name' => 'hostgroup.display_name',
+                    'hostgroup_name'         => new Expression('NULL'),
+                    'hostgroup_display_name' => new Expression('NULL'),
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
