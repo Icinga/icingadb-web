@@ -193,9 +193,11 @@ class ObjectDetail extends BaseHtmlElement
         $groups = [Html::tag('h2', t('Groups'))];
 
         if ($this->objectType === 'host') {
-            $hostgroupList = new TagList();
+            $hostgroups = $this->object->hostgroup;
+            $this->applyRestrictions($hostgroups);
 
-            foreach ($this->object->hostgroup as $hostgroup) {
+            $hostgroupList = new TagList();
+            foreach ($hostgroups as $hostgroup) {
                 $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
@@ -206,9 +208,11 @@ class ObjectDetail extends BaseHtmlElement
                     : new EmptyState(t('Not a member of any host group.'))
             );
         } else {
-            $servicegroupList = new TagList();
+            $servicegroups = $this->object->servicegroup;
+            $this->applyRestrictions($servicegroups);
 
-            foreach ($this->object->servicegroup as $servicegroup) {
+            $servicegroupList = new TagList();
+            foreach ($servicegroups as $servicegroup) {
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
@@ -401,11 +405,15 @@ class ObjectDetail extends BaseHtmlElement
             || ! $this->getAuth()->hasPermission('no-monitoring/contacts')
         ) {
             foreach ($this->object->notification as $notification) {
-                foreach ($notification->user as $user) {
+                $recipients = $notification->user;
+                $this->applyRestrictions($recipients);
+                foreach ($recipients as $user) {
                     $users[$user->name] = $user;
                 }
 
-                foreach ($notification->usergroup as $usergroup) {
+                $recipientGroups = $notification->usergroup;
+                $this->applyRestrictions($recipientGroups);
+                foreach ($recipientGroups as $usergroup) {
                     $usergroups[$usergroup->name] = $usergroup;
                 }
             }
