@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
@@ -24,6 +25,7 @@ use RuntimeException;
 
 class ObjectSuggestions extends Suggestions
 {
+    use Auth;
     use Database;
 
     /** @var Model */
@@ -160,6 +162,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         FilterProcessor::apply($searchFilter, $query);
+        $this->applyRestrictions($query);
 
         try {
             return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
@@ -234,22 +237,19 @@ class ObjectSuggestions extends Suggestions
         $tableName = $customVars->getModel()->getTableName();
 
         $columns = ['flatname'];
+        $aggregates = ['flatname'];
         foreach ($customVars->getResolver()->getRelations($customVars->getModel()) as $name => $relation) {
             if (isset($this->customVarSources[$name]) && $relation instanceof BelongsToMany) {
-                $junction = $relation->getThrough();
-
-                $foreignKey = $customVars->getResolver()->qualifyColumn(
-                    $customVars->getResolver()->getRelations($junction)->get($tableName)->getForeignKey(),
-                    $junction->getTableName()
-                );
-                $candidateKey = $customVars->getResolver()->qualifyColumn(
-                    $relation->getCandidateKey(),
-                    $tableName
+                $query = $customVars->createSubQuery(
+                    $relation->getTarget(),
+                    $customVars->getResolver()->qualifyPath($name, $tableName)
                 );
 
-                $columns[$name] = $junction::on($customVars->getDb())->assembleSelect()
+                $this->applyRestrictions($query);
+
+                $aggregates[$name] = new Expression("MAX($name)");
+                $columns[$name] = $query->assembleSelect()
                     ->resetColumns()->columns(new Expression('1'))
-                    ->where("$foreignKey = $candidateKey")
                     ->limit(1);
             }
         }
@@ -258,10 +258,11 @@ class ObjectSuggestions extends Suggestions
         $customVars = $customVars->assembleSelect();
 
         $customVars->resetColumns()->columns($columns);
-        $customVars->groupBy('flatname');
+        $customVars->groupBy('id');
         $customVars->limit(static::DEFAULT_LIMIT);
 
-        return $customVars;
+        // This outer query exists only because there's no way to combine aggregates and sub queries (yet)
+        return (new Select())->columns($aggregates)->from(['results' => $customVars])->groupBy('flatname');
     }
 
     /**
