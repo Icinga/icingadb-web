@@ -208,6 +208,9 @@ class HostsController extends Controller
 
     protected function getFeatureStatus()
     {
-        return new FeatureStatus('host', HoststateSummary::on($this->getDb())->with(['state'])->first());
+        $summary = HoststateSummary::on($this->getDb())->with(['state']);
+        $this->filter($summary);
+
+        return new FeatureStatus('host', $summary->first());
     }
 }
