@@ -74,6 +74,19 @@ class ServicegroupSummary extends UnionModel
     {
         $unions = [
             [
+                Servicegroup::class,
+                [],
+                [
+                    'servicegroup_id'           => 'servicegroup.id',
+                    'servicegroup_name'         => 'servicegroup.name',
+                    'servicegroup_display_name' => 'servicegroup.display_name',
+                    'service_id'                => new Expression('NULL'),
+                    'service_state'             => new Expression('NULL'),
+                    'service_handled'           => new Expression('NULL'),
+                    'service_severity'          => new Expression('0')
+                ]
+            ],
+            [
                 Service::class,
                 [
                     'servicegroup',
@@ -81,8 +94,8 @@ class ServicegroupSummary extends UnionModel
                 ],
                 [
                     'servicegroup_id'           => 'servicegroup.id',
-                    'servicegroup_name'         => 'servicegroup.name',
-                    'servicegroup_display_name' => 'servicegroup.display_name',
+                    'servicegroup_name'         => new Expression('NULL'),
+                    'servicegroup_display_name' => new Expression('NULL'),
                     'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
                     'service_handled'           => 'state.is_handled',
