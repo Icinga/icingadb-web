@@ -29,8 +29,8 @@ class HealthController extends Controller
         $hoststateSummary = HoststateSummary::on($db)->with('state');
         $servicestateSummary = ServicestateSummary::on($db)->with('state');
 
-        $this->applyMonitoringRestriction($hoststateSummary);
-        $this->applyMonitoringRestriction($servicestateSummary);
+        $this->applyRestrictions($hoststateSummary);
+        $this->applyRestrictions($servicestateSummary);
 
         yield $this->export($instance, $hoststateSummary, $servicestateSummary);
 
