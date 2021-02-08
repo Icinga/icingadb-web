@@ -42,7 +42,7 @@
     ActionList.prototype.onClick = function (event) {
         var _this = event.data.self;
         var $activeItems;
-        var $target = $(this);
+        var $target = $(event.currentTarget);
         var $item = $target.closest('.list-item');
         var $list = $item.parent('.action-list');
 
@@ -90,7 +90,7 @@
         $activeItems = $list.find('.list-item.active');
 
         if ($activeItems.length === 0) {
-            if (_this.icinga.loader.getLinkTargetFor($item).attr('id') === 'col2') {
+            if (_this.icinga.loader.getLinkTargetFor($target).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
             }
         } else {
@@ -107,7 +107,7 @@
             }
 
             _this.icinga.loader.loadUrl(
-                url, _this.icinga.loader.getLinkTargetFor($item)
+                url, _this.icinga.loader.getLinkTargetFor($target)
             );
         }
     };
