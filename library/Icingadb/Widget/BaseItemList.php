@@ -12,6 +12,8 @@ use ipl\Web\Url;
 
 /**
  * Base class for item lists
+ *
+ * @todo Move this to Icinga\Module\Icingadb\Common
  */
 abstract class BaseItemList extends BaseHtmlElement
 {
