@@ -147,7 +147,7 @@
 
         var $list = $target.find('.action-list');
 
-        if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
+        if ($list.length && $list.is('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
             var _this = event.data.self;
             var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
 
