@@ -143,18 +143,6 @@ trait CommandActions
         $this->handleCommandForm(CheckNowCommandForm::class);
     }
 
-    public function deleteCommentAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(DeleteCommentCommandForm::class);
-    }
-
-    public function deleteCommentsAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(DeleteCommentsCommandForm::class);
-    }
-
     public function deleteDowntimeAction()
     {
         $this->assertPermission('monitoring/command/downtime/delete');
