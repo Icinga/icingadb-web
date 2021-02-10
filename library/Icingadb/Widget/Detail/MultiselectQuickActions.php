@@ -6,11 +6,10 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\BaseFilter;
-use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlString;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -70,10 +69,7 @@ class MultiselectQuickActions extends BaseHtmlElement
                 && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
             )
         ) {
-            $checkNowForm = (new CheckNowCommandForm())
-                ->setAction($this->getLink('checkNow'));
-
-            $this->add(Html::tag('li', new HtmlString($checkNowForm->render())));
+            $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
         if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
