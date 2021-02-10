@@ -8,3 +8,12 @@ i.fa-sync-alt.spinner.active {
     content: '\f2f1';
   }
 }
+
+a.spinner.active > i.fa-trash,
+button.spinner.active > i.fa-trash,
+i.fa-trash.spinner.active {
+  &:before {
+    // We use a different icon font, hence why the unicode is redefined (overridden) here
+    content: '\f1f8';
+  }
+}
