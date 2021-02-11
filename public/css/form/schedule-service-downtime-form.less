@@ -1,0 +1,21 @@
+.downtime-duration {
+  > label {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: row-reverse;
+
+    input {
+      flex: 1 1 auto;
+    }
+
+    span {
+      margin-left: .5em;
+      padding: .5625em 0;
+      line-height: 1.1em;
+    }
+
+    &:not(:last-child) {
+      margin-right: 1.5em;
+    }
+  }
+}
