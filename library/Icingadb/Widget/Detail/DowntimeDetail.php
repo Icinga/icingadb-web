@@ -8,13 +8,12 @@ use Icinga\Date\DateFormatter;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
-use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
-use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -73,31 +72,14 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected function createCancelDowntimeForm()
     {
-        $formData = [
-            'downtime_id'   => $this->downtime->name,
-            'downtime_name' => $this->downtime->name,
-            'redirect'      => '__BACK__'
-        ];
+        // TODO: Check permission
+        $action = Links::downtimesDelete();
+        $action->setParam('name', $this->downtime->name);
 
-        if ($this->downtime->object_type === 'host') {
-            $action = HostLinks::cancelDowntime($this->downtime->host);
-        } else {
-            $action = ServiceLinks::cancelDowntime($this->downtime->service, $this->downtime->service->host);
-            $formData['downtime_is_service'] = true;
-        }
-
-        $cancelDowntimeForm = (new DeleteDowntimeCommandForm())
-            ->create()
-            ->populate($formData)
-            ->setAction($action);
-
-        $submitButton = $cancelDowntimeForm->getElement('btn_submit');
-        $submitButton->content = (new HtmlDocument())
-            ->add([new Icon('trash'), t('Cancel Downtime')])
-            ->setSeparator(' ')
-            ->render();
-
-        return new HtmlString($cancelDowntimeForm->render());
+        return (new DeleteDowntimeForm())
+            ->setObjects([$this->downtime])
+            ->populate(['redirect' => '__BACK__'])
+            ->setAction($action->getAbsoluteUrl());
     }
 
     protected function createTimeline()

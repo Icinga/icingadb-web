@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -114,6 +115,8 @@ class DowntimesController extends Controller
 
     public function deleteAction()
     {
+        // TODO: Check permission
+
         $this->setTitle(t('Cancel Downtimes'));
 
         $db = $this->getDb();
@@ -129,40 +132,19 @@ class DowntimesController extends Controller
 
         $this->filter($downtimes);
 
-        $cancelDowntimesForm = (new DeleteDowntimesCommandForm())
-            ->addDescription(sprintf(
-                t('Confirm cancellation of %d downtimes.'),
-                $downtimes->count()
-            ))
-            ->setDowntimes($downtimes)
-            ->setRedirectUrl(Links::downtimes())
-            ->create();
+        $form = (new DeleteDowntimeForm())
+            ->setObjects($downtimes)
+            ->setRedirectUrl(Links::downtimes()->getAbsoluteUrl())
+            ->on(DeleteDowntimeForm::ON_SUCCESS, function ($form) {
+                // This forces the column to reload nearly instantly after the redirect
+                // and ensures the effect of the command is visible to the user asap
+                $this->getResponse()->setAutoRefreshInterval(1);
 
-        $cancelDowntimesForm->removeElement('btn_submit');
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
-        $cancelDowntimesForm->addElement(
-            'button',
-            'btn_submit',
-            [
-                'class'      => 'cancel-button spinner',
-                'decorators' => [
-                    'ViewHelper',
-                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
-                ],
-                'escape'     => false,
-                'ignore'     => true,
-                'label'      => (new HtmlDocument())
-                    ->add([new Icon('trash'), t('Cancel Downtimes')])
-                    ->setSeparator(' ')
-                    ->render(),
-                'title'      => t('Cancel downtimes'),
-                'type'       => 'submit'
-            ]
-        );
-
-        $cancelDowntimesForm->handleRequest();
-
-        $this->addContent(HtmlString::create($cancelDowntimesForm->render()));
+        $this->addContent($form);
     }
 
     public function detailsAction()
@@ -196,15 +178,16 @@ class DowntimesController extends Controller
             sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
-        $this->addContent((new ActionLink(
-            sprintf(t('Cancel %d downtimes'), $downtimes->count()),
-            Links::downtimesDelete()->setQueryString(QueryString::render($this->getFilter())),
-            'trash',
-            [
-                'data-icinga-modal'   => true,
-                'data-no-icinga-ajax' => true
-            ]
-        ))->setAttribute('class', 'cancel-button'));
+        // TODO: Check permission
+        $this->addContent(
+            (new DeleteDowntimeForm())
+                ->setObjects($downtimes)
+                ->setAction(
+                    Links::downtimesDelete()
+                        ->setQueryString(QueryString::render($this->getFilter()))
+                        ->getAbsoluteUrl()
+                )
+        );
     }
 
     public function completeAction()

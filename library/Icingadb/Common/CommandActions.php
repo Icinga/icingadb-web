@@ -143,18 +143,6 @@ trait CommandActions
         $this->handleCommandForm(CheckNowCommandForm::class);
     }
 
-    public function deleteDowntimeAction()
-    {
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(DeleteDowntimeCommandForm::class);
-    }
-
-    public function deleteDowntimesAction()
-    {
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(DeleteDowntimesCommandForm::class);
-    }
-
     public function processCheckresultAction()
     {
         $this->assertPermission('monitoring/command/process-check-result');
