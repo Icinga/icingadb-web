@@ -42,7 +42,7 @@ class Instance extends Model
 
     public function getDefaultSort()
     {
-        return 'responsible desc';
+        return 'responsible asc';
     }
 
     public function createBehaviors(Behaviors $behaviors)
