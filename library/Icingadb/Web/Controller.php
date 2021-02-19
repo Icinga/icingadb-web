@@ -10,6 +10,7 @@ use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use InvalidArgumentException;
@@ -148,7 +149,9 @@ class Controller extends CompatController
                         $condition->columnLabel = sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName);
                     }
                 } else {
-                    $metaData = $query->getResolver()->getMetaData($query->getModel());
+                    $metaData = iterator_to_array(
+                        ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+                    );
                     if (isset($metaData[$path])) {
                         $condition->columnLabel = $metaData[$path];
                     }
@@ -174,7 +177,9 @@ class Controller extends CompatController
                 return;
             }
 
-            $metaData = $query->getResolver()->getMetaData($query->getModel());
+            $metaData = iterator_to_array(
+                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+            );
             foreach ($changes['terms'] as &$termData) {
                 if (($pos = strpos($termData['search'], '.vars.')) !== false) {
                     try {

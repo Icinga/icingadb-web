@@ -174,28 +174,9 @@ class ObjectSuggestions extends Suggestions
      */
     protected function fetchColumnSuggestions($searchTerm)
     {
-        $resolver = new Resolver();
-        $model = $this->getModel();
-
         // Ordinary columns first
-        $metaData = $resolver->getMetaData($model);
-        foreach ($metaData as $columnName => $columnMeta) {
+        foreach (self::collectFilterColumns($this->getModel()) as $columnName => $columnMeta) {
             yield $columnName => $columnMeta;
-        }
-
-        // Re-routed columns next
-        foreach ($resolver->getBehaviors($model) as $behavior) {
-            if ($behavior instanceof ReRoute) {
-                foreach ($behavior->getRoutes() as $name => $route) {
-                    $relation = $resolver->resolveRelation(
-                        $resolver->qualifyPath($route, $model->getTableName()),
-                        $model
-                    );
-                    foreach ($relation->getTarget()->getMetaData() as $columnName => $columnMeta) {
-                        yield $name . '.' . $columnName => $columnMeta;
-                    }
-                }
-            }
         }
 
         // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
@@ -281,5 +262,39 @@ class ObjectSuggestions extends Suggestions
         $customVars->limit(static::DEFAULT_LIMIT);
 
         return $customVars;
+    }
+
+    /**
+     * Collect all columns of this model and its relations that can be used for filtering
+     *
+     * @param Model $model
+     * @param Resolver $resolver
+     *
+     * @return \Generator
+     */
+    public static function collectFilterColumns(Model $model, Resolver $resolver = null)
+    {
+        if ($resolver === null) {
+            $resolver = new Resolver();
+        }
+
+        $metaData = $resolver->getMetaData($model);
+        foreach ($metaData as $columnName => $columnMeta) {
+            yield $columnName => $columnMeta;
+        }
+
+        foreach ($resolver->getBehaviors($model) as $behavior) {
+            if ($behavior instanceof ReRoute) {
+                foreach ($behavior->getRoutes() as $name => $route) {
+                    $relation = $resolver->resolveRelation(
+                        $resolver->qualifyPath($route, $model->getTableName()),
+                        $model
+                    );
+                    foreach ($relation->getTarget()->getMetaData() as $columnName => $columnMeta) {
+                        yield $name . '.' . $columnName => $columnMeta;
+                    }
+                }
+            }
+        }
     }
 }
