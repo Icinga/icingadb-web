@@ -185,6 +185,17 @@ class ServicesController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function searchEditorAction()
+    {
+        $services = Service::on($this->getDb())->with([
+            'state',
+            'host',
+            'host.state'
+        ]);
+
+        $this->getDocument()->add($this->createSearchEditor($services));
+    }
+
     public function fetchCommandTargets()
     {
         $db = $this->getDb();
