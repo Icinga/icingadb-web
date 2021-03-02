@@ -194,6 +194,7 @@ class ServicesController extends Controller
         ]);
 
         $this->getDocument()->add($this->createSearchEditor($services));
+        $this->setTitle(t('Adjust Filter'));
     }
 
     public function fetchCommandTargets()
