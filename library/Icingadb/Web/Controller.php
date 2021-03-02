@@ -156,8 +156,7 @@ class Controller extends CompatController
 
         if (method_exists($this, 'searchEditorAction')) {
             $searchBar->setEditorUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor',
-                ['_disableLayout' => true, 'showCompact' => true]
+                'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor'
             ));
         }
 
