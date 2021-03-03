@@ -76,5 +76,5 @@ still possible, for the die-hard)
 
 ## Concepts
 
-To learn more about our widget/view designs check the [concepts](https://icinga.com/docs/icingadb-web/latest/doc/11-Concepts/)
+To learn more about our widget/view designs check the [concepts](https://icinga.com/docs/icinga-db/latest/icinga-db-web/doc/11-Concepts/)
 chapter.
