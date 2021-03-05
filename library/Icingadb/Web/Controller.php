@@ -157,7 +157,7 @@ class Controller extends CompatController
         if (method_exists($this, 'searchEditorAction')) {
             $searchBar->setEditorUrl(Url::fromPath(
                 'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor'
-            ));
+            )->setParams($redirectUrl->getParams()));
         }
 
         $searchBar->on(SearchBar::ON_CHANGE, function (array &$changes) use ($query) {
@@ -223,19 +223,21 @@ class Controller extends CompatController
      * Create and return the SearchEditor
      *
      * @param Query $query The query being filtered
-     * @param Url $redirectUrl The url to redirect to after a successful submission
+     * @param array $preserveParams Query params to preserve when redirecting
      *
      * @return SearchEditor
      */
-    public function createSearchEditor(Query $query, Url $redirectUrl = null)
+    public function createSearchEditor(Query $query, array $preserveParams = null)
     {
-        if ($redirectUrl === null) {
-            $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
+        $requestUrl = Url::fromRequest();
+        $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
+        if (! empty($preserveParams)) {
+            $redirectUrl->setParams($requestUrl->onlyWith($preserveParams)->getParams());
         }
 
         $editor = new SearchEditor();
-        $editor->setQueryString((string) $this->params);
-        $editor->setAction(Url::fromRequest()->getAbsoluteUrl());
+        $editor->setQueryString((string) $this->params->without($preserveParams));
+        $editor->setAction($requestUrl->getAbsoluteUrl());
 
         if (method_exists($this, 'completeAction')) {
             $editor->setSuggestionUrl(Url::fromPath(
