@@ -18,7 +18,10 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Stdlib\Filter;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -174,6 +177,18 @@ class HostsController extends Controller
         $suggestions->setModel(Host::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(Host::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 
     public function fetchCommandTargets()

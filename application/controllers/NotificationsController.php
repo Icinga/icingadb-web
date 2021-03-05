@@ -10,7 +10,10 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Sql\Sql;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -101,5 +104,17 @@ class NotificationsController extends Controller
         $suggestions->setModel(NotificationHistory::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(NotificationHistory::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }

@@ -13,9 +13,12 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -193,5 +196,17 @@ class DowntimesController extends Controller
         $suggestions->setModel(Downtime::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(Downtime::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }
