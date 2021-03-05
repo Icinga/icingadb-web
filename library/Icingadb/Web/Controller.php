@@ -249,7 +249,36 @@ class Controller extends CompatController
                 $this->enrichFilterCondition($condition, $query);
             }
         });
-        $editor->on(SearchEditor::ON_SUCCESS, function (SearchEditor $form) use ($redirectUrl) {
+
+        $metaData = iterator_to_array(
+            ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+        );
+        $editor->on(SearchEditor::ON_VALIDATE_COLUMN, function (Filter\Condition $condition) use ($query, $metaData) {
+            $column = $condition->getColumn();
+            if (($pos = strpos($column, '.vars.')) !== false) {
+                try {
+                    $query->getResolver()->resolveRelation(substr($column, 0, $pos + 5));
+                } catch (InvalidArgumentException $_) {
+                    throw new SearchBar\SearchException(sprintf(
+                        t('"%s" is not a valid relation'),
+                        substr($column, 0, $pos)
+                    ));
+                }
+            } else {
+                if (! isset($metaData[$column])) {
+                    $path = array_search(
+                        $condition->metaData()->get('columnLabel', $column),
+                        $metaData,
+                        true
+                    );
+                    if ($path === false) {
+                        throw new SearchBar\SearchException(t('Is not a valid column'));
+                    } else {
+                        $condition->setColumn($path);
+                    }
+                }
+            }
+        })->on(SearchEditor::ON_SUCCESS, function (SearchEditor $form) use ($redirectUrl) {
             $existingParams = $redirectUrl->getParams();
             $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
             foreach ($existingParams->toArray(false) as $name => $value) {
