@@ -90,6 +90,9 @@ class NotificationHistory extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('history', History::class)
+            ->setCandidateKey('id')
+            ->setForeignKey('notification_history_id');
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
 

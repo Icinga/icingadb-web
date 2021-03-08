@@ -84,6 +84,9 @@ class AcknowledgementHistory extends Model
     {
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('history', History::class)
+            ->setCandidateKey('id')
+            ->setForeignKey('acknowledgement_history_id');
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
     }

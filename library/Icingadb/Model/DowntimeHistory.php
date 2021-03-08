@@ -102,6 +102,9 @@ class DowntimeHistory extends Model
         // @TODO(el): Add relation for triggered_by_id
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('history', History::class)
+            ->setCandidateKey('downtime_id')
+            ->setForeignKey('downtime_history_id');
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
     }
