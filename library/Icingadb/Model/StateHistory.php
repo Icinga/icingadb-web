@@ -49,6 +49,28 @@ class StateHistory extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('State Environment Id (History)'),
+            'endpoint_id'           => t('State Endpoint Id (History)'),
+            'object_type'           => t('State Object Type (History)'),
+            'host_id'               => t('State Host Id (History)'),
+            'service_id'            => t('State Service Id (History)'),
+            'event_time'            => t('State Event Time (History)'),
+            'state_type'            => t('State Type (History)'),
+            'soft_state'            => t('Soft State (History)'),
+            'hard_state'            => t('Hard State (History)'),
+            'attempt'               => t('State Attempt No. (History)'),
+            'previous_soft_state'   => t('Previous Soft State (History)'),
+            'previous_hard_state'   => t('Previous Hard State (History)'),
+            'output'                => t('State Output (History)'),
+            'long_output'           => t('State Long Output (History)'),
+            'max_check_attempts'    => t('State Max Check Attempts (History)'),
+            'check_source'          => t('State Check Source (History)')
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new Timestamp([

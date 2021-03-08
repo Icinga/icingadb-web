@@ -29,6 +29,16 @@ class TimeperiodRange extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'timeperiod_id'     => t('Timeperiod Range Period Id'),
+            'range_key'         => t('Timeperiod Range Key'),
+            'environment_id'    => t('Timeperiod Range Environment Id'),
+            'range_value'       => t('Timeperiod Range Value')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

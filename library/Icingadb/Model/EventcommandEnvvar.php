@@ -30,6 +30,17 @@ class EventcommandEnvvar extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'command_id'            => t('Eventcommand Envvar Command Id'),
+            'envvar_key'            => t('Eventcommand Envvar Key'),
+            'environment_id'        => t('Eventcommand Envvar Environment Id'),
+            'properties_checksum'   => t('Eventcommand Envvar Properties Checksum'),
+            'envvar_value'          => t('Eventcommand Envvar Value')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

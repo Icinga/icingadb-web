@@ -33,6 +33,20 @@ class Zone extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Zone Environment Id'),
+            'name_checksum'         => t('Zone Name Checksum'),
+            'properties_checksum'   => t('Zone Properties Checksum'),
+            'name'                  => t('Zone Name'),
+            'name_ci'               => t('Zone Name (CI)'),
+            'is_global'             => t('Zone Is Global'),
+            'parent_id'             => t('Zone Parent Id'),
+            'depth'                 => t('Zone Depth')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

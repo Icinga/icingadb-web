@@ -47,6 +47,25 @@ class AcknowledgementHistory extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'    => t('Acknowledgement Environment Id (History)'),
+            'endpoint_id'       => t('Acknowledgement Endpoint Id (History)'),
+            'object_type'       => t('Acknowledgement Object Type (History)'),
+            'host_id'           => t('Acknowledgement Host Id (History)'),
+            'service_id'        => t('Acknowledgement Service Id (History)'),
+            'set_time'          => t('Acknowledgement Set Time (History)'),
+            'clear_time'        => t('Acknowledgement Clear Time (History)'),
+            'author'            => t('Acknowledgement Author (History)'),
+            'cleared_by'        => t('Acknowledgement Cleared By (History)'),
+            'comment'           => t('Acknowledgement Comment (History)'),
+            'expire_time'       => t('Acknowledgement Expire Time (History)'),
+            'is_sticky'         => t('Acknowledgement Is Sticky (History)'),
+            'is_persistent'     => t('Acknowledgement Is Persistent (History)')
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([

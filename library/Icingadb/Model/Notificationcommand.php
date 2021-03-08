@@ -33,6 +33,20 @@ class Notificationcommand extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'zone_id'               => t('Notificationcommand Zone Id'),
+            'environment_id'        => t('Notificationcommand Environment Id'),
+            'name_checksum'         => t('Notificationcommand Name Checksum'),
+            'properties_checksum'   => t('Notificationcommand Properties Checksum'),
+            'name'                  => t('Notificationcommand Name'),
+            'name_ci'               => t('Notificationcommand Name (CI)'),
+            'command'               => t('Notificationcommand'),
+            'timeout'               => t('Notificationcommand Timeout')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
