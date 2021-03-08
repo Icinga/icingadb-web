@@ -33,6 +33,20 @@ class Timeperiod extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Timeperiod Environment Id'),
+            'name_checksum'         => t('Timeperiod Name Checksum'),
+            'properties_checksum'   => t('Timeperiod Properties Checksum'),
+            'name'                  => t('Timeperiod Name'),
+            'name_ci'               => t('Timeperiod Name (CI)'),
+            'display_name'          => t('Timeperiod Display Name'),
+            'prefer_includes'       => t('Timeperiod Prefer Includes'),
+            'zone_id'               => t('Timeperiod Zone Id')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

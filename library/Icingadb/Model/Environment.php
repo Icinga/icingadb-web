@@ -26,6 +26,13 @@ class Environment extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'name' => t('Environment Name')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->hasMany('acknowledgement_history', AcknowledgementHistory::class);

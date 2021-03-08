@@ -30,6 +30,17 @@ class CheckcommandEnvvar extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'command_id'            => t('Checkcommand Envvar Command Id'),
+            'envvar_key'            => t('Checkcommand Envvar Key'),
+            'environment_id'        => t('Checkcommand Environment Id'),
+            'properties_checksum'   => t('Checkcommand Properties Checksum'),
+            'envvar_value'          => t('Checkcommand Envvar Value')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

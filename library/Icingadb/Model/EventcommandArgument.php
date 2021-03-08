@@ -37,6 +37,24 @@ class EventcommandArgument extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'command_id'            => t('Eventcommand Argument Command Id'),
+            'argument_key'          => t('Eventcommand Argument Key'),
+            'environment_id'        => t('Eventcommand Argument Environment Id'),
+            'properties_checksum'   => t('Eventcommand Argument Properties Checksum'),
+            'argument_value'        => t('Eventcommand Argument Value'),
+            'argument_order'        => t('Eventcommand Argument Order'),
+            'description'           => t('Eventcommand Argument Description'),
+            'argument_key_override' => t('Eventcommand Argument Key Override'),
+            'repeat_key'            => t('Eventcommand Argument Repeat Key'),
+            'required'              => t('Eventcommand Argument Required'),
+            'set_if'                => t('Eventcommand Argument Set If'),
+            'skip_key'              => t('Eventcommand Argument Skip Key')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

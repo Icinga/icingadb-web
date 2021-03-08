@@ -33,6 +33,20 @@ class Checkcommand extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'zone_id'               => t('Checkcommand Zone Id'),
+            'environment_id'        => t('Checkcommand Environment Id'),
+            'name_checksum'         => t('Checkcommand Name Checksum'),
+            'properties_checksum'   => t('Checkcommand Properties Checksum'),
+            'name'                  => t('Checkcommand Name'),
+            'name_ci'               => t('Checkcommand Name (CI)'),
+            'command'               => t('Checkcommand'),
+            'timeout'               => t('Checkcommand Timeout')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

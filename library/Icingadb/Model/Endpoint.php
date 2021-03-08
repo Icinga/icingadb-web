@@ -31,6 +31,18 @@ class Endpoint extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'environment_id'        => t('Endpoint Environment Id'),
+            'name_checksum'         => t('Endpoint Name Checksum'),
+            'properties_checksum'   => t('Endpoint Properties Checksum'),
+            'name'                  => t('Endpoint Name'),
+            'name_ci'               => t('Endpoint Name (CI)'),
+            'zone_id'               => t('Endpoint Zone Id')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

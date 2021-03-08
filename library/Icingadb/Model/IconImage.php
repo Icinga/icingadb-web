@@ -27,6 +27,14 @@ class IconImage extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'icon_image'        => t('Icon Image'),
+            'environment_id'    => t('Icon Image Environment Id')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

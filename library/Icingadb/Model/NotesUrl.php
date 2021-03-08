@@ -27,6 +27,14 @@ class NotesUrl extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'notes_url'         => t('Notes Url'),
+            'environment_id'    => t('Notes Url Environment Id')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

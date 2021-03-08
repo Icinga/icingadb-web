@@ -33,6 +33,20 @@ class Eventcommand extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'zone_id'               => t('Eventcommand Zone Id'),
+            'environment_id'        => t('Eventcommand Environment id'),
+            'name_checksum'         => t('Eventcommand Name Checksum'),
+            'properties_checksum'   => t('Eventcommand Properties Checksum'),
+            'name'                  => t('Eventcommand Name'),
+            'name_ci'               => t('Eventcommand Name (CI)'),
+            'command'               => t('Eventcommand'),
+            'timeout'               => t('Eventcommand Timeout')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

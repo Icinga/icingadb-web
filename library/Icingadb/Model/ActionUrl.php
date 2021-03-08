@@ -27,6 +27,14 @@ class ActionUrl extends Model
         ];
     }
 
+    public function getMetaData()
+    {
+        return [
+            'action_url'        => t('Action Url'),
+            'environment_id'    => t('Action Url Environment Id')
+        ];
+    }
+
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);

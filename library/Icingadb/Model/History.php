@@ -50,13 +50,13 @@ class History extends Model
     public function getMetaData()
     {
         return [
-            'environment_id'    => t('History Environment Id'),
-            'endpoint_id'       => t('History Endpoint Id'),
-            'object_type'       => t('History Object Type'),
-            'host_id'           => t('History Host Id'),
-            'service_id'        => t('History Service Id'),
-            'event_type'        => t('History Event Type'),
-            'event_time'        => t('History Event Time')
+            'environment_id'    => t('Environment Id (History)'),
+            'endpoint_id'       => t('Endpoint Id (History)'),
+            'object_type'       => t('Event Object Type'),
+            'host_id'           => t('Host Id (History)'),
+            'service_id'        => t('Service Id (History)'),
+            'event_type'        => t('Event Type'),
+            'event_time'        => t('Event Time')
         ];
     }
 
