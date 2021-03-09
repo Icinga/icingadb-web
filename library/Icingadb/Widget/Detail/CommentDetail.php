@@ -6,17 +6,13 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
-use Icinga\Module\Icingadb\Common\HostLinks;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
-use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlString;
-use ipl\Web\Widget\Icon;
 
 class CommentDetail extends BaseHtmlElement
 {
@@ -70,32 +66,14 @@ class CommentDetail extends BaseHtmlElement
 
     protected function createRemoveCommentForm()
     {
-        $formData = [
-            'comment_id'   => $this->comment->name,
-            'comment_name' => $this->comment->name,
-            'redirect'     => '__BACK__'
-        ];
+        // TODO: Check permission
+        $action = Links::commentsDelete();
+        $action->setParam('name', $this->comment->name);
 
-
-        if ($this->comment->object_type === 'host') {
-            $action = HostLinks::removeComment($this->comment->host);
-        } else {
-            $action = ServiceLinks::removeComment($this->comment->service, $this->comment->service->host);
-            $formData['comment_is_service'] = true;
-        }
-
-        $removeCommentForm = (new DeleteCommentCommandForm())
-            ->create()
-            ->populate($formData)
-            ->setAction($action);
-
-        $submitButton = $removeCommentForm->getElement('btn_submit');
-        $submitButton->content = (new HtmlDocument())
-            ->add([new Icon('trash'), t('Remove Comment')])
-            ->setSeparator(' ')
-            ->render();
-
-        return new HtmlString($removeCommentForm->render());
+        return (new DeleteCommentForm())
+            ->setObjects([$this->comment])
+            ->populate(['redirect' => '__BACK__'])
+            ->setAction($action->getAbsoluteUrl());
     }
 
     protected function assemble()

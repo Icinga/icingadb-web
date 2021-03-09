@@ -12,12 +12,10 @@ use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Compat\CompatBackend;
-use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Compat\CustomvarFilter;
+use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -25,7 +23,6 @@ use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
-use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
 use Icinga\Web\Helper\Markdown;
@@ -364,21 +361,17 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createFeatureToggles()
     {
-        $form = new ToggleObjectFeaturesCommandForm([
-            'backend'   => new CompatBackend()
-        ]);
+        $form = new ToggleObjectFeaturesForm($this->object);
 
         if ($this->objectType === 'host') {
-            $form->load(new CompatHost($this->object));
-            $form->setAction(HostLinks::toggleFeatures($this->object));
+            $form->setAction(HostLinks::toggleFeatures($this->object)->getAbsoluteUrl());
         } else {
-            $form->load(new CompatService($this->object));
-            $form->setAction(ServiceLinks::toggleFeatures($this->object, $this->object->host));
+            $form->setAction(ServiceLinks::toggleFeatures($this->object, $this->object->host)->getAbsoluteUrl());
         }
 
         return [
             Html::tag('h2', t('Feature Commands')),
-            HtmlString::create($form->render())
+            $form
         ];
     }
 

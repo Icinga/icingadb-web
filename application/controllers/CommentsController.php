@@ -6,19 +6,16 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
-use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlString;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
-use ipl\Web\Widget\Icon;
 
 class CommentsController extends Controller
 {
@@ -109,6 +106,8 @@ class CommentsController extends Controller
 
     public function deleteAction()
     {
+        // TODO: Check permission
+
         $this->setTitle(t('Remove Comments'));
 
         $db = $this->getDb();
@@ -124,40 +123,19 @@ class CommentsController extends Controller
 
         $this->filter($comments);
 
-        $deleteCommentsForm = (new DeleteCommentsCommandForm())
-            ->addDescription(sprintf(
-                t('Confirm removal of %d comments.'),
-                $comments->count()
-            ))
-            ->setComments($comments)
-            ->setRedirectUrl(Links::comments())
-            ->create();
+        $form = (new DeleteCommentForm())
+            ->setObjects($comments)
+            ->setRedirectUrl(Links::comments()->getAbsoluteUrl())
+            ->on(DeleteCommentForm::ON_SUCCESS, function ($form) {
+                // This forces the column to reload nearly instantly after the redirect
+                // and ensures the effect of the command is visible to the user asap
+                $this->getResponse()->setAutoRefreshInterval(1);
 
-        $deleteCommentsForm->removeElement('btn_submit');
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
-        $deleteCommentsForm->addElement(
-            'button',
-            'btn_submit',
-            [
-                'class'      => 'cancel-button spinner',
-                'decorators' => [
-                    'ViewHelper',
-                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
-                ],
-                'escape'     => false,
-                'ignore'     => true,
-                'label'      => (new HtmlDocument())
-                    ->add([new Icon('trash'), t('Remove Comments')])
-                    ->setSeparator(' ')
-                    ->render(),
-                'title'      => t('Remove comments'),
-                'type'       => 'submit'
-            ]
-        );
-
-        $deleteCommentsForm->handleRequest();
-
-        $this->addContent(HtmlString::create($deleteCommentsForm->render()));
+        $this->addContent($form);
     }
 
     public function detailsAction()
@@ -191,15 +169,16 @@ class CommentsController extends Controller
             sprintf(t('Show all %d comments'), $comments->count())
         ));
 
-        $this->addContent((new ActionLink(
-            sprintf(t('Remove %d comments'), $comments->count()),
-            Links::commentsDelete()->setQueryString(QueryString::render($this->getFilter())),
-            'trash',
-            [
-                'data-icinga-modal'   => true,
-                'data-no-icinga-ajax' => true
-            ]
-        ))->setAttribute('class', 'cancel-button'));
+        // TODO: Check permission
+        $this->addContent(
+            (new DeleteCommentForm())
+                ->setObjects($comments)
+                ->setAction(
+                    Links::commentsDelete()
+                        ->setQueryString(QueryString::render($this->getFilter()))
+                        ->getAbsoluteUrl()
+                )
+        );
     }
 
     public function completeAction()

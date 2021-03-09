@@ -4,16 +4,18 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Icingadb\Compat\CompatBackend;
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
+use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Forms\Command\Instance\ToggleInstanceFeaturesForm;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Health;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
-use Icinga\Module\Monitoring\Forms\Command\Instance\ToggleInstanceFeaturesCommandForm;
 use ipl\Html\Html;
-use ipl\Html\HtmlString;
+use ipl\Web\Url;
 
 class HealthController extends Controller
 {
@@ -83,22 +85,27 @@ class HealthController extends Controller
             ['class' => 'instance-commands'],
             Html::tag('h2', t('Feature Commands'))
         );
-        $programStatus = (object) [
-            'active_host_checks_enabled'    => $instance->icinga2_active_host_checks_enabled,
-            'active_service_checks_enabled' => $instance->icinga2_active_service_checks_enabled,
-            'event_handlers_enabled'        => $instance->icinga2_event_handlers_enabled,
-            'flap_detection_enabled'        => $instance->icinga2_flap_detection_enabled,
-            'notifications_enabled'         => $instance->icinga2_notifications_enabled,
-            'process_performance_data'      => $instance->icinga2_performance_data_enabled,
-            'program_version'               => $instance->icinga2_version
-        ];
-        $toggleInstanceFeaturesCommandForm = new ToggleInstanceFeaturesCommandForm();
-        $toggleInstanceFeaturesCommandForm
-            ->setBackend(new CompatBackend())
-            ->setStatus($programStatus)
-            ->load($programStatus)
-            ->handleRequest();
-        $featureCommands->add(HtmlString::create($toggleInstanceFeaturesCommandForm->render()));
+        $toggleInstanceFeaturesCommandForm = new ToggleInstanceFeaturesForm([
+            ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS =>
+                $instance->icinga2_active_host_checks_enabled,
+            ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS =>
+                $instance->icinga2_active_service_checks_enabled,
+            ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS =>
+                $instance->icinga2_event_handlers_enabled,
+            ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION =>
+                $instance->icinga2_flap_detection_enabled,
+            ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS =>
+                $instance->icinga2_notifications_enabled,
+            ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA =>
+                $instance->icinga2_performance_data_enabled
+        ]);
+        $toggleInstanceFeaturesCommandForm->setObjects([$instance]);
+        $toggleInstanceFeaturesCommandForm->on(ToggleInstanceFeaturesForm::ON_SUCCESS, function () {
+            $this->redirectNow(Url::fromPath('icingadb/health')->getAbsoluteUrl());
+        });
+        $toggleInstanceFeaturesCommandForm->handleRequest(ServerRequest::fromGlobals());
+
+        $featureCommands->add($toggleInstanceFeaturesCommandForm);
         $this->addContent($featureCommands);
 
         $this->setAutorefreshInterval(30);

@@ -7,13 +7,12 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
 class QuickActions extends BaseHtmlElement
@@ -37,12 +36,11 @@ class QuickActions extends BaseHtmlElement
         if ($this->object->state->is_problem) {
             if ($this->object->state->is_acknowledged) {
                 if ($this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')) {
-                    $removeAckForm = (new RemoveAcknowledgementCommandForm())
+                    $removeAckForm = (new RemoveAcknowledgementForm())
                         ->setAction($this->getLink('removeAcknowledgement'))
-                        ->setLabelEnabled(true)
-                        ->setObjects([true]);
+                        ->setObjects([$this->object]);
 
-                    $this->add(Html::tag('li', new HtmlString($removeAckForm->render())));
+                    $this->add(Html::tag('li', $removeAckForm));
                 }
             } elseif ($this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')) {
                 $this->assembleAction(
@@ -61,10 +59,7 @@ class QuickActions extends BaseHtmlElement
                 && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
             )
         ) {
-            $checkNowForm = (new CheckNowCommandForm())
-                ->setAction($this->getLink('checkNow'));
-
-            $this->add(Html::tag('li', new HtmlString($checkNowForm->render())));
+            $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
         if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
@@ -145,9 +140,9 @@ class QuickActions extends BaseHtmlElement
     protected function getLink($action)
     {
         if ($this->object instanceof Host) {
-            return HostLinks::$action($this->object);
+            return HostLinks::$action($this->object)->getAbsoluteUrl();
         } else {
-            return ServiceLinks::$action($this->object, $this->object->host);
+            return ServiceLinks::$action($this->object, $this->object->host)->getAbsoluteUrl();
         }
     }
 }

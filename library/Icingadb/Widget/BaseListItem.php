@@ -11,6 +11,8 @@ use ipl\Web\Filter\QueryString;
 
 /**
  * Base class for list items
+ *
+ * @todo Move this to Icinga\Module\Icingadb\Common
  */
 abstract class BaseListItem extends BaseHtmlElement
 {

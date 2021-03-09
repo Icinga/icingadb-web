@@ -212,7 +212,7 @@ namespace Icinga\Module\Icingadb
     $this->provideConfigTab('command-transports', [
         'label' => t('Command Transports'),
         'title' => t('Configure command transports'),
-        'url'   => 'config/command-transports'
+        'url'   => 'command-transport'
     ]);
     $this->provideConfigTab('security', [
         'label' => t('Security'),

@@ -4,27 +4,18 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Compat\CompatBackend;
-use Icinga\Module\Icingadb\Compat\CompatHost;
-use Icinga\Module\Icingadb\Compat\CompatObjects;
-use Icinga\Module\Icingadb\Compat\CompatService;
-use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
-use ipl\Html\HtmlString;
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\AcknowledgeProblemForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\AddCommentForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\ProcessCheckResultForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleCheckForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleHostDowntimeForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleServiceDowntimeForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\SendCustomNotificationForm;
+use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Web\Url;
@@ -83,117 +74,79 @@ trait CommandActions
     }
 
     /**
-     * Get command objects
-     *
-     * @return CompatObjects
-     */
-    protected function getCommandObjects()
-    {
-        switch ($this->getCommandTargetModel()->getTableName()) {
-            case 'host':
-                $compatClass = CompatHost::class;
-                break;
-            case 'service':
-                $compatClass = CompatService::class;
-                break;
-            default:
-                throw new LogicException('Only hosts and services are supported');
-        }
-
-        return new CompatObjects($this->getCommandTargets(), $compatClass);
-    }
-
-    /**
      * Handle and register the given command form
      *
-     * @param string|ObjectsCommandForm $form
+     * @param string|CommandForm $form
      */
     protected function handleCommandForm($form)
     {
         if (is_string($form)) {
-            $form = new $form([
-                'backend'   => new CompatBackend(),
-                'objects'   => $this->getCommandObjects()
-            ]);
+            /** @var \Icinga\Module\Icingadb\Forms\Command\CommandForm $form */
+            $form = new $form();
         }
 
-        $form->setRedirectUrl($this->getCommandTargetsUrl());
+        $actionUrl = $this->getRequest()->getUrl();
+        if ($this->view->compact) {
+            $actionUrl = clone $actionUrl;
+            // TODO: This solves https://github.com/Icinga/icingadb-web/issues/124 but I'd like to omit this
+            // entirely. I think it should be solved like https://github.com/Icinga/icingaweb2/pull/4300 so
+            // that a request's url object still has params like showCompact and _dev
+            $actionUrl->getParams()->add('showCompact', true);
+        }
 
-        $form->handleRequest();
-        $this->addContent(HtmlString::create($form->render()));
+        $form->setAction($actionUrl->getAbsoluteUrl());
+        $form->setObjects($this->getCommandTargets());
+        $form->on($form::ON_SUCCESS, function () {
+            // This forces the column to reload nearly instantly after the redirect
+            // and ensures the effect of the command is visible to the user asap
+            $this->getResponse()->setAutoRefreshInterval(1);
+
+            $this->redirectNow($this->getCommandTargetsUrl());
+        });
+
+        $form->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addContent($form);
     }
 
     public function acknowledgeAction()
     {
         $this->assertPermission('monitoring/command/acknowledge-problem');
         $this->setTitle(t('Acknowledge Problem'));
-        $this->handleCommandForm(AcknowledgeProblemCommandForm::class);
+        $this->handleCommandForm(AcknowledgeProblemForm::class);
     }
 
     public function addCommentAction()
     {
         $this->assertPermission('monitoring/command/comment/add');
         $this->setTitle(t('Add Comment'));
-        $this->handleCommandForm(AddCommentCommandForm::class);
+        $this->handleCommandForm(AddCommentForm::class);
     }
 
     public function checkNowAction()
     {
         $this->assertPermission('monitoring/command/schedule-check');
-        $this->handleCommandForm(CheckNowCommandForm::class);
-    }
-
-    public function deleteCommentAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(DeleteCommentCommandForm::class);
-    }
-
-    public function deleteCommentsAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(DeleteCommentsCommandForm::class);
-    }
-
-    public function deleteDowntimeAction()
-    {
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(DeleteDowntimeCommandForm::class);
-    }
-
-    public function deleteDowntimesAction()
-    {
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(DeleteDowntimesCommandForm::class);
+        $this->handleCommandForm(CheckNowForm::class);
     }
 
     public function processCheckresultAction()
     {
         $this->assertPermission('monitoring/command/process-check-result');
         $this->setTitle(t('Submit Passive Check Result'));
-        $this->handleCommandForm(ProcessCheckResultCommandForm::class);
+        $this->handleCommandForm(ProcessCheckResultForm::class);
     }
 
     public function removeAcknowledgementAction()
     {
         $this->assertPermission('monitoring/command/remove-acknowledgement');
-        $this->handleCommandForm(RemoveAcknowledgementCommandForm::class);
+        $this->handleCommandForm(RemoveAcknowledgementForm::class);
     }
 
     public function scheduleCheckAction()
     {
         $this->assertPermission('monitoring/command/schedule-check');
-
-        switch ($this->getCommandTargetModel()->getTableName()) {
-            case 'host':
-                $this->setTitle(t('Reschedule Host Check'));
-                $this->handleCommandForm(ScheduleHostCheckCommandForm::class);
-                break;
-            case 'service':
-                $this->setTitle(t('Reschedule Service Check'));
-                $this->handleCommandForm(ScheduleServiceCheckCommandForm::class);
-                break;
-        }
+        $this->setTitle(t('Reschedule Check'));
+        $this->handleCommandForm(ScheduleCheckForm::class);
     }
 
     public function scheduleDowntimeAction()
@@ -203,11 +156,11 @@ trait CommandActions
         switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
                 $this->setTitle(t('Schedule Host Downtime'));
-                $this->handleCommandForm(ScheduleHostDowntimeCommandForm::class);
+                $this->handleCommandForm(ScheduleHostDowntimeForm::class);
                 break;
             case 'service':
                 $this->setTitle(t('Schedule Service Downtime'));
-                $this->handleCommandForm(ScheduleServiceDowntimeCommandForm::class);
+                $this->handleCommandForm(ScheduleServiceDowntimeForm::class);
                 break;
         }
     }
@@ -216,26 +169,22 @@ trait CommandActions
     {
         $this->assertPermission('monitoring/command/send-custom-notification');
         $this->setTitle(t('Send Custom Notification'));
-        $this->handleCommandForm(SendCustomNotificationCommandForm::class);
+        $this->handleCommandForm(SendCustomNotificationForm::class);
     }
 
     public function toggleFeaturesAction()
     {
-        $commandObjects = $this->getCommandObjects();
-        $form = new ToggleObjectFeaturesCommandForm([
-            'backend'   => new CompatBackend(),
-            'objects'   => $commandObjects
-        ]);
-
+        $commandObjects = $this->getCommandTargets();
         if (count($commandObjects) > 1) {
             if (! method_exists($this, 'getFeatureStatus')) {
                 throw new LogicException('You must implement getFeatureStatus() first');
             }
 
-            $form->load($this->getFeatureStatus());
+            $form = new ToggleObjectFeaturesForm($this->getFeatureStatus());
         } else {
             foreach ($commandObjects as $object) {
-                $form->load($object);
+                // There's only a single result, a foreach is the most compatible way to retrieve the object
+                $form = new ToggleObjectFeaturesForm($object);
             }
         }
 

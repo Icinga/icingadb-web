@@ -29,11 +29,6 @@ abstract class HostLinks
         return Url::fromPath('icingadb/host/schedule-check', ['name' => $host->name]);
     }
 
-    public static function cancelDowntime(Host $host)
-    {
-        return Url::fromPath('icingadb/host/delete-downtime', ['name' => $host->name]);
-    }
-
     public static function comments(Host $host)
     {
         return Url::fromPath('icingadb/host/comments', ['name' => $host->name]);
@@ -52,11 +47,6 @@ abstract class HostLinks
     public static function removeAcknowledgement(Host $host)
     {
         return Url::fromPath('icingadb/host/remove-acknowledgement', ['name' => $host->name]);
-    }
-
-    public static function removeComment(Host $host)
-    {
-        return Url::fromPath('icingadb/host/delete-comment', ['name' => $host->name]);
     }
 
     public static function scheduleDowntime(Host $host)
