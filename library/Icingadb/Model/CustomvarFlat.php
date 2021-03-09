@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Behavior\FlattenedObjectVars;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
+use Traversable;
 
 class CustomvarFlat extends Model
 {
@@ -75,5 +76,42 @@ class CustomvarFlat extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new FlattenedObjectVars());
+    }
+
+    /**
+     * Restore flattened custom variables to their previous structure
+     *
+     * @param Traversable $flattenedVars
+     *
+     * @return array
+     */
+    public function unFlattenVars(Traversable $flattenedVars)
+    {
+        $registerValue = function (&$data, $path, $value) use (&$registerValue) {
+            $step = array_shift($path);
+            $pos = null;
+            if (preg_match('/\[(\d+)]$/', $step, $m)) {
+                $step = substr($step, 0, -strlen($m[0]));
+                array_unshift($path, $m[1]);
+            }
+
+            if (! empty($path)) {
+                if (! isset($data[$step])) {
+                    $data[$step] = [];
+                }
+
+                $registerValue($data[$step], $path, $value);
+            } else {
+                $data[$step] = $value;
+            }
+        };
+
+        $vars = [];
+        foreach ($flattenedVars as $var) {
+            $path = explode('.', $var->flatname);
+            $registerValue($vars, $path, $var->flatvalue);
+        }
+
+        return $vars;
     }
 }

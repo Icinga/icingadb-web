@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
-use Icinga\Application\Config;
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Host;
@@ -61,9 +60,9 @@ trait CompatObject
         return true;
     }
 
-    public function fetchCustomvars()
+    protected function fetchRawCustomvars()
     {
-        if ($this->customvars !== null) {
+        if ($this->rawCustomvars !== null) {
             return $this;
         }
 
@@ -76,19 +75,19 @@ trait CompatObject
 
         $this->rawCustomvars = $customVars;
 
-        $filter = new CustomvarFilter(
-            $vars,
-            $this->type,
-            $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
-            Config::module('monitoring')->get('security', 'protected_customvars', '')
-        );
+        return $this;
+    }
 
-        $obscuredVars = [];
-        foreach ($filter as $row) {
-            $obscuredVars[$row->name] = $row->value;
+    public function fetchCustomvars()
+    {
+        if ($this->customvars !== null) {
+            return $this;
         }
 
-        $this->customvars = $obscuredVars;
+        $this->customvars = $this->object->customvar_flat->getModel()->unflattenVars(
+            $this->object->customvar_flat
+        );
+
         return $this;
     }
 
@@ -106,10 +105,10 @@ trait CompatObject
         if (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
             switch (strtolower($matches[1])) {
                 case $this->type:
-                    $customvars = $this->fetchCustomvars()->rawCustomvars;
+                    $customvars = $this->fetchRawCustomvars()->rawCustomvars;
                     break;
                 case self::TYPE_HOST:
-                    $customvars = $this->getHost()->fetchCustomvars()->rawCustomvars;
+                    $customvars = $this->getHost()->fetchRawCustomvars()->rawCustomvars;
                     break;
                 case self::TYPE_SERVICE:
                     throw new LogicException('Cannot fetch service custom variables for non-service objects');

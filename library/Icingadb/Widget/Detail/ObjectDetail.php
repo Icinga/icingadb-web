@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -15,7 +14,6 @@ use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\User;
@@ -28,7 +26,6 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
-use Icinga\Web\Helper\Markdown;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
@@ -143,16 +140,11 @@ class ObjectDetail extends BaseHtmlElement
     protected function createCustomVars()
     {
         $content = [Html::tag('h2', t('Custom Variables'))];
-        $vars = $this->object->customvar->execute();
+        $vars = $this->object->customvar_flat->getModel()->unflattenVars(
+            $this->object->customvar_flat
+        );
 
-        if ($vars->hasResult()) {
-            $vars = new CustomvarFilter(
-                $vars,
-                $this->objectType,
-                $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
-                Config::module('monitoring')->get('security', 'protected_customvars', '')
-            );
-
+        if (! empty($vars)) {
             $customvarTable = new CustomVarTable($vars);
             $customvarTable->setAttribute('id', $this->objectType . '-customvars');
             $content[] = $customvarTable;

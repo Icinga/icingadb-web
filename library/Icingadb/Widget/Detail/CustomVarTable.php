@@ -35,14 +35,16 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderVar($name, $value)
     {
+        $isArray = is_array($value);
         switch (true) {
-            case is_array($value):
-                return $this->renderArray($name, $value);
-            case is_object($value):
-                return $this->renderObject($name, $value);
-            case $value === null:
+            case $isArray && is_int(key($value)):
+                $this->renderArray($name, $value);
+                break;
+            case $isArray:
+                $this->renderObject($name, $value);
+                break;
             default:
-                return $this->renderScalar($name, $value);
+                $this->renderScalar($name, $value);
         }
     }
 
@@ -53,6 +55,7 @@ class CustomVarTable extends BaseHtmlElement
 
         ++$this->level;
 
+        ksort($array);
         foreach ($array as $key => $value) {
             $this->renderVar("[$key]", $value);
         }
@@ -60,13 +63,14 @@ class CustomVarTable extends BaseHtmlElement
         --$this->level;
     }
 
-    protected function renderObject($name, $object)
+    protected function renderObject($name, array $object)
     {
-        $numItems = count(get_object_vars($object));
+        $numItems = count($object);
         $this->addRow($name, sprintf(tp('%d item', '%d items', $numItems), $numItems));
 
         ++$this->level;
 
+        ksort($object);
         foreach ($object as $key => $value) {
             $this->renderVar($key, $value);
         }
@@ -81,8 +85,9 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function assemble()
     {
-        foreach ($this->data as $customvar) {
-            $this->renderVar($customvar->name, $customvar->value);
+        ksort($this->data);
+        foreach ($this->data as $name => $value) {
+            $this->renderVar($name, $value);
         }
     }
 }
