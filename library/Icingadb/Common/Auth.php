@@ -32,6 +32,10 @@ trait Auth
      */
     public function applyRestrictions(Query $query)
     {
+        if ($this->getAuth()->getUser()->isUnrestricted()) {
+            return;
+        }
+
         if ($query instanceof UnionQuery) {
             $queries = $query->getUnions();
         } else {
@@ -71,7 +75,6 @@ trait Auth
                     );
                 }
 
-                // TODO: Should we allow full access if there's a role that doesn't define any restriction?
                 $queryFilter->add($roleFilter);
             }
 
