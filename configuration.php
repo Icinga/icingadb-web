@@ -28,6 +28,16 @@ namespace Icinga\Module\Icingadb
         $this->translate('Restrict access to the Icinga services that match the filter')
     );
 
+    $this->provideRestriction(
+        'icingadb/blacklist/variables',
+        $this->translate('Hide custom variables of Icinga objects that are part of the list')
+    );
+
+    $this->provideRestriction(
+        'icingadb/protect/variables',
+        $this->translate('Obfuscate custom variable values of Icinga objects that are part of the list')
+    );
+
     if (! $this::exists('monitoring')) {
         /**
          * Search urls
