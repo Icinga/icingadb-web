@@ -93,9 +93,6 @@ class ObjectSuggestions extends Suggestions
         return $quickFilter;
     }
 
-    /**
-     * @todo Don't suggest obfuscated (protected) custom variables
-     */
     protected function fetchValueSuggestions($column, $searchTerm, Filter\Chain $searchFilter)
     {
         $model = $this->getModel();
@@ -172,9 +169,6 @@ class ObjectSuggestions extends Suggestions
         }
     }
 
-    /**
-     * @todo Don't suggest blacklisted custom variables
-     */
     protected function fetchColumnSuggestions($searchTerm)
     {
         // Ordinary columns first
@@ -235,30 +229,34 @@ class ObjectSuggestions extends Suggestions
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
+        $resolver = $customVars->getResolver();
 
-        $columns = ['flatname'];
+        $scalarQueries = [];
         $aggregates = ['flatname'];
-        foreach ($customVars->getResolver()->getRelations($customVars->getModel()) as $name => $relation) {
+        foreach ($resolver->getRelations($customVars->getModel()) as $name => $relation) {
             if (isset($this->customVarSources[$name]) && $relation instanceof BelongsToMany) {
                 $query = $customVars->createSubQuery(
                     $relation->getTarget(),
-                    $customVars->getResolver()->qualifyPath($name, $tableName)
+                    $resolver->qualifyPath($name, $tableName)
                 );
 
                 $this->applyRestrictions($query);
 
                 $aggregates[$name] = new Expression("MAX($name)");
-                $columns[$name] = $query->assembleSelect()
+                $scalarQueries[$name] = $query->assembleSelect()
                     ->resetColumns()->columns(new Expression('1'))
                     ->limit(1);
             }
         }
 
+        $customVars->columns('flatname');
+        $this->applyRestrictions($customVars);
         FilterProcessor::apply(Filter::equal('flatname', $searchTerm), $customVars);
+        $idColumn = $resolver->qualifyColumnsAndAliases((array) 'id', $customVars->getModel(), false);
         $customVars = $customVars->assembleSelect();
 
-        $customVars->resetColumns()->columns($columns);
-        $customVars->groupBy('id');
+        $customVars->columns($scalarQueries);
+        $customVars->groupBy($idColumn);
         $customVars->limit(static::DEFAULT_LIMIT);
 
         // This outer query exists only because there's no way to combine aggregates and sub queries (yet)

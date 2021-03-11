@@ -140,10 +140,10 @@ class ObjectDetail extends BaseHtmlElement
     protected function createCustomVars()
     {
         $content = [Html::tag('h2', t('Custom Variables'))];
-        $vars = $this->object->customvar_flat->getModel()->unflattenVars(
-            $this->object->customvar_flat
-        );
+        $flattenedVars = $this->object->customvar_flat;
+        $this->applyRestrictions($flattenedVars);
 
+        $vars = $this->object->customvar_flat->getModel()->unflattenVars($flattenedVars);
         if (! empty($vars)) {
             $customvarTable = new CustomVarTable($vars);
             $customvarTable->setAttribute('id', $this->objectType . '-customvars');
