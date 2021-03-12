@@ -9,7 +9,6 @@ use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Sql\Expression;
-use ipl\Sql\Filter\IsNull;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 
@@ -99,7 +98,7 @@ trait Auth
                     ) {
                         $roleFilter->add(
                             Filter::any(
-                                new IsNull('service.id'),
+                                Filter::unequal('service.id', '*'),
                                 $this->parseRestriction($restriction, 'icingadb/filter/services')
                             )
                         );
