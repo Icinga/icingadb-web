@@ -232,7 +232,13 @@ trait Auth
     {
         $filter = Filter::none();
         foreach (explode(',', $blacklist) as $value) {
-            $filter->add(Filter::equal($column, trim($value)));
+            $columnFilter = Filter::equal($column, trim($value));
+
+            // For an explanation, check class ObjectSuggestions. This does
+            // not expect other blacklists than those for custom variables.
+            $columnFilter->noOptimization = true;
+
+            $filter->add($columnFilter);
         }
 
         return $filter;
