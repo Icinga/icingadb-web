@@ -239,11 +239,6 @@ namespace Icinga\Module\Icingadb
         'title' => t('Configure command transports'),
         'url'   => 'command-transport'
     ]);
-    $this->provideConfigTab('security', [
-        'label' => t('Security'),
-        'title' => t('Configure security related settings'),
-        'url'   => 'config/security'
-    ]);
 
     try {
         // TODO: Remove this before the stable release!!!1!11
