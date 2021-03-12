@@ -31,7 +31,7 @@ class ServicegroupController extends Controller
             $query
         );
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         $servicegroup = $query->first();
         if ($servicegroup === null) {
@@ -52,7 +52,7 @@ class ServicegroupController extends Controller
         ])->utilize('servicegroup');
 
         $services->getSelectBase()->where(['service_servicegroup.id = ?' => $this->servicegroup->id]);
-        $this->applyMonitoringRestriction($services);
+        $this->applyRestrictions($services);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);

@@ -37,7 +37,7 @@ class HostController extends Controller
         $query->getSelectBase()
             ->where(['host.name = ?' => $name]);
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         /** @var Host $host */
         $host = $query->first();
@@ -55,6 +55,8 @@ class HostController extends Controller
         $serviceSummary = ServicestateSummary::on($this->getDb())->with('state');
         $serviceSummary->getSelectBase()
             ->where(['host_id = ?' => $this->host->id]);
+
+        $this->applyRestrictions($serviceSummary);
 
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
@@ -203,7 +205,7 @@ class HostController extends Controller
             ->getSelectBase()
             ->where(['service_host.id = ?' => $this->host->id]);
 
-        $this->applyMonitoringRestriction($services);
+        $this->applyRestrictions($services);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);

@@ -30,7 +30,7 @@ class UserController extends Controller
         $query->getSelectBase()
             ->where(['user.name = ?' => $name]);
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         $user = $query->first();
         if ($user === null) {

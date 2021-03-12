@@ -31,7 +31,7 @@ class HostgroupController extends Controller
             $query
         );
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         $hostgroup = $query->first();
         if ($hostgroup === null) {
@@ -48,7 +48,7 @@ class HostgroupController extends Controller
         $hosts = Host::on($db)->with('state')->utilize('hostgroup');
 
         $hosts->getSelectBase()->where(['host_hostgroup.id = ?' => $this->hostgroup->id]);
-        $this->applyMonitoringRestriction($hosts);
+        $this->applyRestrictions($hosts);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hosts);

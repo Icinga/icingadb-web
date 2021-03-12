@@ -30,7 +30,7 @@ class UsergroupController extends Controller
         $query->getSelectBase()
             ->where(['usergroup.name = ?' => $name]);
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         $usergroup = $query->first();
         if ($usergroup === null) {

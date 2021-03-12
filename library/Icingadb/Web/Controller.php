@@ -7,9 +7,8 @@ namespace Icinga\Module\Icingadb\Web;
 use Generator;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Compat\MonitoringRestrictions;
-use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
@@ -31,6 +30,7 @@ use ipl\Web\Url;
 
 class Controller extends CompatController
 {
+    use Auth;
     use Database;
 
     /** @var Filter Filter from query string parameters */
@@ -349,24 +349,9 @@ class Controller extends CompatController
 
     public function filter(Query $query, Filter\Rule $filter = null)
     {
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         FilterProcessor::apply($filter ?: $this->getFilter(), $query);
-
-        return $this;
-    }
-
-    public function applyMonitoringRestriction(Query $query, $queryTransformer = null)
-    {
-        if ($queryTransformer === null || UrlMigrator::hasQueryTransformer($queryTransformer)) {
-            $restriction = UrlMigrator::transformFilter(
-                MonitoringRestrictions::getRestriction('monitoring/filter/objects'),
-                $queryTransformer
-            );
-            if ($restriction) {
-                FilterProcessor::apply($restriction, $query);
-            }
-        }
 
         return $this;
     }

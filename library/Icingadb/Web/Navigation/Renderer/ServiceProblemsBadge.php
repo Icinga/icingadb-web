@@ -4,14 +4,20 @@
 
 namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 
 class ServiceProblemsBadge extends ProblemsBadge
 {
+    use Auth;
+
     protected function fetchProblemsCount()
     {
-        return ServicestateSummary::on($this->getDb())->with('state')->first()->services_critical_unhandled;
+        $summary = ServicestateSummary::on($this->getDb())->with('state');
+        $this->applyRestrictions($summary);
+
+        return $summary->first()->services_critical_unhandled;
     }
 
     protected function getUrl()

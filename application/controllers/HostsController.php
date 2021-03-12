@@ -144,6 +144,8 @@ class HostsController extends Controller
 
         $comments = Host::on($db)->with(['comment']);
         $comments->getWith()['host.comment']->setJoinType('INNER');
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        FilterProcessor::apply(Filter::equal('comment.object_type', 'host'), $comments);
         $this->filter($comments);
         $summary->comments_total = $comments->count();
 
@@ -206,6 +208,9 @@ class HostsController extends Controller
 
     protected function getFeatureStatus()
     {
-        return new FeatureStatus('host', HoststateSummary::on($this->getDb())->with(['state'])->first());
+        $summary = HoststateSummary::on($this->getDb())->with(['state']);
+        $this->filter($summary);
+
+        return new FeatureStatus('host', $summary->first());
     }
 }

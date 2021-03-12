@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -14,9 +14,10 @@ use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Compat\CustomvarFilter;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
@@ -25,20 +26,22 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
-use Icinga\Web\Helper\Markdown;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\ResultSet;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use Zend_View_Helper_Perfdata;
 
 class ObjectDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
 
     protected $object;
 
@@ -112,8 +115,15 @@ class ObjectDetail extends BaseHtmlElement
             $relations = ['service', 'service.state', 'service.host', 'service.host.state'];
         }
 
+        $comments = $this->object->comment
+            ->with($relations)
+            ->limit(3)
+            ->peekAhead();
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $comments);
+
+        $comments = $comments->execute();
         /** @var ResultSet $comments */
-        $comments = $this->object->comment->with($relations)->limit(3)->peekAhead()->execute();
 
         $content = [Html::tag('h2', t('Comments'))];
 
@@ -130,16 +140,11 @@ class ObjectDetail extends BaseHtmlElement
     protected function createCustomVars()
     {
         $content = [Html::tag('h2', t('Custom Variables'))];
-        $vars = $this->object->customvar->execute();
+        $flattenedVars = $this->object->customvar_flat;
+        $this->applyRestrictions($flattenedVars);
 
-        if ($vars->hasResult()) {
-            $vars = new CustomvarFilter(
-                $vars,
-                $this->objectType,
-                $this->getAuth()->getRestrictions('monitoring/blacklist/properties'),
-                Config::module('monitoring')->get('security', 'protected_customvars', '')
-            );
-
+        $vars = $this->object->customvar_flat->getModel()->unflattenVars($flattenedVars);
+        if (! empty($vars)) {
             $customvarTable = new CustomVarTable($vars);
             $customvarTable->setAttribute('id', $this->objectType . '-customvars');
             $content[] = $customvarTable;
@@ -154,11 +159,21 @@ class ObjectDetail extends BaseHtmlElement
     {
         if ($this->objectType === 'host') {
             $link = HostLinks::downtimes($this->object);
+            $relations = ['host', 'host.state'];
         } else {
             $link = ServiceLinks::downtimes($this->object, $this->object->host);
+            $relations = ['service', 'service.state', 'service.host', 'service.host.state'];
         }
 
-        $downtimes = $this->object->downtime->limit(3)->peekAhead()->execute();
+        $downtimes = $this->object->downtime
+            ->with($relations)
+            ->limit(3)
+            ->peekAhead();
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $downtimes);
+
+        $downtimes = $downtimes->execute();
+        /** @var ResultSet $downtimes */
 
         $content = [Html::tag('h2', t('Downtimes'))];
 
@@ -177,9 +192,11 @@ class ObjectDetail extends BaseHtmlElement
         $groups = [Html::tag('h2', t('Groups'))];
 
         if ($this->objectType === 'host') {
-            $hostgroupList = new TagList();
+            $hostgroups = $this->object->hostgroup;
+            $this->applyRestrictions($hostgroups);
 
-            foreach ($this->object->hostgroup as $hostgroup) {
+            $hostgroupList = new TagList();
+            foreach ($hostgroups as $hostgroup) {
                 $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
@@ -190,9 +207,11 @@ class ObjectDetail extends BaseHtmlElement
                     : new EmptyState(t('Not a member of any host group.'))
             );
         } else {
-            $servicegroupList = new TagList();
+            $servicegroups = $this->object->servicegroup;
+            $this->applyRestrictions($servicegroups);
 
-            foreach ($this->object->servicegroup as $servicegroup) {
+            $servicegroupList = new TagList();
+            foreach ($servicegroups as $servicegroup) {
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
@@ -384,14 +403,23 @@ class ObjectDetail extends BaseHtmlElement
             $this->getAuth()->hasPermission('*')
             || ! $this->getAuth()->hasPermission('no-monitoring/contacts')
         ) {
-            foreach ($this->object->notification as $notification) {
-                foreach ($notification->user as $user) {
-                    $users[$user->name] = $user;
-                }
+            $objectFilter = Filter::equal(
+                'notification.' . ($this->objectType === 'host' ? 'host_id' : 'service_id'),
+                $this->object->id
+            );
 
-                foreach ($notification->usergroup as $usergroup) {
-                    $usergroups[$usergroup->name] = $usergroup;
-                }
+            $userQuery = User::on($this->getDb());
+            FilterProcessor::apply($objectFilter, $userQuery);
+            $this->applyRestrictions($userQuery);
+            foreach ($userQuery as $user) {
+                $users[$user->name] = $user;
+            }
+
+            $usergroupQuery = Usergroup::on($this->getDb());
+            FilterProcessor::apply($objectFilter, $usergroupQuery);
+            $this->applyRestrictions($usergroupQuery);
+            foreach ($usergroupQuery as $usergroup) {
+                $usergroups[$usergroup->name] = $usergroup;
             }
         }
 

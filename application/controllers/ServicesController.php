@@ -219,6 +219,9 @@ class ServicesController extends Controller
 
     protected function getFeatureStatus()
     {
-        return new FeatureStatus('service', ServicestateSummary::on($this->getDb())->with(['state'])->first());
+        $summary = ServicestateSummary::on($this->getDb())->with(['state']);
+        $this->filter($summary);
+
+        return new FeatureStatus('service', $summary->first());
     }
 }

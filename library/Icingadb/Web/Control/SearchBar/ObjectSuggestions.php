@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
@@ -24,6 +25,7 @@ use RuntimeException;
 
 class ObjectSuggestions extends Suggestions
 {
+    use Auth;
     use Database;
 
     /** @var Model */
@@ -91,9 +93,6 @@ class ObjectSuggestions extends Suggestions
         return $quickFilter;
     }
 
-    /**
-     * @todo Don't suggest obfuscated (protected) custom variables
-     */
     protected function fetchValueSuggestions($column, $searchTerm, Filter\Chain $searchFilter)
     {
         $model = $this->getModel();
@@ -148,18 +147,21 @@ class ObjectSuggestions extends Suggestions
             FilterProcessor::apply($flatnameFilter, $query);
         }
 
+        $inputFilter = Filter::equal($columnPath, $searchTerm);
+        $inputFilter->noOptimization = true;
         $query->columns($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
         if ($searchFilter instanceof Filter\None) {
-            FilterProcessor::apply(Filter::equal($columnPath, $searchTerm), $query);
+            FilterProcessor::apply($inputFilter, $query);
         } elseif ($searchFilter instanceof Filter\All) {
-            $searchFilter->add(Filter::equal($columnPath, $searchTerm));
+            $searchFilter->add($inputFilter);
         } else {
-            $searchFilter = Filter::equal($columnPath, $searchTerm);
+            $searchFilter = $inputFilter;
         }
 
         FilterProcessor::apply($searchFilter, $query);
+        $this->applyRestrictions($query);
 
         try {
             return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
@@ -169,9 +171,6 @@ class ObjectSuggestions extends Suggestions
         }
     }
 
-    /**
-     * @todo Don't suggest blacklisted custom variables
-     */
     protected function fetchColumnSuggestions($searchTerm)
     {
         // Ordinary columns first
@@ -232,36 +231,38 @@ class ObjectSuggestions extends Suggestions
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
+        $resolver = $customVars->getResolver();
 
-        $columns = ['flatname'];
-        foreach ($customVars->getResolver()->getRelations($customVars->getModel()) as $name => $relation) {
+        $scalarQueries = [];
+        $aggregates = ['flatname'];
+        foreach ($resolver->getRelations($customVars->getModel()) as $name => $relation) {
             if (isset($this->customVarSources[$name]) && $relation instanceof BelongsToMany) {
-                $junction = $relation->getThrough();
-
-                $foreignKey = $customVars->getResolver()->qualifyColumn(
-                    $customVars->getResolver()->getRelations($junction)->get($tableName)->getForeignKey(),
-                    $junction->getTableName()
-                );
-                $candidateKey = $customVars->getResolver()->qualifyColumn(
-                    $relation->getCandidateKey(),
-                    $tableName
+                $query = $customVars->createSubQuery(
+                    $relation->getTarget(),
+                    $resolver->qualifyPath($name, $tableName)
                 );
 
-                $columns[$name] = $junction::on($customVars->getDb())->assembleSelect()
+                $this->applyRestrictions($query);
+
+                $aggregates[$name] = new Expression("MAX($name)");
+                $scalarQueries[$name] = $query->assembleSelect()
                     ->resetColumns()->columns(new Expression('1'))
-                    ->where("$foreignKey = $candidateKey")
                     ->limit(1);
             }
         }
 
+        $customVars->columns('flatname');
+        $this->applyRestrictions($customVars);
         FilterProcessor::apply(Filter::equal('flatname', $searchTerm), $customVars);
+        $idColumn = $resolver->qualifyColumnsAndAliases((array) 'id', $customVars->getModel(), false);
         $customVars = $customVars->assembleSelect();
 
-        $customVars->resetColumns()->columns($columns);
-        $customVars->groupBy('flatname');
+        $customVars->columns($scalarQueries);
+        $customVars->groupBy($idColumn);
         $customVars->limit(static::DEFAULT_LIMIT);
 
-        return $customVars;
+        // This outer query exists only because there's no way to combine aggregates and sub queries (yet)
+        return (new Select())->columns($aggregates)->from(['results' => $customVars])->groupBy('flatname');
     }
 
     /**

@@ -8,7 +8,6 @@ use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Forms\DatabaseConfigForm;
 use Icinga\Module\Icingadb\Forms\RedisConfigForm;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 use Icinga\Web\Form;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
@@ -43,18 +42,6 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('redis'));
-
-        $this->addFormToContent($form);
-    }
-
-    public function securityAction()
-    {
-        $form = (new SecurityConfigForm())
-            ->setIniConfig(Config::module('monitoring'));
-
-        $form->handleRequest();
-
-        $this->mergeTabs($this->Module()->getConfigTabs()->activate('security'));
 
         $this->addFormToContent($form);
     }

@@ -41,7 +41,7 @@ class CommentController extends Controller
         $query->getSelectBase()
             ->where(['comment.name = ?' => $name]);
 
-        $this->applyMonitoringRestriction($query);
+        $this->applyRestrictions($query);
 
         $comment = $query->first();
         if ($comment === null) {

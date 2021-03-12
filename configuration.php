@@ -13,6 +13,31 @@ namespace Icinga\Module\Icingadb
 
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
 
+    $this->provideRestriction(
+        'icingadb/filter/objects',
+        $this->translate('Restrict access to the Icinga objects that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/filter/hosts',
+        $this->translate('Restrict access to the Icinga hosts and services that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/filter/services',
+        $this->translate('Restrict access to the Icinga services that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/blacklist/variables',
+        $this->translate('Hide custom variables of Icinga objects that are part of the list')
+    );
+
+    $this->provideRestriction(
+        'icingadb/protect/variables',
+        $this->translate('Obfuscate custom variable values of Icinga objects that are part of the list')
+    );
+
     if (! $this::exists('monitoring')) {
         /**
          * Search urls
@@ -213,11 +238,6 @@ namespace Icinga\Module\Icingadb
         'label' => t('Command Transports'),
         'title' => t('Configure command transports'),
         'url'   => 'command-transport'
-    ]);
-    $this->provideConfigTab('security', [
-        'label' => t('Security'),
-        'title' => t('Configure security related settings'),
-        'url'   => 'config/security'
     ]);
 
     try {
