@@ -35,31 +35,35 @@ class ObjectAuthorization
     {
         $self = new static();
 
-        $uniqueId = spl_object_hash($for);
-        if (! isset(self::$knownGrants[$uniqueId])) {
-            self::$knownGrants[$uniqueId] = $self->loadGrants(
+        $tableName = $for->getTableName();
+        $uniqueId = $for->{$for->getKeyName()};
+        if (! isset(self::$knownGrants[$tableName][$uniqueId])) {
+            $self->loadGrants(
                 get_class($for),
-                Filter::equal($for->getKeyName(), $for->{$for->getKeyName()})
+                Filter::equal($for->getKeyName(), $uniqueId)
             );
         }
 
-        return $self->checkGrants($permission, self::$knownGrants[$uniqueId]);
+        return $self->checkGrants($permission, self::$knownGrants[$tableName][$uniqueId]);
     }
 
     /**
      * Check whether the permission is granted on objects matching the type and filter
      *
-     * The check will not be performed on every object matching the filter. The result
+     * The check will be performed on every object matching the filter. Though the result
      * only allows to determine whether the permission is granted on **any** or *none*
-     * of the objects in question.
+     * of the objects in question. Any subsequent call to {@see ObjectAuthorization::grantsOn}
+     * will make use of the underlying results the check has determined in order to avoid
+     * unnecessary queries.
      *
      * @param string $permission
      * @param string $type
      * @param Filter\Rule $filter
+     * @param bool $cache Pass `false` to not perform the check on every object
      *
      * @return bool
      */
-    public static function grantsOnType($permission, $type, Filter\Rule $filter)
+    public static function grantsOnType($permission, $type, Filter\Rule $filter, $cache = false)
     {
         switch ($type) {
             case 'host':
@@ -75,11 +79,11 @@ class ObjectAuthorization
         $self = new static();
 
         $uniqueId = spl_object_hash($filter);
-        if (! isset(self::$knownGrants[$uniqueId])) {
-            self::$knownGrants[$uniqueId] = $self->loadGrants($for, $filter);
+        if (! isset(self::$knownGrants[$type][$uniqueId])) {
+            $self->loadGrants($for, $filter, $cache);
         }
 
-        return $self->checkGrants($permission, self::$knownGrants[$uniqueId]);
+        return $self->checkGrants($permission, self::$knownGrants[$type][$uniqueId]);
     }
 
     /**
@@ -87,23 +91,24 @@ class ObjectAuthorization
      *
      * @param string $model The class path to the object model
      * @param Filter\Rule $filter
+     * @param bool $cache Pass `false` to not populate the cache with the matching objects
      *
-     * @return array
+     * @return void
      */
-    protected function loadGrants($model, Filter\Rule $filter)
+    protected function loadGrants($model, Filter\Rule $filter, $cache = true)
     {
-        $roles = [];
-        $columns = [];
-        foreach ($this->getAuth()->getUser()->getRoles() as $role) {
-            /** @var Model $model */
-            $subQuery = $model::on($this->getDb())->columns([new Expression('1')]);
+        /** @var Model $model */
+        $query = $model::on($this->getDb());
+        $tableName = $query->getModel()->getTableName();
 
+        $roleExpressions = [];
+        $rolesWithoutRestrictions = [];
+        foreach ($this->getAuth()->getUser()->getRoles() as $role) {
             $roleFilter = Filter::all();
             if (($restriction = $role->getRestrictions('icingadb/filter/objects'))) {
                 $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/objects'));
             }
 
-            $tableName = $subQuery->getModel()->getTableName();
             if ($tableName === 'host' || $tableName === 'service') {
                 if (($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
                     $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/hosts'));
@@ -115,24 +120,57 @@ class ObjectAuthorization
             }
 
             if ($roleFilter->isEmpty()) {
-                $roles[] = $role->getName();
+                $rolesWithoutRestrictions[] = $role->getName();
                 continue;
             }
 
-            FilterProcessor::apply($roleFilter->add($filter), $subQuery);
-            $columns[$role->getName()] = $subQuery->limit(1)->assembleSelect()->resetOrderBy();
+            if ($cache) {
+                FilterProcessor::apply($roleFilter, $query);
+                $where = $query->getSelectBase()->getWhere();
+                $query->getSelectBase()->resetWhere();
+
+                $values = [];
+                $rendered = $this->getDb()->getQueryBuilder()->buildCondition($where, $values);
+                $roleExpressions[$role->getName()] = new Expression($rendered, null, ...$values);
+            } else {
+                $roleExpressions[$role->getName()] = (clone $query)
+                    ->columns([new Expression('1')])
+                    ->filter($roleFilter)
+                    ->filter($filter)
+                    ->limit(1)
+                    ->assembleSelect()
+                    ->resetOrderBy();
+            }
         }
 
-        if (! empty($columns)) {
-            $row = $this->getDb()->fetchOne((new Select())->columns($columns));
-            foreach ($columns as $column => $_) {
-                if ($row->$column) {
-                    $roles[] = $column;
+        $rolesWithRestrictions = [];
+        if (! empty($roleExpressions)) {
+            if ($cache) {
+                $query->columns('id')->columns($roleExpressions);
+                $query->filter($filter);
+            } else {
+                $query = [$this->getDb()->fetchOne((new Select())->columns($roleExpressions))];
+            }
+
+            foreach ($query as $row) {
+                $roles = $rolesWithoutRestrictions;
+                foreach ($roleExpressions as $alias => $_) {
+                    if ($row->$alias) {
+                        $rolesWithRestrictions[$alias] = true;
+                        $roles[] = $alias;
+                    }
+                }
+
+                if ($cache) {
+                    self::$knownGrants[$tableName][$row->id] = $roles;
                 }
             }
         }
 
-        return $roles;
+        self::$knownGrants[$tableName][spl_object_hash($filter)] = array_merge(
+            $rolesWithoutRestrictions,
+            array_keys($rolesWithRestrictions)
+        );
     }
 
     /**

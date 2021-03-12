@@ -37,19 +37,22 @@ trait Auth
     /**
      * Check whether the permission is granted on objects matching the type and filter
      *
-     * The check will not be performed on every object matching the filter. The result
+     * The check will be performed on every object matching the filter. Though the result
      * only allows to determine whether the permission is granted on **any** or *none*
-     * of the objects in question.
+     * of the objects in question. Any subsequent call to {@see Auth::isGrantedOn} will
+     * make use of the underlying results the check has determined in order to avoid
+     * unnecessary queries.
      *
      * @param string $permission
      * @param string $type
      * @param Filter\Rule $filter
+     * @param bool $cache Pass `false` to not perform the check on every object
      *
      * @return bool
      */
-    public function isGrantedOnType($permission, $type, Filter\Rule $filter)
+    public function isGrantedOnType($permission, $type, Filter\Rule $filter, $cache = true)
     {
-        return ObjectAuthorization::grantsOnType($permission, $type, $filter);
+        return ObjectAuthorization::grantsOnType($permission, $type, $filter, $cache);
     }
 
     /**
