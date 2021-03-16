@@ -141,7 +141,7 @@ class AcknowledgeProblemForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('monitoring/command/acknowledge-problem', $object)) {
+        if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {
             return null;
         }
 

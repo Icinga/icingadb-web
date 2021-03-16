@@ -40,10 +40,7 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn(
-            'monitoring/command/downtime/delete',
-            $object->{$object->object_type}
-        )) {
+        if (! $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})) {
             return null;
         }
 

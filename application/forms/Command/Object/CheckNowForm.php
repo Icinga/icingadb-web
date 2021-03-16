@@ -47,10 +47,10 @@ class CheckNowForm extends CommandForm
     protected function getCommand(Model $object)
     {
         if (
-            ! $this->isGrantedOn('monitoring/command/schedule-check', $object)
+            ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
             && (
                 ! $object->active_checks_enabled
-                || ! $this->isGrantedOn('monitoring/command/schedule-check/active-only', $object)
+                || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
             )
         ) {
             return null;

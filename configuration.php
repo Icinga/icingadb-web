@@ -13,6 +13,87 @@ namespace Icinga\Module\Icingadb
 
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
 
+    $this->providePermission(
+        'icingadb/command/*',
+        $this->translate('Allow all commands')
+    );
+    $this->providePermission(
+        'icingadb/command/schedule-check',
+        $this->translate('Allow to schedule host and service checks')
+    );
+    $this->providePermission(
+        'icingadb/command/schedule-check/active-only',
+        $this->translate('Allow to schedule host and service checks (Only on objects with active checks enabled)')
+    );
+    $this->providePermission(
+        'icingadb/command/acknowledge-problem',
+        $this->translate('Allow to acknowledge host and service problems')
+    );
+    $this->providePermission(
+        'icingadb/command/remove-acknowledgement',
+        $this->translate('Allow to remove problem acknowledgements')
+    );
+    $this->providePermission(
+        'icingadb/command/comment/*',
+        $this->translate('Allow to add and delete host and service comments')
+    );
+    $this->providePermission(
+        'icingadb/command/comment/add',
+        $this->translate('Allow to add host and service comments')
+    );
+    $this->providePermission(
+        'icingadb/command/comment/delete',
+        $this->translate('Allow to delete host and service comments')
+    );
+    $this->providePermission(
+        'icingadb/command/downtime/*',
+        $this->translate('Allow to schedule and delete host and service downtimes')
+    );
+    $this->providePermission(
+        'icingadb/command/downtime/schedule',
+        $this->translate('Allow to schedule host and service downtimes')
+    );
+    $this->providePermission(
+        'icingadb/command/downtime/delete',
+        $this->translate('Allow to delete host and service downtimes')
+    );
+    $this->providePermission(
+        'icingadb/command/process-check-result',
+        $this->translate('Allow to process host and service check results')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/instance',
+        $this->translate('Allow to toggle instance-wide features')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/*',
+        $this->translate('Allow to toggle all features on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/active-checks',
+        $this->translate('Allow to toggle active checks on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/passive-checks',
+        $this->translate('Allow to toggle passive checks on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/notifications',
+        $this->translate('Allow to toggle notifications on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/event-handler',
+        $this->translate('Allow to toggle event handlers on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/feature/object/flap-detection',
+        $this->translate('Allow to toggle flap detection on host and service objects')
+    );
+    $this->providePermission(
+        'icingadb/command/send-custom-notification',
+        $this->translate('Allow to send custom notifications for hosts and services')
+    );
+
     $this->provideRestriction(
         'icingadb/filter/objects',
         $this->translate('Restrict access to the Icinga objects that match the filter')

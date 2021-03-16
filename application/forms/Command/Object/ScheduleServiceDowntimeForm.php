@@ -159,7 +159,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('monitoring/command/downtime/schedule', $object)) {
+        if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
             return null;
         }
 

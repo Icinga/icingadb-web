@@ -41,7 +41,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
             && $this->isGrantedOnType(
-                'monitoring/command/acknowledge-problem',
+                'icingadb/command/acknowledge-problem',
                 $this->type,
                 $this->getBaseFilter(),
                 false
@@ -58,7 +58,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         if (
             $this->summary->$acks > 0
             && $this->isGrantedOnType(
-                'monitoring/command/remove-acknowledgement',
+                'icingadb/command/remove-acknowledgement',
                 $this->type,
                 $this->getBaseFilter(),
                 false
@@ -72,11 +72,11 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter(), false)
+            $this->isGrantedOnType('icingadb/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
                 && $this->isGrantedOnType(
-                    'monitoring/command/schedule-check/active-only',
+                    'icingadb/command/schedule-check/active-only',
                     $this->type,
                     $this->getBaseFilter(),
                     false
@@ -86,7 +86,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
-        if ($this->isGrantedOnType('monitoring/command/comment/add', $this->type, $this->getBaseFilter(), false)) {
+        if ($this->isGrantedOnType('icingadb/command/comment/add', $this->type, $this->getBaseFilter(), false)) {
             $this->assembleAction(
                 'addComment',
                 t('Comment'),
@@ -97,7 +97,7 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->isGrantedOnType(
-                'monitoring/command/send-custom-notification',
+                'icingadb/command/send-custom-notification',
                 $this->type,
                 $this->getBaseFilter(),
                 false
@@ -113,7 +113,7 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->isGrantedOnType(
-                'monitoring/command/downtime/schedule',
+                'icingadb/command/downtime/schedule',
                 $this->type,
                 $this->getBaseFilter(),
                 false
@@ -128,11 +128,11 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter(), false)
+            $this->isGrantedOnType('icingadb/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
                 && $this->isGrantedOnType(
-                    'monitoring/command/schedule-check/active-only',
+                    'icingadb/command/schedule-check/active-only',
                     $this->type,
                     $this->getBaseFilter(),
                     false
@@ -149,7 +149,7 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->isGrantedOnType(
-                'monitoring/command/process-check-result',
+                'icingadb/command/process-check-result',
                 $this->type,
                 $this->getBaseFilter(),
                 false

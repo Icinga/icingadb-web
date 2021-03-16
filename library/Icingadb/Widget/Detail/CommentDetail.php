@@ -85,10 +85,12 @@ class CommentDetail extends BaseHtmlElement
             $this->add($details);
         }
 
-        if ($this->isGrantedOn(
-            'monitoring/command/comment/delete',
-             $this->comment->{$this->comment->object_type}
-        )) {
+        if (
+            $this->isGrantedOn(
+                'icingadb/command/comment/delete',
+                $this->comment->{$this->comment->object_type}
+            )
+        ) {
             $this->add($this->createRemoveCommentForm());
         }
     }

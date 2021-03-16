@@ -95,7 +95,7 @@ class AddCommentForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('monitoring/command/comment/add', $object)) {
+        if (! $this->isGrantedOn('icingadb/command/comment/add', $object)) {
             return null;
         }
 

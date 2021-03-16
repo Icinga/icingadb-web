@@ -75,7 +75,7 @@ class SendCustomNotificationForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('monitoring/command/send-custom-notification', $object)) {
+        if (! $this->isGrantedOn('icingadb/command/send-custom-notification', $object)) {
             return null;
         }
 

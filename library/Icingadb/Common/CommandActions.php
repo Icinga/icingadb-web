@@ -153,22 +153,22 @@ trait CommandActions
 
     public function acknowledgeAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/acknowledge-problem');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/acknowledge-problem');
         $this->setTitle(t('Acknowledge Problem'));
         $this->handleCommandForm(AcknowledgeProblemForm::class);
     }
 
     public function addCommentAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/comment/add');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/comment/add');
         $this->setTitle(t('Add Comment'));
         $this->handleCommandForm(AddCommentForm::class);
     }
 
     public function checkNowAction()
     {
-        if (! $this->isGrantedOnCommandTargets('monitoring/command/schedule-check/active-only')) {
-            $this->assertIsGrantedOnCommandTargets('monitoring/command/schedule-check');
+        if (! $this->isGrantedOnCommandTargets('icingadb/command/schedule-check/active-only')) {
+            $this->assertIsGrantedOnCommandTargets('icingadb/command/schedule-check');
         }
 
         $this->handleCommandForm(CheckNowForm::class);
@@ -176,21 +176,21 @@ trait CommandActions
 
     public function processCheckresultAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/process-check-result');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/process-check-result');
         $this->setTitle(t('Submit Passive Check Result'));
         $this->handleCommandForm(ProcessCheckResultForm::class);
     }
 
     public function removeAcknowledgementAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/remove-acknowledgement');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/remove-acknowledgement');
         $this->handleCommandForm(RemoveAcknowledgementForm::class);
     }
 
     public function scheduleCheckAction()
     {
-        if (! $this->isGrantedOnCommandTargets('monitoring/command/schedule-check/active-only')) {
-            $this->assertIsGrantedOnCommandTargets('monitoring/command/schedule-check');
+        if (! $this->isGrantedOnCommandTargets('icingadb/command/schedule-check/active-only')) {
+            $this->assertIsGrantedOnCommandTargets('icingadb/command/schedule-check');
         }
 
         $this->setTitle(t('Reschedule Check'));
@@ -199,7 +199,7 @@ trait CommandActions
 
     public function scheduleDowntimeAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/downtime/schedule');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/downtime/schedule');
 
         switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
@@ -215,7 +215,7 @@ trait CommandActions
 
     public function sendCustomNotificationAction()
     {
-        $this->assertIsGrantedOnCommandTargets('monitoring/command/send-custom-notification');
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/send-custom-notification');
         $this->setTitle(t('Send Custom Notification'));
         $this->handleCommandForm(SendCustomNotificationForm::class);
     }

@@ -37,7 +37,7 @@ class RemoveAcknowledgementForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('monitoring/command/remove-acknowledgement', $object)) {
+        if (! $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object)) {
             return null;
         }
 
