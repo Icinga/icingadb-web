@@ -43,7 +43,8 @@ class MultiselectQuickActions extends BaseHtmlElement
             && $this->isGrantedOnType(
                 'monitoring/command/acknowledge-problem',
                 $this->type,
-                $this->getBaseFilter()
+                $this->getBaseFilter(),
+                false
             )
         ) {
             $this->assembleAction(
@@ -59,7 +60,8 @@ class MultiselectQuickActions extends BaseHtmlElement
             && $this->isGrantedOnType(
                 'monitoring/command/remove-acknowledgement',
                 $this->type,
-                $this->getBaseFilter()
+                $this->getBaseFilter(),
+                false
             )
         ) {
             $removeAckForm = (new RemoveAcknowledgementForm())
@@ -70,20 +72,21 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter())
+            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
                 && $this->isGrantedOnType(
                     'monitoring/command/schedule-check/active-only',
                     $this->type,
-                    $this->getBaseFilter()
+                    $this->getBaseFilter(),
+                    false
                 )
             )
         ) {
             $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
-        if ($this->isGrantedOnType('monitoring/command/comment/add', $this->type, $this->getBaseFilter())) {
+        if ($this->isGrantedOnType('monitoring/command/comment/add', $this->type, $this->getBaseFilter(), false)) {
             $this->assembleAction(
                 'addComment',
                 t('Comment'),
@@ -96,7 +99,8 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->isGrantedOnType(
                 'monitoring/command/send-custom-notification',
                 $this->type,
-                $this->getBaseFilter()
+                $this->getBaseFilter(),
+                false
             )
         ) {
             $this->assembleAction(
@@ -107,7 +111,14 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->isGrantedOnType('monitoring/command/downtime/schedule', $this->type, $this->getBaseFilter())) {
+        if (
+            $this->isGrantedOnType(
+                'monitoring/command/downtime/schedule',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
+        ) {
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
@@ -117,13 +128,14 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter())
+            $this->isGrantedOnType('monitoring/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
                 && $this->isGrantedOnType(
                     'monitoring/command/schedule-check/active-only',
                     $this->type,
-                    $this->getBaseFilter()
+                    $this->getBaseFilter(),
+                    false
                 )
             )
         ) {
@@ -135,7 +147,14 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->isGrantedOnType('monitoring/command/process-check-result', $this->type, $this->getBaseFilter())) {
+        if (
+            $this->isGrantedOnType(
+                'monitoring/command/process-check-result',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
+        ) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),
