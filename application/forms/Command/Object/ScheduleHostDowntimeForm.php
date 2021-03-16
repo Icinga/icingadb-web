@@ -51,6 +51,10 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('monitoring/command/downtime/schedule', $object)) {
+            return null;
+        }
+
         if (($childOptions = (int) $this->getValue('child_options'))) {
             $command = new PropagateHostDowntimeCommand();
             $command->setTriggered($childOptions === 1);

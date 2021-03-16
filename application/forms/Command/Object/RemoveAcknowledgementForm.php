@@ -37,6 +37,10 @@ class RemoveAcknowledgementForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('monitoring/command/remove-acknowledgement', $object)) {
+            return null;
+        }
+
         $command = new RemoveAcknowledgementCommand();
         $command->setObject($object);
         $command->setAuthor($this->getAuth()->getUser()->getUsername());

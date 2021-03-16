@@ -95,6 +95,10 @@ class AddCommentForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('monitoring/command/comment/add', $object)) {
+            return null;
+        }
+
         $command = new AddCommentCommand();
         $command->setObject($object);
         $command->setComment($this->getValue('comment'));

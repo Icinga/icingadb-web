@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 use DateInterval;
 use DateTime;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
@@ -15,6 +16,8 @@ use ipl\Web\Widget\Icon;
 
 class ScheduleCheckForm extends CommandForm
 {
+    use Auth;
+
     protected function assembleElements()
     {
         $this->add(new HtmlElement('div', ['class' => 'form-description'], [
@@ -71,6 +74,16 @@ class ScheduleCheckForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (
+            ! $this->isGrantedOn('monitoring/command/schedule-check', $object)
+            && (
+                ! $object->active_checks_enabled
+                || ! $this->isGrantedOn('monitoring/command/schedule-check/active-only', $object)
+            )
+        ) {
+            return null;
+        }
+
         $command = new ScheduleCheckCommand();
         $command->setObject($object);
         $command->setForced($this->getElement('force_check')->isChecked());

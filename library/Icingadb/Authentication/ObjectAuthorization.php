@@ -133,7 +133,8 @@ class ObjectAuthorization
                 $rendered = $this->getDb()->getQueryBuilder()->buildCondition($where, $values);
                 $roleExpressions[$role->getName()] = new Expression($rendered, null, ...$values);
             } else {
-                $roleExpressions[$role->getName()] = (clone $query)
+                $subQuery = clone $query;
+                $roleExpressions[$role->getName()] = $subQuery
                     ->columns([new Expression('1')])
                     ->filter($roleFilter)
                     ->filter($filter)

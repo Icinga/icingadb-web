@@ -66,7 +66,6 @@ class CommentDetail extends BaseHtmlElement
 
     protected function createRemoveCommentForm()
     {
-        // TODO: Check permission
         $action = Links::commentsDelete();
         $action->setParam('name', $this->comment->name);
 
@@ -86,7 +85,10 @@ class CommentDetail extends BaseHtmlElement
             $this->add($details);
         }
 
-        if ($this->isGrantedOn('monitoring/command/comment/delete', $this->comment)) {
+        if ($this->isGrantedOn(
+            'monitoring/command/comment/delete',
+             $this->comment->{$this->comment->object_type}
+        )) {
             $this->add($this->createRemoveCommentForm());
         }
     }

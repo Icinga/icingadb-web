@@ -40,6 +40,13 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn(
+            'monitoring/command/downtime/delete',
+            $object->{$object->object_type}
+        )) {
+            return null;
+        }
+
         $command = new DeleteDowntimeCommand();
         $command->setDowntimeName($object->name);
         $command->setAuthor($this->getAuth()->getUser()->getUsername());

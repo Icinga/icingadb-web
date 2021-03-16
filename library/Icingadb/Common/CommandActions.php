@@ -16,6 +16,7 @@ use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleHostDowntimeForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleServiceDowntimeForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\SendCustomNotificationForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
+use Icinga\Security\SecurityException;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Web\Url;
@@ -24,7 +25,6 @@ use LogicException;
 /**
  * Trait CommandActions
  *
- * @todo Handle `Auth::isGrantedOn` for each object separately in a command's form
  * @method mixed fetchCommandTargets() Fetch command targets, \ipl\Orm\Query or \ipl\Orm\Model[]
  * @method object getFeatureStatus() Get status of toggleable features
  * @method Url getCommandTargetsUrl() Get url to view command targets, used as redirection target
@@ -75,6 +75,47 @@ trait CommandActions
     }
 
     /**
+     * Check whether the permission is granted on any of the command targets
+     *
+     * @param string $permission
+     *
+     * @return bool
+     */
+    protected function isGrantedOnCommandTargets($permission)
+    {
+        $commandTargets = $this->getCommandTargets();
+        if (is_array($commandTargets)) {
+            foreach ($commandTargets as $commandTarget) {
+                if ($this->isGrantedOn($permission, $commandTarget)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return $this->isGrantedOnType(
+            $permission,
+            $this->getCommandTargetModel()->getTableName(),
+            $commandTargets->getFilter()
+        );
+    }
+
+    /**
+     * Assert that the permission is granted on any of the command targets
+     *
+     * @param string $permission
+     *
+     * @throws SecurityException
+     */
+    protected function assertIsGrantedOnCommandTargets($permission)
+    {
+        if (! $this->isGrantedOnCommandTargets($permission)) {
+            throw new SecurityException('No permission for %s', $permission);
+        }
+    }
+
+    /**
      * Handle and register the given command form
      *
      * @param string|CommandForm $form
@@ -112,47 +153,53 @@ trait CommandActions
 
     public function acknowledgeAction()
     {
-        $this->assertPermission('monitoring/command/acknowledge-problem');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/acknowledge-problem');
         $this->setTitle(t('Acknowledge Problem'));
         $this->handleCommandForm(AcknowledgeProblemForm::class);
     }
 
     public function addCommentAction()
     {
-        $this->assertPermission('monitoring/command/comment/add');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/comment/add');
         $this->setTitle(t('Add Comment'));
         $this->handleCommandForm(AddCommentForm::class);
     }
 
     public function checkNowAction()
     {
-        $this->assertPermission('monitoring/command/schedule-check');
+        if (! $this->isGrantedOnCommandTargets('monitoring/command/schedule-check/active-only')) {
+            $this->assertIsGrantedOnCommandTargets('monitoring/command/schedule-check');
+        }
+
         $this->handleCommandForm(CheckNowForm::class);
     }
 
     public function processCheckresultAction()
     {
-        $this->assertPermission('monitoring/command/process-check-result');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/process-check-result');
         $this->setTitle(t('Submit Passive Check Result'));
         $this->handleCommandForm(ProcessCheckResultForm::class);
     }
 
     public function removeAcknowledgementAction()
     {
-        $this->assertPermission('monitoring/command/remove-acknowledgement');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/remove-acknowledgement');
         $this->handleCommandForm(RemoveAcknowledgementForm::class);
     }
 
     public function scheduleCheckAction()
     {
-        $this->assertPermission('monitoring/command/schedule-check');
+        if (! $this->isGrantedOnCommandTargets('monitoring/command/schedule-check/active-only')) {
+            $this->assertIsGrantedOnCommandTargets('monitoring/command/schedule-check');
+        }
+
         $this->setTitle(t('Reschedule Check'));
         $this->handleCommandForm(ScheduleCheckForm::class);
     }
 
     public function scheduleDowntimeAction()
     {
-        $this->assertPermission('monitoring/command/downtime/schedule');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/downtime/schedule');
 
         switch ($this->getCommandTargetModel()->getTableName()) {
             case 'host':
@@ -168,7 +215,7 @@ trait CommandActions
 
     public function sendCustomNotificationAction()
     {
-        $this->assertPermission('monitoring/command/send-custom-notification');
+        $this->assertIsGrantedOnCommandTargets('monitoring/command/send-custom-notification');
         $this->setTitle(t('Send Custom Notification'));
         $this->handleCommandForm(SendCustomNotificationForm::class);
     }
@@ -181,6 +228,7 @@ trait CommandActions
                 throw new LogicException('You must implement getFeatureStatus() first');
             }
 
+            $this->isGrantedOnCommandTargets('i/am-only-used/to-establish/the-object-auth-cache');
             $form = new ToggleObjectFeaturesForm($this->getFeatureStatus());
         } else {
             foreach ($commandObjects as $object) {

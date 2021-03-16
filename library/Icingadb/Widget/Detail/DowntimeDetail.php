@@ -72,7 +72,6 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected function createCancelDowntimeForm()
     {
-        // TODO: Check permission
         $action = Links::downtimesDelete();
         $action->setParam('name', $this->downtime->name);
 
@@ -136,7 +135,10 @@ class DowntimeDetail extends BaseHtmlElement
         $this->add(Html::tag('h2', t('Progress')));
         $this->add($this->createTimeline());
 
-        if ($this->isGrantedOn('monitoring/command/downtime/delete', $this->downtime)) {
+        if ($this->isGrantedOn(
+            'monitoring/command/downtime/delete',
+             $this->downtime->{$this->downtime->object_type}
+        )) {
             $this->add($this->createCancelDowntimeForm());
         }
     }

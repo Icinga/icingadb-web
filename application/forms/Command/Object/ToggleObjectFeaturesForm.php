@@ -55,7 +55,9 @@ class ToggleObjectFeaturesForm extends CommandForm
         foreach ($this->features as $feature => $spec) {
             $options = [
                 'class'         => 'autosubmit',
-                'disabled'      => ! $this->getAuth()->hasPermission($spec['permission']),
+                'disabled'      => $this->featureStatus instanceof Model
+                    ? ! $this->isGrantedOn($spec['permission'], $this->featureStatus)
+                    : false,
                 'label'         => $spec['label']
             ];
             if ($this->featureStatus[$feature] === 2) {
@@ -95,7 +97,7 @@ class ToggleObjectFeaturesForm extends CommandForm
             $featureState = $this->getElement($feature)->isChecked();
 
             if (
-                ! $this->getAuth()->hasPermission($spec['permission'])
+                ! $this->isGrantedOn($spec['permission'], $object)
                 || $featureState === self::LEAVE_UNCHANGED
                 || (int) $featureState === (int) $this->featureStatus[$feature]
             ) {

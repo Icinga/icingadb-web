@@ -159,6 +159,10 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('monitoring/command/downtime/schedule', $object)) {
+            return null;
+        }
+
         $command = new ScheduleServiceDowntimeCommand();
         $command->setObject($object);
         $command->setComment($this->getValue('comment'));

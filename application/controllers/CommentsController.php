@@ -106,8 +106,6 @@ class CommentsController extends Controller
 
     public function deleteAction()
     {
-        // TODO: Check permission
-
         $this->setTitle(t('Remove Comments'));
 
         $db = $this->getDb();
@@ -169,7 +167,6 @@ class CommentsController extends Controller
             sprintf(t('Show all %d comments'), $comments->count())
         ));
 
-        // TODO: Check permission
         $this->addContent(
             (new DeleteCommentForm())
                 ->setObjects($comments)

@@ -115,8 +115,6 @@ class DowntimesController extends Controller
 
     public function deleteAction()
     {
-        // TODO: Check permission
-
         $this->setTitle(t('Cancel Downtimes'));
 
         $db = $this->getDb();
@@ -178,7 +176,6 @@ class DowntimesController extends Controller
             sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
-        // TODO: Check permission
         $this->addContent(
             (new DeleteDowntimeForm())
                 ->setObjects($downtimes)
