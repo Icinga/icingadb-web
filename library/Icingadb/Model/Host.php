@@ -141,6 +141,7 @@ class Host extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
+        $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id');

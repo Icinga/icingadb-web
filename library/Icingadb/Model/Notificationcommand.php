@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -45,6 +47,16 @@ class Notificationcommand extends Model
             'command'               => t('Notificationcommand'),
             'timeout'               => t('Notificationcommand Timeout')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new ReRoute([
+            'host'          => 'notification.host',
+            'hostgroup'     => 'notification.host.hostgroup',
+            'service'       => 'notification.service',
+            'servicegroup'  => 'notification.service.servicegroup'
+        ]));
     }
 
     public function createRelations(Relations $relations)

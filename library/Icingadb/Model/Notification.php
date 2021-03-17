@@ -67,6 +67,7 @@ class Notification extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
             'servicegroup'  => 'service.servicegroup'
         ]));
         $behaviors->add(new Bitmask([

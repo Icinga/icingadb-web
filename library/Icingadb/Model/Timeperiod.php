@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -45,6 +47,14 @@ class Timeperiod extends Model
             'prefer_includes'       => t('Timeperiod Prefer Includes'),
             'zone_id'               => t('Timeperiod Zone Id')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
+        ]));
     }
 
     public function createRelations(Relations $relations)
