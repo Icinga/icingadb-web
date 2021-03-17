@@ -123,31 +123,10 @@ class ObjectSuggestions extends Suggestions
 
         if (substr($targetPath, -5) === '.vars') {
             $columnPath = $targetPath . '.flatvalue';
-            $flatnameFilter = Filter::equal($targetPath . '.flatname', $columnName);
-
-            // So, this requires some explanation why it's necessary. Take a look into orm's FilterProcessor,
-            // if you want to know what it does. It's necessary because said FilterProcessor optimizes every
-            // single filter rule no matter if its relation is being selected or not. Most of the time this is
-            // fine. But once there's a filter rule that targets the same relation that is also being selected,
-            // problems arise. There's no definite answer how to solve this, because in some occasions a subquery
-            // is indeed desired and in others simply not at all. Here it's not desired, not at all, so this flag
-            // is set to prevent that. We cannot simply prevent subquery optimization because a relation is
-            // selected. Consider the following filter: servicegroup.name=app-db&servicegroup.name=
-            // Put this into the searchbar at icingadb/services and request suggestions for the second condition.
-            // You should see suggestions for not only "app-db" but also other servicegroups. This would not be
-            // the case if the FilterProcessor wouldn't use a subquery to resolve the servicegroup.name=app-db
-            // condition. Here a subquery **is** desired, although the same relation is being selected. There
-            // are other cases when a subquery is required, but I won't list them here. This is the simplest
-            // example that shows what this flag is about and why it's there. Because when asking for custom
-            // variable suggestions, we ask for `flatvalue` cells **and** filter by `flatname`. Having a subquery
-            // resolve the filter leads to false-positives.
-            $flatnameFilter->noOptimization = true;
-
-            $query->filter($flatnameFilter);
+            $query->filter(Filter::equal($targetPath . '.flatname', $columnName));
         }
 
         $inputFilter = Filter::equal($columnPath, $searchTerm);
-        $inputFilter->noOptimization = true;
         $query->columns($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
