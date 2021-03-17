@@ -134,6 +134,13 @@ class ObjectSuggestions extends Suggestions
             $query->filter($inputFilter);
         } elseif ($searchFilter instanceof Filter\All) {
             $searchFilter->add($inputFilter);
+
+            // There may be columns part of $searchFilter which target the base table. These must be
+            // optimized, otherwise they influence what we'll suggest to the user. (i.e. less)
+            // The $inputFilter on the other hand must not be optimized, which it wouldn't, but since
+            // we force optimization on its parent chain, we have to negate that.
+            $searchFilter->metaData()->set('forceOptimization', true);
+            $inputFilter->metaData()->set('forceOptimization', false);
         } else {
             $searchFilter = $inputFilter;
         }
