@@ -18,7 +18,6 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
@@ -153,6 +152,8 @@ class ServicesController extends Controller
 
         $comments = Service::on($db)->with(['comment']);
         $comments->getWith()['service.comment']->setJoinType('INNER');
+        // TODO: This should be automatically done by the model/resolver and added as ON condition
+        $comments->filter(Filter::equal('comment.object_type', 'service'));
         $this->filter($comments);
         $summary->comments_total = $comments->count();
 
@@ -196,13 +197,8 @@ class ServicesController extends Controller
 
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':
-                FilterProcessor::apply(
-                    Filter::all([
-                        Filter::equal('state.is_problem', 'y'),
-                        Filter::equal('state.is_acknowledged', 'n')
-                    ]),
-                    $services
-                );
+                $services->filter(Filter::equal('state.is_problem', 'y'))
+                    ->filter(Filter::equal('state.is_acknowledged', 'n'));
 
                 break;
         }
