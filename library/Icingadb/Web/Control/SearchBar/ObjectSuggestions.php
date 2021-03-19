@@ -86,7 +86,7 @@ class ObjectSuggestions extends Suggestions
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
             $where = Filter::equal($model->getTableName() . '.' . $column, $searchTerm);
-            $where->columnLabel = $model->getMetaData()[$column];
+            $where->metaData()->set('columnLabel', $model->getMetaData()[$column]);
             $quickFilter->add($where);
         }
 
