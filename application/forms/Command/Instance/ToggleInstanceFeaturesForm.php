@@ -41,7 +41,7 @@ class ToggleInstanceFeaturesForm extends CommandForm
 
     protected function assembleElements()
     {
-        $disabled = ! $this->getAuth()->hasPermission('monitoring/command/feature/instance');
+        $disabled = ! $this->getAuth()->hasPermission('icingadb/command/feature/instance');
         $decorator = new IcingaFormDecorator();
 
         foreach ($this->features as $feature => $label) {

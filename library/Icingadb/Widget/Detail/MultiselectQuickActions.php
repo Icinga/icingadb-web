@@ -40,7 +40,12 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
-            && $this->getAuth()->hasPermission('monitoring/command/acknowledge-problem')
+            && $this->isGrantedOnType(
+                'icingadb/command/acknowledge-problem',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
         ) {
             $this->assembleAction(
                 'acknowledge',
@@ -52,7 +57,12 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->summary->$acks > 0
-            && $this->getAuth()->hasPermission('monitoring/command/remove-acknowledgement')
+            && $this->isGrantedOnType(
+                'icingadb/command/remove-acknowledgement',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
         ) {
             $removeAckForm = (new RemoveAcknowledgementForm())
                 ->setAction($this->getLink('removeAcknowledgement'))
@@ -62,16 +72,21 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOnType('icingadb/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOnType(
+                    'icingadb/command/schedule-check/active-only',
+                    $this->type,
+                    $this->getBaseFilter(),
+                    false
+                )
             )
         ) {
             $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/comment/add')) {
+        if ($this->isGrantedOnType('icingadb/command/comment/add', $this->type, $this->getBaseFilter(), false)) {
             $this->assembleAction(
                 'addComment',
                 t('Comment'),
@@ -80,7 +95,14 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/send-custom-notification')) {
+        if (
+            $this->isGrantedOnType(
+                'icingadb/command/send-custom-notification',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
+        ) {
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
@@ -89,7 +111,14 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/downtime/schedule')) {
+        if (
+            $this->isGrantedOnType(
+                'icingadb/command/downtime/schedule',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
+        ) {
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
@@ -99,10 +128,15 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->getAuth()->hasPermission('monitoring/command/schedule-check')
+            $this->isGrantedOnType('icingadb/command/schedule-check', $this->type, $this->getBaseFilter(), false)
             || (
                 $this->summary->$activeChecks > 0
-                && $this->getAuth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->isGrantedOnType(
+                    'icingadb/command/schedule-check/active-only',
+                    $this->type,
+                    $this->getBaseFilter(),
+                    false
+                )
             )
         ) {
             $this->assembleAction(
@@ -113,7 +147,14 @@ class MultiselectQuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->getAuth()->hasPermission('monitoring/command/process-check-result')) {
+        if (
+            $this->isGrantedOnType(
+                'icingadb/command/process-check-result',
+                $this->type,
+                $this->getBaseFilter(),
+                false
+            )
+        ) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),

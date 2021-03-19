@@ -38,6 +38,10 @@ class DeleteCommentForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
+            return null;
+        }
+
         $command = new DeleteCommentCommand();
         $command->setCommentName($object->name);
         $command->setAuthor($this->getAuth()->getUser()->getUsername());

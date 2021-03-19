@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use Icinga\Module\Icingadb\Command\Object\ProcessCheckResultCommand;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use ipl\Html\HtmlElement;
@@ -14,6 +15,8 @@ use ipl\Web\Widget\Icon;
 
 class ProcessCheckResultForm extends CommandForm
 {
+    use Auth;
+
     protected function assembleElements()
     {
         $this->add(new HtmlElement('div', ['class' => 'form-description'], [
@@ -100,6 +103,10 @@ class ProcessCheckResultForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
+        if (! $this->isGrantedOn('icingadb/command/process-check-result', $object)) {
+            return null;
+        }
+
         $command = new ProcessCheckResultCommand();
         $command->setObject($object);
         $command->setStatus($this->getValue('status'));
