@@ -32,7 +32,6 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
@@ -120,7 +119,7 @@ class ObjectDetail extends BaseHtmlElement
             ->limit(3)
             ->peekAhead();
         // TODO: This should be automatically done by the model/resolver and added as ON condition
-        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $comments);
+        $comments->filter(Filter::equal('object_type', $this->objectType));
 
         $comments = $comments->execute();
         /** @var ResultSet $comments */
@@ -170,7 +169,7 @@ class ObjectDetail extends BaseHtmlElement
             ->limit(3)
             ->peekAhead();
         // TODO: This should be automatically done by the model/resolver and added as ON condition
-        FilterProcessor::apply(Filter::equal('object_type', $this->objectType), $downtimes);
+        $downtimes->filter(Filter::equal('object_type', $this->objectType));
 
         $downtimes = $downtimes->execute();
         /** @var ResultSet $downtimes */
@@ -409,14 +408,14 @@ class ObjectDetail extends BaseHtmlElement
             );
 
             $userQuery = User::on($this->getDb());
-            FilterProcessor::apply($objectFilter, $userQuery);
+            $userQuery->filter($objectFilter);
             $this->applyRestrictions($userQuery);
             foreach ($userQuery as $user) {
                 $users[$user->name] = $user;
             }
 
             $usergroupQuery = Usergroup::on($this->getDb());
-            FilterProcessor::apply($objectFilter, $usergroupQuery);
+            $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);
             foreach ($usergroupQuery as $usergroup) {
                 $usergroups[$usergroup->name] = $usergroup;

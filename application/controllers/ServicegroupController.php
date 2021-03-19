@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Stdlib\Filter;
 
 class ServicegroupController extends Controller
@@ -26,10 +25,9 @@ class ServicegroupController extends Controller
 
         $query = ServicegroupSummary::on($this->getDb());
 
-        FilterProcessor::apply(
-            Filter::equal('servicegroup.name', $name),
-            $query
-        );
+        foreach ($query->getUnions() as $unionPart) {
+            $unionPart->filter(Filter::equal('servicegroup.name', $name));
+        }
 
         $this->applyRestrictions($query);
 

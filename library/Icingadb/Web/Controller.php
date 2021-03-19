@@ -16,8 +16,8 @@ use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Query;
+use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
@@ -354,7 +354,13 @@ class Controller extends CompatController
     {
         $this->applyRestrictions($query);
 
-        FilterProcessor::apply($filter ?: $this->getFilter(), $query);
+        if ($query instanceof UnionQuery) {
+            foreach ($query->getUnions() as $query) {
+                $query->filter($filter ?: $this->getFilter());
+            }
+        } else {
+            $query->filter($filter ?: $this->getFilter());
+        }
 
         return $this;
     }

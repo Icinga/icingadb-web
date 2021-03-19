@@ -156,7 +156,7 @@ trait Auth
                 }
             }
 
-            FilterProcessor::apply($queryFilter, $query);
+            $query->filter($queryFilter);
         }
     }
 

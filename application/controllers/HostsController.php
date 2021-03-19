@@ -18,7 +18,6 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
@@ -145,7 +144,7 @@ class HostsController extends Controller
         $comments = Host::on($db)->with(['comment']);
         $comments->getWith()['host.comment']->setJoinType('INNER');
         // TODO: This should be automatically done by the model/resolver and added as ON condition
-        FilterProcessor::apply(Filter::equal('comment.object_type', 'host'), $comments);
+        $comments->filter(Filter::equal('comment.object_type', 'host'));
         $this->filter($comments);
         $summary->comments_total = $comments->count();
 
@@ -185,13 +184,8 @@ class HostsController extends Controller
 
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':
-                FilterProcessor::apply(
-                    Filter::all([
-                        Filter::equal('state.is_problem', 'y'),
-                        Filter::equal('state.is_acknowledged', 'n')
-                    ]),
-                    $hosts
-                );
+                $hosts->filter(Filter::equal('state.is_problem', 'y'))
+                    ->filter(Filter::equal('state.is_acknowledged', 'n'));
 
                 break;
         }

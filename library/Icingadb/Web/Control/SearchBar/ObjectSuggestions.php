@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use InvalidArgumentException;
 use ipl\Html\HtmlElement;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Model;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Resolver;
@@ -144,7 +143,7 @@ class ObjectSuggestions extends Suggestions
             // resolve the filter leads to false-positives.
             $flatnameFilter->noOptimization = true;
 
-            FilterProcessor::apply($flatnameFilter, $query);
+            $query->filter($flatnameFilter);
         }
 
         $inputFilter = Filter::equal($columnPath, $searchTerm);
@@ -153,14 +152,14 @@ class ObjectSuggestions extends Suggestions
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
         if ($searchFilter instanceof Filter\None) {
-            FilterProcessor::apply($inputFilter, $query);
+            $query->filter($inputFilter);
         } elseif ($searchFilter instanceof Filter\All) {
             $searchFilter->add($inputFilter);
         } else {
             $searchFilter = $inputFilter;
         }
 
-        FilterProcessor::apply($searchFilter, $query);
+        $query->filter($searchFilter);
         $this->applyRestrictions($query);
 
         try {
@@ -253,7 +252,7 @@ class ObjectSuggestions extends Suggestions
 
         $customVars->columns('flatname');
         $this->applyRestrictions($customVars);
-        FilterProcessor::apply(Filter::equal('flatname', $searchTerm), $customVars);
+        $customVars->filter(Filter::equal('flatname', $searchTerm));
         $idColumn = $resolver->qualifyColumnsAndAliases((array) 'id', $customVars->getModel(), false);
         $customVars = $customVars->assembleSelect();
 
