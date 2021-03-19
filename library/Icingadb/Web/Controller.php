@@ -24,6 +24,7 @@ use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SearchBar;
+use ipl\Web\Control\SearchEditor;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
@@ -125,6 +126,7 @@ class Controller extends CompatController
     /**
      * Create and return the SearchBar
      *
+     * @param Query $query The query being filtered
      * @param array $preserveParams Query params to preserve when redirecting
      *
      * @return SearchBar
@@ -136,34 +138,11 @@ class Controller extends CompatController
 
         $filter = QueryString::fromString((string) $this->params)
             ->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
-                $path = $condition->getColumn();
-                if (strpos($path, '.') === false) {
-                    $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
-                    $condition->setColumn($path);
-                }
-
-                if (strpos($path, '.vars.') !== false) {
-                    list($target, $varName) = explode('.vars.', $path);
-                    if (strpos($target, '.') === false) {
-                        // Programmatically translated since the full definition is available in class ObjectSuggestions
-                        $condition->metaData()->set(
-                            'columnLabel',
-                            sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName)
-                        );
-                    }
-                } else {
-                    $metaData = iterator_to_array(
-                        ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
-                    );
-                    if (isset($metaData[$path])) {
-                        $condition->metaData()->set('columnLabel', $metaData[$path]);
-                    }
-                }
+                $this->enrichFilterCondition($condition, $query);
             })
             ->parse();
 
         $searchBar = new SearchBar();
-        $searchBar->setSubmitLabel(t('Search'));
         $searchBar->setFilter($filter);
         $searchBar->setAction($requestUrl->getAbsoluteUrl());
         $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
@@ -173,6 +152,12 @@ class Controller extends CompatController
                 'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
                 ['_disableLayout' => true, 'showCompact' => true]
             ));
+        }
+
+        if (method_exists($this, 'searchEditorAction')) {
+            $searchBar->setEditorUrl(Url::fromPath(
+                'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor'
+            )->setParams($redirectUrl->getParams()));
         }
 
         $searchBar->on(SearchBar::ON_CHANGE, function (array &$changes) use ($query) {
@@ -232,6 +217,87 @@ class Controller extends CompatController
         Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
 
         return $searchBar;
+    }
+
+    /**
+     * Create and return the SearchEditor
+     *
+     * @param Query $query The query being filtered
+     * @param array $preserveParams Query params to preserve when redirecting
+     *
+     * @return SearchEditor
+     */
+    public function createSearchEditor(Query $query, array $preserveParams = null)
+    {
+        $requestUrl = Url::fromRequest();
+        $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
+        if (! empty($preserveParams)) {
+            $redirectUrl->setParams($requestUrl->onlyWith($preserveParams)->getParams());
+        }
+
+        $editor = new SearchEditor();
+        $editor->setQueryString((string) $this->params->without($preserveParams));
+        $editor->setAction($requestUrl->getAbsoluteUrl());
+
+        if (method_exists($this, 'completeAction')) {
+            $editor->setSuggestionUrl(Url::fromPath(
+                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+                ['_disableLayout' => true, 'showCompact' => true]
+            ));
+        }
+
+        $editor->getParser()->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
+            if ($condition->getColumn()) {
+                $this->enrichFilterCondition($condition, $query);
+            }
+        });
+
+        $metaData = iterator_to_array(
+            ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+        );
+        $editor->on(SearchEditor::ON_VALIDATE_COLUMN, function (Filter\Condition $condition) use ($query, $metaData) {
+            $column = $condition->getColumn();
+            if (($pos = strpos($column, '.vars.')) !== false) {
+                try {
+                    $query->getResolver()->resolveRelation(substr($column, 0, $pos + 5));
+                } catch (InvalidArgumentException $_) {
+                    throw new SearchBar\SearchException(sprintf(
+                        t('"%s" is not a valid relation'),
+                        substr($column, 0, $pos)
+                    ));
+                }
+            } else {
+                if (! isset($metaData[$column])) {
+                    $path = array_search(
+                        $condition->metaData()->get('columnLabel', $column),
+                        $metaData,
+                        true
+                    );
+                    if ($path === false) {
+                        throw new SearchBar\SearchException(t('Is not a valid column'));
+                    } else {
+                        $condition->setColumn($path);
+                    }
+                }
+            }
+        })->on(SearchEditor::ON_SUCCESS, function (SearchEditor $form) use ($redirectUrl) {
+            $existingParams = $redirectUrl->getParams();
+            $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
+            foreach ($existingParams->toArray(false) as $name => $value) {
+                if (is_int($name)) {
+                    $name = $value;
+                    $value = true;
+                }
+
+                $redirectUrl->getParams()->addEncoded($name, $value);
+            }
+
+            $this->getResponse()
+                ->setHeader('X-Icinga-Container', '_self')
+                ->redirectAndExit($redirectUrl);
+        })->handleRequest(ServerRequest::fromGlobals());
+
+        return $editor;
     }
 
     /**
@@ -339,6 +405,41 @@ class Controller extends CompatController
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
         $this->_helper->notifyPostDispatch();
+    }
+
+    /**
+     * Enrich the filter condition with meta data from the query
+     *
+     * @param Filter\Condition $condition
+     * @param Query $query
+     *
+     * @return void
+     */
+    protected function enrichFilterCondition(Filter\Condition $condition, Query $query)
+    {
+        $path = $condition->getColumn();
+        if (strpos($path, '.') === false) {
+            $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
+            $condition->setColumn($path);
+        }
+
+        if (strpos($path, '.vars.') !== false) {
+            list($target, $varName) = explode('.vars.', $path);
+            if (strpos($target, '.') === false) {
+                // Programmatically translated since the full definition is available in class ObjectSuggestions
+                $condition->metaData()->set(
+                    'columnLabel',
+                    sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName)
+                );
+            }
+        } else {
+            $metaData = iterator_to_array(
+                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+            );
+            if (isset($metaData[$path])) {
+                $condition->metaData()->set('columnLabel', $metaData[$path]);
+            }
+        }
     }
 
     protected function addContent(ValidHtml $content)

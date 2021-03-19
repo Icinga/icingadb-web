@@ -11,6 +11,9 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 
 class TacticalController extends Controller
 {
@@ -69,5 +72,17 @@ class TacticalController extends Controller
         $suggestions->setModel(ServicestateSummary::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(ServicestateSummary::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }

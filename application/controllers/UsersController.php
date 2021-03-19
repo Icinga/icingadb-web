@@ -9,7 +9,10 @@ use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use Icinga\Security\SecurityException;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 
 class UsersController extends Controller
 {
@@ -83,5 +86,17 @@ class UsersController extends Controller
         $suggestions->setModel(User::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(User::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }
