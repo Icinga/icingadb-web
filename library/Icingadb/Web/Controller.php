@@ -146,14 +146,17 @@ class Controller extends CompatController
                     list($target, $varName) = explode('.vars.', $path);
                     if (strpos($target, '.') === false) {
                         // Programmatically translated since the full definition is available in class ObjectSuggestions
-                        $condition->columnLabel = sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName);
+                        $condition->metaData()->set(
+                            'columnLabel',
+                            sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName)
+                        );
                     }
                 } else {
                     $metaData = iterator_to_array(
                         ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
                     );
                     if (isset($metaData[$path])) {
-                        $condition->columnLabel = $metaData[$path];
+                        $condition->metaData()->set('columnLabel', $metaData[$path]);
                     }
                 }
             })

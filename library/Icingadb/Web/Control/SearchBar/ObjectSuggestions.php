@@ -86,7 +86,7 @@ class ObjectSuggestions extends Suggestions
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
             $where = Filter::equal($model->getTableName() . '.' . $column, $searchTerm);
-            $where->columnLabel = $model->getMetaData()[$column];
+            $where->metaData()->set('columnLabel', $model->getMetaData()[$column]);
             $quickFilter->add($where);
         }
 
@@ -102,7 +102,7 @@ class ObjectSuggestions extends Suggestions
         foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
             if ($behavior instanceof ReRoute) {
                 $expr = Filter::equal('', '');
-                $expr->relationCol = $column;
+                $expr->metaData()->set('columnName', $column);
                 $expr = $behavior->rewriteCondition($expr, '');
                 if ($expr !== null) {
                     $column = $expr->getColumn();
