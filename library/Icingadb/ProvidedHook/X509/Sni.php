@@ -7,7 +7,6 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\X509\Hook\SniHook;
-use ipl\Orm\Compat\FilterProcessor;
 use ipl\Web\Filter\QueryString;
 
 class Sni extends SniHook
@@ -34,11 +33,10 @@ class Sni extends SniHook
 
         $this->applyRestrictions($queryHost);
 
-        $filter = Filter::where('name', 'dummy-1');
         if ($filter !== null) {
             $queryString = $filter->toQueryString();
             $filterCondition = QueryString::parse($queryString);
-            FilterProcessor::apply($filterCondition, $queryHost);
+            $queryHost->filter($filterCondition);
         }
 
         $hosts = $this->getdb()->select($queryHost->assembleSelect());
