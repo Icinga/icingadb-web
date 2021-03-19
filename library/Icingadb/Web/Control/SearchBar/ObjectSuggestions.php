@@ -102,7 +102,7 @@ class ObjectSuggestions extends Suggestions
         foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
             if ($behavior instanceof ReRoute) {
                 $expr = Filter::equal('', '');
-                $expr->relationCol = $column;
+                $expr->metaData()->set('columnName', $column);
                 $expr = $behavior->rewriteCondition($expr, '');
                 if ($expr !== null) {
                     $column = $expr->getColumn();
