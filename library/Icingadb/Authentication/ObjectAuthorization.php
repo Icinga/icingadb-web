@@ -40,7 +40,9 @@ class ObjectAuthorization
         if (! isset(self::$knownGrants[$tableName][$uniqueId])) {
             $self->loadGrants(
                 get_class($for),
-                Filter::equal($for->getKeyName(), $uniqueId)
+                Filter::equal($for->getKeyName(), $uniqueId),
+                $uniqueId,
+                false
             );
         }
 
@@ -63,7 +65,7 @@ class ObjectAuthorization
      *
      * @return bool
      */
-    public static function grantsOnType($permission, $type, Filter\Rule $filter, $cache = false)
+    public static function grantsOnType($permission, $type, Filter\Rule $filter, $cache = true)
     {
         switch ($type) {
             case 'host':
@@ -80,7 +82,7 @@ class ObjectAuthorization
 
         $uniqueId = spl_object_hash($filter);
         if (! isset(self::$knownGrants[$type][$uniqueId])) {
-            $self->loadGrants($for, $filter, $cache);
+            $self->loadGrants($for, $filter, $uniqueId, $cache);
         }
 
         return $self->checkGrants($permission, self::$knownGrants[$type][$uniqueId]);
@@ -91,11 +93,12 @@ class ObjectAuthorization
      *
      * @param string $model The class path to the object model
      * @param Filter\Rule $filter
+     * @param string $cacheKey
      * @param bool $cache Pass `false` to not populate the cache with the matching objects
      *
      * @return void
      */
-    protected function loadGrants($model, Filter\Rule $filter, $cache = true)
+    protected function loadGrants($model, Filter\Rule $filter, $cacheKey, $cache = true)
     {
         /** @var Model $model */
         $query = $model::on($this->getDb());
@@ -168,7 +171,7 @@ class ObjectAuthorization
             }
         }
 
-        self::$knownGrants[$tableName][spl_object_hash($filter)] = array_merge(
+        self::$knownGrants[$tableName][$cacheKey] = array_merge(
             $rolesWithoutRestrictions,
             array_keys($rolesWithRestrictions)
         );
