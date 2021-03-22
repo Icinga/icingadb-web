@@ -31,6 +31,10 @@ trait Auth
      */
     public function isGrantedOn($permission, Model $object)
     {
+        if ($this->getAuth()->getUser()->isUnrestricted()) {
+            return $this->getAuth()->hasPermission($permission);
+        }
+
         return ObjectAuthorization::grantsOn($permission, $object);
     }
 
@@ -52,6 +56,10 @@ trait Auth
      */
     public function isGrantedOnType($permission, $type, Filter\Rule $filter, $cache = true)
     {
+        if ($this->getAuth()->getUser()->isUnrestricted()) {
+            return $this->getAuth()->hasPermission($permission);
+        }
+
         return ObjectAuthorization::grantsOnType($permission, $type, $filter, $cache);
     }
 
