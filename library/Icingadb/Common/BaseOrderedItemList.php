@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Widget\BaseItemList;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 
 /**
  * @method BaseOrderedListItem getItemClass()
