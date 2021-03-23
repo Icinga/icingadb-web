@@ -4,11 +4,26 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
+use ipl\Web\Widget\StateBall;
 
-class HostListItemDetailed extends HostListItem
+class HostListItemDetailed extends BaseHostListItem
 {
+    use ListItemDetailedLayout;
+
+    protected function getStateBallSize()
+    {
+        return StateBall::SIZE_LARGE;
+    }
+
+    protected function assembleFooter(BaseHtmlElement $footer)
+    {
+        $footer->add('Footer Host');
+    }
+
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         $caption->add(CompatPluginOutput::getInstance()->render(
