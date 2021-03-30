@@ -156,6 +156,46 @@ div.show-more {
   margin-top: 0;
 }
 
+.performance-data-table {
+  width: 100%;
+
+  td {
+    text-align: right;
+    .text-ellipsis;
+  }
+
+  th {
+    font-size: .857em;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  thead {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 0;
+  }
+
+  .title {
+    text-align: left;
+    width: 100%;
+  }
+
+  td.title {
+    font-weight: bold;
+  }
+
+  .sparkline-col {
+    min-width: 2em;
+    width: 2em;
+    padding: 0;
+  }
+}
+
 .perfdata-wrapper {
   svg {
     width: 100%;
