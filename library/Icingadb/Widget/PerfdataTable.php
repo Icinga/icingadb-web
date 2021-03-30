@@ -6,9 +6,12 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Util\Perfdata;
 use Icinga\Module\Icingadb\Util\PerfdataSet;
+use ipl\Html\BaseHtmlElement;
 
-class PerfdataTable
+class PerfdataTable extends BaseHtmlElement
 {
+    private $containsSparkline = false;
+
     /**
      * Display the given perfdata string to the user
      *
@@ -19,6 +22,9 @@ class PerfdataTable
      *
      * @return string
      */
+
+    // constructor
+
     public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
@@ -46,6 +52,7 @@ class PerfdataTable
         foreach ($pieChartData as $perfdata) {
             if ($perfdata->isVisualizable()) {
                 $columns[''] = '';
+                $this->containsSparkline = true;
             }
             foreach ($perfdata->toArray() as $column => $value) {
                 if (empty($value) ||
@@ -63,8 +70,14 @@ class PerfdataTable
                 $headers[$column] = $labels[$column];
             }
         }
-        $table = array('<thead><tr><th>' . implode('</th><th>', $headers) . '</th></tr></thead><tbody>');
-            foreach ($pieChartData as $perfdata) {
+
+        if ($this->containsSparkline) {
+            $table = array('<thead><tr><th></th><th class="title">' . implode('</th><th>', array_slice($headers, 1)) . '</th></tr></thead><tbody>');
+        } else {
+            $table = array('<thead><tr><th class="title">' . implode('</th><th>', array_slice($headers, 1)) . '</th></tr></thead><tbody>');
+        }
+
+        foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
             } else {
@@ -87,10 +100,22 @@ class PerfdataTable
                         );
                     }
                 }
-                $table []= '<tr><td class="sparkline-col">' . implode('</td><td>', $data) . '</td></tr>';
+                if ($this->containsSparkline) {
+                    $table[] = '<tr><td class="sparkline-col">'
+                        . $data[0]
+                        . '</td><td class="title">'
+                        . $data[1]
+                        . '</td><td>'
+                        . implode('</td><td>', array_slice($data, 2)) . '</td></tr>';
+                } else {
+                    $table[] = '<tr><td class="title">' . implode('</td><td>', $data) . '</td></tr>';
+                }
             }
         }
+
         $table[] = '</tbody>';
+
+
         if ($limit > 0) {
             $count = $compact ? count($results) : count($table);
             if ($count > $limit) {
