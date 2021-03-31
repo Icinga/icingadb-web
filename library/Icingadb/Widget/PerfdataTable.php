@@ -1,143 +1,137 @@
 <?php
-/* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
+
+/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Module\Icingadb\Widget;
 
-
 use Icinga\Module\Icingadb\Util\Perfdata;
 use Icinga\Module\Icingadb\Util\PerfdataSet;
-use ipl\Html\BaseHtmlElement;
+use ipl\Html\HtmlElement;
+use ipl\Html\HtmlString;
+use ipl\Html\Table;
 
-class PerfdataTable extends BaseHtmlElement
+class PerfdataTable extends Table
 {
-    private $containsSparkline = false;
+    /** @var bool Whether the table contains a sparkline column */
+    protected $containsSparkline = false;
+
+    protected $defaultAttributes = [
+        'class' => 'performance-data-table collapsible',
+        'data-visible-rows' => 6
+    ];
+
+    /** @var string The perfdata string  */
+    protected $perfdataStr;
+
+    /** @var int Max labels to show; 0 for no limit */
+    protected $limit;
+
+    /** @var string The color indicating the perfdata state */
+    protected $color;
 
     /**
      * Display the given perfdata string to the user
      *
      * @param   string  $perfdataStr    The perfdata string
-     * @param   bool    $compact        Whether to display the perfdata in compact mode
-     * @param   int     $limit          Max labels to show; 0 for no limit
-     * @param   string  $color          The color indicating the perfdata state
+     * @param   int       $limit              Max labels to show; 0 for no limit
+     * @param   string  $color             The color indicating the perfdata state
      *
      * @return string
      */
-
-    // constructor
-
-    public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
+    public function __construct($perfdataStr, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
-        $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
+        $this->perfdataStr = $perfdataStr;
+        $this->limit = $limit;
+        $this->color = $color;
+    }
+
+    public function assemble()
+    {
+        $pieChartData = PerfdataSet::fromString($this->perfdataStr)->asArray();
         uasort(
             $pieChartData,
             function ($a, $b) {
                 return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
             }
         );
-        $results = array();
-        $keys = array('', 'label', 'value', 'min', 'max', 'warn', 'crit');
-        $columns = array();
+        $keys = ['', 'label', 'value', 'min', 'max', 'warn', 'crit'];
+        $columns = [];
         $labels = array_combine(
             $keys,
-            array(
+            [
                 '',
-                $this->view->translate('Label'),
-                $this->view->translate('Value'),
-                $this->view->translate('Min'),
-                $this->view->translate('Max'),
-                $this->view->translate('Warning'),
-                $this->view->translate('Critical')
-            )
+                t('Label'),
+                t('Value'),
+                t('Min'),
+                t('Max'),
+                t('Warning'),
+                t('Critical')
+            ]
         );
         foreach ($pieChartData as $perfdata) {
             if ($perfdata->isVisualizable()) {
                 $columns[''] = '';
                 $this->containsSparkline = true;
             }
+
             foreach ($perfdata->toArray() as $column => $value) {
-                if (empty($value) ||
+                if (
+                    empty($value) ||
                     $column === 'min' && floatval($value) === 0.0 ||
-                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100) {
+                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100
+                ) {
                     continue;
                 }
+
                 $columns[$column] = $labels[$column];
             }
         }
-        // restore original column array sorting
-        $headers = array();
-        foreach ($keys as $column) {
-            if (isset($columns[$column])) {
-                $headers[$column] = $labels[$column];
+
+        if (! $this->containsSparkline) {
+            $keys = array_slice($keys, 1, -1);
+        }
+
+        $headerRow = new HtmlElement('tr');
+        foreach ($keys as $col) {
+            if (isset($col)) {
+                $headerRow->add(new HtmlElement('th', [
+                    'class' => ($col == 'label' ? 'title' : null)
+                ], $labels[$col]));
             }
         }
 
-        if ($this->containsSparkline) {
-            $table = array('<thead><tr><th></th><th class="title">' . implode('</th><th>', array_slice($headers, 1)) . '</th></tr></thead><tbody>');
-        } else {
-            $table = array('<thead><tr><th class="title">' . implode('</th><th>', array_slice($headers, 1)) . '</th></tr></thead><tbody>');
-        }
+        $this->getHeader()->add($headerRow);
 
-        foreach ($pieChartData as $perfdata) {
-            if ($compact && $perfdata->isVisualizable()) {
-                $results[] = $perfdata->asInlinePie($color)->render();
+        foreach ($pieChartData as $count => $perfdata) {
+            if ($this->limit != 0 && $count > $this->limit) {
+                break;
             } else {
-                $data = array();
-                if ($perfdata->isVisualizable()) {
-                    $data []= $perfdata->asInlinePie($color)->render();
-                } elseif (isset($columns[''])) {
-                    $data []= '';
-                }
-                if (! $compact) {
-                    foreach ($perfdata->toArray() as $column => $value) {
-                        if (! isset($columns[$column])) {
-                            continue;
-                        }
-                        $text = $this->view->escape(empty($value) ? '-' : $value);
-                        $data []= sprintf(
-                            '<span title="%s">%s</span>',
-                            $text,
-                            $text
+                $cols = [];
+                if ($this->containsSparkline) {
+                    if ($perfdata->isVisualizable()) {
+                        $cols[] = Table::td(
+                            HtmlString::create($perfdata->asInlinePie($this->color)->render()),
+                            [ 'class' => 'sparkline-col']
                         );
+                    } else {
+                        $cols[] = Table::td('');
                     }
                 }
-                if ($this->containsSparkline) {
-                    $table[] = '<tr><td class="sparkline-col">'
-                        . $data[0]
-                        . '</td><td class="title">'
-                        . $data[1]
-                        . '</td><td>'
-                        . implode('</td><td>', array_slice($data, 2)) . '</td></tr>';
-                } else {
-                    $table[] = '<tr><td class="title">' . implode('</td><td>', $data) . '</td></tr>';
+
+                foreach ($perfdata->toArray() as $column => $value) {
+                    $text = htmlspecialchars(empty($value) ? '-' : $value);
+                    $cols[] = Table::td(
+                        new HtmlElement(
+                            'span',
+                            [ 'title' => $text ],
+                            $text
+                        ),
+                        [ 'class' => ($column == 'label' ? 'title' : null) ]
+                    );
                 }
-            }
-        }
 
-        $table[] = '</tbody>';
-
-
-        if ($limit > 0) {
-            $count = $compact ? count($results) : count($table);
-            if ($count > $limit) {
-                if ($compact) {
-                    $results = array_slice($results, 0, $limit);
-                    $title = sprintf($this->view->translate('%d more ...'), $count - $limit);
-                    $results[] = '<span aria-hidden="true" title="' . $title . '">...</span>';
-                } else {
-                    $table = array_slice($table, 0, $limit);
-                }
+                $this->add(Table::tr([$cols]));
             }
-        }
-        if ($compact) {
-            return join('', $results);
-        } else {
-            if (empty($table)) {
-                return '';
-            }
-            return sprintf(
-                '<table class="performance-data-table collapsible" data-visible-rows="6">%s</table>',
-                implode("\n", $table)
-            );
         }
     }
 }
