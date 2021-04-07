@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
+use Icinga\Web\Session;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
 use ipl\Web\Control\LimitControl;
@@ -85,6 +86,19 @@ class DowntimesController extends Controller
         $downtimes->peekAhead($compact);
 
         yield $this->export($downtimes);
+
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $viewMode = $prefs->getValue('icingadb', 'view_mode');
+
+        if (isset($viewMode)) {
+            $viewModeSwitcher->setDefaultViewMode($viewMode);
+        }
+
+        // Quick patch: Save single preference value to session, no matter, if the view mode changes
+        $web['view_mode'] = $viewModeSwitcher->getViewMode();
+        $prefs->icingadb = $web;
+
+        Session::getSession()->user->setPreferences($prefs);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
