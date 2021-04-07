@@ -12,8 +12,10 @@ use ipl\Web\Widget\Link;
 
 class ViewModeSwitcher extends BaseHtmlElement
 {
-    /** @var string Default view mode */
+    /** @var String Default view mode */
     const DEFAULT_VIEW_MODE = 'common';
+
+    protected $defaultViewMode;
 
     /** @var string Default view mode param */
     const DEFAULT_VIEW_MODE_PARAM = 'view';
@@ -38,6 +40,30 @@ class ViewModeSwitcher extends BaseHtmlElement
     public function __construct(Url $url)
     {
         $this->url = $url;
+    }
+
+    /**
+     * Get the default view mode
+     *
+     * @return String
+     */
+    public function getDefaultViewMode()
+    {
+        return $this->defaultViewMode ?: static::DEFAULT_VIEW_MODE;
+    }
+
+    /**
+     * Set the default view mode
+     *
+     * @param String $viewMode
+     *
+     * @return $this
+     */
+    public function setDefaultViewMode($viewMode)
+    {
+        $this->defaultViewMode = $viewMode;
+
+        return $this;
     }
 
     /**
@@ -95,7 +121,7 @@ class ViewModeSwitcher extends BaseHtmlElement
      */
     public function getViewMode()
     {
-        return $this->url->getParam($this->getViewModeParam(), static::DEFAULT_VIEW_MODE);
+        return $this->url->getParam($this->getViewModeParam(), $this->getDefaultViewMode());
     }
 
     protected function assemble()
