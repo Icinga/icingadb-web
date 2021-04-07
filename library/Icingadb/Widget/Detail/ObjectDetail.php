@@ -191,8 +191,11 @@ class ObjectDetail extends BaseHtmlElement
         $groups = [Html::tag('h2', t('Groups'))];
 
         if ($this->objectType === 'host') {
-            $hostgroups = $this->object->hostgroup;
-            $this->applyRestrictions($hostgroups);
+            $hostgroups = [];
+            if ($this->isPermittedRoute('hostgroups')) {
+                $hostgroups = $this->object->hostgroup;
+                $this->applyRestrictions($hostgroups);
+            }
 
             $hostgroupList = new TagList();
             foreach ($hostgroups as $hostgroup) {

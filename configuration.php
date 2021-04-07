@@ -301,10 +301,13 @@ namespace Icinga\Module\Icingadb
         ]);
     }
 
-    $section->add(N_('Host Groups'), [
-        'url' => 'icingadb/hostgroups',
-        'priority' => 80
-    ]);
+    if (! array_key_exists('hostgroups', $routeBlacklist)) {
+        $section->add(N_('Host Groups'), [
+            'url' => 'icingadb/hostgroups',
+            'priority' => 80
+        ]);
+    }
+
     $section->add(N_('Service Groups'), [
         'url' => 'icingadb/servicegroups',
         'priority' => 80

@@ -18,6 +18,13 @@ use ipl\Web\Url;
 
 class HostgroupsController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+
+        $this->assertRouteAccess();
+    }
+
     public function indexAction()
     {
         $this->setTitle(t('Host Groups'));

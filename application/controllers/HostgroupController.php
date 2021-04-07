@@ -19,6 +19,8 @@ class HostgroupController extends Controller
 
     public function init()
     {
+        $this->assertRouteAccess('hostgroups');
+
         $this->setTitle(t('Host Group'));
 
         $name = $this->params->shiftRequired('name');
