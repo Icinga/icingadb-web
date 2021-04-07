@@ -308,10 +308,13 @@ namespace Icinga\Module\Icingadb
         ]);
     }
 
-    $section->add(N_('Service Groups'), [
-        'url' => 'icingadb/servicegroups',
-        'priority' => 80
-    ]);
+    if (! array_key_exists('servicegroups', $routeBlacklist)) {
+        $section->add(N_('Service Groups'), [
+            'url' => 'icingadb/servicegroups',
+            'priority' => 80
+        ]);
+    }
+
     $section->add(N_('History'), [
         'url' => 'icingadb/history',
         'priority' => 90

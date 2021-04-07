@@ -209,8 +209,11 @@ class ObjectDetail extends BaseHtmlElement
                     : new EmptyState(t('Not a member of any host group.'))
             );
         } else {
-            $servicegroups = $this->object->servicegroup;
-            $this->applyRestrictions($servicegroups);
+            $servicegroups = [];
+            if ($this->isPermittedRoute('servicegroups')) {
+                $servicegroups = $this->object->servicegroup;
+                $this->applyRestrictions($servicegroups);
+            }
 
             $servicegroupList = new TagList();
             foreach ($servicegroups as $servicegroup) {

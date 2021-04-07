@@ -19,6 +19,8 @@ class ServicegroupController extends Controller
 
     public function init()
     {
+        $this->assertRouteAccess('servicegroups');
+
         $this->setTitle(t('Service Group'));
 
         $name = $this->params->shiftRequired('name');

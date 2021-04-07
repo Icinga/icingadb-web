@@ -18,6 +18,13 @@ use ipl\Web\Url;
 
 class ServicegroupsController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+
+        $this->assertRouteAccess();
+    }
+
     public function indexAction()
     {
         $this->setTitle(t('Service Groups'));
