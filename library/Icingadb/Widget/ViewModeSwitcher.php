@@ -15,8 +15,6 @@ class ViewModeSwitcher extends BaseHtmlElement
     /** @var String Default view mode */
     const DEFAULT_VIEW_MODE = 'common';
 
-    protected $defaultViewMode;
-
     /** @var string Default view mode param */
     const DEFAULT_VIEW_MODE_PARAM = 'view';
 
@@ -26,6 +24,9 @@ class ViewModeSwitcher extends BaseHtmlElement
         'common'   => 'default',
         'detailed' => 'detailed'
     ];
+
+    /** @var String */
+    protected $defaultViewMode;
 
     /** @var Url */
     protected $url;
