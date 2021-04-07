@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Web\Session;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
@@ -75,6 +76,19 @@ class CommentsController extends Controller
         $comments->peekAhead($compact);
 
         yield $this->export($comments);
+
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $viewMode = $prefs->getValue('icingadb', 'view_mode');
+
+        if (isset($viewMode)) {
+            $viewModeSwitcher->setDefaultViewMode($viewMode);
+        }
+
+        // Quick patch: Save single preference value to session, no matter, if the view mode changes
+        $web['view_mode'] = $viewModeSwitcher->getViewMode();
+        $prefs->icingadb = $web;
+
+        Session::getSession()->user->setPreferences($prefs);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
