@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
-use Icinga\Security\SecurityException;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 
@@ -20,9 +19,7 @@ class UsersController extends Controller
     {
         parent::init();
 
-        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
-        }
+        $this->assertRouteAccess();
     }
 
     public function indexAction()

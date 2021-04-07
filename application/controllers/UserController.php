@@ -8,7 +8,6 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
-use Icinga\Security\SecurityException;
 use ipl\Html\Html;
 
 class UserController extends Controller
@@ -18,9 +17,7 @@ class UserController extends Controller
 
     public function init()
     {
-        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
-        }
+        $this->assertRouteAccess('users');
 
         $this->setTitle(t('User'));
 

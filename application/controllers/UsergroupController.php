@@ -9,7 +9,6 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
-use Icinga\Security\SecurityException;
 use ipl\Html\Html;
 
 class UsergroupController extends Controller
@@ -19,9 +18,7 @@ class UsergroupController extends Controller
 
     public function init()
     {
-        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
-            throw new SecurityException(t('No permission for %s'), 'monitoring/contacts');
-        }
+        $this->assertRouteAccess('usergroups');
 
         $this->setTitle(t('User Group'));
 
