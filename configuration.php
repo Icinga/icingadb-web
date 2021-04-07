@@ -110,6 +110,11 @@ namespace Icinga\Module\Icingadb
     );
 
     $this->provideRestriction(
+        'icingadb/blacklist/routes',
+        $this->translate('Prevent access to routes that are part of the list')
+    );
+
+    $this->provideRestriction(
         'icingadb/blacklist/variables',
         $this->translate('Hide custom variables of Icinga objects that are part of the list')
     );
