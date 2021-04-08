@@ -59,11 +59,17 @@ class Controller extends CompatController
      *
      * This automatically shifts the limit URL parameter from {@link $params}.
      *
+     * @param callable    $callback
+     *
      * @return LimitControl
      */
-    public function createLimitControl()
+    public function createLimitControl(callable $callback = null)
     {
         $limitControl = new LimitControl(Url::fromRequest());
+
+        if (is_callable($callback)) {
+            $callback($limitControl);
+        }
 
         $this->params->shift($limitControl->getLimitParam());
 
@@ -75,15 +81,25 @@ class Controller extends CompatController
      *
      * This automatically shifts the pagination URL parameters from {@link $params}.
      *
+     * @param Paginatable $paginatable
+     * @param callable    $callback
+     *
      * @return PaginationControl
      */
-    public function createPaginationControl(Paginatable $paginatable)
+    public function createPaginationControl(Paginatable $paginatable, callable $callback = null)
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
+
+        if (is_callable($callback)) {
+            $callback($paginationControl);
+        }
+
         $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
 
         $this->params->shift($paginationControl->getPageParam());
         $this->params->shift($paginationControl->getPageSizeParam());
+
+        $paginationControl->paginate();
 
         return $paginationControl;
     }
@@ -365,7 +381,7 @@ class Controller extends CompatController
                     }
                 }
 
-                if (!empty($unused)) {
+                if (! empty($unused)) {
                     $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
                 }
 

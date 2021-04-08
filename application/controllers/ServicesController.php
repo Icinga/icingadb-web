@@ -23,6 +23,7 @@ use Icinga\Web\Session;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\PaginationControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -50,8 +51,12 @@ class ServicesController extends Controller
             $summary = ServicestateSummary::on($db)->with('state');
         }
 
-        $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($services);
+        $limitControl = $this->createLimitControl(function (LimitControl $limitControl) {
+            $limitControl->setDefaultLimit(100);
+        });
+        $paginationControl = $this->createPaginationControl($services, function (PaginationControl $paginationControl) {
+            $paginationControl->setDefaultPageSize(100);
+        });
         $sortControl = $this->createSortControl(
             $services,
             [
@@ -75,6 +80,7 @@ class ServicesController extends Controller
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
+
                 return;
             }
         } else {
@@ -93,7 +99,7 @@ class ServicesController extends Controller
 
         $prefs = $this->Auth()->getUser()->getPreferences();
         $viewMode = $prefs->getValue('icingadb', 'view_mode');
-        
+
         if (isset($viewMode)) {
             $viewModeSwitcher->setDefaultViewMode($viewMode);
         }
