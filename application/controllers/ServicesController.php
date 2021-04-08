@@ -97,19 +97,6 @@ class ServicesController extends Controller
             yield $this->export($services);
         }
 
-        $prefs = $this->Auth()->getUser()->getPreferences();
-        $viewMode = $prefs->getValue('icingadb', 'view_mode');
-
-        if (isset($viewMode)) {
-            $viewModeSwitcher->setDefaultViewMode($viewMode);
-        }
-
-        // Quick patch: Save single preference value to session, no matter, if the view mode changes
-        $web['view_mode'] = $viewModeSwitcher->getViewMode();
-        $prefs->icingadb = $web;
-
-        Session::getSession()->user->setPreferences($prefs);
-
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);

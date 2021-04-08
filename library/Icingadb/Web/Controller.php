@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Web\Session;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
@@ -71,6 +72,12 @@ class Controller extends CompatController
             $callback($limitControl);
         }
 
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $limit = $prefs->getValue('icingadb', 'limit');
+        if (isset($limit)) {
+            $limitControl->setDefaultLimit($limit);
+        }
+
         $this->params->shift($limitControl->getLimitParam());
 
         return $limitControl;
@@ -93,6 +100,18 @@ class Controller extends CompatController
         if (is_callable($callback)) {
             $callback($paginationControl);
         }
+
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $limit = $prefs->getValue('icingadb', 'limit');
+        if (isset($limit)) {
+            $paginationControl->setDefaultPageSize($limit);
+        }
+
+        // Quick patch: Save single preference value to session, no matter, if the view mode changes
+        $icingaDb = $prefs->icingadb ?: [];
+        $icingaDb['limit'] = $paginationControl->getPageSize();
+        $prefs->icingadb = $icingaDb;
+        Session::getSession()->user->setPreferences($prefs);
 
         $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
 
@@ -327,6 +346,19 @@ class Controller extends CompatController
     {
         $viewModeSwitcher = new ViewModeSwitcher(Url::fromRequest());
         $viewModeSwitcher->setAttribute('id', $this->getRequest()->protectId('view-switcher'));
+
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $viewMode = $prefs->getValue('icingadb', 'view_mode');
+
+        if (isset($viewMode)) {
+            $viewModeSwitcher->setDefaultViewMode($viewMode);
+        }
+
+        // Quick patch: Save single preference value to session, no matter, if the view mode changes
+        $icingaDb = $prefs->icingadb ?: [];
+        $icingaDb['view_mode'] = $viewModeSwitcher->getViewMode();
+        $prefs->icingadb = $icingaDb;
+        Session::getSession()->user->setPreferences($prefs);
 
         $this->params->shift($viewModeSwitcher->getViewModeParam());
 
