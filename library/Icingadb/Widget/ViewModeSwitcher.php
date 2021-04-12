@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
+use ipl\Web\Widget\IcingaIcon;
 
 class ViewModeSwitcher extends CompatForm
 {
@@ -117,7 +118,7 @@ class ViewModeSwitcher extends CompatForm
                 [
                     'for' => $icon,
                 ],
-                $viewMode
+                new IcingaIcon($icon)
             );
 
             if ($viewMode === $currentViewMode) {
