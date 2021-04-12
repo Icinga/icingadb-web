@@ -342,6 +342,16 @@ class Controller extends CompatController
 
         $this->params->shift($viewModeSwitcher->getViewModeParam());
 
+        $viewModeSwitcher->on(ViewModeSwitcher::ON_SUCCESS, function (ViewModeSwitcher $viewModeSwitcher) {
+            $viewMode = $viewModeSwitcher->getPopulatedValue($viewModeSwitcher->getViewModeParam());
+
+            // Session handling!
+
+            $this->redirectNow(Url::fromRequest()->setParam($viewModeSwitcher->getViewModeParam(), $viewMode));
+        });
+
+        $viewModeSwitcher->handleRequest(ServerRequest::fromGlobals());
+
         return $viewModeSwitcher;
     }
 

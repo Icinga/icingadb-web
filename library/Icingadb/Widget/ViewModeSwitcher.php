@@ -94,15 +94,7 @@ class ViewModeSwitcher extends CompatForm
      */
     public function getViewMode()
     {
-        if ( null !== $this->url->getParam( $this->getViewModeParam() )) {
-            return $this->url->getParam($this->getViewModeParam());
-        }
-
-        if (isset ($_POST[$this->getViewModeParam()])) {
-            return $_POST[$this->getViewModeParam()];
-        }
-
-        return static::DEFAULT_VIEW_MODE;
+        return $this->url->getParam($this->getViewModeParam(), static::DEFAULT_VIEW_MODE);
     }
 
     protected function assemble()
@@ -111,25 +103,28 @@ class ViewModeSwitcher extends CompatForm
         $currentViewMode = $this->getViewMode();
 
         foreach (static::$viewModes as $viewMode => $icon) {
-
             $input = new HtmlElement('input', [
-                'class'   => 'autosubmit',
-                'type' => 'radio',
-                'name' => $viewModeParam,
-                'value' => $viewMode,
-                'id' => $icon
+                'class' => 'autosubmit',
+                // TODO(el): Protect ID
+                'id'    => $icon,
+                'name'  => $viewModeParam,
+                'type'  => 'radio',
+                'value' => $viewMode
             ]);
 
-            $label = new HtmlElement('label', [
+            $label = new HtmlElement(
+                'label',
+                [
                     'for' => $icon,
-                ], $viewMode
+                ],
+                $viewMode
             );
 
             if ($viewMode === $currentViewMode) {
-                $input->getAttributes()->add('checked', '');
+                $input->getAttributes()->add('checked', true);
             }
 
-            $this->add([ $input, $label]);
+            $this->add([$input, $label]);
         }
     }
 }
