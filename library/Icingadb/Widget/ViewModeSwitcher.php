@@ -4,14 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
-use ipl\Web\Widget\IcingaIcon;
-use ipl\Web\Widget\Link;
 
-class ViewModeSwitcher extends BaseHtmlElement
+class ViewModeSwitcher extends CompatForm
 {
+
     /** @var string Default view mode */
     const DEFAULT_VIEW_MODE = 'common';
 
@@ -28,10 +27,10 @@ class ViewModeSwitcher extends BaseHtmlElement
     /** @var Url */
     protected $url;
 
+    protected $method = 'POST';
+
     /** @var string */
     protected $viewModeParam = self::DEFAULT_VIEW_MODE_PARAM;
-
-    protected $tag = 'ul';
 
     protected $defaultAttributes = ['class' => 'view-mode-switcher'];
 
@@ -95,7 +94,15 @@ class ViewModeSwitcher extends BaseHtmlElement
      */
     public function getViewMode()
     {
-        return $this->url->getParam($this->getViewModeParam(), static::DEFAULT_VIEW_MODE);
+        if ( null !== $this->url->getParam( $this->getViewModeParam() )) {
+            return $this->url->getParam($this->getViewModeParam());
+        }
+
+        if (isset ($_POST[$this->getViewModeParam()])) {
+            return $_POST[$this->getViewModeParam()];
+        }
+
+        return static::DEFAULT_VIEW_MODE;
     }
 
     protected function assemble()
@@ -104,15 +111,25 @@ class ViewModeSwitcher extends BaseHtmlElement
         $currentViewMode = $this->getViewMode();
 
         foreach (static::$viewModes as $viewMode => $icon) {
-            $url = $this->url->with($viewModeParam, $viewMode);
 
-            $link = Html::tag('li', new Link(new IcingaIcon($icon), $url));
+            $input = new HtmlElement('input', [
+                'class'   => 'autosubmit',
+                'type' => 'radio',
+                'name' => $viewModeParam,
+                'value' => $viewMode,
+                'id' => $icon
+            ]);
+
+            $label = new HtmlElement('label', [
+                    'for' => $icon,
+                ], $viewMode
+            );
 
             if ($viewMode === $currentViewMode) {
-                $link->getAttributes()->add('class', 'active');
+                $input->getAttributes()->add('checked', '');
             }
 
-            $this->add($link);
+            $this->add([ $input, $label]);
         }
     }
 }
