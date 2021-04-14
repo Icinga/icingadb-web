@@ -103,7 +103,10 @@ class ProcessCheckResultForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('icingadb/command/process-check-result', $object)) {
+        if (
+            ! $object->passive_checks_enabled
+            || ! $this->isGrantedOn('icingadb/command/process-check-result', $object)
+        ) {
             return null;
         }
 
