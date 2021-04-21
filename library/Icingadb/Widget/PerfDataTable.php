@@ -87,12 +87,12 @@ class PerfDataTable extends Table
             }
         }
 
-        if (! $this->containsSparkline) {
-            $keys = array_slice($keys, 1, -1);
-        }
-
         $headerRow = new HtmlElement('tr');
-        foreach ($keys as $col) {
+        foreach ($keys as $key => $col) {
+            if ((! $this->containsSparkline) && $col == '') {
+                unset($keys[$key]);
+                continue;
+            }
             if (isset($col)) {
                 $headerRow->add(new HtmlElement('th', [
                     'class' => ($col == 'label' ? 'title' : null)
