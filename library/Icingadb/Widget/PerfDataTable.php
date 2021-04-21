@@ -123,7 +123,10 @@ class PerfDataTable extends Table
                     $cols[] = Table::td(
                         new HtmlElement(
                             'span',
-                            [ 'title' => $text ],
+                            [
+                                'title' => ($text == '-' ? t('no value given') : $text),
+                                'class' => ($text != '-' ?: 'no-value')
+                            ],
                             $text
                         ),
                         [ 'class' => ($column == 'label' ? 'title' : null) ]
