@@ -1,0 +1,94 @@
+// Style
+
+.downtime-list .list-item,
+.downtime-detail .list-item {
+  .progress {
+    .progress-bar {
+      background-color: @color-ok;
+    }
+  }
+
+  .visual {
+    background-color: @gray-lighter;
+  }
+
+  .main {
+    border-top: 1px solid @gray-light;
+  }
+
+  .visual.active {
+    background-color: @color-ok;
+    color: @text-color-on-icinga-blue;
+  }
+}
+
+// Layout
+
+.downtime-list .list-item {
+  .caption > * {
+    display: inline;
+  }
+}
+
+.downtime-list .list-item,
+.downtime-detail .list-item {
+  .caption {
+    .text-ellipsis();
+    height: 1.5em;
+  }
+
+  .progress {
+    height: 1/6em;
+    margin-bottom: 1/3em;
+    margin-top: -.5em;
+    min-width: 100%;
+    position: relative;
+
+    .progress-bar {
+      height: 100%;
+      max-width: 100%;
+    }
+  }
+
+  .visual {
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1em;
+    margin-right: .5em;
+    margin-bottom: 1px;
+    padding: .5em .25em;
+    text-align: center;
+    width: 6em;
+
+    strong {
+      font-size: 1.5em;
+      line-height: 1em;
+    }
+  }
+}
+
+.downtime-list.minimal .list-item {
+  .visual {
+    display: block;
+    line-height: 1.5;
+    width: 8em;
+    white-space: nowrap;
+
+    strong {
+      display: inline-block;
+      font-size: 1em;
+    }
+  }
+
+  .caption {
+    .text-ellipsis()
+  }
+}
+
+.downtime-list.detailed .list-item {
+  .caption {
+    height: auto;
+    max-height: 4.5em;
+  }
+}
+

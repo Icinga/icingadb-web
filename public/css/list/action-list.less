@@ -1,0 +1,14 @@
+.action-list {
+  > .list-item:hover {
+    background-color: @gray-lightest;
+    cursor: pointer;
+  }
+
+  > .list-item.active {
+    background-color: fade(@icinga-blue, 10);
+  }
+
+  &[data-icinga-multiselect-url] * {
+    user-select: none;
+  }
+}

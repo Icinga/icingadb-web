@@ -1,0 +1,204 @@
+// Style
+
+.list-item {
+  color: @text-color-light;
+
+  &.overdue {
+    background-color: @gray-lighter;
+  }
+
+  &.overdue header > *:not(time),
+  &.overdue .caption {
+    opacity: 0.6;
+  }
+
+  &.overdue time {
+    .rounded-corners();
+    background-color: @color-critical;
+    color: @text-color-on-icinga-blue;
+  }
+
+  &:not(:first-child) .main {
+    border-top: 1px solid @gray-light;
+  }
+
+  .caption {
+    i {
+      opacity: 0.8;
+    }
+
+    a {
+      color: @text-color;
+    }
+  }
+
+  header {
+    .state-text {
+      color: @text-color;
+      text-transform: uppercase;
+    }
+  }
+
+  .title {
+    a {
+      color: @text-color;
+      font-weight: bold;
+
+      &:hover {
+        color: @icinga-blue;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .footer {
+    .status-icons {
+      color: @gray-light;
+    }
+  }
+}
+
+// Layout
+
+.list-item {
+  display: flex;
+
+  &.overdue time {
+    margin-right: -.5em;
+    padding: 0 0.5em;
+  }
+
+  .main {
+    flex: 1 1 auto;
+    padding: .5em 0;
+    width: 0;
+  }
+
+  .visual {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 1em;
+    padding: .5em 0;
+    width: 2.5em;
+
+    .check-attempt {
+      margin-top: .5em;
+    }
+  }
+
+  .caption {
+    height: 3em;
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    p {
+      display: inline-block;
+    }
+
+    &.plugin-output, .plugin-output {
+      font-size: 11/12em;
+      line-height: 1.5*12/11em;
+    }
+  }
+
+  header {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .title {
+    p {
+      margin: 0;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    > * {
+      font-size: .857em;
+      line-height: 1.5/.857em;
+    }
+
+    .performance-data {
+      .inline-pie {
+        display: inline-block;
+        line-height: 1.5/.857em;
+        width:  1em;
+
+        &:not(:last-child) {
+          margin-right: .209em;
+        }
+      }
+    }
+  }
+}
+
+.content.full-width .list-item {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.common .list-item {
+  .caption .plugin-output {
+    .line-clamp();
+  }
+}
+
+.minimal .list-item {
+  header {
+    max-width: 100%;
+  }
+
+  .visual {
+    margin-right: .5em;
+  }
+
+  .check-attempt {
+    display: none;
+  }
+
+  .title {
+    white-space: nowrap;
+
+    p {
+      display: inline;
+
+      & + p {
+        margin-left: .417em;
+      }
+    }
+  }
+
+  .caption {
+    flex: 1 1 auto;
+    height: 1.5em;
+    margin: 0 1em;
+    width: 0;
+  }
+
+  .caption,
+  .caption .plugin-output {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  time {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+}
+
+.detailed .list-item {
+  .caption {
+    display: block;
+    height: auto;
+    max-height: 7.5em; /* 5 lines */
+    position: relative;
+  }
+}

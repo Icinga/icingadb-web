@@ -1,0 +1,49 @@
+// Style
+
+.item-list {
+  list-style-type: none;
+
+  > .empty-state {
+    .rounded-corners();
+    background-color: @gray-lightest;
+  }
+
+  > .show-more a,
+  > .page-separator a {
+    .rounded-corners();
+    background: @gray-lightest;
+    text-align: center;
+  }
+
+  > .page-separator a {
+    color: @gray;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  > .page-separator + .list-item .main {
+    border-top: none;
+  }
+}
+
+// Layout
+
+.item-list {
+  margin: 0;
+  padding: 0;
+
+  > .empty-state {
+    margin: 0 1em;
+    padding: 1em;
+    text-align: center;
+  }
+
+  > .show-more a,
+  > .page-separator a {
+    flex: 1; // TODO: .item-list isn't display:flex, move this where it belongs to!
+    margin: .5em 0 0 3.5em;
+    padding: .5em 1em;
+  }
+}

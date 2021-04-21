@@ -1,0 +1,62 @@
+// Style
+
+.item-table {
+  .list-item {
+    &:not(:last-child) > *:not(.visual) {
+      border-bottom: 1px solid @gray-light;
+    }
+  }
+}
+
+// Layout
+
+.item-table {
+  display: table;
+  width: 100%;
+
+  .list-item {
+    display: table-row;
+  }
+
+  .list-item > .col {
+    display: table-cell;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:not(:last-child) {
+      padding-right: 1em;
+    }
+
+    &.title {
+      .text-ellipsis();
+      max-width: 1em;
+      width: 100%;
+    }
+
+    > * {
+      display: inline-block;
+
+      &:not(:last-child) {
+        margin-right: .5em;
+      }
+    }
+  }
+
+  .list-item > *:not(.visual) {
+    padding: .5em 0;
+  }
+
+  .list-item > .visual {
+    display: table-cell;
+    padding: .5em 1em 0 0;
+  }
+}
+
+.content.full-width .item-table .list-item {
+  // The .list-item itself can't have padding because of `display:table-row`
+  &:before, &:after {
+    display: inline-block;
+    content: '\00a0';
+    width: 1em;
+  }
+}
