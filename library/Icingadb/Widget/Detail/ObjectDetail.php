@@ -22,7 +22,7 @@ use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
-use Icinga\Module\Icingadb\Widget\PerfdataTable;
+use Icinga\Module\Icingadb\Widget\PerfDataTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
@@ -308,7 +308,7 @@ class ObjectDetail extends BaseHtmlElement
             $content[] = new HtmlElement(
                 'div',
                 ['id' => 'check-perfdata-' . $this->object->checkcommand],
-                new PerfdataTable($this->object->state->performance_data)
+                new PerfDataTable($this->object->state->performance_data)
             );
         }
 

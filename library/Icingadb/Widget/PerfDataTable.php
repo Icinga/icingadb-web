@@ -10,7 +10,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
 
-class PerfdataTable extends Table
+class PerfDataTable extends Table
 {
     /** @var bool Whether the table contains a sparkline column */
     protected $containsSparkline = false;
