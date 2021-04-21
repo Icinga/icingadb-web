@@ -6,7 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Util\PerfdataSet;
+use Icinga\Module\Icingadb\Util\PerfDataSet;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -45,7 +45,7 @@ class ServiceListItemDetailed extends BaseServiceListItem
 
         $performanceData = new HtmlElement('div', ['class' => 'performance-data']);
         if ($this->item->state->performance_data) {
-            $pieChartData = PerfdataSet::fromString($this->item->state->performance_data)->asArray();
+            $pieChartData = PerfDataSet::fromString($this->item->state->performance_data)->asArray();
 
             $pies = [];
             foreach ($pieChartData as $i => $perfdata) {

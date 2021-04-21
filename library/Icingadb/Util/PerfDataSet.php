@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Util;
 use ArrayIterator;
 use IteratorAggregate;
 
-class PerfdataSet implements IteratorAggregate
+class PerfDataSet implements IteratorAggregate
 {
     /**
      * The performance data being parsed
@@ -58,7 +58,7 @@ class PerfdataSet implements IteratorAggregate
      *
      * @param   string      $perfdataStr    A space separated list of label/value pairs
      *
-     * @return  PerfdataSet
+     * @return  PerfDataSet
      */
     public static function fromString($perfdataStr)
     {

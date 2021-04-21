@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Icingadb\Util\PerfdataSet;
 use Icinga\Module\Icingadb\Util\PerfData;
+use Icinga\Module\Icingadb\Util\PerfDataSet;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
@@ -47,7 +47,7 @@ class PerfdataTable extends Table
 
     public function assemble()
     {
-        $pieChartData = PerfdataSet::fromString($this->perfdataStr)->asArray();
+        $pieChartData = PerfDataSet::fromString($this->perfdataStr)->asArray();
         uasort(
             $pieChartData,
             function ($a, $b) {
