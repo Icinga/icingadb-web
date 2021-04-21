@@ -24,7 +24,7 @@ class PerfdataSet implements IteratorAggregate
     protected $parserPos = 0;
 
     /**
-     * A list of Perfdata objects
+     * A list of PerfData objects
      *
      * @var array
      */
@@ -85,7 +85,7 @@ class PerfdataSet implements IteratorAggregate
             $value = trim($this->readUntil(' '));
 
             if ($label) {
-                $this->perfdata[] = new Perfdata($label, $value);
+                $this->perfdata[] = new PerfData($label, $value);
             }
         }
     }

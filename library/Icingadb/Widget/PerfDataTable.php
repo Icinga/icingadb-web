@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use Icinga\Module\Icingadb\Util\Perfdata;
 use Icinga\Module\Icingadb\Util\PerfdataSet;
+use Icinga\Module\Icingadb\Util\PerfData;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
@@ -38,7 +38,7 @@ class PerfdataTable extends Table
      *
      * @return string
      */
-    public function __construct($perfdataStr, $limit = 0, $color = Perfdata::PERFDATA_OK)
+    public function __construct($perfdataStr, $limit = 0, $color = PerfData::PERFDATA_OK)
     {
         $this->perfdataStr = $perfdataStr;
         $this->limit = $limit;

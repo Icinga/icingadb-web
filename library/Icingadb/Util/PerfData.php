@@ -10,7 +10,7 @@ use Icinga\Util\Format;
 use Icinga\Web\Widget\Chart\InlinePie;
 use InvalidArgumentException;
 
-class Perfdata
+class PerfData
 {
     const PERFDATA_OK = 'ok';
     const PERFDATA_WARNING = 'warning';
@@ -73,7 +73,7 @@ class Perfdata
     protected $criticalThreshold;
 
     /**
-     * Create a new Perfdata object based on the given performance data label and value
+     * Create a new PerfData object based on the given performance data label and value
      *
      * @param   string      $label      The perfdata label
      * @param   string      $value      The perfdata value
@@ -104,21 +104,21 @@ class Perfdata
     }
 
     /**
-     * Return a new Perfdata object based on the given performance data key=value pair
+     * Return a new PerfData object based on the given performance data key=value pair
      *
      * @param   string      $perfdata       The key=value pair to parse
      *
-     * @return  Perfdata
+     * @return  PerfData
      *
      * @throws  InvalidArgumentException    In case the given performance data has no content or a invalid format
      */
     public static function fromString($perfdata)
     {
         if (empty($perfdata)) {
-            throw new InvalidArgumentException('Perfdata::fromString expects a string with content');
+            throw new InvalidArgumentException('PerfData::fromString expects a string with content');
         } elseif (strpos($perfdata, '=') === false) {
             throw new InvalidArgumentException(
-                'Perfdata::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
+                'PerfData::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
             );
         }
 
@@ -523,11 +523,11 @@ class Perfdata
      * the state indicated by the other perfdata
      * CRITICAL > UNKNOWN > WARNING > OK
      *
-     * @param Perfdata $rhs     the other perfdata
+     * @param PerfData $rhs     the other perfdata
      *
      * @return bool
      */
-    public function worseThan(Perfdata $rhs)
+    public function worseThan(PerfData $rhs)
     {
         if (($state = $this->getState()) === ($rhsState = $rhs->getState())) {
             return $this->getPercentage() > $rhs->getPercentage();
