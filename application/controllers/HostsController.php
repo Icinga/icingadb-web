@@ -12,7 +12,6 @@ use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostList;
@@ -90,7 +89,7 @@ class HostsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $this->addControl(new ContinueWith($this->getFilter(), Links::hostsDetails()));
+        $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar);
 
         $results = $hosts->execute();
         $hostList = (new HostList($results))
@@ -113,7 +112,7 @@ class HostsController extends Controller
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
-            $this->sendMultipartUpdate($viewModeSwitcher);
+            $this->sendMultipartUpdate($viewModeSwitcher, $continueWith);
         }
 
         $this->setAutorefreshInterval(10);
