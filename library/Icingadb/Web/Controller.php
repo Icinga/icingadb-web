@@ -28,6 +28,7 @@ use ipl\Web\Control\SearchEditor;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Web\Widget\ContinueWith;
 
 class Controller extends CompatController
 {
@@ -298,6 +299,30 @@ class Controller extends CompatController
         })->handleRequest(ServerRequest::fromGlobals());
 
         return $editor;
+    }
+
+    /**
+     * Create and return a ContinueWith
+     *
+     * This will automatically be appended to the SearchBar's wrapper. It's not necessary
+     * to add it separately as control or content!
+     *
+     * @param Url $detailsUrl
+     * @param SearchBar $searchBar
+     *
+     * @return ContinueWith
+     */
+    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar)
+    {
+        $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
+        $continueWith->setBaseTarget('_next');
+        $continueWith->getAttributes()
+            ->set('id', $this->getRequest()->protectId('continue-with'))
+            ->set('title', t('Show bulk processing actions for all filtered results'));
+
+        $searchBar->getWrapper()->add($continueWith);
+
+        return $continueWith;
     }
 
     /**
