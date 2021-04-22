@@ -124,6 +124,32 @@
       margin: 0;
     }
   }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    > * {
+      font-size: .857em;
+      line-height: 1.5/.857em;
+    }
+
+    .status-icons {
+      color: @gray-light;
+    }
+
+    .performance-data {
+      .inline-pie {
+        display: inline-block;
+        line-height: 1.5/.857em;
+        width:  1em;
+
+        &:not(:last-child) {
+          margin-right: .209em;
+        }
+      }
+    }
+  }
 }
 
 .content.full-width .list-item {
@@ -186,6 +212,8 @@
   .caption {
     display: block;
     height: auto;
+    max-height: 7.5em; /* 5 lines */
+    position: relative;
   }
 }
 

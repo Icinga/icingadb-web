@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\PerfDataTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
@@ -35,7 +36,6 @@ use ipl\Html\HtmlString;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
-use Zend_View_Helper_Perfdata;
 
 class ObjectDetail extends BaseHtmlElement
 {
@@ -300,12 +300,6 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createPerformanceData()
     {
-        require_once Icinga::app()->getModuleManager()->getModule('monitoring')->getBaseDir()
-            . '/application/views/helpers/Perfdata.php';
-
-        $helper = new Zend_View_Helper_Perfdata();
-        $helper->view = Icinga::app()->getViewRenderer()->view;
-
         $content[] = Html::tag('h2', t('Performance Data'));
 
         if (empty($this->object->state->performance_data)) {
@@ -314,7 +308,7 @@ class ObjectDetail extends BaseHtmlElement
             $content[] = new HtmlElement(
                 'div',
                 ['id' => 'check-perfdata-' . $this->object->checkcommand],
-                new HtmlString($helper->perfdata($this->object->state->performance_data))
+                new PerfDataTable($this->object->state->performance_data)
             );
         }
 

@@ -1,0 +1,57 @@
+/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+
+.performance-data-table {
+  width: 100%;
+  overflow: auto;
+  display: block;
+
+  tr:not(:last-child) {
+    border-bottom: 1px solid @gray-lighter;
+  }
+
+  td {
+    text-align: right;
+    .text-ellipsis();
+  }
+
+  th {
+    font-size: .857em;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  thead {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 0;
+  }
+
+  .title {
+    text-align: left;
+    width: 100%;
+  }
+
+  td.title {
+    font-weight: bold;
+  }
+
+  .sparkline-col {
+    min-width: 1.75em;
+    width: 1.75em;
+    padding: 2/12em 0;
+  }
+
+  .inline-pie > svg {
+    vertical-align: middle;
+  }
+
+  .no-value {
+    opacity: .6;
+    text-align: center;
+    display: block;
+  }
+}
