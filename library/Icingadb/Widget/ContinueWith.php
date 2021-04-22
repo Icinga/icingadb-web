@@ -32,7 +32,7 @@ class ContinueWith implements ValidHtml
         $continue = new ActionLink(
             t('Continue with filter'),
             $this->url->setQueryString(QueryString::render($this->filter)),
-            'forward',
+            'share-square',
             ['class' => 'continue-with', 'data-base-target' => '_next']
         );
 
