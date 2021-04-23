@@ -22,6 +22,11 @@ abstract class BaseServiceListItem extends StateListItem
                 'a',
                 [
                     'href'  => Links::service($this->item, $this->item->host),
+                    'title' => sprintf(
+                        t('Show detailed information for service %s on host %s'),
+                        $this->item->display_name,
+                        $this->item->host->display_name
+                    ),
                     'class' => 'subject'
                 ],
                 $this->item->display_name
@@ -30,6 +35,10 @@ abstract class BaseServiceListItem extends StateListItem
                 'a',
                 [
                     'href'  => Links::host($this->item->host),
+                    'title' => sprintf(
+                        t('Show detailed information for host %s'),
+                        $this->item->host->display_name
+                    ),
                     'class' => 'subject'
                 ],
                 [
