@@ -16,6 +16,14 @@
     border-top: 1px solid @gray-light;
   }
 
+  &:first-child .main {
+    border-top: none;
+
+    .progress-bar {
+      border-top: 1px solid @gray-light;
+    }
+  }
+
   .visual.active {
     background-color: @color-ok;
     color: @text-color-on-icinga-blue;
@@ -49,6 +57,11 @@
       max-width: 100%;
     }
   }
+
+  &:first-child .main .progress-bar {
+    height: ~"calc(100% + 1px)"; // +1px due to the border added exclusively for the first item
+  }
+
 
   .visual {
     justify-content: center;
