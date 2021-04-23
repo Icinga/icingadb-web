@@ -110,9 +110,15 @@
   }
 
   .title {
+    margin-right: 1em;
+
     p {
       margin: 0;
     }
+  }
+
+  time {
+    white-space: nowrap;
   }
 
   .footer {
@@ -163,8 +169,6 @@
   }
 
   .title {
-    white-space: nowrap;
-
     p {
       display: inline;
 
@@ -177,7 +181,7 @@
   .caption {
     flex: 1 1 auto;
     height: 1.5em;
-    margin: 0 1em;
+    margin-right: 1em;
     width: 0;
   }
 
@@ -187,14 +191,41 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
 
-  time {
-    margin-left: auto;
+.common .list-item,
+.minimal .list-item {
+  .title {
+    display: inline-flex;
     white-space: nowrap;
+    min-width: 0;
+
+    > * {
+      margin: 0 1ch;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .subject {
+      .text-ellipsis();
+    }
   }
 }
 
 .detailed .list-item {
+  .title {
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+  }
+
   .caption {
     display: block;
     height: auto;
