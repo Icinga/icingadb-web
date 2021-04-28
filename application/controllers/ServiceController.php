@@ -58,7 +58,10 @@ class ServiceController extends Controller
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
+
+        $this->addControl((new ServiceList([$this->service]))
+            ->setViewMode('minimal')
+            ->setNoSubjectLink());
         $this->addControl(new QuickActions($this->service));
 
         $this->addContent(new ServiceDetail($this->service));

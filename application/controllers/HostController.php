@@ -62,7 +62,9 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
+        $this->addControl((new HostList([$this->host]))
+            ->setViewMode('minimal')
+            ->setNoSubjectLink());
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new HostDetail($this->host, $serviceSummary->first()));
