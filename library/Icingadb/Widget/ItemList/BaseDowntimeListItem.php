@@ -9,18 +9,28 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
+/**
+ * Downtime item of a downtime list. Represents one database row.
+ *
+ * @property Downtime $item
+ * @property DowntimeList $list
+ */
 abstract class BaseDowntimeListItem extends BaseListItem
 {
     use HostLink;
     use ServiceLink;
+    use ObjectLinkDisabled;
 
     /** @var int Current Time */
     protected $currentTime;
@@ -64,6 +74,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
         $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
         $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
     }
 
     protected function createProgress()
@@ -104,22 +115,23 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        if ($this->item->object_type === 'host') {
+        if ($this->getObjectLinkDisabled()) {
+            $link = null;
+        } elseif ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
         } else {
             $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $title->add([
-            new Link(
-                $this->item->is_flexible
-                    ? t('Flexible Downtime')
-                    : t('Fixed Downtime'),
-                Links::downtime($this->item)
-            ),
-            ': ',
-            $link
-        ]);
+        $title->add(new Link(
+            $this->item->is_flexible
+                ? t('Flexible Downtime')
+                : t('Fixed Downtime'),
+            Links::downtime($this->item)
+        ));
+        if ($link !== null) {
+            $title->add([': ', $link]);
+        }
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)

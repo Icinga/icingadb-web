@@ -177,7 +177,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
-            $content[] = new DowntimeList($downtimes);
+            $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled();
             $content[] = new ShowMore($downtimes, $link);
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));
