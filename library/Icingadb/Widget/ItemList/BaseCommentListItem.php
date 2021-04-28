@@ -8,7 +8,9 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
@@ -17,10 +19,17 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
+/**
+ * Comment item of a comment list. Represents one database row.
+ *
+ * @property Comment $item
+ * @property CommentList $list
+ */
 abstract class BaseCommentListItem extends BaseListItem
 {
     use HostLink;
     use ServiceLink;
+    use ObjectLinkDisabled;
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
@@ -63,13 +72,17 @@ abstract class BaseCommentListItem extends BaseListItem
 
         $title->add($headerLineOne);
 
-        if ($this->item->object_type === 'host') {
+        if ($this->getObjectLinkDisabled()) {
+            $link = null;
+        } elseif ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);
         } else {
             $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $title->add(Html::tag('p', $link));
+        if ($link !== null) {
+            $title->add(Html::tag('p', $link));
+        }
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
@@ -88,5 +101,6 @@ abstract class BaseCommentListItem extends BaseListItem
     {
         $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
         $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
     }
 }

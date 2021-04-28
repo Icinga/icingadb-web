@@ -127,7 +127,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
-            $content[] = new CommentList($comments);
+            $content[] = (new CommentList($comments))->setObjectLinkDisabled();
             $content[] = new ShowMore($comments, $link);
         } else {
             $content[] = new EmptyState(t('No comments created.'));
