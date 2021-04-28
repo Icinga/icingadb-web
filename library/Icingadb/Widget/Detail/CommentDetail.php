@@ -5,10 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
-use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
 use ipl\Html\BaseHtmlElement;
@@ -17,8 +15,6 @@ use ipl\Html\Html;
 class CommentDetail extends BaseHtmlElement
 {
     use Auth;
-    use HostLink;
-    use ServiceLink;
 
     protected $comment;
 

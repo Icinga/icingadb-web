@@ -18,7 +18,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Sql\Sql;
 
 class ServiceController extends Controller
 {
