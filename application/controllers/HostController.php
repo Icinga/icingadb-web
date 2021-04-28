@@ -64,6 +64,7 @@ class HostController extends Controller
 
         $this->addControl((new HostList([$this->host]))
             ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl(new QuickActions($this->host));
 

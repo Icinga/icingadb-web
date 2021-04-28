@@ -61,6 +61,7 @@ class ServiceController extends Controller
 
         $this->addControl((new ServiceList([$this->service]))
             ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl(new QuickActions($this->service));
 

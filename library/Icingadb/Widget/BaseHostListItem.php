@@ -34,11 +34,11 @@ abstract class BaseHostListItem extends StateListItem
     {
         parent::init();
 
-        $this->setMultiselectFilter(Filter::equal('host.name', $this->item->name));
-        $this->setDetailFilter(Filter::equal('name', $this->item->name));
-
         if ($this->list->getNoSubjectLink()) {
             $this->setNoSubjectLink();
         }
+
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name))
+            ->addMultiselectFilterAttribute($this, Filter::equal('host.name', $this->item->name));
     }
 }

@@ -51,13 +51,15 @@ abstract class BaseServiceListItem extends StateListItem
             $this->setNoSubjectLink();
         }
 
-        $this->setMultiselectFilter(
+        $this->list->addMultiselectFilterAttribute(
+            $this,
             Filter::all(
                 Filter::equal('service.name', $this->item->name),
                 Filter::equal('host.name', $this->item->host->name)
             )
         );
-        $this->setDetailFilter(
+        $this->list->addDetailFilterAttribute(
+            $this,
             Filter::all(
                 Filter::equal('name', $this->item->name),
                 Filter::equal('host.name', $this->item->host->name)
