@@ -50,7 +50,11 @@ class DowntimeController extends Controller
     {
         $detail = new DowntimeDetail($this->downtime);
 
-        $this->addControl((new DowntimeList([$this->downtime]))->setViewMode('minimal')->setCaptionDisabled());
+        $this->addControl((new DowntimeList([$this->downtime]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setCaptionDisabled()
+            ->setNoSubjectLink());
 
         $this->addContent($detail);
 

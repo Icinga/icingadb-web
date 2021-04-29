@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Downtime;
@@ -16,6 +17,7 @@ use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -30,6 +32,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 {
     use HostLink;
     use ServiceLink;
+    use NoSubjectLink;
     use ObjectLinkDisabled;
 
     /** @var int Current Time */
@@ -75,6 +78,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
         $this->setDetailFilter(Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
 
     protected function createProgress()
@@ -123,12 +127,19 @@ abstract class BaseDowntimeListItem extends BaseListItem
             $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $title->add(new Link(
-            $this->item->is_flexible
+        if ($this->getNoSubjectLink()) {
+            $title->add(new HtmlElement('span', ['class' => 'subject'], $this->item->is_flexible
                 ? t('Flexible Downtime')
-                : t('Fixed Downtime'),
-            Links::downtime($this->item)
-        ));
+                : t('Fixed Downtime')));
+        } else {
+            $title->add(new Link(
+                $this->item->is_flexible
+                    ? t('Flexible Downtime')
+                    : t('Fixed Downtime'),
+                Links::downtime($this->item)
+            ));
+        }
+
         if ($link !== null) {
             $title->add([': ', $link]);
         }

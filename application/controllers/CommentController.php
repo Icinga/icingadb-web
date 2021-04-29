@@ -49,7 +49,11 @@ class CommentController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new CommentList([$this->comment]))->setViewMode('minimal')->setCaptionDisabled());
+        $this->addControl((new CommentList([$this->comment]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setCaptionDisabled()
+            ->setNoSubjectLink());
 
         $this->addContent(new CommentDetail($this->comment));
 

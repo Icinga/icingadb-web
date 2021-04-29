@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Comment;
@@ -29,6 +30,7 @@ abstract class BaseCommentListItem extends BaseListItem
 {
     use HostLink;
     use ServiceLink;
+    use NoSubjectLink;
     use ObjectLinkDisabled;
 
     protected function assembleCaption(BaseHtmlElement $caption)
@@ -43,16 +45,16 @@ abstract class BaseCommentListItem extends BaseListItem
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
 
+        $subjectText = sprintf(
+            $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
+            $this->item->author
+        );
+
         $headerParts = [
             new Icon(Icons::USER),
-            new Link(
-                sprintf(
-                    $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
-                    $this->item->author
-                ),
-                Links::comment($this->item),
-                ['class' => 'subject']
-            )
+            $this->getNoSubjectLink()
+                ? new HtmlElement('span', ['class' => 'subject'], $subjectText)
+                : new Link($subjectText, Links::comment($this->item), ['class' => 'subject'])
         ];
 
         if ($isAck) {
@@ -95,5 +97,6 @@ abstract class BaseCommentListItem extends BaseListItem
         $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
         $this->setDetailFilter(Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
 }
