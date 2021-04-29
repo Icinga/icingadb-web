@@ -6,16 +6,30 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
-/** @property ServicegroupList $list */
+/**
+ * Servicegroup item of a servicegroup list. Represents one database row.
+ *
+ * @property Servicegroup $item
+ * @property ServicegroupList $list
+ */
 class ServicegroupListItem extends BaseTableRowItem
 {
+    use NoSubjectLink;
+
+    protected function init()
+    {
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
+    }
+
     protected function assembleColumns(HtmlDocument $columns)
     {
         $serviceStats = new ServiceStatistics($this->item);
@@ -37,8 +51,10 @@ class ServicegroupListItem extends BaseTableRowItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            new Link($this->item->display_name, Links::servicegroup($this->item)),
-            Html::tag('br'),
+            $this->getNoSubjectLink()
+                ? new HtmlElement('span', ['class' => 'subject'], $this->item->display_name)
+                : new Link($this->item->display_name, Links::servicegroup($this->item), ['class' => 'subject']),
+            new HtmlElement('br'),
             $this->item->name
         ]);
     }
