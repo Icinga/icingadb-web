@@ -14,7 +14,7 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -43,18 +43,17 @@ abstract class BaseCommentListItem extends BaseListItem
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
 
-        $headerLineOne = Html::tag('p');
-
-        $headerLineOne->add([
+        $headerParts = [
             new Icon(Icons::USER),
             new Link(
                 sprintf(
                     $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
                     $this->item->author
                 ),
-                Links::comment($this->item)
+                Links::comment($this->item),
+                ['class' => 'subject']
             )
-        ]);
+        ];
 
         if ($isAck) {
             $label = ['ack'];
@@ -63,33 +62,27 @@ abstract class BaseCommentListItem extends BaseListItem
                 array_unshift($label, new Icon(Icons::IS_PERSISTENT));
             }
 
-            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], $label)]);
+            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], $label)];
         }
 
         if ($expires != 0) {
-            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES'))]);
+            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], t('EXPIRES'))];
         }
-
-        $title->add($headerLineOne);
 
         if ($this->getObjectLinkDisabled()) {
-            $link = null;
+            // pass
         } elseif ($this->item->object_type === 'host') {
-            $link = $this->createHostLink($this->item->host, true);
+            $headerParts[] = $this->createHostLink($this->item->host, true);
         } else {
-            $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
+            $headerParts[] = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        if ($link !== null) {
-            $title->add(Html::tag('p', $link));
-        }
+        $title->add($headerParts);
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $visual->add(
-            Html::tag('div', ['class' => 'user-ball'], $this->item->author[0])
-        );
+        $visual->add(new HtmlElement('div', ['class' => 'user-ball'], $this->item->author[0]));
     }
 
     protected function createTimestamp()

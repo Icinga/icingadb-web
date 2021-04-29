@@ -2,10 +2,24 @@
 
 // Layout
 
-.comment-list {
-  .caption {
-    .text-ellipsis();
-    height: 1.5em;
+.comment-list:not(.detailed) .list-item {
+  .title > i:first-child {
+    margin-right: 0;
+  }
+
+  .title > .badge:last-of-type {
+    margin-right: 0;
+  }
+
+  .title a {
+    &.subject {
+      overflow: visible;
+      margin-right: 0;
+    }
+
+    &:not(.subject) {
+      .text-ellipsis();
+    }
   }
 }
 
@@ -20,13 +34,14 @@
     line-height: 1.5em;
     width: 1.75em;
   }
-
-  .title br {
-    display: none;
-  }
 }
 
 .comment-list.detailed .list-item {
+  .subject,
+  .badge {
+    margin-right: .5em;
+  }
+
   .caption {
     max-height: 4.5em;
     white-space: normal;
