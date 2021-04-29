@@ -42,7 +42,7 @@ class UserController extends Controller
 
     public function indexAction()
     {
-        $this->addControl(new UserList([$this->user]));
+        $this->addControl((new UserList([$this->user]))->setNoSubjectLink()->setDetailActionsDisabled());
 
         $this->addContent(Html::tag('h2', t('Details')));
         $this->addContent(Html::tag('ul', ['class' => 'key-value-list'], [

@@ -43,7 +43,7 @@ class UsergroupController extends Controller
 
     public function indexAction()
     {
-        $this->addControl(new UsergroupList([$this->usergroup]));
+        $this->addControl((new UsergroupList([$this->usergroup]))->setNoSubjectLink()->setDetailActionsDisabled());
 
         $this->addContent(Html::tag('h2', t('Users')));
         $this->addContent(new UserList($this->usergroup->user));

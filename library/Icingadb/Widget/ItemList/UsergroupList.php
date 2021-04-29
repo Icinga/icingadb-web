@@ -4,10 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 
 class UsergroupList extends BaseItemList
 {
+    use NoSubjectLink;
+
     protected $defaultAttributes = ['class' => 'usergroup-list item-table'];
 
     protected function init()
