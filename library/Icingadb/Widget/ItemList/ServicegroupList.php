@@ -13,6 +13,13 @@ class ServicegroupList extends BaseItemList
 
     protected $defaultAttributes = ['class' => 'servicegroup-list item-table'];
 
+    protected function init()
+    {
+        parent::init();
+
+        $this->getAttributes()->get('class')->removeValue('item-list');
+    }
+
     protected function getItemClass()
     {
         $this->addAttributes(['class' => $this->getViewMode()]);

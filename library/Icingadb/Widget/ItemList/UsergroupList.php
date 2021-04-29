@@ -10,6 +10,13 @@ class UsergroupList extends BaseItemList
 {
     protected $defaultAttributes = ['class' => 'usergroup-list item-table'];
 
+    protected function init()
+    {
+        parent::init();
+
+        $this->getAttributes()->get('class')->removeValue('item-list');
+    }
+
     protected function getItemClass()
     {
         return UsergroupListItem::class;

@@ -34,16 +34,139 @@
   margin: 0;
   padding: 0;
 
+  .list-item {
+    display: flex;
+
+    &.show-more a,
+    &.page-separator a {
+      flex: 1;
+      margin: .5em 0 0 3.5em;
+      padding: .5em 1em;
+    }
+
+    .main {
+      flex: 1 1 auto;
+      padding: .5em 0;
+      width: 0;
+    }
+
+    .visual {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .caption {
+      height: 3em;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      .plugin-output {
+        .line-clamp();
+      }
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
   > .empty-state {
     margin: 0 1em;
     padding: 1em;
     text-align: center;
   }
+}
 
-  > .show-more a,
-  > .page-separator a {
-    flex: 1; // TODO: .item-list isn't display:flex, move this where it belongs to!
-    margin: .5em 0 0 3.5em;
-    padding: .5em 1em;
+.item-list.minimal .list-item,
+.item-list.detailed .list-item {
+  .caption .plugin-output {
+    .line-clamp("reset");
+  }
+}
+
+.item-list.minimal .list-item {
+  header {
+    max-width: 100%;
+  }
+
+  .visual {
+    margin-right: .5em;
+  }
+
+  .check-attempt {
+    display: none;
+  }
+
+  .title {
+    p {
+      display: inline;
+
+      & + p {
+        margin-left: .417em;
+      }
+    }
+  }
+
+  .caption {
+    flex: 1 1 auto;
+    height: 1.5em;
+    margin-right: 1em;
+    width: 0;
+  }
+
+  .caption,
+  .caption .plugin-output {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.item-list:not(.detailed) .list-item {
+  .title {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+    min-width: 0;
+
+    > * {
+      margin: 0 .5em;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .subject {
+      .text-ellipsis();
+    }
+  }
+}
+
+.item-list.detailed .list-item {
+  .title {
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+  }
+
+  .caption {
+    display: block;
+    height: auto;
+    max-height: 7.5em; /* 5 lines */
+    position: relative;
   }
 }

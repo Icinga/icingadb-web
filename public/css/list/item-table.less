@@ -1,6 +1,8 @@
 // Style
 
 .item-table {
+  padding: 0;
+
   .list-item {
     &:not(:last-child) > *:not(.visual) {
       border-bottom: 1px solid @gray-light;
@@ -13,6 +15,7 @@
 .item-table {
   display: table;
   width: 100%;
+  margin: 0;
 
   .list-item {
     display: table-row;
@@ -29,7 +32,6 @@
 
     &.title {
       .text-ellipsis();
-      max-width: 1em;
       width: 100%;
     }
 
