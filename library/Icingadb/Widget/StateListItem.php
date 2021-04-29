@@ -9,7 +9,6 @@ use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\State;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
@@ -82,15 +81,6 @@ abstract class StateListItem extends BaseListItem
         if ($this->state->state_type === 'soft') {
             $visual->add(new CheckAttempt($this->state->attempt, $this->item->max_check_attempts));
         }
-    }
-
-    protected function createFooter()
-    {
-        $footer = new HtmlElement('div', ['class' => 'footer']);
-
-        $this->assembleFooter($footer);
-
-        return $footer;
     }
 
     protected function createTimestamp()
