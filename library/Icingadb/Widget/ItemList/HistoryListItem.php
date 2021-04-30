@@ -8,6 +8,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\MarkdownLine;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
@@ -15,10 +16,8 @@ use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
-use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
 class HistoryListItem extends CommonListItem
@@ -31,22 +30,24 @@ class HistoryListItem extends CommonListItem
         switch ($this->item->event_type) {
             case 'comment_add':
             case 'comment_remove':
+                $markdownLine = new MarkdownLine($this->item->comment->comment);
+                $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
                     $this->item->comment->author,
-                    ': ',
-                    HtmlString::create(Markdown::line($this->item->comment->comment))
-                ]);
+                    ': '
+                ])->addFrom($markdownLine);
 
                 break;
             case 'downtime_end':
             case 'downtime_start':
+                $markdownLine = new MarkdownLine($this->item->downtime->comment);
+                $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
                     $this->item->downtime->author,
-                    ': ',
-                    HtmlString::create(Markdown::line($this->item->downtime->comment))
-                ]);
+                    ': '
+                ])->addFrom($markdownLine);
 
                 break;
             case 'flapping_start':
@@ -76,12 +77,13 @@ class HistoryListItem extends CommonListItem
                 break;
             case 'ack_clear':
             case 'ack_set':
+                $markdownLine = new MarkdownLine($this->item->acknowledgement->comment);
+                $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
                     $this->item->acknowledgement->author,
-                    ': ',
-                    HtmlString::create(Markdown::line($this->item->acknowledgement->comment))
-                ]);
+                    ': '
+                ])->addFrom($markdownLine);
 
                 break;
             case 'notification':

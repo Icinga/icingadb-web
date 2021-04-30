@@ -7,6 +7,11 @@
 & > .content.full-width {
   padding-left: 0;
   padding-right: 0;
+
+  .list-item {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
 }
 
 .plugin-output {
@@ -23,6 +28,15 @@
   .rounded-corners(.25em);
   background-color: @gray-lighter;
   padding: .5em;
+}
+
+.host-detail,
+.service-detail {
+  .item-list .list-item:last-of-type .caption {
+    min-height: 1.5em;
+    max-height: 3em;
+    height: auto;
+  }
 }
 
 .pagination-control {
@@ -76,7 +90,7 @@ div.show-more {
   box-shadow: 0 0 0 1px @gray-lighter;
   flex-shrink: 0;
 
-  > * {
+  > :not(:only-child) {
     margin-bottom: .5em;
   }
 
@@ -85,19 +99,17 @@ div.show-more {
     background-color: @gray-lighter;
   }
 
-  .continue-with {
-    float: left;
-    line-height: 2;
-    height: 2em;
-    margin: 0 0 .5em .5em;
-  }
-
   .filter {
     display: flex;
     width: 100%;
 
     .search-bar {
       flex: 1 1 auto;
+    }
+
+    .search-editor-opener,
+    .continue-with {
+      margin-left: .5em;
     }
   }
 
@@ -152,8 +164,15 @@ div.show-more {
   }
 }
 
-.content > h2:first-child, .host-detail > h2:first-child {
+.content > h2:first-child,
+.host-detail > h2:first-child,
+.comment-detail > h2:first-child,
+.downtime-detail > h2:first-child {
   margin-top: 0;
+}
+
+.content.full-width > h2 {
+  margin-left: 1em / 1.333em; // 1em / h2 font size
 }
 
 .perfdata-wrapper {
@@ -232,5 +251,30 @@ div.show-more {
 
   > .vertical-key-value {
     padding: 0 .5em;
+  }
+}
+
+.hostgroup-list.minimal,
+.servicegroup-list.minimal {
+  .col {
+    padding: 0;
+  }
+
+  .title br {
+    display: none;
+  }
+
+  .vertical-key-value {
+    br {
+      display: none;
+    }
+
+    .key {
+      padding-left: .417em;
+    }
+
+    .value {
+      vertical-align: middle;
+    }
   }
 }

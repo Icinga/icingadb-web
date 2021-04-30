@@ -10,19 +10,13 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
-use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlString;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
-use ipl\Web\Widget\ActionLink;
-use ipl\Web\Widget\Icon;
 
 class DowntimesController extends Controller
 {
@@ -91,7 +85,7 @@ class DowntimesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $this->addControl(new ContinueWith($this->getFilter(), Links::downtimesDetails()));
+        $continueWith = $this->createContinueWith(Links::downtimesDetails(), $searchBar);
 
         $results = $downtimes->execute();
 
@@ -110,7 +104,7 @@ class DowntimesController extends Controller
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
-            $this->sendMultipartUpdate($viewModeSwitcher);
+            $this->sendMultipartUpdate($viewModeSwitcher, $continueWith);
         }
 
         $this->setAutorefreshInterval(10);

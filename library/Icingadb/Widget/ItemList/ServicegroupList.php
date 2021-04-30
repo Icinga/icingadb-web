@@ -4,14 +4,23 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 
 class ServicegroupList extends BaseItemList
 {
+    use NoSubjectLink;
     use ViewMode;
 
     protected $defaultAttributes = ['class' => 'servicegroup-list item-table'];
+
+    protected function init()
+    {
+        parent::init();
+
+        $this->getAttributes()->get('class')->removeValue('item-list');
+    }
 
     protected function getItemClass()
     {

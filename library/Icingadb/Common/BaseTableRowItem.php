@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Widget\BaseItemList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 
 abstract class BaseTableRowItem extends BaseHtmlElement
 {
@@ -41,6 +42,10 @@ abstract class BaseTableRowItem extends BaseHtmlElement
 
     abstract protected function assembleTitle(BaseHtmlElement $title);
 
+    protected function assembleVisual(BaseHtmlElement $visual)
+    {
+    }
+
     protected function createColumn($content = null)
     {
         return Html::tag('div', ['class' => 'col'], $content);
@@ -64,6 +69,15 @@ abstract class BaseTableRowItem extends BaseHtmlElement
         return $title;
     }
 
+    protected function createVisual()
+    {
+        $visual = new HtmlElement('div', ['class' => 'visual']);
+
+        $this->assembleVisual($visual);
+
+        return $visual->isEmpty() ? null : $visual;
+    }
+
     /**
      * Initialize the list item
      *
@@ -76,6 +90,7 @@ abstract class BaseTableRowItem extends BaseHtmlElement
     protected function assemble()
     {
         $this->add([
+            $this->createVisual(),
             $this->createTitle(),
             $this->createColumns()
         ]);

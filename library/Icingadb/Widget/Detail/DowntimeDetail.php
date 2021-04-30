@@ -7,24 +7,18 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Date\DateFormatter;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
-use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
 class DowntimeDetail extends BaseHtmlElement
 {
     use Auth;
-    use HostLink;
-    use ServiceLink;
 
     /** @var BaseHtmlElement */
     protected $control;

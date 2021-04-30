@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ContinueWith;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
@@ -81,7 +80,7 @@ class CommentsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $this->addControl(new ContinueWith($this->getFilter(), Links::commentsDetails()));
+        $continueWith = $this->createContinueWith(Links::commentsDetails(), $searchBar);
 
         $results = $comments->execute();
 
@@ -100,7 +99,7 @@ class CommentsController extends Controller
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
-            $this->sendMultipartUpdate($viewModeSwitcher);
+            $this->sendMultipartUpdate($viewModeSwitcher, $continueWith);
         }
 
         $this->setAutorefreshInterval(10);

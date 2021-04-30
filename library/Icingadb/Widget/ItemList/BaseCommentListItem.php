@@ -7,25 +7,37 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
-use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
-use ipl\Html\HtmlString;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
+/**
+ * Comment item of a comment list. Represents one database row.
+ *
+ * @property Comment $item
+ * @property CommentList $list
+ */
 abstract class BaseCommentListItem extends BaseListItem
 {
     use HostLink;
     use ServiceLink;
+    use NoSubjectLink;
+    use ObjectLinkDisabled;
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $caption->add(new HtmlString(Markdown::line($this->item->text)));
+        $markdownLine = new MarkdownLine($this->item->text);
+        $caption->getAttributes()->add($markdownLine->getAttributes());
+        $caption->addFrom($markdownLine);
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
@@ -33,18 +45,17 @@ abstract class BaseCommentListItem extends BaseListItem
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
 
-        $headerLineOne = Html::tag('p');
+        $subjectText = sprintf(
+            $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
+            $this->item->author
+        );
 
-        $headerLineOne->add([
+        $headerParts = [
             new Icon(Icons::USER),
-            new Link(
-                sprintf(
-                    $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
-                    $this->item->author
-                ),
-                Links::comment($this->item)
-            )
-        ]);
+            $this->getNoSubjectLink()
+                ? new HtmlElement('span', ['class' => 'subject'], $subjectText)
+                : new Link($subjectText, Links::comment($this->item), ['class' => 'subject'])
+        ];
 
         if ($isAck) {
             $label = ['ack'];
@@ -53,29 +64,27 @@ abstract class BaseCommentListItem extends BaseListItem
                 array_unshift($label, new Icon(Icons::IS_PERSISTENT));
             }
 
-            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], $label)]);
+            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], $label)];
         }
 
         if ($expires != 0) {
-            $headerLineOne->add([' ', HTML::tag('span', ['class' => 'ack-badge badge'], t('EXPIRES'))]);
+            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], t('EXPIRES'))];
         }
 
-        $title->add($headerLineOne);
-
-        if ($this->item->object_type === 'host') {
-            $link = $this->createHostLink($this->item->host, true);
+        if ($this->getObjectLinkDisabled()) {
+            // pass
+        } elseif ($this->item->object_type === 'host') {
+            $headerParts[] = $this->createHostLink($this->item->host, true);
         } else {
-            $link = $this->createServiceLink($this->item->service, $this->item->service->host, true);
+            $headerParts[] = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $title->add(Html::tag('p', $link));
+        $title->add($headerParts);
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $visual->add(
-            Html::tag('div', ['class' => 'user-ball'], $this->item->author[0])
-        );
+        $visual->add(new HtmlElement('div', ['class' => 'user-ball'], $this->item->author[0]));
     }
 
     protected function createTimestamp()
@@ -87,5 +96,7 @@ abstract class BaseCommentListItem extends BaseListItem
     {
         $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
         $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
 }

@@ -1,0 +1,122 @@
+// Style
+
+.list-item {
+  color: @text-color-light;
+
+  &.overdue {
+    background-color: @gray-lighter;
+  }
+
+  &.overdue header > *:not(time),
+  &.overdue .caption {
+    opacity: 0.6;
+  }
+
+  &.overdue time {
+    .rounded-corners();
+    background-color: @color-critical;
+    color: @text-color-on-icinga-blue;
+  }
+
+  &:not(:first-child) .main {
+    border-top: 1px solid @gray-light;
+  }
+
+  .caption {
+    i {
+      opacity: 0.8;
+    }
+
+    a {
+      color: @text-color;
+    }
+  }
+
+  .title {
+    span.subject,
+    .state-text {
+      color: @text-color;
+    }
+
+    .state-text {
+      text-transform: uppercase;
+    }
+
+    a {
+      color: @text-color;
+      font-weight: bold;
+
+      &:hover {
+        color: @icinga-blue;
+        text-decoration: none;
+      }
+    }
+  }
+
+  footer {
+    .status-icons {
+      color: @gray-light;
+    }
+  }
+}
+
+// Layout
+
+.list-item {
+  &.overdue time {
+    margin-right: -.5em;
+    padding: 0 0.5em;
+  }
+
+  .visual {
+    margin-right: 1em;
+    padding: .5em 0;
+    width: 2.5em;
+
+    .check-attempt {
+      margin-top: .5em;
+    }
+  }
+
+  .caption {
+    p {
+      display: inline-block;
+    }
+
+    &.plugin-output, .plugin-output {
+      font-size: 11/12em;
+      line-height: 1.5*12/11em;
+    }
+  }
+
+  .title {
+    margin-right: 1em;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  time {
+    white-space: nowrap;
+  }
+
+  footer {
+    > * {
+      font-size: .857em;
+      line-height: 1.5/.857em;
+    }
+
+    .performance-data {
+      .inline-pie {
+        display: inline-block;
+        line-height: 1.5/.857em;
+        width:  1em;
+
+        &:not(:last-child) {
+          margin-right: .209em;
+        }
+      }
+    }
+  }
+}

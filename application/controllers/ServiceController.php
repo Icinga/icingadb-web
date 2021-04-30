@@ -18,7 +18,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Sql\Sql;
 
 class ServiceController extends Controller
 {
@@ -59,7 +58,11 @@ class ServiceController extends Controller
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
         }
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
+
+        $this->addControl((new ServiceList([$this->service]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
         $this->addControl(new QuickActions($this->service));
 
         $this->addContent(new ServiceDetail($this->service));

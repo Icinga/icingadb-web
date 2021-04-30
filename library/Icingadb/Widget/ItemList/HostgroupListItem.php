@@ -6,17 +6,31 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Widget\Detail\HostStatistics;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
-/** @property HostgroupList $list */
+/**
+ * Hostgroup item of a hostgroup list. Represents one database row.
+ *
+ * @property Hostgroup $item
+ * @property HostgroupList $list
+ */
 class HostgroupListItem extends BaseTableRowItem
 {
+    use NoSubjectLink;
+
+    protected function init()
+    {
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
+    }
+
     protected function assembleColumns(HtmlDocument $columns)
     {
         $hostStats = new HostStatistics($this->item);
@@ -53,8 +67,10 @@ class HostgroupListItem extends BaseTableRowItem
     protected function assembleTitle(BaseHtmlElement $title)
     {
         $title->add([
-            new Link($this->item->display_name, Links::hostgroup($this->item)),
-            Html::tag('br'),
+            $this->getNoSubjectLink()
+                ? new HtmlElement('span', ['class' => 'subject'], $this->item->display_name)
+                : new Link($this->item->display_name, Links::hostgroup($this->item), ['class' => 'subject']),
+            new HtmlElement('br'),
             $this->item->name
         ]);
     }

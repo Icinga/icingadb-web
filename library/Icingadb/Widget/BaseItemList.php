@@ -6,9 +6,9 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
-use ipl\Web\Url;
 
 /**
  * Base class for item lists
@@ -18,8 +18,9 @@ use ipl\Web\Url;
 abstract class BaseItemList extends BaseHtmlElement
 {
     use BaseFilter;
+    use DetailActions;
 
-    protected $baseAttributes = ['class' => 'action-list item-list', 'data-base-target' => '_next'];
+    protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
 
     /** @var iterable */
     protected $data;
@@ -41,6 +42,7 @@ abstract class BaseItemList extends BaseHtmlElement
 
         $this->addAttributes($this->baseAttributes);
 
+        $this->initializeDetailActions();
         $this->init();
     }
 
@@ -53,20 +55,6 @@ abstract class BaseItemList extends BaseHtmlElement
      */
     protected function init()
     {
-    }
-
-    protected function setMultiselectUrl(Url $url)
-    {
-        $this->addAttributes(['data-icinga-multiselect-url' => $url]);
-
-        return $this;
-    }
-
-    protected function setDetailUrl(Url $url)
-    {
-        $this->addAttributes(['data-icinga-detail-url' => $url]);
-
-        return $this;
     }
 
     protected function assemble()

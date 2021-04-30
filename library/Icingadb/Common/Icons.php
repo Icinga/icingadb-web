@@ -6,17 +6,17 @@ namespace Icinga\Module\Icingadb\Common;
 
 class Icons
 {
-    const COMMENT = 'comment-empty';
+    const COMMENT = 'comment';
 
     const HOST_DOWN = 'sitemap';
 
     const IN_DOWNTIME = 'plug';
 
-    const IS_ACKNOWLEDGED = 'ok';
+    const IS_ACKNOWLEDGED = 'check';
 
-    const IS_FLAPPING = 'flash';
+    const IS_FLAPPING = 'bolt';
 
-    const IS_PERSISTENT = 'pin';
+    const IS_PERSISTENT = 'thumbtack';
 
     const NOTIFICATION = 'bell';
 
@@ -26,5 +26,5 @@ class Icons
 
     const USERGROUP = 'users';
 
-    const WARNING = 'warning-empty';
+    const WARNING = 'exclamation-triangle';
 }

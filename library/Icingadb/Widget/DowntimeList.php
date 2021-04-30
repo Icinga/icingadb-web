@@ -6,6 +6,8 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeListItemMinimal;
 use ipl\Web\Url;
@@ -13,6 +15,8 @@ use ipl\Web\Url;
 class DowntimeList extends BaseItemList
 {
     use CaptionDisabled;
+    use NoSubjectLink;
+    use ObjectLinkDisabled;
     use ViewMode;
 
     protected $defaultAttributes = ['class' => 'downtime-list'];

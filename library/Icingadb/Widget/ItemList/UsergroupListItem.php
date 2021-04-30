@@ -4,35 +4,47 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Model\Usergroup;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Link;
 
-class UsergroupListItem extends BaseHtmlElement
+/**
+ * Usergroup item of a usergroup list. Represents one database row.
+ *
+ * @property Usergroup $item
+ * @property UsergroupList $list
+ */
+class UsergroupListItem extends BaseTableRowItem
 {
-    protected $item;
+    use NoSubjectLink;
 
-    protected $defaultAttributes = ['class' => 'list-item'];
-
-    protected $tag = 'li';
-
-    public function __construct($item)
+    protected function init()
     {
-        $this->item = $item;
+        $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
 
-    protected function assemble()
+    protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $this->add([
-            Html::tag('div', ['class' => 'visual'], [
-                Html::tag('div', ['class' => 'usergroup-ball'], $this->item->display_name[0])
-            ]),
-            Html::tag('div', ['class' => 'title col'], [
-                new Link($this->item->display_name, Links::usergroup($this->item)),
-                Html::tag('br'),
-                $this->item->name
-            ])
+        $visual->add(new HtmlElement('div', ['class' => 'usergroup-ball'], $this->item->display_name[0]));
+    }
+
+    protected function assembleTitle(BaseHtmlElement $title)
+    {
+        $title->add([
+            $this->getNoSubjectLink()
+                ? new HtmlElement('span', ['class' => 'subject'], $this->item->display_name)
+                : new Link($this->item->display_name, Links::usergroup($this->item), ['class' => 'subject']),
+            new HtmlElement('br'),
+            $this->item->name
         ]);
+    }
+
+    protected function assembleColumns(HtmlDocument $columns)
+    {
     }
 }

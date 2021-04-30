@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Filter\QueryString;
 
@@ -46,6 +47,10 @@ abstract class BaseListItem extends BaseHtmlElement
 
     abstract protected function assembleMain(BaseHtmlElement $main);
 
+    protected function assembleFooter(BaseHtmlElement $footer)
+    {
+    }
+
     protected function assembleCaption(BaseHtmlElement $caption)
     {
     }
@@ -85,6 +90,14 @@ abstract class BaseListItem extends BaseHtmlElement
         return $main;
     }
 
+    protected function createFooter()
+    {
+        $footer = new HtmlElement('footer');
+
+        $this->assembleFooter($footer);
+
+        return $footer;
+    }
 
     protected function createTimestamp()
     {

@@ -1,0 +1,49 @@
+// Style
+
+// Layout
+
+.comment-list:not(.detailed) .list-item {
+  .title > i:first-child {
+    margin-right: 0;
+  }
+
+  .title > .badge:last-of-type {
+    margin-right: 0;
+  }
+
+  .title a {
+    &.subject {
+      overflow: visible;
+      margin-right: 0;
+    }
+
+    &:not(.subject) {
+      .text-ellipsis();
+    }
+  }
+}
+
+.comment-list.minimal .list-item {
+  .visual {
+    width: 2em;
+  }
+
+  .user-ball {
+    font-size: .857em;
+    height: 1.75em;
+    line-height: 1.5em;
+    width: 1.75em;
+  }
+}
+
+.comment-list.detailed .list-item {
+  .subject,
+  .badge {
+    margin-right: .5em;
+  }
+
+  .caption {
+    max-height: 4.5em;
+    white-space: normal;
+  }
+}

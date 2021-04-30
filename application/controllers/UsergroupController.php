@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Security\SecurityException;
+use ipl\Html\Html;
 
 class UsergroupController extends Controller
 {
@@ -42,8 +43,9 @@ class UsergroupController extends Controller
 
     public function indexAction()
     {
-        $this->addControl(new UsergroupList([$this->usergroup]));
+        $this->addControl((new UsergroupList([$this->usergroup]))->setNoSubjectLink()->setDetailActionsDisabled());
 
+        $this->addContent(Html::tag('h2', t('Users')));
         $this->addContent(new UserList($this->usergroup->user));
 
         $this->setAutorefreshInterval(10);
