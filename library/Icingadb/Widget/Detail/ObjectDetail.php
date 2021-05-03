@@ -191,8 +191,11 @@ class ObjectDetail extends BaseHtmlElement
         $groups = [Html::tag('h2', t('Groups'))];
 
         if ($this->objectType === 'host') {
-            $hostgroups = $this->object->hostgroup;
-            $this->applyRestrictions($hostgroups);
+            $hostgroups = [];
+            if ($this->isPermittedRoute('hostgroups')) {
+                $hostgroups = $this->object->hostgroup;
+                $this->applyRestrictions($hostgroups);
+            }
 
             $hostgroupList = new TagList();
             foreach ($hostgroups as $hostgroup) {
@@ -206,8 +209,11 @@ class ObjectDetail extends BaseHtmlElement
                     : new EmptyState(t('Not a member of any host group.'))
             );
         } else {
-            $servicegroups = $this->object->servicegroup;
-            $this->applyRestrictions($servicegroups);
+            $servicegroups = [];
+            if ($this->isPermittedRoute('servicegroups')) {
+                $servicegroups = $this->object->servicegroup;
+                $this->applyRestrictions($servicegroups);
+            }
 
             $servicegroupList = new TagList();
             foreach ($servicegroups as $servicegroup) {
@@ -392,22 +398,21 @@ class ObjectDetail extends BaseHtmlElement
         $users = [];
         $usergroups = [];
 
-        if (
-            $this->getAuth()->hasPermission('*')
-            || ! $this->getAuth()->hasPermission('no-monitoring/contacts')
-        ) {
-            $objectFilter = Filter::equal(
-                'notification.' . ($this->objectType === 'host' ? 'host_id' : 'service_id'),
-                $this->object->id
-            );
+        $objectFilter = Filter::equal(
+            'notification.' . ($this->objectType === 'host' ? 'host_id' : 'service_id'),
+            $this->object->id
+        );
 
+        if ($this->isPermittedRoute('users')) {
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
             $this->applyRestrictions($userQuery);
             foreach ($userQuery as $user) {
                 $users[$user->name] = $user;
             }
+        }
 
+        if ($this->isPermittedRoute('usergroups')) {
             $usergroupQuery = Usergroup::on($this->getDb());
             $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);

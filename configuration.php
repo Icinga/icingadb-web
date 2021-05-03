@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb
 {
     use Exception;
     use Icinga\Authentication\Auth;
+    use Icinga\Util\StringHelper;
     use RecursiveDirectoryIterator;
     use RecursiveIteratorIterator;
 
@@ -107,6 +108,11 @@ namespace Icinga\Module\Icingadb
     $this->provideRestriction(
         'icingadb/filter/services',
         $this->translate('Restrict access to the Icinga services that match the filter')
+    );
+
+    $this->provideRestriction(
+        'icingadb/blacklist/routes',
+        $this->translate('Prevent access to routes that are part of the list')
     );
 
     $this->provideRestriction(
@@ -273,25 +279,42 @@ namespace Icinga\Module\Icingadb
     ]);
 
     $auth = Auth::getInstance();
-    if ($auth->hasPermission('*') || ! $auth->hasPermission('no-monitoring/contacts')) {
+    $routeBlacklist = [];
+    if ($auth->isAuthenticated() && ! $auth->getUser()->isUnrestricted()) {
+        // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
+        $routeBlacklist = array_flip(array_merge([], ...array_map(function ($restriction) {
+            return StringHelper::trimSplit($restriction);
+        }, $auth->getRestrictions('icingadb/blacklist/routes'))));
+    }
+
+    if (! array_key_exists('users', $routeBlacklist)) {
         $section->add(N_('Users'), [
             'url' => 'icingadb/users',
             'priority' => 60
         ]);
+    }
+
+    if (! array_key_exists('usergroups', $routeBlacklist)) {
         $section->add(N_('User Groups'), [
             'url' => 'icingadb/usergroups',
             'priority' => 70
         ]);
     }
 
-    $section->add(N_('Host Groups'), [
-        'url' => 'icingadb/hostgroups',
-        'priority' => 80
-    ]);
-    $section->add(N_('Service Groups'), [
-        'url' => 'icingadb/servicegroups',
-        'priority' => 80
-    ]);
+    if (! array_key_exists('hostgroups', $routeBlacklist)) {
+        $section->add(N_('Host Groups'), [
+            'url' => 'icingadb/hostgroups',
+            'priority' => 80
+        ]);
+    }
+
+    if (! array_key_exists('servicegroups', $routeBlacklist)) {
+        $section->add(N_('Service Groups'), [
+            'url' => 'icingadb/servicegroups',
+            'priority' => 80
+        ]);
+    }
+
     $section->add(N_('History'), [
         'url' => 'icingadb/history',
         'priority' => 90

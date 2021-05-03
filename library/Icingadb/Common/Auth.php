@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Authentication\ObjectAuthorization;
+use Icinga\Util\StringHelper;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -19,6 +20,27 @@ trait Auth
     public function getAuth()
     {
         return \Icinga\Authentication\Auth::getInstance();
+    }
+
+    /**
+     * Check whether access to the given route is permitted
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function isPermittedRoute($name)
+    {
+        if ($this->getAuth()->getUser()->isUnrestricted()) {
+            return true;
+        }
+
+        // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
+        $routeBlacklist = array_flip(array_merge([], ...array_map(function ($restriction) {
+            return StringHelper::trimSplit($restriction);
+        }, $this->getAuth()->getRestrictions('icingadb/blacklist/routes'))));
+
+        return ! array_key_exists($name, $routeBlacklist);
     }
 
     /**

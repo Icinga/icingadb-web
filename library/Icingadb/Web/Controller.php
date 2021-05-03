@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Security\SecurityException;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
@@ -368,6 +369,24 @@ class Controller extends CompatController
         }
 
         $this->getResponse()->redirectAndExit($requestUrl);
+    }
+
+    /**
+     * Require permission to access the given route
+     *
+     * @param string $name If NULL, the current controller name is used
+     *
+     * @throws SecurityException
+     */
+    public function assertRouteAccess($name = null)
+    {
+        if (! $name) {
+            $name = $this->getRequest()->getControllerName();
+        }
+
+        if (! $this->isPermittedRoute($name)) {
+            throw new SecurityException('No permission to access this route');
+        }
     }
 
     public function export(Query ...$queries)
