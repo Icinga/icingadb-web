@@ -206,11 +206,16 @@ class ApiCommandTransport implements CommandTransportInterface
             $data
         );
 
+        $headers = ['Accept' => 'application/json'];
+        if ($command->getMethod() !== 'POST') {
+            $headers['X-HTTP-Method-Override'] = $command->getMethod();
+        }
+
         try {
             $response = (new Client())
                 ->post($this->getUriFor($command->getEndpoint()), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
-                    'headers'       => ['Accept' => 'application/json'],
+                    'headers'       => $headers,
                     'json'          => $command->getData(),
                     'http_errors'   => false,
                     'verify'        => false

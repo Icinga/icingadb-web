@@ -21,6 +21,13 @@ class IcingaApiCommand
     protected $endpoint;
 
     /**
+     * HTTP method to use
+     *
+     * @var string
+     */
+    protected $method = 'POST';
+
+    /**
      * Create a new Icinga 2 API command
      *
      * @param   string  $endpoint
@@ -79,6 +86,30 @@ class IcingaApiCommand
     public function setEndpoint($endpoint)
     {
         $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    /**
+     * Get the HTTP method to use
+     *
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * Set the HTTP method to use
+     *
+     * @param string $method All uppercase HTTP method name. Case-sensitive.
+     *
+     * @return $this
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
 
         return $this;
     }
