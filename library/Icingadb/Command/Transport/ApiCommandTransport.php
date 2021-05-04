@@ -249,14 +249,16 @@ class ApiCommandTransport implements CommandTransportInterface
             return;
         }
 
-        $result = array_pop($responseData['results']);
-        if ($result['code'] < 200 || $result['code'] >= 300) {
+        $errorResult = $responseData['results'][0];
+        if (isset($errorResult['code']) && ($errorResult['code'] < 200 || $errorResult['code'] >= 300)) {
             throw new ApiCommandException(
                 'Can\'t send external Icinga command: %u %s',
-                $result['code'],
-                $result['status']
+                $errorResult['code'],
+                $errorResult['status']
             );
         }
+
+        return $responseData['results'];
     }
 
     /**
@@ -269,7 +271,7 @@ class ApiCommandTransport implements CommandTransportInterface
      */
     public function send(IcingaCommand $command, $now = null)
     {
-        $this->sendCommand($this->renderer->render($command));
+        return $this->sendCommand($this->renderer->render($command));
     }
 
     /**

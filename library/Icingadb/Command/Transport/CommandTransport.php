@@ -106,14 +106,14 @@ class CommandTransport implements CommandTransportInterface
             $transport = static::createTransport($transportConfig);
 
             try {
-                $transport->send($command, $now);
+                $result = $transport->send($command, $now);
             } catch (CommandTransportException $e) {
                 Logger::error($e);
                 $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
                 continue; // Try the next transport
             }
 
-            return; // The command was successfully sent
+            return $result; // The command was successfully sent
         }
 
         if (! empty($errors)) {
