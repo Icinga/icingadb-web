@@ -238,6 +238,14 @@ class ApiCommandTransport implements CommandTransportInterface
         }
 
         if (! isset($responseData['results']) || empty($responseData['results'])) {
+            if (isset($responseData['error'])) {
+                throw new ApiCommandException(
+                    'Can\'t send external Icinga command: %u %s',
+                    $responseData['error'],
+                    $responseData['status']
+                );
+            }
+
             return;
         }
 
