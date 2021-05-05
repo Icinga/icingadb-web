@@ -17,6 +17,7 @@ use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
+use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\HostList;
@@ -69,6 +70,7 @@ class HostController extends Controller
             ->setViewMode('minimal')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
+        $this->addControl(new HostMetaInfo($this->host));
         $this->addControl(new QuickActions($this->host));
 
         $this->addContent(new HostDetail($this->host, $serviceSummary->first()));
