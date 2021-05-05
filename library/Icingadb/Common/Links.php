@@ -8,7 +8,6 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use ipl\Web\Url;
@@ -83,6 +82,11 @@ abstract class Links
     public static function service(Service $service, Host $host)
     {
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
+    }
+
+    public static function serviceSource(Service $service, Host $host)
+    {
+        return Url::fromPath('icingadb/service/source', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
     public static function servicesDetails()
