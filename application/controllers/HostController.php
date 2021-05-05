@@ -5,6 +5,8 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
+use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
@@ -14,6 +16,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
+use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\HostList;
@@ -71,6 +74,24 @@ class HostController extends Controller
         $this->addContent(new HostDetail($this->host, $serviceSummary->first()));
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function sourceAction()
+    {
+        $this->assertPermission('icingadb/object/show-source');
+        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObject($this->host));
+
+        if ($this->host->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
+
+        $this->addControl((new HostList([$this->host]))
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
+        $this->addContent(new HostInspectionDetail(
+            $this->host,
+            reset($apiResult)
+        ));
     }
 
     public function commentsAction()
@@ -231,8 +252,7 @@ class HostController extends Controller
 
     protected function createTabs()
     {
-        return $this
-            ->getTabs()
+        $tabs = $this->getTabs()
             ->add('index', [
                 'label'  => t('Host'),
                 'url'    => Links::host($this->host)
@@ -245,6 +265,15 @@ class HostController extends Controller
                 'label'  => t('History'),
                 'url'    => HostLinks::history($this->host)
             ]);
+
+        if ($this->hasPermission('icingadb/object/show-source')) {
+            $tabs->add('source', [
+                'label' => t('Source'),
+                'url' => Links::hostSource($this->host)
+            ]);
+        }
+
+        return $tabs;
     }
 
     protected function setTitleTab($name)
