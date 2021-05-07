@@ -62,6 +62,7 @@ class CompatService extends Service
             'type' => 'bool'
         ],
         'service_action_url'                        => ['path' => ['action_url', 'action_url']],
+        'action_url'                                => ['path' => ['action_url', 'action_url']],
         'service_active_checks_enabled'             => [
             'path' => ['active_checks_enabled'],
             'type' => 'bool'
