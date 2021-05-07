@@ -67,16 +67,20 @@ class ObjectDetail extends BaseHtmlElement
             $item->setObject($this->compatObject);
         }
 
-        foreach ($this->compatObject->getActionUrls() as $i => $url) {
+        foreach ($this->compatObject->getActionUrls() as $url) {
             $navigation->addItem(
-                sprintf(t('Action %d'), $i + 1),
+                Html::wantHtml([
+                    // Add warning to links that open in new tabs, as recommended by WCAG20 G201
+                    new Icon('external-link-alt', ['title' => t('Link opens in a new window')]),
+                    $url
+                ])->render(),
                 [
+                    'target'   => '_blank',
+                    'url'      => $url,
                     'renderer' => [
                         'NavigationItemRenderer',
                         'escape_label' => false
-                    ],
-                    'target'   => '_blank',
-                    'url'      => $url
+                    ]
                 ]
             );
         }
@@ -236,13 +240,20 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        foreach ($this->compatObject->getNotesUrls() as $i => $url) {
+        foreach ($this->compatObject->getNotesUrls() as $url) {
             $navigation->addItem(
-                sprintf(t('Note %d'), $i + 1),
+                Html::wantHtml([
+                    // Add warning to links that open in new tabs, as recommended by WCAG20 G201
+                    new Icon('external-link-alt', ['title' => t('Link opens in a new window')]),
+                    $url
+                ])->render(),
                 [
-                    'renderer' => 'NavigationItemRenderer',
                     'target'   => '_blank',
-                    'url'      => $url
+                    'url'      => $url,
+                    'renderer'  => [
+                        'NavigationItemRenderer',
+                        'escape_label' => false
+                    ]
                 ]
             );
         }
