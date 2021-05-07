@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Model\History;
@@ -192,9 +193,17 @@ class ServiceController extends Controller
     {
         return $this
             ->getTabs()
+            ->add('host', [
+                'label'  => t('Host'),
+                'url'    => Links::host($this->service->host, $this->service)
+            ])
             ->add('index', [
                 'label'  => t('Service'),
                 'url'    => Links::service($this->service, $this->service->host)
+            ])
+            ->add('services', [
+                'label'  => t('Services'),
+                'url'    => HostLinks::services($this->service->host, $this->service)
             ])
             ->add('history', [
                 'label'  => t('History'),
