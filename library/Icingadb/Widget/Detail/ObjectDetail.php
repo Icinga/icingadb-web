@@ -4,7 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Exception;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
@@ -33,6 +36,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\Text;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
