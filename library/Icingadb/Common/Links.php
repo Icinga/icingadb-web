@@ -56,9 +56,14 @@ abstract class Links
         return Url::fromPath('icingadb/downtimes/details');
     }
 
-    public static function host(Host $host)
+    public static function host(Host $host, Service $service = null)
     {
-        return Url::fromPath('icingadb/host', ['name' => $host->name]);
+        $url = Url::fromPath('icingadb/host', ['name' => $host->name]);
+        if ($service !== null) {
+            $url->addParams(['service.name' => $service->name]);
+        }
+
+        return $url;
     }
 
     public static function hostsDetails()

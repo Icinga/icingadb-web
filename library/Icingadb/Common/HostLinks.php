@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use ipl\Web\Url;
 
 abstract class HostLinks
@@ -69,8 +70,13 @@ abstract class HostLinks
         return Url::fromPath('icingadb/host/toggle-features', ['name' => $host->name]);
     }
 
-    public static function services(Host $host)
+    public static function services(Host $host, Service $service = null)
     {
-        return Url::fromPath('icingadb/host/services', ['name' => $host->name]);
+        $url = Url::fromPath('icingadb/host/services', ['name' => $host->name]);
+        if ($service !== null) {
+            $url->addParams(['service.name' => $service->name]);
+        }
+
+        return $url;
     }
 }
