@@ -8,6 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
@@ -21,6 +22,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Stdlib\Filter;
 
 class HostController extends Controller
 {
@@ -29,13 +31,16 @@ class HostController extends Controller
     /** @var Host The host object */
     protected $host;
 
+    /** @var Service The service object */
+    protected $service;
+
     public function init()
     {
         $name = $this->params->shiftRequired('name');
 
-        $query = Host::on($this->getDb())->with('state');
-        $query->getSelectBase()
-            ->where(['host.name = ?' => $name]);
+        $query = Host::on($this->getDb())
+            ->with('state')
+            ->filter(Filter::equal('host.name', $name));
 
         $this->applyRestrictions($query);
 
@@ -45,7 +50,21 @@ class HostController extends Controller
             throw new NotFoundError(t('Host not found'));
         }
 
+        $service = null;
+        if ($this->params->has('service.name')) {
+            $query = Service::on($this->getDb())
+                ->filter(Filter::equal('service.name', $this->params->shift('service.name')));
+
+            $this->applyRestrictions($query);
+
+            $service = $query->first();
+            if ($service === null) {
+                throw new NotFoundError(t('Service not found'));
+            }
+        }
+
         $this->host = $host;
+        $this->service = $service;
 
         $this->setTitleTab($this->getRequest()->getActionName());
     }
@@ -231,20 +250,36 @@ class HostController extends Controller
 
     protected function createTabs()
     {
-        return $this
-            ->getTabs()
-            ->add('index', [
+        $tabs = $this->getTabs();
+
+        if ($this->service === null) {
+            $tabs->add('index', [
                 'label'  => t('Host'),
                 'url'    => Links::host($this->host)
-            ])
-            ->add('services', [
+            ])->add('services', [
                 'label'  => t('Services'),
                 'url'    => HostLinks::services($this->host)
-            ])
-            ->add('history', [
+            ])->add('history', [
                 'label'  => t('History'),
                 'url'    => HostLinks::history($this->host)
             ]);
+        } else {
+            $tabs->add('index', [
+                'label'  => t('Host'),
+                'url'    => Links::host($this->host, $this->service)
+            ])->add('service', [
+                'label'  => t('Service'),
+                'url'    => Links::service($this->service, $this->host)
+            ])->add('services', [
+                'label'  => t('Services'),
+                'url'    => HostLinks::services($this->host, $this->service)
+            ])->add('history', [
+                'label'  => t('History'),
+                'url'    => ServiceLinks::history($this->service, $this->host)
+            ]);
+        }
+
+        return $tabs;
     }
 
     protected function setTitleTab($name)
