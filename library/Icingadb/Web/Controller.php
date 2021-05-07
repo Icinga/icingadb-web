@@ -66,6 +66,7 @@ class Controller extends CompatController
     public function createLimitControl()
     {
         $limitControl = new LimitControl(Url::fromRequest());
+        $limitControl->setDefaultLimit($this->getPageSize(null));
 
         $this->params->shift($limitControl->getLimitParam());
 
@@ -82,12 +83,13 @@ class Controller extends CompatController
     public function createPaginationControl(Paginatable $paginatable)
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
+        $paginationControl->setDefaultPageSize($this->getPageSize(null));
         $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
 
         $this->params->shift($paginationControl->getPageParam());
         $this->params->shift($paginationControl->getPageSizeParam());
 
-        return $paginationControl;
+        return $paginationControl->apply();
     }
 
     /**
