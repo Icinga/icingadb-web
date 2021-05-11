@@ -32,12 +32,11 @@ abstract class BaseServiceListItem extends StateListItem
             $this->item->host->display_name
         ];
 
+        $host = new Link($host, Links::host($this->item->host), ['class' => 'subject']);
         if ($this->getNoSubjectLink()) {
             $service = new HtmlElement('span', ['class' => 'subject'], $service);
-            $host = new HtmlElement('span', ['class' => 'subject'], $host);
         } else {
             $service = new Link($service, Links::service($this->item, $this->item->host), ['class' => 'subject']);
-            $host = new Link($host, Links::host($this->item->host), ['class' => 'subject']);
         }
 
         return [Html::sprintf(t('%s on %s', '<service> on <host>'), $service, $host)];
