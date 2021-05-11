@@ -10,6 +10,7 @@ use Exception;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
 use ipl\Html\BaseHtmlElement;
@@ -103,6 +104,10 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                 ->hGet("icinga:config:state:{$this->object->getTableName()}", bin2hex($this->object->id));
         } catch (Exception $e) {
             return [$title, sprintf('Failed to load redis data: %s', $e->getMessage())];
+        }
+
+        if ($json === false) {
+            return [$title, new EmptyState(t('No data available in redis'))];
         }
 
         try {
