@@ -4,8 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Icinga\Exception\Json\JsonDecodeException;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Util\Format;
 use Icinga\Util\Json;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
@@ -75,7 +80,17 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             new HtmlElement('h2', null, t('Executed Command')),
             new HtmlElement('pre', null, $command),
             new HtmlElement('h2', null, t('Execution Details')),
-            $this->createNameValueTable(array_diff_key($this->attrs['last_check_result'], array_flip($blacklist)))
+            $this->createNameValueTable(
+                array_diff_key($this->attrs['last_check_result'], array_flip($blacklist)),
+                [
+                    'execution_end'     => [$this, 'formatTimestamp'],
+                    'execution_start'   => [$this, 'formatTimestamp'],
+                    'schedule_end'      => [$this, 'formatTimestamp'],
+                    'schedule_start'    => [$this, 'formatTimestamp'],
+                    'ttl'               => [$this, 'formatSeconds'],
+                    'state'             => [$this, 'formatState']
+                ]
+            )
         ];
     }
 
@@ -102,7 +117,21 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             'id'
         ];
 
-        return [$title, $this->createNameValueTable(array_diff_key($data, array_flip($blacklist)))];
+        return [$title, $this->createNameValueTable(
+            array_diff_key($data, array_flip($blacklist)),
+            [
+                'last_state_change'     => [$this, 'formatMillisecondTimestamp'],
+                'last_update'           => [$this, 'formatMillisecondTimestamp'],
+                'next_check'            => [$this, 'formatMillisecondTimestamp'],
+                'next_update'           => [$this, 'formatMillisecondTimestamp'],
+                'check_timeout'         => [$this, 'formatMilliseconds'],
+                'execution_time'        => [$this, 'formatMilliseconds'],
+                'latency'               => [$this, 'formatMilliseconds'],
+                'hard_state'            => [$this, 'formatState'],
+                'previous_hard_state'   => [$this, 'formatState'],
+                'state'                 => [$this, 'formatState']
+            ]
+        )];
     }
 
     protected function createAttributes()
@@ -125,25 +154,103 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, t('Object Attributes')),
-            $this->createNameValueTable(array_diff_key($this->attrs, array_flip($blacklist)))
+            $this->createNameValueTable(
+                array_diff_key($this->attrs, array_flip($blacklist)),
+                [
+                    'acknowledgement_expiry'        => [$this, 'formatTimestamp'],
+                    'acknowledgement_last_change'   => [$this, 'formatTimestamp'],
+                    'check_timeout'                 => [$this, 'formatSeconds'],
+                    'flapping_last_change'          => [$this, 'formatTimestamp'],
+                    'last_check'                    => [$this, 'formatTimestamp'],
+                    'last_hard_state_change'        => [$this, 'formatTimestamp'],
+                    'last_state_change'             => [$this, 'formatTimestamp'],
+                    'last_state_ok'                 => [$this, 'formatTimestamp'],
+                    'last_state_up'                 => [$this, 'formatTimestamp'],
+                    'last_state_warning'            => [$this, 'formatTimestamp'],
+                    'last_state_critical'           => [$this, 'formatTimestamp'],
+                    'last_state_down'               => [$this, 'formatTimestamp'],
+                    'last_state_unknown'            => [$this, 'formatTimestamp'],
+                    'last_state_unreachable'        => [$this, 'formatTimestamp'],
+                    'next_check'                    => [$this, 'formatTimestamp'],
+                    'next_update'                   => [$this, 'formatTimestamp'],
+                    'previous_state_change'         => [$this, 'formatTimestamp'],
+                    'check_interval'                => [$this, 'formatSeconds'],
+                    'retry_interval'                => [$this, 'formatSeconds'],
+                    'last_hard_state'               => [$this, 'formatState'],
+                    'last_state'                    => [$this, 'formatState'],
+                    'state'                         => [$this, 'formatState']
+                ]
+            )
         ];
     }
 
-    private function createNameValueTable(array $data)
+    private function formatJson($json)
+    {
+        if (is_scalar($json)) {
+            return Json::encode($json, JSON_UNESCAPED_SLASHES);
+        }
+
+        return new HtmlElement(
+            'pre',
+            null,
+            Json::encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+    }
+
+    private function formatTimestamp($ts)
+    {
+        if ($ts === 0) {
+            return '-';
+        }
+
+        if (is_float($ts)) {
+            $dt = DateTime::createFromFormat('U.u', $ts);
+        } else {
+            $dt = (new DateTime())->setTimestamp($ts);
+        }
+
+        return $dt->setTimezone(new DateTimeZone('UTC'))
+            ->format('Y-m-d\TH:i:s.vP');
+    }
+
+    private function formatMillisecondTimestamp($ms)
+    {
+        return $this->formatTimestamp($ms / 1000.0);
+    }
+
+    private function formatSeconds($s)
+    {
+        return Format::seconds($s);
+    }
+
+    private function formatMilliseconds($ms)
+    {
+        return Format::seconds($ms / 1000.0);
+    }
+
+    private function formatState($state)
+    {
+        switch (true) {
+            case $this->object instanceof Host:
+                return HostStates::text($state);
+            case $this->object instanceof Service:
+                return ServiceStates::text($state);
+            default:
+                return $state;
+        }
+    }
+
+    private function createNameValueTable(array $data, array $formatters)
     {
         $table = new Table();
         $table->addAttributes(['class' => 'name-value-table']);
         foreach ($data as $name => $value) {
             if (empty($value) && ($value === null || is_string($value) || is_array($value))) {
                 $value = '-';
-            } elseif (is_array($value)) {
-                $value = new HtmlElement(
-                    'pre',
-                    null,
-                    Json::encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-                );
-            } elseif (is_scalar($value)) {
-                $value = Json::encode($value, JSON_UNESCAPED_SLASHES);
+            } elseif (isset($formatters[$name])) {
+                $value = call_user_func($formatters[$name], $value);
+            } else {
+                $value = $this->formatJson($value);
             }
 
             $table->add(Table::tr([
