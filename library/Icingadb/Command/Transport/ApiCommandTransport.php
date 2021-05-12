@@ -206,11 +206,16 @@ class ApiCommandTransport implements CommandTransportInterface
             $data
         );
 
+        $headers = ['Accept' => 'application/json'];
+        if ($command->getMethod() !== 'POST') {
+            $headers['X-HTTP-Method-Override'] = $command->getMethod();
+        }
+
         try {
             $response = (new Client())
                 ->post($this->getUriFor($command->getEndpoint()), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
-                    'headers'       => ['Accept' => 'application/json'],
+                    'headers'       => $headers,
                     'json'          => $command->getData(),
                     'http_errors'   => false,
                     'verify'        => false
@@ -233,17 +238,27 @@ class ApiCommandTransport implements CommandTransportInterface
         }
 
         if (! isset($responseData['results']) || empty($responseData['results'])) {
+            if (isset($responseData['error'])) {
+                throw new ApiCommandException(
+                    'Can\'t send external Icinga command: %u %s',
+                    $responseData['error'],
+                    $responseData['status']
+                );
+            }
+
             return;
         }
 
-        $result = array_pop($responseData['results']);
-        if ($result['code'] < 200 || $result['code'] >= 300) {
+        $errorResult = $responseData['results'][0];
+        if (isset($errorResult['code']) && ($errorResult['code'] < 200 || $errorResult['code'] >= 300)) {
             throw new ApiCommandException(
                 'Can\'t send external Icinga command: %u %s',
-                $result['code'],
-                $result['status']
+                $errorResult['code'],
+                $errorResult['status']
             );
         }
+
+        return $responseData['results'];
     }
 
     /**
@@ -256,7 +271,7 @@ class ApiCommandTransport implements CommandTransportInterface
      */
     public function send(IcingaCommand $command, $now = null)
     {
-        $this->sendCommand($this->renderer->render($command));
+        return $this->sendCommand($this->renderer->render($command));
     }
 
     /**

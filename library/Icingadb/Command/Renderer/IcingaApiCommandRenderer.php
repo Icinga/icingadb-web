@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Command\Renderer;
 
 use Icinga\Module\Icingadb\Command\IcingaApiCommand;
+use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
@@ -95,6 +96,22 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         }
 
         return $this->$renderMethod($command);
+    }
+
+    public function renderGetObject(GetObjectCommand $command)
+    {
+        $endpoint = sprintf(
+            'objects/%s/%s',
+            $command->getObjectPluralType(),
+            rawurlencode($command->getObjectName())
+        );
+
+        $data = [
+            'all_joins' => 1,
+            'attrs'     => $command->getAttributes() ?: []
+        ];
+
+        return IcingaApiCommand::create($endpoint, $data)->setMethod('GET');
     }
 
     public function renderAddComment(AddCommentCommand $command)

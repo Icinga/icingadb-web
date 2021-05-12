@@ -7,9 +7,7 @@ namespace Icinga\Module\Icingadb\Common;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use ipl\Web\Url;
@@ -61,6 +59,11 @@ abstract class Links
         return Url::fromPath('icingadb/host', ['name' => $host->name]);
     }
 
+    public static function hostSource(Host $host)
+    {
+        return Url::fromPath('icingadb/host/source', ['name' => $host->name]);
+    }
+
     public static function hostsDetails()
     {
         return Url::fromPath('icingadb/hosts/details');
@@ -79,6 +82,11 @@ abstract class Links
     public static function service(Service $service, Host $host)
     {
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
+    }
+
+    public static function serviceSource(Service $service, Host $host)
+    {
+        return Url::fromPath('icingadb/service/source', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
     public static function servicesDetails()

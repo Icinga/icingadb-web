@@ -5,6 +5,8 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
+use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
@@ -13,6 +15,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
+use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
@@ -68,6 +71,24 @@ class ServiceController extends Controller
         $this->addContent(new ServiceDetail($this->service));
 
         $this->setAutorefreshInterval(10);
+    }
+
+    public function sourceAction()
+    {
+        $this->assertPermission('icingadb/object/show-source');
+        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObject($this->service));
+
+        if ($this->service->state->is_overdue) {
+            $this->controls->addAttributes(['class' => 'overdue']);
+        }
+
+        $this->addControl((new ServiceList([$this->service]))
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
+        $this->addContent(new ServiceInspectionDetail(
+            $this->service,
+            reset($apiResult)
+        ));
     }
 
     public function commentsAction()
@@ -190,8 +211,7 @@ class ServiceController extends Controller
 
     protected function createTabs()
     {
-        return $this
-            ->getTabs()
+        $tabs = $this->getTabs()
             ->add('index', [
                 'label'  => t('Service'),
                 'url'    => Links::service($this->service, $this->service->host)
@@ -200,6 +220,15 @@ class ServiceController extends Controller
                 'label'  => t('History'),
                 'url'    => ServiceLinks::history($this->service, $this->service->host)
             ]);
+
+        if ($this->hasPermission('icingadb/object/show-source')) {
+            $tabs->add('source', [
+                'label' => t('Source'),
+                'url'   => Links::serviceSource($this->service, $this->service->host)
+            ]);
+        }
+
+        return $tabs;
     }
 
     protected function setTitleTab($name)

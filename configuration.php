@@ -95,6 +95,11 @@ namespace Icinga\Module\Icingadb
         $this->translate('Allow to send custom notifications for hosts and services')
     );
 
+    $this->providePermission(
+        'icingadb/object/show-source',
+        $this->translate('Allow to view an object\'s source data. (May contain sensitive data!)')
+    );
+
     $this->provideRestriction(
         'icingadb/filter/objects',
         $this->translate('Restrict access to the Icinga objects that match the filter')
