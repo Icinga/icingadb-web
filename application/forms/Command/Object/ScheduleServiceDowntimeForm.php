@@ -54,10 +54,11 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'localDateTime',
             'start',
             [
-                'required'      => true,
-                'value'         => new DateTime(),
-                'label'         => t('Start Time'),
-                'description'   => t('Set the start date and time for the downtime.')
+                'data-use-datetime-picker'  => true,
+                'required'                  => true,
+                'value'                     => new DateTime(),
+                'label'                     => t('Start Time'),
+                'description'               => t('Set the start date and time for the downtime.')
             ]
         );
         $decorator->decorate($this->getElement('start'));
@@ -66,11 +67,12 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'localDateTime',
             'end',
             [
-                'required'      => true,
-                'label'         => t('End Time'),
-                'description'   => t('Set the end date and time for the downtime.'),
-                'value'         => (new DateTime())->add(new DateInterval('PT1H')),
-                'validators'    => ['Callback' => function ($value, $validator) {
+                'data-use-datetime-picker'  => true,
+                'required'                  => true,
+                'label'                     => t('End Time'),
+                'description'               => t('Set the end date and time for the downtime.'),
+                'value'                     => (new DateTime())->add(new DateInterval('PT1H')),
+                'validators'                => ['Callback' => function ($value, $validator) {
                     /** @var CallbackValidator $validator */
 
                     if ($value <= $this->getValue('start')) {

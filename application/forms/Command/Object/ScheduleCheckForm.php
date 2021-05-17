@@ -36,10 +36,11 @@ class ScheduleCheckForm extends CommandForm
             'localDateTime',
             'check_time',
             [
-                'required'      => true,
-                'label'         => t('Check Time'),
-                'description'   => t('Set the date and time when the check should be scheduled.'),
-                'value'         => (new DateTime())->add(new DateInterval('PT1H'))
+                'data-use-datetime-picker'  => true,
+                'required'                  => true,
+                'label'                     => t('Check Time'),
+                'description'               => t('Set the date and time when the check should be scheduled.'),
+                'value'                     => (new DateTime())->add(new DateInterval('PT1H'))
             ]
         );
         $decorator->decorate($this->getElement('check_time'));

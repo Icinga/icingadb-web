@@ -69,10 +69,11 @@ class AddCommentForm extends CommandForm
                 'localDateTime',
                 'expire_time',
                 [
-                    'required'      => true,
-                    'value'         => $expireTime,
-                    'label'         => t('Expire Time'),
-                    'description'   => t('Choose the date and time when Icinga should delete the comment.')
+                    'data-use-datetime-picker'  => true,
+                    'required'                  => true,
+                    'value'                     => $expireTime,
+                    'label'                     => t('Expire Time'),
+                    'description'               => t('Choose the date and time when Icinga should delete the comment.')
                 ]
             );
             $decorator->decorate($this->getElement('expire_time'));
