@@ -48,6 +48,9 @@ trait DetailActions
         $this->getAttributes()
             ->registerAttributeCallback('class', function () {
                 return $this->getDetailActionsDisabled() ? null : 'action-list';
+            })
+            ->registerAttributeCallback('data-icinga-multiselect-count-label', function () {
+                return $this->getDetailActionsDisabled() ? null : t('%d Item(s) selected');
             });
 
         return $this;
