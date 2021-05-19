@@ -212,25 +212,38 @@ div.show-more {
   }
 }
 
-.status-bar {
+.footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: .25em 1em;
-  box-shadow: 0 -1px 0 0px @gray-lighter;
-  font-size: .857em;
   z-index: 1000;
-  line-height: 1.7;
+
+  .selection-count {
+    flex: 1 1 auto;
+
+    .selected-items {
+      font-size: 1.25em;
+      color: @gray;
+    }
+  }
+
+  .status-bar, .selection-count {
+    font-size: .857em;
+    box-shadow: 0 -1px 0 0px @gray-lighter;
+    padding: .25em 1em;
+    line-height: 1.7;
+  }
+}
+
+.status-bar {
+  margin-left: auto;
 
   .item-count {
-    margin-left: auto;
     font-size: 1.25em;
     color: @gray;
   }
 
   .state-badges {
-    margin: 0;
-    margin-left: .417em;
+    display: inline-block;
+    margin: 0 0 0 .417em;
   }
 }
 
