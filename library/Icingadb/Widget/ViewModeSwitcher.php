@@ -8,11 +8,17 @@ use ipl\Html\Form;
 use ipl\Html\FormElement\HiddenElement;
 use ipl\Html\FormElement\InputElement;
 use ipl\Html\HtmlElement;
+use ipl\Web\Common\FormUid;
 use ipl\Web\Widget\IcingaIcon;
 
 class ViewModeSwitcher extends Form
 {
-    protected $defaultAttributes = ['class' => 'view-mode-switcher'];
+    use FormUid;
+
+    protected $defaultAttributes = [
+        'class' => 'view-mode-switcher',
+        'name'  => 'view-mode-switcher'
+    ];
 
     /** @var string Default view mode */
     const DEFAULT_VIEW_MODE = 'common';
@@ -125,6 +131,7 @@ class ViewModeSwitcher extends Form
         $viewModeParam = $this->getViewModeParam();
         $currentViewMode = $this->getViewMode();
 
+        $this->addElement($this->createUidElement());
         $this->addElement(new HiddenElement($viewModeParam));
 
         foreach (static::$viewModes as $viewMode => $icon) {
