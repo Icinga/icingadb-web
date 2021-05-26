@@ -98,8 +98,7 @@ class CommentsController extends Controller
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
-            $viewModeSwitcher->setUrl($searchBar->getRedirectUrl());
-            $this->sendMultipartUpdate($viewModeSwitcher, $continueWith);
+            $this->sendMultipartUpdate($continueWith);
         }
 
         $this->setAutorefreshInterval(10);

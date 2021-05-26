@@ -4,14 +4,22 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
-use ipl\Web\Url;
+use ipl\Html\Form;
+use ipl\Html\FormElement\HiddenElement;
+use ipl\Html\FormElement\InputElement;
+use ipl\Html\HtmlElement;
+use ipl\Web\Common\FormUid;
 use ipl\Web\Widget\IcingaIcon;
-use ipl\Web\Widget\Link;
 
-class ViewModeSwitcher extends BaseHtmlElement
+class ViewModeSwitcher extends Form
 {
+    use FormUid;
+
+    protected $defaultAttributes = [
+        'class' => 'view-mode-switcher',
+        'name'  => 'view-mode-switcher'
+    ];
+
     /** @var string Default view mode */
     const DEFAULT_VIEW_MODE = 'common';
 
@@ -25,41 +33,38 @@ class ViewModeSwitcher extends BaseHtmlElement
         'detailed' => 'detailed'
     ];
 
-    /** @var Url */
-    protected $url;
+    /** @var string */
+    protected $defaultViewMode;
+
+    /** @var string */
+    protected $method = 'POST';
+
+    /** @var callable */
+    protected $protector;
 
     /** @var string */
     protected $viewModeParam = self::DEFAULT_VIEW_MODE_PARAM;
 
-    protected $tag = 'ul';
-
-    protected $defaultAttributes = ['class' => 'view-mode-switcher'];
-
-    public function __construct(Url $url)
-    {
-        $this->url = $url;
-    }
-
     /**
-     * Get the base url
+     * Get the default mode
      *
-     * @return Url
+     * @return string
      */
-    public function getUrl()
+    public function getDefaultViewMode()
     {
-        return $this->url;
+        return $this->defaultViewMode ?: static::DEFAULT_VIEW_MODE;
     }
 
     /**
-     * Set the base url
+     * Set the default view mode
      *
-     * @param Url $url
+     * @param string $defaultViewMode
      *
      * @return $this
      */
-    public function setUrl(Url $url)
+    public function setDefaultViewMode($defaultViewMode)
     {
-        $this->url = $url;
+        $this->defaultViewMode = $defaultViewMode;
 
         return $this;
     }
@@ -95,7 +100,30 @@ class ViewModeSwitcher extends BaseHtmlElement
      */
     public function getViewMode()
     {
-        return $this->url->getParam($this->getViewModeParam(), static::DEFAULT_VIEW_MODE);
+        return $this->getValue($this->getViewModeParam(), $this->getDefaultViewMode());
+    }
+
+    /**
+     * Set callback to protect ids with
+     *
+     * @param   callable $protector
+     *
+     * @return  $this
+     */
+    public function setIdProtector($protector)
+    {
+        $this->protector = $protector;
+
+        return $this;
+    }
+
+    private function protectId($id)
+    {
+        if (is_callable($this->protector)) {
+            return call_user_func($this->protector, $id);
+        }
+
+        return $id;
     }
 
     protected function assemble()
@@ -103,16 +131,32 @@ class ViewModeSwitcher extends BaseHtmlElement
         $viewModeParam = $this->getViewModeParam();
         $currentViewMode = $this->getViewMode();
 
-        foreach (static::$viewModes as $viewMode => $icon) {
-            $url = $this->url->with($viewModeParam, $viewMode);
+        $this->addElement($this->createUidElement());
+        $this->addElement(new HiddenElement($viewModeParam));
 
-            $link = Html::tag('li', new Link(new IcingaIcon($icon), $url));
+        foreach (static::$viewModes as $viewMode => $icon) {
+            $protectedId = $this->protectId('view-mode-switcher-' . $icon);
+            $input = new InputElement($viewModeParam, [
+                'class' => 'autosubmit',
+                'id'    => $protectedId,
+                'name'  => $viewModeParam,
+                'type'  => 'radio',
+                'value' => $viewMode
+            ]);
+
+            $label = new HtmlElement(
+                'label',
+                [
+                    'for' => $protectedId
+                ],
+                new IcingaIcon($icon)
+            );
 
             if ($viewMode === $currentViewMode) {
-                $link->getAttributes()->add('class', 'active');
+                $input->getAttributes()->add('checked', true);
             }
 
-            $this->add($link);
+            $this->add([$input, $label]);
         }
     }
 }

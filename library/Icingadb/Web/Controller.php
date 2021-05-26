@@ -338,9 +338,27 @@ class Controller extends CompatController
     public function createViewModeSwitcher()
     {
         $viewModeSwitcher = new ViewModeSwitcher(Url::fromRequest());
-        $viewModeSwitcher->setAttribute('id', $this->getRequest()->protectId('view-switcher'));
+        $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
-        $this->params->shift($viewModeSwitcher->getViewModeParam());
+        $prefs = $this->Auth()->getUser()->getPreferences();
+        $viewMode = $prefs->getValue('icingadb', 'view_mode');
+        if (isset($viewMode)) {
+            $viewModeSwitcher->setDefaultViewMode($viewMode);
+        }
+
+        $viewModeSwitcher->populate(['view' => $this->params->shift($viewModeSwitcher->getViewModeParam())]);
+
+        $viewModeSwitcher->on(ViewModeSwitcher::ON_SUCCESS, function (ViewModeSwitcher $viewModeSwitcher) use ($prefs) {
+            $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
+
+            $icingadbPrefs = $prefs->icingadb ?: [];
+            $icingadbPrefs['view_mode'] = $viewMode;
+            $prefs->icingadb = $icingadbPrefs;
+
+            $this->redirectNow(Url::fromRequest()->setParam($viewModeSwitcher->getViewModeParam(), $viewMode));
+        });
+
+        $viewModeSwitcher->handleRequest(ServerRequest::fromGlobals());
 
         return $viewModeSwitcher;
     }
