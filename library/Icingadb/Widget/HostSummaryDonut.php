@@ -10,9 +10,9 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\TemplateString;
 use ipl\Web\Filter\QueryString;
 
 class HostSummaryDonut extends Card
@@ -61,10 +61,11 @@ class HostSummaryDonut extends Card
     {
         $header->add([
             new HtmlElement('h2', null, t('Hosts')),
-            Html::tag('span', ['class' => 'meta'], [
-                Html::tag('span', t('Total')),
-                ' ' . $this->summary->hosts_total
-            ])
+            new HtmlElement('span', ['class' => 'meta'], TemplateString::create(
+                t('{{#total}}Total{{/total}} %d'),
+                ['total' => new HtmlElement('span')],
+                (int) $this->summary->hosts_total
+            ))
         ]);
     }
 }

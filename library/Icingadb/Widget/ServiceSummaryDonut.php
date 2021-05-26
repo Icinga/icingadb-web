@@ -10,9 +10,9 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\TemplateString;
 use ipl\Web\Filter\QueryString;
 
 class ServiceSummaryDonut extends Card
@@ -63,10 +63,11 @@ class ServiceSummaryDonut extends Card
     {
         $header->add([
             new HtmlElement('h2', null, t('Services')),
-            Html::tag('span', ['class' => 'meta'], [
-                Html::tag('span', t('Total')),
-                ' ' . $this->summary->services_total
-            ])
+            new HtmlElement('span', ['class' => 'meta'], TemplateString::create(
+                t('{{#total}}Total{{/total}} %d'),
+                ['total' => new HtmlElement('span')],
+                (int) $this->summary->services_total
+            ))
         ]);
     }
 }
