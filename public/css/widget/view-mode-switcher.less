@@ -28,6 +28,11 @@
     &:not(:last-of-type) {
       border-right: 1px solid @low-sat-blue-dark;
     }
+
+    i {
+      // fix height for Chrome
+      display: block;
+    }
   }
 
   input[checked] + label {
