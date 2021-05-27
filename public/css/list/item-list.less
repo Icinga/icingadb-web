@@ -61,9 +61,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
 
-      .plugin-output {
-        .line-clamp();
-      }
+      .line-clamp();
     }
 
     header {
@@ -82,13 +80,6 @@
     margin: 0 1em;
     padding: 1em;
     text-align: center;
-  }
-}
-
-.item-list.minimal .list-item,
-.item-list.detailed .list-item {
-  .caption .plugin-output {
-    .line-clamp("reset");
   }
 }
 
@@ -120,13 +111,13 @@
     height: 1.5em;
     margin-right: 1em;
     width: 0;
+
+    .line-clamp("reset");
   }
 
   .caption,
   .caption .plugin-output {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    .text-ellipsis();
   }
 }
 
@@ -168,5 +159,7 @@
     height: auto;
     max-height: 7.5em; /* 5 lines */
     position: relative;
+
+    .line-clamp(4)
   }
 }
