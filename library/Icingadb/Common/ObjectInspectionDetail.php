@@ -101,7 +101,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
         try {
             $json = $this->getIcingaRedis()
-                ->hGet("icinga:config:state:{$this->object->getTableName()}", bin2hex($this->object->id));
+                ->hGet("icinga:{$this->object->getTableName()}:state", bin2hex($this->object->id));
         } catch (Exception $e) {
             return [$title, sprintf('Failed to load redis data: %s', $e->getMessage())];
         }
