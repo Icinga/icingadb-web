@@ -46,7 +46,7 @@ class QuickActions extends BaseHtmlElement
                 $this->assembleAction(
                     'acknowledge',
                     t('Acknowledge'),
-                    'edit',
+                    'check-circle',
                     t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
                 );
             }
