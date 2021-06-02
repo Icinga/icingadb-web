@@ -59,12 +59,18 @@
   .vertical-key-value .value,
   .vertical-key-value .key {
     font-size: 16/18em;
-    line-height: 1.5;
+    line-height: 18/16; // compensate smaller font-size (1/font-size)
   }
 }
 
+
+// @ToDo: Isn't this obsolete, since `.host-meta-info` is wrapped in `#host-meta-info`
 .controls > .host-meta-info {
   margin-top: -.5em;
+}
+
+.controls .host-meta-info {
+  margin-bottom: .5em;
 }
 
 .host-meta-info-control {
