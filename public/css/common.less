@@ -95,6 +95,11 @@ div.show-more {
     margin-bottom: .5em;
   }
 
+  // ToDo: .5em spacing (`margin-bottom`) should be applied to `.collapsible` content?
+  > .collapsible {
+    margin-bottom: 0
+  }
+
   &.overdue,
   &.overdue .tabs li.active a {
     background-color: @gray-lighter;
