@@ -55,6 +55,8 @@
         event.stopImmediatePropagation();
         event.stopPropagation();
 
+        var container = $list.closest('.container');
+
         if ($list.is('[data-icinga-multiselect-url]')) {
             if (event.ctrlKey || event.metaKey) {
                 $item.toggleClass('active');
@@ -82,14 +84,28 @@
                 $list.find('.list-item.active').removeClass('active');
                 $item.addClass('active');
             }
+
+            // For items that do not have a bottom status bar like Downtimes, Comments...
+            if (! container.children('.footer').length) {
+                container.append('<div class="footer" data-action-list-automatically-added></div>');
+            }
         } else {
             $list.find('.list-item.active').removeClass('active');
             $item.addClass('active');
         }
 
         $activeItems = $list.find('.list-item.active');
+        var footer = container.children('.footer');
 
         if ($activeItems.length === 0) {
+            if (footer.length) {
+                if (typeof footer.data('action-list-automatically-added') !== 'undefined') {
+                    footer.remove();
+                } else {
+                    footer.children('.selection-count').remove();
+                }
+            }
+
             if (_this.icinga.loader.getLinkTargetFor($target).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
             }
@@ -104,6 +120,20 @@
                 });
 
                 url = $list.attr('data-icinga-multiselect-url') + '?(' + filters.toArray().join('|') + ')';
+            }
+
+            if ($list.is('[data-icinga-multiselect-url]')) {
+                if (! footer.children('.selection-count').length) {
+                    footer.prepend('<div class="selection-count"></div>');
+                }
+
+                var label = $list.data('icinga-multiselect-count-label').replace('%d', $activeItems.length);
+                var selectedItems = footer.find('.selection-count > .selected-items');
+                if (selectedItems.length) {
+                    selectedItems.text(label);
+                } else {
+                    footer.children('.selection-count').append('<span class="selected-items">' + label + '</span>');
+                }
             }
 
             _this.icinga.loader.loadUrl(
@@ -135,6 +165,16 @@
                     '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
                 ).removeClass('active');
             }
+
+            var footer = $list.closest('.container').children('.footer');
+
+            if (footer.length) {
+                if (typeof footer.data('action-list-automatically-added') !== 'undefined') {
+                    footer.remove();
+                } else {
+                    footer.children('.selection-count').remove();
+                }
+            }
         }
     };
 
@@ -161,6 +201,21 @@
                 $list.find(
                     '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
                 ).addClass('active');
+            }
+        }
+
+        if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
+            var $activeItems = $list.find('.list-item.active');
+
+            if ($activeItems.length) {
+                if (! $target.children('.footer').length) {
+                    $target.append('<div class="footer" data-action-list-automatically-added></div>');
+                }
+
+                var label = $list.data('icinga-multiselect-count-label').replace('%d', $activeItems.length);
+                $target.children('.footer').prepend(
+                    '<div class="selection-count"><span class="selected-items">' + label + '</span></div>'
+                );
             }
         }
     };
