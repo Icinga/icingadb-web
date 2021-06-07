@@ -12,6 +12,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
 
 class MultiselectQuickActions extends BaseHtmlElement
 {
@@ -50,7 +51,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'acknowledge',
                 t('Acknowledge'),
-                'icon-edit',
+                'check-circle',
                 t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
             );
         }
@@ -90,7 +91,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'addComment',
                 t('Comment'),
-                'icon-comment-empty',
+                'comment',
                 t('Add a new comment')
             );
         }
@@ -106,7 +107,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
-                'icon-bell',
+                'bell',
                 t('Send a custom notification')
             );
         }
@@ -122,7 +123,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'scheduleDowntime',
                 t('Downtime'),
-                'icon-plug',
+                'plug',
                 t('Schedule a downtime to suppress all problem notifications within a specific period of time')
             );
         }
@@ -142,7 +143,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'scheduleCheck',
                 t('Reschedule'),
-                'icon-calendar-empty',
+                'calendar',
                 t('Schedule the next active check at a different time than the current one')
             );
         }
@@ -158,7 +159,7 @@ class MultiselectQuickActions extends BaseHtmlElement
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),
-                'icon-edit',
+                'edit',
                 t('Submit passive check result')
             );
         }
@@ -176,7 +177,7 @@ class MultiselectQuickActions extends BaseHtmlElement
                 'data-no-icinga-ajax' => true
             ],
             [
-                Html::tag('i', ['class' => $icon]),
+                new Icon($icon),
                 $label
             ]
         );
