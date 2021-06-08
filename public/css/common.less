@@ -112,15 +112,6 @@ div.show-more {
     .search-bar {
       flex: 1 1 auto;
     }
-
-    .search-editor-opener,
-    .continue-with {
-      margin-left: .5em;
-
-      &:last-child {
-        margin-right: -.5em;
-      }
-    }
   }
 
   .pagination-control {
@@ -148,13 +139,17 @@ div.show-more {
     padding-top: .25em;
   }
 
+  .control-button {
+    margin-left: .5em;
+
+    &:last-child {
+      margin-right: -.5em;
+    }
+  }
+
   .sort-control {
     display: flex;
     justify-content: flex-end;
-
-	.control-button {
-      margin-right: 0;
-    }
 
     // Icinga Web 2 override
     label {
@@ -164,7 +159,10 @@ div.show-more {
     // Icinga Web 2 override
     .spinner {
       height: 100%;
-      padding-right: 0;
+    }
+
+    .control-button {
+      margin: 0;
     }
 
     .link-button {
@@ -180,7 +178,6 @@ div.show-more {
 
   .show-more {
     margin-top: .25em;
-    margin-left: 6em;
   }
 }
 
@@ -317,4 +314,3 @@ div.show-more {
 .servicegropup-list > col.object-statistics-graph {
   padding-right: .25em;
 }
-
