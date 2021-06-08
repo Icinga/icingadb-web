@@ -32,7 +32,7 @@ class DeleteDowntimeForm extends CommandForm
                 'class' => ['cancel-button', 'spinner'],
                 'label' => [
                     new Icon('trash'),
-                    tp('Delete downtime', 'Delete donwtimes', count($this->getObjects()))
+                    tp('Delete downtime', 'Delete downtimes', count($this->getObjects()))
                 ]
             ]
         );
