@@ -4,11 +4,17 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Widget\EmptyState;
+use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
@@ -123,6 +129,75 @@ class EventDetail extends BaseHtmlElement
         }
     }
 
+    protected function assembleStateChangeEvent(StateHistory $stateChange)
+    {
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Plugin Output'))),
+            HtmlElement::create('div', [
+                'id'    => 'check-output-' . (
+                    $stateChange->object_type === 'host'
+                        ? $this->event->host->checkcommand
+                        : $this->event->service->checkcommand
+                ),
+                'class' => 'collapsible',
+                'data-visible-height' => 100
+            ], CompatPluginOutput::getInstance()->render(
+                $stateChange->output . "\n" . $stateChange->long_output
+            ))
+        );
+
+        if ($stateChange->object_type === 'host') {
+            $objectKey = t('Host');
+            $objectState = $stateChange->state_type === 'hard' ? $stateChange->hard_state : $stateChange->soft_state;
+            $objectInfo = HtmlElement::create('span', ['class' => 'accompanying-text'], [
+                HtmlElement::create('span', ['class' => 'state-change'], [
+                    new StateBall(HostStates::text($stateChange->previous_soft_state), StateBall::SIZE_MEDIUM),
+                    new StateBall(HostStates::text($objectState), StateBall::SIZE_MEDIUM)
+                ]),
+                ' ',
+                HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+            ]);
+        } else {
+            $objectKey = t('Service');
+            $objectState = $stateChange->state_type === 'hard' ? $stateChange->hard_state : $stateChange->soft_state;
+            $objectInfo = HtmlElement::create('span', ['class' => 'accompanying-text'], [
+                HtmlElement::create('span', ['class' => 'state-change'], [
+                    new StateBall(ServiceStates::text($stateChange->previous_soft_state), StateBall::SIZE_MEDIUM),
+                    new StateBall(ServiceStates::text($objectState), StateBall::SIZE_MEDIUM)
+                ]),
+                ' ',
+                FormattedString::create(
+                    t('%s on %s', '<service> on <host>'),
+                    HtmlElement::create('span', ['class' => 'subject'], $this->event->service->display_name),
+                    HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+                )
+            ]);
+        }
+
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Event Info'))),
+            new HorizontalKeyValue(t('Occurred On'), DateFormatter::formatDateTime($stateChange->event_time)),
+            new HorizontalKeyValue(t('Check Source'), $stateChange->check_source)
+        );
+        if ($stateChange->state_type === 'soft') {
+            $this->addHtml(new HorizontalKeyValue(t('Check Attempt'), sprintf(
+                t('%d of %d'),
+                $stateChange->attempt,
+                $stateChange->max_check_attempts
+            )));
+        }
+        $this->addHtml(
+            new HorizontalKeyValue(t('State'), $stateChange->object_type === 'host'
+                ? ucfirst(HostStates::text($objectState))
+                : ucfirst(ServiceStates::text($objectState))),
+            new HorizontalKeyValue(
+                t('State Type'),
+                $stateChange->state_type === 'hard' ? t('Hard', 'state') : t('Soft', 'state')
+            ),
+            new HorizontalKeyValue($objectKey, $objectInfo)
+        );
+    }
+
     protected function assemble()
     {
         switch ($this->event->event_type) {
@@ -131,6 +206,9 @@ class EventDetail extends BaseHtmlElement
 
                 break;
             case 'state_change':
+                $this->assembleStateChangeEvent($this->event->state);
+
+                break;
             case 'downtime_start':
             case 'downtime_end':
             case 'comment_add':
