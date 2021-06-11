@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\AcknowledgementHistory;
+use Icinga\Module\Icingadb\Model\CommentHistory;
 use Icinga\Module\Icingadb\Model\FlappingHistory;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
@@ -203,6 +204,64 @@ class EventDetail extends BaseHtmlElement
         );
     }
 
+    protected function assembleCommentEvent(CommentHistory $comment)
+    {
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Comment'))),
+            new MarkdownText($comment->comment)
+        );
+
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Event Info'))),
+            $comment->object_type === 'host'
+                ? new HorizontalKeyValue(t('Host'), HtmlElement::create(
+                    'span',
+                    ['class' => 'accompanying-text'],
+                    HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+                ))
+                : new HorizontalKeyValue(t('Service'), HtmlElement::create(
+                    'span',
+                    ['class' => 'accompanying-text'],
+                    FormattedString::create(
+                        t('%s on %s', '<service> on <host>'),
+                        HtmlElement::create('span', ['class' => 'subject'], $this->event->service->display_name),
+                        HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+                    )
+                )),
+            new HorizontalKeyValue(t('Entered On'), DateFormatter::formatDateTime($comment->entry_time)),
+            new HorizontalKeyValue(t('Author'), [new Icon('user'), $comment->author]),
+            new HorizontalKeyValue(t('Expires On'), $comment->expire_time
+                ? DateFormatter::formatDateTime($comment->expire_time)
+                : '-')
+        );
+
+        if ($comment->entry_type === 'ack') {
+            $this->addHtml(
+                new HtmlElement('h2', null, Text::create(t('This comment is tied to an acknowledgement'))),
+                new HorizontalKeyValue(t('Sticky'), $comment->is_sticky ? t('Yes') : t('No')),
+                new HorizontalKeyValue(t('Persistent'), $comment->is_persistent ? t('Yes') : t('No'))
+            );
+        }
+
+        if ($comment->has_been_removed) {
+            $this->addHtml(new HtmlElement('h2', null, Text::create(t('This comment has been removed'))));
+            if ($comment->removed_by) {
+                $this->addHtml(
+                    new HorizontalKeyValue(t('Removed On'), DateFormatter::formatDateTime($comment->remove_time))
+                );
+                if ($comment->removed_by) {
+                    $this->addHtml(
+                        new HorizontalKeyValue(t('Removed by'), [new Icon('user'), $comment->removed_by])
+                    );
+                }
+            } else {
+                $this->addHtml(
+                    new HorizontalKeyValue(t('Expired On'), DateFormatter::formatDateTime($comment->remove_time))
+                );
+            }
+        }
+    }
+
     protected function assembleFlappingEvent(FlappingHistory $flapping)
     {
         $this->addHtml(
@@ -343,6 +402,9 @@ class EventDetail extends BaseHtmlElement
             case 'downtime_end':
             case 'comment_add':
             case 'comment_remove':
+                $this->assembleCommentEvent($this->event->comment);
+
+                break;
             case 'flapping_start':
             case 'flapping_end':
                 $this->assembleFlappingEvent($this->event->flapping);
