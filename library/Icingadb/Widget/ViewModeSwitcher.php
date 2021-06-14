@@ -152,8 +152,25 @@ class ViewModeSwitcher extends Form
                 new IcingaIcon($icon)
             );
 
+            switch ($viewMode) {
+                case 'minimal':
+                    $active = t('Minimal view active');
+                    $inactive = t('Switch to minimal view');
+                    break;
+                case 'common':
+                    $active = t('Common view active');
+                    $inactive = t('Switch to common view');
+                    break;
+                case 'detailed':
+                    $active = t('Detailed view active');
+                    $inactive = t('Switch to detailed view');
+            }
+
             if ($viewMode === $currentViewMode) {
                 $input->getAttributes()->add('checked', true);
+                $label->getAttributes()->add('title', $active);
+            } else {
+                $label->getAttributes()->add('title', $inactive);
             }
 
             $this->add([$input, $label]);
