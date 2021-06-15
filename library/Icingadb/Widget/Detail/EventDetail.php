@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\AcknowledgementHistory;
 use Icinga\Module\Icingadb\Model\CommentHistory;
+use Icinga\Module\Icingadb\Model\DowntimeHistory;
 use Icinga\Module\Icingadb\Model\FlappingHistory;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
@@ -202,6 +203,58 @@ class EventDetail extends BaseHtmlElement
             ),
             new HorizontalKeyValue($objectKey, $objectInfo)
         );
+    }
+
+    protected function assembleDowntimeEvent(DowntimeHistory $downtime)
+    {
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Comment'))),
+            new MarkdownText($downtime->comment)
+        );
+
+        $this->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Event Info'))),
+            $downtime->object_type === 'host'
+                ? new HorizontalKeyValue(t('Host'), HtmlElement::create(
+                    'span',
+                    ['class' => 'accompanying-text'],
+                    HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+                ))
+                : new HorizontalKeyValue(t('Service'), HtmlElement::create(
+                    'span',
+                    ['class' => 'accompanying-text'],
+                    FormattedString::create(
+                        t('%s on %s', '<service> on <host>'),
+                        HtmlElement::create('span', ['class' => 'subject'], $this->event->service->display_name),
+                        HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
+                    )
+                )),
+            new HorizontalKeyValue(t('Entered On'), DateFormatter::formatDateTime($downtime->entry_time)),
+            new HorizontalKeyValue(t('Author'), [new Icon('user'), $downtime->author]),
+            // TODO: The following should be presented in a specific widget (maybe just like the downtime card)
+            new HorizontalKeyValue(t('Triggered On'), DateFormatter::formatDateTime($downtime->trigger_time)),
+            new HorizontalKeyValue(
+                t('Scheduled Start'),
+                DateFormatter::formatDateTime($downtime->scheduled_start_time)
+            ),
+            new HorizontalKeyValue(t('Actual Start'), DateFormatter::formatDateTime($downtime->start_time)),
+            new HorizontalKeyValue(t('Scheduled End'), DateFormatter::formatDateTime($downtime->scheduled_end_time)),
+            new HorizontalKeyValue(t('Actual End'), DateFormatter::formatDateTime($downtime->end_time))
+        );
+        if ($downtime->is_flexible) {
+            $this->addHtml(
+                new HorizontalKeyValue(t('Flexible'), t('Yes')),
+                new HorizontalKeyValue(t('Duration'), DateFormatter::formatDuration($downtime->flexible_duration))
+            );
+        }
+
+        if ($downtime->has_been_cancelled) {
+            $this->addHtml(
+                new HtmlElement('h2', null, Text::create(t('This downtime has been cancelled'))),
+                new HorizontalKeyValue(t('Cancelled On'), DateFormatter::formatDateTime($downtime->cancel_time)),
+                new HorizontalKeyValue(t('Cancelled by'), [new Icon('user'), $downtime->cancelled_by])
+            );
+        }
     }
 
     protected function assembleCommentEvent(CommentHistory $comment)
@@ -400,6 +453,9 @@ class EventDetail extends BaseHtmlElement
                 break;
             case 'downtime_start':
             case 'downtime_end':
+                $this->assembleDowntimeEvent($this->event->downtime);
+
+                break;
             case 'comment_add':
             case 'comment_remove':
                 $this->assembleCommentEvent($this->event->comment);
