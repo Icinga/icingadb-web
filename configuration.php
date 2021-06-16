@@ -349,13 +349,6 @@ namespace Icinga\Module\Icingadb
         'url'   => 'command-transport'
     ]);
 
-    try {
-        // TODO: Remove this before the stable release!!!1!11
-        $this->requireCssFile('*', 'ipl');
-    } catch (Exception $_) {
-        // Ignored
-    }
-
     $cssDirectory = $this->getCssDir();
     $cssFiles = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
         $cssDirectory,
