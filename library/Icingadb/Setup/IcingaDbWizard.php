@@ -43,7 +43,6 @@ class IcingaDbWizard extends Wizard implements SetupWizard
         $setup->addStep(new DbResourceStep($pageData['setup_icingadb_resource']));
         $setup->addStep(new RedisStep($pageData['setup_icingadb_redis']));
         $setup->addStep(new ApiTransportStep($pageData['setup_icingadb_api_transport']));
-        $setup->addStep(new EnableModuleStep(['ipl']));
 
         return $setup;
     }
@@ -51,15 +50,6 @@ class IcingaDbWizard extends Wizard implements SetupWizard
     public function getRequirements()
     {
         $set = new RequirementSet();
-
-        $set->add(new WebModuleRequirement([
-            'condition'     => ['ipl', '>=', '0.5'],
-            'alias'         => 'Icinga PHP Library',
-            'description'   => mt(
-                'icingadb',
-                'The IPL module for Icinga Web 2 is required in version 0.5+.'
-            )
-        ]));
 
         $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
