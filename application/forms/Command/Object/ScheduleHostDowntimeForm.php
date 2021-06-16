@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use DateInterval;
+use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
@@ -12,12 +14,34 @@ use ipl\Web\FormDecorator\IcingaFormDecorator;
 
 class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
 {
+    /** @var bool */
+    protected $hostDowntimeAllServices;
+
+    public function __construct()
+    {
+        $this->start = new DateTime();
+        $config = Config::module('icingadb');
+        $this->commentText = $config->get('settings', 'hostdowntime_comment_text');
+
+        $this->hostDowntimeAllServices = (bool) $config->get('settings', 'hostdowntime_all_services', false);
+
+        $fixedEnd = clone $this->start;
+        $fixed = $config->get('settings', 'hostdowntime_end_fixed', 'PT1H');
+        $this->fixedEnd = $fixedEnd->add(new DateInterval($fixed));
+
+        $flexibleEnd = clone $this->start;
+        $flexible = $config->get('settings', 'hostdowntime_end_flexible', 'PT2H');
+        $this->flexibleEnd = $flexibleEnd->add(new DateInterval($flexible));
+
+        $flexibleDuration = $config->get('settings', 'hostdowntime_flexible_duration', 'PT2H');
+        $this->flexibleDuration = new DateInterval($flexibleDuration);
+    }
+
     protected function assembleElements()
     {
         parent::assembleElements();
 
         $decorator = new IcingaFormDecorator();
-        $config = Config::module('icingadb');
 
         $this->addElement(
             'checkbox',
@@ -28,7 +52,7 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
                     'Sets downtime for all services for the matched host objects. If child options are set,'
                     . ' all child hosts and their services will schedule a downtime too.'
                 ),
-                'value'         => (bool) $config->get('settings', 'hostdowntime_all_services', false)
+                'value'         => $this->hostDowntimeAllServices
             ]
         );
         $decorator->decorate($this->getElement('all_services'));

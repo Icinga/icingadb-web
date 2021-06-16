@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use DateInterval;
 use DateTime;
+use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
@@ -21,8 +22,47 @@ class ScheduleServiceDowntimeForm extends CommandForm
 {
     use Auth;
 
+    /** @var DateTime downtime start */
+    protected $start;
+
+    /** @var DateTime fixed downtime end */
+    protected $fixedEnd;
+
+    /**@var DateTime flexible downtime end */
+    protected $flexibleEnd;
+
+    /**  @var DateInterval flexible downtime duration */
+    protected $flexibleDuration;
+
+    /** @var mixed Comment Text */
+    protected $commentText;
+
+    /**
+     * Initialize this form
+     */
+    public function __construct()
+    {
+        $this->start = new DateTime();
+
+        $config = Config::module('icingadb');
+
+        $this->commentText = $config->get('settings', 'hostdowntime_comment_text');
+        $fixedEnd = clone $this->start;
+        $fixed = $config->get('settings', 'servicedowntime_end_fixed', 'PT1H');
+        $this->fixedEnd = $fixedEnd->add(new DateInterval($fixed));
+
+        $flexibleEnd = clone $this->start;
+        $flexible = $config->get('settings', 'servicedowntime_end_flexible', 'PT2H');
+        $this->flexibleEnd = $flexibleEnd->add(new DateInterval($flexible));
+
+        $flexibleDuration = $config->get('settings', 'servicedowntime_flexible_duration', 'PT2H');
+        $this->flexibleDuration = new DateInterval($flexibleDuration);
+    }
+
     protected function assembleElements()
     {
+        $isFlexible = $this->getPopulatedValue('flexible') === 'y';
+
         $this->addHtml(new HtmlElement(
             'div',
             Attributes::create(['class' => 'form-description']),
@@ -55,7 +95,8 @@ class ScheduleServiceDowntimeForm extends CommandForm
                     'If you work with other administrators, you may find it useful to share information about'
                     . ' the host or service that is having problems. Make sure you enter a brief description of'
                     . ' what you are doing.'
-                )
+                ),
+                'value'         => $this->commentText
             ]
         );
         $decorator->decorate($this->getElement('comment'));
@@ -66,7 +107,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
             [
                 'data-use-datetime-picker'  => true,
                 'required'                  => true,
-                'value'                     => new DateTime(),
+                'value'                     => $this->start,
                 'label'                     => t('Start Time'),
                 'description'               => t('Set the start date and time for the downtime.')
             ]
@@ -81,7 +122,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
                 'required'                  => true,
                 'label'                     => t('End Time'),
                 'description'               => t('Set the end date and time for the downtime.'),
-                'value'                     => (new DateTime())->add(new DateInterval('PT1H')),
+                'value'                     => $isFlexible ? $this->flexibleEnd : $this->fixedEnd,
                 'validators'                => ['Callback' => function ($value, $validator) {
                     /** @var CallbackValidator $validator */
 
@@ -116,14 +157,14 @@ class ScheduleServiceDowntimeForm extends CommandForm
         );
         $decorator->decorate($this->getElement('flexible'));
 
-        if ($this->getPopulatedValue('flexible') === 'y') {
+        if ($isFlexible) {
             $hoursInput = $this->createElement(
                 'number',
                 'hours',
                 [
                     'required'  => true,
                     'label'     => t('Duration'),
-                    'value'     => 2,
+                    'value'     => $this->flexibleDuration->h,
                     'min'       => 0
                 ]
             );
@@ -135,7 +176,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
                 'minutes',
                 [
                     'required'  => true,
-                    'value'     => 0,
+                    'value'     => $this->flexibleDuration->m,
                     'min'       => 0
                 ]
             );
