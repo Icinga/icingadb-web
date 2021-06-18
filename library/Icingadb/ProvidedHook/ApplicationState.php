@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Web\Session;
+use ipl\Stdlib\Filter;
 
 class ApplicationState extends ApplicationStateHook
 {
@@ -18,7 +19,11 @@ class ApplicationState extends ApplicationStateHook
 
     public function collectMessages()
     {
-        $instance = Instance::on($this->getDb())->with(['endpoint'])->first();
+        $instance = Instance::on($this->getDb())
+            ->with(['endpoint'])
+            ->filter(Filter::equal('responsible', true))
+            ->orderBy('heartbeat', 'desc')
+            ->first();
 
         if ($instance === null) {
             $noInstanceSince = Session::getSession()
