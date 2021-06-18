@@ -42,6 +42,9 @@ class Controller extends CompatController
     /** @var string|null */
     private $format;
 
+    /** @var bool */
+    private $formatProcessed = false;
+
     /**
      * Get the filter created from query string parameters
      *
@@ -457,6 +460,7 @@ class Controller extends CompatController
                 if ($interceptable instanceof Generator) {
                     foreach ($interceptable as $stopSignal) {
                         if ($stopSignal === true) {
+                            $this->formatProcessed = true;
                             break;
                         }
                     }
@@ -517,7 +521,9 @@ class Controller extends CompatController
 
     public function filter(Query $query, Filter\Rule $filter = null)
     {
-        $this->applyRestrictions($query);
+        if ($this->format !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
+            $this->applyRestrictions($query);
+        }
 
         if ($query instanceof UnionQuery) {
             foreach ($query->getUnions() as $query) {
@@ -535,6 +541,22 @@ class Controller extends CompatController
         parent::preDispatch();
 
         $this->format = $this->params->shift('format');
+    }
+
+    public function postDispatch()
+    {
+        if (! $this->formatProcessed && $this->format !== null) {
+            // The purpose of this is not only to show that a requested format isn't supported.
+            // It's main purpose is to not allow to bypass restrictions with `?format=sql` as
+            // it may be possible that an action applies restrictions, but doesn't support any
+            // output formats. Since the restrictions are bypassed in method `$this->filter()`
+            // for the SQL output format and the actual format processing is part of a different
+            // method (`$this->export()`) which needs to be called explicitly by an action,
+            // it's otherwise possible for bad individuals to access unrestricted data.
+            $this->httpBadRequest(t('This route does not support the requested output format'));
+        }
+
+        parent::postDispatch();
     }
 
     protected function moduleInit()
