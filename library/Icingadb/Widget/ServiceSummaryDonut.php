@@ -9,10 +9,12 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\TemplateString;
+use ipl\Html\Text;
 use ipl\Web\Filter\QueryString;
 
 class ServiceSummaryDonut extends Card
@@ -51,23 +53,25 @@ class ServiceSummaryDonut extends Card
             ->setLabelBigEyeCatching($this->summary->services_critical_unhandled > 0)
             ->setLabelSmall(t('Critical'));
 
-        $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
+        $body->addHtml(
+            new HtmlElement('div', Attributes::create(['class' => 'donut']), new HtmlString($donut->render()))
+        );
     }
 
     protected function assembleFooter(BaseHtmlElement $footer)
     {
-        $footer->add((new ServiceStateBadges($this->summary))->setBaseFilter($this->getBaseFilter()));
+        $footer->addHtml((new ServiceStateBadges($this->summary))->setBaseFilter($this->getBaseFilter()));
     }
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add([
-            new HtmlElement('h2', null, t('Services')),
-            new HtmlElement('span', ['class' => 'meta'], TemplateString::create(
+        $header->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Services'))),
+            new HtmlElement('span', Attributes::create(['class' => 'meta']), TemplateString::create(
                 t('{{#total}}Total{{/total}} %d'),
                 ['total' => new HtmlElement('span')],
                 (int) $this->summary->services_total
             ))
-        ]);
+        );
     }
 }
