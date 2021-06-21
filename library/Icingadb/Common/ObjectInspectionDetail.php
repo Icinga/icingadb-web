@@ -17,6 +17,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
+use ipl\Html\Text;
 use ipl\Orm\Model;
 
 abstract class ObjectInspectionDetail extends BaseHtmlElement
@@ -50,11 +51,11 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         }
 
         return [
-            new HtmlElement('h2', null, t('Source Location')),
+            new HtmlElement('h2', null, Text::create(t('Source Location'))),
             FormattedString::create(
                 t('You can find this object in %s on line %s.'),
-                new HtmlElement('strong', null, $this->attrs['source_location']['path']),
-                new HtmlElement('strong', null, $this->attrs['source_location']['first_line'])
+                new HtmlElement('strong', null, Text::create($this->attrs['source_location']['path'])),
+                new HtmlElement('strong', null, Text::create($this->attrs['source_location']['first_line']))
             )
         ];
     }
@@ -78,9 +79,9 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         ];
 
         return [
-            new HtmlElement('h2', null, t('Executed Command')),
-            new HtmlElement('pre', null, $command),
-            new HtmlElement('h2', null, t('Execution Details')),
+            new HtmlElement('h2', null, Text::create(t('Executed Command'))),
+            new HtmlElement('pre', null, Text::create($command)),
+            new HtmlElement('h2', null, Text::create(t('Execution Details'))),
             $this->createNameValueTable(
                 array_diff_key($this->attrs['last_check_result'], array_flip($blacklist)),
                 [
@@ -97,7 +98,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
     protected function createRedisInfo()
     {
-        $title = new HtmlElement('h2', null, t('Volatile State Details'));
+        $title = new HtmlElement('h2', null, Text::create(t('Volatile State Details')));
 
         try {
             $json = $this->getIcingaRedis()
@@ -158,7 +159,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         ];
 
         return [
-            new HtmlElement('h2', null, t('Object Attributes')),
+            new HtmlElement('h2', null, Text::create(t('Object Attributes'))),
             $this->createNameValueTable(
                 array_diff_key($this->attrs, array_flip($blacklist)),
                 [
@@ -198,7 +199,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         return new HtmlElement(
             'pre',
             null,
-            Json::encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            Text::create(Json::encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
         );
     }
 
@@ -258,7 +259,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                 $value = $this->formatJson($value);
             }
 
-            $table->add(Table::tr([
+            $table->addHtml(Table::tr([
                 Table::th($name),
                 Table::td($value)
             ]));
