@@ -9,7 +9,9 @@ use DateTime;
 use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
@@ -21,17 +23,25 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
     protected function assembleElements()
     {
-        $this->add(new HtmlElement('div', ['class' => 'form-description'], [
+        $this->addHtml(new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'form-description']),
             new Icon('info-circle', ['class' => 'form-description-icon']),
-            new HtmlElement('ul', null, [
-                new HtmlElement('li', null, t(
-                    'This command is used to schedule host and service downtimes. During the downtime specified'
-                    . ' by the start and end time, Icinga will not send notifications out about the hosts and'
-                    . ' services. When the scheduled downtime expires, Icinga will send out notifications for'
-                    . ' the hosts and services as it normally would.'
-                ))
-            ])
-        ]));
+            new HtmlElement(
+                'ul',
+                null,
+                new HtmlElement(
+                    'li',
+                    null,
+                    Text::create(t(
+                        'This command is used to schedule host and service downtimes. During the downtime specified'
+                        . ' by the start and end time, Icinga will not send notifications out about the hosts and'
+                        . ' services. When the scheduled downtime expires, Icinga will send out notifications for'
+                        . ' the hosts and services as it normally would.'
+                    ))
+                )
+            )
+        ));
 
         $decorator = new IcingaFormDecorator();
 
@@ -131,14 +141,14 @@ class ScheduleServiceDowntimeForm extends CommandForm
             );
             $this->registerElement($minutesInput);
             $minutesInput->addWrapper(
-                new HtmlElement('label', null, new HtmlElement('span', null, t('Minutes')))
+                new HtmlElement('label', null, new HtmlElement('span', null, Text::create(t('Minutes'))))
             );
 
             $hoursInput->getWrapper()
                 ->add($minutesInput)
                 ->getAttributes()->add('class', 'downtime-duration');
             $hoursInput->prependWrapper(
-                new HtmlElement('label', null, new HtmlElement('span', null, t('Hours')))
+                new HtmlElement('label', null, new HtmlElement('span', null, Text::create(t('Hours'))))
             );
 
             $this->add($hoursInput);
