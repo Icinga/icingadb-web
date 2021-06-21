@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Widget\BaseItemList;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
@@ -71,7 +72,7 @@ abstract class BaseTableRowItem extends BaseHtmlElement
 
     protected function createVisual()
     {
-        $visual = new HtmlElement('div', ['class' => 'visual']);
+        $visual = new HtmlElement('div', Attributes::create(['class' => 'visual']));
 
         $this->assembleVisual($visual);
 
