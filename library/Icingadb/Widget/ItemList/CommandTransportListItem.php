@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\BaseOrderedListItem;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
@@ -25,12 +26,12 @@ class CommandTransportListItem extends BaseOrderedListItem
 
     protected function assembleMain(BaseHtmlElement $main)
     {
-        $main->add(new Link(
-            new HtmlElement('strong', null, $this->item->name),
+        $main->addHtml(new Link(
+            new HtmlElement('strong', null, Text::create($this->item->name)),
             Url::fromPath('icingadb/command-transport/show', ['name' => $this->item->name])
         ));
 
-        $main->add(new Link(
+        $main->addHtml(new Link(
             new Icon('trash', ['title' => sprintf(t('Remove command transport "%s"'), $this->item->name)]),
             Url::fromPath('icingadb/command-transport/remove', ['name' => $this->item->name]),
             [
@@ -41,7 +42,7 @@ class CommandTransportListItem extends BaseOrderedListItem
         ));
 
         if ($this->getOrder() + 1 < $this->list->count()) {
-            $main->add((new Link(
+            $main->addHtml((new Link(
                 new Icon('arrow-down'),
                 Url::fromPath('icingadb/command-transport/sort', [
                     'name'  => $this->item->name,
@@ -52,7 +53,7 @@ class CommandTransportListItem extends BaseOrderedListItem
         }
 
         if ($this->getOrder() > 0) {
-            $main->add((new Link(
+            $main->addHtml((new Link(
                 new Icon('arrow-up'),
                 Url::fromPath('icingadb/command-transport/sort', [
                     'name'  => $this->item->name,

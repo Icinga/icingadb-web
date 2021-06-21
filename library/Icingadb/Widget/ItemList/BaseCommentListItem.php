@@ -14,8 +14,10 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -53,22 +55,28 @@ abstract class BaseCommentListItem extends BaseListItem
         $headerParts = [
             new Icon(Icons::USER),
             $this->getNoSubjectLink()
-                ? new HtmlElement('span', ['class' => 'subject'], $subjectText)
+                ? new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($subjectText))
                 : new Link($subjectText, Links::comment($this->item), ['class' => 'subject'])
         ];
 
         if ($isAck) {
-            $label = ['ack'];
+            $label = [Text::create('ack')];
 
             if ($this->item->is_persistent) {
                 array_unshift($label, new Icon(Icons::IS_PERSISTENT));
             }
 
-            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], $label)];
+            $headerParts[] = Text::create(' ');
+            $headerParts[] = new HtmlElement('span', Attributes::create(['class' => 'ack-badge badge']), ...$label);
         }
 
         if ($expires != 0) {
-            $headerParts[] = [' ', new HtmlElement('span', ['class' => 'ack-badge badge'], t('EXPIRES'))];
+            $headerParts[] = Text::create(' ');
+            $headerParts[] = new HtmlElement(
+                'span',
+                Attributes::create(['class' => 'ack-badge badge']),
+                Text::create(t('EXPIRES'))
+            );
         }
 
         if ($this->getObjectLinkDisabled()) {
@@ -79,12 +87,16 @@ abstract class BaseCommentListItem extends BaseListItem
             $headerParts[] = $this->createServiceLink($this->item->service, $this->item->service->host, true);
         }
 
-        $title->add($headerParts);
+        $title->addHtml(...$headerParts);
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $visual->add(new HtmlElement('div', ['class' => 'user-ball'], $this->item->author[0]));
+        $visual->addHtml(new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'user-ball']),
+            Text::create($this->item->author[0])
+        ));
     }
 
     protected function createTimestamp()

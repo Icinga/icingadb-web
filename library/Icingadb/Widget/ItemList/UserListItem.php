@@ -8,9 +8,11 @@ use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\User;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Web\Widget\Link;
 
 /**
@@ -30,25 +32,33 @@ class UserListItem extends BaseTableRowItem
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        $visual->add(new HtmlElement('div', ['class' => 'user-ball'], $this->item->display_name[0]));
+        $visual->addHtml(new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'user-ball']),
+            Text::create($this->item->display_name[0])
+        ));
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        $title->add([
+        $title->addHtml(
             $this->getNoSubjectLink()
-                ? new HtmlElement('span', ['class' => 'subject'], $this->item->display_name)
+                ? new HtmlElement(
+                    'span',
+                    Attributes::create(['class' => 'subject']),
+                    Text::create($this->item->display_name)
+                )
                 : new Link($this->item->display_name, Links::user($this->item), ['class' => 'subject']),
             new HtmlElement('br'),
-            $this->item->name
-        ]);
+            Text::create($this->item->name)
+        );
     }
 
     protected function assembleColumns(HtmlDocument $columns)
     {
-        $columns->add([
+        $columns->addHtml(
             $this->createColumn($this->item->email),
             $this->createColumn($this->item->pager)
-        ]);
+        );
     }
 }
