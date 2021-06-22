@@ -32,6 +32,7 @@ use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -328,7 +329,7 @@ class ObjectDetail extends BaseHtmlElement
         } else {
             $content[] = new HtmlElement(
                 'div',
-                ['id' => 'check-perfdata-' . $this->object->checkcommand],
+                Attributes::create(['id' => 'check-perfdata-' . $this->object->checkcommand]),
                 new PerfDataTable($this->object->state->performance_data)
             );
         }
@@ -375,10 +376,10 @@ class ObjectDetail extends BaseHtmlElement
 
                 $extensionHtml = new HtmlElement(
                     'div',
-                    [
+                    Attributes::create([
                         'class' => 'icinga-module module-' . $extension->getModule()->getName(),
                         'data-icinga-module' => $extension->getModule()->getName()
-                    ],
+                    ]),
                     HtmlString::create($renderedExtension)
                 );
             } catch (Exception $e) {

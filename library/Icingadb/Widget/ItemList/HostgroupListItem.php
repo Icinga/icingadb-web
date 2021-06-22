@@ -10,9 +10,11 @@ use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Widget\Detail\HostStatistics;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
@@ -66,12 +68,16 @@ class HostgroupListItem extends BaseTableRowItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        $title->add([
+        $title->addHtml(
             $this->getNoSubjectLink()
-                ? new HtmlElement('span', ['class' => 'subject'], $this->item->display_name)
+                ? new HtmlElement(
+                    'span',
+                    Attributes::create(['class' => 'subject']),
+                    Text::create($this->item->display_name)
+                )
                 : new Link($this->item->display_name, Links::hostgroup($this->item), ['class' => 'subject']),
             new HtmlElement('br'),
-            $this->item->name
-        ]);
+            Text::create($this->item->name)
+        );
     }
 }

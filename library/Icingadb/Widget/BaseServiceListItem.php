@@ -7,8 +7,10 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
@@ -34,7 +36,7 @@ abstract class BaseServiceListItem extends StateListItem
 
         $host = new Link($host, Links::host($this->item->host), ['class' => 'subject']);
         if ($this->getNoSubjectLink()) {
-            $service = new HtmlElement('span', ['class' => 'subject'], $service);
+            $service = new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($service));
         } else {
             $service = new Link($service, Links::service($this->item, $this->item->host), ['class' => 'subject']);
         }

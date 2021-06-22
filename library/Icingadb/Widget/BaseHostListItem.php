@@ -7,7 +7,9 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Host;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
@@ -24,7 +26,11 @@ abstract class BaseHostListItem extends StateListItem
     protected function createSubject()
     {
         if ($this->getNoSubjectLink()) {
-            return new HtmlElement('span', ['class' => 'subject'], $this->item->display_name);
+            return new HtmlElement(
+                'span',
+                Attributes::create(['class' => 'subject']),
+                Text::create($this->item->display_name)
+            );
         } else {
             return new Link($this->item->display_name, Links::host($this->item), ['class' => 'subject']);
         }

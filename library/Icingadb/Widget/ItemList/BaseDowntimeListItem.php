@@ -15,9 +15,11 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\DowntimeList;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -108,13 +110,15 @@ abstract class BaseDowntimeListItem extends BaseListItem
     {
         $markdownLine = new MarkdownLine($this->item->comment);
         $caption->getAttributes()->add($markdownLine->getAttributes());
-        $caption->add([
-            Html::tag('span', [
+        $caption->addHtml(
+            new HtmlElement(
+                'span',
+                null,
                 new Icon(Icons::USER),
-                $this->item->author
-            ]),
-            ': '
-        ])->addFrom($markdownLine);
+                Text::create($this->item->author)
+            ),
+            Text::create(': ')
+        )->addFrom($markdownLine);
     }
 
     protected function assembleTitle(BaseHtmlElement $title)
@@ -128,11 +132,13 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
 
         if ($this->getNoSubjectLink()) {
-            $title->add(new HtmlElement('span', ['class' => 'subject'], $this->item->is_flexible
-                ? t('Flexible Downtime')
-                : t('Fixed Downtime')));
+            $title->addHtml(new HtmlElement(
+                'span',
+                Attributes::create(['class' => 'subject']),
+                Text::create($this->item->is_flexible ? t('Flexible Downtime') : t('Fixed Downtime'))
+            ));
         } else {
-            $title->add(new Link(
+            $title->addHtml(new Link(
                 $this->item->is_flexible
                     ? t('Flexible Downtime')
                     : t('Fixed Downtime'),
@@ -141,7 +147,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
 
         if ($link !== null) {
-            $title->add([': ', $link]);
+            $title->addHtml(Text::create(': '), $link);
         }
     }
 
@@ -154,7 +160,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 $visual->addAttributes(['class' => 'active']);
             }
 
-            $visual->add(Html::sprintf(
+            $visual->addHtml(Html::sprintf(
                 t('%s left', '<timespan>..'),
                 Html::tag(
                     'strong',
@@ -169,7 +175,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 )
             ));
         } else {
-            $visual->add(Html::sprintf(
+            $visual->addHtml(Html::sprintf(
                 t('in %s', '..<timespan>'),
                 Html::tag('strong', $this->duration)
             ));

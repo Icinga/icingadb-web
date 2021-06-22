@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use ipl\Html\Attributes;
 use ipl\Html\Form;
 use ipl\Html\FormElement\HiddenElement;
 use ipl\Html\FormElement\InputElement;
@@ -146,9 +147,9 @@ class ViewModeSwitcher extends Form
 
             $label = new HtmlElement(
                 'label',
-                [
+                Attributes::create([
                     'for' => $protectedId
-                ],
+                ]),
                 new IcingaIcon($icon)
             );
 
@@ -173,7 +174,7 @@ class ViewModeSwitcher extends Form
                 $label->getAttributes()->add('title', $inactive);
             }
 
-            $this->add([$input, $label]);
+            $this->addHtml($input, $label);
         }
     }
 }

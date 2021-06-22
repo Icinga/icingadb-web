@@ -9,10 +9,12 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\TemplateString;
+use ipl\Html\Text;
 use ipl\Web\Filter\QueryString;
 
 class HostSummaryDonut extends Card
@@ -49,23 +51,25 @@ class HostSummaryDonut extends Card
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)
             ->setLabelSmall(t('Down'));
 
-        $body->add(new HtmlElement('div', ['class' => 'donut'], new HtmlString($donut->render())));
+        $body->addHtml(
+            new HtmlElement('div', Attributes::create(['class' => 'donut']), new HtmlString($donut->render()))
+        );
     }
 
     protected function assembleFooter(BaseHtmlElement $footer)
     {
-        $footer->add((new HostStateBadges($this->summary))->setBaseFilter($this->getBaseFilter()));
+        $footer->addHtml((new HostStateBadges($this->summary))->setBaseFilter($this->getBaseFilter()));
     }
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
-        $header->add([
-            new HtmlElement('h2', null, t('Hosts')),
-            new HtmlElement('span', ['class' => 'meta'], TemplateString::create(
+        $header->addHtml(
+            new HtmlElement('h2', null, Text::create(t('Hosts'))),
+            new HtmlElement('span', Attributes::create(['class' => 'meta']), TemplateString::create(
                 t('{{#total}}Total{{/total}} %d'),
                 ['total' => new HtmlElement('span')],
                 (int) $this->summary->hosts_total
             ))
-        ]);
+        );
     }
 }

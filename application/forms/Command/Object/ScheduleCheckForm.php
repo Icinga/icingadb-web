@@ -9,7 +9,9 @@ use DateTime;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
@@ -20,15 +22,23 @@ class ScheduleCheckForm extends CommandForm
 
     protected function assembleElements()
     {
-        $this->add(new HtmlElement('div', ['class' => 'form-description'], [
+        $this->addHtml(new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'form-description']),
             new Icon('info-circle', ['class' => 'form-description-icon']),
-            new HtmlElement('ul', null, [
-                new HtmlElement('li', null, t(
-                    'This command is used to schedule the next check of hosts or services. Icinga'
-                    . ' will re-queue the hosts or services to be checked at the time you specify.'
-                ))
-            ])
-        ]));
+            new HtmlElement(
+                'ul',
+                null,
+                new HtmlElement(
+                    'li',
+                    null,
+                    Text::create(t(
+                        'This command is used to schedule the next check of hosts or services. Icinga'
+                        . ' will re-queue the hosts or services to be checked at the time you specify.'
+                    ))
+                )
+            )
+        ));
 
         $decorator = new IcingaFormDecorator();
 

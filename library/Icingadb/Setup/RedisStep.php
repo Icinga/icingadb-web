@@ -8,9 +8,11 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
+use ipl\Html\Text;
 
 class RedisStep extends Step
 {
@@ -58,51 +60,51 @@ class RedisStep extends Step
 
     public function getSummary()
     {
-        $topic = new HtmlElement('div', ['class' => 'topic']);
-        $topic->add(new HtmlElement('p', null, mt(
+        $topic = new HtmlElement('div', Attributes::create(['class' => 'topic']));
+        $topic->addHtml(new HtmlElement('p', null, Text::create(mt(
             'icingadb',
             'The Icinga DB Redis will be accessed using the following connection details:'
-        )));
+        ))));
 
         $primaryOptions = new Table();
-        $primaryOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Host')),
+        $primaryOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Host'))),
             $this->data['redis1_host']
         ]));
-        $primaryOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Port')),
+        $primaryOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Port'))),
             $this->data['redis1_port'] ?: 6380
         ]));
 
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
-            $topic->add([
-                new HtmlElement('h3', null, mt('icingadb', 'Primary')),
+            $topic->addHtml(
+                new HtmlElement('h3', null, Text::create(mt('icingadb', 'Primary'))),
                 $primaryOptions
-            ]);
+            );
 
             $secondaryOptions = new Table();
-            $secondaryOptions->add(Table::row([
-                new HtmlElement('strong', null, t('Host')),
+            $secondaryOptions->addHtml(Table::row([
+                new HtmlElement('strong', null, Text::create(t('Host'))),
                 $this->data['redis2_host']
             ]));
-            $secondaryOptions->add(Table::row([
-                new HtmlElement('strong', null, t('Port')),
+            $secondaryOptions->addHtml(Table::row([
+                new HtmlElement('strong', null, Text::create(t('Port'))),
                 $this->data['redis2_port'] ?: 6380
             ]));
 
-            $topic->add([
-                new HtmlElement('h3', null, mt('icingadb', 'Secondary')),
+            $topic->addHtml(
+                new HtmlElement('h3', null, Text::create(mt('icingadb', 'Secondary'))),
                 $secondaryOptions
-            ]);
+            );
         } else {
-            $topic->add($primaryOptions);
+            $topic->addHtml($primaryOptions);
         }
 
         $summary = new HtmlDocument();
-        $summary->add([
-            new HtmlElement('h2', null, mt('icingadb', 'Icinga DB Redis')),
+        $summary->addHtml(
+            new HtmlElement('h2', null, Text::create(mt('icingadb', 'Icinga DB Redis'))),
             $topic
-        ]);
+        );
 
         return $summary->render();
     }

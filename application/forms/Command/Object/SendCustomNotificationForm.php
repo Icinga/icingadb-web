@@ -8,7 +8,9 @@ use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\SendCustomNotificationCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
@@ -19,14 +21,20 @@ class SendCustomNotificationForm extends CommandForm
 
     protected function assembleElements()
     {
-        $this->add(new HtmlElement('div', ['class' => 'form-description'], [
+        $this->addHtml(new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'form-description']),
             new Icon('info-circle', ['class' => 'form-description-icon']),
-            new HtmlElement('ul', null, [
-                new HtmlElement('li', null, t(
-                    'This command is used to send custom notifications about hosts or services.'
-                ))
-            ])
-        ]));
+            new HtmlElement(
+                'ul',
+                null,
+                new HtmlElement(
+                    'li',
+                    null,
+                    Text::create(t('This command is used to send custom notifications about hosts or services.'))
+                )
+            )
+        ));
 
         $config = Config::module('icingadb');
         $decorator = new IcingaFormDecorator();

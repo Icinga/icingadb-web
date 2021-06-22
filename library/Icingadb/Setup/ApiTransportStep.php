@@ -8,9 +8,11 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
+use ipl\Html\Text;
 
 class ApiTransportStep extends Step
 {
@@ -45,37 +47,37 @@ class ApiTransportStep extends Step
 
     public function getSummary()
     {
-        $description = new HtmlElement('p', null, mt(
+        $description = new HtmlElement('p', null, Text::create(mt(
             'icingadb',
             'The Icinga 2 API will be accessed using the following connection details:'
-        ));
+        )));
 
         $apiOptions = new Table();
-        $apiOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Host')),
+        $apiOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Host'))),
             $this->data['host']
         ]));
-        $apiOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Port')),
+        $apiOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Port'))),
             $this->data['port']
         ]));
-        $apiOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Username')),
+        $apiOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Username'))),
             $this->data['username']
         ]));
-        $apiOptions->add(Table::row([
-            new HtmlElement('strong', null, t('Password')),
+        $apiOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Password'))),
             str_repeat('*', strlen($this->data['password']))
         ]));
 
-        $topic = new HtmlElement('div', ['class' => 'topic']);
-        $topic->add([$description, $apiOptions]);
+        $topic = new HtmlElement('div', Attributes::create(['class' => 'topic']));
+        $topic->addHtml($description, $apiOptions);
 
         $summary = new HtmlDocument();
-        $summary->add([
-            new HtmlElement('h2', null, mt('icingadb', 'Icinga 2 API')),
+        $summary->addHtml(
+            new HtmlElement('h2', null, Text::create(mt('icingadb', 'Icinga 2 API'))),
             $topic
-        ]);
+        );
 
         return $summary->render();
     }

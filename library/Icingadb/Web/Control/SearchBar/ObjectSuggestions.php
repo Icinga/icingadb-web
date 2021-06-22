@@ -181,7 +181,7 @@ class ObjectSuggestions extends Suggestions
                 if (isset($customVar->$relation)) {
                     if (! $titleAdded) {
                         $titleAdded = true;
-                        $this->add(new HtmlElement(
+                        $this->addHtml(HtmlElement::create(
                             'li',
                             ['class' => static::SUGGESTION_TITLE_CLASS],
                             t('Custom Variables')

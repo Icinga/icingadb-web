@@ -6,9 +6,11 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Util\PerfData;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
+use ipl\Html\Text;
 
 class PerfDataTable extends Table
 {
@@ -94,13 +96,13 @@ class PerfDataTable extends Table
                 continue;
             }
             if (isset($col)) {
-                $headerRow->add(new HtmlElement('th', [
+                $headerRow->addHtml(new HtmlElement('th', Attributes::create([
                     'class' => ($col == 'label' ? 'title' : null)
-                ], $labels[$col]));
+                ]), Text::create($labels[$col])));
             }
         }
 
-        $this->getHeader()->add($headerRow);
+        $this->getHeader()->addHtml($headerRow);
 
         foreach ($pieChartData as $count => $perfdata) {
             if ($this->limit != 0 && $count > $this->limit) {
@@ -123,17 +125,17 @@ class PerfDataTable extends Table
                     $cols[] = Table::td(
                         new HtmlElement(
                             'span',
-                            [
+                            Attributes::create([
                                 'title' => ($text == '-' ? t('no value given') : $text),
                                 'class' => ($text != '-' ?: 'no-value')
-                            ],
-                            $text
+                            ]),
+                            Text::create($text)
                         ),
                         [ 'class' => ($column == 'label' ? 'title' : null) ]
                     );
                 }
 
-                $this->add(Table::tr([$cols]));
+                $this->addHtml(Table::tr([$cols]));
             }
         }
     }
