@@ -147,7 +147,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
 
         if ($link !== null) {
-            $title->addHtml(Text::create(': '), $link);
+            $title->addHtml(Text::create('for '), $link);
         }
     }
 
