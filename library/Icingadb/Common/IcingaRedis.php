@@ -6,9 +6,6 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Exception\NotFoundError;
-use Icinga\File\Storage\CommonFileStorage;
-use Icinga\File\Storage\TemporaryLocalFileStorage;
 use Predis\Client as Redis;
 
 trait IcingaRedis
@@ -95,11 +92,8 @@ trait IcingaRedis
 
     private function getPrimaryRedis(Config $config = null)
     {
-        $pkiIsTemporary = true;
-
         if ($config === null) {
             $config = Config::module('icingadb');
-            $pkiIsTemporary = false;
         }
 
         $section = $config->getSection('redis1');
@@ -108,7 +102,7 @@ trait IcingaRedis
             'host'      => $section->get('host', 'localhost'),
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($config, $pkiIsTemporary));
+        ] + $this->getTlsParams($config));
 
         $redis->ping();
 
@@ -117,11 +111,8 @@ trait IcingaRedis
 
     private function getSecondaryRedis(Config $config = null)
     {
-        $pkiIsTemporary = true;
-
         if ($config === null) {
             $config = Config::module('icingadb');
-            $pkiIsTemporary = false;
         }
 
         $section = $config->getSection('redis2');
@@ -135,14 +126,14 @@ trait IcingaRedis
             'host'      => $host,
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($config, $pkiIsTemporary));
+        ] + $this->getTlsParams($config));
 
         $redis->ping();
 
         return $redis;
     }
 
-    private function getTlsParams(Config $config, $pkiIsTemporary)
+    private function getTlsParams(Config $config)
     {
         $config = $config->getSection('redis');
 
@@ -159,7 +150,7 @@ trait IcingaRedis
             $ca = $config->get('ca');
 
             if ($ca !== null) {
-                $ssl['cafile'] = $this->ensurePemOnDisk($ca, 'ca', $pkiIsTemporary);
+                $ssl['cafile'] = $ca;
             }
         }
 
@@ -167,39 +158,10 @@ trait IcingaRedis
         $key = $config->get('key');
 
         if ($cert !== null && $key !== null) {
-            $ssl['local_cert'] = $this->ensurePemOnDisk($cert, 'cert', $pkiIsTemporary);
-            $ssl['local_pk'] = $this->ensurePemOnDisk($key, 'key', $pkiIsTemporary);
+            $ssl['local_cert'] = $cert;
+            $ssl['local_pk'] = $key;
         }
 
         return ['scheme' => 'tls', 'ssl' => $ssl];
-    }
-
-    private function ensurePemOnDisk($pem, $subject, $temporary)
-    {
-        if ($temporary) {
-            $storage = new TemporaryLocalFileStorage();
-            $keepAlive = (object) ['storage' => $storage];
-
-            $storage->create("$subject.pem", $pem);
-
-            // Keep a reference to $storage until shutdown
-            register_shutdown_function(function () use ($keepAlive) {
-                $keepAlive->storage = null;
-            });
-        } else {
-            $storage = CommonFileStorage::module('redis');
-
-            try {
-                $create = $storage->read("$subject.pem") !== $pem;
-            } catch (NotFoundError $_) {
-                $create = true;
-            }
-
-            if ($create) {
-                $storage->create("$subject.pem", $pem);
-            }
-        }
-
-        return $storage->resolvePath("$subject.pem");
     }
 }

@@ -6,6 +6,10 @@ namespace Icinga\Module\Icingadb\Forms;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
+use Icinga\Exception\NotWritableError;
+use Icinga\File\Storage\LocalFileStorage;
+use Icinga\File\Storage\TemporaryLocalFileStorage;
 use Icinga\Forms\ConfigForm;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Web\Form;
@@ -261,6 +265,64 @@ class RedisConfigForm extends ConfigForm
         return true;
     }
 
+    public function onRequest()
+    {
+        $errors = [];
+
+        $redisConfig = $this->config->getSection('redis');
+        if ($redisConfig->get('tls', false)) {
+            foreach (['ca', 'cert', 'key'] as $name) {
+                $path = $redisConfig->get($name);
+                if (file_exists($path)) {
+                    try {
+                        $redisConfig[$name] = file_get_contents($path);
+                    } catch (Exception $e) {
+                        unset($redisConfig[$name]);
+                        $errors['redis_' . $name] = sprintf(
+                            t('Failed to read file "%s": %s'),
+                            $path,
+                            $e->getMessage()
+                        );
+                    }
+                } else {
+                    unset($redisConfig[$name]);
+                }
+            }
+        }
+
+        parent::onRequest();
+
+        foreach ($errors as $elementName => $message) {
+            $this->getElement($elementName)->addError($message);
+        }
+    }
+
+    public function onSuccess()
+    {
+        if ($this->getElement('redis_tls')->isChecked()) {
+            $storage = new LocalFileStorage(Icinga::app()->getStorageDir(
+                join(DIRECTORY_SEPARATOR, ['modules', 'icingadb', 'redis'])
+            ));
+
+            foreach (['redis_ca', 'redis_cert', 'redis_key'] as $name) {
+                $pem = $this->getValue($name);
+                $pemFile = md5($pem) . '-' . $name . '.pem';
+                if (! $storage->has($pemFile)) {
+                    try {
+                        $storage->create($pemFile, $pem);
+                    } catch (NotWritableError $e) {
+                        $this->getElement($name)->addError($e->getMessage());
+                        return false;
+                    }
+                }
+
+                $this->getElement($name)->setValue($storage->resolvePath($pemFile));
+            }
+        }
+
+        return parent::onSuccess();
+    }
+
     public function addSubmitButton()
     {
         parent::addSubmitButton()
@@ -296,9 +358,15 @@ class RedisConfigForm extends ConfigForm
         $sections = [];
         $config = new Config();
 
+        $storage = new TemporaryLocalFileStorage();
         foreach (ConfigForm::transformEmptyValuesToNull($form->getValues()) as $sectionAndPropertyName => $value) {
             if ($value !== null) {
                 list($section, $property) = explode('_', $sectionAndPropertyName, 2);
+                if (in_array($property, ['ca', 'cert', 'key'])) {
+                    $storage->create("$property.pem", $value);
+                    $value = $storage->resolvePath("$property.pem");
+                }
+
                 $sections[$section][$property] = $value;
             }
         }
