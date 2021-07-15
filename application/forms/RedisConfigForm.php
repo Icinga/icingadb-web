@@ -113,8 +113,8 @@ class RedisConfigForm extends ConfigForm
                     'Fieldset'
                 ],
                 'description' => t(
-                    'Redis connection details of your Icinga host. If you are running a high'
-                    . ' availability zone with two masters, the following applies to both of them.'
+                    'Secure connections. If you are running a high availability zone'
+                    . ' with two masters, the following applies to both of them.'
                 ),
                 'legend'      => t('General')
             ]
@@ -156,7 +156,7 @@ class RedisConfigForm extends ConfigForm
                     'Fieldset'
                 ],
                 'description' => t(
-                    'Secure connections. If you are running a high'
+                    'Redis connection details of your Icinga host. If you are running a high'
                     . ' availability zone with two masters, this is your configuration master.'
                 ),
                 'legend'      => t('Primary Icinga Master')
