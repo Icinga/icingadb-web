@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms;
 
+use Closure;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -13,7 +14,6 @@ use Icinga\File\Storage\TemporaryLocalFileStorage;
 use Icinga\Forms\ConfigForm;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Checkbox;
 use ipl\Validator\PrivateKeyValidator;
 use ipl\Validator\X509CertValidator;
 use Zend_Validate_Callback;
@@ -36,7 +36,6 @@ class RedisConfigForm extends ConfigForm
             'autosubmit'  => true
         ]);
 
-        $this->addElement('hidden', 'redis_insecure');
         $this->addElement('hidden', 'redis_ca');
         $this->addElement('hidden', 'redis_cert');
         $this->addElement('hidden', 'redis_key');
@@ -44,7 +43,8 @@ class RedisConfigForm extends ConfigForm
         $this->addElement('hidden', 'clear_redis_cert', ['ignore' => true]);
         $this->addElement('hidden', 'clear_redis_key', ['ignore' => true]);
 
-        if (isset($formData['redis_tls']) && $formData['redis_tls']) {
+        $useTls = isset($formData['redis_tls']) && $formData['redis_tls'];
+        if ($useTls) {
             $this->addElement('textarea', 'redis_ca_pem', [
                 'label'       => t('Redis CA Certificate'),
                 'description' => sprintf(
@@ -63,7 +63,18 @@ class RedisConfigForm extends ConfigForm
                     '-----BEGIN CERTIFICATE-----'
                 ),
                 'ignore'      => true,
-                'validators'  => [$this->wrapIplValidator(X509CertValidator::class, 'redis_cert_pem')]
+                'allowEmpty'  => false,
+                'validators'  => [
+                    $this->wrapIplValidator(X509CertValidator::class, 'redis_cert_pem', function ($value) {
+                        if (! $value && $this->getElement('redis_key_pem')->getValue()) {
+                            $this->getElement('redis_cert_pem')->addError(t(
+                                'Either both a client certificate and its private key or none of them must be specified'
+                            ));
+                        }
+
+                        return true;
+                    })
+                ]
             ]);
 
             $this->addElement('textarea', 'redis_key_pem', [
@@ -73,7 +84,18 @@ class RedisConfigForm extends ConfigForm
                     '-----BEGIN PRIVATE KEY-----'
                 ),
                 'ignore'      => true,
-                'validators'  => [$this->wrapIplValidator(PrivateKeyValidator::class, 'redis_key_pem')]
+                'allowEmpty'  => false,
+                'validators'  => [
+                    $this->wrapIplValidator(PrivateKeyValidator::class, 'redis_key_pem', function ($value) {
+                        if (! $value && $this->getElement('redis_cert_pem')->getValue()) {
+                            $this->getElement('redis_key_pem')->addError(t(
+                                'Either both a client certificate and its private key or none of them must be specified'
+                            ));
+                        }
+
+                        return true;
+                    })
+                ]
             ]);
         }
 
@@ -103,9 +125,9 @@ class RedisConfigForm extends ConfigForm
             static::addSkipValidationCheckbox($this);
         }
 
-        if (isset($formData['redis_insecure']) && $formData['redis_insecure']) {
+        if ($useTls && isset($formData['redis_insecure']) && $formData['redis_insecure']) {
             // In case another error occured and the checkbox was displayed before
-            static::addInsecureCheckboxIfTls($this, $formData);
+            static::addInsecureCheckboxIfTls($this);
         }
 
         $this->addElement('text', 'redis1_host', [
@@ -190,35 +212,26 @@ class RedisConfigForm extends ConfigForm
         );
     }
 
-    public static function addInsecureCheckboxIfTls(Form $form, array $formData = null)
+    public static function addInsecureCheckboxIfTls(Form $form)
     {
-        if (
-            $formData === null
-                ? $form->getElement('redis_tls')->getValue()
-                : isset($formData['redis_tls']) && $formData['redis_tls']
-        ) {
-            $displayGroup = $form->getDisplayGroup('redis');
-            $elements = $displayGroup->getElements();
-
-            $value = $formData === null
-                ? $form->getElement('redis_insecure')->getValue()
-                : isset($formData['redis_insecure']) && $formData['redis_insecure'];
-
-            $form->removeElement('redis_insecure');
-
-            $form->addElement(
-                'checkbox',
-                'redis_insecure',
-                [
-                    'label'       => t('Insecure'),
-                    'description' => t('Don\'t verify the peer'),
-                    'value'       => $value
-                ]
-            );
-
-            $elements['redis_insecure'] = $form->getElement('redis_insecure');
-            $displayGroup->setElements($elements);
+        if ($form->getElement('redis_insecure') !== null) {
+            return;
         }
+
+        $form->addElement(
+            'checkbox',
+            'redis_insecure',
+            [
+                'order'       => 1,
+                'label'       => t('Insecure'),
+                'description' => t('Don\'t verify the peer')
+            ]
+        );
+
+        $displayGroup = $form->getDisplayGroup('redis');
+        $elements = $displayGroup->getElements();
+        $elements['redis_insecure'] = $form->getElement('redis_insecure');
+        $displayGroup->setElements($elements);
     }
 
     public function isValid($formData)
@@ -227,27 +240,14 @@ class RedisConfigForm extends ConfigForm
             return false;
         }
 
-        /** @var Checkbox $useTls */
-        $useTls = $this->getElement('redis_tls');
-
-        if ($useTls !== null && $useTls->isChecked()) {
-            $cert = $this->getElement('redis_cert_pem');
-            $key = $this->getElement('redis_key_pem');
-
-            if (($cert !== null && $cert->getValue() !== '') !== ($key !== null && $key->getValue() !== '')) {
-                $this->addError(t(
-                    'Either both a client certificate and its private key or none of them must be specified'
-                ));
-
-                return false;
-            }
-        }
-
         if (($el = $this->getElement('skip_validation')) === null || ! $el->isChecked()) {
             if (! static::checkRedis($this)) {
                 if ($el === null) {
                     static::addSkipValidationCheckbox($this);
-                    static::addInsecureCheckboxIfTls($this);
+
+                    if ($this->getElement('redis_tls')->isChecked()) {
+                        static::addInsecureCheckboxIfTls($this);
+                    }
                 }
 
                 return false;
@@ -283,7 +283,13 @@ class RedisConfigForm extends ConfigForm
         }
 
         if ($this->getElement('backend_validation')->isChecked()) {
-            return static::checkRedis($this);
+            if (! static::checkRedis($this)) {
+                if ($this->getElement('redis_tls')->isChecked()) {
+                    static::addInsecureCheckboxIfTls($this);
+                }
+
+                return false;
+            }
         }
 
         return true;
@@ -388,7 +394,7 @@ class RedisConfigForm extends ConfigForm
         return $this;
     }
 
-    public static function checkRedis($form)
+    public static function checkRedis(Form $form)
     {
         $sections = [];
         $config = new Config();
@@ -398,15 +404,32 @@ class RedisConfigForm extends ConfigForm
             if ($value !== null) {
                 list($section, $property) = explode('_', $sectionAndPropertyName, 2);
                 if (in_array($property, ['ca', 'cert', 'key'])) {
-                    if (($textarea = $form->getElement('redis_' . $property . '_pem')) !== null) {
-                        $value = $textarea->getValue();
-                    }
-
                     $storage->create("$property.pem", $value);
                     $value = $storage->resolvePath("$property.pem");
                 }
 
                 $sections[$section][$property] = $value;
+            }
+        }
+
+        $ignoredTextAreas = [
+            'ca'    => 'redis_ca_pem',
+            'cert'  => 'redis_cert_pem',
+            'key'   => 'redis_key_pem'
+        ];
+        foreach ($ignoredTextAreas as $name => $textareaName) {
+            if (($textarea = $form->getElement($textareaName)) !== null) {
+                if (($pem = $textarea->getValue())) {
+                    if ($storage->has("$name.pem")) {
+                        $storage->update("$name.pem", $pem);
+                    } else {
+                        $storage->create("$name.pem", $pem);
+                        $sections['redis'][$name] = $storage->resolvePath("$name.pem");
+                    }
+                } elseif ($storage->has("$name.pem")) {
+                    $storage->delete("$name.pem");
+                    unset($sections['redis'][$name]);
+                }
             }
         }
 
@@ -451,16 +474,27 @@ class RedisConfigForm extends ConfigForm
      *
      * @param   string  $cls        IPL validator class FQN
      * @param   string  $element    Form element name
+     * @param   Closure $additionalValidator
      *
      * @return  array               Callback validator
      */
-    private function wrapIplValidator($cls, $element)
+    private function wrapIplValidator($cls, $element, Closure $additionalValidator = null)
     {
         return [
             'Callback',
             false,
             [
-                'callback' => function ($v) use ($cls, $element) {
+                'callback' => function ($v) use ($cls, $element, $additionalValidator) {
+                    if ($additionalValidator !== null) {
+                        if (! $additionalValidator($v)) {
+                            return false;
+                        }
+                    }
+
+                    if (! $v) {
+                        return true;
+                    }
+
                     $validator = new $cls();
                     $valid = $validator->isValid($v);
 
