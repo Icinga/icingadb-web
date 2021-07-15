@@ -90,7 +90,7 @@ trait IcingaRedis
         return null;
     }
 
-    private function getPrimaryRedis(Config $config = null)
+    public function getPrimaryRedis(Config $config = null)
     {
         if ($config === null) {
             $config = Config::module('icingadb');
@@ -109,7 +109,7 @@ trait IcingaRedis
         return $redis;
     }
 
-    private function getSecondaryRedis(Config $config = null)
+    public function getSecondaryRedis(Config $config = null)
     {
         if ($config === null) {
             $config = Config::module('icingadb');
