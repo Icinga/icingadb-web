@@ -37,43 +37,48 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addElement('hidden', 'redis_insecure');
+        $this->addElement('hidden', 'redis_ca');
+        $this->addElement('hidden', 'redis_cert');
+        $this->addElement('hidden', 'redis_key');
+        $this->addElement('hidden', 'clear_redis_ca', ['ignore' => true]);
+        $this->addElement('hidden', 'clear_redis_cert', ['ignore' => true]);
+        $this->addElement('hidden', 'clear_redis_key', ['ignore' => true]);
 
         if (isset($formData['redis_tls']) && $formData['redis_tls']) {
-            $this->addElement('textarea', 'redis_ca', [
+            $this->addElement('textarea', 'redis_ca_pem', [
                 'label'       => t('Redis CA Certificate'),
                 'description' => sprintf(
                     t('Verify the peer using this PEM-encoded CA certificate ("%s...")'),
                     '-----BEGIN CERTIFICATE-----'
                 ),
                 'required'    => true,
-                'validators'  => [$this->wrapIplValidator(X509CertValidator::class, 'redis_ca')]
+                'ignore'      => true,
+                'validators'  => [$this->wrapIplValidator(X509CertValidator::class, 'redis_ca_pem')]
             ]);
 
-            $this->addElement('textarea', 'redis_cert', [
+            $this->addElement('textarea', 'redis_cert_pem', [
                 'label'       => t('Client Certificate'),
                 'description' => sprintf(
                     t('Authenticate using this PEM-encoded client certificate ("%s...")'),
                     '-----BEGIN CERTIFICATE-----'
                 ),
-                'validators'  => [$this->wrapIplValidator(X509CertValidator::class, 'redis_cert')]
+                'ignore'      => true,
+                'validators'  => [$this->wrapIplValidator(X509CertValidator::class, 'redis_cert_pem')]
             ]);
 
-            $this->addElement('textarea', 'redis_key', [
+            $this->addElement('textarea', 'redis_key_pem', [
                 'label'       => t('Client Key'),
                 'description' => sprintf(
                     t('Authenticate using this PEM-encoded private key ("%s...")'),
                     '-----BEGIN PRIVATE KEY-----'
                 ),
-                'validators'  => [$this->wrapIplValidator(PrivateKeyValidator::class, 'redis_key')]
+                'ignore'      => true,
+                'validators'  => [$this->wrapIplValidator(PrivateKeyValidator::class, 'redis_key_pem')]
             ]);
-        } else {
-            $this->addElement('hidden', 'redis_ca');
-            $this->addElement('hidden', 'redis_cert');
-            $this->addElement('hidden', 'redis_key');
         }
 
         $this->addDisplayGroup(
-            ['redis_tls', 'redis_insecure', 'redis_ca', 'redis_cert', 'redis_key'],
+            ['redis_tls', 'redis_insecure', 'redis_ca_pem', 'redis_cert_pem', 'redis_key_pem'],
             'redis',
             [
                 'decorators'  => [
@@ -226,8 +231,8 @@ class RedisConfigForm extends ConfigForm
         $useTls = $this->getElement('redis_tls');
 
         if ($useTls !== null && $useTls->isChecked()) {
-            $cert = $this->getElement('redis_cert');
-            $key = $this->getElement('redis_key');
+            $cert = $this->getElement('redis_cert_pem');
+            $key = $this->getElement('redis_key_pem');
 
             if (($cert !== null && $cert->getValue() !== '') !== ($key !== null && $key->getValue() !== '')) {
                 $this->addError(t(
@@ -258,6 +263,25 @@ class RedisConfigForm extends ConfigForm
             return false;
         }
 
+        $useTls = $this->getElement('redis_tls')->isChecked();
+        foreach (['ca', 'cert', 'key'] as $name) {
+            $textareaName = 'redis_' . $name . '_pem';
+            $clearName = 'clear_redis_' . $name;
+
+            if ($useTls) {
+                $this->getElement($clearName)->setValue(null);
+
+                $pemPath = $this->getValue('redis_' . $name);
+                if ($pemPath && ! isset($formData[$textareaName]) && ! $formData[$clearName]) {
+                    $this->getElement($textareaName)->setValue(@file_get_contents($pemPath));
+                }
+            }
+
+            if (isset($formData[$textareaName]) && ! $formData[$textareaName]) {
+                $this->getElement($clearName)->setValue(true);
+            }
+        }
+
         if ($this->getElement('backend_validation')->isChecked()) {
             return static::checkRedis($this);
         }
@@ -275,17 +299,14 @@ class RedisConfigForm extends ConfigForm
                 $path = $redisConfig->get($name);
                 if (file_exists($path)) {
                     try {
-                        $redisConfig[$name] = file_get_contents($path);
+                        $redisConfig[$name . '_pem'] = file_get_contents($path);
                     } catch (Exception $e) {
-                        unset($redisConfig[$name]);
-                        $errors['redis_' . $name] = sprintf(
+                        $errors['redis_' . $name . '_pem'] = sprintf(
                             t('Failed to read file "%s": %s'),
                             $path,
                             $e->getMessage()
                         );
                     }
-                } else {
-                    unset($redisConfig[$name]);
                 }
             }
         }
@@ -299,24 +320,38 @@ class RedisConfigForm extends ConfigForm
 
     public function onSuccess()
     {
-        if ($this->getElement('redis_tls')->isChecked()) {
-            $storage = new LocalFileStorage(Icinga::app()->getStorageDir(
-                join(DIRECTORY_SEPARATOR, ['modules', 'icingadb', 'redis'])
-            ));
+        $storage = new LocalFileStorage(Icinga::app()->getStorageDir(
+            join(DIRECTORY_SEPARATOR, ['modules', 'icingadb', 'redis'])
+        ));
 
-            foreach (['redis_ca', 'redis_cert', 'redis_key'] as $name) {
-                $pem = $this->getValue($name);
+        $useTls = $this->getElement('redis_tls')->isChecked();
+        foreach (['ca', 'cert', 'key'] as $name) {
+            $textarea = $this->getElement('redis_' . $name . '_pem');
+            if ($useTls && $textarea !== null && ($pem = $textarea->getValue())) {
                 $pemFile = md5($pem) . '-' . $name . '.pem';
                 if (! $storage->has($pemFile)) {
                     try {
                         $storage->create($pemFile, $pem);
                     } catch (NotWritableError $e) {
-                        $this->getElement($name)->addError($e->getMessage());
+                        $textarea->addError($e->getMessage());
                         return false;
                     }
                 }
 
-                $this->getElement($name)->setValue($storage->resolvePath($pemFile));
+                $this->getElement('redis_' . $name)->setValue($storage->resolvePath($pemFile));
+            }
+
+            if ((! $useTls && $this->getElement('clear_redis_' . $name)->getValue()) || ($useTls && ! $pem)) {
+                $pemPath = $this->getValue('redis_' . $name);
+                if ($pemPath && $storage->has(($pemFile = basename($pemPath)))) {
+                    try {
+                        $storage->delete($pemFile);
+                        $this->getElement('redis_' . $name)->setValue(null);
+                    } catch (NotWritableError $e) {
+                        $this->addError($e->getMessage());
+                        return false;
+                    }
+                }
             }
         }
 
@@ -363,6 +398,10 @@ class RedisConfigForm extends ConfigForm
             if ($value !== null) {
                 list($section, $property) = explode('_', $sectionAndPropertyName, 2);
                 if (in_array($property, ['ca', 'cert', 'key'])) {
+                    if (($textarea = $form->getElement('redis_' . $property . '_pem')) !== null) {
+                        $value = $textarea->getValue();
+                    }
+
                     $storage->create("$property.pem", $value);
                     $value = $storage->resolvePath("$property.pem");
                 }
