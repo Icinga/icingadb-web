@@ -32,6 +32,7 @@ class ServiceState extends State
             'output'                        => t('Service State Output'),
             'long_output'                   => t('Service State Long Output'),
             'performance_data'              => t('Service State Performance Data'),
+            'normalized_performance_data'   => t('Service State Normalized Performance Data'),
             'check_commandline'             => t('Service State Check Commandline'),
             'is_problem'                    => t('Service State Is Problem'),
             'is_handled'                    => t('Service State Is Handled'),
