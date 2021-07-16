@@ -142,6 +142,16 @@ class PerfDataFormat
             $pow = $result = 0;
         } else {
             $pow = floor(log($value, $base));
+
+            // Identify nearest unit if unknown
+            while (! isset($units[$pow])) {
+                if ($pow < 0) {
+                    $pow++;
+                } else {
+                    $pow--;
+                }
+            }
+
             $result = $value / pow($base, $pow);
         }
 
@@ -154,7 +164,7 @@ class PerfDataFormat
             '%s%0.2f %s',
             $sign,
             $result,
-            $units[abs($pow)]
+            $units[$pow]
         );
     }
 }
