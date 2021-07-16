@@ -52,7 +52,7 @@ class VolatileState
         $type = substr($state->getTableName(), 0, -6);
 
         $json = $this->redis->hGet("icinga:{$type}:state", bin2hex($state->{$type . '_id'}));
-        if ($json !== false) {
+        if ($json !== null) {
             $data = json_decode($json, true);
             $data = array_intersect_key($data, array_flip(static::$keys));
 
