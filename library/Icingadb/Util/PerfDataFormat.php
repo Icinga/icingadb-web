@@ -16,22 +16,45 @@ class PerfDataFormat
 
     protected static $wattHourPrefix = ['Wh', 'kWh', 'MWh', 'GWh', 'TWh', 'PWh', 'EWh', 'ZWh', 'YWh'];
 
-    protected static $wattPrefix = ['W', 'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'];
+    protected static $wattPrefix = [-1 => 'mW', 'W', 'kW', 'MW', 'GW'];
 
-    protected static $amperePrefix = ['A', 'kA', 'MA', 'GA', 'TA', 'PA', 'EA', 'ZA', 'YA'];
+    protected static $amperePrefix = [-3 => 'nA', -2 => 'µA', -1 => 'mA', 'A', 'kA', 'MA', 'GA'];
 
-    protected static $ampSecondPrefix = ['As', 'kAs', 'MAs', 'GAs', 'TAs', 'PAs', 'EAs', 'ZAs', 'YAs'];
+    protected static $ampSecondPrefix = [-2 => 'µAs', -1 => 'mAs', 'As', 'kAs', 'MAs', 'GAs'];
 
-    protected static $voltPrefix = ['V', 'kV', 'MV', 'GV', 'TV', 'PV', 'EV', 'ZV', 'YV'];
+    protected static $voltPrefix = [-2 => 'µV', -1 => 'mV', 'V', 'kV', 'MV', 'GV'];
 
-    protected static $ohmPrefix = ['O', 'kO', 'MO', 'GO', 'TO', 'PO', 'EO', 'ZO', 'YO'];
+    protected static $ohmPrefix = ['Ω'];
 
-    protected static $gramPrefix = ['g', 'kg', 't'];
+    protected static $gramPrefix = [
+        -5 => 'fg',
+        -4 => 'pg',
+        -3 => 'ng',
+        -2 => 'µg',
+        -1 => 'mg',
+        'g',
+        'kg',
+        't',
+        'ktǂ',
+        'Mt',
+        'Gt'
+    ];
 
-    protected static $literPrefix = ['l', 'hl'];
-    protected static $literBase = 100;
+    protected static $literPrefix = [
+        -5 => 'fl',
+        -4 => 'pl',
+        -3 => 'nl',
+        -2 => 'µl',
+        -1 => 'ml',
+        'l',
+        'kl',
+        'Ml',
+        'Gl',
+        'Tl',
+        'Pl'
+    ];
 
-    protected static $secondPrefix = ['s'];
+    protected static $secondPrefix = [-3 => 'ns', -2 => 'µs', -1 => 'ms', 's'];
 
     public static function getInstance()
     {
@@ -89,7 +112,7 @@ class PerfDataFormat
 
     public static function liters($value)
     {
-        return self::formatForUnits($value, self::$literPrefix, self::$literBase);
+        return self::formatForUnits($value, self::$literPrefix, self::$generalBase);
     }
 
     public static function seconds($value)
