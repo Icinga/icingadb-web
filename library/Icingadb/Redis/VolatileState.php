@@ -5,13 +5,14 @@
 namespace Icinga\Module\Icingadb\Redis;
 
 use Icinga\Module\Icingadb\Model\State;
+use Predis\Client as Redis;
 
 /**
  * Fetch volatile host or service states from redis.
  */
 class VolatileState
 {
-    /** @var \Redis */
+    /** @var Redis */
     protected $redis;
 
     /** @var array Set of keys to sync */
@@ -32,9 +33,9 @@ class VolatileState
     /**
      * VolatileState constructor.
      *
-     * @param \Redis $redis Connection to the Icinga Redis
+     * @param Redis $redis Connection to the Icinga Redis
      */
-    public function __construct(\Redis $redis)
+    public function __construct(Redis $redis)
     {
         $this->redis = $redis;
     }
@@ -51,7 +52,7 @@ class VolatileState
         $type = substr($state->getTableName(), 0, -6);
 
         $json = $this->redis->hGet("icinga:{$type}:state", bin2hex($state->{$type . '_id'}));
-        if ($json !== false) {
+        if ($json !== null) {
             $data = json_decode($json, true);
             $data = array_intersect_key($data, array_flip(static::$keys));
 

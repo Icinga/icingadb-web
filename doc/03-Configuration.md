@@ -25,7 +25,7 @@ using the `Configuration -> Application -> Resources` menu.
 Then tell Icinga DB Web which database resource to use. This can be done in
 `Configuration -> Modules -> icingadb -> Database`.
 
-## Redis [![PHP Support](https://img.shields.io/badge/php-%3E%3D%207.0-777BB4?logo=PHP)](https://php.net/)
+## Redis
 
 To view the most recent state information in Icinga DB Web, make sure to configure the connection details to
 [Icinga DB's redis](https://icinga.com/docs/icingadb/latest/doc/02-Installation/#installing-icinga-db-redis)

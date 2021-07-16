@@ -26,11 +26,7 @@ class RedisHealth extends HealthHook
             $redis = $this->getIcingaRedis();
 
             $lastIcingaHeartbeat = $this->getLastIcingaHeartbeat($redis);
-            if ($lastIcingaHeartbeat === false) {
-                $this->setState(self::STATE_UNKNOWN);
-                $this->setMessage(t("Can't connect to Icinga Redis: phpredis>=4.3.0 required"));
-                return;
-            } elseif ($lastIcingaHeartbeat === null) {
+            if ($lastIcingaHeartbeat === null) {
                 $lastIcingaHeartbeat = time();
             }
 

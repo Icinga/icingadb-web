@@ -6,12 +6,9 @@ namespace Icinga\Module\Icingadb\Setup;
 
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
-use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
-use Icinga\Module\Setup\Requirement\WebModuleRequirement;
 use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
-use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Wizard;
@@ -69,24 +66,6 @@ class IcingaDbWizard extends Wizard implements SetupWizard
                 'To send external commands over Icinga 2\'s API, the cURL module for PHP is required.'
             )
         ]));
-
-        $redisSet = new RequirementSet();
-        $redisSet->add(new PhpModuleRequirement([
-            'condition'     => 'redis',
-            'alias'         => 'Redis',
-            'description'   => mt(
-                'icingadb',
-                'To view the most recent state information in Icinga DB Web, the Redis module for PHP is required.'
-            )
-        ]));
-        $redisSet->add(new PhpVersionRequirement([
-            'condition'     => ['>=', '7.0'],
-            'description'   => mt(
-                'icingadb',
-                'The Redis module for PHP in version 4.3 and above requires PHP 7+'
-            )
-        ]));
-        $set->merge($redisSet);
 
         return $set;
     }

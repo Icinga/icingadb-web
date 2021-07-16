@@ -6,7 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Exception;
 use Icinga\Application\Config;
-use Redis;
+use Predis\Client as Redis;
 
 trait IcingaRedis
 {
@@ -33,12 +33,6 @@ trait IcingaRedis
                 }
 
                 $this->redis = $secondaryRedis;
-
-                return $this->redis;
-            }
-
-            if (! self::streamSupportAvailable()) {
-                $this->redis = $primaryRedis;
 
                 return $this->redis;
             }
@@ -71,58 +65,103 @@ trait IcingaRedis
 
     public function getLastIcingaHeartbeat(Redis $redis)
     {
-        if (! self::streamSupportAvailable()) {
-            return false;
-        }
+        // Predis doesn't support streams (yet).
+        // https://github.com/predis/predis/issues/607#event-3640855190
+        $rs = $redis->executeRaw(['XREAD', 'COUNT', '1', 'STREAMS', 'icinga:stats', '0']);
 
-        $rs = $redis->xRead(['icinga:stats' => 0], 1);
-
-        if (empty($rs)) {
+        if (! is_array($rs)) {
             return null;
         }
 
-        $stats = array_pop($rs['icinga:stats']);
+        $key = null;
 
-        return $stats['timestamp'] / 1000;
+        foreach ($rs[0][1][0][1] as $kv) {
+            if ($key === null) {
+                $key = $kv;
+            } else {
+                if ($key === 'timestamp') {
+                    return $kv / 1000;
+                }
+
+                $key = null;
+            }
+        }
+
+        return null;
     }
 
-    private function getPrimaryRedis()
+    public function getPrimaryRedis(Config $config = null)
     {
-        $config = Config::module('icingadb')->getSection('redis1');
-        $redis = new Redis();
+        if ($config === null) {
+            $config = Config::module('icingadb');
+        }
 
-        $redis->connect(
-            $config->get('host', 'localhost'),
-            $config->get('port', 6380),
-            0.5
-        );
+        $section = $config->getSection('redis1');
+
+        $redis = new Redis([
+            'host'      => $section->get('host', 'localhost'),
+            'port'      => $section->get('port', 6380),
+            'timeout'   => 0.5
+        ] + $this->getTlsParams($config));
+
+        $redis->ping();
 
         return $redis;
     }
 
-    private function getSecondaryRedis()
+    public function getSecondaryRedis(Config $config = null)
     {
-        $config = Config::module('icingadb')->getSection('redis2');
-        $redis = new Redis();
+        if ($config === null) {
+            $config = Config::module('icingadb');
+        }
 
-        $host = $config->host;
+        $section = $config->getSection('redis2');
+        $host = $section->host;
 
         if (empty($host)) {
             return null;
         }
 
-        $redis->connect(
-            $host,
-            $config->get('port', 6380),
-            0.5
-        );
+        $redis = new Redis([
+            'host'      => $host,
+            'port'      => $section->get('port', 6380),
+            'timeout'   => 0.5
+        ] + $this->getTlsParams($config));
+
+        $redis->ping();
 
         return $redis;
     }
 
-    private static function streamSupportAvailable()
+    private function getTlsParams(Config $config)
     {
-        $extRedisVersion = phpversion('redis');
-        return version_compare($extRedisVersion, '4.3.0', '>=');
+        $config = $config->getSection('redis');
+
+        if (! $config->get('tls', false)) {
+            return [];
+        }
+
+        $ssl = [];
+
+        if ($config->get('insecure')) {
+            $ssl['verify_peer'] = false;
+            $ssl['verify_peer_name'] = false;
+        } else {
+            $ca = $config->get('ca');
+
+            if ($ca !== null) {
+                $ssl['cafile'] = $ca;
+            }
+        }
+
+        $cert = $config->get('cert');
+        $key = $config->get('key');
+
+        if ($cert !== null && $key !== null) {
+            $ssl['local_cert'] = $cert;
+            $ssl['local_pk'] = $key;
+        }
+
+        return ['scheme' => 'tls', 'ssl' => $ssl];
     }
 }

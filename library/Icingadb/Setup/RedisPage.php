@@ -4,11 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Setup;
 
+use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Forms\RedisConfigForm;
 use Icinga\Web\Form;
 
 class RedisPage extends Form
 {
+    use IcingaRedis;
+
     public function init()
     {
         $this->setName('setup_icingadb_redis');
@@ -23,6 +26,12 @@ class RedisPage extends Form
     {
         $redisConfigForm = new RedisConfigForm();
         $redisConfigForm->createElements($formData);
+        if (isset($formData['redis_tls']) && $formData['redis_tls']) {
+            $redisConfigForm->getElement('redis_ca_pem')->setIgnore(false);
+            $redisConfigForm->getElement('redis_cert_pem')->setIgnore(false);
+            $redisConfigForm->getElement('redis_key_pem')->setIgnore(false);
+        }
+
         $this->addElements($redisConfigForm->getElements());
         $this->addDisplayGroups($redisConfigForm->getDisplayGroups());
     }
@@ -37,6 +46,7 @@ class RedisPage extends Form
             if (! RedisConfigForm::checkRedis($this)) {
                 if ($el === null) {
                     RedisConfigForm::addSkipValidationCheckbox($this);
+                    RedisConfigForm::addInsecureCheckboxIfTls($this);
                 }
 
                 return false;

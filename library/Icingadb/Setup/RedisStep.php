@@ -6,7 +6,10 @@ namespace Icinga\Module\Icingadb\Setup;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotWritableError;
+use Icinga\File\Storage\LocalFileStorage;
 use Icinga\Module\Setup\Step;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
@@ -30,6 +33,9 @@ class RedisStep extends Step
     public function apply()
     {
         $moduleConfig = [
+            'redis'  => [
+                'tls' => 0
+            ],
             'redis1' => [
                 'host'  => $this->data['redis1_host'],
                 'port'  => $this->data['redis1_port'] ?: null
@@ -41,6 +47,34 @@ class RedisStep extends Step
                 'host'  => $this->data['redis2_host'],
                 'port'  => $this->data['redis2_port'] ?: null
             ];
+        }
+
+        if (isset($this->data['redis_tls']) && $this->data['redis_tls']) {
+            $moduleConfig['redis']['tls'] = 1;
+            if (isset($this->data['redis_insecure']) && $this->data['redis_insecure']) {
+                $moduleConfig['redis']['insecure'] = 1;
+            }
+
+            $storage = new LocalFileStorage(Icinga::app()->getStorageDir(
+                join(DIRECTORY_SEPARATOR, ['modules', 'icingadb', 'redis'])
+            ));
+            foreach (['ca', 'cert', 'key'] as $name) {
+                $textareaName = 'redis_' . $name . '_pem';
+                if (isset($this->data[$textareaName]) && $this->data[$textareaName]) {
+                    $pem = $this->data[$textareaName];
+                    $pemFile = md5($pem) . '-' . $name . '.pem';
+                    if (! $storage->has($pemFile)) {
+                        try {
+                            $storage->create($pemFile, $pem);
+                        } catch (NotWritableError $e) {
+                            $this->error = $e;
+                            return false;
+                        }
+                    }
+
+                    $moduleConfig['redis'][$name] = $storage->resolvePath($pemFile);
+                }
+            }
         }
 
         try {
@@ -98,6 +132,30 @@ class RedisStep extends Step
             );
         } else {
             $topic->addHtml($primaryOptions);
+        }
+
+        $tlsOptions = new Table();
+        $topic->addHtml($tlsOptions);
+        if (isset($this->data['redis_tls']) && $this->data['redis_tls']) {
+            if (isset($this->data['redis_cert_pem']) && $this->data['redis_cert_pem']) {
+                $tlsOptions->addHtml(Table::row([
+                    new HtmlElement('strong', null, Text::create('TLS')),
+                    Text::create(
+                        t('Icinga DB Web will authenticate against Redis with a client'
+                          . ' certificate and private key over a secured connection')
+                    )
+                ]));
+            } else {
+                $tlsOptions->addHtml(Table::row([
+                    new HtmlElement('strong', null, Text::create('TLS')),
+                    Text::create(t('Icinga DB Web will use secured Redis connections'))
+                ]));
+            }
+        } else {
+            $tlsOptions->addHtml(Table::row([
+                new HtmlElement('strong', null, Text::create('TLS')),
+                Text::create(t('No'))
+            ]));
         }
 
         $summary = new HtmlDocument();
