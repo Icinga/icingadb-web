@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Util;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Monitoring\Object\Service;
-use Icinga\Util\Format;
 use Icinga\Web\Widget\Chart\InlinePie;
 use InvalidArgumentException;
 
@@ -143,7 +142,7 @@ class PerfData
      */
     public function isSeconds()
     {
-        return in_array($this->unit, array('s', 'ms', 'us'));
+        return $this->unit === 's';
     }
 
     /**
@@ -153,7 +152,7 @@ class PerfData
      */
     public function isTemperature()
     {
-        return in_array($this->unit, array('°c', '°f'));
+        return in_array($this->unit, array('C', 'F', 'K'));
     }
 
     /**
@@ -167,13 +166,133 @@ class PerfData
     }
 
     /**
+     * Get whether this perf data's value is in packets
+     *
+     * @return bool   True in case it's in packets
+     */
+    public function isPackets()
+    {
+        return $this->unit === 'packets';
+    }
+
+    /**
+     * Get whether this perf data's value is in lumen
+     *
+     * @return bool
+     */
+    public function isLumens()
+    {
+        return $this->unit === 'lm';
+    }
+
+    /**
+     * Get whether this perf data's value is in decibel-milliwatts
+     *
+     * @return bool
+     */
+    public function isDecibelMilliWatts()
+    {
+        return $this->unit === 'dBm';
+    }
+
+    /**
+     * Get whether this data's value is in bits
+     *
+     * @return bool
+     */
+    public function isBits()
+    {
+        return $this->unit === 'b';
+    }
+
+    /**
      * Return whether this performance data's value is in bytes
      *
      * @return  bool    True in case it's in bytes, otherwise False
      */
     public function isBytes()
     {
-        return in_array($this->unit, array('b', 'kb', 'mb', 'gb', 'tb'));
+        return $this->unit === 'B';
+    }
+
+    /**
+     * Get whether this data's value is in watt hours
+     *
+     * @return bool
+     */
+    public function isWattHours()
+    {
+        return $this->unit === 'Wh';
+    }
+
+    /**
+     * Get whether this data's value is in watt
+     *
+     * @return bool
+     */
+    public function isWatts()
+    {
+        return $this->unit === 'W';
+    }
+
+    /**
+     * Get whether this data's value is in ampere
+     *
+     * @return bool
+     */
+    public function isAmperes()
+    {
+        return $this->unit === 'A';
+    }
+
+    /**
+     * Get whether this data's value is in ampere seconds
+     *
+     * @return bool
+     */
+    public function isAmpSeconds()
+    {
+        return $this->unit === 'As';
+    }
+
+    /**
+     * Get whether this data's value is in volts
+     *
+     * @return bool
+     */
+    public function isVolts()
+    {
+        return $this->unit === 'V';
+    }
+
+    /**
+     * Get whether this data's value is in ohm
+     *
+     * @return bool
+     */
+    public function isOhms()
+    {
+        return $this->unit === 'O';
+    }
+
+    /**
+     * Get whether this data's value is in grams
+     *
+     * @return bool
+     */
+    public function isGrams()
+    {
+        return $this->unit === 'g';
+    }
+
+    /**
+     * Get whether this data's value is in Litters
+     *
+     * @return bool
+     */
+    public function isLiters()
+    {
+        return $this->unit === 'l';
     }
 
     /**
@@ -307,36 +426,30 @@ class PerfData
         $parts = explode(';', $this->perfdataValue);
 
         $matches = array();
-        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%°]{1,2})$@u', $parts[0], $matches)) {
-            $this->unit = strtolower($matches[3]);
-            $this->value = self::convert($matches[1], $this->unit);
+        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%°]{1,3})$@u', $parts[0], $matches)) {
+            $this->unit = $matches[3];
+            $this->value = $matches[1];
         } else {
-            $this->value = self::convert($parts[0]);
+            $this->value = $parts[0];
         }
 
         switch (count($parts)) {
             /* @noinspection PhpMissingBreakStatementInspection */
             case 5:
                 if ($parts[4] !== '') {
-                    $this->maxValue = self::convert($parts[4], $this->unit);
+                    $this->maxValue = $parts[4];
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 4:
                 if ($parts[3] !== '') {
-                    $this->minValue = self::convert($parts[3], $this->unit);
+                    $this->minValue = $parts[3];
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 3:
-                $this->criticalThreshold = self::convert(
-                    ThresholdRange::fromString(trim($parts[2])),
-                    $this->unit
-                );
+                $this->criticalThreshold = ThresholdRange::fromString(trim($parts[2]));
             // Fallthrough
             case 2:
-                $this->warningThreshold = self::convert(
-                    ThresholdRange::fromString(trim($parts[1])),
-                    $this->unit
-                );
+                $this->warningThreshold = ThresholdRange::fromString(trim($parts[1]));
         }
 
         if ($this->warningThreshold === null) {
@@ -344,52 +457,6 @@ class PerfData
         }
         if ($this->criticalThreshold === null) {
             $this->criticalThreshold = new ThresholdRange();
-        }
-    }
-
-    /**
-     * Return the given value converted to its smallest supported representation
-     *
-     * @param   string      $value      The value to convert
-     * @param   string      $fromUnit   The unit the value currently represents
-     *
-     * @return  null|float              Null in case the value is not a number
-     */
-    protected static function convert($value, $fromUnit = null)
-    {
-        if ($value instanceof ThresholdRange) {
-            $value = clone $value;
-
-            $min = $value->getMin();
-            if ($min !== null) {
-                $value->setMin(self::convert($min, $fromUnit));
-            }
-
-            $max = $value->getMax();
-            if ($max !== null) {
-                $value->setMax(self::convert($max, $fromUnit));
-            }
-
-            return $value;
-        }
-
-        if (is_numeric($value)) {
-            switch ($fromUnit) {
-                case 'us':
-                    return $value / pow(10, 6);
-                case 'ms':
-                    return $value / pow(10, 3);
-                case 'tb':
-                    return floatval($value) * pow(2, 40);
-                case 'gb':
-                    return floatval($value) * pow(2, 30);
-                case 'mb':
-                    return floatval($value) * pow(2, 20);
-                case 'kb':
-                    return floatval($value) * pow(2, 10);
-                default:
-                    return (float) $value;
-            }
         }
     }
 
@@ -446,19 +513,44 @@ class PerfData
             return $max === null ? '' : $this->format($max);
         }
 
-        if ($this->isPercentage()) {
-            return (string)$value . '%';
+        switch (true) {
+            case $this->isPercentage():
+                return (string) $value . '%';
+            case $this->isPackets():
+                return (string) $value . 'packets';
+            case $this->isLumens():
+                return (string) $value . 'lm';
+            case $this->isDecibelMilliWatts():
+                return (string) $value . 'dBm';
+            case $this->isCounter():
+                return (string) $value . 'c';
+            case $this->isTemperature():
+                return (string) $value . $this->unit;
+            case $this->isBits():
+                return PerfDataFormat::bits($value);
+            case $this->isBytes():
+                return PerfDataFormat::bytes($value);
+            case $this->isSeconds():
+                return PerfDataFormat::seconds($value);
+            case $this->isWatts():
+                return PerfDataFormat::watts($value);
+            case $this->isWattHours():
+                return PerfDataFormat::wattHours($value);
+            case $this->isAmperes():
+                return PerfDataFormat::amperes($value);
+            case $this->isAmpSeconds():
+                return PerfDataFormat::ampereSeconds($value);
+            case $this->isVolts():
+                return PerfDataFormat::volts($value);
+            case $this->isOhms():
+                return PerfDataFormat::ohms($value);
+            case $this->isGrams():
+                return PerfDataFormat::grams($value);
+            case $this->isLiters():
+                return PerfDataFormat::liters($value);
+            default:
+                return number_format($value, 2);
         }
-        if ($this->isBytes()) {
-            return Format::bytes($value);
-        }
-        if ($this->isSeconds()) {
-            return Format::seconds($value);
-        }
-        if ($this->isTemperature()) {
-            return (string)$value . strtoupper($this->unit);
-        }
-        return number_format($value, 2);
     }
 
     /**

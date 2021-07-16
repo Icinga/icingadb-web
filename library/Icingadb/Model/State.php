@@ -28,6 +28,7 @@ abstract class State extends Model
             'output',
             'long_output',
             'performance_data',
+            'normalized_performance_data',
             'check_commandline',
             'is_problem',
             'is_handled',

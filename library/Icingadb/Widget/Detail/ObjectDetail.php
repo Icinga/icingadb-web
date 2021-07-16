@@ -330,7 +330,7 @@ class ObjectDetail extends BaseHtmlElement
             $content[] = new HtmlElement(
                 'div',
                 Attributes::create(['id' => 'check-perfdata-' . $this->object->checkcommand]),
-                new PerfDataTable($this->object->state->performance_data)
+                new PerfDataTable($this->object->state->normalized_performance_data)
             );
         }
 

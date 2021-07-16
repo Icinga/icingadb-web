@@ -46,7 +46,7 @@ class HostListItemDetailed extends BaseHostListItem
 
         $performanceData = new HtmlElement('div', Attributes::create(['class' => 'performance-data']));
         if ($this->item->state->performance_data) {
-            $pieChartData = PerfDataSet::fromString($this->item->state->performance_data)->asArray();
+            $pieChartData = PerfDataSet::fromString($this->item->state->normalized_performance_data)->asArray();
 
             $pies = [];
             foreach ($pieChartData as $i => $perfdata) {

@@ -35,6 +35,7 @@ class HostState extends State
             'output'                        => t('Host State Output'),
             'long_output'                   => t('Host State Long Output'),
             'performance_data'              => t('Host State Performance Data'),
+            'normalized_performance_data'   => t('Host State Normalized Performance Data'),
             'check_commandline'             => t('Host State Check Commandline'),
             'is_problem'                    => t('Host State Is Problem'),
             'is_handled'                    => t('Host State Is Handled'),
