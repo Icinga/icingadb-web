@@ -21,6 +21,7 @@ class VolatileState
         'output',
         'long_output',
         'performance_data',
+        'normalized_performance_data',
         'check_commandline',
         'execution_time',
         'latency',
