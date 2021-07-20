@@ -34,6 +34,7 @@ class ServiceController extends Controller
 
         $query = Service::on($this->getDb())->with([
             'state',
+            'icon_image',
             'host',
             'host.state'
         ]);
