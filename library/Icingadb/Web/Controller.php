@@ -176,16 +176,22 @@ class Controller extends CompatController
                 ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
             );
             foreach ($changes['terms'] as &$termData) {
-                if (($pos = strpos($termData['search'], '.vars.')) !== false) {
+                if ($termData['type'] !== 'column') {
+                    continue;
+                } elseif (($pos = strpos($termData['search'], '.vars.')) !== false) {
                     try {
-                        $query->getResolver()->resolveRelation(substr($termData['search'], 0, $pos + 5));
+                        $relationPath = $query->getResolver()->qualifyPath(
+                            substr($termData['search'], 0, $pos + 5),
+                            $query->getModel()->getTableName()
+                        );
+                        $query->getResolver()->resolveRelation($relationPath);
                     } catch (InvalidArgumentException $_) {
                         $termData['invalidMsg'] = sprintf(
                             t('"%s" is not a valid relation'),
                             substr($termData['search'], 0, $pos)
                         );
                     }
-                } elseif ($termData['type'] === 'column') {
+                } else {
                     $column = $termData['search'];
                     if (strpos($column, '.') === false) {
                         $column = $query->getResolver()->qualifyPath($column, $query->getModel()->getTableName());
