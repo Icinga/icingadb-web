@@ -137,7 +137,7 @@ class ObjectDetail extends BaseHtmlElement
 
         if ($comments->hasResult()) {
             $content[] = (new CommentList($comments))->setObjectLinkDisabled();
-            $content[] = new ShowMore($comments, $link);
+            $content[] = (new ShowMore($comments, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No comments created.'));
         }
@@ -187,7 +187,7 @@ class ObjectDetail extends BaseHtmlElement
 
         if ($downtimes->hasResult()) {
             $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled();
-            $content[] = new ShowMore($downtimes, $link);
+            $content[] = (new ShowMore($downtimes, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));
         }

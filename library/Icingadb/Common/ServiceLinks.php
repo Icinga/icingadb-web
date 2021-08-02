@@ -45,16 +45,16 @@ abstract class ServiceLinks
     public static function comments(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/comments',
-            ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/comments',
+            ['service.name' => $service->name, 'host.name' => $host->name]
         );
     }
 
     public static function downtimes(Service $service, Host $host)
     {
         return Url::fromPath(
-            'icingadb/service/downtimes',
-            ['name' => $service->name, 'host.name' => $host->name]
+            'icingadb/downtimes',
+            ['service.name' => $service->name, 'host.name' => $host->name]
         );
     }
 

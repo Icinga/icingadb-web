@@ -19,9 +19,7 @@ use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
-use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\HostList;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -94,48 +92,6 @@ class HostController extends Controller
             $this->host,
             reset($apiResult)
         ));
-    }
-
-    public function commentsAction()
-    {
-        $this->setTitle(t('Comments'));
-
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
-
-        $comments = $this->host->comment;
-
-        $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($comments);
-
-        yield $this->export($comments);
-
-        $this->addControl($paginationControl);
-        $this->addControl($limitControl);
-
-        $this->addContent(new CommentList($comments));
-
-        $this->setAutorefreshInterval(10);
-    }
-
-    public function downtimesAction()
-    {
-        $this->setTitle(t('Downtimes'));
-
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
-
-        $downtimes = $this->host->downtime;
-
-        $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($downtimes);
-
-        yield $this->export($downtimes);
-
-        $this->addControl($paginationControl);
-        $this->addControl($limitControl);
-
-        $this->addContent(new DowntimeList($downtimes));
-
-        $this->setAutorefreshInterval(10);
     }
 
     public function historyAction()
