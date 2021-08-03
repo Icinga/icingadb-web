@@ -50,9 +50,11 @@ class HistoryController extends Controller
                 'history.event_time desc' => t('Event Time')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $searchBar = $this->createSearchBar($history, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -96,10 +98,12 @@ class HistoryController extends Controller
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $historyList = (new HistoryList($results))
-            ->setPageSize($limitControl->getLimit());
+            ->setPageSize($limitControl->getLimit())
+            ->setViewMode($viewModeSwitcher->getViewMode());
         if ($compact) {
             $historyList->setPageNumber($page);
         }

@@ -49,6 +49,7 @@ class EventController extends Controller
     public function indexAction()
     {
         $this->addControl((new HistoryList([$this->event]))
+            ->setViewMode('minimal')
             ->setPageSize(1)
             ->setCaptionDisabled()
             ->setNoSubjectLink()

@@ -15,18 +15,17 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\CommonListItem;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
-class HistoryListItem extends CommonListItem
+abstract class BaseHistoryListItem extends BaseListItem
 {
     use HostLink;
     use NoSubjectLink;
@@ -41,8 +40,9 @@ class HistoryListItem extends CommonListItem
     protected function init()
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
-        $this->setCaptionDisabled($this->list->isCaptionDisabled());
     }
+
+    abstract protected function getStateBallSize();
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
@@ -129,42 +129,54 @@ class HistoryListItem extends CommonListItem
     {
         switch ($this->item->event_type) {
             case 'comment_add':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::COMMENT))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::COMMENT)
+                ));
 
                 break;
             case 'comment_remove':
             case 'downtime_end':
             case 'ack_clear':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::REMOVE))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::REMOVE)
+                ));
 
                 break;
             case 'downtime_start':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IN_DOWNTIME)
+                ));
 
                 break;
             case 'ack_set':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IS_ACKNOWLEDGED)
+                ));
 
                 break;
             case 'flapping_end':
             case 'flapping_start':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IS_FLAPPING)
+                ));
 
                 break;
             case 'notification':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::NOTIFICATION)
+                ));
 
                 break;
             case 'state_change':
@@ -173,7 +185,10 @@ class HistoryListItem extends CommonListItem
                 if ($this->item->state->state_type === 'soft') {
                     $state = 'soft_state';
 
-                    $visual->add(new CheckAttempt($this->item->state->attempt, $this->item->state->max_check_attempts));
+                    $visual->addHtml(new CheckAttempt(
+                        $this->item->state->attempt,
+                        $this->item->state->max_check_attempts
+                    ));
                 } else {
                     $state = 'hard_state';
                 }
@@ -186,7 +201,7 @@ class HistoryListItem extends CommonListItem
                     $previousHardState = ServiceStates::text($this->item->state->$previousState);
                 }
 
-                $visual->prepend(new StateChange($state, $previousHardState));
+                $visual->prependHtml(new StateChange($state, $previousHardState));
 
                 break;
         }

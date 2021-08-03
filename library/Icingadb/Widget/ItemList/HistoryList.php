@@ -6,12 +6,14 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Widget\BaseItemList;
 
 class HistoryList extends BaseItemList
 {
     use CaptionDisabled;
     use NoSubjectLink;
+    use ViewMode;
 
     protected $defaultAttributes = ['class' => 'history-list'];
 
@@ -41,7 +43,14 @@ class HistoryList extends BaseItemList
 
     protected function getItemClass()
     {
-        return HistoryListItem::class;
+        switch ($this->getViewMode()) {
+            case 'minimal':
+                return HistoryListItemMinimal::class;
+            case 'detailed':
+                return HistoryListItemDetailed::class;
+            default:
+                return HistoryListItem::class;
+        }
     }
 
     protected function getIterator()
@@ -64,5 +73,12 @@ class HistoryList extends BaseItemList
 
             yield $data;
         }
+    }
+
+    protected function assemble()
+    {
+        $this->addAttributes(['class' => $this->getViewMode()]);
+
+        parent::assemble();
     }
 }
