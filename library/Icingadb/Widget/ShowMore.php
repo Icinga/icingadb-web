@@ -43,6 +43,15 @@ class ShowMore extends BaseHtmlElement
         return $this->label ?: t('Show More');
     }
 
+    public function renderUnwrapped()
+    {
+        if ($this->resultSet->hasMore()) {
+            return parent::renderUnwrapped();
+        }
+
+        return '';
+    }
+
     protected function assemble()
     {
         if ($this->resultSet->hasMore()) {
