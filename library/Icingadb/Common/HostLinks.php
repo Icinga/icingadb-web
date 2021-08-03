@@ -31,12 +31,12 @@ abstract class HostLinks
 
     public static function comments(Host $host)
     {
-        return Url::fromPath('icingadb/host/comments', ['name' => $host->name]);
+        return Url::fromPath('icingadb/comments', ['host.name' => $host->name]);
     }
 
     public static function downtimes(Host $host)
     {
-        return Url::fromPath('icingadb/host/downtimes', ['name' => $host->name]);
+        return Url::fromPath('icingadb/downtimes', ['host.name' => $host->name]);
     }
 
     public static function history(Host $host)

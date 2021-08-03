@@ -16,8 +16,6 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
-use Icinga\Module\Icingadb\Widget\DowntimeList;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ServiceList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -89,46 +87,6 @@ class ServiceController extends Controller
             $this->service,
             reset($apiResult)
         ));
-    }
-
-    public function commentsAction()
-    {
-        $this->setTitle(t('Comments'));
-
-        $comments = $this->service->comment;
-
-        $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($comments);
-
-        yield $this->export($comments);
-
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-        $this->addControl($paginationControl);
-        $this->addControl($limitControl);
-
-        $this->addContent(new CommentList($comments));
-
-        $this->setAutorefreshInterval(10);
-    }
-
-    public function downtimesAction()
-    {
-        $this->setTitle(t('Downtimes'));
-
-        $downtimes = $this->service->downtime;
-
-        $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($downtimes);
-
-        yield $this->export($downtimes);
-
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
-        $this->addControl($paginationControl);
-        $this->addControl($limitControl);
-
-        $this->addContent(new DowntimeList($downtimes));
-
-        $this->setAutorefreshInterval(10);
     }
 
     public function historyAction()
