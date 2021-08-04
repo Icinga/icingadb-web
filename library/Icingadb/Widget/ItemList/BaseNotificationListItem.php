@@ -12,18 +12,17 @@ use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
-use Icinga\Module\Icingadb\Widget\CommonListItem;
+use Icinga\Module\Icingadb\Widget\BaseListItem;
+use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
-use ipl\Web\Widget\StateBall;
 
-class NotificationListItem extends CommonListItem
+abstract class BaseNotificationListItem extends BaseListItem
 {
     use HostLink;
     use NoSubjectLink;
@@ -35,7 +34,6 @@ class NotificationListItem extends CommonListItem
     protected function init()
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
-        $this->setCaptionDisabled($this->list->isCaptionDisabled());
     }
 
     /**
@@ -71,6 +69,8 @@ class NotificationListItem extends CommonListItem
         }
     }
 
+    abstract protected function getStateBallSize();
+
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
@@ -89,30 +89,38 @@ class NotificationListItem extends CommonListItem
     {
         switch ($this->item->type) {
             case 'acknowledgement':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_ACKNOWLEDGED))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IS_ACKNOWLEDGED)
+                ));
 
                 break;
             case 'custom':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::NOTIFICATION))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::NOTIFICATION)
+                ));
 
                 break;
             case 'downtime_end':
             case 'downtime_removed':
             case 'downtime_start':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IN_DOWNTIME))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IN_DOWNTIME)
+                ));
 
                 break;
             case 'flapping_end':
             case 'flapping_start':
-                $visual->add(
-                    Html::tag('div', ['class' => 'icon-ball ball-size-xl'], new Icon(Icons::IS_FLAPPING))
-                );
+                $visual->addHtml(HtmlElement::create(
+                    'div',
+                    ['class' => ['icon-ball', 'ball-size-' . $this->getStateBallSize()]],
+                    new Icon(Icons::IS_FLAPPING)
+                ));
 
                 break;
             case 'problem':
@@ -125,10 +133,7 @@ class NotificationListItem extends CommonListItem
                     $previousHardState = ServiceStates::text($this->item->previous_hard_state);
                 }
 
-                $visual->add([
-                    new StateBall($previousHardState, StateBall::SIZE_BIG),
-                    new StateBall($state, StateBall::SIZE_BIG)
-                ]);
+                $visual->addHtml(new StateChange($state, $previousHardState));
 
                 break;
         }

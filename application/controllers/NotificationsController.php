@@ -43,9 +43,11 @@ class NotificationsController extends Controller
                 'notification_history.send_time desc' => t('Send Time')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $searchBar = $this->createSearchBar($notifications, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -75,11 +77,15 @@ class NotificationsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $results = $notifications->execute();
 
-        $this->addContent(new NotificationList($results));
+        $this->addContent(
+            (new NotificationList($results))
+                  ->setViewMode($viewModeSwitcher->getViewMode())
+        );
 
         if ($compact) {
             $this->addContent(
