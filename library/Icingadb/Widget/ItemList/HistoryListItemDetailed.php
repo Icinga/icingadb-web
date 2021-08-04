@@ -4,12 +4,12 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
+use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use ipl\Web\Widget\StateBall;
 
-class HistoryListItem extends BaseHistoryListItem
+class HistoryListItemDetailed extends BaseHistoryListItem
 {
-    use ListItemCommonLayout;
+    use ListItemDetailedLayout;
 
     protected function getStateBallSize()
     {
