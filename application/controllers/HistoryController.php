@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
 use ipl\Sql\Sql;
+use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
@@ -38,6 +39,7 @@ class HistoryController extends Controller
             'state'
         ]);
 
+        $before = $this->params->shift('before', time());
         $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
         if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
             $page = 1;
@@ -79,6 +81,7 @@ class HistoryController extends Controller
             }
         }
 
+        $history->filter(Filter::lessThanOrEqual('event_time', $before));
         $this->filter($history, $filter);
         $history->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
@@ -91,6 +94,7 @@ class HistoryController extends Controller
         $showMore = (new ShowMore(
             $results,
             $url->setParam('page', $page + 1)
+                ->setParam('before', $before)
                 ->setAnchor('page-' . ($page + 1))
         ))
             ->setLabel(t('Load More'))
