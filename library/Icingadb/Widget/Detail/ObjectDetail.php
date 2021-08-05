@@ -211,12 +211,9 @@ class ObjectDetail extends BaseHtmlElement
                 $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
-            $groups[] = new HorizontalKeyValue(
-                t('Host Groups'),
-                $hostgroupList->hasContent()
-                    ? $hostgroupList
-                    : new EmptyState(t('Not a member of any host group.'))
-            );
+            $groups[] = $hostgroupList->hasContent()
+                ? $hostgroupList
+                : new EmptyState(t('Not a member of any host group.'));
         } else {
             $servicegroups = [];
             if ($this->isPermittedRoute('servicegroups')) {
@@ -229,12 +226,9 @@ class ObjectDetail extends BaseHtmlElement
                 $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
-            $groups[] = new HorizontalKeyValue(
-                t('Service Groups'),
-                $servicegroupList->hasContent()
-                    ? $servicegroupList
-                    : new EmptyState(t('Not a member of any service group.'))
-            );
+            $groups[] = $servicegroupList->hasContent()
+                ? $servicegroupList
+                : new EmptyState(t('Not a member of any service group.'));
         }
 
         return $groups;
