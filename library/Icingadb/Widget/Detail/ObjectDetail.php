@@ -18,6 +18,7 @@ use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
+use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
@@ -357,11 +358,22 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createExtensions()
     {
-        $extensions = Hook::all('Monitoring\DetailviewExtension');
+        $extensions = ObjectDetailExtensionHook::loadExtensions($this->object);
 
-        $html = [];
+        $nativeExtensionProviders = [];
         foreach ($extensions as $extension) {
+            if ($extension->getAttributes()->has('data-icinga-module')) {
+                $nativeExtensionProviders[$extension->getAttributes()->get('data-icinga-module')->getValue()] = true;
+            }
+        }
+
+        foreach (Hook::all('Monitoring\DetailviewExtension') as $extension) {
             /** @var DetailviewExtensionHook $extension */
+            $moduleName = $extension->getModule()->getName();
+
+            if (isset($nativeExtensionProviders[$moduleName])) {
+                continue;
+            }
 
             try {
                 $renderedExtension = $extension
@@ -371,20 +383,25 @@ class ObjectDetail extends BaseHtmlElement
                 $extensionHtml = new HtmlElement(
                     'div',
                     Attributes::create([
-                        'class' => 'icinga-module module-' . $extension->getModule()->getName(),
-                        'data-icinga-module' => $extension->getModule()->getName()
+                        'class' => 'icinga-module module-' . $moduleName,
+                        'data-icinga-module' => $moduleName
                     ]),
                     HtmlString::create($renderedExtension)
                 );
             } catch (Exception $e) {
-                Logger::error("Failed to load extension: %s\n%s", $e, $e->getTraceAsString());
+                Logger::error("Failed to load legacy detail extension: %s\n%s", $e, $e->getTraceAsString());
                 $extensionHtml = Text::create(IcingaException::describe($e));
             }
 
-            $html[] = $extensionHtml;
+            $location = ObjectDetailExtensionHook::BASE_LOCATIONS[ObjectDetailExtensionHook::DETAIL_SECTION];
+            while (isset($extensions[$location])) {
+                $location++;
+            }
+
+            $extensions[$location] = $extensionHtml;
         }
 
-        return $html;
+        return $extensions;
     }
 
     protected function createFeatureToggles()

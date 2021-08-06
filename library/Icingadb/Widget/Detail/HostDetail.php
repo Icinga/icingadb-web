@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Widget\EmptyState;
-use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 
@@ -34,20 +34,19 @@ class HostDetail extends ObjectDetail
 
     protected function assemble()
     {
-        $this->add([
-            $this->createPluginOutput(),
-            $this->createExtensions(),
-            $this->createActions(),
-            $this->createNotes(),
-            $this->createServiceStatistics(),
-            $this->createGroups(),
-            $this->createComments(),
-            $this->createDowntimes(),
-            $this->createNotifications(),
-            $this->createCheckStatistics(),
-            $this->createPerformanceData(),
-            $this->createCustomVars(),
-            $this->createFeatureToggles()
-        ]);
+        $this->add(ObjectDetailExtensionHook::injectExtensions([
+            0   => $this->createPluginOutput(),
+            190 => $this->createServiceStatistics(),
+            300 => $this->createActions(),
+            301 => $this->createNotes(),
+            400 => $this->createComments(),
+            401 => $this->createDowntimes(),
+            500 => $this->createGroups(),
+            501 => $this->createNotifications(),
+            600 => $this->createCheckStatistics(),
+            601 => $this->createPerformanceData(),
+            700 => $this->createCustomVars(),
+            701 => $this->createFeatureToggles()
+        ], $this->createExtensions()));
     }
 }
