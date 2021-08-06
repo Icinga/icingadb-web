@@ -5,6 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Exception;
+use Icinga\Application\ClassLoader;
+use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
@@ -365,6 +367,29 @@ class ObjectDetail extends BaseHtmlElement
             if ($extension->getAttributes()->has('data-icinga-module')) {
                 $nativeExtensionProviders[$extension->getAttributes()->get('data-icinga-module')->getValue()] = true;
             }
+        }
+
+        foreach (Hook::all('Grapher') as $grapher) {
+            /** @var GrapherHook $grapher */
+            $moduleName = ClassLoader::extractModuleName(get_class($grapher));
+
+            if (isset($nativeExtensionProviders[$moduleName])) {
+                continue;
+            }
+
+            try {
+                $graph = HtmlString::create($grapher->getPreviewHtml($this->compatObject));
+            } catch (Exception $e) {
+                Logger::error("Failed to load legacy grapher: %s\n%s", $e, $e->getTraceAsString());
+                $graph = Text::create(IcingaException::describe($e));
+            }
+
+            $location = ObjectDetailExtensionHook::BASE_LOCATIONS[ObjectDetailExtensionHook::GRAPH_SECTION];
+            while (isset($extensions[$location])) {
+                $location++;
+            }
+
+            $extensions[$location] = $graph;
         }
 
         foreach (Hook::all('Monitoring\DetailviewExtension') as $extension) {
