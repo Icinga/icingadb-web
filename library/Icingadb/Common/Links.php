@@ -131,6 +131,11 @@ abstract class Links
         return Url::fromPath('icingadb/users');
     }
 
+    public static function usergroups()
+    {
+        return Url::fromPath('icingadb/usergroups');
+    }
+
     public static function event(History $event)
     {
         return Url::fromPath('icingadb/event', ['id' => bin2hex($event->id)]);
