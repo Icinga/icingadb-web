@@ -52,10 +52,10 @@ class UsergroupDetail extends BaseHtmlElement
     {
         $users = $this->usergroup->user->limit(6)->peekAhead()->execute();
 
-        $showMoreLink = new ShowMore(
+        $showMoreLink = (new ShowMore(
             $users,
             Links::users()->addParams(['usergroup.name' => $this->usergroup->name])
-        );
+        ))->setBaseTarget('_next');
 
         return [
             new HtmlElement('h2', null, Text::create(t('Users'))),
