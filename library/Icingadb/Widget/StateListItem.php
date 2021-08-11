@@ -112,27 +112,12 @@ abstract class StateListItem extends BaseListItem
         }
     }
 
-    protected function createIconImage()
-    {
-        $iconImage = HtmlElement::create('div', [
-            'class' => 'icon-image',
-        ]);
-
-        $this->assembleIconImage($iconImage);
-
-        return $iconImage;
-    }
-
     protected function assemble()
     {
         if ($this->state->is_overdue) {
             $this->addAttributes(['class' => 'overdue']);
         }
 
-        $this->add($this->createVisual());
-        if ($this->list->hasIconImages()) {
-            $this->add($this->createIconImage());
-        }
-        $this->add($this->createMain());
+        parent::assemble();
     }
 }
