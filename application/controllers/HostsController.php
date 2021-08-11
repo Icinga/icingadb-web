@@ -164,7 +164,7 @@ class HostsController extends Controller
         );
 
         $this->addContent(
-            (new ObjectsDetail('host', $summary))
+            (new ObjectsDetail('host', $summary, $hosts))
                 ->setBaseFilter($this->getFilter())
         );
     }

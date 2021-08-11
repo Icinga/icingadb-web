@@ -175,7 +175,7 @@ class ServicesController extends Controller
         );
 
         $this->addContent(
-            (new ObjectsDetail('service', $summary))
+            (new ObjectsDetail('service', $summary, $services))
                 ->setBaseFilter($this->getFilter())
         );
     }
