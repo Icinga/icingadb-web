@@ -10,7 +10,7 @@
 * [Icinga Web 2](https://github.com/Icinga/icingaweb2) (>= 2.8)
   * monitoring (>= 2.8) (Core Icinga Web 2 module)
   * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.5) (Icinga Web 2 module)
-* PHP (>= 5.6, 7+ recommended)
+* PHP (>= 7.0)
 
 ## Installation
 
