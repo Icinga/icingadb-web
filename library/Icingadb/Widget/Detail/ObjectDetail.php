@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
+use Icinga\Module\Icingadb\Hook\ActionsHook\ObjectActionsHook;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\User;
@@ -32,7 +33,6 @@ use Icinga\Module\Icingadb\Widget\PerfDataTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
-use Icinga\Module\Monitoring\Hook\ObjectActionsHook;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\Attributes;
@@ -93,9 +93,20 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
-        /** @var ObjectActionsHook $hook */
+        $moduleActions = ObjectActionsHook::loadActions($this->object);
+
+        $nativeExtensionProviders = [];
+        foreach ($moduleActions->getContent() as $item) {
+            if ($item->getAttributes()->has('data-icinga-module')) {
+                $nativeExtensionProviders[$item->getAttributes()->get('data-icinga-module')->getValue()] = true;
+            }
+        }
+
         foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
-            $navigation->merge($hook->getNavigation($this->compatObject));
+            $moduleName = ClassLoader::extractModuleName(get_class($hook));
+            if (! isset($nativeExtensionProviders[$moduleName])) {
+                $navigation->merge($hook->getNavigation($this->compatObject));
+            }
         }
 
         if ($navigation->isEmpty() || ! $navigation->hasRenderableItems()) {
@@ -104,7 +115,8 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             Html::tag('h2', t('Actions')),
-            new HtmlString($navigation->getRenderer()->setCssClass('actions')->render())
+            new HtmlString($navigation->getRenderer()->setCssClass('actions')->render()),
+            $moduleActions->isEmpty() ? null : $moduleActions
         ];
     }
 
