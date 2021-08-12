@@ -91,7 +91,6 @@
 
   .visual {
     width: 2.2em;
-    margin-right: .5em;
   }
 
   &.show-more a,
@@ -175,17 +174,11 @@
   .icon-image {
     width:  3em;
     height: 3em;
-    align-self: center;
     text-align: center;
-
-    &.inline {
-      display: inline-block;
-      height: 1.5em;
-      width: 1.5em;
-    }
+    margin-top: .5em;
+    margin-left: .5em;
 
     img {
-      vertical-align: middle;
       max-height: 100%;
       max-width: 100%;
       height: auto;
@@ -197,14 +190,7 @@
     .icon-image {
       height: 2em;
       width: 2em;
-    }
-  }
-
-  .title {
-    .icon-image {
-      display: inline-block;
-      width: 1.5em;
-      height: 1.5em;
+      line-height: 2;
     }
   }
 }
@@ -221,4 +207,8 @@
   .caption {
     height: 2.5em;
   }
+}
+
+.controls .item-list.minimal .icon-image {
+  margin-top: 0;
 }
