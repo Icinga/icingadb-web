@@ -38,6 +38,7 @@ abstract class State extends Model
             'is_overdue',
             'is_acknowledged',
             'acknowledgement_comment_id',
+            'last_comment_id',
             'in_downtime',
             'execution_time',
             'latency',
