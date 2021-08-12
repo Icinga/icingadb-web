@@ -35,7 +35,7 @@ class HostsController extends Controller
 
         $db = $this->getDb();
 
-        $hosts = Host::on($db)->with(['state', 'icon_image']);
+        $hosts = Host::on($db)->with(['state', 'icon_image', 'state.last_comment']);
 
         $this->handleSearchRequest($hosts);
 
