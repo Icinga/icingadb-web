@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -17,6 +18,7 @@ use ipl\Html\Text;
 class UsergroupDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
 
     /** @var Usergroup The given user group */
     protected $usergroup;

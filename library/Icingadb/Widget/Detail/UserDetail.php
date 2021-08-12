@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -18,6 +19,7 @@ use ipl\Html\Text;
 class UserDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
 
     /** @var User The given user */
     protected $user;
