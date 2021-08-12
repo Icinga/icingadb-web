@@ -8,9 +8,12 @@ use DateTime;
 use DateTimeZone;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
+use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\AcknowledgementHistory;
@@ -27,15 +30,21 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
 use ipl\Html\HtmlElement;
+use ipl\Html\TemplateString;
 use ipl\Html\Text;
 use ipl\Orm\ResultSet;
+use ipl\Stdlib\Filter;
 use ipl\Stdlib\Str;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 
 class EventDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
+    use HostLink;
+    use ServiceLink;
 
     protected $tag = 'div';
 
@@ -212,8 +221,41 @@ class EventDetail extends BaseHtmlElement
             new MarkdownText($downtime->comment)
         );
 
+        $this->addHtml(new HtmlElement('h2', null, Text::create(t('Event Info'))));
+
+        if ($downtime->triggered_by_id !== null || $downtime->parent_id !== null) {
+            if ($downtime->triggered_by_id !== null) {
+                $label = t('Triggered By');
+                $relatedDowntime = $downtime->triggered_by;
+            } else {
+                $label = t('Parent');
+                $relatedDowntime = $downtime->parent;
+            }
+
+            $query = History::on($this->getDb())
+                ->columns('id')
+                ->filter(Filter::equal('event_type', 'downtime_start'))
+                ->filter(Filter::equal('history.downtime_history_id', $relatedDowntime->downtime_id));
+            $this->applyRestrictions($query);
+            if (($relatedEvent = $query->first()) !== null) {
+                /** @var History $relatedEvent */
+                $this->addHtml(new HorizontalKeyValue(
+                    $label,
+                    HtmlElement::create('span', ['class' => 'accompanying-text'], TemplateString::create(
+                        $relatedDowntime->is_flexible
+                            ? t('{{#link}}Flexible Downtime{{/link}} for %s')
+                            : t('{{#link}}Fixed Downtime{{/link}} for %s'),
+                        ['link' => new Link(null, Links::event($relatedEvent), ['class' => 'subject'])],
+                        ($relatedDowntime->object_type === 'host'
+                            ? $this->createHostLink($relatedDowntime->host, true)
+                            : $this->createServiceLink($relatedDowntime->service, $relatedDowntime->host, true))
+                            ->addAttributes(['class' => 'subject'])
+                    ))
+                ));
+            }
+        }
+
         $this->addHtml(
-            new HtmlElement('h2', null, Text::create(t('Event Info'))),
             $downtime->object_type === 'host'
                 ? new HorizontalKeyValue(t('Host'), HtmlElement::create(
                     'span',
