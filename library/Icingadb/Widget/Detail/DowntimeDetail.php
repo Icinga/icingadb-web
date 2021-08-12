@@ -7,18 +7,32 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Date\DateFormatter;
 use Icinga\Date\DateFormatter as WebDateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
+use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Widget\DowntimeList;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use ipl\Html\TemplateString;
+use ipl\Html\Text;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class DowntimeDetail extends BaseHtmlElement
 {
     use Auth;
+    use Database;
+    use HostLink;
+    use ServiceLink;
 
     /** @var BaseHtmlElement */
     protected $control;
@@ -93,6 +107,31 @@ class DowntimeDetail extends BaseHtmlElement
         ]));
 
         $this->add(Html::tag('h2', t('Details')));
+
+        if ($this->downtime->triggered_by_id !== null || $this->downtime->parent_id !== null) {
+            if ($this->downtime->triggered_by_id !== null) {
+                $label = t('Triggered By');
+                $relatedDowntime = $this->downtime->triggered_by;
+            } else {
+                $label = t('Parent');
+                $relatedDowntime = $this->downtime->parent;
+            }
+
+            $this->addHtml(new HorizontalKeyValue(
+                $label,
+                HtmlElement::create('span', ['class' => 'accompanying-text'], TemplateString::create(
+                    $relatedDowntime->is_flexible
+                        ? t('{{#link}}Flexible Downtime{{/link}} for %s')
+                        : t('{{#link}}Fixed Downtime{{/link}} for %s'),
+                    ['link' => new Link(null, Links::downtime($relatedDowntime), ['class' => 'subject'])],
+                    ($relatedDowntime->object_type === 'host'
+                        ? $this->createHostLink($relatedDowntime->host, true)
+                        : $this->createServiceLink($relatedDowntime->service, $relatedDowntime->host, true))
+                        ->addAttributes(['class' => 'subject'])
+                ))
+            ));
+        }
+
         $this->add(new HorizontalKeyValue(
             t('Created'),
             WebDateFormatter::formatDateTime($this->downtime->entry_time)
@@ -124,6 +163,33 @@ class DowntimeDetail extends BaseHtmlElement
                 t('Flexible Duration'),
                 DateFormatter::formatDuration($this->downtime->flexible_duration)
             ));
+        }
+
+        $query = Downtime::on($this->getDb())->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ])
+            ->limit(3)
+            ->filter(Filter::equal('parent_id', $this->downtime->id))
+            ->orFilter(Filter::equal('triggered_by_id', $this->downtime->id));
+        $this->applyRestrictions($query);
+
+        $children = $query->peekAhead()->execute();
+        if ($children->hasResult()) {
+            $this->addHtml(
+                new HtmlElement('h2', null, Text::create(t('Children'))),
+                new DowntimeList($children),
+                (new ShowMore($children, Links::downtimes()->setQueryString(
+                    QueryString::render(Filter::any(
+                        Filter::equal('downtime.parent.name', $this->downtime->name),
+                        Filter::equal('downtime.triggered_by.name', $this->downtime->name)
+                    ))
+                )))->setBaseTarget('_next')
+            );
         }
 
         $this->add(Html::tag('h2', t('Progress')));
