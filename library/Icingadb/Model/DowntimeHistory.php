@@ -34,6 +34,7 @@ class DowntimeHistory extends Model
             'environment_id',
             'endpoint_id',
             'triggered_by_id',
+            'parent_id',
             'object_type',
             'host_id',
             'service_id',
@@ -59,6 +60,7 @@ class DowntimeHistory extends Model
             'environment_id'        => t('Downtime Environment Id (History)'),
             'endpoint_id'           => t('Downtime Endpoint Id (History)'),
             'triggered_by_id'       => t('Downtime Triggered By Id (History)'),
+            'parent_id'             => t('Downtime Parent Id (History)'),
             'object_type'           => t('Downtime Object Type (History)'),
             'host_id'               => t('Downtime Host Id (History)'),
             'service_id'            => t('Downtime Service Id (History)'),
@@ -98,13 +100,18 @@ class DowntimeHistory extends Model
 
     public function createRelations(Relations $relations)
     {
-        // @TODO(el): Add relation for triggered_by_id
+        $relations->belongsTo('triggered_by', self::class)
+            ->setCandidateKey('triggered_by_id')
+            ->setJoinType('LEFT');
+        $relations->belongsTo('parent', self::class)
+            ->setCandidateKey('parent_id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('endpoint', Endpoint::class);
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('history', History::class)
             ->setCandidateKey('downtime_id')
             ->setForeignKey('downtime_history_id');
-        $relations->belongsTo('host', Host::class);
+        $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
     }
 }
