@@ -239,7 +239,7 @@ class ObjectSuggestions extends Suggestions
         $customVars->columns('flatname');
         $this->applyRestrictions($customVars);
         $customVars->filter(Filter::equal('flatname', $searchTerm));
-        $idColumn = $resolver->qualifyColumnsAndAliases((array) 'id', $customVars->getModel(), false);
+        $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
 
         $customVars->columns($scalarQueries);
