@@ -31,7 +31,17 @@ class DowntimeController extends Controller
             'service',
             'service.state',
             'service.host',
-            'service.host.state'
+            'service.host.state',
+            'parent',
+            'parent.host',
+            'parent.host.state',
+            'parent.service',
+            'parent.service.state',
+            'triggered_by',
+            'triggered_by.host',
+            'triggered_by.host.state',
+            'triggered_by.service',
+            'triggered_by.service.state'
         ]);
         $query->getSelectBase()
             ->where(['downtime.name = ?' => $name]);

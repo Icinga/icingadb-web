@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\IdKey;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
@@ -28,6 +29,8 @@ class Downtime extends Model
     {
         return [
             'environment_id',
+            'triggered_by_id',
+            'parent_id',
             'object_type',
             'host_id',
             'service_id',
@@ -46,8 +49,8 @@ class Downtime extends Model
             'end_time',
             'zone_id',
             'duration' => new Expression(
-                'CASE WHEN is_flexible = \'y\' THEN flexible_duration ELSE'
-                . ' scheduled_end_time - scheduled_start_time END'
+                'CASE WHEN %s = \'y\' THEN %s ELSE %s - %s END',
+                ['is_flexible', 'flexible_duration', 'scheduled_end_time', 'scheduled_start_time']
             )
         ];
     }
@@ -56,6 +59,8 @@ class Downtime extends Model
     {
         return [
             'environment_id'        => t('Downtime Environment Id'),
+            'triggered_by_id'       => t('Downtime Triggered By Id'),
+            'parent_id'             => t('Downtime Parent Id'),
             'object_type'           => t('Downtime Object Type'),
             'host_id'               => t('Downtime Host Id'),
             'service_id'            => t('Downtime Service Id'),
@@ -88,6 +93,7 @@ class Downtime extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
+        $behaviors->add(new IdKey());
         $behaviors->add(new BoolCast([
             'is_flexible',
             'is_in_effect'
@@ -108,6 +114,12 @@ class Downtime extends Model
 
     public function createRelations(Relations $relations)
     {
+        $relations->belongsTo('triggered_by', self::class)
+            ->setCandidateKey('triggered_by_id')
+            ->setJoinType('LEFT');
+        $relations->belongsTo('parent', self::class)
+            ->setCandidateKey('parent_id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
