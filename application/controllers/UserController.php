@@ -7,8 +7,8 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\UserDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
-use ipl\Html\Html;
 
 class UserController extends Controller
 {
@@ -40,26 +40,7 @@ class UserController extends Controller
     public function indexAction()
     {
         $this->addControl((new UserList([$this->user]))->setNoSubjectLink()->setDetailActionsDisabled());
-
-        $this->addContent(Html::tag('h2', t('Details')));
-        $this->addContent(Html::tag('ul', ['class' => 'key-value-list'], [
-            Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], t('E-Mail')),
-                Html::tag(
-                    'span',
-                    ['class' => 'value'],
-                    $this->user->email ?: Html::tag('span', ['class' => 'text-muted'], t('Unset'))
-                )
-            ]),
-            Html::tag('li', [
-                Html::tag('span', ['class' => 'label'], t('Pager')),
-                Html::tag(
-                    'span',
-                    ['class' => 'value'],
-                    $this->user->pager ?: Html::tag('span', ['class' => 'text-muted'], t('Unset'))
-                )
-            ])
-        ]));
+        $this->addContent(new UserDetail($this->user));
 
         $this->setAutorefreshInterval(10);
     }
