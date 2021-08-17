@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
@@ -27,6 +28,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 class HostController extends Controller
 {
     use CommandActions;
+    use HookActions;
 
     /** @var Host The host object */
     protected $host;
@@ -48,6 +50,7 @@ class HostController extends Controller
         }
 
         $this->host = $host;
+        $this->loadTabsForObject($host);
 
         $this->setTitleTab($this->getRequest()->getActionName());
     }
@@ -231,6 +234,10 @@ class HostController extends Controller
             ]);
         }
 
+        foreach ($this->loadAdditionalTabs() as $name => $tab) {
+            $tabs->add($name, $tab + ['urlParams' => ['name' => $this->host->name]]);
+        }
+
         return $tabs;
     }
 
@@ -253,5 +260,10 @@ class HostController extends Controller
     protected function getCommandTargetsUrl()
     {
         return Links::host($this->host);
+    }
+
+    protected function getDefaultTabControls()
+    {
+        return [(new HostList([$this->host]))->setDetailActionsDisabled()->setNoSubjectLink()];
     }
 }
