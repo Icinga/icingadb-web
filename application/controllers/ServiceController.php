@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
+use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -23,6 +24,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 class ServiceController extends Controller
 {
     use CommandActions;
+    use HookActions;
 
     /** @var Service The service object */
     protected $service;
@@ -50,6 +52,7 @@ class ServiceController extends Controller
         }
 
         $this->service = $service;
+        $this->loadTabsForObject($service);
 
         $this->setTitleTab($this->getRequest()->getActionName());
     }
@@ -186,6 +189,13 @@ class ServiceController extends Controller
             ]);
         }
 
+        foreach ($this->loadAdditionalTabs() as $name => $tab) {
+            $tabs->add($name, $tab + ['urlParams' => [
+                'name'      => $this->service->name,
+                'host.name' => $this->service->host->name
+            ]]);
+        }
+
         return $tabs;
     }
 
@@ -208,5 +218,10 @@ class ServiceController extends Controller
     public function getCommandTargetsUrl()
     {
         return Links::service($this->service, $this->service->host);
+    }
+
+    protected function getDefaultTabControls()
+    {
+        return [(new ServiceList([$this->service]))->setDetailActionsDisabled()->setNoSubjectLink()];
     }
 }
