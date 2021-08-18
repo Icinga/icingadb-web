@@ -45,7 +45,8 @@ class StateHistory extends Model
             'output',
             'long_output',
             'max_check_attempts',
-            'check_source'
+            'check_source',
+            'scheduling_source'
         ];
     }
 
