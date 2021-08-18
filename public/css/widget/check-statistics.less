@@ -1,6 +1,18 @@
 .check-statistics {
   .card();
   .progress-bar();
+  .card-footer {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid @gray-light;
+
+    .key {
+      width: auto;
+      align-self: center;
+      margin-right: .28125em; //calculated &nbsp; width
+      font-size: .83333333em;
+    }
+  }
 
   .check-attempt {
     display: inline-flex;

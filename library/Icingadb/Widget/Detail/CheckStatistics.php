@@ -5,16 +5,17 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
-use ipl\Web\Common\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
+use Icinga\Util\Format;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
+use ipl\Web\Common\Card;
+use ipl\Web\Widget\HorizontalKeyValue;
+use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
 use ipl\Web\Widget\TimeUntil;
 use ipl\Web\Widget\VerticalKeyValue;
-use Icinga\Util\Format;
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
-use ipl\Web\Widget\StateBall;
 
 class CheckStatistics extends Card
 {
@@ -141,6 +142,7 @@ class CheckStatistics extends Card
 
     protected function assembleFooter(BaseHtmlElement $footer)
     {
+        $footer->add(new HorizontalKeyValue(t('Scheduling Source') . ':', $this->object->state->scheduling_source));
     }
 
     protected function assembleHeader(BaseHtmlElement $header)
@@ -157,7 +159,7 @@ class CheckStatistics extends Card
                 t('Attempts'),
                 new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
             ),
-            new VerticalKeyValue(t('Check source'), $checkSource),
+            new VerticalKeyValue(t('Check Source'), $checkSource),
             new VerticalKeyValue(
                 t('Execution time'),
                 Format::seconds($this->object->state->execution_time)
