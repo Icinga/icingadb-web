@@ -31,12 +31,12 @@ class HostMetaInfo extends BaseHtmlElement
     protected function assemble()
     {
         $this->addHtml(
-            new VerticalKeyValue('host_name', $this->host->name),
+            new VerticalKeyValue('host.name', $this->host->name),
             new HtmlElement(
                 'div',
                 null,
-                new HorizontalKeyValue('host_address', $this->host->address ?: '-'),
-                new HorizontalKeyValue('host_address_v6', $this->host->address6 ?: '-')
+                new HorizontalKeyValue('host.address', $this->host->address ?: '-'),
+                new HorizontalKeyValue('host.address6', $this->host->address6 ?: '-')
             ),
             new VerticalKeyValue(
                 'last_state_change',
