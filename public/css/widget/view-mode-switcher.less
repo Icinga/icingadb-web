@@ -15,6 +15,7 @@
     padding: 14/16*.25em 14/16*.5em;
     font-size: 16/12em;
     height: 24/16em; // desired pixel height / font-size
+    cursor: pointer;
 
     &:first-of-type {
       border-top-left-radius: 0.25em;
@@ -39,5 +40,6 @@
   input[checked] + label {
     background-color: @icinga-blue;
     color: @text-color-on-icinga-blue;
+    cursor: default;
   }
 }
