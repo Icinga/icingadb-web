@@ -9,7 +9,6 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Sql\Sql;
 use ipl\Stdlib\Filter;
@@ -89,31 +88,19 @@ class HistoryController extends Controller
 
         yield $this->export($history);
 
-        $results = $history->execute();
-
-        $showMore = (new ShowMore(
-            $results,
-            $url->setParam('page', $page + 1)
-                ->setParam('before', $before)
-                ->setAnchor('page-' . ($page + 1))
-        ))
-            ->setLabel(t('Load More'))
-            ->setAttribute('data-no-icinga-ajax', true);
-
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $historyList = (new HistoryList($results))
+        $historyList = (new HistoryList($history->execute()))
             ->setPageSize($limitControl->getLimit())
-            ->setViewMode($viewModeSwitcher->getViewMode());
+            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setLoadMoreUrl($url->setParam('before', $before));
         if ($compact) {
             $historyList->setPageNumber($page);
         }
 
-        // TODO: Dirty, really dirty, find a better solution (And I don't just mean `getContent()` !)
-        $historyList->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
         if ($compact && $page > 1) {
             $this->document->addFrom($historyList);
         } else {
