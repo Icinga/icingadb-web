@@ -1,0 +1,95 @@
+<?php
+
+/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+
+namespace Icinga\Module\Icingadb\Common;
+
+use Icinga\Module\Icingadb\Widget\ItemList\PageSeparatorItem;
+use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
+
+trait LoadMore
+{
+    /** @var int */
+    protected $pageSize;
+
+    /** @var int */
+    protected $pageNumber;
+
+    /** @var Url */
+    protected $loadMoreUrl;
+
+    /**
+     * Set the page size
+     *
+     * @param int $size
+     *
+     * @return $this
+     */
+    public function setPageSize($size)
+    {
+        $this->pageSize = $size;
+
+        return $this;
+    }
+
+    /**
+     * Set the page number
+     *
+     * @param int $number
+     *
+     * @return $this
+     */
+    public function setPageNumber($number)
+    {
+        $this->pageNumber = $number;
+
+        return $this;
+    }
+
+    /**
+     * Set the page number
+     *
+     * @param Url $url
+     *
+     * @return $this
+     */
+    public function setLoadMoreUrl(Url $url)
+    {
+        $this->loadMoreUrl = $url;
+
+        return $this;
+    }
+
+    protected function getIterator($result)
+    {
+        $count = 0;
+        $pageNumber = $this->pageNumber ?: 1;
+
+        $showMore = (new ShowMore(
+            $result,
+            $this->loadMoreUrl->setParam('page', $pageNumber + 1)
+                ->setAnchor('page-' . ($pageNumber + 1))
+        ))
+            ->setLabel(t('Load More'))
+            ->setAttribute('data-no-icinga-ajax', true);
+
+        if ($pageNumber > 1) {
+            $this->add(new PageSeparatorItem($pageNumber));
+        }
+
+        foreach ($result as $data) {
+            $count++;
+
+            if ($count % $this->pageSize === 0) {
+                $pageNumber++;
+            } elseif ($count > $this->pageSize && $count % $this->pageSize === 1) {
+                $this->add(new PageSeparatorItem($pageNumber));
+            }
+
+            yield $data;
+        }
+
+        $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
+    }
+}
