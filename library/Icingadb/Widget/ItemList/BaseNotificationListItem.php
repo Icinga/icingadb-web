@@ -11,8 +11,9 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
-use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
+use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
+use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use InvalidArgumentException;
@@ -74,7 +75,12 @@ abstract class BaseNotificationListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
-            $caption->add(CompatPluginOutput::getInstance()->render($this->item->text));
+            $caption->addHtml(new PluginOutputContainer(
+                (new PluginOutput($this->item->text))
+                    ->setCommandName($this->item->object_type === 'host'
+                        ? $this->item->host->checkcommand
+                        : $this->item->service->checkcommand)
+            ));
         } else {
             $caption->add([
                 new Icon(Icons::USER),

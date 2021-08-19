@@ -5,10 +5,11 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\Icons;
-use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\State;
+use Icinga\Module\Icingadb\Util\PluginOutput;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
@@ -33,15 +34,15 @@ abstract class StateListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if ($this->state->soft_state === null && $this->state->output === null) {
-            $caption->add(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
+            $caption->addHtml(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
         } else {
             if (empty($this->state->output)) {
                 $pluginOutput = new EmptyState(t('Output unavailable.'));
             } else {
-                $pluginOutput = CompatPluginOutput::getInstance()->render($this->state->output);
+                $pluginOutput = new PluginOutputContainer(PluginOutput::fromObject($this->item));
             }
 
-            $caption->add($pluginOutput);
+            $caption->addHtml($pluginOutput);
         }
     }
 

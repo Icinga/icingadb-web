@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
-use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -77,12 +76,5 @@ class HostListItemDetailed extends BaseHostListItem
 
         $footer->addHtml($statusIcons);
         $footer->addHtml($performanceData);
-    }
-
-    protected function assembleCaption(BaseHtmlElement $caption)
-    {
-        $caption->add(CompatPluginOutput::getInstance()->render(
-            $this->state->output . "\n" . $this->state->long_output
-        ));
     }
 }
