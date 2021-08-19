@@ -205,7 +205,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
     private function formatTimestamp($ts)
     {
-        if ($ts === 0) {
+        if (empty($ts)) {
             return '-';
         }
 
