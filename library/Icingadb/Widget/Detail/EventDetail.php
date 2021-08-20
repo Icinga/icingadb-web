@@ -202,6 +202,7 @@ class EventDetail extends BaseHtmlElement
         $this->addHtml(
             new HtmlElement('h2', null, Text::create(t('Event Info'))),
             new HorizontalKeyValue(t('Occurred On'), DateFormatter::formatDateTime($stateChange->event_time)),
+            new HorizontalKeyValue(t('Scheduling Source'), $stateChange->scheduling_source),
             new HorizontalKeyValue(t('Check Source'), $stateChange->check_source)
         );
         if ($stateChange->state_type === 'soft') {

@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
+use ipl\Sql\Expression;
 
 /**
  * Model for table `state_history`
@@ -45,7 +46,10 @@ class StateHistory extends Model
             'output',
             'long_output',
             'max_check_attempts',
-            'check_source'
+            'check_source',
+            'scheduling_source' => new Expression( // TODO: Do as told
+                "'remove me if https://github.com/Icinga/icingadb/issues/160 is done'"
+            )
         ];
     }
 
