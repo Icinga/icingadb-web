@@ -4,10 +4,12 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use ArrayObject;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\EventDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
+use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 
 class EventController extends Controller
@@ -58,7 +60,7 @@ class EventController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new HistoryList([$this->event]))
+        $this->addControl((new HistoryList(new ResultSet(new ArrayObject([$this->event]))))
             ->setViewMode('minimal')
             ->setPageSize(1)
             ->setCaptionDisabled()
