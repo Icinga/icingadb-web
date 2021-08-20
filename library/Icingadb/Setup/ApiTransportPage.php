@@ -5,10 +5,8 @@
 namespace Icinga\Module\Icingadb\Setup;
 
 use Icinga\Data\ConfigObject;
-use Icinga\Module\Monitoring\Command\Transport\ApiCommandTransport;
-use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
-use Icinga\Module\Monitoring\Exception\CommandTransportException;
-use Icinga\Module\Monitoring\Forms\Config\Transport\ApiTransportForm;
+use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
+use Icinga\Module\Icingadb\Command\Transport\CommandTransportException;
 use Icinga\Web\Form;
 
 class ApiTransportPage extends Form
@@ -35,17 +33,35 @@ class ApiTransportPage extends Form
         $this->addElement('hidden', 'transport', [
             'required'  => true,
             'disabled'  => true,
-            'value'     => ApiCommandTransport::TRANSPORT
+            'value'     => 'api'
         ]);
         $this->addElement('hidden', 'name', [
             'required'  => true,
             'disabled'  => true,
             'value'     => 'icinga2'
         ]);
-
-        $transportForm = new ApiTransportForm();
-        $transportForm->createElements($formData);
-        $this->addElements($transportForm->getElements());
+        $this->addElement('text', 'host', [
+            'required'      => true,
+            'label'         => t('Host'),
+            'description'   => t('Hostname or address of the Icinga master')
+        ]);
+        $this->addElement('number', 'port', [
+            'required'          => true,
+            'label'             => t('Port'),
+            'value'             => 5665,
+            'min'               => 1,
+            'max'               => 65536
+        ]);
+        $this->addElement('text', 'username', [
+            'required'      => true,
+            'label'         => t('API Username'),
+            'description'   => t('User to authenticate with using HTTP Basic Auth')
+        ]);
+        $this->addElement('password', 'password', [
+            'required'          => true,
+            'renderPassword'    => true,
+            'label'             => t('API Password')
+        ]);
     }
 
     public function isValid($formData)
