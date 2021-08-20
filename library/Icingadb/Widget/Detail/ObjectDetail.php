@@ -15,7 +15,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\MarkdownText;
+use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
