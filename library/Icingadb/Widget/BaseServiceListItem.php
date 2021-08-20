@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;

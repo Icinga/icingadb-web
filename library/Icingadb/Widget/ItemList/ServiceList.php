@@ -2,9 +2,13 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Widget\ServiceListItem;
+use Icinga\Module\Icingadb\Widget\ServiceListItemDetailed;
+use Icinga\Module\Icingadb\Widget\ServiceListItemMinimal;
+use Icinga\Module\Icingadb\Widget\StateList;
 use ipl\Web\Url;
 
 class ServiceList extends StateList
