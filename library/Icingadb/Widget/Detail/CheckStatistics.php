@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Widget\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
-use Icinga\Module\Icingadb\Widget\TimeUntil;
+use ipl\Web\Widget\TimeUntil;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
