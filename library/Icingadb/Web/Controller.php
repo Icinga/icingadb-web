@@ -11,7 +11,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Common\BaseItemList;
-use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Security\SecurityException;
 use InvalidArgumentException;
 use ipl\Html\Html;

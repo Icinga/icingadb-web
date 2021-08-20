@@ -19,7 +19,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
