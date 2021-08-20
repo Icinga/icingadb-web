@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Generator;
 use Icinga\Module\Icingadb\Widget\ItemList\PageSeparatorItem;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\ResultSet;
@@ -49,7 +50,7 @@ trait LoadMore
     }
 
     /**
-     * Set the url for LoadMore widget
+     * Set the url to fetch more items
      *
      * @param Url $url
      *
@@ -63,25 +64,31 @@ trait LoadMore
     }
 
     /**
+     * Iterate over the given data
+     *
      * Add the page separator and the "LoadMore" button at the desired position
      *
      * @param ResultSet $result
+     *
+     * @return Generator
      */
-    protected function getIterator($result)
+    protected function getIterator(ResultSet $result)
     {
         $count = 0;
         $pageNumber = $this->pageNumber ?: 1;
 
-        $showMore = (new ShowMore(
-            $result,
-            $this->loadMoreUrl->setParam('page', $pageNumber + 1)
-                ->setAnchor('page-' . ($pageNumber + 1))
-        ))
-            ->setLabel(t('Load More'))
-            ->setAttribute('data-no-icinga-ajax', true);
+        if ($this->loadMoreUrl !== null) {
+            $showMore = (new ShowMore(
+                $result,
+                $this->loadMoreUrl->setParam('page', $pageNumber + 1)
+                    ->setAnchor('page-' . ($pageNumber + 1))
+            ))
+                ->setLabel(t('Load More'))
+                ->setAttribute('data-no-icinga-ajax', true);
 
-        if ($pageNumber > 1) {
-            $this->add(new PageSeparatorItem($pageNumber));
+            if ($pageNumber > 1) {
+                $this->add(new PageSeparatorItem($pageNumber));
+            }
         }
 
         foreach ($result as $data) {
@@ -96,6 +103,8 @@ trait LoadMore
             yield $data;
         }
 
-        $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
+        if (isset($showMore)) {
+            $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
+        }
     }
 }
