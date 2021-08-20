@@ -11,7 +11,7 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
-use Icinga\Module\Icingadb\Widget\TimeSince;
+use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
