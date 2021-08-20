@@ -5,9 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Widget\ServiceListItem;
-use Icinga\Module\Icingadb\Widget\ServiceListItemDetailed;
-use Icinga\Module\Icingadb\Widget\ServiceListItemMinimal;
 use Icinga\Module\Icingadb\Widget\StateList;
 use ipl\Web\Url;
 

@@ -2,12 +2,12 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\StateListItem;
 use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
