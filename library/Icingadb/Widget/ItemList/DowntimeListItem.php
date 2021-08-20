@@ -2,10 +2,9 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
-use Icinga\Module\Icingadb\Widget\ItemList\BaseDowntimeListItem;
 use ipl\Html\BaseHtmlElement;
 
 class DowntimeListItem extends BaseDowntimeListItem

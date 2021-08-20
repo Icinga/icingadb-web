@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ViewMode;
-use Icinga\Module\Icingadb\Widget\DowntimeListItem;
 use ipl\Web\Url;
 
 class DowntimeList extends BaseItemList
