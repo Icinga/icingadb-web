@@ -8,3 +8,12 @@ $this->provideHook('ApplicationState');
 $this->provideHook('X509/Sni');
 $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
+
+if (! $this->app->getModuleManager()->hasEnabled('monitoring')) {
+    // Ensure we can load some classes/interfaces for compatibility with legacy hooks
+    $this->app->getLoader()->registerNamespace(
+        'Icinga\\Module\\Monitoring',
+        $this->getLibDir() . '/Monitoring',
+        $this->getApplicationDir()
+    );
+}

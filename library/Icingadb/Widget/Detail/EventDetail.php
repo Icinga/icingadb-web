@@ -15,7 +15,6 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
-use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\AcknowledgementHistory;
 use Icinga\Module\Icingadb\Model\CommentHistory;
 use Icinga\Module\Icingadb\Model\DowntimeHistory;
@@ -23,9 +22,11 @@ use Icinga\Module\Icingadb\Model\FlappingHistory;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
+use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
@@ -70,7 +71,12 @@ class EventDetail extends BaseHtmlElement
                 ),
                 'class' => 'collapsible',
                 'data-visible-height' => 100
-            ], CompatPluginOutput::getInstance()->render($notification->text))
+            ], new PluginOutputContainer(
+                (new PluginOutput($notification->text))
+                    ->setCommandName($notification->object_type === 'host'
+                        ? $this->event->host->checkcommand
+                        : $this->event->service->checkcommand)
+            ))
         );
 
         if ($notification->object_type === 'host') {
@@ -157,8 +163,11 @@ class EventDetail extends BaseHtmlElement
                 ),
                 'class' => 'collapsible',
                 'data-visible-height' => 100
-            ], CompatPluginOutput::getInstance()->render(
-                $stateChange->output . "\n" . $stateChange->long_output
+            ], new PluginOutputContainer(
+                (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
+                    ->setCommandName($stateChange->object_type === 'host'
+                        ? $this->event->host->checkcommand
+                        : $this->event->service->checkcommand)
             ))
         );
 

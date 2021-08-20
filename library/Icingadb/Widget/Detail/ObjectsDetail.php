@@ -8,6 +8,7 @@ use Icinga\Chart\Donut;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
+use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectsDetailExtensionHook;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
@@ -25,15 +26,18 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected $summary;
 
+    protected $query;
+
     protected $type;
 
     protected $defaultAttributes = ['class' => 'objects-detail'];
 
     protected $tag = 'div';
 
-    public function __construct($type, $summary)
+    public function __construct($type, $summary, $query)
     {
         $this->summary = $summary;
+        $this->query = $query;
         $this->type = $type;
     }
 
@@ -148,6 +152,15 @@ class ObjectsDetail extends BaseHtmlElement
         ];
     }
 
+    protected function createExtensions()
+    {
+        return ObjectsDetailExtensionHook::loadExtensions(
+            $this->type,
+            $this->query,
+            $this->getBaseFilter()
+        );
+    }
+
     protected function createSummary()
     {
         return [
@@ -158,11 +171,11 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->add([
-            $this->createSummary(),
-            $this->createComments(),
-            $this->createDowntimes(),
-            $this->createFeatureToggles()
-        ]);
+        $this->add(ObjectsDetailExtensionHook::injectExtensions([
+            190 => $this->createSummary(),
+            400 => $this->createComments(),
+            401 => $this->createDowntimes(),
+            701 => $this->createFeatureToggles()
+        ], $this->createExtensions()));
     }
 }

@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
@@ -66,11 +67,16 @@ class UsergroupDetail extends BaseHtmlElement
         ];
     }
 
+    protected function createExtensions()
+    {
+        return ObjectDetailExtensionHook::loadExtensions($this->usergroup);
+    }
+
     protected function assemble()
     {
-        $this->add([
-            $this->createUserList(),
-            $this->createCustomVars()
-        ]);
+        $this->add(ObjectDetailExtensionHook::injectExtensions([
+            500 => $this->createUserList(),
+            700 => $this->createCustomVars()
+        ], $this->createExtensions()));
     }
 }

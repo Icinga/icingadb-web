@@ -13,10 +13,11 @@ use Icinga\Module\Icingadb\Common\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
-use Icinga\Module\Icingadb\Compat\CompatPluginOutput;
 use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\BaseListItem;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
+use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
@@ -114,12 +115,22 @@ abstract class BaseHistoryListItem extends BaseListItem
                         $this->item->notification->text
                     ]);
                 } else {
-                    $caption->add(CompatPluginOutput::getInstance()->render($this->item->notification->text));
+                    $caption->addHtml(new PluginOutputContainer(
+                        (new PluginOutput($this->item->notification->text))
+                            ->setCommandName($this->item->object_type === 'host'
+                                ? $this->item->host->checkcommand
+                                : $this->item->service->checkcommand)
+                    ));
                 }
 
                 break;
             case 'state_change':
-                $caption->add(CompatPluginOutput::getInstance()->render($this->item->state->output));
+                $caption->addHtml(new PluginOutputContainer(
+                    (new PluginOutput($this->item->state->output))
+                        ->setCommandName($this->item->object_type === 'host'
+                            ? $this->item->host->checkcommand
+                            : $this->item->service->checkcommand)
+                ));
 
                 break;
         }
