@@ -2,7 +2,7 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Web\Control;
 
 use ipl\Html\Attributes;
 use ipl\Html\Form;

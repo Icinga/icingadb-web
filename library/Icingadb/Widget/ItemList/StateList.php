@@ -2,8 +2,9 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 

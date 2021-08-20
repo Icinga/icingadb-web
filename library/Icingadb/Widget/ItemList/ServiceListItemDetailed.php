@@ -2,7 +2,7 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
@@ -14,7 +14,7 @@ use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
-class HostListItemDetailed extends BaseHostListItem
+class ServiceListItemDetailed extends BaseServiceListItem
 {
     use ListItemDetailedLayout;
 
@@ -54,17 +54,17 @@ class HostListItemDetailed extends BaseHostListItem
                 }
 
                 // Check if number of visualizable pie charts is larger than PIE_CHART_LIMIT
-                if (count($pies) > HostListItemDetailed::PIE_CHART_LIMIT) {
+                if (count($pies) > ServiceListItemDetailed::PIE_CHART_LIMIT) {
                     break;
                 }
             }
 
-            $maxVisiblePies = HostListItemDetailed::PIE_CHART_LIMIT - 2;
+            $maxVisiblePies = ServiceListItemDetailed::PIE_CHART_LIMIT - 2;
             $numOfPies = count($pies);
             foreach ($pies as $i => $pie) {
                 if (
                     // Show max. 5 elements: if there are more than 5, show 4 + `…`
-                    $i > $maxVisiblePies && $numOfPies > HostListItemDetailed::PIE_CHART_LIMIT
+                    $i > $maxVisiblePies && $numOfPies > ServiceListItemDetailed::PIE_CHART_LIMIT
                 ) {
                     $performanceData->addHtml(new HtmlElement('span', null, Text::create('…')));
                     break;

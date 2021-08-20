@@ -5,12 +5,12 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Icingadb\Widget\Card;
+use ipl\Web\Common\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\TimeAgo;
-use Icinga\Module\Icingadb\Widget\TimeSince;
-use Icinga\Module\Icingadb\Widget\TimeUntil;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use ipl\Web\Widget\TimeAgo;
+use ipl\Web\Widget\TimeSince;
+use ipl\Web\Widget\TimeUntil;
+use ipl\Web\Widget\VerticalKeyValue;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

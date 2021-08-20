@@ -2,7 +2,7 @@
 
 /* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Util\PerfData;
 use Icinga\Module\Icingadb\Util\PerfDataSet;

@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
-use Icinga\Module\Icingadb\Widget\BaseItemList;
+use Icinga\Module\Icingadb\Common\BaseItemList;
 
 class UsergroupList extends BaseItemList
 {

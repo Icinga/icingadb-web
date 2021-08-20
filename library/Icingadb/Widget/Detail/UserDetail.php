@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Widget\EmptyState;
-use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;

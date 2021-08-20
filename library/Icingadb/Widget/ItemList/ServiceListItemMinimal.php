@@ -2,12 +2,12 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemMinimalLayout;
 use ipl\Web\Widget\StateBall;
 
-class HostListItemMinimal extends BaseHostListItem
+class ServiceListItemMinimal extends BaseServiceListItem
 {
     use ListItemMinimalLayout;
 

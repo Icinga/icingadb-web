@@ -8,7 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\HostList;
+use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
 use ipl\Stdlib\Filter;
 

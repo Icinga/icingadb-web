@@ -13,7 +13,7 @@ use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Health;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\Html;
 use ipl\Web\Url;
 

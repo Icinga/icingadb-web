@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
-use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 

@@ -5,9 +5,9 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Model\Downtime;
-use Icinga\Module\Icingadb\Widget\TimeAgo;
-use Icinga\Module\Icingadb\Widget\TimeUntil;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use ipl\Web\Widget\TimeAgo;
+use ipl\Web\Widget\TimeUntil;
+use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 

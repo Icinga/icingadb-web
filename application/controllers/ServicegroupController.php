@@ -8,7 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
 use ipl\Stdlib\Filter;
 

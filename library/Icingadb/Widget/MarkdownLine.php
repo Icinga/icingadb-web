@@ -2,7 +2,7 @@
 
 /* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Common;
+namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Web\Helper\Markdown;
 use ipl\Html\BaseHtmlElement;

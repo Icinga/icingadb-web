@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use Icinga\Module\Icingadb\Widget\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Sql\Sql;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
