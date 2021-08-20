@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Widget\ItemList\PageSeparatorItem;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Orm\ResultSet;
 use ipl\Web\Url;
 
 trait LoadMore
@@ -48,7 +49,7 @@ trait LoadMore
     }
 
     /**
-     * Set the page number
+     * Set the url for LoadMore widget
      *
      * @param Url $url
      *
@@ -61,6 +62,11 @@ trait LoadMore
         return $this;
     }
 
+    /**
+     * Add the page separator and the "LoadMore" button at the desired position
+     *
+     * @param ResultSet $result
+     */
     protected function getIterator($result)
     {
         $count = 0;

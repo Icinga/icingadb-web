@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
+use ipl\Orm\ResultSet;
 
 class NotificationList extends BaseItemList
 {
@@ -18,6 +19,14 @@ class NotificationList extends BaseItemList
     use LoadMore;
 
     protected $defaultAttributes = ['class' => 'notification-list'];
+
+    /** @var ResultSet */
+    protected $data;
+
+    public function __construct(ResultSet $data)
+    {
+        parent::__construct($data);
+    }
 
     protected function init()
     {
