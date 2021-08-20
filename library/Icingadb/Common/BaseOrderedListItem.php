@@ -4,8 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Widget\BaseListItem;
-
 abstract class BaseOrderedListItem extends BaseListItem
 {
     /** @var int This element's position */

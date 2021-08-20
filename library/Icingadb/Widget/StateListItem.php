@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Util\PluginOutput;

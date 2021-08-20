@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\BaseFilter;
+use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\DetailActions;
 use InvalidArgumentException;

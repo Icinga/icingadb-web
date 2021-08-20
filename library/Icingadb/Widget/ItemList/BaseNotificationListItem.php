@@ -12,7 +12,7 @@ use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Util\PluginOutput;
-use Icinga\Module\Icingadb\Widget\BaseListItem;
+use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use Icinga\Module\Icingadb\Widget\TimeAgo;

@@ -2,8 +2,9 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Module\Icingadb\Widget\BaseItemList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -12,8 +13,6 @@ use ipl\Web\Filter\QueryString;
 
 /**
  * Base class for list items
- *
- * @todo Move this to Icinga\Module\Icingadb\Common
  */
 abstract class BaseListItem extends BaseHtmlElement
 {
