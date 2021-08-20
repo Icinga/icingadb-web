@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\MarkdownLine;
+use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
