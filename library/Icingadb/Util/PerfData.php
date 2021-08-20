@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Util;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Web\Widget\Chart\InlinePie;
 use InvalidArgumentException;
+use LogicException;
 
 class PerfData
 {
@@ -485,7 +485,7 @@ class PerfData
     public function asInlinePie()
     {
         if (! $this->isVisualizable()) {
-            throw new ProgrammingError('Cannot calculate piechart data for unvisualizable perfdata entry.');
+            throw new LogicException('Cannot calculate piechart data for unvisualizable perfdata entry.');
         }
 
         $data = $this->calculatePieChartData();
@@ -589,25 +589,23 @@ class PerfData
     /**
      * Return the state indicated by this perfdata
      *
-     * @see Service
-     *
      * @return int
      */
     public function getState()
     {
         if ($this->value === null) {
-            return Service::STATE_UNKNOWN;
+            return ServiceStates::UNKNOWN;
         }
 
         if (! $this->criticalThreshold->contains($this->value)) {
-            return Service::STATE_CRITICAL;
+            return ServiceStates::CRITICAL;
         }
 
         if (! $this->warningThreshold->contains($this->value)) {
-            return Service::STATE_WARNING;
+            return ServiceStates::WARNING;
         }
 
-        return Service::STATE_OK;
+        return ServiceStates::OK;
     }
 
     /**
@@ -625,16 +623,16 @@ class PerfData
             return $this->getPercentage() > $rhs->getPercentage();
         }
 
-        if ($state === Service::STATE_CRITICAL) {
+        if ($state === ServiceStates::CRITICAL) {
             return true;
         }
 
-        if ($state === Service::STATE_UNKNOWN) {
-            return $rhsState !== Service::STATE_CRITICAL;
+        if ($state === ServiceStates::UNKNOWN) {
+            return $rhsState !== ServiceStates::CRITICAL;
         }
 
-        if ($state === Service::STATE_WARNING) {
-            return $rhsState === Service::STATE_OK;
+        if ($state === ServiceStates::WARNING) {
+            return $rhsState === ServiceStates::OK;
         }
 
         return false;
