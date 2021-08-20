@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
-use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 
 class DowntimeController extends Controller
 {

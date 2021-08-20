@@ -25,7 +25,7 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
-use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;

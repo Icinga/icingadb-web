@@ -14,7 +14,7 @@ use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Common\BaseListItem;
-use Icinga\Module\Icingadb\Widget\DowntimeList;
+use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
