@@ -15,6 +15,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\TemplateString;
 use ipl\Html\Text;
+use ipl\Web\Common\Card;
 use ipl\Web\Filter\QueryString;
 
 class ServiceSummaryDonut extends Card

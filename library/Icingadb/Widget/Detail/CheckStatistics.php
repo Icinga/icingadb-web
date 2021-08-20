@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Icingadb\Widget\Card;
+use ipl\Web\Common\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
