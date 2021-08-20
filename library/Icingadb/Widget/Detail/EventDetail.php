@@ -24,7 +24,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\EmptyState;
-use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;

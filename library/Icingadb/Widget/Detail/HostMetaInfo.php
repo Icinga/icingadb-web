@@ -6,7 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;

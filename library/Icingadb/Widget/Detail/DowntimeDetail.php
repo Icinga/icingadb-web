@@ -15,7 +15,7 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
-use Icinga\Module\Icingadb\Widget\HorizontalKeyValue;
+use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
