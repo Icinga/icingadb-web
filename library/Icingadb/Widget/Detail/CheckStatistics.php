@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\Card;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\TimeAgo;
+use ipl\Web\Widget\TimeAgo;
 use Icinga\Module\Icingadb\Widget\TimeSince;
 use Icinga\Module\Icingadb\Widget\TimeUntil;
 use Icinga\Module\Icingadb\Widget\VerticalKeyValue;

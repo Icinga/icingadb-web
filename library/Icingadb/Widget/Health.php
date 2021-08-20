@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Web\Widget\TimeAgo;
 
 class Health extends BaseHtmlElement
 {

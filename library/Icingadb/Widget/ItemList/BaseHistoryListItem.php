@@ -19,7 +19,7 @@ use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
-use Icinga\Module\Icingadb\Widget\TimeAgo;
+use ipl\Web\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
