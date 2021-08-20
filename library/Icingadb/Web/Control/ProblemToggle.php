@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+
 namespace Icinga\Module\Icingadb\Web\Control;
 
 use ipl\Web\Common\FormUid;
