@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Widget\BaseItemList;
+use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;

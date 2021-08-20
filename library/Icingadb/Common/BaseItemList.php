@@ -2,19 +2,14 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget;
+namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Common\BaseFilter;
-use Icinga\Module\Icingadb\Common\BaseListItem;
-use Icinga\Module\Icingadb\Common\BaseTableRowItem;
-use Icinga\Module\Icingadb\Common\DetailActions;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 
 /**
  * Base class for item lists
- *
- * @todo Move this to Icinga\Module\Icingadb\Common
  */
 abstract class BaseItemList extends BaseHtmlElement
 {

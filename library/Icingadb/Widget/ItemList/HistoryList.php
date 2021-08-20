@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
-use Icinga\Module\Icingadb\Widget\BaseItemList;
+use Icinga\Module\Icingadb\Common\BaseItemList;
 
 class HistoryList extends BaseItemList
 {
