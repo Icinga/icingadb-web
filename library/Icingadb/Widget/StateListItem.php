@@ -25,6 +25,10 @@ abstract class StateListItem extends BaseListItem
     protected function init()
     {
         $this->state = $this->item->state;
+
+        if (isset($this->item->icon_image->icon_image)) {
+            $this->list->setHasIconImages(true);
+        }
     }
 
     abstract protected function createSubject();
@@ -43,6 +47,18 @@ abstract class StateListItem extends BaseListItem
             }
 
             $caption->addHtml($pluginOutput);
+        }
+    }
+
+    protected function assembleIconImage(BaseHtmlElement $iconImage)
+    {
+        if (isset($this->item->icon_image->icon_image)) {
+            $iconImage->add(HtmlElement::create('img', [
+                'src' => $this->item->icon_image->icon_image,
+                'alt' => $this->item->icon_image_alt
+            ]));
+        } else {
+            $iconImage->addAttributes(['class' => 'placeholder']);
         }
     }
 

@@ -55,6 +55,10 @@ abstract class BaseListItem extends BaseHtmlElement
     {
     }
 
+    protected function assembleIconImage(BaseHtmlElement $iconImage)
+    {
+    }
+
     protected function assembleTitle(BaseHtmlElement $title)
     {
     }
@@ -97,6 +101,21 @@ abstract class BaseListItem extends BaseHtmlElement
         $this->assembleFooter($footer);
 
         return $footer;
+    }
+
+    protected function createIconImage()
+    {
+        if (! $this->list->hasIconImages()) {
+            return null;
+        }
+
+        $iconImage = HtmlElement::create('div', [
+            'class' => 'icon-image',
+        ]);
+
+        $this->assembleIconImage($iconImage);
+
+        return $iconImage;
     }
 
     protected function createTimestamp()
@@ -148,7 +167,8 @@ abstract class BaseListItem extends BaseHtmlElement
     {
         $this->add([
             $this->createVisual(),
-            $this->createMain(),
+            $this->createIconImage(),
+            $this->createMain()
         ]);
     }
 }

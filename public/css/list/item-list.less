@@ -48,6 +48,7 @@
       flex: 1 1 auto;
       padding: .5em 0;
       width: 0;
+      margin-left: .5em;
     }
 
     .visual {
@@ -90,7 +91,6 @@
 
   .visual {
     width: 2.2em;
-    margin-right: .5em;
   }
 
   &.show-more a,
@@ -170,6 +170,31 @@
   }
 }
 
+.item-list {
+  .icon-image {
+    width:  3em;
+    height: 3em;
+    text-align: center;
+    margin-top: .5em;
+    margin-left: .5em;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      height: auto;
+      width: auto;
+    }
+  }
+
+  &.minimal {
+    .icon-image {
+      height: 2em;
+      width: 2em;
+      line-height: 2;
+    }
+  }
+}
+
 .controls .list-item:not(:last-child) {
   margin-bottom: .5em;
 }
@@ -182,4 +207,8 @@
   .caption {
     height: 2.5em;
   }
+}
+
+.controls .item-list.minimal .icon-image {
+  margin-top: 0;
 }
