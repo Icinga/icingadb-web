@@ -8,6 +8,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
+use ipl\Web\Widget\VerticalKeyValue;
 
 class Health extends BaseHtmlElement
 {

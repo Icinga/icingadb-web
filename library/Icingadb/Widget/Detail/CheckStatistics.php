@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
 use ipl\Web\Widget\TimeUntil;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use ipl\Web\Widget\VerticalKeyValue;
 use Icinga\Util\Format;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

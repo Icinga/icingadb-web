@@ -13,7 +13,7 @@ use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
 use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
-use Icinga\Module\Icingadb\Widget\VerticalKeyValue;
+use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
