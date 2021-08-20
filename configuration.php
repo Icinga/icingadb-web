@@ -289,7 +289,7 @@ namespace Icinga\Module\Icingadb
         'icon'     => 'bell'
     ]);
     $section->add(N_('Service Grid'), [
-        'icon'        => 'services',
+        'icon'        => 'cog',
         'description' => $this->translate('Display service problems as grid'),
         'url'         => 'icingadb/services/grid?problems',
         'priority'    => 70
