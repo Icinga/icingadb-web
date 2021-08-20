@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use Icinga\Module\Icingadb\Model\Behavior\VolatileState;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
+use ipl\Sql\Expression;
 
 /**
  * Base class for the {@link HostState} and {@link ServiceState} models providing common columns.
@@ -42,7 +43,9 @@ abstract class State extends Model
             'latency',
             'timeout',
             'check_source',
-            'scheduling_source',
+            'scheduling_source' => new Expression( // TODO: Do as told
+                "'remove me if https://github.com/Icinga/icingadb/issues/160 is done'"
+            ),
             'last_update',
             'last_state_change',
             'next_check',
