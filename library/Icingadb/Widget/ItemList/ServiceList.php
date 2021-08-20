@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Widget\StateList;
 use ipl\Web\Url;
 
 class ServiceList extends StateList
