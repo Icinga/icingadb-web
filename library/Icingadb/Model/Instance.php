@@ -47,10 +47,7 @@ class Instance extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
-        $behaviors->add(new Timestamp([
-            'heartbeat',
-            'icinga2_start_time'
-        ]));
+        $behaviors->add(new Timestamp(['heartbeat']));
         $behaviors->add(new BoolCast([
             'responsible',
             'icinga2_active_host_checks_enabled',
