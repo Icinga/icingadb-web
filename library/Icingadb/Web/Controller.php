@@ -376,7 +376,8 @@ class Controller extends CompatController
                 $requestUrl = Url::fromRequest();
                 $pageParam = $paginationControl->getPageParam();
                 $limitParam = LimitControl::DEFAULT_LIMIT_PARAM;
-                $urlParams[$viewModeSwitcher->getViewModeParam()] = $viewMode;
+
+                $requestUrl->setParam($viewModeSwitcher->getViewModeParam(), $viewMode);
 
                 if (! $requestUrl->hasParam($limitParam)) {
                     if ($viewMode === 'minimal') {
@@ -401,13 +402,13 @@ class Controller extends CompatController
                     }
 
                     if (($requestUrl->hasParam($pageParam) && $currentPage > 1) || $currentPage > 1) {
-                        $urlParams[$pageParam] = $currentPage;
+                        $requestUrl->setParam($pageParam, $currentPage);
+                    } else {
+                        $requestUrl->remove($pageParam);
                     }
-                } else {
-                    $urlParams[$limitParam] = $requestUrl->getParam($limitParam);
                 }
 
-                $this->redirectNow($requestUrl->setParams($urlParams));
+                $this->redirectNow($requestUrl);
             }
         )->handleRequest(ServerRequest::fromGlobals());
 
