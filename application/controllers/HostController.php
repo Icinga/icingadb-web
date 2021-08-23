@@ -183,7 +183,7 @@ class HostController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
-        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         yield $this->export($services);
 

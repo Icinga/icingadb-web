@@ -342,6 +342,9 @@ class Controller extends CompatController
      *
      * This automatically shifts the view mode URL parameter from {@link $params}.
      *
+     * @param PaginationControl $paginationControl
+     * @param LimitControl      $limitControl
+     *
      * @return ViewModeSwitcher
      */
     public function createViewModeSwitcher(PaginationControl $paginationControl, LimitControl $limitControl)
@@ -356,7 +359,7 @@ class Controller extends CompatController
         }
 
         $viewModeSwitcher->populate([
-            'view' => $this->params->shift($viewModeSwitcher->getViewModeParam())
+            $viewModeSwitcher->getViewModeParam() => $this->params->shift($viewModeSwitcher->getViewModeParam())
         ]);
 
         $session = $this->Window()->getSessionNamespace(
