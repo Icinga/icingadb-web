@@ -5,40 +5,32 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
+use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
+use ipl\Orm\ResultSet;
 
 class HistoryList extends BaseItemList
 {
     use CaptionDisabled;
     use NoSubjectLink;
     use ViewMode;
+    use LoadMore;
 
     protected $defaultAttributes = ['class' => 'history-list'];
 
-    protected $pageSize;
+    /** @var ResultSet */
+    protected $data;
 
-    protected $pageNumber;
+    public function __construct(ResultSet $data)
+    {
+        parent::__construct($data);
+    }
 
     protected function init()
     {
-        $this->realData = $this->data;
-        $this->data = $this->getIterator();
-    }
-
-    public function setPageSize($size)
-    {
-        $this->pageSize = $size;
-
-        return $this;
-    }
-
-    public function setPageNumber($number)
-    {
-        $this->pageNumber = $number;
-
-        return $this;
+        $this->data = $this->getIterator($this->data);
     }
 
     protected function getItemClass()
@@ -50,28 +42,6 @@ class HistoryList extends BaseItemList
                 return HistoryListItemDetailed::class;
             default:
                 return HistoryListItem::class;
-        }
-    }
-
-    protected function getIterator()
-    {
-        $count = 0;
-        $pageNumber = $this->pageNumber ?: 1;
-
-        if ($pageNumber > 1) {
-            $this->add(new PageSeparatorItem($pageNumber));
-        }
-
-        foreach ($this->realData as $data) {
-            $count++;
-
-            if ($count % $this->pageSize === 0) {
-                $pageNumber++;
-            } elseif ($count > $this->pageSize && $count % $this->pageSize === 1) {
-                $this->add(new PageSeparatorItem($pageNumber));
-            }
-
-            yield $data;
         }
     }
 

@@ -19,7 +19,6 @@ use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 
 class ServiceController extends Controller
 {
@@ -130,7 +129,7 @@ class ServiceController extends Controller
         }
 
         $limitControl = $this->createLimitControl();
-
+        $url->setParam('limit', $limitControl->getLimit());
         $history->peekAhead();
         $history->limit($limitControl->getLimit());
         if ($page > 1) {
@@ -143,29 +142,18 @@ class ServiceController extends Controller
 
         yield $this->export($history);
 
-        $results = $history->execute();
-
-        $showMore = (new ShowMore(
-            $results,
-            $url->setParam('page', $page + 1)
-                ->setAnchor('page-' . ($page + 1))
-        ))
-            ->setLabel(t('Load More'))
-            ->setAttribute('data-no-icinga-ajax', true);
-
         $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
         $this->addControl($limitControl);
 
-        $historyList = (new HistoryList($results))
-            ->setPageSize($limitControl->getLimit());
+        $historyList = (new HistoryList($history->execute()))
+            ->setPageSize($limitControl->getLimit())
+            ->setLoadMoreUrl($url);
         if ($compact) {
             $historyList->setPageNumber($page);
         }
 
-        // TODO: Dirty, really dirty, find a better solution (And I don't just mean `getContent()` !)
-        $historyList->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
         if ($compact && $page > 1) {
-            $this->document->add($historyList->getContent());
+            $this->document->addFrom($historyList);
         } else {
             $this->addContent($historyList);
         }

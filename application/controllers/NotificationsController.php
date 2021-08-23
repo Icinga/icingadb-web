@@ -9,9 +9,9 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Sql\Sql;
+use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
@@ -34,9 +34,13 @@ class NotificationsController extends Controller
         ]);
 
         $this->handleSearchRequest($notifications);
+        $before = $this->params->shift('before', time());
+        $url = Url::fromPath('icingadb/notifications')->setParams(clone $this->params);
+        if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
+            $page = 1;
+        }
 
         $limitControl = $this->createLimitControl();
-        $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
             $notifications,
             [
@@ -62,6 +66,18 @@ class NotificationsController extends Controller
             $filter = $searchBar->getFilter();
         }
 
+        $notifications->peekAhead();
+        $notifications->limit($limitControl->getLimit());
+
+        if ($page > 1) {
+            if ($compact) {
+                $notifications->offset(($page - 1) * $limitControl->getLimit());
+            } else {
+                $notifications->limit($page * $limitControl->getLimit());
+            }
+        }
+
+        $notifications->filter(Filter::lessThanOrEqual('send_time', $before));
         $this->filter($notifications, $filter);
         $notifications->getSelectBase()
             // Make sure we'll fetch service history entries only for services which still exist
@@ -70,32 +86,26 @@ class NotificationsController extends Controller
                 'notification_history_service.id IS NOT NULL'
             ], Sql::ANY);
 
-        $notifications->peekAhead($compact);
-
         yield $this->export($notifications);
 
-        $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $results = $notifications->execute();
-
-        $this->addContent(
-            (new NotificationList($results))
-                  ->setViewMode($viewModeSwitcher->getViewMode())
-        );
+        $notificationList = (new NotificationList($notifications->execute()))
+            ->setPageSize($limitControl->getLimit())
+            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setLoadMoreUrl($url->setParam('before', $before));
 
         if ($compact) {
-            $this->addContent(
-                (new ShowMore($results, Url::fromRequest()->without(['showCompact', 'limit'])))
-                    ->setBaseTarget('_next')
-                    ->setAttribute('title', sprintf(
-                        t('Show all %d notifications'),
-                        $notifications->count()
-                    ))
-            );
+            $notificationList->setPageNumber($page);
+        }
+
+        if ($compact && $page > 1) {
+            $this->document->addFrom($notificationList);
+        } else {
+            $this->addContent($notificationList);
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
