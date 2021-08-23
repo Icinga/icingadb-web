@@ -328,3 +328,14 @@ div.show-more {
 .servicegropup-list > col.object-statistics-graph {
   padding-right: .25em;
 }
+
+.comment-popup {
+  .comment-list .main {
+    border: none;
+    // This is necessary to limit the visible comment lines
+    // because the popup is shown in detailed list mode only
+    .caption {
+      height: 3em;
+    }
+  }
+}
