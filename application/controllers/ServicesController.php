@@ -39,6 +39,7 @@ class ServicesController extends Controller
 
         $services = Service::on($db)->with([
             'state',
+            'state.last_comment',
             'host',
             'host.state',
             'icon_image'

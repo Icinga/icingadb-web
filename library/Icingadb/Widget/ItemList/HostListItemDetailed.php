@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
+use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -30,9 +31,22 @@ class HostListItemDetailed extends BaseHostListItem
     {
         $statusIcons = new HtmlElement('div', Attributes::create(['class' => 'status-icons']));
 
-        // ToDo(fs): Get `has_comments` from database
-        if ($this->item->comment->limit(1)->execute()->hasResult()) {
-            $statusIcons->addHtml(new Icon('comments', ['title' => t('This item has been commented')]));
+        if ($this->item->state->last_comment_id !== null) {
+            $comment = $this->item->state->last_comment;
+            $comment->host = $this->item;
+            $comment = (new CommentList([$comment]))
+                ->setNoSubjectLink()
+                ->setObjectLinkDisabled()
+                ->setDetailActionsDisabled();
+
+            $statusIcons->addHtml(
+                new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'comment-wrapper']),
+                    new HtmlElement('div', Attributes::create(['class' => 'comment-popup']), $comment),
+                    (new Icon('comments', ['class' => 'comment-icon']))
+                )
+            );
         }
 
         if (! $this->item->notifications_enabled) {
