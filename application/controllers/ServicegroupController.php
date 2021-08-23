@@ -47,6 +47,7 @@ class ServicegroupController extends Controller
 
         $services = Service::on($db)->with([
             'state',
+            'icon_image',
             'host',
             'host.state'
         ])->utilize('servicegroup');
