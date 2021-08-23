@@ -40,18 +40,16 @@ class HistoryController extends Controller
 
         $before = $this->params->shift('before', time());
         $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
-        if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
-            $page = 1;
-        }
 
         $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
             $history,
             [
                 'history.event_time desc' => t('Event Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
         $searchBar = $this->createSearchBar($history, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
@@ -71,13 +69,11 @@ class HistoryController extends Controller
         }
 
         $history->peekAhead();
-        $history->limit($limitControl->getLimit());
-        if ($page > 1) {
-            if ($compact) {
-                $history->offset(($page - 1) * $limitControl->getLimit());
-            } else {
-                $history->limit($page * $limitControl->getLimit());
-            }
+
+        $page = $paginationControl->getCurrentPageNumber();
+
+        if ($page > 1 && ! $compact) {
+            $history->limit($page * $limitControl->getLimit());
         }
 
         $history->filter(Filter::lessThanOrEqual('event_time', $before));

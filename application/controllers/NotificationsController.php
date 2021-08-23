@@ -36,18 +36,16 @@ class NotificationsController extends Controller
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
         $url = Url::fromPath('icingadb/notifications')->setParams(clone $this->params);
-        if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
-            $page = 1;
-        }
 
         $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
             $notifications,
             [
                 'notification_history.send_time desc' => t('Send Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
         $searchBar = $this->createSearchBar($notifications, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
@@ -67,14 +65,11 @@ class NotificationsController extends Controller
         }
 
         $notifications->peekAhead();
-        $notifications->limit($limitControl->getLimit());
 
-        if ($page > 1) {
-            if ($compact) {
-                $notifications->offset(($page - 1) * $limitControl->getLimit());
-            } else {
-                $notifications->limit($page * $limitControl->getLimit());
-            }
+        $page = $paginationControl->getCurrentPageNumber();
+
+        if ($page > 1 && ! $compact) {
+            $notifications->limit($page * $limitControl->getLimit());
         }
 
         $notifications->filter(Filter::lessThanOrEqual('send_time', $before));
