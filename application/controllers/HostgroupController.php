@@ -45,7 +45,7 @@ class HostgroupController extends Controller
     {
         $db = $this->getDb();
 
-        $hosts = Host::on($db)->with(['state', 'icon_image'])->utilize('hostgroup');
+        $hosts = Host::on($db)->with(['state', 'state.last_comment', 'icon_image'])->utilize('hostgroup');
 
         $hosts->getSelectBase()->where(['host_hostgroup.id = ?' => $this->hostgroup->id]);
         $this->applyRestrictions($hosts);
