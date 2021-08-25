@@ -97,7 +97,13 @@ class Comment extends Model
     {
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
+        $relations->belongsTo('host_state', HostState::class)
+            ->setForeignKey('last_comment_id')
+            ->setCandidateKey('id');
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
+        $relations->belongsTo('service_state', ServiceState::class)
+            ->setForeignKey('last_comment_id')
+            ->setCandidateKey('id');
         $relations->belongsTo('zone', Zone::class);
     }
 }
