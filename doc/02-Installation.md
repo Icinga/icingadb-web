@@ -6,11 +6,14 @@
 
 ## Requirements
 
+* PHP (>= 7.3)
+  * Older versions (7.0+) still work, but may stop doing so with near future updates
+* MySQL or PostgreSQL PHP libraries
+* The following PHP modules must be installed: cURL, dom, json, libxml, pdo
 * [Icinga DB](https://github.com/Icinga/icingadb)
-* [Icinga Web 2](https://github.com/Icinga/icingaweb2) (>= 2.8)
-  * monitoring (>= 2.8) (Core Icinga Web 2 module)
-  * [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.5) (Icinga Web 2 module)
-* PHP (>= 7.0)
+* [Icinga Web 2](https://github.com/Icinga/icingaweb2) (>= 2.9)
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.7)
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10)
 
 ## Installation
 
