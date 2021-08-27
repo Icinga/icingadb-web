@@ -77,18 +77,8 @@ trait LoadMore
         $count = 0;
         $pageNumber = $this->pageNumber ?: 1;
 
-        if ($this->loadMoreUrl !== null) {
-            $showMore = (new ShowMore(
-                $result,
-                $this->loadMoreUrl->setParam('page', $pageNumber + 1)
-                    ->setAnchor('page-' . ($pageNumber + 1))
-            ))
-                ->setLabel(t('Load More'))
-                ->setAttribute('data-no-icinga-ajax', true);
-
-            if ($pageNumber > 1) {
-                $this->add(new PageSeparatorItem($pageNumber));
-            }
+        if ($pageNumber > 1) {
+            $this->add(new PageSeparatorItem($pageNumber));
         }
 
         foreach ($result as $data) {
@@ -103,7 +93,15 @@ trait LoadMore
             yield $data;
         }
 
-        if (isset($showMore)) {
+        if ($this->loadMoreUrl !== null) {
+            $showMore = (new ShowMore(
+                $result,
+                $this->loadMoreUrl->setParam('page', $pageNumber)
+                    ->setAnchor('page-' . ($pageNumber))
+            ))
+                ->setLabel(t('Load More'))
+                ->setAttribute('data-no-icinga-ajax', true);
+
             $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
         }
     }
