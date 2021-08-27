@@ -104,8 +104,10 @@ class ObjectAuthorization
         $query = $model::on($this->getDb());
         $tableName = $query->getModel()->getTableName();
 
+        $inspectedRoles = [];
         $roleExpressions = [];
         $rolesWithoutRestrictions = [];
+
         foreach ($this->getAuth()->getUser()->getRoles() as $role) {
             $roleFilter = Filter::all();
             if (($restriction = $role->getRestrictions('icingadb/filter/objects'))) {
@@ -127,6 +129,9 @@ class ObjectAuthorization
                 continue;
             }
 
+            $inspectedRoles[] = $role->getName();
+            $roleName = $this->getDb()->quoteIdentifier($role->getName());
+
             if ($cache) {
                 FilterProcessor::apply($roleFilter, $query);
                 $where = $query->getSelectBase()->getWhere();
@@ -134,10 +139,10 @@ class ObjectAuthorization
 
                 $values = [];
                 $rendered = $this->getDb()->getQueryBuilder()->buildCondition($where, $values);
-                $roleExpressions[$role->getName()] = new Expression($rendered, null, ...$values);
+                $roleExpressions[$roleName] = new Expression($rendered, null, ...$values);
             } else {
                 $subQuery = clone $query;
-                $roleExpressions[$role->getName()] = $subQuery
+                $roleExpressions[$roleName] = $subQuery
                     ->columns([new Expression('1')])
                     ->filter($roleFilter)
                     ->filter($filter)
@@ -158,7 +163,7 @@ class ObjectAuthorization
 
             foreach ($query as $row) {
                 $roles = $rolesWithoutRestrictions;
-                foreach ($roleExpressions as $alias => $_) {
+                foreach ($inspectedRoles as $alias) {
                     if ($row->$alias) {
                         $rolesWithRestrictions[$alias] = true;
                         $roles[] = $alias;
