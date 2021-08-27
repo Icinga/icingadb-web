@@ -23,6 +23,7 @@ use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use ipl\Web\Url;
 
 class HostController extends Controller
 {
@@ -124,31 +125,39 @@ class HostController extends Controller
                 'history.object_type = ?' => 'host'
             ]);
 
-        $url = HostLinks::history($this->host);
-        if (! $this->params->has('page') || ($page = (int) $this->params->shift('page')) < 1) {
-            $page = 1;
-        }
+        $before = $this->params->shift('before', time());
+        $url = Url::fromRequest()->setParams(clone $this->params);
 
         $limitControl = $this->createLimitControl();
-        $url->setParam('limit', $limitControl->getLimit());
+        $paginationControl = $this->createPaginationControl($history);
+        $sortControl = $this->createSortControl(
+            $history,
+            [
+                'history.event_time desc' => t('Event Time')
+            ]
+        );
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
         $history->peekAhead();
-        $history->limit($limitControl->getLimit());
-        if ($page > 1) {
-            if ($compact) {
-                $history->offset(($page - 1) * $limitControl->getLimit());
-            } else {
-                $history->limit($page * $limitControl->getLimit());
-            }
+
+        $page = $paginationControl->getCurrentPageNumber();
+
+        if ($page > 1 && ! $compact) {
+            $history->limit($page * $limitControl->getLimit());
         }
 
         yield $this->export($history);
 
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
 
         $historyList = (new HistoryList($history->execute()))
+            ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url);
+            ->setLoadMoreUrl($url->setParam('before', $before));
+
         if ($compact) {
             $historyList->setPageNumber($page);
         }
