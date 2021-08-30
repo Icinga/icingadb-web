@@ -192,7 +192,7 @@ class ObjectAuthorization
         }
 
         foreach ($this->getAuth()->getUser()->getRoles() as $role) {
-            if (! $role->grants($permission)) {
+            if (! $role->grants($permission) || $role->denies($permission)) {
                 continue;
             }
 
