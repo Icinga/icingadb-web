@@ -179,6 +179,7 @@ class HostController extends Controller
 
         $services = Service::on($db)->with([
             'state',
+            'state.last_comment',
             'icon_image',
             'host',
             'host.state'
