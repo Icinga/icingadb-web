@@ -16,7 +16,11 @@ abstract class BaseItemList extends BaseHtmlElement
     use BaseFilter;
     use DetailActions;
 
-    protected $baseAttributes = ['class' => 'item-list', 'data-base-target' => '_next'];
+    protected $baseAttributes = [
+        'class' => 'item-list',
+        'data-base-target' => '_next',
+        'data-pdfexport-page-breaks-at' => '.list-item'
+    ];
 
     /** @var iterable */
     protected $data;
