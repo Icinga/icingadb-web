@@ -109,7 +109,12 @@ class ObjectDetail extends BaseHtmlElement
         foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
             $moduleName = ClassLoader::extractModuleName(get_class($hook));
             if (! isset($nativeExtensionProviders[$moduleName])) {
-                $navigation->merge($hook->getNavigation($this->compatObject));
+                try {
+                    $navigation->merge($hook->getNavigation($this->compatObject));
+                } catch (Exception $e) {
+                    Logger::error("Failed to load legacy action hook: %s\n%s", $e, $e->getTraceAsString());
+                    $navigation->addItem($moduleName, ['label' => IcingaException::describe($e), 'url' => '#']);
+                }
             }
         }
 
