@@ -115,7 +115,7 @@
   footer {
     > * {
       font-size: .857em;
-      line-height: 1.5/.857em;
+      line-height: 1.5*.857em;
     }
 
     .status-icons {
@@ -126,8 +126,9 @@
     .performance-data {
       .inline-pie {
         display: inline-block;
-        line-height: 1.5/.857em;
-        width:  1em;
+        line-height: 1.5*.857em;
+        height: 1em;
+        width: 1em;
 
         &:not(:last-child) {
           margin-right: .209em;
