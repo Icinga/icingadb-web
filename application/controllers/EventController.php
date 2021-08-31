@@ -21,7 +21,7 @@ class EventController extends Controller
     {
         $this->setTitle(t('Event'));
 
-        $id = $this->params->shiftRequired('id');
+        $id = $this->params->getRequired('id');
 
         $query = History::on($this->getDb())
             ->with([

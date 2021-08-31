@@ -30,8 +30,8 @@ class ServiceController extends Controller
 
     public function init()
     {
-        $name = $this->params->shiftRequired('name');
-        $hostName = $this->params->shiftRequired('host.name');
+        $name = $this->params->getRequired('name');
+        $hostName = $this->params->getRequired('host.name');
 
         $query = Service::on($this->getDb())->with([
             'state',

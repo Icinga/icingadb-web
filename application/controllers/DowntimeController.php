@@ -23,7 +23,7 @@ class DowntimeController extends Controller
     {
         $this->setTitle(t('Downtime'));
 
-        $name = $this->params->shiftRequired('name');
+        $name = $this->params->getRequired('name');
 
         $query = Downtime::on($this->getDb())->with([
             'host',

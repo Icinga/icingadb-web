@@ -23,7 +23,7 @@ class ServicegroupController extends Controller
 
         $this->setTitle(t('Service Group'));
 
-        $name = $this->params->shiftRequired('name');
+        $name = $this->params->getRequired('name');
 
         $query = ServicegroupSummary::on($this->getDb());
 

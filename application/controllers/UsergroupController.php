@@ -21,7 +21,7 @@ class UsergroupController extends Controller
 
         $this->setTitle(t('User Group'));
 
-        $name = $this->params->shiftRequired('name');
+        $name = $this->params->getRequired('name');
 
         $query = Usergroup::on($this->getDb());
         $query->getSelectBase()

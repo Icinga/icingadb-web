@@ -21,7 +21,7 @@ class UserController extends Controller
 
         $this->setTitle(t('User'));
 
-        $name = $this->params->shiftRequired('name');
+        $name = $this->params->getRequired('name');
 
         $query = User::on($this->getDb());
         $query->getSelectBase()
