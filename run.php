@@ -9,11 +9,24 @@ $this->provideHook('X509/Sni');
 $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
 
-if (! $this->app->getModuleManager()->hasEnabled('monitoring')) {
-    // Ensure we can load some classes/interfaces for compatibility with legacy hooks
-    $this->app->getLoader()->registerNamespace(
-        'Icinga\\Module\\Monitoring',
-        $this->getLibDir() . '/Monitoring',
-        $this->getApplicationDir()
-    );
+if (! $this::exists('monitoring')) {
+    $modulePath = null;
+    foreach ($this->app->getModuleManager()->getModuleDirs() as $path) {
+        $pathToTest = join(DIRECTORY_SEPARATOR, [$path, 'monitoring']);
+        if (file_exists($pathToTest)) {
+            $modulePath = $pathToTest;
+            break;
+        }
+    }
+
+    if ($modulePath === null) {
+        Icinga\Application\Logger::error('Unable to locate monitoring module');
+    } else {
+        // Ensure we can load some classes/interfaces for compatibility with legacy hooks
+        $this->app->getLoader()->registerNamespace(
+            'Icinga\\Module\\Monitoring',
+            join(DIRECTORY_SEPARATOR, [$modulePath, 'library', 'Monitoring']),
+            join(DIRECTORY_SEPARATOR, [$modulePath, 'application'])
+        );
+    }
 }
