@@ -57,7 +57,10 @@ class ObjectDetail extends BaseHtmlElement
 
     protected $objectType;
 
-    protected $defaultAttributes = ['class' => 'host-detail'];
+    protected $defaultAttributes = [
+        'class' => 'host-detail',
+        'data-pdfexport-page-breaks-at' => 'h2'
+    ];
 
     protected $tag = 'div';
 
