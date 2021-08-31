@@ -23,7 +23,7 @@ class HostgroupController extends Controller
 
         $this->setTitle(t('Host Group'));
 
-        $name = $this->params->shiftRequired('name');
+        $name = $this->params->getRequired('name');
 
         $query = Hostgroupsummary::on($this->getDb());
 
