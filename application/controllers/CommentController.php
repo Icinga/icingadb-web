@@ -22,6 +22,7 @@ class CommentController extends Controller
     public function init()
     {
         $this->setTitle(t('Comment'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $name = $this->params->shiftRequired('name');
 

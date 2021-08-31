@@ -107,6 +107,7 @@ class CommentsController extends Controller
     public function deleteAction()
     {
         $this->setTitle(t('Remove Comments'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $db = $this->getDb();
 
@@ -139,6 +140,7 @@ class CommentsController extends Controller
     public function detailsAction()
     {
         $this->setTitle(t('Comments'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $db = $this->getDb();
 

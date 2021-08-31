@@ -22,6 +22,7 @@ class DowntimeController extends Controller
     public function init()
     {
         $this->setTitle(t('Downtime'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $name = $this->params->shiftRequired('name');
 

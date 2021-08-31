@@ -112,6 +112,7 @@ class DowntimesController extends Controller
     public function deleteAction()
     {
         $this->setTitle(t('Cancel Downtimes'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $db = $this->getDb();
 
@@ -144,6 +145,7 @@ class DowntimesController extends Controller
     public function detailsAction()
     {
         $this->setTitle(t('Downtimes'));
+        $this->getTabs()->disableLegacyExtensions();
 
         $db = $this->getDb();
 
