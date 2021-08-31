@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 
@@ -19,6 +20,13 @@ class ToggleObjectFeaturesForm extends CommandForm
     protected $features;
 
     protected $featureStatus;
+
+    /**
+     * ToggleFeature(s) being used to submit this form
+     *
+     * @var ToggleObjectFeatureCommand[]
+     */
+    protected $submittedFeatures = [];
 
     public function __construct($featureStatus)
     {
@@ -47,6 +55,51 @@ class ToggleObjectFeaturesForm extends CommandForm
         ];
 
         $this->getAttributes()->add('class', 'object-features');
+
+        $this->on(self::ON_SUCCESS, function () {
+            foreach ($this->submittedFeatures as $feature) {
+                $enabled = $feature->getEnabled();
+                switch ($feature->getFeature()) {
+                    case ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS:
+                        if ($enabled) {
+                            $message = t('Enabled active checks successfully');
+                        } else {
+                            $message = t('Disabled active checks successfully');
+                        }
+
+                        break;
+                    case ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER:
+                        if ($enabled) {
+                            $message = t('Enabled event handler successfully');
+                        } else {
+                            $message = t('Disabled event handler checks successfully');
+                        }
+
+                        break;
+                    case ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION:
+                        if ($enabled) {
+                            $message = t('Enabled flap detection successfully');
+                        } else {
+                            $message = t('Disabled flap detection successfully');
+                        }
+
+                        break;
+                    case ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS:
+                        if ($enabled) {
+                            $message = t('Enabled notifications successfully');
+                        } else {
+                            $message = t('Disabled notifications successfully');
+                        }
+
+                        break;
+                    default:
+                        $message = t('Invalid feature option');
+                        break;
+                }
+
+                Notification::success($message);
+            }
+        });
     }
 
     protected function assembleElements()
@@ -108,6 +161,8 @@ class ToggleObjectFeaturesForm extends CommandForm
             $command->setObject($object);
             $command->setFeature($feature);
             $command->setEnabled((int) $featureState);
+
+            $this->submittedFeatures[] = $command;
 
             yield $command;
         }

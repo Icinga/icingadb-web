@@ -9,6 +9,8 @@ use DateTime;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
@@ -19,6 +21,26 @@ use ipl\Web\Widget\Icon;
 class ScheduleCheckForm extends CommandForm
 {
     use Auth;
+
+    public function __construct()
+    {
+        $this->on(self::ON_SUCCESS, function () {
+            $countObjects = count($this->getObjects());
+            if (current($this->getObjects()) instanceof Host) {
+                $message = sprintf(
+                    tp('Scheduled check successfully', 'Scheduled check for %d hosts successfully', $countObjects),
+                    $countObjects
+                );
+            } else {
+                $message = sprintf(
+                    tp('Scheduled check successfully', 'Scheduled check for %d services successfully', $countObjects),
+                    $countObjects
+                );
+            }
+
+            Notification::success($message);
+        });
+    }
 
     protected function assembleElements()
     {

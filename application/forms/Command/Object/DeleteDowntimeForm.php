@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
@@ -17,6 +18,18 @@ class DeleteDowntimeForm extends CommandForm
     use RedirectOption;
 
     protected $defaultAttributes = ['class' => 'inline'];
+
+    public function __construct()
+    {
+        $this->on(self::ON_SUCCESS, function () {
+            $countObjects = count($this->getObjects());
+
+            Notification::success(sprintf(
+                tp('Removed downtime successfully', 'Removed downtime from %d objects successfully', $countObjects),
+                $countObjects
+            ));
+        });
+    }
 
     protected function assembleElements()
     {

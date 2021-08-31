@@ -9,6 +9,7 @@ use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
+use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 
@@ -35,6 +36,15 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
 
         $flexibleDuration = $config->get('settings', 'hostdowntime_flexible_duration', 'PT2H');
         $this->flexibleDuration = new DateInterval($flexibleDuration);
+
+        $this->on(self::ON_SUCCESS, function () {
+            $countObjects = count($this->getObjects());
+
+            Notification::success(sprintf(
+                tp('Scheduled downtime successfully', 'Scheduled downtime for %d hosts successfully', $countObjects),
+                $countObjects
+            ));
+        });
     }
 
     protected function assembleElements()

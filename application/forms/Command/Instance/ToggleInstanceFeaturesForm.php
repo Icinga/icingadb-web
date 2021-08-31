@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Instance;
 use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 
@@ -17,6 +18,13 @@ class ToggleInstanceFeaturesForm extends CommandForm
     protected $features;
 
     protected $featureStatus;
+
+    /**
+     * ToggleFeature(s) being used to submit this form
+     *
+     * @var ToggleInstanceFeatureCommand[]
+     */
+    protected $submittedFeatures = [];
 
     public function __construct($featureStatus)
     {
@@ -37,6 +45,67 @@ class ToggleInstanceFeaturesForm extends CommandForm
         ];
 
         $this->getAttributes()->add('class', 'instance-features');
+
+        $this->on(self::ON_SUCCESS, function () {
+            foreach ($this->submittedFeatures as $feature) {
+                $enabled = $feature->getEnabled();
+                switch ($feature->getFeature()) {
+                    case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS:
+                        if ($enabled) {
+                            $message = t('Enabled active host checks successfully');
+                        } else {
+                            $message = t('Disabled active host checks successfully');
+                        }
+
+                        break;
+                    case ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS:
+                        if ($enabled) {
+                            $message = t('Enabled active service checks successfully');
+                        } else {
+                            $message = t('Disabled active service checks successfully');
+                        }
+
+                        break;
+                    case ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS:
+                        if ($enabled) {
+                            $message = t('Enabled event handlers successfully');
+                        } else {
+                            $message = t('Disabled event handlers checks successfully');
+                        }
+
+                        break;
+                    case ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION:
+                        if ($enabled) {
+                            $message = t('Enabled flap detection successfully');
+                        } else {
+                            $message = t('Disabled flap detection successfully');
+                        }
+
+                        break;
+                    case ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS:
+                        if ($enabled) {
+                            $message = t('Enabled notifications successfully');
+                        } else {
+                            $message = t('Disabled notifications successfully');
+                        }
+
+                        break;
+                    case ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA:
+                        if ($enabled) {
+                            $message = t('Enabled performance data successfully');
+                        } else {
+                            $message = t('Disabled performance data successfully');
+                        }
+
+                        break;
+                    default:
+                        $message = t('Invalid feature option');
+                        break;
+                }
+
+                Notification::success($message);
+            }
+        });
     }
 
     protected function assembleElements()
@@ -75,6 +144,8 @@ class ToggleInstanceFeaturesForm extends CommandForm
             $command = new ToggleInstanceFeatureCommand();
             $command->setFeature($feature);
             $command->setEnabled((int) $featureState);
+
+            $this->submittedFeatures[] = $command;
 
             yield $command;
         }
