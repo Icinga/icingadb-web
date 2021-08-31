@@ -11,6 +11,7 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransportConfig;
 use Icinga\Module\Icingadb\Forms\ApiTransportForm;
 use Icinga\Module\Icingadb\Widget\ItemList\CommandTransportList;
+use Icinga\Web\Notification;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\ButtonLink;
 
@@ -64,6 +65,8 @@ class CommandTransportController extends ConfigController
                 Filter::where('name', $transportName)
             );
 
+            Notification::success(sprintf(t('Updated command transport "%s" successfully'), $transportName));
+
             $this->redirectNow('icingadb/command-transport');
         });
 
@@ -80,6 +83,9 @@ class CommandTransportController extends ConfigController
         $form = new ApiTransportForm();
         $form->on(ApiTransportForm::ON_SUCCESS, function (ApiTransportForm $form) {
             (new CommandTransportConfig())->insert('transport', $form->getValues());
+
+            Notification::success(t('Created command transport successfully'));
+
             $this->redirectNow('icingadb/command-transport');
         });
 
@@ -102,6 +108,8 @@ class CommandTransportController extends ConfigController
                 'transport',
                 Filter::where('name', $transportName)
             );
+
+            Notification::success(sprintf(t('Removed command transport "%s" successfully'), $transportName));
 
             $this->redirectNow('icingadb/command-transport');
         });

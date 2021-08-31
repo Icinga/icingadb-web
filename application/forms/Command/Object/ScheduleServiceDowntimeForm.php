@@ -10,6 +10,7 @@ use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
+use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
@@ -57,6 +58,15 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
         $flexibleDuration = $config->get('settings', 'servicedowntime_flexible_duration', 'PT2H');
         $this->flexibleDuration = new DateInterval($flexibleDuration);
+
+        $this->on(self::ON_SUCCESS, function () {
+            $countObjects = count($this->getObjects());
+
+            Notification::success(sprintf(
+                tp('Scheduled downtime successfully', 'Scheduled downtime for %d services successfully', $countObjects),
+                $countObjects
+            ));
+        });
     }
 
     protected function assembleElements()
