@@ -101,6 +101,8 @@ class HealthController extends Controller
         ]);
         $toggleInstanceFeaturesCommandForm->setObjects([$instance]);
         $toggleInstanceFeaturesCommandForm->on(ToggleInstanceFeaturesForm::ON_SUCCESS, function () {
+            $this->getResponse()->setAutoRefreshInterval(1);
+
             $this->redirectNow(Url::fromPath('icingadb/health')->getAbsoluteUrl());
         });
         $toggleInstanceFeaturesCommandForm->handleRequest(ServerRequest::fromGlobals());
