@@ -7,12 +7,17 @@ namespace Icinga\Module\Icingadb\Web;
 use Generator;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
+use Icinga\Date\DateFormatter;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Pdfexport\PrintableHtmlDocument;
+use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
 use Icinga\Security\SecurityException;
+use Icinga\Util\Environment;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
@@ -514,6 +519,46 @@ class Controller extends CompatController
         $this->getTabs()->enableDataExports();
     }
 
+    /**
+     * @todo Consider making this the default in Icinga Web 2
+     */
+    protected function sendAsPdf()
+    {
+        if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
+            throw new ConfigurationError('The pdfexport module is required for exports to PDF');
+        }
+
+        putenv('ICINGAWEB_EXPORT_FORMAT=pdf');
+        Environment::raiseMemoryLimit('512M');
+        Environment::raiseExecutionTime(300);
+
+        $time = DateFormatter::formatDateTime(time());
+
+        $doc = (new PrintableHtmlDocument())
+            ->setTitle($this->view->title)
+            ->setHeader(Html::wantHtml([
+                Html::tag('span', ['class' => 'title']),
+                Html::tag('time', null, $time)
+            ]))
+            ->setFooter(Html::wantHtml([
+                Html::tag('span', null, [
+                    t('Page') . ' ',
+                    Html::tag('span', ['class' => 'pageNumber']),
+                    ' / ',
+                    Html::tag('span', ['class' => 'totalPages'])
+                ]),
+                Html::tag('p', null, Url::fromRequest()->setParams($this->params))
+            ]))
+            ->addHtml($this->content);
+        $doc->getAttributes()->add('class', 'icinga-module module-icingadb');
+
+        Pdfexport::first()->streamPdfFromHtml($doc, sprintf(
+            '%s-%s',
+            $this->view->title ?: $this->getRequest()->getActionName(),
+            $time
+        ));
+    }
+
     public function dispatch($action)
     {
         // Notify helpers of action preDispatch state
@@ -614,7 +659,7 @@ class Controller extends CompatController
 
     public function postDispatch()
     {
-        if (! $this->formatProcessed && $this->format !== null) {
+        if (! $this->formatProcessed && $this->format !== null && $this->format !== 'pdf') {
             // The purpose of this is not only to show that a requested format isn't supported.
             // It's main purpose is to not allow to bypass restrictions with `?format=sql` as
             // it may be possible that an action applies restrictions, but doesn't support any
