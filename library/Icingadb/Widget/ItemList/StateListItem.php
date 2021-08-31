@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
+use ipl\Web\Url;
 use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -58,8 +59,21 @@ abstract class StateListItem extends BaseListItem
     protected function assembleIconImage(BaseHtmlElement $iconImage)
     {
         if (isset($this->item->icon_image->icon_image)) {
+            $src = $this->item->icon_image->icon_image;
+            if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
+                $srcUrl = Url::fromPath($src);
+                $path = $srcUrl->getRelativeUrl();
+                if (! $srcUrl->isExternal() && file_exists($path) && is_file($path)) {
+                    $mimeType = @mime_content_type($path);
+                    $content = @file_get_contents($path);
+                    if ($mimeType !== false && $content !== false) {
+                        $src = "data:$mimeType;base64," . base64_encode($content);
+                    }
+                }
+            }
+
             $iconImage->add(HtmlElement::create('img', [
-                'src' => $this->item->icon_image->icon_image,
+                'src' => $src,
                 'alt' => $this->item->icon_image_alt
             ]));
         } else {
