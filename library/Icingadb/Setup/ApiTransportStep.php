@@ -34,7 +34,7 @@ class ApiTransportStep extends Step
         unset($transportConfig['name']);
 
         try {
-            $config = Config::module('monitoring', 'commandtransports', true);
+            $config = Config::module('icingadb', 'commandtransports', true);
             $config->setSection($transportName, $transportConfig);
             $config->saveIni();
         } catch (Exception $e) {
@@ -87,13 +87,13 @@ class ApiTransportStep extends Step
         if ($this->error === null) {
             return [sprintf(
                 mt('icingadb', 'Commandtransport configuration update successful: %s'),
-                Config::module('monitoring', 'commandtransports')->getConfigFile()
+                Config::module('icingadb', 'commandtransports')->getConfigFile()
             )];
         } else {
             return [
                 sprintf(
                     mt('icingadb', 'Commandtransport configuration update failed: %s'),
-                    Config::module('monitoring', 'commandtransports')->getConfigFile()
+                    Config::module('icingadb', 'commandtransports')->getConfigFile()
                 ),
                 sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             ];
