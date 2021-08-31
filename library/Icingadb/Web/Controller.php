@@ -675,8 +675,6 @@ class Controller extends CompatController
 
     protected function moduleInit()
     {
-        Icinga::app()->getModuleManager()->loadModule('monitoring');
-
         Icinga::app()->getFrontController()
             ->getPlugin('Zend_Controller_Plugin_ErrorHandler')
             ->setErrorHandlerModule('icingadb');
