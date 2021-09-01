@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use ipl\Html\HtmlString;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -214,48 +215,17 @@ class ServicesController extends Controller
             'host.state'
         ]);
 
-        $gridcols = [
-            'host_name' => 'host.name',
-            'host_display_name' => 'host.display_name',
-            'service_name' => 'service.name',
-            'service_display_name' => 'service.display_name',
-            'service_handled' => 'service.state.is_handled',
-            'service_output' => 'service.state.output',
-            'service_state' => 'service.state.soft_state'
-        ];
+        $this->handleSearchRequest($query);
 
-        $pivotFilter = (bool) $this->params->get('problems', false) ?
-            Filter::equal('service.state.is_problem', 'y') : null;
+        $this->params->shift('page'); // Handled by PivotTable internally
+        $this->params->shift('limit'); // Handled by PivotTable internally
+        $flipped = $this->params->shift('flipped', false);
 
         $problemToggle = $this->createProblemToggle();
-        $this->addControl($problemToggle);
-
         $sortControl = $this->createSortControl($query, [
             'service.name' => t('Service Name'),
             'host.name' => t('Host Name'),
-        ]);
-
-        $sortControl->setDefault('service.name');
-
-        $flipped = $this->params->shift('flipped', false);
-
-        if ($flipped) {
-            $xAxisCol = 'host_name';
-            $yAxisCol = 'service_name';
-        } else {
-            $xAxisCol = 'service_name';
-            $yAxisCol = 'host_name';
-        }
-
-        $pivot = (new PivotTable($query, $xAxisCol, $yAxisCol, $gridcols))
-            ->setXAxisFilter($pivotFilter)
-            ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
-            ->setXAxisHeader($xAxisCol)
-            ->setYAxisHeader($yAxisCol);
-
-        $this->params->shift('page');
-        $this->params->shift('limit');
-
+        ])->setDefault('service.name');
         $searchBar = $this->createSearchBar($query, [
             LimitControl::DEFAULT_LIMIT_PARAM,
             $sortControl->getSortParam(),
@@ -276,12 +246,37 @@ class ServicesController extends Controller
             $filter = $searchBar->getFilter();
         }
 
-        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
-
         $this->filter($query, $filter);
 
+        $this->addControl($problemToggle);
         $this->addControl($sortControl);
         $this->addControl($searchBar);
+        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
+
+        if ($flipped) {
+            $xAxisCol = 'host_name';
+            $yAxisCol = 'service_name';
+        } else {
+            $xAxisCol = 'service_name';
+            $yAxisCol = 'host_name';
+        }
+
+        $pivotFilter = $problemToggle->isChecked() ?
+            Filter::equal('service.state.is_problem', 'y') : null;
+
+        $pivot = (new PivotTable($query, $xAxisCol, $yAxisCol, [
+            'host_name' => 'host.name',
+            'host_display_name' => 'host.display_name',
+            'service_name' => 'service.name',
+            'service_display_name' => 'service.display_name',
+            'service_handled' => 'service.state.is_handled',
+            'service_output' => 'service.state.output',
+            'service_state' => 'service.state.soft_state'
+        ]))
+            ->setXAxisFilter($pivotFilter)
+            ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
+            ->setXAxisHeader($xAxisCol)
+            ->setYAxisHeader($yAxisCol);
 
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
@@ -296,6 +291,17 @@ class ServicesController extends Controller
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            // TODO: Everything up to addContent() (inclusive) can be removed once the grid is a widget
+            $this->view->compact = true; // Relevant controls are transmitted separately
+            $viewRenderer = $this->getHelper('viewRenderer');
+            $viewRenderer->postDispatch();
+            $viewRenderer->setNoRender(false);
+
+            $content = trim($this->getResponse());
+            $this->getResponse()->clearBody($viewRenderer->getResponseSegment());
+
+            $this->addContent(HtmlString::create(substr($content, strpos($content, '>') + 1, -6)));
+
             $this->sendMultipartUpdate($continueWith);
         }
 
