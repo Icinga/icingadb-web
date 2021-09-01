@@ -3,6 +3,11 @@
 .item-table {
   padding: 0;
 
+  > .empty-state {
+    .rounded-corners();
+    background-color: @gray-lightest;
+  }
+
   .list-item {
     &:not(:last-child) > *:not(.visual) {
       border-bottom: 1px solid @gray-light;
@@ -59,6 +64,12 @@
   .list-item > .visual {
     display: table-cell;
     padding: .5em 1em 0 0;
+  }
+
+  > .empty-state {
+    margin: 0 1em;
+    padding: 1em;
+    text-align: center;
   }
 }
 

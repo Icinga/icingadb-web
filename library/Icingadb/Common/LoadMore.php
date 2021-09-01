@@ -93,7 +93,7 @@ trait LoadMore
             yield $data;
         }
 
-        if ($this->loadMoreUrl !== null) {
+        if ($count > 0 && $this->loadMoreUrl !== null) {
             $showMore = (new ShowMore(
                 $result,
                 $this->loadMoreUrl->setParam('page', $pageNumber)
