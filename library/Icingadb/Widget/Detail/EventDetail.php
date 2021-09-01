@@ -129,8 +129,8 @@ class EventDetail extends BaseHtmlElement
             $this->addHtml(new EmptyState(t('None', 'notified users: none')));
         } elseif (! $this->isPermittedRoute('users')) {
             $this->addHtml(Text::create(sprintf(tp(
-                'This notification received a single user',
-                'This notification received %d users',
+                'This notification was sent to a single user',
+                'This notification was sent to %d users',
                 $notification->users_notified
             ), $notification->users_notified)));
         } elseif ($notification->users_notified > 0) {
