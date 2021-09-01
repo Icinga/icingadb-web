@@ -8,7 +8,9 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content" data-base-target="_next">
 <?php if (empty($pivotData)): ?>
-    <p><?= $this->translate('No services found matching the filter.') ?></p>
+    <div class="item-list">
+        <div class="empty-state"><?= $this->translate('No services found matching the filter.') ?></div>
+    </div>
 </div>
 <?php return; endif;
 $hostFilter = Filter::matchAny();
