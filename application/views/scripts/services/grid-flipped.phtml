@@ -6,7 +6,7 @@ use Icinga\Web\Url;
 if (! $this->compact): ?>
     <?= $this->controls ?>
 <?php endif ?>
-<div class="content" data-base-target="_next">
+<div class="content" data-base-target="_next" id="<?= $this->protectId('content') ?>">
     <?php if (empty($pivotData)): ?>
     <p><?= $this->translate('No services found matching the filter.') ?></p>
 </div>
