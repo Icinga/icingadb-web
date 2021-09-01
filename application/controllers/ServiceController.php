@@ -147,7 +147,10 @@ class ServiceController extends Controller
 
         yield $this->export($history);
 
-        $this->addControl((new ServiceList([$this->service]))->setViewMode('minimal'));
+        $this->addControl((new ServiceList([$this->service]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);

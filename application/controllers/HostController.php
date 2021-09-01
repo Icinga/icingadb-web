@@ -148,7 +148,10 @@ class HostController extends Controller
 
         yield $this->export($history);
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
+        $this->addControl((new HostList([$this->host]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -209,7 +212,10 @@ class HostController extends Controller
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
+        $this->addControl((new HostList([$this->host]))
+            ->setViewMode('minimal')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
