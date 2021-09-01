@@ -184,6 +184,15 @@ class HostController extends Controller
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $sortControl = $this->createSortControl(
+            $services,
+            [
+                'service.display_name'                    => t('Name'),
+                'service.state.severity desc'             => t('Severity'),
+                'service.state.soft_state'                => t('Current State'),
+                'service.state.last_state_change desc'    => t('Last State Change')
+            ]
+        );
 
         yield $this->export($services);
 
@@ -192,8 +201,9 @@ class HostController extends Controller
 
         $this->addControl((new HostList([$this->host]))->setViewMode('minimal'));
         $this->addControl($paginationControl);
-        $this->addControl($viewModeSwitcher);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
 
         $this->addContent($serviceList);
 
