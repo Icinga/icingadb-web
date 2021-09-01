@@ -25,7 +25,6 @@ class ProblemToggle extends CompatForm
         $this->filter = $filter;
     }
 
-
     /**
      * Set callback to protect ids with
      *
@@ -38,6 +37,18 @@ class ProblemToggle extends CompatForm
         $this->protector = $protector;
 
         return $this;
+    }
+
+    /**
+     * Get whether the toggle is checked
+     *
+     * @return bool
+     */
+    public function isChecked()
+    {
+        $this->ensureAssembled();
+
+        return $this->getElement('problems')->isChecked();
     }
 
     protected function assemble()
