@@ -199,7 +199,7 @@
                 });
             } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
                 $list.find(
-                    '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
+                    '[data-icinga-detail-filter="(' + detailUrl.query.slice(1) + ')"]'
                 ).addClass('active');
             }
         }
