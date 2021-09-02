@@ -25,7 +25,7 @@ class UserDetail extends BaseHtmlElement
     /** @var User The given user */
     protected $user;
 
-    protected $defaultAttributes = ['class' => 'user-detail'];
+    protected $defaultAttributes = ['class' => 'object-detail'];
 
     protected $tag = 'div';
 

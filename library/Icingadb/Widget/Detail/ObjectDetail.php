@@ -58,7 +58,8 @@ class ObjectDetail extends BaseHtmlElement
     protected $objectType;
 
     protected $defaultAttributes = [
-        'class' => 'host-detail',
+        // Class host-detail is kept as the grafana module's iframe.js depends on it
+        'class' => ['object-detail', 'host-detail'],
         'data-pdfexport-page-breaks-at' => 'h2'
     ];
 

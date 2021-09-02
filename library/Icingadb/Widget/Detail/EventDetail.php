@@ -49,7 +49,7 @@ class EventDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'event-detail'];
+    protected $defaultAttributes = ['class' => 'object-detail'];
 
     /** @var History */
     protected $event;

@@ -52,7 +52,7 @@ class DowntimeDetail extends BaseHtmlElement
     /** @var string */
     protected $startTime;
 
-    protected $defaultAttributes = ['class' => 'downtime-detail'];
+    protected $defaultAttributes = ['class' => ['object-detail', 'downtime-detail']];
 
     protected $tag = 'div';
 

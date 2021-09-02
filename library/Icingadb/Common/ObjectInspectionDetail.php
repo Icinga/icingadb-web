@@ -26,7 +26,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'inspection-detail'];
+    protected $defaultAttributes = ['class' => ['object-detail', 'inspection-detail']];
 
     /** @var Model */
     protected $object;
