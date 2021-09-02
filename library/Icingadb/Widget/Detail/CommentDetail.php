@@ -18,7 +18,7 @@ class CommentDetail extends BaseHtmlElement
 
     protected $comment;
 
-    protected $defaultAttributes = ['class' => 'comment-detail'];
+    protected $defaultAttributes = ['class' => ['object-detail', 'comment-detail']];
 
     protected $tag = 'div';
 

@@ -24,7 +24,7 @@ class UsergroupDetail extends BaseHtmlElement
     /** @var Usergroup The given user group */
     protected $usergroup;
 
-    protected $defaultAttributes = ['class' => 'usergroup-detail'];
+    protected $defaultAttributes = ['class' => 'object-detail'];
 
     protected $tag = 'div';
 
