@@ -4,11 +4,16 @@
 
 namespace Icinga\Module\Icingadb\Web;
 
+use Exception;
 use Generator;
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -17,7 +22,10 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
 use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
 use Icinga\Security\SecurityException;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\Environment;
+use Icinga\Util\Json;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
@@ -357,10 +365,24 @@ class Controller extends CompatController
         $viewModeSwitcher = new ViewModeSwitcher();
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
-        $prefs = $this->Auth()->getUser()->getPreferences();
-        $viewMode = $prefs->getValue('icingadb', 'view_mode');
-        if (isset($viewMode)) {
-            $viewModeSwitcher->setDefaultViewMode($viewMode);
+        $user = $this->Auth()->getUser();
+        if (($preferredModes = $user->getAdditional('icingadb.view_modes')) === null) {
+            try {
+                $preferredModes = Json::decode(
+                    $user->getPreferences()->getValue('icingadb', 'view_modes', '[]'),
+                    true
+                );
+            } catch (JsonDecodeException $e) {
+                Logger::error('Failed to load preferred view modes for user "%s": %s', $user->getUsername(), $e);
+                $preferredModes = [];
+            }
+
+            $user->setAdditional('icingadb.view_modes', $preferredModes);
+        }
+
+        $requestRoute = $this->getRequest()->getUrl()->getPath();
+        if (isset($preferredModes[$requestRoute])) {
+            $viewModeSwitcher->setDefaultViewMode($preferredModes[$requestRoute]);
         }
 
         $viewModeSwitcher->populate([
@@ -373,20 +395,31 @@ class Controller extends CompatController
 
         $viewModeSwitcher->on(
             ViewModeSwitcher::ON_SUCCESS,
-            function (ViewModeSwitcher $viewModeSwitcher) use ($prefs, $paginationControl, &$session) {
+            function (ViewModeSwitcher $viewModeSwitcher) use ($user, $preferredModes, $paginationControl, &$session) {
                 $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
-                $icingadbPrefs = $prefs->icingadb ?: [];
-                $icingadbPrefs['view_mode'] = $viewMode;
-                $prefs->icingadb = $icingadbPrefs;
-
-                $currentPage = $paginationControl->getCurrentPageNumber();
-
                 $requestUrl = Url::fromRequest();
+
+                $preferredModes[$requestUrl->getPath()] = $viewMode;
+                $user->setAdditional('icingadb.view_modes', $preferredModes);
+
+                try {
+                    $preferencesStore = PreferencesStore::create(new ConfigObject([
+                        'store'     => Config::app()->get('global', 'config_backend', 'db'),
+                        'resource'  => Config::app()->get('global', 'config_resource')
+                    ]), $user);
+                    $preferencesStore->load();
+                    $preferencesStore->save(
+                        new Preferences(['icingadb' => ['view_modes' => Json::encode($preferredModes)]])
+                    );
+                } catch (Exception $e) {
+                    Logger::error('Failed to save preferred view mode for user "%s": %s', $user->getUsername(), $e);
+                }
+
                 $pageParam = $paginationControl->getPageParam();
                 $limitParam = LimitControl::DEFAULT_LIMIT_PARAM;
+                $currentPage = $paginationControl->getCurrentPageNumber();
 
                 $requestUrl->setParam($viewModeSwitcher->getViewModeParam(), $viewMode);
-
                 if (! $requestUrl->hasParam($limitParam)) {
                     if ($viewMode === 'minimal') {
                         $session->set('previous_page', $currentPage);
@@ -432,8 +465,7 @@ class Controller extends CompatController
         }
 
         $requestPath =  $session->get('request_path');
-
-        if ($requestPath && $requestPath !== Url::fromRequest()->getPath()) {
+        if ($requestPath && $requestPath !== $requestRoute) {
             $session->clear();
         }
 
