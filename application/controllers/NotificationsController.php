@@ -106,8 +106,6 @@ class NotificationsController extends Controller
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
-
-        $this->setAutorefreshInterval(10);
     }
 
     public function completeAction()
