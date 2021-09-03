@@ -113,7 +113,7 @@
             var url;
 
             if ($activeItems.length === 1) {
-                url = $target.is('a') ? $target.attr('href') : $item.find('[href]').first().attr('href');
+                url = $target.is('a') ? $target.attr('href') : $activeItems.find('[href]').first().attr('href');
             } else {
                 var filters = $activeItems.map(function () {
                     return $(this).attr('data-icinga-multiselect-filter');
