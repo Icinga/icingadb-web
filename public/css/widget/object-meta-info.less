@@ -1,6 +1,6 @@
 // Style
 
-.host-meta-info {
+.object-meta-info {
   .horizontal-key-value .key,
   .vertical-key-value .key {
     color: @gray-light;
@@ -19,7 +19,7 @@
   }
 }
 
-.host-meta-info-control {
+.object-meta-info-control {
   .link-button();
 
   .rounded-corners(0 0 .5em .5em);
@@ -30,7 +30,7 @@
 
 // Layout
 
-.host-meta-info {
+.object-meta-info {
   display: flex;
   justify-content: space-between;
 
@@ -63,7 +63,7 @@
   }
 }
 
-.host-meta-info-control {
+.object-meta-info-control {
   position: absolute;
   right: 2.25em;
   bottom: -2.5em; // height + margin-bottom
@@ -88,7 +88,7 @@
   }
 }
 
-.collapsed + .host-meta-info-control {
+.collapsed + .object-meta-info-control {
   .collapse-icon {
     display: none;
   }

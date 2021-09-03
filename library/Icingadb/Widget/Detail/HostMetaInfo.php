@@ -18,7 +18,7 @@ class HostMetaInfo extends BaseHtmlElement
 {
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'host-meta-info'];
+    protected $defaultAttributes = ['class' => 'object-meta-info'];
 
     /** @var Host */
     protected $host;
@@ -46,8 +46,8 @@ class HostMetaInfo extends BaseHtmlElement
 
         $collapsible = new HtmlElement('div', Attributes::create([
             'class' => 'collapsible',
-            'id'    => 'host-meta-info',
-            'data-toggle-element' => '.host-meta-info-control',
+            'id'    => 'object-meta-info',
+            'data-toggle-element' => '.object-meta-info-control',
             'data-visible-height' => 0
         ]));
 
@@ -56,7 +56,7 @@ class HostMetaInfo extends BaseHtmlElement
             $this,
             new HtmlElement(
                 'button',
-                Attributes::create(['class' => 'host-meta-info-control']),
+                Attributes::create(['class' => 'object-meta-info-control']),
                 new Icon('angle-double-up', ['class' => 'collapse-icon']),
                 new Icon('angle-double-down', ['class' => 'expand-icon'])
             )
