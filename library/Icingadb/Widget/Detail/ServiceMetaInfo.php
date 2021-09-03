@@ -5,8 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Icingadb\Model\Host;
-use ipl\Web\Widget\HorizontalKeyValue;
+use Icinga\Module\Icingadb\Model\Service;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -14,41 +13,35 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Icon;
 
-class HostMetaInfo extends BaseHtmlElement
+class ServiceMetaInfo extends BaseHtmlElement
 {
     protected $tag = 'div';
 
     protected $defaultAttributes = ['class' => 'object-meta-info'];
 
-    /** @var Host */
-    protected $host;
+    /** @var Service */
+    protected $service;
 
-    public function __construct(Host $host)
+    public function __construct(Service $service)
     {
-        $this->host = $host;
+        $this->service = $service;
     }
 
     protected function assemble()
     {
         $this->addHtml(
-            new VerticalKeyValue('host.name', $this->host->name),
-            new HtmlElement(
-                'div',
-                null,
-                new HorizontalKeyValue('host.address', $this->host->address ?: '-'),
-                new HorizontalKeyValue('host.address6', $this->host->address6 ?: '-')
-            ),
+            new VerticalKeyValue('service.name', $this->service->name),
             new VerticalKeyValue(
                 'last_state_change',
-                DateFormatter::formatDateTime($this->host->state->last_state_change)
+                DateFormatter::formatDateTime($this->service->state->last_state_change)
             )
         );
 
         $collapsible = new HtmlElement('div', Attributes::create([
-            'class' => 'collapsible',
-            'id'    => 'object-meta-info',
-            'data-toggle-element' => '.object-meta-info-control',
-            'data-visible-height' => 0
+            'class'                 => 'collapsible',
+            'id'                    => 'object-meta-info',
+            'data-toggle-element'   => '.object-meta-info-control',
+            'data-visible-height'   => 0
         ]));
 
         $renderHelper = new HtmlDocument();
