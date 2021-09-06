@@ -173,7 +173,9 @@ class DowntimeCard extends BaseHtmlElement
                     ['class' => 'bubble start'],
                     new VerticalKeyValue(
                         t('Scheduled Start'),
-                        new TimeAgo($this->downtime->scheduled_start_time)
+                        time() > $this->downtime->scheduled_start_time
+                            ? new TimeAgo($this->downtime->scheduled_start_time)
+                            : new TimeUntil($this->downtime->scheduled_start_time)
                     )
                 ),
                 Html::tag(
@@ -210,7 +212,12 @@ class DowntimeCard extends BaseHtmlElement
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time)
                         )
                     ],
-                    new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->scheduled_start_time))
+                    new VerticalKeyValue(
+                        t('Start'),
+                        time() > $this->downtime->scheduled_start_time
+                            ? new TimeAgo($this->downtime->scheduled_start_time)
+                            : new TimeUntil($this->downtime->scheduled_start_time)
+                    )
                 ),
                 Html::tag(
                     'li',
