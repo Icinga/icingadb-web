@@ -154,7 +154,9 @@ class Controller extends CompatController
     public function createSearchBar(Query $query, array $preserveParams = null)
     {
         $requestUrl = Url::fromRequest();
-        $redirectUrl = $preserveParams !== null ? $requestUrl->onlyWith($preserveParams) : $requestUrl;
+        $redirectUrl = $preserveParams !== null
+            ? $requestUrl->onlyWith($preserveParams)
+            : (clone $requestUrl)->setParams([]);
 
         $filter = QueryString::fromString((string) $this->params)
             ->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
