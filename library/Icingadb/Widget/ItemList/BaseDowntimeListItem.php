@@ -78,8 +78,8 @@ abstract class BaseDowntimeListItem extends BaseListItem
             $until <= 3600 ? $until : $until + (3600 - ($until % 3600))
         ), 2)[0];
 
-        $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
-        $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
+        $this->list->addMultiselectFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
