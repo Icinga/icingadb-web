@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
+use ipl\Web\Url;
 
 class ServicegroupList extends BaseItemList
 {
@@ -20,6 +21,7 @@ class ServicegroupList extends BaseItemList
         parent::init();
 
         $this->getAttributes()->get('class')->removeValue('item-list');
+        $this->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
     }
 
     protected function getItemClass()
