@@ -31,6 +31,7 @@ class HostgroupListItem extends BaseTableRowItem
     protected function init()
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
     protected function assembleColumns(HtmlDocument $columns)

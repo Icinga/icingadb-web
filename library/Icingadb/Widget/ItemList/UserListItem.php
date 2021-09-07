@@ -13,6 +13,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
 /**
@@ -28,6 +29,7 @@ class UserListItem extends BaseTableRowItem
     protected function init()
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)

@@ -17,7 +17,7 @@ class CommandTransportListItem extends BaseOrderedListItem
 {
     protected function init()
     {
-        $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
     protected function assembleHeader(BaseHtmlElement $header)

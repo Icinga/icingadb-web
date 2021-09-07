@@ -148,20 +148,6 @@ abstract class BaseListItem extends BaseHtmlElement
     {
     }
 
-    protected function setMultiselectFilter(Rule $filter)
-    {
-        $this->addAttributes(['data-icinga-multiselect-filter' => '(' . QueryString::render($filter) . ')']);
-
-        return $this;
-    }
-
-    protected function setDetailFilter(Rule $filter)
-    {
-        $this->addAttributes(['data-icinga-detail-filter' => QueryString::render($filter)]);
-
-        return $this;
-    }
-
     protected function assemble()
     {
         $this->add([

@@ -106,8 +106,8 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function init()
     {
-        $this->setMultiselectFilter(Filter::equal('name', $this->item->name));
-        $this->setDetailFilter(Filter::equal('name', $this->item->name));
+        $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
+        $this->list->addMultiselectFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }

@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Orm\ResultSet;
+use ipl\Web\Url;
 
 class NotificationList extends BaseItemList
 {
@@ -31,6 +32,7 @@ class NotificationList extends BaseItemList
     protected function init()
     {
         $this->data = $this->getIterator($this->data);
+        $this->setDetailUrl(Url::fromPath('icingadb/event'));
     }
 
     protected function getItemClass()

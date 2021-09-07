@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use ipl\Stdlib\Filter;
 use ipl\Web\Widget\TimeAgo;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
@@ -35,6 +36,7 @@ abstract class BaseNotificationListItem extends BaseListItem
     protected function init()
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
+        $this->list->addDetailFilterAttribute($this, Filter::equal('id', bin2hex($this->item->history->id)));
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\BaseItemList;
+use ipl\Web\Url;
 
 class UsergroupList extends BaseItemList
 {
@@ -18,6 +19,7 @@ class UsergroupList extends BaseItemList
         parent::init();
 
         $this->getAttributes()->get('class')->removeValue('item-list');
+        $this->setDetailUrl(Url::fromPath('icingadb/usergroup'));
     }
 
     protected function getItemClass()
