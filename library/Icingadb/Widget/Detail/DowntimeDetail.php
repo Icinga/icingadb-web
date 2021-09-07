@@ -138,11 +138,11 @@ class DowntimeDetail extends BaseHtmlElement
         ));
         $this->add(new HorizontalKeyValue(
             t('Start time'),
-            WebDateFormatter::formatDateTime($this->downtime->start_time)
+            $this->downtime->start_time ? WebDateFormatter::formatDateTime($this->downtime->start_time) : '-'
         ));
         $this->add(new HorizontalKeyValue(
             t('End time'),
-            WebDateFormatter::formatDateTime($this->downtime->end_time)
+            $this->downtime->end_time ? WebDateFormatter::formatDateTime($this->downtime->end_time) : '-'
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Start'),
