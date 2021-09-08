@@ -360,8 +360,11 @@ class Controller extends CompatController
      *
      * @return ViewModeSwitcher
      */
-    public function createViewModeSwitcher(PaginationControl $paginationControl, LimitControl $limitControl)
-    {
+    public function createViewModeSwitcher(
+        PaginationControl $paginationControl,
+        LimitControl $limitControl,
+        $verticalPagination = false
+    ) {
         $viewModeSwitcher = new ViewModeSwitcher();
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -395,7 +398,13 @@ class Controller extends CompatController
 
         $viewModeSwitcher->on(
             ViewModeSwitcher::ON_SUCCESS,
-            function (ViewModeSwitcher $viewModeSwitcher) use ($user, $preferredModes, $paginationControl, &$session) {
+            function (ViewModeSwitcher $viewModeSwitcher) use (
+                $user,
+                $preferredModes,
+                $paginationControl,
+                $verticalPagination,
+                &$session
+            ) {
                 $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
                 $requestUrl = Url::fromRequest();
 
@@ -426,17 +435,24 @@ class Controller extends CompatController
                         $session->set('request_path', $requestUrl->getPath());
 
                         $limit = $paginationControl->getLimit();
-                        $currentPage = (int) (floor((($currentPage * $limit) - $limit) / ($limit * 2)) + 1);
+                        if (! $verticalPagination) {
+                            // We are computing it based on the first element being rendered on this current page
+                            $currentPage = (int) (floor((($currentPage * $limit) - $limit) / ($limit * 2)) + 1);
+                        } else {
+                            $currentPage = (int) (round($currentPage * $limit / ($limit * 2)));
+                        }
 
                         $session->set('current_page', $currentPage);
                     } elseif ($viewModeSwitcher->getDefaultViewMode() === 'minimal') {
+                        $limit = $paginationControl->getLimit();
                         if ($currentPage === $session->get('current_page')) {
                             // No other page numbers have been selected, i.e the user only
                             // switches back and forth without changing the page numbers
                             $currentPage =  $session->get('previous_page');
-                        } else {
-                            $limit = $paginationControl->getLimit();
+                        } elseif (! $verticalPagination) {
                             $currentPage = (int) (floor((($currentPage * $limit) - $limit) / ($limit / 2)) + 1);
+                        } else {
+                            $currentPage = (int) (floor($currentPage * $limit / ($limit / 2)));
                         }
 
                         $session->clear();

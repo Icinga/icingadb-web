@@ -45,7 +45,7 @@ class NotificationsController extends Controller
                 'notification_history.send_time desc' => t('Send Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
         $searchBar = $this->createSearchBar($notifications, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
