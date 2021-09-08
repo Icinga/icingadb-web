@@ -13,9 +13,20 @@ If that is the case, this chapter has you covered.
 
 ## Configuration
 
-As already mentioned in the [configuration](03-Configuration.md) chapter, Icinga DB Web
-currently utilizes the monitoring module's configuration. There is no need to migrate
-command transport and security configuration at the moment.
+### Command Transports
+
+Icinga DB Web still uses the same configuration format for command transports. This means that the file
+`/etc/icingaweb2/modules/monitoring/commandtransports.ini` can simply be copied over to
+`/etc/icingaweb2/modules/icingadb/commandtransports.ini`.
+
+But note that Icinga DB Web doesn't support the commandfile (local and remote) anymore. Remove all sections
+that do **not** define `transport=api`.
+
+### Protected Customvars
+
+The rules previously configured at `Configuration -> Modules -> monitoring -> Security` have moved into the
+roles configuration as a new restriction. This is called `icingadb/protect/variables` and accepts the same
+rules. Just copy them over.
 
 ## Dashboards and Navigation
 
@@ -64,10 +75,37 @@ unchanged:
 
 ## Restrictions
 
-> **No migration required:** The monitoring module restrictions are currently utilized
-> transparently.
+### `monitoring/filter/objects`
+
+This is now `icingadb/filter/objects` but still accepts the same filter syntax. Only the columns have changed
+or support for them has been dropped. Check the table below for details:
+
+Old Column Name      | New Column Name
+---------------------|-----------------------
+instance\_name       | -
+host\_name           | host.name
+hostgroup\_name      | hostgroup.name
+service\_description | service.name
+servicegroup\_name   | servicegroup.name
+\_host\_customvar    | host.vars.customvar
+\_service\_customvar | service.vars.customvar
+
+### `monitoring/blacklist/properties`
+
+This is now `icingadb/blacklist/variables`. However, it does not accept the same rules as
+`monitoring/blacklist/properties`. It still accepts a comma separated list of GLOB like filters,
+but with some features removed:
+
+* No distinction between host and service variables (`host.vars.` and `service.vars.` prefixes are no longer keywords)
+* No `**` to cross multiple level boundaries at once (`a.**.d` does not differ from `a.*.d`)
+* Dots are not significant (`foo.*.oof` and `foo*oof` will both match `foo.bar.oof`)
+
+Check the [security chapter](04-Security.md#variable-paths) for more details.
 
 ## Permissions
 
-> **No migration required:** The monitoring module permissions are currently utilized
-> transparently.
+The command permissions have not changed. It is only the module identifier that has changed of course:
+`monitoring.command.*` is now `icingadb.command.*`
+
+The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/blacklist/routes`.
+Add `users,usergroups` to it to achieve the same effect.
