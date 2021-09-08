@@ -137,7 +137,7 @@ class ServiceController extends Controller
                 'history.event_time desc' => t('Event Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
 
         $history->peekAhead();
 
