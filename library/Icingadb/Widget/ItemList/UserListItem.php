@@ -56,9 +56,5 @@ class UserListItem extends BaseTableRowItem
 
     protected function assembleColumns(HtmlDocument $columns)
     {
-        $columns->addHtml(
-            $this->createColumn($this->item->email),
-            $this->createColumn($this->item->pager)
-        );
     }
 }
