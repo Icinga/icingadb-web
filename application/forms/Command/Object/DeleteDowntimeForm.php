@@ -25,11 +25,23 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function assembleSubmitButton()
     {
+        $isDisabled = true;
+        foreach ($this->getObjects() as $downtime) {
+            if ($downtime->scheduled_by === null) {
+                $isDisabled = false;
+                break;
+            }
+        }
+
         $this->addElement(
             'submitButton',
             'btn_submit',
             [
                 'class' => ['cancel-button', 'spinner'],
+                'disabled' => $isDisabled ?: null,
+                'title' => $isDisabled
+                    ? t('Downtime cannot be removed at runtime because it is based on a configured scheduled downtime.')
+                    : null,
                 'label' => [
                     new Icon('trash'),
                     tp('Delete downtime', 'Delete downtimes', count($this->getObjects()))
@@ -40,7 +52,10 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function getCommand(Model $object)
     {
-        if (! $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})) {
+        if (
+            ! $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})
+            || $object->scheduled_by !== null
+        ) {
             return null;
         }
 
