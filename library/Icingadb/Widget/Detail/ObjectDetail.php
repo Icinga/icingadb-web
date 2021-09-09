@@ -15,6 +15,9 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\Macros;
+use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Compat\CompatObject;
@@ -50,6 +53,7 @@ class ObjectDetail extends BaseHtmlElement
 {
     use Auth;
     use Database;
+    use Macros;
 
     protected $object;
 
@@ -74,13 +78,17 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createActions()
     {
+        $this->fetchCustomVars();
+
         $navigation = new Navigation();
-        $navigation->load($this->objectType . '-action');
+        $navigation->load('icingadb-' . $this->objectType . '-action');
+        /** @var Action $item */
         foreach ($navigation as $item) {
-            $item->setObject($this->compatObject);
+            $item->setObject($this->object);
         }
 
-        foreach ($this->compatObject->getActionUrls() as $url) {
+        foreach ($this->object->action_url->action_url ?? [] as $url) {
+            $url = $this->expandMacros($url, $this->object);
             $navigation->addItem(
                 Html::wantHtml([
                     // Add warning to links that open in new tabs, as recommended by WCAG20 G201
@@ -173,10 +181,9 @@ class ObjectDetail extends BaseHtmlElement
     protected function createCustomVars()
     {
         $content = [Html::tag('h2', t('Custom Variables'))];
-        $flattenedVars = $this->object->customvar_flat;
-        $this->applyRestrictions($flattenedVars);
 
-        $vars = $this->object->customvar_flat->getModel()->unflattenVars($flattenedVars);
+        $this->fetchCustomVars();
+        $vars = (new CustomvarFlat())->unFlattenVars($this->object->customvar_flat);
         if (! empty($vars)) {
             $customvarTable = new CustomVarTable($vars);
             $customvarTable->setAttribute('id', $this->objectType . '-customvars');
@@ -264,7 +271,8 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        foreach ($this->compatObject->getNotesUrls() as $url) {
+        foreach ($this->object->notes_url->notes_url ?? [] as $url) {
+            $url = $this->expandMacros($url, $this->object);
             $navigation->addItem(
                 Html::wantHtml([
                     // Add warning to links that open in new tabs, as recommended by WCAG20 G201
@@ -494,5 +502,14 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         return [$users, $usergroups];
+    }
+
+    protected function fetchCustomVars()
+    {
+        $customvarFlat = $this->object->customvar_flat;
+        if (! $customvarFlat instanceof ResultSet) {
+            $this->applyRestrictions($customvarFlat);
+            $this->object->customvar_flat = $customvarFlat->execute();
+        }
     }
 }
