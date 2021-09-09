@@ -132,6 +132,12 @@ namespace Icinga\Module\Icingadb
     );
 
     if (! $this::exists('monitoring')) {
+        /*
+        * Available navigation items
+        */
+        $this->provideNavigationItem('icingadb-host-action', $this->translate('Host Action'));
+        $this->provideNavigationItem('icingadb-service-action', $this->translate('Service Action'));
+
         /**
          * Search urls
          */
@@ -252,6 +258,18 @@ namespace Icinga\Module\Icingadb
             'icingadb/hosts?host.state.is_acknowledged!=n&host.state.is_problem=y'
             . '&view=minimal&limit=15&sort=host.state.severity desc',
             150
+        );
+    } else {
+        /*
+        * Available navigation items
+        */
+        $this->provideNavigationItem(
+            'icingadb-host-action',
+            $this->translate('Host Action') . ' (Icinga DB)'
+        );
+        $this->provideNavigationItem(
+            'icingadb-service-action',
+            $this->translate('Service Action') . ' (Icinga DB)'
         );
     }
 
