@@ -86,6 +86,19 @@ trait Auth
     }
 
     /**
+     * Check whether the filter matches the given object
+     *
+     * @param string $queryString
+     * @param Model  $object
+     *
+     * @return bool
+     */
+    public function isMatchedOn(string $queryString, Model $object): bool
+    {
+        return ObjectAuthorization::matchesOn($queryString, $object);
+    }
+
+    /**
      * Apply Icinga DB Web's restrictions depending on what is queried
      *
      * This will apply `icingadb/filter/objects` in any case. `icingadb/filter/services` is only
@@ -211,7 +224,7 @@ trait Auth
                     $where = $queryClone->getSelectBase()->getWhere();
 
                     $values = [];
-                    $rendered = $this->getDb()->getQueryBuilder()->buildCondition($where, $values);
+                    $rendered = $query->getDb()->getQueryBuilder()->buildCondition($where, $values);
                     $columns[$flatvaluePath] = new Expression(
                         "CASE WHEN (" . $rendered . ") THEN (%s) ELSE '***' END",
                         [$flatvalue],
