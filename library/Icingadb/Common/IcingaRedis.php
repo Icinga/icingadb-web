@@ -90,32 +90,40 @@ trait IcingaRedis
         return null;
     }
 
-    public function getPrimaryRedis(Config $config = null)
+    public function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
-        if ($config === null) {
-            $config = Config::module('icingadb');
+        if ($moduleConfig === null) {
+            $moduleConfig = Config::module('icingadb');
         }
 
-        $section = $config->getSection('redis1');
+        if ($redisConfig === null) {
+            $redisConfig = Config::module('icingadb', 'redis');
+        }
+
+        $section = $redisConfig->getSection('redis1');
 
         $redis = new Redis([
             'host'      => $section->get('host', 'localhost'),
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($config));
+        ] + $this->getTlsParams($moduleConfig));
 
         $redis->ping();
 
         return $redis;
     }
 
-    public function getSecondaryRedis(Config $config = null)
+    public function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
-        if ($config === null) {
-            $config = Config::module('icingadb');
+        if ($moduleConfig === null) {
+            $moduleConfig = Config::module('redis');
         }
 
-        $section = $config->getSection('redis2');
+        if ($redisConfig === null) {
+            $redisConfig = Config::module('icingadb', 'redis');
+        }
+
+        $section = $redisConfig->getSection('redis2');
         $host = $section->host;
 
         if (empty($host)) {
@@ -126,7 +134,7 @@ trait IcingaRedis
             'host'      => $host,
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($config));
+        ] + $this->getTlsParams($moduleConfig));
 
         $redis->ping();
 

@@ -317,6 +317,18 @@ class RedisConfigForm extends ConfigForm
             }
         }
 
+        $connectionConfig = Config::fromIni(
+            join(DIRECTORY_SEPARATOR, [dirname($this->config->getConfigFile()), 'redis.ini'])
+        );
+        $this->config->setSection('redis1', [
+            'host' => $connectionConfig->get('redis1', 'host'),
+            'port' => $connectionConfig->get('redis1', 'port')
+        ]);
+        $this->config->setSection('redis2', [
+            'host' => $connectionConfig->get('redis2', 'host'),
+            'port' => $connectionConfig->get('redis2', 'port')
+        ]);
+
         parent::onRequest();
 
         foreach ($errors as $elementName => $message) {
@@ -361,6 +373,37 @@ class RedisConfigForm extends ConfigForm
             }
         }
 
+        $connectionConfig = Config::fromIni(
+            join(DIRECTORY_SEPARATOR, [dirname($this->config->getConfigFile()), 'redis.ini'])
+        );
+
+        $redis1Host = $this->getValue('redis1_host');
+        $redis1Port = $this->getValue('redis1_port');
+        $redis1Section = $connectionConfig->getSection('redis1');
+        $redis1Section['host'] = $redis1Host;
+        $this->getElement('redis1_host')->setValue(null);
+        $connectionConfig->setSection('redis1', $redis1Section);
+        if (! empty($redis1Port)) {
+            $redis1Section['port'] = $redis1Port;
+            $this->getElement('redis1_port')->setValue(null);
+        }
+
+        $redis2Host = $this->getValue('redis2_host');
+        $redis2Port = $this->getValue('redis2_port');
+        $redis2Section = $connectionConfig->getSection('redis2');
+        if (! empty($redis2Host)) {
+            $redis2Section['host'] = $redis2Host;
+            $this->getElement('redis2_host')->setValue(null);
+            $connectionConfig->setSection('redis2', $redis2Section);
+        }
+        if (! empty($redis2Port)) {
+            $redis2Section['port'] = $redis2Port;
+            $this->getElement('redis2_port')->setValue(null);
+            $connectionConfig->setSection('redis2', $redis2Section);
+        }
+
+        $connectionConfig->saveIni();
+
         return parent::onSuccess();
     }
 
@@ -397,7 +440,6 @@ class RedisConfigForm extends ConfigForm
     public static function checkRedis(Form $form)
     {
         $sections = [];
-        $config = new Config();
 
         $storage = new TemporaryLocalFileStorage();
         foreach (ConfigForm::transformEmptyValuesToNull($form->getValues()) as $sectionAndPropertyName => $value) {
@@ -433,12 +475,14 @@ class RedisConfigForm extends ConfigForm
             }
         }
 
-        foreach ($sections as $section => $options) {
-            $config->setSection($section, $options);
-        }
+        $moduleConfig = new Config();
+        $moduleConfig->setSection('redis', $sections['redis']);
+        $redisConfig = new Config();
+        $redisConfig->setSection('redis1', $sections['redis1'] ?? []);
+        $redisConfig->setSection('redis2', $sections['redis2'] ?? []);
 
         try {
-            $redis1 = $form->getPrimaryRedis($config);
+            $redis1 = $form->getPrimaryRedis($moduleConfig, $redisConfig);
         } catch (Exception $e) {
             $form->warning(sprintf(
                 t('Failed to connect to primary Redis: %s'),
@@ -453,7 +497,7 @@ class RedisConfigForm extends ConfigForm
         }
 
         try {
-            $redis2 = $form->getSecondaryRedis($config);
+            $redis2 = $form->getSecondaryRedis($moduleConfig, $redisConfig);
         } catch (Exception $e) {
             $form->warning(sprintf(t('Failed to connect to secondary Redis: %s'), $e->getMessage()));
             return false;
