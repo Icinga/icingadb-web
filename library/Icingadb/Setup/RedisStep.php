@@ -35,15 +35,16 @@ class RedisStep extends Step
         $moduleConfig = [
             'redis'  => [
                 'tls' => 0
-            ],
+            ]
+        ];
+        $redisConfig = [
             'redis1' => [
                 'host'  => $this->data['redis1_host'],
                 'port'  => $this->data['redis1_port'] ?: null
             ]
         ];
-
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
-            $moduleConfig['redis2'] = [
+            $redisConfig['redis2'] = [
                 'host'  => $this->data['redis2_host'],
                 'port'  => $this->data['redis2_port'] ?: null
             ];
@@ -80,6 +81,13 @@ class RedisStep extends Step
         try {
             $config = Config::module('icingadb', 'config', true);
             foreach ($moduleConfig as $section => $options) {
+                $config->setSection($section, $options);
+            }
+
+            $config->saveIni();
+
+            $config = Config::module('icingadb', 'redis', true);
+            foreach ($redisConfig as $section => $options) {
                 $config->setSection($section, $options);
             }
 
