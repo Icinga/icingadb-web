@@ -47,6 +47,7 @@ class Downtime extends Model
             'is_in_effect',
             'start_time',
             'end_time',
+            'scheduled_by',
             'zone_id',
             'duration' => new Expression(
                 'CASE WHEN %s = \'y\' THEN %s ELSE %s - %s END',
@@ -76,6 +77,7 @@ class Downtime extends Model
             'is_in_effect'          => t('Downtime Is In Effect'),
             'start_time'            => t('Downtime Actual Start'),
             'end_time'              => t('Downtime Actual End'),
+            'scheduled_by'          => t('Downtime Scheduled By'),
             'zone_id'               => t('Downtime Zone Id'),
             'duration'              => t('Downtime Duration')
         ];
