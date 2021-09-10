@@ -49,6 +49,14 @@ list below for example uses it to show a check's output at different lengths.
 
 ![View Switcher Preview](doc/res/view-switcher-preview.png)
 
+### New Search With Auto-Completion
+
+We have greatly expanded the search functionality in list views. The so called search-bar
+allows experienced users full control by keyboard to write their filters. It also aids
+with contextual auto completion. There's also an editor for a more easy manipulation.
+
+![Searchbar Completion Preview](doc/res/searchbar-completion-preview.png)
+
 ### Cleaner Detail Views
 
 A host's or service's detail view has been restructured to show more details but also
@@ -69,8 +77,8 @@ your current view.
 
 If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
 now is the time for it. Simply filter for the hosts or services you want to operate on
-and then select *Continue with filter*. No more *shift-click* nightmares! (Which are
-still possible, for the die-hard)
+and then click on the little forward icon on the right. No more *shift-click* nightmares!
+(Which are still possible, for the die-hard)
 
 ![Continue With Preview](doc/res/continue-with-preview.png)
 
