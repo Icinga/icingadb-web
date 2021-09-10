@@ -337,7 +337,7 @@ class EventDetail extends BaseHtmlElement
             new HorizontalKeyValue(t('Author'), [new Icon('user'), $comment->author]),
             new HorizontalKeyValue(t('Expires On'), $comment->expire_time
                 ? DateFormatter::formatDateTime($comment->expire_time)
-                : '-')
+                : new EmptyState(t('Never')))
         );
 
         if ($comment->entry_type === 'ack') {
@@ -440,7 +440,7 @@ class EventDetail extends BaseHtmlElement
             $this->addHtml(
                 new HorizontalKeyValue(t('Expires On'), $acknowledgement->expire_time
                     ? DateFormatter::formatDateTime($acknowledgement->expire_time)
-                    : '-'),
+                    : new EmptyState(t('Never'))),
                 new HorizontalKeyValue(t('Sticky'), $acknowledgement->is_sticky ? t('Yes') : t('No')),
                 new HorizontalKeyValue(t('Persistent'), $acknowledgement->is_persistent ? t('Yes') : t('No'))
             );

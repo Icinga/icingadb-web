@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 
@@ -80,6 +81,10 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function renderScalar($name, $value)
     {
+        if ($value === '') {
+            $value = new EmptyState(t('empty string'));
+        }
+
         $this->addRow($name, $value);
     }
 

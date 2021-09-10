@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\Attributes;
@@ -35,8 +36,14 @@ class HostMetaInfo extends BaseHtmlElement
             new HtmlElement(
                 'div',
                 null,
-                new HorizontalKeyValue('host.address', $this->host->address ?: '-'),
-                new HorizontalKeyValue('host.address6', $this->host->address6 ?: '-')
+                new HorizontalKeyValue(
+                    'host.address',
+                    $this->host->address ?: new EmptyState(t('None', 'address'))
+                ),
+                new HorizontalKeyValue(
+                    'host.address6',
+                    $this->host->address6 ?: new EmptyState(t('None', 'address'))
+                )
             ),
             new VerticalKeyValue(
                 'last_state_change',

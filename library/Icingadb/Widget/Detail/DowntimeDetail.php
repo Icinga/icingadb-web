@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
@@ -138,11 +139,15 @@ class DowntimeDetail extends BaseHtmlElement
         ));
         $this->add(new HorizontalKeyValue(
             t('Start time'),
-            $this->downtime->start_time ? WebDateFormatter::formatDateTime($this->downtime->start_time) : '-'
+            $this->downtime->start_time
+                ? WebDateFormatter::formatDateTime($this->downtime->start_time)
+                : new EmptyState(t('Not started yet'))
         ));
         $this->add(new HorizontalKeyValue(
             t('End time'),
-            $this->downtime->end_time ? WebDateFormatter::formatDateTime($this->downtime->end_time) : '-'
+            $this->downtime->end_time
+                ? WebDateFormatter::formatDateTime($this->downtime->end_time)
+                : new EmptyState(t('Not started yet'))
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Start'),
