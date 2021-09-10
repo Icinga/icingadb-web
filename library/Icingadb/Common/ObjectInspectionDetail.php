@@ -206,7 +206,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
     private function formatTimestamp($ts)
     {
         if (empty($ts)) {
-            return '-';
+            return new EmptyState(t('n. a.'));
         }
 
         if (is_float($ts)) {
@@ -252,7 +252,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         $table->addAttributes(['class' => 'name-value-table']);
         foreach ($data as $name => $value) {
             if (empty($value) && ($value === null || is_string($value) || is_array($value))) {
-                $value = '-';
+                $value = new EmptyState(t('n. a.'));
             } elseif (isset($formatters[$name])) {
                 $value = call_user_func($formatters[$name], $value);
             } else {

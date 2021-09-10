@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Util\PerfData;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
@@ -121,15 +122,14 @@ class PerfDataTable extends Table
                 }
 
                 foreach ($perfdata->toArray() as $column => $value) {
-                    $text = htmlspecialchars(empty($value) ? '-' : $value);
+                    $text = htmlspecialchars($value);
                     $cols[] = Table::td(
                         new HtmlElement(
                             'span',
                             Attributes::create([
-                                'title' => ($text == '-' ? t('no value given') : $text),
-                                'class' => ($text != '-' ?: 'no-value')
+                                'class' => ($text ? '' : 'no-value')
                             ]),
-                            Text::create($text)
+                            $text ? Text::create($text) : new EmptyState(t('None', 'value'))
                         ),
                         [ 'class' => ($column == 'label' ? 'title' : null) ]
                     );
