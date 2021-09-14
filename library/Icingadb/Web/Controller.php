@@ -366,6 +366,7 @@ class Controller extends CompatController
     {
         $viewModeSwitcher = new ViewModeSwitcher();
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
+        $this->getResponse()->setHeader('X-Icinga-Shift-RightColumn', 'false');
 
         $user = $this->Auth()->getUser();
         if (($preferredModes = $user->getAdditional('icingadb.view_modes')) === null) {
