@@ -156,6 +156,16 @@ class Controller extends CompatController
                 $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
                 $requestUrl = Url::fromRequest();
 
+                if ($viewMode === 'minimal' && $requestUrl->getPath() === 'icingadb/hostgroups') {
+                    $requestUrl = Url::fromPath('icingadb/hostgroups/grid')->setParams($requestUrl->getParams());
+                } elseif ($viewMode !== 'minimal' && $requestUrl->getPath() === 'icingadb/hostgroups/grid') {
+                    $requestUrl = Url::fromPath('icingadb/hostgroups')->setParams($requestUrl->getParams());
+                } elseif ($viewMode === 'minimal' && $requestUrl->getPath() === 'icingadb/servicegroups') {
+                    $requestUrl = Url::fromPath('icingadb/servicegroups/grid')->setParams($requestUrl->getParams());
+                } elseif ($viewMode !== 'minimal' && $requestUrl->getPath() === 'icingadb/servicegroups/grid') {
+                    $requestUrl = Url::fromPath('icingadb/servicegroups')->setParams($requestUrl->getParams());
+                }
+
                 $preferredModes[$requestUrl->getPath()] = $viewMode;
                 $user->setAdditional('icingadb.view_modes', $preferredModes);
 
