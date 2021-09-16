@@ -28,6 +28,39 @@ class ServicegroupsController extends Controller
     public function indexAction()
     {
         $this->addTitleTab(t('Service Groups'));
+
+        yield from $this->renderServiceGroups();
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Servicegroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(ServicegroupSummary::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function gridAction()
+    {
+        $this->setTitle(t('Service Group Grid'));
+
+        yield from $this->renderServiceGroups();
+    }
+
+    protected function renderServiceGroups()
+    {
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -46,9 +79,11 @@ class ServicegroupsController extends Controller
                 'services_total desc'    => t('Total Services')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
         $searchBar = $this->createSearchBar($servicegroups, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -72,6 +107,7 @@ class ServicegroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $results = $servicegroups->execute();
@@ -96,25 +132,5 @@ class ServicegroupsController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
-    }
-
-    public function completeAction()
-    {
-        $suggestions = new ObjectSuggestions();
-        $suggestions->setModel(Servicegroup::class);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
-        $this->getDocument()->add($suggestions);
-    }
-
-    public function searchEditorAction()
-    {
-        $editor = $this->createSearchEditor(ServicegroupSummary::on($this->getDb()), [
-            LimitControl::DEFAULT_LIMIT_PARAM,
-            SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
-        ]);
-
-        $this->getDocument()->add($editor);
-        $this->setTitle(t('Adjust Filter'));
     }
 }

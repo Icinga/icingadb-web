@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use ipl\Orm\Query;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
@@ -28,12 +29,58 @@ class HostgroupsController extends Controller
     public function indexAction()
     {
         $this->addTitleTab(t('Host Groups'));
-        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
         $hostgroups = Hostgroupsummary::on($db);
 
+        yield from $this->renderHostGroups($hostgroups);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Hostgroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(Hostgroupsummary::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function gridAction()
+    {
+        $this->setTitle(t('Host Group Grid'));
+
+        $db = $this->getDb();
+
+        $hostgroups = Hostgroupsummary::on($db)->without([
+            'services_critical_handled',
+            'services_critical_unhandled',
+            'services_ok',
+            'services_pending',
+            'services_total',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning_handled',
+            'services_warning_unhandled',
+        ]);
+
+        yield from $this->renderHostGroups($hostgroups);
+    }
+
+    protected function renderHostGroups(Query $hostgroups)
+    {
+        $compact = $this->view->compact;
         $this->handleSearchRequest($hostgroups);
 
         $limitControl = $this->createLimitControl();
@@ -44,12 +91,13 @@ class HostgroupsController extends Controller
                 'display_name'        => t('Name'),
                 'hosts_severity desc' => t('Severity'),
                 'hosts_total desc'    => t('Total Hosts'),
-                'services_total desc' => t('Total Services')
             ]
         );
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
         $searchBar = $this->createSearchBar($hostgroups, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -73,6 +121,7 @@ class HostgroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $results = $hostgroups->execute();
@@ -97,25 +146,5 @@ class HostgroupsController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
-    }
-
-    public function completeAction()
-    {
-        $suggestions = new ObjectSuggestions();
-        $suggestions->setModel(Hostgroup::class);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
-        $this->getDocument()->add($suggestions);
-    }
-
-    public function searchEditorAction()
-    {
-        $editor = $this->createSearchEditor(Hostgroupsummary::on($this->getDb()), [
-            LimitControl::DEFAULT_LIMIT_PARAM,
-            SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
-        ]);
-
-        $this->getDocument()->add($editor);
-        $this->setTitle(t('Adjust Filter'));
     }
 }
