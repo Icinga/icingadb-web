@@ -70,6 +70,7 @@ class ScheduleCheckForm extends CommandForm
             [
                 'data-use-datetime-picker'  => true,
                 'required'                  => true,
+                'step'                      => 1,
                 'label'                     => t('Check Time'),
                 'description'               => t('Set the date and time when the check should be scheduled.'),
                 'value'                     => (new DateTime())->add(new DateInterval('PT1H'))

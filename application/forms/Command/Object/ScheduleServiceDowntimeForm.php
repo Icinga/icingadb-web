@@ -117,6 +117,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
             [
                 'data-use-datetime-picker'  => true,
                 'required'                  => true,
+                'step'                      => 1,
                 'value'                     => $this->start,
                 'label'                     => t('Start Time'),
                 'description'               => t('Set the start date and time for the downtime.')
@@ -130,6 +131,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
             [
                 'data-use-datetime-picker'  => true,
                 'required'                  => true,
+                'step'                      => 1,
                 'label'                     => t('End Time'),
                 'description'               => t('Set the end date and time for the downtime.'),
                 'value'                     => $isFlexible ? $this->flexibleEnd : $this->fixedEnd,
