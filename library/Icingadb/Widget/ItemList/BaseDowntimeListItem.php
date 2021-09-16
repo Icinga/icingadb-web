@@ -179,7 +179,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
             }
 
             $visual->addHtml(Html::sprintf(
-                t('%s left', '<timespan>..'),
+                t('EXPIRES in %s', '<timespan>..'),
                 Html::tag(
                     'strong',
                     Html::tag(
@@ -194,13 +194,13 @@ abstract class BaseDowntimeListItem extends BaseListItem
             ));
         } else {
             $visual->addHtml(Html::sprintf(
-                t('in %s', '..<timespan>'),
+                t('STARTS in %s', '..<timespan>'),
                 Html::tag('strong', $this->duration)
             ));
         }
     }
 
-    protected function createTimestamp()
+    /*protected function createTimestamp()
     {
         $dateTime = DateFormatter::formatDateTime($this->endTime);
 
@@ -217,5 +217,5 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 $this->duration
             )
         );
-    }
+    }*/
 }
