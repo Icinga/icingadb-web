@@ -86,7 +86,7 @@ abstract class BaseItemList extends BaseHtmlElement
         $itemClass = $this->getItemClass();
 
         foreach ($this->data as $data) {
-            /** @var BaseListItem|BaseTableRowItem $item */
+            /** @var BaseListItem|BaseTableRowItem|GroupGridCell $item */
             $item = new $itemClass($data, $this);
 
             $this->add($item);
