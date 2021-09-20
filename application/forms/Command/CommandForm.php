@@ -24,6 +24,15 @@ abstract class CommandForm extends Form
     protected $objects;
 
     /**
+     * Whether an error occurred while sending the command
+     *
+     * Prevents the success message from being rendered simultaneously
+     *
+     * @var bool
+     */
+    protected $errorOccurred = false;
+
+    /**
      * Set the objects to issue the command for
      *
      * @param mixed $objects A traversable that is also countable
@@ -106,6 +115,8 @@ abstract class CommandForm extends Form
                     t('Some commands were not transmitted. Please check the log. The first error follows.')
                 );
             }
+
+            $this->errorOccurred = true;
 
             Notification::error($errors[0]);
         }

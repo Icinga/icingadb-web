@@ -57,6 +57,10 @@ class ToggleObjectFeaturesForm extends CommandForm
         $this->getAttributes()->add('class', 'object-features');
 
         $this->on(self::ON_SUCCESS, function () {
+            if ($this->errorOccurred) {
+                return;
+            }
+
             foreach ($this->submittedFeatures as $feature) {
                 $enabled = $feature->getEnabled();
                 switch ($feature->getFeature()) {

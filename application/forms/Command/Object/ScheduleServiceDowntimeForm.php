@@ -60,6 +60,10 @@ class ScheduleServiceDowntimeForm extends CommandForm
         $this->flexibleDuration = new DateInterval($flexibleDuration);
 
         $this->on(self::ON_SUCCESS, function () {
+            if ($this->errorOccurred) {
+                return;
+            }
+
             $countObjects = count($this->getObjects());
 
             Notification::success(sprintf(
