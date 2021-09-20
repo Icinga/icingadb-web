@@ -20,7 +20,9 @@ class CheckNowForm extends CommandForm
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
-            Notification::success(tp('Scheduling check..', 'Scheduling checks..', count($this->getObjects())));
+            if (! $this->errorOccurred) {
+                Notification::success(tp('Scheduling check..', 'Scheduling checks..', count($this->getObjects())));
+            }
         });
     }
 

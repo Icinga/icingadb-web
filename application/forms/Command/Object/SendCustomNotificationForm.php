@@ -24,6 +24,10 @@ class SendCustomNotificationForm extends CommandForm
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
+            if ($this->errorOccurred) {
+                return;
+            }
+
             $countObjects = count($this->getObjects());
             if (current($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(
