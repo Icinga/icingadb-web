@@ -22,8 +22,6 @@ use ipl\Orm\Model;
 
 abstract class ObjectInspectionDetail extends BaseHtmlElement
 {
-    use IcingaRedis;
-
     protected $tag = 'div';
 
     protected $defaultAttributes = ['class' => ['object-detail', 'inspection-detail']];
@@ -101,7 +99,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         $title = new HtmlElement('h2', null, Text::create(t('Volatile State Details')));
 
         try {
-            $json = $this->getIcingaRedis()
+            $json = IcingaRedis::instance()->getConnection()
                 ->hGet("icinga:{$this->object->getTableName()}:state", bin2hex($this->object->id));
         } catch (Exception $e) {
             return [$title, sprintf('Failed to load redis data: %s', $e->getMessage())];

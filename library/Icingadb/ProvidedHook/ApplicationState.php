@@ -15,7 +15,6 @@ use ipl\Stdlib\Filter;
 class ApplicationState extends ApplicationStateHook
 {
     use Database;
-    use IcingaRedis;
 
     public function collectMessages()
     {
@@ -52,11 +51,7 @@ class ApplicationState extends ApplicationStateHook
         $outdatedDbHeartbeat = $instance->heartbeat < time() - 60;
 
         try {
-            $redis = $this->getIcingaRedis();
-
-            Session::getSession()->getNamespace('icingadb')->delete('redis.down-since');
-
-            $lastIcingaHeartbeat = $this->getLastIcingaHeartbeat($redis);
+            $lastIcingaHeartbeat = IcingaRedis::getLastIcingaHeartbeat();
             if ($lastIcingaHeartbeat === null) {
                 $missingSince = Session::getSession()
                     ->getNamespace('icingadb')->get('redis.heartbeat-missing-since');
@@ -93,6 +88,8 @@ class ApplicationState extends ApplicationStateHook
 
                     break;
             }
+
+            Session::getSession()->getNamespace('icingadb')->delete('redis.down-since');
         } catch (Exception $e) {
             $downSince = Session::getSession()->getNamespace('icingadb')->get('redis.down-since');
 

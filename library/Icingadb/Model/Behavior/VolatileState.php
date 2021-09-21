@@ -12,14 +12,12 @@ use ipl\Orm\Model;
 
 class VolatileState implements RetrieveBehavior
 {
-    use IcingaRedis;
-
     protected $state;
 
     protected function getVolatileState()
     {
         if ($this->state === null) {
-            $this->state = new RedisState($this->getIcingaRedis());
+            $this->state = new RedisState(IcingaRedis::instance()->getConnection());
         }
 
         return $this->state;

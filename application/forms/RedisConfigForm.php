@@ -20,8 +20,6 @@ use Zend_Validate_Callback;
 
 class RedisConfigForm extends ConfigForm
 {
-    use IcingaRedis;
-
     public function init()
     {
         $this->setSubmitLabel(t('Save Changes'));
@@ -482,7 +480,7 @@ class RedisConfigForm extends ConfigForm
         $redisConfig->setSection('redis2', $sections['redis2'] ?? []);
 
         try {
-            $redis1 = $form->getPrimaryRedis($moduleConfig, $redisConfig);
+            $redis1 = IcingaRedis::getPrimaryRedis($moduleConfig, $redisConfig);
         } catch (Exception $e) {
             $form->warning(sprintf(
                 t('Failed to connect to primary Redis: %s'),
@@ -491,19 +489,19 @@ class RedisConfigForm extends ConfigForm
             return false;
         }
 
-        if ($form->getLastIcingaHeartbeat($redis1) === null) {
+        if (IcingaRedis::getLastIcingaHeartbeat($redis1) === null) {
             $form->warning(t('Primary connection established but failed to verify Icinga is connected as well.'));
             return false;
         }
 
         try {
-            $redis2 = $form->getSecondaryRedis($moduleConfig, $redisConfig);
+            $redis2 = IcingaRedis::getSecondaryRedis($moduleConfig, $redisConfig);
         } catch (Exception $e) {
             $form->warning(sprintf(t('Failed to connect to secondary Redis: %s'), $e->getMessage()));
             return false;
         }
 
-        if ($redis2 !== null && $form->getLastIcingaHeartbeat($redis2) === null) {
+        if ($redis2 !== null && IcingaRedis::getLastIcingaHeartbeat($redis2) === null) {
             $form->warning(t('Secondary connection established but failed to verify Icinga is connected as well.'));
             return false;
         }

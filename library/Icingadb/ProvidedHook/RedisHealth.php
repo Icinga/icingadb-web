@@ -13,7 +13,6 @@ use Icinga\Module\Icingadb\Model\Instance;
 class RedisHealth extends HealthHook
 {
     use Database;
-    use IcingaRedis;
 
     public function getName()
     {
@@ -23,9 +22,7 @@ class RedisHealth extends HealthHook
     public function checkHealth()
     {
         try {
-            $redis = $this->getIcingaRedis();
-
-            $lastIcingaHeartbeat = $this->getLastIcingaHeartbeat($redis);
+            $lastIcingaHeartbeat = IcingaRedis::getLastIcingaHeartbeat();
             if ($lastIcingaHeartbeat === null) {
                 $lastIcingaHeartbeat = time();
             }
