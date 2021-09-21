@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Predis\Client as Redis;
 
 class IcingaRedis
@@ -15,6 +16,9 @@ class IcingaRedis
 
     /** @var Redis Connection to the Icinga Redis */
     private $redis;
+
+    /** @var bool true if no connection attempt was successful */
+    private $redisUnavailable = false;
 
     /**
      * Get the singleton
@@ -39,13 +43,24 @@ class IcingaRedis
      */
     public function getConnection()
     {
-        if ($this->redis === null) {
+        if ($this->redisUnavailable) {
+            throw new Exception('Redis is still not available');
+        } elseif ($this->redis === null) {
             try {
                 $primaryRedis = $this->getPrimaryRedis();
             } catch (Exception $e) {
-                $secondaryRedis = $this->getSecondaryRedis();
+                try {
+                    $secondaryRedis = $this->getSecondaryRedis();
+                } catch (Exception $ee) {
+                    $this->redisUnavailable = true;
+                    Logger::error($ee);
+
+                    throw $e;
+                }
 
                 if ($secondaryRedis === null) {
+                    $this->redisUnavailable = true;
+
                     throw $e;
                 }
 
