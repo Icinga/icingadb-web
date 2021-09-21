@@ -8,10 +8,27 @@ use Exception;
 use Icinga\Application\Config;
 use Predis\Client as Redis;
 
-trait IcingaRedis
+class IcingaRedis
 {
+    /** @var static The singleton */
+    protected static $instance;
+
     /** @var Redis Connection to the Icinga Redis */
     private $redis;
+
+    /**
+     * Get the singleton
+     *
+     * @return static
+     */
+    public static function instance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new static();
+        }
+
+        return self::$instance;
+    }
 
     /**
      * Get the connection to the Icinga Redis
@@ -20,7 +37,7 @@ trait IcingaRedis
      *
      * @throws Exception
      */
-    public function getIcingaRedis()
+    public function getConnection()
     {
         if ($this->redis === null) {
             try {
@@ -63,8 +80,12 @@ trait IcingaRedis
         return $this->redis;
     }
 
-    public function getLastIcingaHeartbeat(Redis $redis)
+    public static function getLastIcingaHeartbeat(Redis $redis = null)
     {
+        if ($redis === null) {
+            $redis = self::instance()->getConnection();
+        }
+
         // Predis doesn't support streams (yet).
         // https://github.com/predis/predis/issues/607#event-3640855190
         $rs = $redis->executeRaw(['XREAD', 'COUNT', '1', 'STREAMS', 'icinga:stats', '0']);
@@ -90,7 +111,7 @@ trait IcingaRedis
         return null;
     }
 
-    public function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
+    public static function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');
@@ -106,14 +127,14 @@ trait IcingaRedis
             'host'      => $section->get('host', 'localhost'),
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($moduleConfig));
+        ] + static::getTlsParams($moduleConfig));
 
         $redis->ping();
 
         return $redis;
     }
 
-    public function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
+    public static function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('redis');
@@ -134,14 +155,14 @@ trait IcingaRedis
             'host'      => $host,
             'port'      => $section->get('port', 6380),
             'timeout'   => 0.5
-        ] + $this->getTlsParams($moduleConfig));
+        ] + static::getTlsParams($moduleConfig));
 
         $redis->ping();
 
         return $redis;
     }
 
-    private function getTlsParams(Config $config)
+    private static function getTlsParams(Config $config)
     {
         $config = $config->getSection('redis');
 

@@ -4,14 +4,11 @@
 
 namespace Icinga\Module\Icingadb\Setup;
 
-use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Forms\RedisConfigForm;
 use Icinga\Web\Form;
 
 class RedisPage extends Form
 {
-    use IcingaRedis;
-
     public function init()
     {
         $this->setName('setup_icingadb_redis');
