@@ -566,6 +566,114 @@ class Controller extends CompatController
             return true;
         }
 
+        if ($this->format === 'json' || $this->format === 'csv') {
+            $isJsonFormat = $this->format === 'json';
+            $response = $this->getResponse();
+            $fileName = $this->view->title;
+
+            if ($isJsonFormat) {
+                $response
+                    ->setHeader('Content-Type', 'application/json')
+                    ->setHeader('Cache-Control', 'no-store')
+                    ->setHeader(
+                        'Content-Disposition',
+                        'attachment; filename=' . $fileName . '.json'
+                    )
+                    ->sendResponse();
+            } else {
+                $response
+                    ->setHeader('Content-Type', 'text/csv')
+                    ->setHeader('Cache-Control', 'no-store')
+                    ->setHeader(
+                        'Content-Disposition',
+                        'attachment; filename=' . $fileName . '.csv'
+                    )
+                    ->sendResponse();
+            }
+
+            ob_end_clean();
+            Environment::raiseExecutionTime();
+
+            $query = $queries[0];
+            $query->limit(Url::fromRequest()->getParam('limit'));
+            $col = array_merge((array) $query->getModel()->getKeyName(), $query->getModel()->getColumns());
+            $tableName = $query->getModel()->getTableName();
+
+            foreach ($query->getWith() as $relationPath => $relation) {
+                $relatedCols = $relation->getTarget()->getColumns();
+                foreach ($relatedCols as $alias => $name) {
+                    if (is_int($alias)) {
+                        $alias = $name;
+                    }
+
+                    $col[] = $relationPath . '.' . $alias;
+                }
+            }
+
+            if ($isJsonFormat) {
+                echo '[';
+            }
+
+            $rs = $query->execute()->disableCache();
+
+            foreach ($rs as $i => $row) {
+                $result = [];
+                if ($i > 0) {
+                    $separator = $isJsonFormat ? ',' : "\r\n";
+                    echo $separator;
+                }
+
+                foreach ($col as $alias => $name) {
+                    if (is_int($alias)) {
+                        $alias = $name;
+                    }
+
+                    if (strpos($alias, '.') !== false) {
+                        $properties = array_slice(explode('.', $alias), 1);
+                        $alias = implode('.', $properties);
+
+                        $val = $row;
+                        do {
+                            $column = array_shift($properties);
+                            $val = $val->$column;
+                        } while (! empty($properties) && $val !== null);
+                    } else {
+                        $val = $row->$alias;
+                    }
+
+                    if (
+                        $alias === 'id' || substr($alias, -3) === '_id'
+                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin'
+                    ) {
+                        $val = base64_encode($val);
+                    }
+
+                    if ($isJsonFormat) { // Json
+                        $result[$alias] = $val;
+                    } elseif (is_bool($val)) { // CSV
+                        $result[$alias] = $val ? 'true' : 'false';
+                    } elseif (is_string($val)) {
+                        $result[$alias] = '"' . str_replace('"', '""', $val) . '"';
+                    } else {
+                        $result[$alias] = $val;
+                    }
+                }
+
+                if ($i === 0 && ! $isJsonFormat) {
+                    echo implode(',', array_keys($result)) . "\r\n";
+                }
+
+                $data = $isJsonFormat ? Json::sanitize($result) : implode(',', array_values($result));
+                echo $data;
+            }
+
+            if ($isJsonFormat) {
+                echo ']';
+            }
+
+            exit;
+        }
+
         $this->getTabs()->enableDataExports();
     }
 
