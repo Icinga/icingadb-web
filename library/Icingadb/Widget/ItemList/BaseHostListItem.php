@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Host;
 use ipl\Html\Attributes;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Stdlib\Filter;
@@ -23,6 +24,11 @@ abstract class BaseHostListItem extends StateListItem
 {
     use NoSubjectLink;
 
+    /**
+     * Create new subject link
+     *
+     * @return BaseHtmlElement
+     */
     protected function createSubject()
     {
         if ($this->getNoSubjectLink()) {

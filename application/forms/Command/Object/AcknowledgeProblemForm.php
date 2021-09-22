@@ -176,6 +176,9 @@ class AcknowledgeProblemForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
+    /**
+     * @return ?AcknowledgeProblemCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {

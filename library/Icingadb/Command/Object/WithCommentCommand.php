@@ -25,9 +25,9 @@ abstract class WithCommentCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setComment($comment)
+    public function setComment(string $comment): self
     {
-        $this->comment = (string) $comment;
+        $this->comment = $comment;
 
         return $this;
     }
@@ -37,8 +37,14 @@ abstract class WithCommentCommand extends ObjectCommand
      *
      * @return string
      */
-    public function getComment()
+    public function getComment(): string
     {
+        if ($this->comment === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->comment;
     }
 }

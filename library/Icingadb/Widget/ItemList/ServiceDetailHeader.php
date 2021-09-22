@@ -12,7 +12,7 @@ use ipl\Web\Widget\StateBall;
 
 class ServiceDetailHeader extends ServiceListItemMinimal
 {
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         if ($this->state->state_type === 'soft') {
             return StateBall::SIZE_MEDIUM_LARGE;

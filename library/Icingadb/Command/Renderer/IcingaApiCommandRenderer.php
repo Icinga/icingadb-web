@@ -42,7 +42,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
      *
      * @return string
      */
-    public function getApp()
+    public function getApp(): string
     {
         return $this->app;
     }
@@ -54,7 +54,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
      *
      * @return  $this
      */
-    public function setApp($app)
+    public function setApp(string $app): self
     {
         $this->app = $app;
 
@@ -67,7 +67,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
      * @param   array   $data
      * @param   Model   $object
      *
-     * @return  array
+     * @return  void
      */
     protected function applyFilter(array &$data, Model $object)
     {
@@ -86,7 +86,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
      *
      * @return  IcingaApiCommand
      */
-    public function render(IcingaCommand $command)
+    public function render(IcingaCommand $command): IcingaApiCommand
     {
         $renderMethod = 'render' . $command->getName();
         if (! method_exists($this, $renderMethod)) {
@@ -98,7 +98,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return $this->$renderMethod($command);
     }
 
-    public function renderGetObject(GetObjectCommand $command)
+    public function renderGetObject(GetObjectCommand $command): IcingaApiCommand
     {
         $endpoint = sprintf(
             'objects/%s/%s',
@@ -114,7 +114,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data)->setMethod('GET');
     }
 
-    public function renderAddComment(AddCommentCommand $command)
+    public function renderAddComment(AddCommentCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/add-comment';
         $data = [
@@ -130,7 +130,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderSendCustomNotification(SendCustomNotificationCommand $command)
+    public function renderSendCustomNotification(SendCustomNotificationCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/send-custom-notification';
         $data = [
@@ -143,7 +143,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderProcessCheckResult(ProcessCheckResultCommand $command)
+    public function renderProcessCheckResult(ProcessCheckResultCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/process-check-result';
         $data = [
@@ -156,7 +156,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderScheduleCheck(ScheduleCheckCommand $command)
+    public function renderScheduleCheck(ScheduleCheckCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/reschedule-check';
         $data = [
@@ -168,7 +168,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderScheduleDowntime(ScheduleServiceDowntimeCommand $command)
+    public function renderScheduleDowntime(ScheduleServiceDowntimeCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/schedule-downtime';
         $data = [
@@ -193,7 +193,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderAcknowledgeProblem(AcknowledgeProblemCommand $command)
+    public function renderAcknowledgeProblem(AcknowledgeProblemCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/acknowledge-problem';
         $data = [
@@ -212,7 +212,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderToggleObjectFeature(ToggleObjectFeatureCommand $command)
+    public function renderToggleObjectFeature(ToggleObjectFeatureCommand $command): IcingaApiCommand
     {
         switch ($command->getFeature()) {
             case ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS:
@@ -253,7 +253,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderDeleteComment(DeleteCommentCommand $command)
+    public function renderDeleteComment(DeleteCommentCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/remove-comment';
         $data = [
@@ -264,7 +264,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderDeleteDowntime(DeleteDowntimeCommand $command)
+    public function renderDeleteDowntime(DeleteDowntimeCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/remove-downtime';
         $data = [
@@ -275,7 +275,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderRemoveAcknowledgement(RemoveAcknowledgementCommand $command)
+    public function renderRemoveAcknowledgement(RemoveAcknowledgementCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/remove-acknowledgement';
         $data = ['author' => $command->getAuthor()];
@@ -284,7 +284,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderToggleInstanceFeature(ToggleInstanceFeatureCommand $command)
+    public function renderToggleInstanceFeature(ToggleInstanceFeatureCommand $command): IcingaApiCommand
     {
         $endpoint = 'objects/icingaapplications/' . $this->getApp();
 

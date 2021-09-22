@@ -32,7 +32,7 @@ class ProblemToggle extends CompatForm
      *
      * @return  $this
      */
-    public function setIdProtector($protector)
+    public function setIdProtector(callable $protector): self
     {
         $this->protector = $protector;
 
@@ -44,7 +44,7 @@ class ProblemToggle extends CompatForm
      *
      * @return bool
      */
-    public function isChecked()
+    public function isChecked(): bool
     {
         $this->ensureAssembled();
 

@@ -87,6 +87,9 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
         $decorator->decorate($this->getElement('child_options'));
     }
 
+    /**
+     * @return ?PropagateHostDowntimeCommand|ScheduleHostDowntimeCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {

@@ -67,6 +67,9 @@ class DeleteDowntimeForm extends CommandForm
         );
     }
 
+    /**
+     * @return ?DeleteDowntimeCommand
+     */
     protected function getCommand(Model $object)
     {
         if (

@@ -20,9 +20,9 @@ trait CommandAuthor
      *
      * @return  $this
      */
-    public function setAuthor($author)
+    public function setAuthor(string $author): self
     {
-        $this->author = (string) $author;
+        $this->author = $author;
 
         return $this;
     }
@@ -32,8 +32,14 @@ trait CommandAuthor
      *
      * @return string
      */
-    public function getAuthor()
+    public function getAuthor(): string
     {
+        if ($this->author === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->author;
     }
 }

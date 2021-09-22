@@ -14,7 +14,7 @@ class RedisHealth extends HealthHook
 {
     use Database;
 
-    public function getName()
+    public function getName(): string
     {
         return 'Icinga Redis';
     }

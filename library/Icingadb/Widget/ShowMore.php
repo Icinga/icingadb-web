@@ -24,26 +24,26 @@ class ShowMore extends BaseHtmlElement
 
     protected $label;
 
-    public function __construct(ResultSet $resultSet, Url $url, $label = null)
+    public function __construct(ResultSet $resultSet, Url $url, string $label = null)
     {
         $this->label = $label;
         $this->resultSet = $resultSet;
         $this->url = $url;
     }
 
-    public function setLabel($label)
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label ?: t('Show More');
     }
 
-    public function renderUnwrapped()
+    public function renderUnwrapped(): string
     {
         if ($this->resultSet->hasMore()) {
             return parent::renderUnwrapped();

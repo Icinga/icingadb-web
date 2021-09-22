@@ -16,7 +16,7 @@ trait NoSubjectLink
      *
      * @return $this
      */
-    public function setNoSubjectLink($state = true)
+    public function setNoSubjectLink(bool $state = true): self
     {
         $this->noSubjectLink = $state;
 
@@ -28,7 +28,7 @@ trait NoSubjectLink
      *
      * @return bool
      */
-    public function getNoSubjectLink()
+    public function getNoSubjectLink(): bool
     {
         return $this->noSubjectLink;
     }

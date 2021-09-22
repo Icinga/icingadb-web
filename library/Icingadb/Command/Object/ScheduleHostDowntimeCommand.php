@@ -23,9 +23,9 @@ class ScheduleHostDowntimeCommand extends ScheduleServiceDowntimeCommand
      *
      * @return  $this
      */
-    public function setForAllServices($forAllServices = true)
+    public function setForAllServices(bool $forAllServices = true): self
     {
-        $this->forAllServices = (bool) $forAllServices;
+        $this->forAllServices = $forAllServices;
 
         return $this;
     }
@@ -35,7 +35,7 @@ class ScheduleHostDowntimeCommand extends ScheduleServiceDowntimeCommand
      *
      * @return bool
      */
-    public function getForAllServices()
+    public function getForAllServices(): bool
     {
         return $this->forAllServices;
     }

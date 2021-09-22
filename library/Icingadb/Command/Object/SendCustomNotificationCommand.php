@@ -21,7 +21,7 @@ class SendCustomNotificationCommand extends WithCommentCommand
     /**
      * Get whether to force the notification
      *
-     * @return bool
+     * @return ?bool
      */
     public function getForced()
     {
@@ -35,7 +35,7 @@ class SendCustomNotificationCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setForced($forced = true)
+    public function setForced(bool $forced = true): self
     {
         $this->forced = $forced;
 

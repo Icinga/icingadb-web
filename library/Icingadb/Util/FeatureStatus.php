@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 
 class FeatureStatus extends ArrayObject
 {
-    public function __construct($type, $summary)
+    public function __construct(string $type, $summary)
     {
         $prefix = "{$type}s";
 
@@ -29,7 +29,7 @@ class FeatureStatus extends ArrayObject
         parent::__construct($featureStatus, ArrayObject::ARRAY_AS_PROPS);
     }
 
-    protected function getFeatureStatus($feature, $prefix, $summary)
+    protected function getFeatureStatus(string $feature, string $prefix, $summary): int
     {
         $key = "{$prefix}_{$feature}";
         $value = (int) $summary->$key;

@@ -37,9 +37,9 @@ class ScheduleCheckCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setCheckTime($checkTime)
+    public function setCheckTime(int $checkTime): self
     {
-        $this->checkTime = (int) $checkTime;
+        $this->checkTime = $checkTime;
 
         return $this;
     }
@@ -49,8 +49,14 @@ class ScheduleCheckCommand extends ObjectCommand
      *
      * @return int Unix timestamp
      */
-    public function getCheckTime()
+    public function getCheckTime(): int
     {
+        if ($this->checkTime === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->checkTime;
     }
 
@@ -61,9 +67,9 @@ class ScheduleCheckCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setForced($forced = true)
+    public function setForced(bool $forced = true): self
     {
-        $this->forced = (bool) $forced;
+        $this->forced = $forced;
 
         return $this;
     }
@@ -73,7 +79,7 @@ class ScheduleCheckCommand extends ObjectCommand
      *
      * @return bool
      */
-    public function getForced()
+    public function getForced(): bool
     {
         return $this->forced;
     }

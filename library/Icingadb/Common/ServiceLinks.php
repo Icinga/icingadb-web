@@ -10,7 +10,7 @@ use ipl\Web\Url;
 
 abstract class ServiceLinks
 {
-    public static function acknowledge(Service $service, Host $host)
+    public static function acknowledge(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/acknowledge',
@@ -18,7 +18,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function addComment(Service $service, Host $host)
+    public static function addComment(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/add-comment',
@@ -26,7 +26,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function checkNow(Service $service, Host $host)
+    public static function checkNow(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/check-now',
@@ -34,7 +34,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function scheduleCheck(Service $service, Host $host)
+    public static function scheduleCheck(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/schedule-check',
@@ -42,7 +42,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function comments(Service $service, Host $host)
+    public static function comments(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/comments',
@@ -50,7 +50,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function downtimes(Service $service, Host $host)
+    public static function downtimes(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/downtimes',
@@ -58,7 +58,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function history(Service $service, Host $host)
+    public static function history(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/history',
@@ -66,7 +66,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function removeAcknowledgement(Service $service, Host $host)
+    public static function removeAcknowledgement(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/remove-acknowledgement',
@@ -74,7 +74,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function scheduleDowntime(Service $service, Host $host)
+    public static function scheduleDowntime(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/schedule-downtime',
@@ -82,7 +82,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function sendCustomNotification(Service $service, Host $host)
+    public static function sendCustomNotification(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/send-custom-notification',
@@ -90,7 +90,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function processCheckresult(Service $service, Host $host)
+    public static function processCheckresult(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/process-checkresult',
@@ -98,7 +98,7 @@ abstract class ServiceLinks
         );
     }
 
-    public static function toggleFeatures(Service $service, Host $host)
+    public static function toggleFeatures(Service $service, Host $host): Url
     {
         return Url::fromPath(
             'icingadb/service/toggle-features',

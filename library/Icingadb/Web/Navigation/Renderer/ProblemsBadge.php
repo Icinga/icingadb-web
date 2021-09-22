@@ -65,7 +65,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
      *
      * @return $this
      */
-    public function setState($state)
+    public function setState(string $state): self
     {
         $this->state = $state;
 
@@ -77,8 +77,14 @@ abstract class ProblemsBadge extends NavigationItemRenderer
      *
      * @return string
      */
-    public function getState()
+    public function getState(): string
     {
+        if ($this->state === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->state;
     }
 
@@ -89,7 +95,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -101,12 +107,18 @@ abstract class ProblemsBadge extends NavigationItemRenderer
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
+        if ($this->title === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->title;
     }
 
-    public function render(NavigationItem $item = null)
+    public function render(NavigationItem $item = null): string
     {
         if ($item === null) {
             $item = $this->getItem();

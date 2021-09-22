@@ -9,10 +9,14 @@ use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectsDetailExtensionHook;
+use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
 use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
+use ipl\Html\HtmlElement;
+use ipl\Orm\Query;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -34,14 +38,21 @@ class ObjectsDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct($type, $summary, $query)
+    /**
+     * Construct an object detail summary widget
+     *
+     * @param string $type
+     * @param HoststateSummary|ServicestateSummary $summary
+     * @param Query $query
+     */
+    public function __construct(string $type, $summary, Query $query)
     {
         $this->summary = $summary;
         $this->query = $query;
         $this->type = $type;
     }
 
-    protected function createChart()
+    protected function createChart(): BaseHtmlElement
     {
         $content = Html::tag('div', ['class' => 'multiselect-summary']);
 
@@ -90,7 +101,7 @@ class ObjectsDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createComments()
+    protected function createComments(): array
     {
         $content = [Html::tag('h2', t('Comments'))];
 
@@ -109,7 +120,7 @@ class ObjectsDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createDowntimes()
+    protected function createDowntimes(): array
     {
         $content = [Html::tag('h2', t('Downtimes'))];
 
@@ -128,7 +139,7 @@ class ObjectsDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createFeatureToggles()
+    protected function createFeatureToggles(): array
     {
         $form = new ToggleObjectFeaturesForm(new FeatureStatus($this->type, $this->summary));
 
@@ -152,7 +163,7 @@ class ObjectsDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createExtensions()
+    protected function createExtensions(): array
     {
         return ObjectsDetailExtensionHook::loadExtensions(
             $this->type,
@@ -161,7 +172,7 @@ class ObjectsDetail extends BaseHtmlElement
         );
     }
 
-    protected function createSummary()
+    protected function createSummary(): array
     {
         return [
             Html::tag('h2', t('Summary')),

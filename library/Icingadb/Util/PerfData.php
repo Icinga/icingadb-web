@@ -77,7 +77,7 @@ class PerfData
      * @param   string      $label      The perfdata label
      * @param   string      $value      The perfdata value
      */
-    public function __construct($label, $value)
+    public function __construct(string $label, string $value)
     {
         $this->perfdataValue = $value;
         $this->label = $label;
@@ -111,7 +111,7 @@ class PerfData
      *
      * @throws  InvalidArgumentException    In case the given performance data has no content or a invalid format
      */
-    public static function fromString($perfdata)
+    public static function fromString(string $perfdata): self
     {
         if (empty($perfdata)) {
             throw new InvalidArgumentException('PerfData::fromString expects a string with content');
@@ -130,7 +130,7 @@ class PerfData
      *
      * @return  bool    True in case it's a number, otherwise False
      */
-    public function isNumber()
+    public function isNumber(): bool
     {
         return $this->unit === null;
     }
@@ -140,7 +140,7 @@ class PerfData
      *
      * @return  bool    True in case it's seconds, otherwise False
      */
-    public function isSeconds()
+    public function isSeconds(): bool
     {
         return $this->unit === 's';
     }
@@ -150,7 +150,7 @@ class PerfData
      *
      * @return  bool    True in case it's temperature, otherwise False
      */
-    public function isTemperature()
+    public function isTemperature(): bool
     {
         return in_array($this->unit, array('C', 'F', 'K'));
     }
@@ -160,7 +160,7 @@ class PerfData
      *
      * @return  bool    True in case it's in percentage, otherwise False
      */
-    public function isPercentage()
+    public function isPercentage(): bool
     {
         return $this->unit === '%';
     }
@@ -170,7 +170,7 @@ class PerfData
      *
      * @return bool   True in case it's in packets
      */
-    public function isPackets()
+    public function isPackets(): bool
     {
         return $this->unit === 'packets';
     }
@@ -180,7 +180,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isLumens()
+    public function isLumens(): bool
     {
         return $this->unit === 'lm';
     }
@@ -190,7 +190,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isDecibelMilliWatts()
+    public function isDecibelMilliWatts(): bool
     {
         return $this->unit === 'dBm';
     }
@@ -200,7 +200,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isBits()
+    public function isBits(): bool
     {
         return $this->unit === 'b';
     }
@@ -210,7 +210,7 @@ class PerfData
      *
      * @return  bool    True in case it's in bytes, otherwise False
      */
-    public function isBytes()
+    public function isBytes(): bool
     {
         return $this->unit === 'B';
     }
@@ -220,7 +220,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isWattHours()
+    public function isWattHours(): bool
     {
         return $this->unit === 'Wh';
     }
@@ -230,7 +230,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isWatts()
+    public function isWatts(): bool
     {
         return $this->unit === 'W';
     }
@@ -240,7 +240,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isAmperes()
+    public function isAmperes(): bool
     {
         return $this->unit === 'A';
     }
@@ -250,7 +250,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isAmpSeconds()
+    public function isAmpSeconds(): bool
     {
         return $this->unit === 'As';
     }
@@ -260,7 +260,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isVolts()
+    public function isVolts(): bool
     {
         return $this->unit === 'V';
     }
@@ -270,7 +270,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isOhms()
+    public function isOhms(): bool
     {
         return $this->unit === 'O';
     }
@@ -280,7 +280,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isGrams()
+    public function isGrams(): bool
     {
         return $this->unit === 'g';
     }
@@ -290,7 +290,7 @@ class PerfData
      *
      * @return bool
      */
-    public function isLiters()
+    public function isLiters(): bool
     {
         return $this->unit === 'l';
     }
@@ -300,7 +300,7 @@ class PerfData
      *
      * @return  bool    True in case it's a counter, otherwise False
      */
-    public function isCounter()
+    public function isCounter(): bool
     {
         return $this->unit === 'c';
     }
@@ -310,7 +310,7 @@ class PerfData
      *
      * @return  bool    True when the perfdata is visualizable
      */
-    public function isVisualizable()
+    public function isVisualizable(): bool
     {
         return isset($this->minValue) && isset($this->maxValue) && isset($this->value);
     }
@@ -318,7 +318,7 @@ class PerfData
     /**
      * Return this perfomance data's label
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -336,7 +336,7 @@ class PerfData
     /**
      * Return the unit as a string
      *
-     * @return string
+     * @return ?string
      */
     public function getUnit()
     {
@@ -371,7 +371,7 @@ class PerfData
      *
      * @return  ThresholdRange
      */
-    public function getWarningThreshold()
+    public function getWarningThreshold(): ThresholdRange
     {
         return $this->warningThreshold;
     }
@@ -381,7 +381,7 @@ class PerfData
      *
      * @return  ThresholdRange
      */
-    public function getCriticalThreshold()
+    public function getCriticalThreshold(): ThresholdRange
     {
         return $this->criticalThreshold;
     }
@@ -389,7 +389,7 @@ class PerfData
     /**
      * Return the minimum value or null if it is not available
      *
-     * @return  null|string
+     * @return ?float
      */
     public function getMinimumValue()
     {
@@ -460,7 +460,7 @@ class PerfData
         }
     }
 
-    protected function calculatePieChartData()
+    protected function calculatePieChartData(): array
     {
         $rawValue = $this->getValue();
         $minValue = $this->getMinimumValue() !== null ? $this->getMinimumValue() : 0;
@@ -482,7 +482,7 @@ class PerfData
     }
 
 
-    public function asInlinePie()
+    public function asInlinePie(): InlinePie
     {
         if (! $this->isVisualizable()) {
             throw new LogicException('Cannot calculate piechart data for unvisualizable perfdata entry.');
@@ -560,7 +560,7 @@ class PerfData
      *
      * @return string
      */
-    public function formatLabel($html = false)
+    public function formatLabel(bool $html = false): string
     {
         return sprintf(
             $html ? '<b>%s %s</b> (%s%%)' : '%s %s (%s%%)',
@@ -570,7 +570,7 @@ class PerfData
         );
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array(
             'label' => $this->getLabel(),
@@ -591,7 +591,7 @@ class PerfData
      *
      * @return int
      */
-    public function getState()
+    public function getState(): int
     {
         if ($this->value === null) {
             return ServiceStates::UNKNOWN;
@@ -617,7 +617,7 @@ class PerfData
      *
      * @return bool
      */
-    public function worseThan(PerfData $rhs)
+    public function worseThan(PerfData $rhs): bool
     {
         if (($state = $this->getState()) === ($rhsState = $rhs->getState())) {
             return $this->getPercentage() > $rhs->getPercentage();

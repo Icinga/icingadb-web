@@ -24,9 +24,9 @@ abstract class BaseStatusBar extends BaseHtmlElement
 
     abstract protected function assembleTotal(BaseHtmlElement $total);
 
-    abstract protected function createStateBadges();
+    abstract protected function createStateBadges(): BaseHtmlElement;
 
-    protected function createCount()
+    protected function createCount(): BaseHtmlElement
     {
         $total = Html::tag('span', ['class' => 'item-count']);
 

@@ -117,7 +117,7 @@ class QuickActions extends BaseHtmlElement
         }
     }
 
-    protected function assembleAction($action, $label, $icon, $title)
+    protected function assembleAction(string $action, string $label, string $icon, string $title)
     {
         $link = Html::tag(
             'a',

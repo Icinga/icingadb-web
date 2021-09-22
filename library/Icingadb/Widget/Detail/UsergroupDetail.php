@@ -33,7 +33,7 @@ class UsergroupDetail extends BaseHtmlElement
         $this->usergroup = $usergroup;
     }
 
-    protected function createCustomVars()
+    protected function createCustomVars(): array
     {
         $content = [new HtmlElement('h2', null, Text::create(t('Custom Variables')))];
         $flattenedVars = $this->usergroup->customvar_flat;
@@ -51,7 +51,7 @@ class UsergroupDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createUserList()
+    protected function createUserList(): array
     {
         $users = $this->usergroup->user->limit(6)->peekAhead()->execute();
 
@@ -67,7 +67,7 @@ class UsergroupDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createExtensions()
+    protected function createExtensions(): array
     {
         return ObjectDetailExtensionHook::loadExtensions($this->usergroup);
     }

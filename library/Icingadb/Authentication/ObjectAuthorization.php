@@ -38,7 +38,7 @@ class ObjectAuthorization
      *
      * @return bool
      */
-    public static function grantsOn($permission, Model $for)
+    public static function grantsOn(string $permission, Model $for): bool
     {
         $self = new static();
 
@@ -72,7 +72,7 @@ class ObjectAuthorization
      *
      * @return bool
      */
-    public static function grantsOnType($permission, $type, Filter\Rule $filter, $cache = true)
+    public static function grantsOnType(string $permission, string $type, Filter\Rule $filter, bool $cache = true): bool
     {
         switch ($type) {
             case 'host':
@@ -142,7 +142,7 @@ class ObjectAuthorization
      *
      * @return void
      */
-    protected function loadGrants($model, Filter\Rule $filter, $cacheKey, $cache = true)
+    protected function loadGrants(string $model, Filter\Rule $filter, string $cacheKey, bool $cache = true)
     {
         /** @var Model $model */
         $query = $model::on($this->getDb());
@@ -234,7 +234,7 @@ class ObjectAuthorization
      *
      * @return bool
      */
-    protected function checkGrants($permission, $roles)
+    protected function checkGrants(string $permission, array $roles): bool
     {
         if (empty($roles)) {
             return false;

@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook\X509;
 
+use Generator;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -19,7 +20,7 @@ class Sni extends SniHook
     /**
      * @inheritDoc
      */
-    public function getHosts(Filter $filter = null)
+    public function getHosts(Filter $filter = null): Generator
     {
         $queryHost = Host::on($this->getDb());
 

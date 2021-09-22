@@ -96,7 +96,7 @@ class ApiTransportPage extends Form
         return true;
     }
 
-    protected function validateConfiguration()
+    protected function validateConfiguration(): bool
     {
         try {
             CommandTransport::createTransport(new ConfigObject($this->getValues()))->probe();

@@ -51,7 +51,7 @@ class ConfigController extends Controller
         $this->addContent(new HtmlString($form->render()));
     }
 
-    protected function mergeTabs(Tabs $tabs)
+    protected function mergeTabs(Tabs $tabs): self
     {
         /** @var Tab $tab */
         foreach ($tabs->getTabs() as $tab) {

@@ -71,7 +71,7 @@ class HostState extends State
      *
      * @return string
      */
-    public function getStateText()
+    public function getStateText(): string
     {
         return HostStates::text($this->soft_state);
     }
@@ -81,7 +81,7 @@ class HostState extends State
      *
      * @return string
      */
-    public function getStateTextTranslated()
+    public function getStateTextTranslated(): string
     {
         return HostStates::text($this->soft_state);
     }

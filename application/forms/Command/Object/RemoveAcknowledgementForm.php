@@ -63,6 +63,9 @@ class RemoveAcknowledgementForm extends CommandForm
         );
     }
 
+    /**
+     * @return ?RemoveAcknowledgementCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object)) {

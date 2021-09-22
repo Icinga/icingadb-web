@@ -98,7 +98,7 @@ class PivotTable
      * @param   string      $yAxisColumn    Y-axis pivot column
      * @param   array      $gridcols        Grid columns
      */
-    public function __construct(Query $query, $xAxisColumn, $yAxisColumn, $gridcols)
+    public function __construct(Query $query, string $xAxisColumn, string $yAxisColumn, array $gridcols)
     {
         foreach ($query->getOrderBy() as $sort) {
             $this->order[$sort[0]] = $sort[1];
@@ -118,7 +118,7 @@ class PivotTable
      *
      * @return  $this
      */
-    public function setXAxisFilter(Filter\Rule $filter = null)
+    public function setXAxisFilter(Filter\Rule $filter = null): self
     {
         $this->xAxisFilter = $filter;
         return  $this;
@@ -127,11 +127,11 @@ class PivotTable
     /**
      * Set the filter to apply on the query for the y-axis
      *
-     * @param   Filter  $filter
+     * @param   Filter\Rule  $filter
      *
      * @return  $this
      */
-    public function setYAxisFilter(Filter\Rule $filter = null)
+    public function setYAxisFilter(Filter\Rule $filter = null): self
     {
         $this->yAxisFilter = $filter;
         return  $this;
@@ -144,8 +144,14 @@ class PivotTable
      *
      * @return string
      */
-    public function getXAxisHeader()
+    public function getXAxisHeader(): string
     {
+        if ($this->xAxisHeader === null && $this->xAxisColumn === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->xAxisHeader !== null ? $this->xAxisHeader : $this->xAxisColumn;
     }
 
@@ -156,9 +162,9 @@ class PivotTable
      *
      * @return  $this
      */
-    public function setXAxisHeader($xAxisHeader)
+    public function setXAxisHeader(string $xAxisHeader): self
     {
-        $this->xAxisHeader = (string) $xAxisHeader;
+        $this->xAxisHeader = $xAxisHeader;
         return $this;
     }
 
@@ -169,8 +175,14 @@ class PivotTable
      *
      * @return string
      */
-    public function getYAxisHeader()
+    public function getYAxisHeader(): string
     {
+        if ($this->yAxisHeader === null && $this->yAxisColumn === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->yAxisHeader !== null ? $this->yAxisHeader : $this->yAxisColumn;
     }
 
@@ -181,9 +193,9 @@ class PivotTable
      *
      * @return  $this
      */
-    public function setYAxisHeader($yAxisHeader)
+    public function setYAxisHeader(string $yAxisHeader): self
     {
-        $this->yAxisHeader = (string) $yAxisHeader;
+        $this->yAxisHeader = $yAxisHeader;
         return $this;
     }
 
@@ -196,7 +208,7 @@ class PivotTable
      *
      * @return  int
      */
-    protected function getPaginationParameter($axis, $param, $default = null)
+    protected function getPaginationParameter(string $axis, string $param, int $default = null): int
     {
         $request = Icinga::app()->getRequest();
 
@@ -214,7 +226,7 @@ class PivotTable
      *
      * @return Query
      */
-    protected function queryXAxis()
+    protected function queryXAxis(): Query
     {
         if ($this->xAxisQuery === null) {
             $this->xAxisQuery = clone $this->baseQuery;
@@ -263,7 +275,7 @@ class PivotTable
      *
      * @return Query
      */
-    protected function queryYAxis()
+    protected function queryYAxis(): Query
     {
         if ($this->yAxisQuery === null) {
             $this->yAxisQuery = clone $this->baseQuery;
@@ -317,7 +329,7 @@ class PivotTable
      *
      * @return  Paginatable
      */
-    public function paginateXAxis($limit = null, $page = null)
+    public function paginateXAxis(int $limit = null, int $page = null): Paginatable
     {
         if ($limit === null || $page === null) {
             if ($limit === null) {
@@ -348,7 +360,7 @@ class PivotTable
      *
      * @return  Paginatable
      */
-    public function paginateYAxis($limit = null, $page = null)
+    public function paginateYAxis(int $limit = null, int $page = null): Paginatable
     {
         if ($limit === null || $page === null) {
             if ($limit === null) {
@@ -372,7 +384,7 @@ class PivotTable
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         if (
             ($this->xAxisFilter === null && $this->yAxisFilter === null)

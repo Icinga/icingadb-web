@@ -46,7 +46,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         $this->list->addDetailFilterAttribute($this, Filter::equal('id', bin2hex($this->item->id)));
     }
 
-    abstract protected function getStateBallSize();
+    abstract protected function getStateBallSize(): string;
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {

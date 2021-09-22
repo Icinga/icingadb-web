@@ -16,9 +16,9 @@ abstract class BaseOrderedListItem extends BaseListItem
      *
      * @return $this
      */
-    public function setOrder($order)
+    public function setOrder(int $order): self
     {
-        $this->order = (int) $order;
+        $this->order = $order;
 
         return $this;
     }
@@ -30,6 +30,12 @@ abstract class BaseOrderedListItem extends BaseListItem
      */
     public function getOrder()
     {
+        if ($this->order === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->order;
     }
 }

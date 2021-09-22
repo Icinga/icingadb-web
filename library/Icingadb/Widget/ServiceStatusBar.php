@@ -17,7 +17,7 @@ class ServiceStatusBar extends BaseStatusBar
         ));
     }
 
-    protected function createStateBadges()
+    protected function createStateBadges(): BaseHtmlElement
     {
         return new ServiceStateBadges($this->summary);
     }

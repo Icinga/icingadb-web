@@ -46,7 +46,7 @@ abstract class BaseNotificationListItem extends BaseListItem
      *
      * @return string
      */
-    public static function phraseForType($type)
+    public static function phraseForType(string $type): string
     {
         switch ($type) {
             case 'acknowledgement':

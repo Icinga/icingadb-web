@@ -29,8 +29,14 @@ class DeleteDowntimeCommand extends IcingaCommand
      *
      * @return string
      */
-    public function getDowntimeName()
+    public function getDowntimeName(): string
     {
+        if ($this->downtimeName === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->downtimeName;
     }
 
@@ -43,7 +49,7 @@ class DeleteDowntimeCommand extends IcingaCommand
      *
      * @return  $this
      */
-    public function setDowntimeName($downtimeName)
+    public function setDowntimeName(string $downtimeName): self
     {
         $this->downtimeName = $downtimeName;
 

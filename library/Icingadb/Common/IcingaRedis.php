@@ -41,7 +41,7 @@ class IcingaRedis
      *
      * @throws Exception
      */
-    public function getConnection()
+    public function getConnection(): Redis
     {
         if ($this->redisUnavailable) {
             throw new Exception('Redis is still not available');
@@ -95,6 +95,13 @@ class IcingaRedis
         return $this->redis;
     }
 
+    /**
+     * Get the last icinga heartbeat from redis
+     *
+     * @param Redis|null $redis
+     *
+     * @return ?float|int
+     */
     public static function getLastIcingaHeartbeat(Redis $redis = null)
     {
         if ($redis === null) {
@@ -126,7 +133,15 @@ class IcingaRedis
         return null;
     }
 
-    public static function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
+    /**
+     * Get the primary redis instance
+     *
+     * @param Config|null $moduleConfig
+     * @param Config|null $redisConfig
+     *
+     * @return Redis
+     */
+    public static function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null): Redis
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');
@@ -149,6 +164,14 @@ class IcingaRedis
         return $redis;
     }
 
+    /**
+     * Get the secondary redis instance if exists
+     *
+     * @param Config|null $moduleConfig
+     * @param Config|null $redisConfig
+     *
+     * @return ?Redis
+     */
     public static function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
@@ -177,7 +200,7 @@ class IcingaRedis
         return $redis;
     }
 
-    private static function getTlsParams(Config $config)
+    private static function getTlsParams(Config $config): array
     {
         $config = $config->getSection('redis');
 

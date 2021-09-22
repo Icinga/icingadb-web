@@ -66,7 +66,7 @@ abstract class BaseListItem extends BaseHtmlElement
     {
     }
 
-    protected function createCaption()
+    protected function createCaption(): BaseHtmlElement
     {
         $caption = Html::tag('section', ['class' => 'caption']);
 
@@ -75,7 +75,7 @@ abstract class BaseListItem extends BaseHtmlElement
         return $caption;
     }
 
-    protected function createHeader()
+    protected function createHeader(): BaseHtmlElement
     {
         $header = Html::tag('header');
 
@@ -84,7 +84,7 @@ abstract class BaseListItem extends BaseHtmlElement
         return $header;
     }
 
-    protected function createMain()
+    protected function createMain(): BaseHtmlElement
     {
         $main = Html::tag('div', ['class' => 'main']);
 
@@ -93,7 +93,7 @@ abstract class BaseListItem extends BaseHtmlElement
         return $main;
     }
 
-    protected function createFooter()
+    protected function createFooter(): BaseHtmlElement
     {
         $footer = new HtmlElement('footer');
 
@@ -102,6 +102,9 @@ abstract class BaseListItem extends BaseHtmlElement
         return $footer;
     }
 
+    /**
+     * @return ?BaseHtmlElement
+     */
     protected function createIconImage()
     {
         if (! $this->list->hasIconImages()) {
@@ -121,7 +124,7 @@ abstract class BaseListItem extends BaseHtmlElement
     {
     }
 
-    protected function createTitle()
+    protected function createTitle(): BaseHtmlElement
     {
         $title = HTML::tag('div', ['class' => 'title']);
 
@@ -130,6 +133,9 @@ abstract class BaseListItem extends BaseHtmlElement
         return $title;
     }
 
+    /**
+     * @return ?BaseHtmlElement
+     */
     protected function createVisual()
     {
         $visual = Html::tag('div', ['class' => 'visual']);

@@ -29,7 +29,7 @@ trait HookActions
      *
      * @return ValidHtml[]
      */
-    abstract protected function getDefaultTabControls();
+    abstract protected function getDefaultTabControls(): array;
 
     public function __call($methodName, $args)
     {
@@ -50,6 +50,8 @@ trait HookActions
      * Register the object for which to load additional tabs
      *
      * @param Model $object
+     *
+     * @return void
      */
     protected function loadTabsForObject(Model $object)
     {
@@ -103,6 +105,8 @@ trait HookActions
      * Render the given tab hook
      *
      * @param TabHook $hook
+     *
+     * @return void
      */
     protected function showTabHook(TabHook $hook)
     {

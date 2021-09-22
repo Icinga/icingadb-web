@@ -74,7 +74,7 @@ trait CommandActions
      *
      * @return Model
      */
-    protected function getCommandTargetModel()
+    protected function getCommandTargetModel(): Model
     {
         if (! isset($this->commandTargetModel)) {
             $commandTargets = $this->getCommandTargets();
@@ -95,7 +95,7 @@ trait CommandActions
      *
      * @return bool
      */
-    protected function isGrantedOnCommandTargets($permission)
+    protected function isGrantedOnCommandTargets(string $permission): bool
     {
         $commandTargets = $this->getCommandTargets();
         if (is_array($commandTargets)) {
@@ -122,7 +122,7 @@ trait CommandActions
      *
      * @throws SecurityException
      */
-    protected function assertIsGrantedOnCommandTargets($permission)
+    protected function assertIsGrantedOnCommandTargets(string $permission)
     {
         if (! $this->isGrantedOnCommandTargets($permission)) {
             throw new SecurityException('No permission for %s', $permission);
@@ -133,6 +133,8 @@ trait CommandActions
      * Handle and register the given command form
      *
      * @param string|CommandForm $form
+     *
+     * @return void
      */
     protected function handleCommandForm($form)
     {

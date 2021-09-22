@@ -53,6 +53,9 @@ class DeleteCommentForm extends CommandForm
         );
     }
 
+    /**
+     * @return ?DeleteCommentCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {

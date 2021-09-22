@@ -21,7 +21,7 @@ class CommentList extends BaseItemList
 
     protected $defaultAttributes = ['class' => 'comment-list'];
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         $viewMode = $this->getViewMode();
 

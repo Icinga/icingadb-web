@@ -206,7 +206,7 @@ class ServiceController extends Controller
         return $tabs;
     }
 
-    protected function setTitleTab($name)
+    protected function setTitleTab(string $name)
     {
         $tab = $this->createTabs()->get($name);
 
@@ -217,7 +217,7 @@ class ServiceController extends Controller
         }
     }
 
-    protected function fetchCommandTargets()
+    protected function fetchCommandTargets(): array
     {
         return [$this->service];
     }
@@ -227,7 +227,7 @@ class ServiceController extends Controller
         return Links::service($this->service, $this->service->host);
     }
 
-    protected function getDefaultTabControls()
+    protected function getDefaultTabControls(): array
     {
         return [(new ServiceList([$this->service]))->setDetailActionsDisabled()->setNoSubjectLink()];
     }

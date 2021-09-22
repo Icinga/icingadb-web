@@ -64,9 +64,9 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return  $this
      */
-    public function setStart($start)
+    public function setStart(int $start): self
     {
-        $this->start = (int) $start;
+        $this->start = $start;
 
         return $this;
     }
@@ -76,8 +76,14 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return int Unix timestamp
      */
-    public function getStart()
+    public function getStart(): int
     {
+        if ($this->start === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->start;
     }
 
@@ -88,9 +94,9 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return  $this
      */
-    public function setEnd($end)
+    public function setEnd(int $end): self
     {
-        $this->end = (int) $end;
+        $this->end = $end;
 
         return $this;
     }
@@ -100,8 +106,14 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return int Unix timestamp
      */
-    public function getEnd()
+    public function getEnd(): int
     {
+        if ($this->start === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->end;
     }
 
@@ -112,9 +124,9 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return  $this
      */
-    public function setFixed($fixed = true)
+    public function setFixed(bool $fixed = true): self
     {
-        $this->fixed = (bool) $fixed;
+        $this->fixed = $fixed;
 
         return $this;
     }
@@ -124,7 +136,7 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return boolean
      */
-    public function getFixed()
+    public function getFixed(): bool
     {
         return $this->fixed;
     }
@@ -136,9 +148,9 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return  $this
      */
-    public function setTriggerId($triggerId)
+    public function setTriggerId(int $triggerId): self
     {
-        $this->triggerId = (int) $triggerId;
+        $this->triggerId = $triggerId;
 
         return $this;
     }
@@ -160,9 +172,9 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      *
      * @return  $this
      */
-    public function setDuration($duration)
+    public function setDuration(int $duration): self
     {
-        $this->duration = (int) $duration;
+        $this->duration = $duration;
 
         return $this;
     }
@@ -177,7 +189,7 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
         return $this->duration;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'ScheduleDowntime';
     }

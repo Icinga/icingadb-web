@@ -16,7 +16,7 @@ trait BaseFilter
      *
      * @return bool
      */
-    public function hasBaseFilter()
+    public function hasBaseFilter(): bool
     {
         return $this->baseFilter !== null;
     }
@@ -24,7 +24,7 @@ trait BaseFilter
     /**
      * Get the base filter
      *
-     * @return Rule
+     * @return ?Rule
      */
     public function getBaseFilter()
     {
@@ -38,7 +38,7 @@ trait BaseFilter
      *
      * @return $this
      */
-    public function setBaseFilter(Rule $baseFilter = null)
+    public function setBaseFilter(Rule $baseFilter = null): self
     {
         $this->baseFilter = $baseFilter;
 

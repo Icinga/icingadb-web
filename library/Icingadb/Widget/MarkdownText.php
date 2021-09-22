@@ -19,7 +19,7 @@ class MarkdownText extends BaseHtmlElement
      *
      * @param string $text
      */
-    public function __construct($text)
+    public function __construct(string $text)
     {
         $this->add((new DeferredText(function () use ($text) {
             return Markdown::text($text);

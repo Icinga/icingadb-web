@@ -5,12 +5,13 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Model\Host;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\StateBall;
 
 trait HostLink
 {
-    protected function createHostLink(Host $host, $withStateBall = false)
+    protected function createHostLink(Host $host, bool $withStateBall = false): BaseHtmlElement
     {
         $content = [];
 

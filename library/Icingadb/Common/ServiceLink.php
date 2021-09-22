@@ -6,12 +6,13 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\Html\FormattedString;
 use ipl\Html\Html;
 use ipl\Web\Widget\StateBall;
 
 trait ServiceLink
 {
-    protected function createServiceLink(Service $service, Host $host, $withStateBall = false)
+    protected function createServiceLink(Service $service, Host $host, bool $withStateBall = false): FormattedString
     {
         $content = [];
 

@@ -20,7 +20,7 @@ class AttemptBall extends BaseHtmlElement
      *
      * @param bool $taken Whether the attempt was taken
      */
-    public function __construct($taken = false)
+    public function __construct(bool $taken = false)
     {
         if ($taken) {
             $this->addAttributes(['class' => 'ball-size-s taken']);

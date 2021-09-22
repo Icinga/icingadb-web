@@ -44,7 +44,7 @@ class ThresholdRange
      *
      * @return  ThresholdRange
      */
-    public static function fromString($rawRange)
+    public static function fromString(string $rawRange): self
     {
         $range = new static();
         $range->raw = $rawRange;
@@ -92,7 +92,7 @@ class ThresholdRange
      *
      * @return  $this
      */
-    public function setMin($min)
+    public function setMin(float $min): self
     {
         $this->min = $min;
         return $this;
@@ -115,7 +115,7 @@ class ThresholdRange
      *
      * @return  $this
      */
-    public function setMax($max)
+    public function setMax(float $max): self
     {
         $this->max = $max;
         return $this;
@@ -138,7 +138,7 @@ class ThresholdRange
      *
      * @return  $this
      */
-    public function setInverted($inverted = true)
+    public function setInverted(bool $inverted = true): self
     {
         $this->inverted = $inverted;
         return $this;
@@ -149,7 +149,7 @@ class ThresholdRange
      *
      * @return  bool
      */
-    public function isInverted()
+    public function isInverted(): bool
     {
         return $this->inverted;
     }
@@ -161,7 +161,7 @@ class ThresholdRange
      *
      * @return  bool
      */
-    public function contains($value)
+    public function contains(float $value): bool
     {
         return (bool) ($this->inverted ^ (
             ($this->min === null || $this->min <= $value) && ($this->max === null || $this->max >= $value)

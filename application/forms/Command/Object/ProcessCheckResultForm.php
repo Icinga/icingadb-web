@@ -136,6 +136,9 @@ class ProcessCheckResultForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
+    /**
+     * @return ?ProcessCheckResultCommand
+     */
     protected function getCommand(Model $object)
     {
         if (

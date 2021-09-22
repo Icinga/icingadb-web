@@ -30,7 +30,7 @@ class CommandTransport implements CommandTransportInterface
      *
      * @throws  ConfigurationError
      */
-    public static function getConfig()
+    public static function getConfig(): Config
     {
         if (static::$config === null) {
             $config = Config::module('icingadb', 'commandtransports');
@@ -56,7 +56,7 @@ class CommandTransport implements CommandTransportInterface
      *
      * @throws  ConfigurationError
      */
-    public static function createTransport(ConfigObject $config)
+    public static function createTransport(ConfigObject $config): ApiCommandTransport
     {
         $config = clone $config;
         switch (strtolower($config->transport)) {
@@ -97,8 +97,10 @@ class CommandTransport implements CommandTransportInterface
      * @param   int|null        $now        Timestamp of the command or null for now
      *
      * @throws  CommandTransportException   If sending the Icinga command failed
+     *
+     * @return  void
      */
-    public function send(IcingaCommand $command, $now = null)
+    public function send(IcingaCommand $command, int $now = null)
     {
         $errors = [];
 

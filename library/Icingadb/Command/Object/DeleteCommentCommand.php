@@ -25,8 +25,14 @@ class DeleteCommentCommand extends IcingaCommand
      *
      * @return string
      */
-    public function getCommentName()
+    public function getCommentName(): string
     {
+        if ($this->commentName === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->commentName;
     }
 
@@ -37,7 +43,7 @@ class DeleteCommentCommand extends IcingaCommand
      *
      * @return  $this
      */
-    public function setCommentName($commentName)
+    public function setCommentName(string $commentName): self
     {
         $this->commentName = $commentName;
 

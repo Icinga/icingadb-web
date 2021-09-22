@@ -19,7 +19,7 @@ class MarkdownLine extends BaseHtmlElement
      *
      * @param string $line
      */
-    public function __construct($line)
+    public function __construct(string $line)
     {
         $this->add((new DeferredText(function () use ($line) {
             return Markdown::line($line);

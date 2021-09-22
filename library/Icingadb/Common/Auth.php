@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Authentication\Auth as IcingaAuth;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Authentication\ObjectAuthorization;
 use Icinga\Util\StringHelper;
@@ -17,9 +18,9 @@ use ipl\Web\Filter\QueryString;
 
 trait Auth
 {
-    public function getAuth()
+    public function getAuth(): IcingaAuth
     {
-        return \Icinga\Authentication\Auth::getInstance();
+        return IcingaAuth::getInstance();
     }
 
     /**
@@ -29,7 +30,7 @@ trait Auth
      *
      * @return bool
      */
-    public function isPermittedRoute($name)
+    public function isPermittedRoute(string $name): bool
     {
         if ($this->getAuth()->getUser()->isUnrestricted()) {
             return true;
@@ -51,7 +52,7 @@ trait Auth
      *
      * @return bool
      */
-    public function isGrantedOn($permission, Model $object)
+    public function isGrantedOn(string $permission, Model $object): bool
     {
         if ($this->getAuth()->getUser()->isUnrestricted()) {
             return $this->getAuth()->hasPermission($permission);
@@ -76,7 +77,7 @@ trait Auth
      *
      * @return bool
      */
-    public function isGrantedOnType($permission, $type, Filter\Rule $filter, $cache = true)
+    public function isGrantedOnType(string $permission, string $type, Filter\Rule $filter, bool $cache = true): bool
     {
         if ($this->getAuth()->getUser()->isUnrestricted()) {
             return $this->getAuth()->hasPermission($permission);
@@ -247,7 +248,7 @@ trait Auth
      *
      * @return Filter\Rule
      */
-    protected function parseRestriction($queryString, $restriction)
+    protected function parseRestriction(string $queryString, string $restriction): Filter\Rule
     {
         $allowedColumns = [
             'host.name',
@@ -311,7 +312,7 @@ trait Auth
      *
      * @return Filter\None
      */
-    protected function parseBlacklist($blacklist, $column)
+    protected function parseBlacklist(string $blacklist, string $column): Filter\None
     {
         $filter = Filter::none();
         foreach (explode(',', $blacklist) as $value) {

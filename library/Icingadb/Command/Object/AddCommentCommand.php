@@ -23,9 +23,9 @@ class AddCommentCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setExpireTime($expireTime)
+    public function setExpireTime(int $expireTime): self
     {
-        $this->expireTime = (int) $expireTime;
+        $this->expireTime = $expireTime;
 
         return $this;
     }
@@ -33,7 +33,7 @@ class AddCommentCommand extends WithCommentCommand
     /**
      * Get the time when the acknowledgement should expire
      *
-     * @return int
+     * @return ?int
      */
     public function getExpireTime()
     {

@@ -46,14 +46,14 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return Url
      */
-    abstract protected function getBaseUrl();
+    abstract protected function getBaseUrl(): Url;
 
     /**
      * Get the prefix for accessing state information
      *
      * @return string
      */
-    abstract protected function getPrefix();
+    abstract protected function getPrefix(): string;
 
     /**
      * Get the integer of the given state text
@@ -62,14 +62,14 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return int
      */
-    abstract protected function getStateInt($state);
+    abstract protected function getStateInt(string $state): int;
 
     /**
      * Get the badge URL
      *
      * @return Url
      */
-    public function getUrl()
+    public function getUrl(): Url
     {
         return $this->url;
     }
@@ -81,7 +81,7 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return $this
      */
-    public function setUrl($url)
+    public function setUrl(Url $url): self
     {
         $this->url = $url;
 
@@ -96,7 +96,7 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return Link
      */
-    public function createLink($content, array $params = null)
+    public function createLink($content, array $params = null): Link
     {
         $url = clone $this->getUrl();
 
@@ -111,7 +111,14 @@ abstract class StateBadges extends BaseHtmlElement
         return new Link($content, $url);
     }
 
-    protected function createBadge($state)
+    /**
+     * Create a state bade
+     *
+     * @param string $state
+     *
+     * @return ?BaseHtmlElement
+     */
+    protected function createBadge(string $state)
     {
         $key = $this->prefix . "_{$state}";
 
@@ -125,7 +132,14 @@ abstract class StateBadges extends BaseHtmlElement
         return null;
     }
 
-    protected function createGroup($state)
+    /**
+     * Create a state group
+     *
+     * @param string $state
+     *
+     * @return ?BaseHtmlElement
+     */
+    protected function createGroup(string $state)
     {
         $content = [];
         $handledKey = $this->prefix . "_{$state}_handled";

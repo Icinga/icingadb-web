@@ -57,7 +57,7 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct($downtime)
+    public function __construct(Downtime $downtime)
     {
         $this->downtime = $downtime;
 
@@ -90,7 +90,7 @@ class DowntimeDetail extends BaseHtmlElement
             ->setAction($action->getAbsoluteUrl());
     }
 
-    protected function createTimeline()
+    protected function createTimeline(): DowntimeCard
     {
         return new DowntimeCard($this->downtime);
     }

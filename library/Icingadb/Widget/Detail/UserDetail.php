@@ -34,7 +34,7 @@ class UserDetail extends BaseHtmlElement
         $this->user = $user;
     }
 
-    protected function createCustomVars()
+    protected function createCustomVars(): array
     {
         $content = [new HtmlElement('h2', null, Text::create(t('Custom Variables')))];
         $flattenedVars = $this->user->customvar_flat;
@@ -52,7 +52,7 @@ class UserDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createUserDetail()
+    protected function createUserDetail(): array
     {
         list($hostStates, $serviceStates) = $this->separateStates($this->user->states);
         $hostStates = implode(', ', $this->localizeStates($hostStates));
@@ -69,7 +69,7 @@ class UserDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createUsergroupList()
+    protected function createUsergroupList(): array
     {
         $userGroups = $this->user->usergroup->limit(6)->peekAhead()->execute();
 
@@ -85,7 +85,7 @@ class UserDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createExtensions()
+    protected function createExtensions(): array
     {
         return ObjectDetailExtensionHook::loadExtensions($this->user);
     }
@@ -99,7 +99,7 @@ class UserDetail extends BaseHtmlElement
         ], $this->createExtensions()));
     }
 
-    private function localizeTypes(array $types)
+    private function localizeTypes(array $types): array
     {
         $localizedTypes = [];
         foreach ($types as $type) {
@@ -137,7 +137,7 @@ class UserDetail extends BaseHtmlElement
         return $localizedTypes;
     }
 
-    private function localizeStates(array $states)
+    private function localizeStates(array $states): array
     {
         $localizedState = [];
         foreach ($states as $state) {
@@ -166,7 +166,7 @@ class UserDetail extends BaseHtmlElement
         return $localizedState;
     }
 
-    private function separateStates(array $states)
+    private function separateStates(array $states): array
     {
         $hostStates = [];
         $serviceStates = [];

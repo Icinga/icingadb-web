@@ -23,7 +23,7 @@ trait Database
      *
      * @throws ConfigurationError If the related resource configuration does not exist
      */
-    public function getDb()
+    public function getDb(): Connection
     {
         if ($this->db === null) {
             $config = new SqlConfig(ResourceFactory::getResourceConfig(

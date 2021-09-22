@@ -16,7 +16,7 @@ trait ObjectLinkDisabled
      *
      * @return $this
      */
-    public function setObjectLinkDisabled($state = true)
+    public function setObjectLinkDisabled(bool $state = true): self
     {
         $this->objectLinkDisabled = $state;
 
@@ -28,7 +28,7 @@ trait ObjectLinkDisabled
      *
      * @return bool
      */
-    public function getObjectLinkDisabled()
+    public function getObjectLinkDisabled(): bool
     {
         return $this->objectLinkDisabled;
     }

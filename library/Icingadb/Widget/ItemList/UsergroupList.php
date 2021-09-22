@@ -22,7 +22,7 @@ class UsergroupList extends BaseItemList
         $this->setDetailUrl(Url::fromPath('icingadb/usergroup'));
     }
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         return UsergroupListItem::class;
     }

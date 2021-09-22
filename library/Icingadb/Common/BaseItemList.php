@@ -49,14 +49,14 @@ abstract class BaseItemList extends BaseHtmlElement
         $this->init();
     }
 
-    abstract protected function getItemClass();
+    abstract protected function getItemClass(): string;
 
     /**
      * Get whether the list contains at least one item with an icon_image
      *
      * @return bool
      */
-    public function hasIconImages()
+    public function hasIconImages(): bool
     {
         return $this->hasIconImages;
     }

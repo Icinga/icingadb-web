@@ -16,14 +16,14 @@ class TagList extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function addLink($content, $url)
+    public function addLink($content, $url): self
     {
         $this->content[] = new Link($content, $url);
 
         return $this;
     }
 
-    public function hasContent()
+    public function hasContent(): bool
     {
         return ! empty($this->content);
     }
