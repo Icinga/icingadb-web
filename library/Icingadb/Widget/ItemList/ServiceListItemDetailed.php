@@ -22,7 +22,7 @@ class ServiceListItemDetailed extends BaseServiceListItem
     /** @var int Max pie charts to be shown */
     const PIE_CHART_LIMIT = 5;
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
     }

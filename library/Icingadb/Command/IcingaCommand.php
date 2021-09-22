@@ -14,7 +14,7 @@ abstract class IcingaCommand
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $nsParts = explode('\\', get_called_class());
         return substr_replace(end($nsParts), '', -7);  // Remove 'Command' Suffix

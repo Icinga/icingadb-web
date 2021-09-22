@@ -130,6 +130,9 @@ class AddCommentForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
+    /**
+     * @return ?AddCommentCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/comment/add', $object)) {

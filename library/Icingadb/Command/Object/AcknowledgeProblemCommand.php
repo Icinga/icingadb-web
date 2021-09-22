@@ -49,9 +49,9 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setSticky($sticky = true)
+    public function setSticky(bool $sticky = true): self
     {
-        $this->sticky = (bool) $sticky;
+        $this->sticky = $sticky;
 
         return $this;
     }
@@ -61,7 +61,7 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return bool
      */
-    public function getSticky()
+    public function getSticky(): bool
     {
         return $this->sticky;
     }
@@ -73,9 +73,9 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setNotify($notify = true)
+    public function setNotify(bool $notify = true): self
     {
-        $this->notify = (bool) $notify;
+        $this->notify = $notify;
 
         return $this;
     }
@@ -85,7 +85,7 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return bool
      */
-    public function getNotify()
+    public function getNotify(): bool
     {
         return $this->notify;
     }
@@ -97,9 +97,9 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setPersistent($persistent = true)
+    public function setPersistent(bool $persistent = true): self
     {
-        $this->persistent = (bool) $persistent;
+        $this->persistent = $persistent;
 
         return $this;
     }
@@ -109,7 +109,7 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return bool
      */
-    public function getPersistent()
+    public function getPersistent(): bool
     {
         return $this->persistent;
     }
@@ -121,9 +121,9 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      *
      * @return  $this
      */
-    public function setExpireTime($expireTime)
+    public function setExpireTime(int $expireTime): self
     {
-        $this->expireTime = (int) $expireTime;
+        $this->expireTime = $expireTime;
 
         return $this;
     }
@@ -131,7 +131,7 @@ class AcknowledgeProblemCommand extends WithCommentCommand
     /**
      * Get the time when the acknowledgement should expire
      *
-     * @return int
+     * @return ?int
      */
     public function getExpireTime()
     {

@@ -50,7 +50,7 @@ class Controller extends CompatController
     use Auth;
     use Database;
 
-    /** @var Filter Filter from query string parameters */
+    /** @var Filter\Rule Filter from query string parameters */
     private $filter;
 
     /** @var string|null */
@@ -64,7 +64,7 @@ class Controller extends CompatController
      *
      * @return Filter\Rule
      */
-    public function getFilter()
+    public function getFilter(): Filter\Rule
     {
         if ($this->filter === null) {
             $this->filter = QueryString::parse((string) $this->params);
@@ -80,7 +80,7 @@ class Controller extends CompatController
      *
      * @return LimitControl
      */
-    public function createLimitControl()
+    public function createLimitControl(): LimitControl
     {
         $limitControl = new LimitControl(Url::fromRequest());
         $limitControl->setDefaultLimit($this->getPageSize(null));
@@ -97,7 +97,7 @@ class Controller extends CompatController
      *
      * @return PaginationControl
      */
-    public function createPaginationControl(Paginatable $paginatable)
+    public function createPaginationControl(Paginatable $paginatable): PaginationControl
     {
         $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
         $paginationControl->setDefaultPageSize($this->getPageSize(null));
@@ -119,7 +119,7 @@ class Controller extends CompatController
      *
      * @return SortControl
      */
-    public function createSortControl(Query $query, array $columns)
+    public function createSortControl(Query $query, array $columns): SortControl
     {
         $default = (array) $query->getModel()->getDefaultSort();
         $normalized = [];
@@ -152,7 +152,7 @@ class Controller extends CompatController
      *
      * @return SearchBar
      */
-    public function createSearchBar(Query $query, array $preserveParams = null)
+    public function createSearchBar(Query $query, array $preserveParams = null): SearchBar
     {
         $requestUrl = Url::fromRequest();
         $redirectUrl = $preserveParams !== null
@@ -253,7 +253,7 @@ class Controller extends CompatController
      *
      * @return SearchEditor
      */
-    public function createSearchEditor(Query $query, array $preserveParams = null)
+    public function createSearchEditor(Query $query, array $preserveParams = null): SearchEditor
     {
         $requestUrl = Url::fromRequest();
         $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
@@ -333,7 +333,7 @@ class Controller extends CompatController
      *
      * @return ContinueWith
      */
-    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar)
+    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar): ContinueWith
     {
         $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
         $continueWith->setTitle(t('Show bulk processing actions for all filtered results'));
@@ -353,14 +353,15 @@ class Controller extends CompatController
      *
      * @param PaginationControl $paginationControl
      * @param LimitControl      $limitControl
+     * @param bool              $verticalPagination
      *
      * @return ViewModeSwitcher
      */
     public function createViewModeSwitcher(
         PaginationControl $paginationControl,
         LimitControl $limitControl,
-        $verticalPagination = false
-    ) {
+        bool $verticalPagination = false
+    ): ViewModeSwitcher {
         $viewModeSwitcher = new ViewModeSwitcher();
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -488,6 +489,8 @@ class Controller extends CompatController
      * Process a search request
      *
      * @param Query $query
+     *
+     * @return void
      */
     public function handleSearchRequest(Query $query)
     {
@@ -519,7 +522,7 @@ class Controller extends CompatController
      *
      * @throws SecurityException
      */
-    public function assertRouteAccess($name = null)
+    public function assertRouteAccess(string $name = null)
     {
         if (! $name) {
             $name = $this->getRequest()->getControllerName();
@@ -786,7 +789,7 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query, Filter\Rule $filter = null)
+    public function filter(Query $query, Filter\Rule $filter = null): self
     {
         if ($this->format !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
             $this->applyRestrictions($query);

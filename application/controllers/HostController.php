@@ -25,6 +25,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Web\Url;
+use ipl\Web\Widget\Tabs;
 
 class HostController extends Controller
 {
@@ -230,7 +231,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    protected function createTabs()
+    protected function createTabs(): Tabs
     {
         $tabs = $this->getTabs()
             ->add('index', [
@@ -260,7 +261,7 @@ class HostController extends Controller
         return $tabs;
     }
 
-    protected function setTitleTab($name)
+    protected function setTitleTab(string $name)
     {
         $tab = $this->createTabs()->get($name);
 
@@ -271,7 +272,7 @@ class HostController extends Controller
         }
     }
 
-    protected function fetchCommandTargets()
+    protected function fetchCommandTargets(): array
     {
         return [$this->host];
     }
@@ -281,7 +282,7 @@ class HostController extends Controller
         return Links::host($this->host);
     }
 
-    protected function getDefaultTabControls()
+    protected function getDefaultTabControls(): array
     {
         return [(new HostList([$this->host]))->setDetailActionsDisabled()->setNoSubjectLink()];
     }

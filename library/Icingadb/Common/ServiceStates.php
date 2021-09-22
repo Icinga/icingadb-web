@@ -28,7 +28,7 @@ class ServiceStates
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function int($state)
+    public static function int(string $state): int
     {
         switch (strtolower($state)) {
             case 'ok':
@@ -62,7 +62,7 @@ class ServiceStates
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function text($state)
+    public static function text(int $state): string
     {
         switch (true) {
             case $state === self::OK:
@@ -99,7 +99,7 @@ class ServiceStates
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function translated($state)
+    public static function translated(int $state): string
     {
         switch (true) {
             case $state === self::OK:

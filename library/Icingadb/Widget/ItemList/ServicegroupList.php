@@ -24,7 +24,7 @@ class ServicegroupList extends BaseItemList
         $this->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
     }
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         $this->addAttributes(['class' => $this->getViewMode()]);
 

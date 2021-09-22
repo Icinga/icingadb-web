@@ -59,9 +59,9 @@ class ToggleObjectFeatureCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setFeature($feature)
+    public function setFeature(string $feature): self
     {
-        $this->feature = (string) $feature;
+        $this->feature = $feature;
 
         return $this;
     }
@@ -71,8 +71,14 @@ class ToggleObjectFeatureCommand extends ObjectCommand
      *
      * @return string
      */
-    public function getFeature()
+    public function getFeature(): string
     {
+        if ($this->feature === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->feature;
     }
 
@@ -83,9 +89,9 @@ class ToggleObjectFeatureCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setEnabled($enabled = true)
+    public function setEnabled(bool $enabled = true): self
     {
-        $this->enabled = (bool) $enabled;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -93,7 +99,7 @@ class ToggleObjectFeatureCommand extends ObjectCommand
     /**
      * Get whether the feature should be enabled or disabled
      *
-     * @return bool
+     * @return ?bool
      */
     public function getEnabled()
     {

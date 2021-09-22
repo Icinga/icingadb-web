@@ -19,6 +19,7 @@ use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -192,7 +193,7 @@ class HostsController extends Controller
         $this->setTitle(t('Adjust Filter'));
     }
 
-    protected function fetchCommandTargets()
+    protected function fetchCommandTargets(): Query
     {
         $db = $this->getDb();
 

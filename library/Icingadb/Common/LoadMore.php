@@ -28,7 +28,7 @@ trait LoadMore
      *
      * @return $this
      */
-    public function setPageSize($size)
+    public function setPageSize(int $size): self
     {
         $this->pageSize = $size;
 
@@ -42,7 +42,7 @@ trait LoadMore
      *
      * @return $this
      */
-    public function setPageNumber($number)
+    public function setPageNumber(int $number): self
     {
         $this->pageNumber = $number;
 
@@ -56,7 +56,7 @@ trait LoadMore
      *
      * @return $this
      */
-    public function setLoadMoreUrl(Url $url)
+    public function setLoadMoreUrl(Url $url): self
     {
         $this->loadMoreUrl = $url;
 
@@ -72,7 +72,7 @@ trait LoadMore
      *
      * @return Generator
      */
-    protected function getIterator(ResultSet $result)
+    protected function getIterator(ResultSet $result): Generator
     {
         $count = 0;
         $pageNumber = $this->pageNumber ?: 1;

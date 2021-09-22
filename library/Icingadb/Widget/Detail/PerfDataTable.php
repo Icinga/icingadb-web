@@ -38,10 +38,8 @@ class PerfDataTable extends Table
      * @param   string  $perfdataStr    The perfdata string
      * @param   int       $limit              Max labels to show; 0 for no limit
      * @param   string  $color             The color indicating the perfdata state
-     *
-     * @return string
      */
-    public function __construct($perfdataStr, $limit = 0, $color = PerfData::PERFDATA_OK)
+    public function __construct(string $perfdataStr, int $limit = 0, string $color = PerfData::PERFDATA_OK)
     {
         $this->perfdataStr = $perfdataStr;
         $this->limit = $limit;

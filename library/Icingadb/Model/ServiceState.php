@@ -68,7 +68,7 @@ class ServiceState extends State
      *
      * @return string
      */
-    public function getStateText()
+    public function getStateText(): string
     {
         return ServiceStates::text($this->soft_state);
     }
@@ -78,7 +78,7 @@ class ServiceState extends State
      *
      * @return string
      */
-    public function getStateTextTranslated()
+    public function getStateTextTranslated(): string
     {
         return ServiceStates::text($this->soft_state);
     }

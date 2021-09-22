@@ -48,7 +48,7 @@ class VolatileState
      *
      * @return $this
      */
-    public function fetch(State $state)
+    public function fetch(State $state): self
     {
         $type = substr($state->getTableName(), 0, -6);
 

@@ -14,7 +14,7 @@ class HostList extends StateList
 {
     protected $defaultAttributes = ['class' => 'host-list'];
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         switch ($this->getViewMode()) {
             case 'minimal':

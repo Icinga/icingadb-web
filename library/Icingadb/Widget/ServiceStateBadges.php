@@ -7,20 +7,21 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Common\StateBadges;
+use ipl\Web\Url;
 
 class ServiceStateBadges extends StateBadges
 {
-    protected function getBaseUrl()
+    protected function getBaseUrl(): Url
     {
         return Links::services();
     }
 
-    protected function getPrefix()
+    protected function getPrefix(): string
     {
         return 'services';
     }
 
-    protected function getStateInt($state)
+    protected function getStateInt(string $state): int
     {
         return ServiceStates::int($state);
     }

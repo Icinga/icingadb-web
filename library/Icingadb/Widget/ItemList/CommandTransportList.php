@@ -15,7 +15,7 @@ class CommandTransportList extends BaseOrderedItemList
         $this->setDetailUrl(Url::fromPath('icingadb/command-transport/show'));
     }
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         return CommandTransportListItem::class;
     }

@@ -8,6 +8,7 @@ use Icinga\Chart\Donut;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
+use ipl\Html\ValidHtml;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\HtmlString;
 use ipl\Web\Filter\QueryString;
@@ -22,7 +23,7 @@ class HostStatistics extends ObjectStatistics
         $this->summary = $summary;
     }
 
-    protected function createDonut()
+    protected function createDonut(): ValidHtml
     {
         $donut = (new Donut())
             ->addSlice($this->summary->hosts_up, ['class' => 'slice-state-ok'])
@@ -33,7 +34,7 @@ class HostStatistics extends ObjectStatistics
         return HtmlString::create($donut->render());
     }
 
-    protected function createTotal()
+    protected function createTotal(): ValidHtml
     {
         $url = Links::hosts();
         if ($this->hasBaseFilter()) {
@@ -49,7 +50,7 @@ class HostStatistics extends ObjectStatistics
         );
     }
 
-    protected function createBadges()
+    protected function createBadges(): ValidHtml
     {
         $badges = new HostStateBadges($this->summary);
         if ($this->hasBaseFilter()) {

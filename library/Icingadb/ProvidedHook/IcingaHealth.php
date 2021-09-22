@@ -16,12 +16,12 @@ class IcingaHealth extends HealthHook
     /** @var Instance */
     protected $instance;
 
-    public function getName()
+    public function getName(): string
     {
         return 'Icinga DB';
     }
 
-    public function getUrl()
+    public function getUrl(): Url
     {
         return Url::fromPath('icingadb/health');
     }
@@ -57,7 +57,7 @@ class IcingaHealth extends HealthHook
         }
     }
 
-    protected function getInstance()
+    protected function getInstance(): Instance
     {
         if ($this->instance === null) {
             $this->instance = Instance::on($this->getDb())

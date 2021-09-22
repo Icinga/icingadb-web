@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Html\HtmlString;
+use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -314,7 +315,7 @@ class ServicesController extends Controller
         $this->setAutorefreshInterval(30);
     }
 
-    protected function fetchCommandTargets()
+    protected function fetchCommandTargets(): Query
     {
         $db = $this->getDb();
 
@@ -351,7 +352,7 @@ class ServicesController extends Controller
         return new FeatureStatus('service', $summary->first());
     }
 
-    public function createProblemToggle()
+    public function createProblemToggle(): ProblemToggle
     {
         $filter = $this->params->shift('problems');
 

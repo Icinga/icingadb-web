@@ -35,7 +35,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @param   string      $perfdataStr    A space separated list of label/value pairs
      */
-    protected function __construct($perfdataStr)
+    protected function __construct(string $perfdataStr)
     {
         if (($perfdataStr = trim($perfdataStr)) !== '') {
             $this->perfdataStr = $perfdataStr;
@@ -48,7 +48,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @return  ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->asArray());
     }
@@ -60,7 +60,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @return  PerfDataSet
      */
-    public static function fromString($perfdataStr)
+    public static function fromString(string $perfdataStr): self
     {
         return new static($perfdataStr);
     }
@@ -70,7 +70,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @return  array
      */
-    public function asArray()
+    public function asArray(): array
     {
         return $this->perfdata;
     }
@@ -95,7 +95,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @return  string      The label found
      */
-    protected function readLabel()
+    protected function readLabel(): string
     {
         $this->skipSpaces();
         if (in_array($this->perfdataStr[$this->parserPos], array('"', "'"))) {
@@ -122,7 +122,7 @@ class PerfDataSet implements IteratorAggregate
      *
      * @return  string
      */
-    protected function readUntil($stopChar)
+    protected function readUntil(string $stopChar): string
     {
         $start = $this->parserPos;
         while ($this->parserPos < strlen($this->perfdataStr) && $this->perfdataStr[$this->parserPos] !== $stopChar) {

@@ -17,7 +17,7 @@ class PageSeparatorItem extends BaseHtmlElement
     /** @var string */
     protected $tag = 'li';
 
-    public function __construct($pageNumber)
+    public function __construct(int $pageNumber)
     {
         $this->pageNumber = $pageNumber;
     }

@@ -11,7 +11,7 @@ class HostListItem extends BaseHostListItem
 {
     use ListItemCommonLayout;
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
     }

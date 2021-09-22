@@ -26,7 +26,7 @@ abstract class ObjectCommand extends IcingaCommand
      *
      * @return  $this
      */
-    public function setObject(Model $object)
+    public function setObject(Model $object): self
     {
         $this->object = $object;
 
@@ -38,8 +38,14 @@ abstract class ObjectCommand extends IcingaCommand
      *
      * @return Model
      */
-    public function getObject()
+    public function getObject(): Model
     {
+        if ($this->object === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->object;
     }
 }

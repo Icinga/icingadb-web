@@ -47,12 +47,12 @@ abstract class BaseTableRowItem extends BaseHtmlElement
     {
     }
 
-    protected function createColumn($content = null)
+    protected function createColumn($content = null): BaseHtmlElement
     {
         return Html::tag('div', ['class' => 'col'], $content);
     }
 
-    protected function createColumns()
+    protected function createColumns(): HtmlDocument
     {
         $columns = new HtmlDocument();
 
@@ -61,7 +61,7 @@ abstract class BaseTableRowItem extends BaseHtmlElement
         return $columns;
     }
 
-    protected function createTitle()
+    protected function createTitle(): BaseHtmlElement
     {
         $title = $this->createColumn()->addAttributes(['class' => 'title']);
 
@@ -70,6 +70,9 @@ abstract class BaseTableRowItem extends BaseHtmlElement
         return $title;
     }
 
+    /**
+     * @return ?BaseHtmlElement
+     */
     protected function createVisual()
     {
         $visual = new HtmlElement('div', Attributes::create(['class' => 'visual']));

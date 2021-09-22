@@ -26,7 +26,7 @@ class HostStates
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function int($state)
+    public static function int(string $state): int
     {
         switch (strtolower($state)) {
             case 'up':
@@ -57,7 +57,7 @@ class HostStates
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function text($state)
+    public static function text(int $state): string
     {
         switch (true) {
             case $state === self::UP:
@@ -91,7 +91,7 @@ class HostStates
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function translated($state)
+    public static function translated(int $state): string
     {
         switch (true) {
             case $state === self::UP:

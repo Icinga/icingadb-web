@@ -16,127 +16,127 @@ use ipl\Web\Url;
 
 abstract class Links
 {
-    public static function comment(Comment $comment)
+    public static function comment(Comment $comment): Url
     {
         return Url::fromPath('icingadb/comment', ['name' => $comment->name]);
     }
 
-    public static function comments()
+    public static function comments(): Url
     {
         return Url::fromPath('icingadb/comments');
     }
 
-    public static function commentsDelete()
+    public static function commentsDelete(): Url
     {
         return Url::fromPath('icingadb/comments/delete');
     }
 
-    public static function commentsDetails()
+    public static function commentsDetails(): Url
     {
         return Url::fromPath('icingadb/comments/details');
     }
 
-    public static function downtime(Downtime $downtime)
+    public static function downtime(Downtime $downtime): Url
     {
         return Url::fromPath('icingadb/downtime', ['name' => $downtime->name]);
     }
 
-    public static function downtimes()
+    public static function downtimes(): Url
     {
         return Url::fromPath('icingadb/downtimes');
     }
 
-    public static function downtimesDelete()
+    public static function downtimesDelete(): Url
     {
         return Url::fromPath('icingadb/downtimes/delete');
     }
 
-    public static function downtimesDetails()
+    public static function downtimesDetails(): Url
     {
         return Url::fromPath('icingadb/downtimes/details');
     }
 
-    public static function host(Host $host)
+    public static function host(Host $host): Url
     {
         return Url::fromPath('icingadb/host', ['name' => $host->name]);
     }
 
-    public static function hostSource(Host $host)
+    public static function hostSource(Host $host): Url
     {
         return Url::fromPath('icingadb/host/source', ['name' => $host->name]);
     }
 
-    public static function hostsDetails()
+    public static function hostsDetails(): Url
     {
         return Url::fromPath('icingadb/hosts/details');
     }
 
-    public static function hostgroup($hostgroup)
+    public static function hostgroup($hostgroup): Url
     {
         return Url::fromPath('icingadb/hostgroup', ['name' => $hostgroup->name]);
     }
 
-    public static function hosts()
+    public static function hosts(): Url
     {
         return Url::fromPath('icingadb/hosts');
     }
 
-    public static function service(Service $service, Host $host)
+    public static function service(Service $service, Host $host): Url
     {
         return Url::fromPath('icingadb/service', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
-    public static function serviceSource(Service $service, Host $host)
+    public static function serviceSource(Service $service, Host $host): Url
     {
         return Url::fromPath('icingadb/service/source', ['name' => $service->name, 'host.name' => $host->name]);
     }
 
-    public static function servicesDetails()
+    public static function servicesDetails(): Url
     {
         return Url::fromPath('icingadb/services/details');
     }
 
-    public static function servicegroup($servicegroup)
+    public static function servicegroup($servicegroup): Url
     {
         return Url::fromPath('icingadb/servicegroup', ['name' => $servicegroup->name]);
     }
 
-    public static function services()
+    public static function services(): Url
     {
         return Url::fromPath('icingadb/services');
     }
 
-    public static function toggleHostsFeatures()
+    public static function toggleHostsFeatures(): Url
     {
         return Url::fromPath('icingadb/hosts/toggle-features');
     }
 
-    public static function toggleServicesFeatures()
+    public static function toggleServicesFeatures(): Url
     {
         return Url::fromPath('icingadb/services/toggle-features');
     }
 
-    public static function user(User $user)
+    public static function user(User $user): Url
     {
         return Url::fromPath('icingadb/user', ['name' => $user->name]);
     }
 
-    public static function usergroup(Usergroup $usergroup)
+    public static function usergroup(Usergroup $usergroup): Url
     {
         return Url::fromPath('icingadb/usergroup', ['name' => $usergroup->name]);
     }
 
-    public static function users()
+    public static function users(): Url
     {
         return Url::fromPath('icingadb/users');
     }
 
-    public static function usergroups()
+    public static function usergroups(): Url
     {
         return Url::fromPath('icingadb/usergroups');
     }
 
-    public static function event(History $event)
+    public static function event(History $event): Url
     {
         return Url::fromPath('icingadb/event', ['id' => bin2hex($event->id)]);
     }

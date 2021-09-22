@@ -24,7 +24,7 @@ class HostgroupList extends BaseItemList
         $this->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
     }
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         $this->addAttributes(['class' => $this->getViewMode()]);
 

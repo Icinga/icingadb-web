@@ -26,7 +26,7 @@ class ToggleInstanceFeaturesForm extends CommandForm
      */
     protected $submittedFeatures = [];
 
-    public function __construct($featureStatus)
+    public function __construct(array $featureStatus)
     {
         $this->featureStatus = $featureStatus;
         $this->features = [
@@ -136,7 +136,7 @@ class ToggleInstanceFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommand(Model $object)
+    protected function getCommand(Model $object): \Generator
     {
         foreach ($this->features as $feature => $spec) {
             $featureState = $this->getElement($feature)->isChecked();
@@ -147,7 +147,7 @@ class ToggleInstanceFeaturesForm extends CommandForm
 
             $command = new ToggleInstanceFeatureCommand();
             $command->setFeature($feature);
-            $command->setEnabled((int) $featureState);
+            $command->setEnabled($featureState);
 
             $this->submittedFeatures[] = $command;
 

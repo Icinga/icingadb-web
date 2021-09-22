@@ -11,7 +11,7 @@ class HostListItemMinimal extends BaseHostListItem
 {
     use ListItemMinimalLayout;
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_BIG;
     }

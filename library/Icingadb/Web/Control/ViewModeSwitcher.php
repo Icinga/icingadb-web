@@ -51,7 +51,7 @@ class ViewModeSwitcher extends Form
      *
      * @return string
      */
-    public function getDefaultViewMode()
+    public function getDefaultViewMode(): string
     {
         return $this->defaultViewMode ?: static::DEFAULT_VIEW_MODE;
     }
@@ -63,7 +63,7 @@ class ViewModeSwitcher extends Form
      *
      * @return $this
      */
-    public function setDefaultViewMode($defaultViewMode)
+    public function setDefaultViewMode(string $defaultViewMode): self
     {
         $this->defaultViewMode = $defaultViewMode;
 
@@ -75,7 +75,7 @@ class ViewModeSwitcher extends Form
      *
      * @return string
      */
-    public function getViewModeParam()
+    public function getViewModeParam(): string
     {
         return $this->viewModeParam;
     }
@@ -87,7 +87,7 @@ class ViewModeSwitcher extends Form
      *
      * @return $this
      */
-    public function setViewModeParam($viewModeParam)
+    public function setViewModeParam(string $viewModeParam): self
     {
         $this->viewModeParam = $viewModeParam;
 
@@ -99,7 +99,7 @@ class ViewModeSwitcher extends Form
      *
      * @return string
      */
-    public function getViewMode()
+    public function getViewMode(): string
     {
         return $this->getValue($this->getViewModeParam(), $this->getDefaultViewMode());
     }
@@ -111,7 +111,7 @@ class ViewModeSwitcher extends Form
      *
      * @return  $this
      */
-    public function setIdProtector($protector)
+    public function setIdProtector(callable $protector): self
     {
         $this->protector = $protector;
 

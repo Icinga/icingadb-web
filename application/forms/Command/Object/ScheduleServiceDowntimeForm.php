@@ -227,6 +227,9 @@ class ScheduleServiceDowntimeForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
+    /**
+     * @return ?ScheduleServiceDowntimeCommand
+     */
     protected function getCommand(Model $object)
     {
         if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {

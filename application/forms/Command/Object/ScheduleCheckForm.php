@@ -109,6 +109,9 @@ class ScheduleCheckForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
+    /**
+     * @return ?ScheduleCheckCommand
+     */
     protected function getCommand(Model $object)
     {
         if (

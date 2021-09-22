@@ -42,6 +42,11 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         $this->joins = $apiResult['joins'];
     }
 
+    /**
+     * Render the object source location
+     *
+     * @return ?array
+     */
     protected function createSourceLocation()
     {
         if (! isset($this->attrs['source_location'])) {
@@ -58,6 +63,11 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         ];
     }
 
+    /**
+     * Render object's last check result
+     *
+     * @return ?array
+     */
     protected function createLastCheckResult()
     {
         if (! isset($this->attrs['last_check_result'])) {
@@ -94,7 +104,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createRedisInfo()
+    protected function createRedisInfo(): array
     {
         $title = new HtmlElement('h2', null, Text::create(t('Volatile State Details')));
 
@@ -138,7 +148,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         )];
     }
 
-    protected function createAttributes()
+    protected function createAttributes(): array
     {
         $blacklist = [
             'name',
@@ -188,6 +198,13 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         ];
     }
 
+    /**
+     * Format the given value as a json
+     *
+     * @param  mixed $json
+     *
+     * @return BaseHtmlElement|string
+     */
     private function formatJson($json)
     {
         if (is_scalar($json)) {
@@ -201,7 +218,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         );
     }
 
-    private function formatTimestamp($ts)
+    private function formatTimestamp($ts): string
     {
         if (empty($ts)) {
             return new EmptyState(t('n. a.'));
@@ -217,22 +234,22 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             ->format('Y-m-d\TH:i:s.vP');
     }
 
-    private function formatMillisecondTimestamp($ms)
+    private function formatMillisecondTimestamp($ms): string
     {
         return $this->formatTimestamp($ms / 1000.0);
     }
 
-    private function formatSeconds($s)
+    private function formatSeconds($s): string
     {
         return Format::seconds($s);
     }
 
-    private function formatMilliseconds($ms)
+    private function formatMilliseconds($ms): string
     {
         return Format::seconds($ms / 1000.0);
     }
 
-    private function formatState($state)
+    private function formatState(int $state): string
     {
         switch (true) {
             case $this->object instanceof Host:
@@ -244,7 +261,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         }
     }
 
-    private function createNameValueTable(array $data, array $formatters)
+    private function createNameValueTable(array $data, array $formatters): Table
     {
         $table = new Table();
         $table->addAttributes(['class' => 'name-value-table']);

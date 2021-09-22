@@ -12,7 +12,7 @@ trait ViewMode
     /**
      * Get the view mode
      *
-     * @return string
+     * @return ?string
      */
     public function getViewMode()
     {
@@ -26,7 +26,7 @@ trait ViewMode
      *
      * @return $this
      */
-    public function setViewMode($viewMode)
+    public function setViewMode(string $viewMode): self
     {
         $this->viewMode = $viewMode;
 

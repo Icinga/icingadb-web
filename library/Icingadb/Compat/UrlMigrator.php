@@ -39,18 +39,18 @@ class UrlMigrator
         'monitoring/tactical' => ['services', 'icingadb/tactical']
     ];
 
-    public static function isSupportedUrl(Url $url)
+    public static function isSupportedUrl(Url $url): bool
     {
         $supportedPaths = self::SUPPORTED_PATHS;
         return isset($supportedPaths[$url->getPath()]);
     }
 
-    public static function hasQueryTransformer($name)
+    public static function hasQueryTransformer(string $name): bool
     {
         return method_exists(new self(), $name . 'Columns');
     }
 
-    public static function transformUrl(Url $url)
+    public static function transformUrl(Url $url): Url
     {
         if (! self::isSupportedUrl($url)) {
             throw new InvalidArgumentException(sprintf('Url path "%s" is not supported', $url->getPath()));
@@ -70,7 +70,15 @@ class UrlMigrator
         return $url;
     }
 
-    public static function transformFilter(Filter\Rule $filter, $queryTransformer = null)
+    /**
+     * Transform the given legacy filter
+     *
+     * @param Filter\Rule $filter
+     * @param string|null $queryTransformer
+     *
+     * @return Filter\Rule|false
+     */
+    public static function transformFilter(Filter\Rule $filter, string $queryTransformer = null)
     {
         $transformer = new self();
 
@@ -87,6 +95,15 @@ class UrlMigrator
         return $rewritten === false ? false : ($rewritten instanceof Filter\Rule ? $rewritten : $filter);
     }
 
+    /**
+     * Rewrite the given filter and legacy columns
+     *
+     * @param Filter\Rule $filter
+     * @param array $legacyColumns
+     * @param Filter\Chain|null $parent
+     *
+     * @return ?mixed
+     */
     protected function rewrite(Filter\Rule $filter, array $legacyColumns, Filter\Chain $parent = null)
     {
         $rewritten = null;
@@ -174,7 +191,7 @@ class UrlMigrator
         return $rewritten;
     }
 
-    protected static function commonColumns()
+    protected static function commonColumns(): array
     {
         return [
 
@@ -222,7 +239,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function hostsColumns()
+    protected static function hostsColumns(): array
     {
         return [
 
@@ -402,7 +419,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function multipleHostsColumns()
+    protected static function multipleHostsColumns(): array
     {
         return array_merge(
             static::hostsColumns(),
@@ -414,7 +431,7 @@ class UrlMigrator
         );
     }
 
-    protected static function hostColumns()
+    protected static function hostColumns(): array
     {
         return [
             'host' => [
@@ -423,7 +440,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function servicesColumns()
+    protected static function servicesColumns(): array
     {
         return [
 
@@ -723,7 +740,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function multipleServicesColumns()
+    protected static function multipleServicesColumns(): array
     {
         return array_merge(
             static::servicesColumns(),
@@ -738,7 +755,7 @@ class UrlMigrator
         );
     }
 
-    protected static function serviceColumns()
+    protected static function serviceColumns(): array
     {
         return [
             'host' => [
@@ -750,7 +767,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function hostgroupsColumns()
+    protected static function hostgroupsColumns(): array
     {
         return [
 
@@ -772,7 +789,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function servicegroupsColumns()
+    protected static function servicegroupsColumns(): array
     {
         return [
 
@@ -799,7 +816,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function contactgroupsColumns()
+    protected static function contactgroupsColumns(): array
     {
         return [
 
@@ -819,7 +836,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function contactsColumns()
+    protected static function contactsColumns(): array
     {
         $receivesStateNotifications = function ($state, $type = null) {
             return function ($filter) use ($state, $type) {
@@ -939,7 +956,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function commentsColumns()
+    protected static function commentsColumns(): array
     {
         return [
 
@@ -986,7 +1003,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function downtimesColumns()
+    protected static function downtimesColumns(): array
     {
         return [
 
@@ -1054,7 +1071,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function historyColumns()
+    protected static function historyColumns(): array
     {
         return [
 
@@ -1117,7 +1134,7 @@ class UrlMigrator
         ];
     }
 
-    protected static function notificationHistoryColumns()
+    protected static function notificationHistoryColumns(): array
     {
         return [
 

@@ -193,7 +193,7 @@ class PluginOutput extends HtmlString
      * @todo Do we really need to create a DOM here? Or is a preg_replace like we do it for text also feasible?
      * @return  string
      */
-    protected function processHtml($html)
+    protected function processHtml(string $html): string
     {
         $pattern = '/[([](OK|WARNING|CRITICAL|UNKNOWN|UP|DOWN)[)\]]/';
         $doc = new DOMDocument();

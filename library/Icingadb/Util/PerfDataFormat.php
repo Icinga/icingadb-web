@@ -56,7 +56,7 @@ class PerfDataFormat
 
     protected static $secondPrefix = [-3 => 'ns', -2 => 'µs', -1 => 'ms', 's'];
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (self::$instance === null) {
             self::$instance = new PerfDataFormat();
@@ -65,57 +65,57 @@ class PerfDataFormat
         return self::$instance;
     }
 
-    public static function bits($value)
+    public static function bits($value): string
     {
         return self::formatForUnits($value, self::$bitPrefix, self::$generalBase);
     }
 
-    public static function bytes($value)
+    public static function bytes($value): string
     {
         return self::formatForUnits($value, self::$bytePrefix, self::$generalBase);
     }
 
-    public static function wattHours($value)
+    public static function wattHours($value): string
     {
         return self::formatForUnits($value, self::$wattHourPrefix, self::$generalBase);
     }
 
-    public static function watts($value)
+    public static function watts($value): string
     {
         return self::formatForUnits($value, self::$wattPrefix, self::$generalBase);
     }
 
-    public static function amperes($value)
+    public static function amperes($value): string
     {
         return self::formatForUnits($value, self::$amperePrefix, self::$generalBase);
     }
 
-    public static function ampereSeconds($value)
+    public static function ampereSeconds($value): string
     {
         return self::formatForUnits($value, self::$ampSecondPrefix, self::$generalBase);
     }
 
-    public static function volts($value)
+    public static function volts($value): string
     {
         return self::formatForUnits($value, self::$voltPrefix, self::$generalBase);
     }
 
-    public static function ohms($value)
+    public static function ohms($value): string
     {
         return self::formatForUnits($value, self::$ohmPrefix, self::$generalBase);
     }
 
-    public static function grams($value)
+    public static function grams($value): string
     {
         return self::formatForUnits($value, self::$gramPrefix, self::$generalBase);
     }
 
-    public static function liters($value)
+    public static function liters($value): string
     {
         return self::formatForUnits($value, self::$literPrefix, self::$generalBase);
     }
 
-    public static function seconds($value)
+    public static function seconds($value): string
     {
         $absValue = abs($value);
 
@@ -130,7 +130,7 @@ class PerfDataFormat
         return sprintf('%0.2f d', $value / 86400);
     }
 
-    protected static function formatForUnits($value, &$units, $base)
+    protected static function formatForUnits($value, array &$units, int $base): string
     {
         $sign = '';
         if ($value < 0) {

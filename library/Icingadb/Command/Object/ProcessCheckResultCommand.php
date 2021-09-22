@@ -67,9 +67,9 @@ class ProcessCheckResultCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setStatus($status)
+    public function setStatus(int $status): self
     {
-        $this->status = (int) $status;
+        $this->status = $status;
 
         return $this;
     }
@@ -79,8 +79,14 @@ class ProcessCheckResultCommand extends ObjectCommand
      *
      * @return int
      */
-    public function getStatus()
+    public function getStatus(): int
     {
+        if ($this->status === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->status;
     }
 
@@ -91,9 +97,9 @@ class ProcessCheckResultCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setOutput($output)
+    public function setOutput(string $output): self
     {
-        $this->output = (string) $output;
+        $this->output = $output;
 
         return $this;
     }
@@ -101,7 +107,7 @@ class ProcessCheckResultCommand extends ObjectCommand
     /**
      * Get the text output of the host or service check result
      *
-     * @return string
+     * @return ?string
      */
     public function getOutput()
     {
@@ -115,9 +121,9 @@ class ProcessCheckResultCommand extends ObjectCommand
      *
      * @return  $this
      */
-    public function setPerformanceData($performanceData)
+    public function setPerformanceData(string $performanceData): self
     {
-        $this->performanceData = (string) $performanceData;
+        $this->performanceData = $performanceData;
 
         return $this;
     }
@@ -125,7 +131,7 @@ class ProcessCheckResultCommand extends ObjectCommand
     /**
      * Get the performance data of the host or service check result
      *
-     * @return string
+     * @return ?string
      */
     public function getPerformanceData()
     {

@@ -19,7 +19,7 @@ class StateChange extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct($state, $previousState)
+    public function __construct(string $state, string $previousState)
     {
         $this->previousState = $previousState;
         $this->state = $state;

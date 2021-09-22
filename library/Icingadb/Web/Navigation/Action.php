@@ -85,7 +85,7 @@ class Action extends NavigationItem
     /**
      * Get the filter to use when being asked whether to render this action
      *
-     * @return  string
+     * @return  ?string
      */
     public function getFilter()
     {

@@ -20,7 +20,7 @@ class HistoryListItemMinimal extends BaseHistoryListItem
         }
     }
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_BIG;
     }

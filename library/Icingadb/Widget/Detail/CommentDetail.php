@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use ipl\Web\Widget\TimeUntil;
@@ -22,12 +23,12 @@ class CommentDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct($comment)
+    public function __construct(Comment $comment)
     {
         $this->comment = $comment;
     }
 
-    protected function createComment()
+    protected function createComment(): array
     {
         return [
             Html::tag('h2', t('Comment')),
@@ -35,7 +36,7 @@ class CommentDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createDetails()
+    protected function createDetails(): array
     {
         $details = [];
 

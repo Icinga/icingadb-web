@@ -11,7 +11,7 @@ trait CaptionDisabled
     /**
      * @return bool
      */
-    public function isCaptionDisabled()
+    public function isCaptionDisabled(): bool
     {
         return $this->captionDisabled;
     }
@@ -21,7 +21,7 @@ trait CaptionDisabled
      *
      * @return $this
      */
-    public function setCaptionDisabled($captionDisabled = true)
+    public function setCaptionDisabled(bool $captionDisabled = true): self
     {
         $this->captionDisabled = $captionDisabled;
 

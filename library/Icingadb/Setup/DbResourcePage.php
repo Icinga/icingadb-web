@@ -95,7 +95,7 @@ class DbResourcePage extends Form
         return true;
     }
 
-    protected function validateConfiguration($showLog = false)
+    protected function validateConfiguration(bool $showLog = false): bool
     {
         $inspection = ResourceConfigForm::inspectResource($this);
         if ($inspection !== null) {

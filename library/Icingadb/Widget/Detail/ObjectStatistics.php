@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\ValidHtml;
 
 abstract class ObjectStatistics extends BaseHtmlElement
 {
@@ -16,11 +17,11 @@ abstract class ObjectStatistics extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'object-statistics'];
 
-    abstract protected function createDonut();
+    abstract protected function createDonut(): ValidHtml;
 
-    abstract protected function createTotal();
+    abstract protected function createTotal(): ValidHtml;
 
-    abstract protected function createBadges();
+    abstract protected function createBadges(): ValidHtml;
 
     protected function assemble()
     {

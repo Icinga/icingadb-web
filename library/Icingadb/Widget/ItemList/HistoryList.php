@@ -35,7 +35,7 @@ class HistoryList extends BaseItemList
         $this->setDetailUrl(Url::fromPath('icingadb/event'));
     }
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         switch ($this->getViewMode()) {
             case 'minimal':

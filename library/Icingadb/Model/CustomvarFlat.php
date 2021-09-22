@@ -85,7 +85,7 @@ class CustomvarFlat extends Model
      *
      * @return array
      */
-    public function unFlattenVars(Traversable $flattenedVars)
+    public function unFlattenVars(Traversable $flattenedVars): array
     {
         $registerValue = function (&$data, $path, $value) use (&$registerValue) {
             $step = array_shift($path);

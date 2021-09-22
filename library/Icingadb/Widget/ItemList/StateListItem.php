@@ -39,7 +39,7 @@ abstract class StateListItem extends BaseListItem
 
     abstract protected function createSubject();
 
-    abstract protected function getStateBallSize();
+    abstract protected function getStateBallSize(): string;
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {

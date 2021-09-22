@@ -72,7 +72,7 @@ class DowntimeController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    protected function fetchCommandTargets()
+    protected function fetchCommandTargets(): array
     {
         return [$this->downtime];
     }

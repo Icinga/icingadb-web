@@ -19,9 +19,6 @@ class ActionForm extends NavigationItemForm
      */
     protected $restriction;
 
-    /**
-     * {@inheritdoc}
-     */
     public function createElements(array $formData)
     {
         parent::createElements($formData);

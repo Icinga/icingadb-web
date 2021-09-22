@@ -74,7 +74,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  $this
      */
-    public function setApp($app)
+    public function setApp(string $app): self
     {
         $this->renderer->setApp($app);
 
@@ -86,8 +86,14 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return string
      */
-    public function getHost()
+    public function getHost(): string
     {
+        if ($this->host === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->host;
     }
 
@@ -98,7 +104,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  $this
      */
-    public function setHost($host)
+    public function setHost(string $host): self
     {
         $this->host = $host;
 
@@ -110,8 +116,14 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
+        if ($this->password === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->password;
     }
 
@@ -122,7 +134,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  $this
      */
-    public function setPassword($password)
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -134,7 +146,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return int
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
     }
@@ -146,9 +158,9 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  $this
      */
-    public function setPort($port)
+    public function setPort(int $port): self
     {
-        $this->port = (int) $port;
+        $this->port = $port;
 
         return $this;
     }
@@ -158,8 +170,14 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
+        if ($this->username === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->username;
     }
 
@@ -170,7 +188,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  $this
      */
-    public function setUsername($username)
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
@@ -184,11 +202,18 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return  string
      */
-    protected function getUriFor($endpoint)
+    protected function getUriFor(string $endpoint): string
     {
         return sprintf('https://%s:%u/v1/%s', $this->getHost(), $this->getPort(), $endpoint);
     }
 
+    /**
+     * Send the given command to the icinga2's REST API
+     *
+     * @param IcingaApiCommand $command
+     *
+     * @return mixed
+     */
     protected function sendCommand(IcingaApiCommand $command)
     {
         Logger::debug(
@@ -268,14 +293,18 @@ class ApiCommandTransport implements CommandTransportInterface
      * @param   int|null        $now
      *
      * @throws  CommandTransportException
+     *
+     * @return  void
      */
-    public function send(IcingaCommand $command, $now = null)
+    public function send(IcingaCommand $command, int $now = null)
     {
         return $this->sendCommand($this->renderer->render($command));
     }
 
     /**
      * Try to connect to the API
+     *
+     * @return void
      *
      * @throws  CommandTransportException In case the connection was not successful
      */

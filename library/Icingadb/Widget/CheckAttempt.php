@@ -28,7 +28,7 @@ class CheckAttempt extends BaseHtmlElement
      * @param int $attempt     Current check attempt
      * @param int $maxAttempts Max check attempts
      */
-    public function __construct($attempt, $maxAttempts)
+    public function __construct(int $attempt, int $maxAttempts)
     {
         $this->attempt = $attempt;
         $this->maxAttempts = $maxAttempts;

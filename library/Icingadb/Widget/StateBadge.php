@@ -26,7 +26,7 @@ class StateBadge extends BaseHtmlElement
      * @param string $state     Textual representation of a state
      * @param bool   $isHandled True if state is handled
      */
-    public function __construct($content, $state, $isHandled = false)
+    public function __construct($content, string $state, bool $isHandled = false)
     {
         $this->content = $content;
         $this->isHandled = $isHandled;

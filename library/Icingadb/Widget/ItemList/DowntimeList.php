@@ -21,7 +21,7 @@ class DowntimeList extends BaseItemList
 
     protected $defaultAttributes = ['class' => 'downtime-list'];
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         $viewMode = $this->getViewMode();
 

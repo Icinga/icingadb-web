@@ -11,7 +11,7 @@ class HistoryListItem extends BaseHistoryListItem
 {
     use ListItemCommonLayout;
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
     }

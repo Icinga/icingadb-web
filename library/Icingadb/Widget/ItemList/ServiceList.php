@@ -11,7 +11,7 @@ class ServiceList extends StateList
 {
     protected $defaultAttributes = ['class' => 'service-list'];
 
-    protected function getItemClass()
+    protected function getItemClass(): string
     {
         switch ($this->getViewMode()) {
             case 'minimal':

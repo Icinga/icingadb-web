@@ -165,7 +165,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
     }
 
-    protected function assembleAction($action, $label, $icon, $title)
+    protected function assembleAction(string $action, string $label, string $icon, string $title)
     {
         $link = Html::tag(
             'a',
@@ -185,7 +185,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         $this->add(Html::tag('li', $link));
     }
 
-    protected function getLink($action)
+    protected function getLink(string $action): string
     {
         return Url::fromPath("icingadb/{$this->type}s/$action")
             ->setQueryString(QueryString::render($this->getBaseFilter()))

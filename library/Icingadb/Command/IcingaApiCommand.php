@@ -35,7 +35,7 @@ class IcingaApiCommand
      *
      * @return  static
      */
-    public static function create($endpoint, array $data)
+    public static function create(string $endpoint, array $data): self
     {
         return (new static())
             ->setEndpoint($endpoint)
@@ -47,8 +47,14 @@ class IcingaApiCommand
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
+        if ($this->data === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->data;
     }
 
@@ -59,7 +65,7 @@ class IcingaApiCommand
      *
      * @return  $this
      */
-    public function setData($data)
+    public function setData(array $data): self
     {
         $this->data = $data;
 
@@ -71,8 +77,14 @@ class IcingaApiCommand
      *
      * @return string
      */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
+        if ($this->endpoint === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->endpoint;
     }
 
@@ -83,7 +95,7 @@ class IcingaApiCommand
      *
      * @return  $this
      */
-    public function setEndpoint($endpoint)
+    public function setEndpoint(string $endpoint): self
     {
         $this->endpoint = $endpoint;
 
@@ -95,7 +107,7 @@ class IcingaApiCommand
      *
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -107,7 +119,7 @@ class IcingaApiCommand
      *
      * @return $this
      */
-    public function setMethod($method)
+    public function setMethod(string $method): self
     {
         $this->method = $method;
 

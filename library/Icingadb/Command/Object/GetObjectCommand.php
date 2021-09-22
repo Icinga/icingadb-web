@@ -18,7 +18,7 @@ class GetObjectCommand extends ObjectCommand
      *
      * @return string
      */
-    public function getObjectName()
+    public function getObjectName(): string
     {
         switch (true) {
             case $this->object instanceof Service:
@@ -33,7 +33,7 @@ class GetObjectCommand extends ObjectCommand
      *
      * @return string
      */
-    public function getObjectPluralType()
+    public function getObjectPluralType(): string
     {
         switch (true) {
             case $this->object instanceof Host:
@@ -48,7 +48,7 @@ class GetObjectCommand extends ObjectCommand
     /**
      * Get the attributes to query
      *
-     * @return array
+     * @return ?array
      */
     public function getAttributes()
     {
@@ -62,7 +62,7 @@ class GetObjectCommand extends ObjectCommand
      *
      * @return $this
      */
-    public function setAttributes(array $attributes)
+    public function setAttributes(array $attributes): self
     {
         $this->attributes = $attributes;
 

@@ -21,7 +21,7 @@ trait DetailActions
      *
      * @return $this
      */
-    public function setDetailActionsDisabled($state = true)
+    public function setDetailActionsDisabled(bool $state = true): self
     {
         $this->detailActionsDisabled = $state;
 
@@ -33,7 +33,7 @@ trait DetailActions
      *
      * @return bool
      */
-    public function getDetailActionsDisabled()
+    public function getDetailActionsDisabled(): bool
     {
         return $this->detailActionsDisabled;
     }
@@ -43,7 +43,7 @@ trait DetailActions
      *
      * @return $this
      */
-    public function initializeDetailActions()
+    public function initializeDetailActions(): self
     {
         $this->getAttributes()
             ->registerAttributeCallback('class', function () {
@@ -63,7 +63,7 @@ trait DetailActions
      *
      * @return $this
      */
-    protected function setMultiselectUrl(Url $url)
+    protected function setMultiselectUrl(Url $url): self
     {
         /** @var BaseHtmlElement $this */
         $this->getAttributes()
@@ -81,7 +81,7 @@ trait DetailActions
      *
      * @return $this
      */
-    protected function setDetailUrl(Url $url)
+    protected function setDetailUrl(Url $url): self
     {
         /** @var BaseHtmlElement $this */
         $this->getAttributes()
@@ -100,7 +100,7 @@ trait DetailActions
      *
      * @return $this
      */
-    public function addMultiselectFilterAttribute(BaseHtmlElement $element, Filter\Rule $filter)
+    public function addMultiselectFilterAttribute(BaseHtmlElement $element, Filter\Rule $filter): self
     {
         $element->getAttributes()
             ->registerAttributeCallback('data-icinga-multiselect-filter', function () use ($filter) {
@@ -118,7 +118,7 @@ trait DetailActions
      *
      * @return $this
      */
-    public function addDetailFilterAttribute(BaseHtmlElement $element, Filter\Rule $filter)
+    public function addDetailFilterAttribute(BaseHtmlElement $element, Filter\Rule $filter): self
     {
         $element->getAttributes()
             ->registerAttributeCallback('data-icinga-detail-filter', function () use ($filter) {

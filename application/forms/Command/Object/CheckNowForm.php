@@ -46,6 +46,9 @@ class CheckNowForm extends CommandForm
         );
     }
 
+    /**
+     * @return ?ScheduleCheckCommand
+     */
     protected function getCommand(Model $object)
     {
         if (

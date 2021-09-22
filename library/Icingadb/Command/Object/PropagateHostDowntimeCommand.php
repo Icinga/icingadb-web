@@ -23,9 +23,9 @@ class PropagateHostDowntimeCommand extends ScheduleHostDowntimeCommand
      *
      * @return  $this
      */
-    public function setTriggered($triggered = true)
+    public function setTriggered(bool $triggered = true): self
     {
-        $this->triggered = (bool) $triggered;
+        $this->triggered = $triggered;
 
         return $this;
     }
@@ -35,7 +35,7 @@ class PropagateHostDowntimeCommand extends ScheduleHostDowntimeCommand
      *
      * @return bool
      */
-    public function getTriggered()
+    public function getTriggered(): bool
     {
         return $this->triggered;
     }

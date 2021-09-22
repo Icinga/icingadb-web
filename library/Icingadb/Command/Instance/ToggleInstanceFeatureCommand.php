@@ -62,9 +62,9 @@ class ToggleInstanceFeatureCommand extends IcingaCommand
      *
      * @return  $this
      */
-    public function setFeature($feature)
+    public function setFeature(string $feature): self
     {
-        $this->feature = (string) $feature;
+        $this->feature = $feature;
 
         return $this;
     }
@@ -74,8 +74,12 @@ class ToggleInstanceFeatureCommand extends IcingaCommand
      *
      * @return string
      */
-    public function getFeature()
+    public function getFeature(): string
     {
+        if ($this->feature === null) {
+            throw new \LogicException('You have to set the feature first before getting it.');
+        }
+
         return $this->feature;
     }
 
@@ -86,9 +90,9 @@ class ToggleInstanceFeatureCommand extends IcingaCommand
      *
      * @return  $this
      */
-    public function setEnabled($enabled = true)
+    public function setEnabled(bool $enabled = true): self
     {
-        $this->enabled = (bool) $enabled;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -96,7 +100,7 @@ class ToggleInstanceFeatureCommand extends IcingaCommand
     /**
      * Get whether the feature should be enabled or disabled
      *
-     * @return bool
+     * @return ?bool
      */
     public function getEnabled()
     {

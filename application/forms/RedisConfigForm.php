@@ -194,7 +194,7 @@ class RedisConfigForm extends ConfigForm
         );
     }
 
-    public static function addSkipValidationCheckbox($form)
+    public static function addSkipValidationCheckbox(Form $form)
     {
         $form->addElement(
             'checkbox',
@@ -435,7 +435,7 @@ class RedisConfigForm extends ConfigForm
         return $this;
     }
 
-    public static function checkRedis(Form $form)
+    public static function checkRedis(Form $form): bool
     {
         $sections = [];
 
@@ -520,7 +520,7 @@ class RedisConfigForm extends ConfigForm
      *
      * @return  array               Callback validator
      */
-    private function wrapIplValidator($cls, $element, Closure $additionalValidator = null)
+    private function wrapIplValidator(string $cls, string $element, Closure $additionalValidator = null): array
     {
         return [
             'Callback',

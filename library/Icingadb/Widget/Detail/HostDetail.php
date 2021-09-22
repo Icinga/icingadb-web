@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
@@ -13,14 +14,14 @@ class HostDetail extends ObjectDetail
 {
     protected $serviceSummary;
 
-    public function __construct($object, $serviceSummary)
+    public function __construct($object, ServicestateSummary $serviceSummary)
     {
         parent::__construct($object);
 
         $this->serviceSummary = $serviceSummary;
     }
 
-    protected function createServiceStatistics()
+    protected function createServiceStatistics(): array
     {
         if ($this->serviceSummary->services_total > 0) {
             $services = new ServiceStatistics($this->serviceSummary);

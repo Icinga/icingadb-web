@@ -138,7 +138,7 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createCheckStatistics()
+    protected function createCheckStatistics(): array
     {
         return [
             Html::tag('h2', t('Check Statistics')),
@@ -146,7 +146,7 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createComments()
+    protected function createComments(): array
     {
         if ($this->objectType === 'host') {
             $link = HostLinks::comments($this->object);
@@ -178,7 +178,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createCustomVars()
+    protected function createCustomVars(): array
     {
         $content = [Html::tag('h2', t('Custom Variables'))];
 
@@ -195,7 +195,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createDowntimes()
+    protected function createDowntimes(): array
     {
         if ($this->objectType === 'host') {
             $link = HostLinks::downtimes($this->object);
@@ -227,7 +227,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createGroups()
+    protected function createGroups(): array
     {
         $groups = [Html::tag('h2', t('Groups'))];
 
@@ -314,7 +314,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createNotifications()
+    protected function createNotifications(): array
     {
         list($users, $usergroups) = $this->getUsersAndUsergroups();
 
@@ -347,7 +347,7 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createPerformanceData()
+    protected function createPerformanceData(): array
     {
         $content[] = Html::tag('h2', t('Performance Data'));
 
@@ -364,7 +364,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createPluginOutput()
+    protected function createPluginOutput(): array
     {
         if (empty($this->object->state->output) && empty($this->object->state->long_output)) {
             $pluginOutput = new EmptyState(t('Output unavailable.'));
@@ -386,7 +386,7 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createExtensions()
+    protected function createExtensions(): array
     {
         $extensions = ObjectDetailExtensionHook::loadExtensions($this->object);
 
@@ -457,7 +457,7 @@ class ObjectDetail extends BaseHtmlElement
         return $extensions;
     }
 
-    protected function createFeatureToggles()
+    protected function createFeatureToggles(): array
     {
         $form = new ToggleObjectFeaturesForm($this->object);
 
@@ -473,7 +473,7 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function getUsersAndUsergroups()
+    protected function getUsersAndUsergroups(): array
     {
         $users = [];
         $usergroups = [];

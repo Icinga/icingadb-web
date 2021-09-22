@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
+use Generator;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
@@ -61,7 +62,7 @@ class ObjectSuggestions extends Suggestions
      *
      * @return $this
      */
-    public function setModel($model)
+    public function setModel($model): self
     {
         if (is_string($model)) {
             $model = new $model();
@@ -77,8 +78,14 @@ class ObjectSuggestions extends Suggestions
      *
      * @return Model
      */
-    public function getModel()
+    public function getModel(): Model
     {
+        if ($this->model === null) {
+            throw new \LogicException(
+                'You are accessing an unset property. Please make sure to set it beforehand.'
+            );
+        }
+
         return $this->model;
     }
 
@@ -216,7 +223,7 @@ class ObjectSuggestions extends Suggestions
      *
      * @return Select
      */
-    protected function queryCustomvarConfig($searchTerm)
+    protected function queryCustomvarConfig(string $searchTerm): Select
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
@@ -260,9 +267,9 @@ class ObjectSuggestions extends Suggestions
      * @param Model $model
      * @param Resolver $resolver
      *
-     * @return \Generator
+     * @return Generator
      */
-    public static function collectFilterColumns(Model $model, Resolver $resolver = null)
+    public static function collectFilterColumns(Model $model, Resolver $resolver = null): Generator
     {
         if ($resolver === null) {
             $resolver = new Resolver();

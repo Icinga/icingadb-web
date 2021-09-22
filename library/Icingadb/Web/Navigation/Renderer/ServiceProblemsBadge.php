@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use ipl\Web\Url;
 
 class ServiceProblemsBadge extends ProblemsBadge
 {
@@ -20,7 +21,7 @@ class ServiceProblemsBadge extends ProblemsBadge
         return $summary->first()->services_critical_unhandled;
     }
 
-    protected function getUrl()
+    protected function getUrl(): Url
     {
         return Links::services()
             ->setParams(['service.state.is_problem' => 'y', 'sort' => 'service.state.severity desc']);

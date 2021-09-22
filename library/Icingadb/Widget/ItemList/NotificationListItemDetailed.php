@@ -11,7 +11,7 @@ class NotificationListItemDetailed extends BaseNotificationListItem
 {
     use ListItemDetailedLayout;
 
-    protected function getStateBallSize()
+    protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
     }

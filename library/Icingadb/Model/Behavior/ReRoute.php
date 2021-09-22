@@ -16,7 +16,7 @@ class ReRoute implements RewriteBehavior
         $this->routes = $routes;
     }
 
-    public function getRoutes()
+    public function getRoutes(): array
     {
         return $this->routes;
     }

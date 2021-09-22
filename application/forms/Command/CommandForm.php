@@ -39,7 +39,7 @@ abstract class CommandForm extends Form
      *
      * @return $this
      */
-    public function setObjects($objects)
+    public function setObjects($objects): self
     {
         $this->objects = $objects;
 

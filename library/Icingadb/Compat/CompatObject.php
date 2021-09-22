@@ -51,17 +51,17 @@ trait CompatObject
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->object->name;
     }
 
-    public function fetch()
+    public function fetch(): bool
     {
         return true;
     }
 
-    protected function fetchRawCustomvars()
+    protected function fetchRawCustomvars(): self
     {
         if ($this->rawCustomvars !== null) {
             return $this;
@@ -79,7 +79,7 @@ trait CompatObject
         return $this;
     }
 
-    public function fetchCustomvars()
+    public function fetchCustomvars(): self
     {
         if ($this->customvars !== null) {
             return $this;
@@ -181,6 +181,13 @@ trait CompatObject
         throw new NotImplementedError('getDataView() is not supported');
     }
 
+    /**
+     * Get the bool type of the given value as an int
+     *
+     * @param bool|string $value
+     *
+     * @return ?int
+     */
     private function getBoolType($value)
     {
         switch ($value) {

@@ -148,7 +148,7 @@ class ToggleObjectFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommand(Model $object)
+    protected function getCommand(Model $object): \Generator
     {
         foreach ($this->features as $feature => $spec) {
             $featureState = $this->getElement($feature)->isChecked();

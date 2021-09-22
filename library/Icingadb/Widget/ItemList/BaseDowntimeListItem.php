@@ -88,7 +88,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
     }
 
-    protected function createProgress()
+    protected function createProgress(): BaseHtmlElement
     {
         $ref = floor(
             (float) ($this->currentTime - $this->startTime)
