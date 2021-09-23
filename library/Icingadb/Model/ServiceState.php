@@ -70,7 +70,7 @@ class ServiceState extends State
      */
     public function getStateText()
     {
-        return ServiceStates::text($this->properties['soft_state']);
+        return ServiceStates::text($this->soft_state);
     }
 
     /**
@@ -80,6 +80,6 @@ class ServiceState extends State
      */
     public function getStateTextTranslated()
     {
-        return ServiceStates::text($this->properties['soft_state']);
+        return ServiceStates::text($this->soft_state);
     }
 }
