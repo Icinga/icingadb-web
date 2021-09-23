@@ -342,10 +342,10 @@ class Controller extends CompatController
     public function createContinueWith(Url $detailsUrl, SearchBar $searchBar)
     {
         $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
+        $continueWith->setTitle(t('Show bulk processing actions for all filtered results'));
         $continueWith->setBaseTarget('_next');
         $continueWith->getAttributes()
-            ->set('id', $this->getRequest()->protectId('continue-with'))
-            ->set('title', t('Show bulk processing actions for all filtered results'));
+            ->set('id', $this->getRequest()->protectId('continue-with'));
 
         $searchBar->getWrapper()->add($continueWith);
 
