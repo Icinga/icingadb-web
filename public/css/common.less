@@ -186,10 +186,19 @@ div.show-more {
   padding: .5em;
 }
 
-.object-detail .item-list .list-item:last-of-type .caption {
-  min-height: 1.5em;
-  max-height: 3em;
-  height: auto;
+.object-detail .item-list {
+  &.action-list .list-item {
+    margin-right: -1em;
+    margin-left: -1em;
+    padding-right: 1em;
+    padding-left: 1em;
+  }
+
+  .list-item:last-of-type .caption {
+    min-height: 1.5em;
+    max-height: 3em;
+    height: auto;
+  }
 }
 
 .perfdata-wrapper {
