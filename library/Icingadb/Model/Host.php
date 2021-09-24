@@ -4,17 +4,24 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
+use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Orm\ResultSet;
 
 /**
  * Host model.
  */
 class Host extends Model
 {
+    use Auth;
+
+    protected $accessorsAndMutatorsEnabled = true;
+
     public function getTableName()
     {
         return 'host';
@@ -136,6 +143,27 @@ class Host extends Model
         $behaviors->add(new ReRoute([
             'servicegroup'  => 'service.servicegroup'
         ]));
+    }
+
+    /**
+     * Mutates flattened custom vars to an associative array
+     *
+     * @param  Query|ResultSet $_
+     *
+     * @return array
+     */
+    public function mutateVarsProperty($_): array
+    {
+        if (! $this->customvar_flat instanceof ResultSet) {
+            $this->applyRestrictions($this->customvar_flat);
+        }
+
+        $vars = [];
+        foreach ($this->customvar_flat as $customVar) {
+            $vars[$customVar->flatname] = $customVar->flatvalue;
+        }
+
+        return $vars;
     }
 
     public function createRelations(Relations $relations)
