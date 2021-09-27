@@ -24,9 +24,15 @@
     }
   }
 
-  .visual.active {
-    background-color: @color-ok;
-    color: @text-color-on-icinga-blue;
+  &.in-effect {
+    .visual {
+      background-color: @color-ok;
+      color: @text-color-on-icinga-blue;
+    }
+
+    .main {
+      padding-top: 0; // If active the progress bar represents the padding top
+    }
   }
 }
 
@@ -41,9 +47,8 @@
 .downtime-list .list-item,
 .downtime-detail .list-item {
   .progress {
-    height: 1/6em;
-    margin-bottom: 1/3em;
-    margin-top: -.5em;
+    height: 2px;
+    margin-bottom: ~"calc(.5em - 2px)";
     min-width: 100%;
     position: relative;
 
