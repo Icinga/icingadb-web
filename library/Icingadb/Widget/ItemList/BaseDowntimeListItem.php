@@ -82,6 +82,10 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $this->list->addMultiselectFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
+
+        if ($this->isActive && $this->item->is_in_effect) {
+            $this->getAttributes()->add('class', 'in-effect');
+        }
     }
 
     protected function createProgress()
@@ -174,10 +178,6 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $dateTime = DateFormatter::formatDateTime($this->endTime);
 
         if ($this->isActive) {
-            if ($this->item->is_in_effect) {
-                $visual->addAttributes(['class' => 'active']);
-            }
-
             $visual->addHtml(Html::sprintf(
                 t('%s left', '<timespan>..'),
                 Html::tag(
