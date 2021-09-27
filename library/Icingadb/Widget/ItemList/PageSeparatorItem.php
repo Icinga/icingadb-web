@@ -29,7 +29,7 @@ class PageSeparatorItem extends BaseHtmlElement
             [
                 'id' => 'page-' . $this->pageNumber
             ],
-            sprintf(t('Page %d'), $this->pageNumber)
+            $this->pageNumber
         ));
     }
 }
