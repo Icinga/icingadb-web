@@ -104,20 +104,23 @@
     }
 
     .vertical-key-value {
+      max-width: 100%;
+
+      .key,
+      .value time {
+        .text-ellipsis();
+        max-width: 100%;
+        display: inline-block;
+      }
+
       .key {
         color: @gray;
       }
 
       .value {
-        white-space: nowrap;
         font-size: 1em;
         line-height: 1;
       }
-    }
-
-    .start .vertical-key-value,
-    .end .vertical-key-value {
-      width: 6em;
     }
 
     .timeline {
