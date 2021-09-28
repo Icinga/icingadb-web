@@ -44,9 +44,7 @@ abstract class State extends Model
             'latency',
             'timeout',
             'check_source',
-            'scheduling_source' => new Expression( // TODO: Do as told
-                "'remove me if https://github.com/Icinga/icingadb/issues/160 is done'"
-            ),
+            'scheduling_source',
             'last_update',
             'last_state_change',
             'next_check',
