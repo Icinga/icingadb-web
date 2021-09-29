@@ -109,8 +109,10 @@ class DowntimeCard extends BaseHtmlElement
                     'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
-                        $hPadding + $this->calcRelativeLeft($this->downtime->start_time),
-                        $this->calcRelativeLeft(time(), $this->downtime->start_time)
+                        $flexStartLeft,
+                        $hPadding
+                        + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3)
+                        - $flexStartLeft
                     )
                 ]);
             }
