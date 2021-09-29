@@ -15,17 +15,22 @@
       padding: 1.25em 10%;
     }
 
+    .positioned {
+      position: absolute;
+    }
+
     .bubble {
       .rounded-corners(.25em);
       background-color: @body-bg-color;
       border: 1px solid @gray-light;
-      position: absolute;
-      bottom: 0;
+      position: relative;
       box-shadow: 0 0 1em 0 rgba(0, 0, 0, .1);
-      margin-left: -4em;
       padding: .25em .5em;
       text-align: center;
-      width: 8em;
+      width: auto;
+      // The wrapper of .bubble is dynamically moved to the left based on the value of the progress bar
+      // This moves the center of the bubble to the beginning of the wrapper regardless of the size of the content.
+      transform: translate(-50%, 0);
       z-index: 1;
 
       > * {
@@ -35,16 +40,6 @@
 
       &:hover {
         z-index: 5;
-      }
-
-      &.now {
-        margin-left: -2em;
-        width: 4em;
-        z-index: 2;
-      }
-
-      &.end {
-        margin-right: -4em;
       }
 
       &:before {
@@ -71,8 +66,9 @@
       }
 
       &.right {
-        margin-left: -1.25em;
+        margin-left: 2.75em;
         margin-right: 0;
+        width: 8em;
       }
 
       &.right:before {
@@ -82,7 +78,8 @@
       }
 
       &.left {
-        margin-left: -6.75em;
+        margin-left: -2.75em;
+        width: 8em;
       }
 
       &.left:before {
@@ -93,19 +90,18 @@
       }
     }
 
-    .above .bubble {
+    .above .positioned {
       bottom: 0;
-      top: auto;
     }
 
-    .below .bubble {
-      bottom: auto;
+    .below .positioned {
       top: 0;
     }
 
     .vertical-key-value {
       .key {
         color: @gray;
+        white-space: nowrap;
       }
 
       .value {
@@ -113,11 +109,6 @@
         font-size: 1em;
         line-height: 1;
       }
-    }
-
-    .start .vertical-key-value,
-    .end .vertical-key-value {
-      width: 6em;
     }
 
     .timeline {
