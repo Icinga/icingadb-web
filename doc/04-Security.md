@@ -111,6 +111,10 @@ Allowed columns are:
 * service.name
 * hostgroup.name
 * servicegroup.name
+* host.user.name
+* service.user.name
+* host.usergroup.name
+* service.usergroup.name
 * host.vars.[\<variable path\>](#variable-paths)
 * service.vars.[\<variable path\>](#variable-paths)
 

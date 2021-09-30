@@ -252,8 +252,12 @@ trait Auth
         $allowedColumns = [
             'host.name',
             'hostgroup.name',
+            'host.user.name',
+            'host.usergroup.name',
             'service.name',
             'servicegroup.name',
+            'service.user.name',
+            'service.usergroup.name',
             '(host|service).vars.<customvar-name>' => function ($c) {
                 return preg_match('/^(?:host|service)\.vars\./i', $c);
             }
