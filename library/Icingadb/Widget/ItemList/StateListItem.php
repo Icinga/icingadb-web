@@ -60,6 +60,11 @@ abstract class StateListItem extends BaseListItem
     {
         if (isset($this->item->icon_image->icon_image)) {
             $src = $this->item->icon_image->icon_image;
+
+            if (strpos($src, '/') === false) {
+                $src = 'img/icons/' . $src;
+            }
+
             if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
                 $srcUrl = Url::fromPath($src);
                 $path = $srcUrl->getRelativeUrl();
