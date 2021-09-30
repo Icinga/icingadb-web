@@ -97,19 +97,6 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        // TODO: Remove this once https://github.com/Icinga/ipl-orm/issues/9 is done
-        foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
-            if ($behavior instanceof ReRoute) {
-                $expr = Filter::equal('', '');
-                $expr->metaData()->set('columnName', $column);
-                $expr = $behavior->rewriteCondition($expr, '');
-                if ($expr !== null) {
-                    $column = $expr->getColumn();
-                    break;
-                }
-            }
-        }
-
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
 

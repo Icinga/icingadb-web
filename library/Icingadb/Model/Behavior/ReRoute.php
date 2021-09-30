@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use ipl\Orm\Contract\RewriteFilterBehavior;
+use ipl\Orm\Contract\RewriteBehavior;
 use ipl\Stdlib\Filter;
 
-class ReRoute implements RewriteFilterBehavior
+class ReRoute implements RewriteBehavior
 {
     protected $routes;
 
@@ -23,19 +23,40 @@ class ReRoute implements RewriteFilterBehavior
 
     public function rewriteCondition(Filter\Condition $condition, $relation = null)
     {
-        $column = $condition->metaData()->get('columnName', '');
-        $dot = strpos($column, '.');
-        if ($dot === false) {
+        $remainingPath = $condition->metaData()->get('columnName', '');
+        if (strpos($remainingPath, '.') === false) {
             return;
         }
 
-        $leftMostRelationName = substr($column, 0, $dot);
-        if (isset($this->routes[$leftMostRelationName])) {
+        if (($path = $this->rewritePath($remainingPath, $relation)) !== null) {
             $class = get_class($condition);
-            return new $class(
-                $relation . $this->routes[$leftMostRelationName] . substr($column, $dot),
-                $condition->getValue()
-            );
+            $filter = new $class($relation . $path, $condition->getValue());
+            if ($condition->metaData()->has('forceOptimization')) {
+                $filter->metaData()->set(
+                    'forceOptimization',
+                    $condition->metaData()->get('forceOptimization')
+                );
+            }
+
+            return $filter;
         }
+    }
+
+    public function rewritePath($path, $relation = null)
+    {
+        $dot = strpos($path, '.');
+        if ($dot !== false) {
+            $routeName = substr($path, 0, $dot);
+        } else {
+            $routeName = $path;
+        }
+
+        if (isset($this->routes[$routeName])) {
+            return $this->routes[$routeName] . ($dot !== false ? substr($path, $dot) : '');
+        }
+    }
+
+    public function rewriteColumn($column, $relation = null)
+    {
     }
 }
