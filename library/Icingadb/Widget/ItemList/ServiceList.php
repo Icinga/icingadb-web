@@ -18,6 +18,8 @@ class ServiceList extends StateList
                 return ServiceListItemMinimal::class;
             case 'detailed':
                 return ServiceListItemDetailed::class;
+            case 'objectHeader':
+                return ServiceDetailHeader::class;
             default:
                 return ServiceListItem::class;
         }

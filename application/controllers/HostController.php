@@ -68,7 +68,7 @@ class HostController extends Controller
         }
 
         $this->addControl((new HostList([$this->host]))
-            ->setViewMode('minimal')
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl(new HostMetaInfo($this->host));
@@ -89,6 +89,7 @@ class HostController extends Controller
         }
 
         $this->addControl((new HostList([$this->host]))
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addContent(new HostInspectionDetail(
@@ -149,7 +150,7 @@ class HostController extends Controller
         yield $this->export($history);
 
         $this->addControl((new HostList([$this->host]))
-            ->setViewMode('minimal')
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl($sortControl);
@@ -213,7 +214,7 @@ class HostController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl((new HostList([$this->host]))
-            ->setViewMode('minimal')
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl($paginationControl);

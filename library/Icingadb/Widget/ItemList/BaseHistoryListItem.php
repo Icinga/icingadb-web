@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Stdlib\Filter;
+use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -193,17 +194,19 @@ abstract class BaseHistoryListItem extends BaseListItem
 
                 break;
             case 'state_change':
-                $previousState = 'previous_soft_state';
-
                 if ($this->item->state->state_type === 'soft') {
+                    $previousState = 'previous_soft_state';
                     $state = 'soft_state';
+                    $isSoftState = true;
 
                     $visual->addHtml(new CheckAttempt(
                         $this->item->state->attempt,
                         $this->item->state->max_check_attempts
                     ));
                 } else {
+                    $previousState = 'previous_hard_state';
                     $state = 'hard_state';
+                    $isSoftState = false;
                 }
 
                 if ($this->item->object_type === 'host') {
@@ -214,7 +217,12 @@ abstract class BaseHistoryListItem extends BaseListItem
                     $previousHardState = ServiceStates::text($this->item->state->$previousState);
                 }
 
-                $visual->prependHtml(new StateChange($state, $previousHardState));
+                $stateChange = new StateChange($state, $previousHardState);
+                if ($isSoftState) {
+                    $stateChange->setCurrentStateBallSize(StateBall::SIZE_MEDIUM_LARGE);
+                }
+
+                $visual->prependHtml($stateChange);
 
                 break;
         }
