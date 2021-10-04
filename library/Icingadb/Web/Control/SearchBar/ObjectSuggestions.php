@@ -8,11 +8,14 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use InvalidArgumentException;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Resolver;
+use ipl\Orm\UnionModel;
 use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
@@ -96,19 +99,6 @@ class ObjectSuggestions extends Suggestions
     {
         $model = $this->getModel();
         $query = $model::on($this->getDb());
-
-        // TODO: Remove this once https://github.com/Icinga/ipl-orm/issues/9 is done
-        foreach ($query->getResolver()->getBehaviors($model) as $behavior) {
-            if ($behavior instanceof ReRoute) {
-                $expr = Filter::equal('', '');
-                $expr->metaData()->set('columnName', $column);
-                $expr = $behavior->rewriteCondition($expr, '');
-                if ($expr !== null) {
-                    $column = $expr->getColumn();
-                    break;
-                }
-            }
-        }
 
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
@@ -280,6 +270,34 @@ class ObjectSuggestions extends Suggestions
                         yield $name . '.' . $columnName => $columnMeta;
                     }
                 }
+            }
+        }
+
+        if ($model instanceof UnionModel) {
+            $baseModelClass = $model->getUnions()[0][0];
+            $model = new $baseModelClass();
+        }
+
+        $foreignMetaDataSources = [];
+        if (! $model instanceof Host) {
+            $foreignMetaDataSources[] = ['host.user', ' (' . t('Host') . ')'];
+            $foreignMetaDataSources[] = ['host.usergroup', ' (' . t('Host') . ')'];
+        }
+
+        if (! $model instanceof Service) {
+            $foreignMetaDataSources[] = ['service.user', ' (' . t('Service') . ')'];
+            $foreignMetaDataSources[] = ['service.usergroup', ' (' . t('Service') . ')'];
+        }
+
+        foreach ($foreignMetaDataSources as list($path, $suffix)) {
+            $foreignMetaData = $resolver->resolveRelation(
+                $resolver->qualifyPath($path, $model->getTableName()),
+                $model
+            )
+                ->getTarget()
+                ->getMetaData();
+            foreach ($foreignMetaData as $columnName => $columnMeta) {
+                yield "$path.$columnName" => $columnMeta . $suffix;
             }
         }
     }

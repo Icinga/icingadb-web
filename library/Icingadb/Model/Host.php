@@ -141,7 +141,9 @@ class Host extends Model
         ]));
 
         $behaviors->add(new ReRoute([
-            'servicegroup'  => 'service.servicegroup'
+            'servicegroup'  => 'service.servicegroup',
+            'user'          => 'notification.user',
+            'usergroup'     => 'notification.usergroup'
         ]));
     }
 
