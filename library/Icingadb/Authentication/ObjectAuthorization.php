@@ -24,6 +24,13 @@ class ObjectAuthorization
     protected static $knownGrants = [];
 
     /**
+     * Caches already applied filters to an object
+     *
+     * @var array
+     */
+    protected static $matchedFilters = [];
+
+    /**
      * Check whether the permission is granted on the object
      *
      * @param string $permission
@@ -86,6 +93,43 @@ class ObjectAuthorization
         }
 
         return $self->checkGrants($permission, self::$knownGrants[$type][$uniqueId]);
+    }
+
+    /**
+     * Check whether the given filter matches on the given object
+     *
+     * @param string $queryString
+     * @param Model  $object
+     *
+     * @return bool
+     */
+    public static function matchesOn(string $queryString, Model $object): bool
+    {
+        $self = new static();
+
+        $uniqueId = $object->{$object->getKeyName()};
+        if (! isset(self::$matchedFilters[$queryString][$uniqueId])) {
+            $restriction = 'icingadb/filter/services';
+            if ($object instanceof Host) {
+                $restriction = 'icingadb/filter/hosts';
+            }
+
+            $filter = $self->parseRestriction($queryString, $restriction);
+
+            $query = $object::on($self->getDb());
+            $query
+                ->filter($filter)
+                ->filter(Filter::equal($object->getKeyName(), $uniqueId))
+                ->getSelectBase()
+                ->columns([new Expression('1')]);
+
+            $result = $query->execute()->hasResult();
+            self::$matchedFilters[$queryString][$uniqueId] = $result;
+
+            return $result;
+        }
+
+        return self::$matchedFilters[$queryString][$uniqueId];
     }
 
     /**

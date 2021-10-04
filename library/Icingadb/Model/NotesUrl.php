@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ActionAndNoteUrl;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -33,6 +35,11 @@ class NotesUrl extends Model
             'notes_url'         => t('Notes Url'),
             'environment_id'    => t('Notes Url Environment Id')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new ActionAndNoteUrl(['notes_url']));
     }
 
     public function createRelations(Relations $relations)

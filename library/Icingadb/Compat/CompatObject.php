@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
@@ -84,9 +85,7 @@ trait CompatObject
             return $this;
         }
 
-        $this->customvars = $this->object->customvar_flat->getModel()->unflattenVars(
-            $this->object->customvar_flat
-        );
+        $this->customvars = (new CustomvarFlat())->unflattenVars($this->object->customvar_flat);
 
         return $this;
     }
