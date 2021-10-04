@@ -99,6 +99,7 @@ class ObjectSuggestions extends Suggestions
     {
         $model = $this->getModel();
         $query = $model::on($this->getDb());
+        $query->limit(static::DEFAULT_LIMIT);
 
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
