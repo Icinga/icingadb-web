@@ -49,6 +49,15 @@ class HostListItemDetailed extends BaseHostListItem
             );
         }
 
+        if ($this->item->state->is_flapping) {
+            $statusIcons->addHtml(new Icon(
+                'random',
+                [
+                    'title' => sprintf(t('Host "%s" is in flapping state'), $this->item->display_name),
+                ]
+            ));
+        }
+
         if (! $this->item->notifications_enabled) {
             $statusIcons->addHtml(new Icon('bell-slash', ['title' => t('Notifications disabled')]));
         }

@@ -21,6 +21,8 @@ class HostList extends StateList
                 return HostListItemMinimal::class;
             case 'detailed':
                 return HostListItemDetailed::class;
+            case 'objectHeader':
+                return HostDetailHeader::class;
             default:
                 return HostListItem::class;
         }

@@ -13,6 +13,8 @@ class StateChange extends BaseHtmlElement
 
     protected $state;
 
+    protected $currentStateBallSize = StateBall::SIZE_BIG;
+
     protected $defaultAttributes = ['class' => 'state-change'];
 
     protected $tag = 'div';
@@ -27,7 +29,21 @@ class StateChange extends BaseHtmlElement
     {
         $this->add([
             new StateBall($this->previousState, StateBall::SIZE_BIG),
-            new StateBall($this->state, StateBall::SIZE_BIG)
+            new StateBall($this->state, $this->currentStateBallSize)
         ]);
+    }
+
+    /**
+     * Set the state ball size for the current state
+     *
+     * @param string $size
+     *
+     * @return $this
+     */
+    public function setCurrentStateBallSize(string $size): self
+    {
+        $this->currentStateBallSize = $size;
+
+        return $this;
     }
 }

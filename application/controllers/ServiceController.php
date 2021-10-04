@@ -66,7 +66,7 @@ class ServiceController extends Controller
         }
 
         $this->addControl((new ServiceList([$this->service]))
-            ->setViewMode('minimal')
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl(new ServiceMetaInfo($this->service));
@@ -87,6 +87,7 @@ class ServiceController extends Controller
         }
 
         $this->addControl((new ServiceList([$this->service]))
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addContent(new ServiceInspectionDetail(
@@ -150,7 +151,7 @@ class ServiceController extends Controller
         yield $this->export($history);
 
         $this->addControl((new ServiceList([$this->service]))
-            ->setViewMode('minimal')
+            ->setViewMode('objectHeader')
             ->setDetailActionsDisabled()
             ->setNoSubjectLink());
         $this->addControl($sortControl);

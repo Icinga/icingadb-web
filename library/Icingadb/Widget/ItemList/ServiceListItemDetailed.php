@@ -49,6 +49,19 @@ class ServiceListItemDetailed extends BaseServiceListItem
             );
         }
 
+        if ($this->item->state->is_flapping) {
+            $statusIcons->addHtml(new Icon(
+                'random',
+                [
+                    'title' => sprintf(
+                        t('Service "%s" on "%s" is in flapping state'),
+                        $this->item->display_name,
+                        $this->item->host->display_name
+                    ),
+                ]
+            ));
+        }
+
         if (! $this->item->notifications_enabled) {
             $statusIcons->addHtml(new Icon('bell-slash', ['title' => t('Notifications disabled')]));
         }
