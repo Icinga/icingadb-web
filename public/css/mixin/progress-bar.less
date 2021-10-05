@@ -19,6 +19,11 @@
       position: absolute;
     }
 
+    :not(.positioned).end .bubble {
+      // to move the center of the bubble to the end of the wrapper (for check-statistics end bubble only).
+      transform: translate(50%, 0);
+    }
+
     .bubble {
       .rounded-corners(.25em);
       background-color: @body-bg-color;
