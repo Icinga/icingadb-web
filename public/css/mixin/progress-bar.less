@@ -71,9 +71,8 @@
       }
 
       &.right {
-        margin-left: 2.75em;
-        margin-right: 0;
-        width: 8em;
+        // This is (.675em (:before placement) + .5em (half :before width)) + 1px (:before border)
+        transform: translate(~"calc(-1.175em - 1px)", 0);
       }
 
       &.right:before {
@@ -83,8 +82,8 @@
       }
 
       &.left {
-        margin-left: -2.75em;
-        width: 8em;
+        // entire width (moves the right border in place of the left) + (.675em (:before placement) + .5em (half :before width)) + 1px (:before border)
+        transform: translate(~"calc(-100% + 1.175em + 1px)", 0);
       }
 
       &.left:before {
