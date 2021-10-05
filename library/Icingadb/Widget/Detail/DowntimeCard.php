@@ -110,9 +110,7 @@ class DowntimeCard extends BaseHtmlElement
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
                         $flexStartLeft,
-                        $hPadding
-                        + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3)
-                        - $flexStartLeft
+                        $hPadding + $this->calcRelativeLeft(time()) - $flexStartLeft
                     )
                 ]);
             }
