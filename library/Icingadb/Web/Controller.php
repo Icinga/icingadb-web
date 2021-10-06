@@ -26,6 +26,8 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\Environment;
 use Icinga\Util\Json;
+use Icinga\Web\Session;
+use Icinga\Web\Window;
 use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
@@ -718,6 +720,11 @@ class Controller extends CompatController
             // method (`$this->export()`) which needs to be called explicitly by an action,
             // it's otherwise possible for bad individuals to access unrestricted data.
             $this->httpBadRequest(t('This route does not support the requested output format'));
+        }
+
+        if ($this->getRequest()->getUrl()->getPath() !== 'icingadb/state/update') {
+            Session::getSession()->getNamespace('icingadb-state-updates')
+                ->set(Window::getInstance()->getContainerId(), $this->getRequest()->getUrl()->getPath());
         }
 
         parent::postDispatch();
