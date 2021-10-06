@@ -124,7 +124,7 @@ class ServicesController extends Controller
             $this->sendMultipartUpdate($continueWith);
         }
 
-        $this->setAutorefreshInterval(10);
+        $this->setAutorefreshInterval(300);
     }
 
     public function detailsAction()
