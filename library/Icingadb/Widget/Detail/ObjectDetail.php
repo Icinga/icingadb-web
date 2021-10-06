@@ -64,7 +64,8 @@ class ObjectDetail extends BaseHtmlElement
     protected $defaultAttributes = [
         // Class host-detail is kept as the grafana module's iframe.js depends on it
         'class' => ['object-detail', 'host-detail'],
-        'data-pdfexport-page-breaks-at' => 'h2'
+        'data-pdfexport-page-breaks-at' => 'h2',
+        //'data-state-interval' => 5
     ];
 
     protected $tag = 'div';
@@ -74,6 +75,11 @@ class ObjectDetail extends BaseHtmlElement
         $this->object = $object;
         $this->compatObject = CompatObject::fromModel($object);
         $this->objectType = $object instanceof Host ? 'host' : 'service';
+
+        $this->setAttribute("data-{$this->objectType}-id", bin2hex($this->object->id));
+        if ($this->objectType === 'service') {
+            $this->setAttribute('data-host-id', bin2hex($this->object->host->id));
+        }
     }
 
     protected function createActions()
@@ -140,9 +146,12 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createCheckStatistics()
     {
+        $stats = new CheckStatistics($this->object);
+        $stats->setAttribute('id', Icinga::app()->getRequest()->protectId(bin2hex($this->object->id) . '-check-statistics'));
+
         return [
             Html::tag('h2', t('Check Statistics')),
-            new CheckStatistics($this->object)
+            $stats
         ];
     }
 
