@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
@@ -41,6 +42,8 @@ class ServiceController extends Controller
             'host',
             'host.state'
         ]);
+        $query->setResultSetClass(VolatileStateResults::class);
+
         $query->getSelectBase()
             ->where(['service.name = ?' => $name])
             ->where(['service_host.name = ?' => $hostName]);

@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -36,6 +37,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with(['state', 'icon_image', 'state.last_comment']);
+        $hosts->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($hosts);
 
@@ -124,6 +126,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with(['state', 'icon_image']);
+        $hosts->setResultSetClass(VolatileStateResults::class);
         $summary = HoststateSummary::on($db)->with(['state']);
 
         $this->filter($hosts);
@@ -194,6 +197,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with('state');
+        $hosts->setResultSetClass(VolatileStateResults::class);
 
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':

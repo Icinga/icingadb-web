@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -45,6 +46,7 @@ class ServicesController extends Controller
             'host.state',
             'icon_image'
         ]);
+        $services->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($services);
 
@@ -139,6 +141,7 @@ class ServicesController extends Controller
             'host',
             'host.state'
         ]);
+        $services->setResultSetClass(VolatileStateResults::class);
         $summary = ServicestateSummary::on($db)->with(['state']);
 
         $this->filter($services);
@@ -214,6 +217,7 @@ class ServicesController extends Controller
             'host',
             'host.state'
         ]);
+        $query->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($query);
 
@@ -317,6 +321,7 @@ class ServicesController extends Controller
             'host',
             'host.state'
         ]);
+        $services->setResultSetClass(VolatileStateResults::class);
 
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':

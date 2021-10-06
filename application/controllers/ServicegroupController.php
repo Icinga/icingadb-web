@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
@@ -52,6 +53,7 @@ class ServicegroupController extends Controller
             'host',
             'host.state'
         ])->utilize('servicegroup');
+        $services->setResultSetClass(VolatileStateResults::class);
 
         $services->getSelectBase()->where(['service_servicegroup.id = ?' => $this->servicegroup->id]);
         $this->applyRestrictions($services);
