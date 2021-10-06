@@ -67,10 +67,21 @@ class CheckStatistics extends Card
         }
 
         $above = Html::tag('ul', ['class' => 'above']);
-        $now = Html::tag('li', [
-            'class' => 'bubble now',
-            'style' => sprintf('left: %F%%', $hPadding + $leftNow),
-        ], Html::tag('strong', t('Now')));
+        $now = Html::tag(
+            'li',
+            [
+                'class' => 'now positioned',
+                'style' => sprintf('left: %F%%', $hPadding + $leftNow)
+            ],
+            Html::tag(
+                'div',
+                ['class' => 'bubble'],
+                Html::tag(
+                    'strong',
+                    t('Now')
+                )
+            )
+        );
         $above->add($now);
 
         $markerLast = Html::tag('div', [
@@ -99,10 +110,14 @@ class CheckStatistics extends Card
 
         $lastUpdate = Html::tag(
             'li',
-            ['class' => 'bubble upwards start'],
-            new VerticalKeyValue(t('Last update'), $this->object->state->last_update !== null
-                ? new TimeAgo($this->object->state->last_update)
-                : t('PENDING'))
+            ['class' => 'start'],
+            Html::tag(
+                'div',
+                ['class' => 'bubble upwards'],
+                new VerticalKeyValue(t('Last update'), $this->object->state->last_update !== null
+                    ? new TimeAgo($this->object->state->last_update)
+                    : t('PENDING'))
+            )
         );
         $interval = Html::tag(
             'li',
@@ -111,13 +126,17 @@ class CheckStatistics extends Card
         );
         $nextCheck = Html::tag(
             'li',
-            ['class' => 'bubble upwards end'],
-            $this->object->state->is_overdue
-                ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
-                : new VerticalKeyValue(
-                    t('Next Check'),
-                    $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : t('PENDING')
-                )
+            ['class' => 'end'],
+            Html::tag(
+                'div',
+                ['class' => 'bubble upwards'],
+                $this->object->state->is_overdue
+                    ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
+                    : new VerticalKeyValue(
+                        t('Next Check'),
+                        $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : t('PENDING')
+                    )
+            )
         );
 
         $intervalLine = Html::tag('hr', ['class' => 'interval-line']);

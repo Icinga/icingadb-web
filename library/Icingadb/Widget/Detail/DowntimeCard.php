@@ -109,8 +109,8 @@ class DowntimeCard extends BaseHtmlElement
                     'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
                         'left: %F%%; width: %F%%;',
-                        $hPadding + $this->calcRelativeLeft($this->downtime->start_time),
-                        $this->calcRelativeLeft(time(), $this->downtime->start_time)
+                        $flexStartLeft,
+                        $hPadding + $this->calcRelativeLeft(time()) - $flexStartLeft
                     )
                 ]);
             }
@@ -118,22 +118,23 @@ class DowntimeCard extends BaseHtmlElement
             $above->add([
                 Html::tag(
                     'li',
-                    ['class' => 'bubble start'],
-                    new VerticalKeyValue(
-                        t('Scheduled Start'),
-                        new TimeAgo($this->downtime->scheduled_start_time)
+                    ['class' => 'start positioned'],
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble'],
+                        new VerticalKeyValue(t('Scheduled Start'), new TimeAgo($this->downtime->scheduled_start_time))
                     )
                 ),
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble end',
+                        'class' => 'end positioned',
                         'style' => sprintf(
                             'left: %F%%',
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue(t('Scheduled End'), $endTime)
+                    Html::tag('div', ['class' => 'bubble'], new VerticalKeyValue(t('Scheduled End'), $endTime))
                 )
             ]);
 
@@ -141,18 +142,26 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble upwards start' . ($evade ? ' left' : ''),
+                        'class' => 'start positioned',
                         'style' => sprintf('left: %F%%', $flexStartLeft)
                     ],
-                    new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->start_time))
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble upwards' . ($evade ? ' left' : '')],
+                        new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->start_time))
+                    )
                 ),
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble upwards end' . ($evade ? ' right' : ''),
+                        'class' => 'end positioned',
                         'style' => sprintf('left: %F%%', $flexEndLeft)
                     ],
-                    new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->end_time))
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble upwards' . ($evade ? ' right' : '')],
+                        new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->end_time))
+                    )
                 )
             ]);
         } elseif ($this->downtime->is_flexible) {
@@ -170,24 +179,32 @@ class DowntimeCard extends BaseHtmlElement
             $above->add([
                 Html::tag(
                     'li',
-                    ['class' => 'bubble start'],
-                    new VerticalKeyValue(
-                        t('Scheduled Start'),
-                        time() > $this->downtime->scheduled_start_time
-                            ? new TimeAgo($this->downtime->scheduled_start_time)
-                            : new TimeUntil($this->downtime->scheduled_start_time)
+                    ['class' => 'start positioned'],
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble'],
+                        new VerticalKeyValue(
+                            t('Scheduled Start'),
+                            time() > $this->downtime->scheduled_start_time
+                                ? new TimeAgo($this->downtime->scheduled_start_time)
+                                : new TimeUntil($this->downtime->scheduled_start_time)
+                        )
                     )
                 ),
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble end',
+                        'class' => 'end positioned',
                         'style' => sprintf(
                             'left: %F%%',
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue(t('Scheduled End'), $endTime)
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble'],
+                        new VerticalKeyValue(t('Scheduled End'), $endTime)
+                    )
                 )
             ]);
 
@@ -206,29 +223,32 @@ class DowntimeCard extends BaseHtmlElement
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble upwards start',
+                        'class' => 'start positioned',
                         'style' => sprintf(
                             'left: %F%%',
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time)
                         )
                     ],
-                    new VerticalKeyValue(
-                        t('Start'),
-                        time() > $this->downtime->scheduled_start_time
-                            ? new TimeAgo($this->downtime->scheduled_start_time)
-                            : new TimeUntil($this->downtime->scheduled_start_time)
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble upwards'],
+                        new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->scheduled_start_time))
                     )
                 ),
                 Html::tag(
                     'li',
                     [
-                        'class' => 'bubble upwards end',
+                        'class' => 'end positioned',
                         'style' => sprintf(
                             'left: %F%%',
                             $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
                         )
                     ],
-                    new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->scheduled_end_time))
+                    Html::tag(
+                        'div',
+                        ['class' => 'bubble upwards'],
+                        new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->scheduled_end_time))
+                    )
                 )
             ]);
         }
@@ -236,13 +256,17 @@ class DowntimeCard extends BaseHtmlElement
         $now = Html::tag(
             'li',
             [
-                'class' => 'now bubble',
+                'class' => 'now positioned',
                 'style' => sprintf(
                     'left: %F%%',
                     $hPadding + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3)
                 )
             ],
-            Html::tag('strong', t('Now'))
+            Html::tag(
+                'div',
+                ['class' => 'bubble'],
+                Html::tag('strong', t('Now'))
+            )
         );
         $above->add($now);
 
