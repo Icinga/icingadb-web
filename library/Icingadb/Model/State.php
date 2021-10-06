@@ -6,10 +6,8 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
-use Icinga\Module\Icingadb\Model\Behavior\VolatileState;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
-use ipl\Sql\Expression;
 
 /**
  * Base class for the {@link HostState} and {@link ServiceState} models providing common columns.
@@ -54,7 +52,6 @@ abstract class State extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
-        $behaviors->add(new VolatileState());
         $behaviors->add(new BoolCast([
             'is_problem',
             'is_handled',
