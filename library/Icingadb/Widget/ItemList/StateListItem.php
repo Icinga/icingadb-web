@@ -4,8 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
@@ -35,6 +37,12 @@ abstract class StateListItem extends BaseListItem
         if (isset($this->item->icon_image->icon_image)) {
             $this->list->setHasIconImages(true);
         }
+
+        $type = $this->item->getTableName();
+        $this->setAttribute("data-$type-id", bin2hex($this->item->id));
+        if ($type === 'service') {
+            $this->setAttribute('data-host-id', bin2hex($this->item->host->id));
+        }
     }
 
     abstract protected function createSubject();
@@ -54,6 +62,8 @@ abstract class StateListItem extends BaseListItem
 
             $caption->addHtml($pluginOutput);
         }
+
+        $caption->setAttribute('id', Icinga::app()->getRequest()->protectId(bin2hex($this->item->id) . '-output'));
     }
 
     protected function assembleIconImage(BaseHtmlElement $iconImage)

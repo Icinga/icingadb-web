@@ -9,7 +9,7 @@ use ipl\Web\Url;
 
 class ServiceList extends StateList
 {
-    protected $defaultAttributes = ['class' => 'service-list'];
+    protected $defaultAttributes = ['class' => 'service-list', 'data-state-interval' => 10];
 
     protected function getItemClass()
     {
