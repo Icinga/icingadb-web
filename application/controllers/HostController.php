@@ -273,7 +273,7 @@ class HostController extends Controller
         return [$this->host];
     }
 
-    protected function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::host($this->host);
     }

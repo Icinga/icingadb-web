@@ -308,7 +308,7 @@ class ServicesController extends Controller
         $this->setAutorefreshInterval(30);
     }
 
-    public function fetchCommandTargets()
+    protected function fetchCommandTargets()
     {
         $db = $this->getDb();
 
@@ -331,7 +331,7 @@ class ServicesController extends Controller
         return $services;
     }
 
-    public function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::servicesDetails()->setQueryString(QueryString::render($this->getFilter()));
     }

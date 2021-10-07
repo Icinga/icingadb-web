@@ -214,12 +214,12 @@ class ServiceController extends Controller
         }
     }
 
-    public function fetchCommandTargets()
+    protected function fetchCommandTargets()
     {
         return [$this->service];
     }
 
-    public function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::service($this->service, $this->service->host);
     }

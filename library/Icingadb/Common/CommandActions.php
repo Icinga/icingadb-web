@@ -20,14 +20,9 @@ use Icinga\Security\SecurityException;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Web\Url;
-use LogicException;
 
 /**
  * Trait CommandActions
- *
- * @method mixed fetchCommandTargets() Fetch command targets, \ipl\Orm\Query or \ipl\Orm\Model[]
- * @method object getFeatureStatus() Get status of toggleable features
- * @method Url getCommandTargetsUrl() Get url to view command targets, used as redirection target
  */
 trait CommandActions
 {
@@ -38,6 +33,29 @@ trait CommandActions
     protected $commandTargetModel;
 
     /**
+     * Get url to view command targets, used as redirection target
+     *
+     * @return Url
+     */
+    abstract protected function getCommandTargetsUrl(): Url;
+
+    /**
+     * Get status of toggleable features
+     *
+     * @return object
+     */
+    protected function getFeatureStatus()
+    {
+    }
+
+    /**
+     * Fetch command targets
+     *
+     * @return Query|Model[]
+     */
+    abstract protected function fetchCommandTargets();
+
+    /**
      * Get command targets
      *
      * @return Query|Model[]
@@ -45,11 +63,7 @@ trait CommandActions
     protected function getCommandTargets()
     {
         if (! isset($this->commandTargets)) {
-            if (method_exists($this, 'fetchCommandTargets')) {
-                $this->commandTargets = $this->fetchCommandTargets();
-            } else {
-                throw new LogicException('You must implement fetchCommandTargets() first');
-            }
+            $this->commandTargets = $this->fetchCommandTargets();
         }
 
         return $this->commandTargets;
@@ -224,10 +238,6 @@ trait CommandActions
     {
         $commandObjects = $this->getCommandTargets();
         if (count($commandObjects) > 1) {
-            if (! method_exists($this, 'getFeatureStatus')) {
-                throw new LogicException('You must implement getFeatureStatus() first');
-            }
-
             $this->isGrantedOnCommandTargets('i/am-only-used/to-establish/the-object-auth-cache');
             $form = new ToggleObjectFeaturesForm($this->getFeatureStatus());
         } else {

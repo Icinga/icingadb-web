@@ -189,7 +189,7 @@ class HostsController extends Controller
         $this->setTitle(t('Adjust Filter'));
     }
 
-    public function fetchCommandTargets()
+    protected function fetchCommandTargets()
     {
         $db = $this->getDb();
 
@@ -208,7 +208,7 @@ class HostsController extends Controller
         return $hosts;
     }
 
-    public function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::hostsDetails()->setQueryString(QueryString::render($this->getFilter()));
     }
