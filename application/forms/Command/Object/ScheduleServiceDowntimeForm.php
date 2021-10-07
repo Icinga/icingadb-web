@@ -137,21 +137,24 @@ class ScheduleServiceDowntimeForm extends CommandForm
                 'label'                     => t('End Time'),
                 'description'               => t('Set the end date and time for the downtime.'),
                 'value'                     => $isFlexible ? $this->flexibleEnd : $this->fixedEnd,
-                'validators'                => ['Callback' => function ($value, $validator) {
+                'validators'                => [
+                    'DateTime' => ['break_chain_on_failure' => true],
+                    'Callback' => function ($value, $validator) {
                     /** @var CallbackValidator $validator */
 
-                    if ($value <= $this->getValue('start')) {
-                        $validator->addMessage(t('The end time must be greater than the start time'));
-                        return false;
-                    }
+                        if ($value <= $this->getValue('start')) {
+                            $validator->addMessage(t('The end time must be greater than the start time'));
+                            return false;
+                        }
 
-                    if ($value <= (new DateTime())) {
-                        $validator->addMessage(t('A downtime must not be in the past'));
-                        return false;
-                    }
+                        if ($value <= (new DateTime())) {
+                            $validator->addMessage(t('A downtime must not be in the past'));
+                            return false;
+                        }
 
-                    return true;
-                }]
+                        return true;
+                    }
+                ]
             ]
         );
         $decorator->decorate($this->getElement('end'));
