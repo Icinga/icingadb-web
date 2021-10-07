@@ -5,13 +5,13 @@
 }
 
 .check-attempt .ball {
-  background-color: @gray-light;
+  .var(background-color, gray-light);
 
   &:not(:last-child) {
     margin-right: 1/6em;
   }
 
   &.taken {
-    background-color: @gray;
+    .var(background-color, "gray");
   }
 }

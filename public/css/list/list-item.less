@@ -1,10 +1,10 @@
 // Style
 
 .list-item {
-  color: @text-color-light;
+  .var(color, text-color-light);
 
   &.overdue {
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 
   &.overdue header > *:not(time),
@@ -14,12 +14,13 @@
 
   &.overdue time {
     .rounded-corners();
-    background-color: @color-critical;
-    color: @text-color-on-icinga-blue;
+    .var(background-color, color-critical);
+    .var(color, text-color-on-icinga-blue);
   }
 
   &:not(:first-child) .main {
-    border-top: 1px solid @gray-light;
+    border-top: 1px solid;
+    .var(border-top-color, gray-light);
   }
 
   &:not(:first-child) .visual {
@@ -32,14 +33,14 @@
     }
 
     a {
-      color: @text-color;
+      .var(color, text-color);
     }
   }
 
   .title {
     span.subject,
     .state-text {
-      color: @text-color;
+      .var(color, text-color);
     }
 
     .state-text {
@@ -47,11 +48,11 @@
     }
 
     a {
-      color: @text-color;
+      .var(color, text-color);
       font-weight: bold;
 
       &:hover {
-        color: @icinga-blue;
+        .var(color, icinga-blue);
         text-decoration: none;
       }
     }
@@ -59,7 +60,7 @@
 
   footer {
     .status-icons {
-      color: @gray-light;
+      .var(color, gray-light);
     }
   }
 }

@@ -1,11 +1,11 @@
 .action-list {
   > .list-item:hover {
-    background-color: fade(@icinga-blue, 5);
+    .var(background-color, tr-hover-color);
     cursor: pointer;
   }
 
   > .list-item.active {
-    background-color: fade(@icinga-blue, 25);
+    .var(background-color, tr-active-color);
   }
 
   &[data-icinga-multiselect-url] * {

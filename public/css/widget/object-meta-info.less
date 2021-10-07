@@ -3,7 +3,7 @@
 .object-meta-info {
   .horizontal-key-value .key,
   .vertical-key-value .key {
-    color: @gray-light;
+    .var(color, gray-light);
   }
 
   .vertical-key-value .value {
@@ -23,9 +23,10 @@
   .link-button();
 
   .rounded-corners(0 0 .5em .5em);
-  border: 1px solid @gray-lighter;
+  border: 1px solid;
+  .var(border-color, gray-lighter);
   border-top-width: 0;
-  background: @body-bg-color;
+  .var(background, body-bg-color);
 }
 
 // Layout

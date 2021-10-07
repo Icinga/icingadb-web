@@ -20,7 +20,7 @@
 }
 
 .empty-state {
-  color: @gray-semilight;
+  .var(color, gray-semilight);
 }
 
 .pagination-control {
@@ -89,7 +89,7 @@ div.show-more {
 
   &.overdue,
   &.overdue .tabs li.active a {
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 
   .filter {
@@ -182,7 +182,7 @@ div.show-more {
 
 .object-detail .plugin-output {
   .rounded-corners(.25em);
-  background-color: @gray-lighter;
+  .var(background-color, gray-lighter);
   padding: .5em;
 }
 
@@ -216,14 +216,14 @@ div.show-more {
 }
 
 .text-muted {
-  color: @gray;
+  .var(color, "gray");
 }
 
 .accompanying-text {
-  color: @text-color-light;
+  .var(color, text-color-light);
 
   .subject {
-    color: @text-color;
+    .var(color, text-color);
     .user-select(all);
   }
 }
@@ -236,13 +236,14 @@ div.show-more {
 .downtime-detail button {
   .button();
 
-  background: @body-bg-color;
-  border: 1px solid @color-critical;
-  color: @color-critical;
+  .var(background, body-bg-color);
+  border: 1px solid;
+  .var(border-color, color-critical);
+  .var(color, color-critical);
 
   &:hover {
-    background-color: @color-critical;
-    color: @text-color-on-icinga-blue;
+    .var(background-color, color-critical);
+    .var(color, text-color-on-icinga-blue);
   }
 }
 
@@ -255,7 +256,7 @@ div.show-more {
 
     .selected-items {
       font-size: 1.25em;
-      color: @gray;
+      .var(color, "gray");
     }
   }
 
@@ -271,7 +272,7 @@ div.show-more {
 
   .item-count {
     font-size: 1.25em;
-    color: @gray;
+    .var(color, "gray");
   }
 
   .state-badges {

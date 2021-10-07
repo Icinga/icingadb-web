@@ -4,30 +4,32 @@
 .downtime-detail .list-item {
   .progress {
     .progress-bar {
-      background-color: @color-ok;
+      .var(background-color, color-ok);
     }
   }
 
   .visual {
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 
   .main {
-    border-top: 1px solid @gray-light;
+    border-top: 1px solid;
+    .var(border-top-color, gray-light);
   }
 
   &:first-child .main {
     border-top: none;
 
     .progress-bar {
-      border-top: 1px solid @gray-light;
+      border-top: 1px solid;
+      .var(border-top-color, gray-light);
     }
   }
 
   &.in-effect {
     .visual {
-      background-color: @color-ok;
-      color: @text-color-on-icinga-blue;
+      .var(background-color, color-ok);
+      .var(color, text-color-on-icinga-blue);
     }
 
     .main {

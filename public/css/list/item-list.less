@@ -5,18 +5,18 @@
 
   > .empty-state {
     .rounded-corners();
-    background-color: @gray-lightest;
+    .var(background-color, gray-lightest);
   }
 
   > .show-more a,
   > .page-separator a {
     .rounded-corners();
-    background: @gray-lightest;
+    .var(background, gray-lightest);
     text-align: center;
   }
 
   > .page-separator a {
-    color: @gray;
+    .var(color, "gray");
 
     &:hover {
       text-decoration: none;

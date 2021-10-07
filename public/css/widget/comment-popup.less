@@ -2,8 +2,9 @@
   font-size: 1em / .857em; // // default font size / footer font size = 12px
   height: 6em;
   border-radius: 0.25em;
-  border: @gray-light 1px solid;
-  background-color: @body-bg-color;
+  border: 1px solid;
+  .var(border-color, gray-light);
+  .var(background-color, body-bg-color);
 }
 
 .comment-wrapper {
@@ -26,9 +27,11 @@
     height: 1.5em;
     left: 1.5em;
     top: ~"calc(-0.75em - 1px)";
-    border-left: @gray-light 1px solid;
-    border-top: @gray-light 1px solid;
-    background-color: @body-bg-color;
+    border-left: 1px solid;
+    .var(border-left-color, gray-light);
+    border-top: 1px solid;
+    .var(border-top-color, gray-light);
+    .var(background-color, body-bg-color);
     z-index: -1;
     transform: rotate(45deg);
   }
