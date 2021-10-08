@@ -15,9 +15,12 @@ use RuntimeException;
 
 class VolatileStateResults extends ResultSet
 {
+    /** @var bool Whether Redis updates were applied */
+    private $updatesApplied = false;
+
     public function current()
     {
-        if ($this->position === null && ! $this->isCacheDisabled) {
+        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
         }
 
@@ -26,7 +29,7 @@ class VolatileStateResults extends ResultSet
 
     public function key()
     {
-        if ($this->position === null && ! $this->isCacheDisabled) {
+        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
         }
 
@@ -35,7 +38,8 @@ class VolatileStateResults extends ResultSet
 
     public function rewind()
     {
-        if ($this->position === null && ! $this->isCacheDisabled) {
+        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
+            $this->updatesApplied = true;
             $this->advance();
 
             Benchmark::measure('Applying Redis updates');
@@ -73,6 +77,10 @@ class VolatileStateResults extends ResultSet
             if ($type === 'service' && $row->host instanceof Host) {
                 $hostStates[bin2hex($row->host->id)] = $row->host->state;
             }
+        }
+
+        if (empty($states)) {
+            return;
         }
 
         foreach ($this->fetchStates("icinga:{$type}:state", array_keys($states)) as $id => $data) {
