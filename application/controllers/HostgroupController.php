@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
@@ -46,6 +47,7 @@ class HostgroupController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with(['state', 'state.last_comment', 'icon_image'])->utilize('hostgroup');
+        $hosts->setResultSetClass(VolatileStateResults::class);
 
         $hosts->getSelectBase()->where(['host_hostgroup.id = ?' => $this->hostgroup->id]);
         $this->applyRestrictions($hosts);

@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
@@ -38,6 +39,7 @@ class HostController extends Controller
         $name = $this->params->getRequired('name');
 
         $query = Host::on($this->getDb())->with(['state', 'icon_image']);
+        $query->setResultSetClass(VolatileStateResults::class);
         $query->getSelectBase()
             ->where(['host.name = ?' => $name]);
 
@@ -188,6 +190,7 @@ class HostController extends Controller
             'host',
             'host.state'
         ]);
+        $services->setResultSetClass(VolatileStateResults::class);
 
         $services
             ->getSelectBase()
