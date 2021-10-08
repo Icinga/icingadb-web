@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
+use ipl\Web\Url;
 
 class DowntimeController extends Controller
 {
@@ -76,7 +77,7 @@ class DowntimeController extends Controller
         return [$this->downtime];
     }
 
-    protected function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::downtime($this->downtime);
     }

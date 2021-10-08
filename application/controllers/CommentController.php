@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\CommentDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use ipl\Web\Url;
 
 class CommentController extends Controller
 {
@@ -65,7 +66,7 @@ class CommentController extends Controller
         return [$this->comment];
     }
 
-    protected function getCommandTargetsUrl()
+    protected function getCommandTargetsUrl(): Url
     {
         return Links::comment($this->comment);
     }

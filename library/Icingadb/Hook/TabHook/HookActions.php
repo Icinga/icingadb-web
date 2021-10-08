@@ -15,8 +15,6 @@ use ipl\Stdlib\Str;
 
 /**
  * Trait HookActions
- *
- * @method ValidHtml[] getDefaultTabControls() Get default control elements
  */
 trait HookActions
 {
@@ -25,6 +23,13 @@ trait HookActions
 
     /** @var TabHook[] Loaded tab hooks */
     protected $tabHooks;
+
+    /**
+     * Get default control elements
+     *
+     * @return ValidHtml[]
+     */
+    abstract protected function getDefaultTabControls();
 
     public function __call($methodName, $args)
     {
@@ -112,7 +117,7 @@ trait HookActions
                 'class'                 => ['icinga-module', 'module-' . $moduleName],
                 'data-icinga-module'    => $moduleName
             ]);
-        } elseif (method_exists($this, 'getDefaultTabControls')) {
+        } else {
             foreach ($this->getDefaultTabControls() as $control) {
                 $this->addControl($control);
             }
