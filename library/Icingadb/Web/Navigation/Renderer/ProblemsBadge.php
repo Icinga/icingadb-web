@@ -30,11 +30,13 @@ abstract class ProblemsBadge extends NavigationItemRenderer
     /** @var string Title */
     protected $title;
 
+    protected $linkDisabled;
+
     abstract protected function fetchProblemsCount();
 
     abstract protected function getUrl();
 
-    protected function getProblemsCount()
+    public function getProblemsCount()
     {
         if ($this->count === null) {
             try {
@@ -114,9 +116,28 @@ abstract class ProblemsBadge extends NavigationItemRenderer
 
         $item->setCssClass('badge-nav-item icinga-module module-icingadb');
 
+        $badge = $this->createBadge();
+
+        if ($this->linkDisabled) {
+            $badge->addAttributes(['class' => 'disabled']);
+            $this->setEscapeLabel(false);
+            $label = $this->view()->escape($item->getLabel());
+            $item->setLabel($badge . $label);
+
+            return (new HtmlDocument())
+                ->add(new HtmlString(parent::render($item)))
+                ->render();
+        }
+
+        $badge = new Link(
+            $badge,
+            $this->getUrl(),
+            ['title' => $this->getTitle()]
+        );
+
         return (new HtmlDocument())
             ->add(new HtmlString(parent::render($item)))
-            ->add($this->createBadge())
+            ->add($badge)
             ->render();
     }
 
@@ -125,12 +146,8 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         $count = $this->getProblemsCount();
 
         if ($count) {
-            return new Link(
-                (new StateBadge($count, $this->getState()))
-                    ->addAttributes(['class' => 'badge']),
-                $this->getUrl(),
-                ['title' => $this->getTitle()]
-            );
+            return (new StateBadge($count, $this->getState()))
+                    ->addAttributes(['class' => 'badge']);
         }
 
         return null;
@@ -145,5 +162,12 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         }
 
         return $count;
+    }
+
+    public function disableLink()
+    {
+        $this->linkDisabled = true;
+
+        return $this;
     }
 }
