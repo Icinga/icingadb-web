@@ -22,7 +22,7 @@ class EventcommandCustomvar extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'eventcommand_id',
             'customvar_id',
             'environment_id'
         ];
@@ -31,8 +31,7 @@ class EventcommandCustomvar extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('eventcommand', Eventcommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
             ->setCandidateKey('customvar_id')

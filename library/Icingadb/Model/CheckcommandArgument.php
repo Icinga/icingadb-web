@@ -22,7 +22,7 @@ class CheckcommandArgument extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'checkcommand_id',
             'argument_key',
             'environment_id',
             'properties_checksum',
@@ -40,7 +40,7 @@ class CheckcommandArgument extends Model
     public function getMetaData()
     {
         return [
-            'command_id'            => t('Checkcommand Argument Command Id'),
+            'checkcommand_id'       => t('Checkcommand Argument Command Id'),
             'argument_key'          => t('Checkcommand Argument Key'),
             'environment_id'        => t('Checkcommand Argument Environment Id'),
             'properties_checksum'   => t('Checkcommand Argument Properties Checksum'),
@@ -58,7 +58,6 @@ class CheckcommandArgument extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('checkcommand', CheckCommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('checkcommand', CheckCommand::class);
     }
 }

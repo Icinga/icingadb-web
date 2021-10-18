@@ -32,7 +32,7 @@ class Notification extends Model
             'name_ci',
             'host_id',
             'service_id',
-            'command_id',
+            'notificationcommand_id',
             'times_begin',
             'times_end',
             'notification_interval',
@@ -46,21 +46,21 @@ class Notification extends Model
     public function getMetaData()
     {
         return [
-            'environment_id'        => t('Notification Environment Id'),
-            'name_checksum'         => t('Notification Name Checksum'),
-            'properties_checksum'   => t('Notification Properties Checksum'),
-            'name'                  => t('Notification Name'),
-            'name_ci'               => t('Notification Name (CI)'),
-            'host_id'               => t('Notification Host Id'),
-            'service_id'            => t('Notification Service Id'),
-            'command_id'            => t('Notification Command Id'),
-            'times_begin'           => t('Notification Times Begin'),
-            'times_end'             => t('Notification Times End'),
-            'notification_interval' => t('Notification Interval'),
-            'timeperiod_id'         => t('Notification Timeperiod Id'),
-            'states'                => t('Notification States'),
-            'types'                 => t('Notification Types'),
-            'zone_id'               => t('Notification Zone Id')
+            'environment_id'         => t('Notification Environment Id'),
+            'name_checksum'          => t('Notification Name Checksum'),
+            'properties_checksum'    => t('Notification Properties Checksum'),
+            'name'                   => t('Notification Name'),
+            'name_ci'                => t('Notification Name (CI)'),
+            'host_id'                => t('Notification Host Id'),
+            'service_id'             => t('Notification Service Id'),
+            'notificationcommand_id' => t('Notification Command Id'),
+            'times_begin'            => t('Notification Times Begin'),
+            'times_end'              => t('Notification Times End'),
+            'notification_interval'  => t('Notification Interval'),
+            'timeperiod_id'          => t('Notification Timeperiod Id'),
+            'states'                 => t('Notification States'),
+            'types'                  => t('Notification Types'),
+            'zone_id'                => t('Notification Zone Id')
         ];
     }
 
@@ -98,8 +98,7 @@ class Notification extends Model
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class);
-        $relations->belongsTo('notificationcommand', Notificationcommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('notificationcommand', Notificationcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class);
         $relations->belongsTo('zone', Zone::class);
 

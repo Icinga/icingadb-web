@@ -22,7 +22,7 @@ class NotificationcommandCustomvar extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'notificationcommand_id',
             'customvar_id',
             'environment_id'
         ];
@@ -31,8 +31,7 @@ class NotificationcommandCustomvar extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('notificationcommand', Notificationcommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('notificationcommand', Notificationcommand::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
             ->setCandidateKey('customvar_id')
