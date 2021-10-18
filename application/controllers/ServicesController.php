@@ -269,6 +269,8 @@ class ServicesController extends Controller
             Filter::equal('service.state.is_problem', 'y') : null;
 
         $pivot = (new PivotTable($query, $xAxisCol, $yAxisCol, [
+            'id',
+            'host.id',
             'host_name' => 'host.name',
             'host_display_name' => 'host.display_name',
             'service_name' => 'service.name',
