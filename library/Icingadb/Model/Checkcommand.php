@@ -69,10 +69,8 @@ class Checkcommand extends Model
         $relations->belongsToMany('vars', CustomvarFlat::class)
             ->through(CheckcommandCustomvar::class);
 
-        $relations->hasMany('argument', CheckcommandArgument::class)
-            ->setForeignKey('command_id');
-        $relations->hasMany('envvar', CheckcommandEnvvar::class)
-            ->setForeignKey('command_id');
+        $relations->hasMany('argument', CheckcommandArgument::class);
+        $relations->hasMany('envvar', CheckcommandEnvvar::class);
         $relations->hasMany('host', Host::class);
         $relations->hasMany('service', Service::class);
     }

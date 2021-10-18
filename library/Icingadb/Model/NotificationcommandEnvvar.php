@@ -22,7 +22,7 @@ class NotificationcommandEnvvar extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'notificationcommand_id',
             'envvar_key',
             'environment_id',
             'properties_checksum',
@@ -33,18 +33,17 @@ class NotificationcommandEnvvar extends Model
     public function getMetaData()
     {
         return [
-            'command_id'            => t('Notificationcommand Envvar Command Id'),
-            'envvar_key'            => t('Notificationcommand Envvar Key'),
-            'environment_id'        => t('Notificationcommand Envvar Environment Id'),
-            'properties_checksum'   => t('Notificationcommand Envvar Properties Checksum'),
-            'envvar_value'          => t('Notificationcommand Envvar Value')
+            'notificationcommand_id' => t('Notificationcommand Envvar Command Id'),
+            'envvar_key'             => t('Notificationcommand Envvar Key'),
+            'environment_id'         => t('Notificationcommand Envvar Environment Id'),
+            'properties_checksum'    => t('Notificationcommand Envvar Properties Checksum'),
+            'envvar_value'           => t('Notificationcommand Envvar Value')
         ];
     }
 
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('notificationcommand', Notificationcommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('notificationcommand', Notificationcommand::class);
     }
 }

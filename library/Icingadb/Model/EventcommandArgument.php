@@ -22,7 +22,7 @@ class EventcommandArgument extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'eventcommand_id',
             'argument_key',
             'environment_id',
             'properties_checksum',
@@ -40,7 +40,7 @@ class EventcommandArgument extends Model
     public function getMetaData()
     {
         return [
-            'command_id'            => t('Eventcommand Argument Command Id'),
+            'eventcommand_id'       => t('Eventcommand Argument Command Id'),
             'argument_key'          => t('Eventcommand Argument Key'),
             'environment_id'        => t('Eventcommand Argument Environment Id'),
             'properties_checksum'   => t('Eventcommand Argument Properties Checksum'),
@@ -58,7 +58,6 @@ class EventcommandArgument extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('eventcommand', Eventcommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('eventcommand', Eventcommand::class);
     }
 }

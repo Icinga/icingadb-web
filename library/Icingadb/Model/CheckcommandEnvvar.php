@@ -22,7 +22,7 @@ class CheckcommandEnvvar extends Model
     public function getColumns()
     {
         return [
-            'command_id',
+            'checkcommand_id',
             'envvar_key',
             'environment_id',
             'properties_checksum',
@@ -33,7 +33,7 @@ class CheckcommandEnvvar extends Model
     public function getMetaData()
     {
         return [
-            'command_id'            => t('Checkcommand Envvar Command Id'),
+            'checkcommand_id'       => t('Checkcommand Envvar Command Id'),
             'envvar_key'            => t('Checkcommand Envvar Key'),
             'environment_id'        => t('Checkcommand Environment Id'),
             'properties_checksum'   => t('Checkcommand Properties Checksum'),
@@ -44,7 +44,6 @@ class CheckcommandEnvvar extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('checkcommand', CheckCommand::class)
-            ->setCandidateKey('command_id');
+        $relations->belongsTo('checkcommand', CheckCommand::class);
     }
 }

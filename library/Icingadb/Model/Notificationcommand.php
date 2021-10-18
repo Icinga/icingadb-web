@@ -71,11 +71,8 @@ class Notificationcommand extends Model
         $relations->belongsToMany('vars', CustomvarFlat::class)
             ->through(NotificationcommandCustomvar::class);
 
-        $relations->hasMany('notification', Notification::class)
-            ->setForeignKey('command_id');
-        $relations->hasMany('argument', NotificationcommandArgument::class)
-            ->setForeignKey('command_id');
-        $relations->hasMany('envvar', NotificationcommandEnvvar::class)
-            ->setForeignKey('command_id');
+        $relations->hasMany('notification', Notification::class);
+        $relations->hasMany('argument', NotificationcommandArgument::class);
+        $relations->hasMany('envvar', NotificationcommandEnvvar::class);
     }
 }
