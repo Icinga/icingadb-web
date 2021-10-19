@@ -98,19 +98,19 @@ trait Macros
                 } while (! empty($properties) && $value !== null);
             } else {
                 $value = $object->$macro;
-
-                if ($value instanceof Query || $value instanceof ResultSet || is_array($value)) {
-                    Logger::debug(
-                        'It is not allowed to use "%s" as a macro which produces a "%s" type as a result.',
-                        $macro,
-                        get_php_type($value)
-                    );
-                    $value = null;
-                }
             }
         } catch (\Exception $e) {
             $value = null;
             Logger::debug('Unable to resolve macro "%s". An error occurred: %s', $macro, $e);
+        }
+
+        if ($value instanceof Query || $value instanceof ResultSet || is_array($value)) {
+            Logger::debug(
+                'It is not allowed to use "%s" as a macro which produces a "%s" type as a result.',
+                $macro,
+                get_php_type($value)
+            );
+            $value = null;
         }
 
         return $value !== null ? $value : $macro;
