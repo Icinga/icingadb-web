@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Module\Icingadb\Forms\SetAsBackendConfigForm;
 use Icinga\Module\Icingadb\Forms\DatabaseConfigForm;
 use Icinga\Module\Icingadb\Forms\RedisConfigForm;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -43,6 +44,15 @@ class ConfigController extends Controller
 
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('redis'));
 
+        $this->addFormToContent($form);
+    }
+
+    public function backendAction()
+    {
+        $form = new SetAsBackendConfigForm();
+        $form->handleRequest();
+
+        $this->mergeTabs($this->Module()->getConfigTabs()->activate('backend'));
         $this->addFormToContent($form);
     }
 
