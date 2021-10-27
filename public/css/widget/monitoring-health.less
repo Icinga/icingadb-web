@@ -11,6 +11,8 @@
   }
 
   .check-summary {
+    padding: .5em 0;
+
     .col {
       padding: 0 1em .5em 1em;
     }
@@ -27,7 +29,6 @@
     border: 1px solid;
     .var(border-color, gray-light);
     display: flex;
-    padding: .5em 0;
     width: 100%;
   }
 
@@ -73,7 +74,7 @@
   .instance-features {
     .control-group {
       flex: 1 1 auto;
-      margin: 0;
+      margin: .5em 0;
       padding: .5em;
       width: 0;
 
@@ -94,10 +95,38 @@
         padding: 0;
         text-align: center;
         width: auto;
+
+        label {
+          text-align: center;
+        }
       }
 
       .toggle-switch {
         margin: 0;
+      }
+    }
+  }
+}
+
+#layout.minimal-layout {
+  .icinga-info {
+    .vertical-key-value {
+      width: 100%;
+
+      & + .vertical-key-value {
+        margin-top: 2em
+      }
+    }
+  }
+
+  .instance-features {
+    flex-wrap: wrap;
+
+    .control-group {
+      width: 33%;
+
+      &:nth-child(3n) {
+        border-right: none;
       }
     }
   }
