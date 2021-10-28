@@ -183,65 +183,62 @@ class Controller extends CompatController
             )->setParams($redirectUrl->getParams()));
         }
 
-        $searchBar->on(SearchBar::ON_CHANGE, function (array &$changes) use ($query) {
-            if ($changes['type'] === 'remove') {
-                return;
-            }
+        $metaData = iterator_to_array(
+            ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+        );
+        $columnValidator = function (SearchBar\ValidatedColumn $column) use ($query, $metaData) {
+            $columnPath = $column->getSearchValue();
+            if (($pos = strpos($columnPath, '.vars.')) !== false) {
+                try {
+                    $relationPath = $query->getResolver()->qualifyPath(
+                        substr($columnPath, 0, $pos + 5),
+                        $query->getModel()->getTableName()
+                    );
+                    $query->getResolver()->resolveRelation($relationPath);
+                } catch (InvalidRelationException $e) {
+                    $column->setMessage(sprintf(
+                        t('"%s" is not a valid relation'),
+                        substr($e->getRelation(), 0, $pos)
+                    ));
+                }
+            } else {
+                if (strpos($columnPath, '.') === false) {
+                    $columnPath = $query->getResolver()->qualifyPath($columnPath, $query->getModel()->getTableName());
+                }
 
-            $metaData = iterator_to_array(
-                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
-            );
-            foreach ($changes['terms'] as &$termData) {
-                if ($termData['type'] !== 'column') {
-                    continue;
-                } elseif (($pos = strpos($termData['search'], '.vars.')) !== false) {
-                    try {
-                        $relationPath = $query->getResolver()->qualifyPath(
-                            substr($termData['search'], 0, $pos + 5),
-                            $query->getModel()->getTableName()
-                        );
-                        $query->getResolver()->resolveRelation($relationPath);
-                    } catch (InvalidArgumentException $_) {
-                        $termData['invalidMsg'] = sprintf(
-                            t('"%s" is not a valid relation'),
-                            substr($termData['search'], 0, $pos)
-                        );
+                if (! isset($metaData[$columnPath])) {
+                    list($columnPath, $columnLabel) = Seq::find($metaData, $column->getSearchValue(), false);
+                    if ($columnPath === null) {
+                        $column->setMessage(t('Is not a valid column'));
+                    } else {
+                        $column->setSearchValue($columnPath);
+                        $column->setLabel($columnLabel);
                     }
                 } else {
-                    $column = $termData['search'];
-                    if (strpos($column, '.') === false) {
-                        $column = $query->getResolver()->qualifyPath($column, $query->getModel()->getTableName());
-                        // TODO: Also apply this change, though not until.. (see below)
-                    }
-
-                    if (! isset($metaData[$column])) {
-                        // TODO: Enable once https://github.com/Icinga/ipl-stdlib/issues/17 is done and
-                        //       used by the search bar so that not every "change" makes it invalid
-                        $path = false; //array_search($column, $metaData, true);
-                        if ($path === false) {
-                            $termData['invalidMsg'] = t('Is not a valid column');
-                        } else {
-                            $termData['search'] = $path;
-                        }
-                    }
+                    $column->setLabel($metaData[$columnPath]);
                 }
             }
-        })->on(SearchBar::ON_SENT, function (SearchBar $form) use ($redirectUrl) {
-            $existingParams = $redirectUrl->getParams();
-            $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
-            foreach ($existingParams->toArray(false) as $name => $value) {
-                if (is_int($name)) {
-                    $name = $value;
-                    $value = true;
+        };
+
+        $searchBar->on(SearchBar::ON_ADD, $columnValidator)
+            ->on(SearchBar::ON_INSERT, $columnValidator)
+            ->on(SearchBar::ON_SAVE, $columnValidator)
+            ->on(SearchBar::ON_SENT, function (SearchBar $form) use ($redirectUrl) {
+                $existingParams = $redirectUrl->getParams();
+                $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
+                foreach ($existingParams->toArray(false) as $name => $value) {
+                    if (is_int($name)) {
+                        $name = $value;
+                        $value = true;
+                    }
+
+                    $redirectUrl->getParams()->addEncoded($name, $value);
                 }
 
-                $redirectUrl->getParams()->addEncoded($name, $value);
-            }
-
-            $form->setRedirectUrl($redirectUrl);
-        })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
-            $this->getResponse()->redirectAndExit($form->getRedirectUrl());
-        })->handleRequest(ServerRequest::fromGlobals());
+                $form->setRedirectUrl($redirectUrl);
+            })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
+                $this->getResponse()->redirectAndExit($form->getRedirectUrl());
+            })->handleRequest(ServerRequest::fromGlobals());
 
         Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
 
