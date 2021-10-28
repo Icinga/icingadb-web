@@ -21,6 +21,7 @@ use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use ipl\Stdlib\Filter;
+use ipl\Stdlib\Seq;
 use ipl\Web\Control\SearchBar\SearchException;
 use ipl\Web\Control\SearchBar\Suggestions;
 use PDO;
@@ -100,6 +101,18 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
         $query->limit(static::DEFAULT_LIMIT);
+
+        if (strpos($column, ' ') !== false) {
+            // $column may be a label
+            list($path, $_) = Seq::find(
+                self::collectFilterColumns($query->getModel(), $query->getResolver()),
+                $column,
+                false
+            );
+            if ($path !== null) {
+                $column = $path;
+            }
+        }
 
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
