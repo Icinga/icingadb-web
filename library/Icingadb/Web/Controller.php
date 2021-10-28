@@ -770,11 +770,12 @@ class Controller extends CompatController
                 );
             }
         } else {
-            $metaData = iterator_to_array(
-                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
+            $label = Seq::findValue(
+                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver()),
+                $path
             );
-            if (isset($metaData[$path])) {
-                $condition->metaData()->set('columnLabel', $metaData[$path]);
+            if ($label !== null) {
+                $condition->metaData()->set('columnLabel', $label);
             }
         }
     }
