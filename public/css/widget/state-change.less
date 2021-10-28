@@ -39,4 +39,61 @@
       .var(background-color, body-bg-color);
     }
   }
+
+  // Avoid transparency on overlapping solid state-change state-balls
+  .state-ball.handled {
+    position: relative;
+    opacity: 1;
+
+    i {
+      position: relative;
+      z-index: 3;
+    }
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: 50%;
+      opacity: .6;
+      z-index: 2
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      .var(background-color, body-bg-color);
+      z-index: 1;
+    }
+
+    &.state-pending:before {
+      background-color: @color-pending;
+    }
+
+    &.state-down:before {
+      background-color: @color-down;
+    }
+
+    &.state-warning:before {
+      background-color: @color-warning;
+    }
+
+    &.state-critical:before {
+      background-color: @color-critical;
+    }
+
+    &.state-unknown:before {
+      background-color: @color-warning;
+    }
+  }
 }
