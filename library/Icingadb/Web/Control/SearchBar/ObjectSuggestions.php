@@ -10,8 +10,9 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use InvalidArgumentException;
 use ipl\Html\HtmlElement;
+use ipl\Orm\Exception\InvalidColumnException;
+use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Resolver;
@@ -23,7 +24,6 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Control\SearchBar\SearchException;
 use ipl\Web\Control\SearchBar\Suggestions;
 use PDO;
-use RuntimeException;
 
 class ObjectSuggestions extends Suggestions
 {
@@ -107,8 +107,8 @@ class ObjectSuggestions extends Suggestions
         if (strpos($targetPath, '.') !== false) {
             try {
                 $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
-            } catch (InvalidArgumentException $_) {
-                throw new SearchException(sprintf(t('"%s" is not a valid relation'), $targetPath));
+            } catch (InvalidRelationException $e) {
+                throw new SearchException(sprintf(t('"%s" is not a valid relation'), $e->getRelation()));
             }
         }
 
@@ -142,8 +142,8 @@ class ObjectSuggestions extends Suggestions
         try {
             return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
                 ->setFetchMode(PDO::FETCH_COLUMN);
-        } catch (RuntimeException $_) {
-            throw new SearchException(sprintf(t('"%s" is not a valid column'), $columnName));
+        } catch (InvalidColumnException $e) {
+            throw new SearchException(sprintf(t('"%s" is not a valid column'), $e->getColumn()));
         }
     }
 

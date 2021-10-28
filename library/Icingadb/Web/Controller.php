@@ -26,10 +26,10 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\Environment;
 use Icinga\Util\Json;
-use InvalidArgumentException;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Common\SortUtil;
+use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Contract\Paginatable;
@@ -288,10 +288,10 @@ class Controller extends CompatController
             if (($pos = strpos($column, '.vars.')) !== false) {
                 try {
                     $query->getResolver()->resolveRelation(substr($column, 0, $pos + 5));
-                } catch (InvalidArgumentException $_) {
+                } catch (InvalidRelationException $e) {
                     throw new SearchBar\SearchException(sprintf(
                         t('"%s" is not a valid relation'),
-                        substr($column, 0, $pos)
+                        substr($e->getRelation(), 0, $pos)
                     ));
                 }
             } else {
