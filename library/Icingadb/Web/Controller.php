@@ -34,6 +34,7 @@ use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Stdlib\Filter;
+use ipl\Stdlib\Seq;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
@@ -296,12 +297,8 @@ class Controller extends CompatController
                 }
             } else {
                 if (! isset($metaData[$column])) {
-                    $path = array_search(
-                        $condition->metaData()->get('columnLabel', $column),
-                        $metaData,
-                        true
-                    );
-                    if ($path === false) {
+                    $path = Seq::findKey($metaData, $condition->metaData()->get('columnLabel', $column), false);
+                    if ($path === null) {
                         throw new SearchBar\SearchException(t('Is not a valid column'));
                     } else {
                         $condition->setColumn($path);
