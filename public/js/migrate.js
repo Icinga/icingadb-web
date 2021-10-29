@@ -24,6 +24,19 @@
         '   <button type="button" value="0"><i class="icon-"></i></button>\n' +
         '</li>';
 
+    const BACKEND_FORM = '<form id="setAsBackendForm" name="IcingaModuleIcingadbFormsSetAsBackendForm" class="icinga-form icinga-controls" method="post" action="icingadb/config/backend">\n' +
+        '   <div class="wrapper">\n' +
+        '      <div class="checkbox-label">\n' +
+        '         <span><label for="setAsBackendForm-checkbox">Use Icinga DB As Backend</label></span>\n' +
+        '      </div>\n' +
+        '      <input type="checkbox" name="backend" value="1" id="setAsBackendForm-checkbox" class="autosubmit sr-only">\n' +
+        '      <label for="setAsBackendForm-checkbox" aria-hidden="true" class="toggle-switch">\n' +
+        '         <span class="toggle-slider"></span>\n' +
+        '      </label>\n' +
+        '     </div>\n' +
+        '   <input type="hidden" name="formUID" value="IcingaModuleIcingadbFormsSetAsBackendForm" id="IcingaModuleIcingadbFormsSetAsBackendForm">\n' +
+        '</form>';
+
     /**
      * Icinga DB Migration behavior.
      *
@@ -35,6 +48,12 @@
         this.icinga = icinga;
         this.knownMigrations = {};
         this.$popup = null;
+        this.supportedModules = [
+            '/director',
+            '/businessprocess',
+            '/jira/',
+            '/cube/'
+        ];
 
         // Some persistence, we don't want to annoy our users too much
         this.storage = Icinga.Storage.BehaviorStorage('icingadb.migrate');
@@ -44,7 +63,7 @@
 
         // We don't want to ask the server to migrate non-monitoring urls
         this.isMonitoringUrl = new RegExp('^' + icinga.config.baseUrl + '/monitoring/');
-
+        this.isSupportedModule = new RegExp('^' + icinga.config.baseUrl + '(' + this.supportedModules.join('|') +')');
         this.on('rendered', this.onRendered, this);
         this.on('close-column', this.onColumnClose, this);
         this.on('click', '#migrate-popup button.close', this.onClose, this);
@@ -91,28 +110,37 @@
     Migrate.prototype.prepareMigration = function($target) {
         var urls = {};
         var href;
+        var wantBackendForm = false;
 
         var _this = this;
         $target.each(function () {
             var $container = $(this);
             href = $container.data('icingaUrl');
 
-            if (typeof href !== 'undefined' && href.match(_this.isMonitoringUrl)) {
-                var containerId = $container.attr('id');
+            if (typeof href !== 'undefined') {
+                if (href.match(_this.isMonitoringUrl)) {
+                    var containerId = $container.attr('id');
 
-                if (
-                    typeof _this.previousMigrations[containerId] !== 'undefined'
-                    && _this.previousMigrations[containerId] === href
-                ) {
-                    delete _this.previousMigrations[containerId];
+                    if (
+                        typeof _this.previousMigrations[containerId] !== 'undefined'
+                        && _this.previousMigrations[containerId] === href
+                    ) {
+                        delete _this.previousMigrations[containerId];
+                    } else {
+                        urls[containerId] = href;
+                    }
+                } else if (href.match(_this.isSupportedModule)) {
+                    wantBackendForm = true;
                 } else {
-                    urls[containerId] = href;
+                    _this.removeBackendCheckboxForm();
                 }
             }
         });
 
         if (this.icinga.utils.objectKeys(urls).length) {
             this.migrateMonitoringUrls(urls);
+        } else if (wantBackendForm) {
+            this.prepareBackendCheckboxForm();
         } else {
             this.cleanupSuggestions();
         }
@@ -203,6 +231,8 @@
         var _this = this,
             containerIds = [],
             containerUrls = [];
+
+        this.removeBackendCheckboxForm();
         $.each(urls, function (containerId, containerUrl) {
             if (typeof _this.knownMigrations[containerUrl] === 'undefined') {
                 containerUrls.push(containerUrl);
@@ -253,6 +283,43 @@
         this.addSuggestions(req.urls);
     };
 
+    Migrate.prototype.prepareBackendCheckboxForm = function() {
+        var $popup = this.Popup();
+        var checkboxForm = $popup.find('.suggestion-area > #setAsBackendForm');
+
+        this.cleanupSuggestions(); // remove links
+        if (! checkboxForm.length) {
+            $popup.find('.suggestion-area > ul').after($(BACKEND_FORM));
+        }
+
+        var req = $.ajax({
+            context     : this,
+            type        : 'get',
+            url         : this.icinga.config.baseUrl + '/icingadb/migrate/checkbox-state'
+        });
+
+        req.done(this.setCheckboxState);
+    };
+
+    Migrate.prototype.setCheckboxState = function(isChecked, textStatus, req) {
+        var $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
+        var $checkbox = $form.find('input#setAsBackendForm-checkbox');
+
+        this.Popup().find('p').hide();
+
+        $checkbox.prop('checked', isChecked);
+        this.showPopup();
+    }
+
+    Migrate.prototype.removeBackendCheckboxForm = function () {
+        var $backendCheckboxForm = this.Popup().find('.suggestion-area > #setAsBackendForm');
+        if ($backendCheckboxForm.length) {
+            $backendCheckboxForm.remove();
+        }
+
+        this.Popup().find('p').show();
+    }
+
     Migrate.prototype.addSuggestions = function(urls) {
         var _this = this,
             hasSuggestions = false,
@@ -302,7 +369,8 @@
     Migrate.prototype.cleanupSuggestions = function() {
         var _this = this,
             toBeRemoved = [],
-            willBeEmpty = true;
+            willBeEmpty = true,
+            $hasBackendForm = this.Popup().find('.suggestion-area > #setAsBackendForm').length > 0;
         this.Popup().find('li').each(function () {
             var $suggestion = $(this);
             var $container = $('#' + $suggestion.data('containerId'));
@@ -320,6 +388,10 @@
                 willBeEmpty = false;
             }
         });
+
+        if ($hasBackendForm) {
+            willBeEmpty = false;
+        }
 
         if (willBeEmpty) {
             this.hidePopup(function () {

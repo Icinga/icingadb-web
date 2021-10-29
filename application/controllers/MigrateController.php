@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Exception;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
+use Icinga\Module\Icingadb\Icingadb;
 use Icinga\Module\Icingadb\Web\Controller;
 use ipl\Web\Url;
 
@@ -58,5 +59,15 @@ class MigrateController extends Controller
         }
 
         $response->sendResponse();
+    }
+
+    public function checkboxStateAction()
+    {
+        $this->assertHttpMethod('get');
+
+        $this->getResponse()
+            ->setBody(Icingadb::isSetAsBackend())
+            ->sendResponse();
+        exit;
     }
 }
