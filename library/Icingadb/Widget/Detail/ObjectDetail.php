@@ -127,7 +127,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if ($navigation->isEmpty() || ! $navigation->hasRenderableItems()) {
+        if ($moduleActions->isEmpty() && ($navigation->isEmpty() || ! $navigation->hasRenderableItems())) {
             return null;
         }
 
