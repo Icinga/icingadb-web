@@ -176,7 +176,7 @@ class CheckStatistics extends Card
             new VerticalKeyValue(t('Command'), $this->object->checkcommand),
             new VerticalKeyValue(
                 t('Attempts'),
-                new CheckAttempt($this->object->state->attempt, $this->object->max_check_attempts)
+                new CheckAttempt((int) $this->object->state->attempt, (int) $this->object->max_check_attempts)
             ),
             new VerticalKeyValue(t('Check Source'), $checkSource),
             new VerticalKeyValue(

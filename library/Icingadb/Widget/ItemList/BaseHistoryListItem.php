@@ -200,8 +200,8 @@ abstract class BaseHistoryListItem extends BaseListItem
                     $isSoftState = true;
 
                     $visual->addHtml(new CheckAttempt(
-                        $this->item->state->attempt,
-                        $this->item->state->max_check_attempts
+                        (int) $this->item->state->attempt,
+                        (int) $this->item->state->max_check_attempts
                     ));
                 } else {
                     $previousState = 'previous_hard_state';
