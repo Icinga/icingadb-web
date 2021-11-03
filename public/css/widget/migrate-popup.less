@@ -8,6 +8,7 @@
   top: 0;
   right: 4em;
   pointer-events: none;
+  line-height: 1.5em;
 
   .transform(translateY(-100%));
   .transition(transform @transitionLength ease-in);
@@ -75,9 +76,10 @@
   }
 
   .suggestion-area {
-    padding: .75em .75em .25em;
+    padding: .75em;
     flex-grow: 1;
     pointer-events: auto;
+    font-size: .75em;
 
     .var(background, body-bg-color);
     border-radius: 0 0 4px 4px;
@@ -89,14 +91,12 @@
 
     p {
       margin-bottom: .5em;
-      font-size: 90%;
       .var(color, text-color-light);
     }
 
     & > button.close {
       float: right;
       margin-top: 1em;
-      font-size: 75%;
 
       &:hover {
         text-decoration: underline;
@@ -123,23 +123,21 @@
         margin-right: .5em;
       }
 
+      button:hover{
+        opacity: 0.8;
+      }
+
       button[value="1"] {
         flex-grow: 1;
 
         .var(color, text-color);
-        font-weight: bold;
-        font-size: 90%;
-
-        &:hover {
-          text-decoration: underline;
-        }
+        text-decoration: underline;
       }
 
       button[value="0"] {
         i:before {
           margin: 0;
           content: '\e804';
-          font-size: 80%;
         }
       }
     }
