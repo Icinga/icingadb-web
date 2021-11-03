@@ -43,7 +43,7 @@
     pointer-events: auto;
 
     border-bottom-right-radius: 4px;
-    background-color: @body-bg-color;
+    .var(background-color, body-bg-color);
 
     .transition(none);
 
@@ -53,11 +53,11 @@
       content: '\f102';
       font-size: 1.25em;
       cursor: pointer;
-      color: @gray-light;
+      .var(color, gray-light);
     }
 
     i:hover:before {
-      color: @menu-highlight-color;
+      .var(color, menu-highlight-color);
     }
   }
 
@@ -79,7 +79,7 @@
     flex-grow: 1;
     pointer-events: auto;
 
-    background: @body-bg-color;
+    .var(background, body-bg-color);
     border-radius: 0 0 4px 4px;
     box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.3);
 
@@ -90,7 +90,7 @@
     p {
       margin-bottom: .5em;
       font-size: 90%;
-      color: @text-color-light;
+      .var(color, text-color-light);
     }
 
     & > button.close {
@@ -126,7 +126,7 @@
       button[value="1"] {
         flex-grow: 1;
 
-        color: @text-color;
+        .var(color, text-color);
         font-weight: bold;
         font-size: 90%;
 

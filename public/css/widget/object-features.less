@@ -7,7 +7,7 @@ form.object-features {
     text-align: left;
     margin-right: 0;
     width: @name-value-table-name-width;
-    color: @text-color-light;
+    .var(color, text-color-light);
 
     label {
       font-size: inherit;
@@ -46,7 +46,7 @@ form.object-features {
 
     & + span.hint {
       margin: .35em;
-      color: @gray-light;
+      .var(color, gray-light);
       font-style: italic;
     }
   }

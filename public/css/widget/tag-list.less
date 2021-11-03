@@ -19,12 +19,12 @@
 
   > li > a {
     .rounded-corners();
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
     display: block;
     padding: .25em .5em;
 
     &:hover {
-      background-color: @gray-light;
+      .var(background-color, gray-light);
       text-decoration: none;
     }
   }

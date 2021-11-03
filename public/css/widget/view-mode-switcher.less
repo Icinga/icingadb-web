@@ -9,9 +9,9 @@
   }
 
   label {
-    color: @icinga-blue;
+    .var(color, icinga-blue);
     line-height: 1;
-    background: @low-sat-blue;
+    .var(background, low-sat-blue);
     padding: 14/16*.25em 14/16*.5em;
     font-size: 16/12em;
     height: 24/16em; // desired pixel height / font-size
@@ -28,7 +28,8 @@
     }
 
     &:not(:last-of-type) {
-      border-right: 1px solid @low-sat-blue-dark;
+      border-right: 1px solid;
+      .var(border-right-color, low-sat-blue-dark);
     }
 
     i {
@@ -38,8 +39,8 @@
   }
 
   input[checked] + label {
-    background-color: @icinga-blue;
-    color: @text-color-on-icinga-blue;
+    .var(background-color, icinga-blue);
+    .var(color, text-color-on-icinga-blue);
     cursor: default;
   }
 }

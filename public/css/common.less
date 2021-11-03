@@ -20,7 +20,7 @@
 }
 
 .empty-state {
-  color: @gray-semilight;
+  .var(color, gray-semilight);
 }
 
 .pagination-control {
@@ -33,13 +33,13 @@ div.show-more {
 }
 
 .state-ball.state-not-available {
-  .ball-solid(@gray-light);
+  .ball-solid(~"var(--gray-light, @{gray-light})");
   .animate(pulse 1.5s infinite both);
 }
 
 .icon-ball {
   .ball();
-  .ball-outline(@gray);
+  .ball-outline(~"var(--gray, @{gray})");
   text-align: center;
 
   i:before {
@@ -50,7 +50,7 @@ div.show-more {
 .user-ball {
   .ball();
   .ball-size-xl();
-  .ball-solid(fade(@gray, 70));
+  .ball-solid(~"var(--gray-semilight, @{gray-semilight})");
   font-weight: bold;
   line-height: 1.75;
   text-transform: uppercase;
@@ -58,7 +58,7 @@ div.show-more {
 
 .usergroup-ball {
   .ball();
-  .ball-outline(@gray);
+  .ball-outline(~"var(--gray, @{gray})");
   .ball-size-xl();
   line-height: 1.75;
   text-transform: uppercase;
@@ -71,7 +71,7 @@ div.show-more {
 }
 
 .controls {
-  box-shadow: 0 0 0 1px @gray-lighter;
+  .box-shadow(0, 0, 0, 1px, ~"var(--gray-lighter, @{gray-lighter})");
   flex-shrink: 0;
   position: relative; // Required for the host meta info control
 
@@ -89,7 +89,7 @@ div.show-more {
 
   &.overdue,
   &.overdue .tabs li.active a {
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 
   .filter {
@@ -186,7 +186,7 @@ div.show-more {
 
 .object-detail .plugin-output {
   .rounded-corners(.25em);
-  background-color: @gray-lighter;
+  .var(background-color, gray-lighter);
   padding: .5em;
 }
 
@@ -220,14 +220,14 @@ div.show-more {
 }
 
 .text-muted {
-  color: @gray;
+  .var(color, "gray");
 }
 
 .accompanying-text {
-  color: @text-color-light;
+  .var(color, text-color-light);
 
   .subject {
-    color: @text-color;
+    .var(color, text-color);
     .user-select(all);
   }
 }
@@ -240,26 +240,27 @@ div.show-more {
 .downtime-detail button {
   .button();
 
-  background: @body-bg-color;
-  border: 1px solid @color-critical;
-  color: @color-critical;
+  .var(background, body-bg-color);
+  border: 1px solid;
+  .var(border-color, color-critical);
+  .var(color, color-critical);
 
   &:hover {
-    background-color: @color-critical;
-    color: @text-color-on-icinga-blue;
+    .var(background-color, color-critical);
+    .var(color, text-color-on-icinga-blue);
   }
 }
 
 .footer {
   display: flex;
-  box-shadow: 0 -1px 0 0 @gray-lighter;
+  .box-shadow(0, -1px, 0, 0, ~"var(--gray-lighter, @{gray-lighter})");
 
   .selection-count {
     flex: 1 1 auto;
 
     .selected-items {
       font-size: 1.25em;
-      color: @gray;
+      .var(color, "gray");
     }
   }
 
@@ -275,7 +276,7 @@ div.show-more {
 
   .item-count {
     font-size: 1.25em;
-    color: @gray;
+    .var(color, "gray");
   }
 
   .state-badges {

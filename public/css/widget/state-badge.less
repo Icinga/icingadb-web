@@ -1,6 +1,6 @@
 .state-badge {
   .rounded-corners();
-  color: @text-color-on-icinga-blue;
+  .var(color, text-color-on-icinga-blue);
   display: inline-block;
   font-size: 1em;
   min-width: 2em;
@@ -8,47 +8,47 @@
   text-align: center;
 
   &.state-critical {
-    background-color: @color-critical
+    .var(background-color, color-critical)
   }
 
   &.state-critical.handled {
-    background-color: @color-critical-handled
+    .var(background-color, color-critical-handled)
   }
 
   &.state-down {
-    background-color: @color-down
+    .var(background-color, color-down)
   }
 
   &.state-down.handled {
-    background-color: @color-down-handled
+    .var(background-color, color-down-handled)
   }
 
   &.state-ok {
-    background-color: @color-ok
+    .var(background-color, color-ok)
   }
 
   &.state-pending {
-    background-color: @color-pending
+    .var(background-color, color-pending)
   }
 
   &.state-unknown {
-    background-color: @color-unknown
+    .var(background-color, color-unknown)
   }
 
   &.state-unknown.handled {
-    background-color: @color-unknown-handled
+    .var(background-color, color-unknown-handled)
   }
 
   &.state-up {
-    background-color: @color-up
+    .var(background-color, color-up)
   }
 
   &.state-warning {
-    background-color: @color-warning
+    .var(background-color, color-warning)
   }
 
   &.state-warning.handled {
-    background-color: @color-warning-handled
+    .var(background-color, color-warning-handled)
   }
 }
 

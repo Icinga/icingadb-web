@@ -26,8 +26,9 @@
 
     .bubble {
       .rounded-corners(.25em);
-      background-color: @body-bg-color;
-      border: 1px solid @gray-light;
+      .var(background-color, body-bg-color);
+      border: 1px solid;
+      .var(border-color, gray-light);
       position: relative;
       box-shadow: 0 0 1em 0 rgba(0, 0, 0, .1);
       padding: .25em .5em;
@@ -48,9 +49,11 @@
       }
 
       &:before {
-        background-color: @body-bg-color;
-        border-bottom: 1px solid @gray-light;
-        border-right: 1px solid @gray-light;
+        .var(background-color, body-bg-color);
+        border-bottom: 1px solid;
+        .var(border-bottom-color, gray-light);
+        border-right: 1px solid;
+        .var(border-right-color, gray-light);
         content: "";
         display: block;
         height: 1em;
@@ -104,7 +107,7 @@
 
     .vertical-key-value {
       .key {
-        color: @gray;
+        .var(color, "gray");
         white-space: nowrap;
       }
 
@@ -117,7 +120,7 @@
 
     .timeline {
       .rounded-corners(.5em);
-      background-color: @gray-lighter;
+      .var(background-color, gray-lighter);
       height: 1em;
       margin: 1em 0;
       position: relative;
@@ -126,7 +129,7 @@
 
       .marker {
         .rounded-corners(50%);
-        background-color: @gray-light;
+        .var(background-color, gray-light);
         height: .857em;
         margin-left: -.857/2em;
         margin-top: -1/12em;
@@ -137,12 +140,12 @@
         top: 2/12em;
 
         &.now {
-          background-color: @gray;
+          .var(background-color, "gray");
         }
 
         &.start,
         &.end {
-          background-color: @icinga-blue;
+          .var(background-color, icinga-blue);
         }
       }
     }

@@ -6,7 +6,8 @@
   display: block;
 
   tr:not(:last-child) {
-    border-bottom: 1px solid @gray-lighter;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lighter);
   }
 
   td {
@@ -22,7 +23,8 @@
   }
 
   thead {
-    border-bottom: 1px solid @gray-light;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-light);
   }
 
   th:first-child,

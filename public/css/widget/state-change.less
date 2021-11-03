@@ -2,7 +2,7 @@
   display: inline-flex;
 
   .state-ball {
-    box-shadow: 0 0 0 1px @body-bg-color;
+    .box-shadow(0, 0, 0, 1px, ~"var(--body-bg-color, @{body-bg-color})");
   }
 
   .state-ball ~ .state-ball {
@@ -36,7 +36,7 @@
   .state-ball.state-up {
     &.ball-size-l,
     &.ball-size-xl {
-      background-color: @body-bg-color;
+      .var(background-color, body-bg-color);
     }
   }
 }
