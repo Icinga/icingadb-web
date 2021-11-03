@@ -64,7 +64,9 @@ class UrlMigrator
         if (! $url->getParams()->isEmpty()) {
             $filter = QueryString::parse((string) $url->getParams());
             $filter = self::transformFilter($filter, $queryTransformer);
-            $url->setQueryString(QueryString::render($filter));
+            if ($filter) {
+                $url->setQueryString(QueryString::render($filter));
+            }
         }
 
         return $url;
