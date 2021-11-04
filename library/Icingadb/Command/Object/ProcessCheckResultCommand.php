@@ -117,11 +117,11 @@ class ProcessCheckResultCommand extends ObjectCommand
     /**
      * Set the performance data of the host or service check result
      *
-     * @param   string $performanceData
+     * @param   string|null $performanceData
      *
      * @return  $this
      */
-    public function setPerformanceData(string $performanceData): self
+    public function setPerformanceData(string $performanceData = null): self
     {
         $this->performanceData = $performanceData;
 
