@@ -25,10 +25,10 @@ trait ServiceLink
 
         return Html::sprintf(
             t('%s on %s', '<service> on <host>'),
-            Html::tag('a', ['href' => Links::service($service, $host)], $content),
+            Html::tag('a', ['href' => Links::service($service, $host), 'class' => 'subject'], $content),
             Html::tag(
                 'a',
-                ['href' => Links::host($host)],
+                ['href' => Links::host($host), 'class' => 'subject'],
                 [
                     new StateBall($host->state->getStateText(), StateBall::SIZE_MEDIUM),
                     ' ',
