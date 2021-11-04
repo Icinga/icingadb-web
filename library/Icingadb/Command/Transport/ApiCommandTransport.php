@@ -294,7 +294,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @throws  CommandTransportException
      *
-     * @return  void
+     * @return  mixed
      */
     public function send(IcingaCommand $command, int $now = null)
     {
