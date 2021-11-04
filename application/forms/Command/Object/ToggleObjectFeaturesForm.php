@@ -72,6 +72,14 @@ class ToggleObjectFeaturesForm extends CommandForm
                         }
 
                         break;
+                    case ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS:
+                        if ($enabled) {
+                            $message = t('Enabled passive checks successfully');
+                        } else {
+                            $message = t('Disabled passive checks successfully');
+                        }
+
+                        break;
                     case ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER:
                         if ($enabled) {
                             $message = t('Enabled event handler successfully');
