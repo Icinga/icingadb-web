@@ -36,7 +36,7 @@
   .state-ball.state-up {
     &.ball-size-l,
     &.ball-size-xl {
-      .var(background-color, body-bg-color);
+      background-color: var(--body-bg-color, @body-bg-color);
     }
   }
 
@@ -72,28 +72,36 @@
       right: -2px;
       bottom: -2px;
       border-radius: 50%;
-      .var(background-color, body-bg-color);
+      background-color: var(--body-bg-color, @body-bg-color);
       z-index: 1;
     }
 
     &.state-pending:before {
-      background-color: @color-pending;
+      background-color: var(--color-pending, @color-pending);
     }
 
     &.state-down:before {
-      background-color: @color-down;
+      background-color: var(--color-down, @color-down);
     }
 
     &.state-warning:before {
-      background-color: @color-warning;
+      background-color: var(--color-warning, @color-warning);
     }
 
     &.state-critical:before {
-      background-color: @color-critical;
+      background-color: var(--color-critical, @color-critical);
     }
 
     &.state-unknown:before {
-      background-color: @color-warning;
+      background-color: var(--color-unknown, @color-unknown);
     }
+  }
+}
+
+.overdue .state-change .state-ball {
+  .box-shadow(0, 0, 0, 1px, ~"var(--gray-lighter, @{gray-lighter})");
+
+  &.handled:after {
+    background-color: var(--gray-lighter, @gray-lighter);
   }
 }
