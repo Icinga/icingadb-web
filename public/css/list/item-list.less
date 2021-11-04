@@ -8,8 +8,21 @@
     .var(background-color, gray-lightest);
   }
 
-  > .show-more a,
-  > .page-separator a {
+  > .show-more a {
+    .rounded-corners(.25em);
+    .var(background, low-sat-blue);
+    text-align: center;
+
+    &:hover {
+      opacity: .8;
+      text-decoration: none;
+    }
+  }
+
+  > .page-separator:after {
+    content: "";
+    display: block;
+    width: 100%;
     .rounded-corners();
     .var(background, gray-lightest);
     text-align: center;
@@ -40,8 +53,8 @@
     &.show-more a,
     &.page-separator a {
       flex: 1;
-      margin: .5em 0 0 3.5em;
-      padding: .5em 1em;
+      margin: 1.5em 0;
+      padding: .5em 0;
     }
 
     .main {
