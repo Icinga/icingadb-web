@@ -8,15 +8,35 @@
     .var(background-color, gray-lightest);
   }
 
-  > .show-more a,
-  > .page-separator a {
-    .rounded-corners();
-    .var(background, gray-lightest);
+  .show-more:hover,
+  .page-separator:hover {
+    background: none;
+  }
+
+  > .show-more a {
+    .rounded-corners(.25em);
+    .var(background, low-sat-blue);
     text-align: center;
+
+    &:hover {
+      opacity: .8;
+      text-decoration: none;
+    }
+  }
+
+  > .page-separator:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: @gray;
+    align-self: center;
+    margin-left: .25em;
   }
 
   > .page-separator a {
     .var(color, "gray");
+    font-weight: bold;
 
     &:hover {
       text-decoration: none;
@@ -37,11 +57,10 @@
   .list-item {
     display: flex;
 
-    &.show-more a,
-    &.page-separator a {
+    &.show-more a {
       flex: 1;
-      margin: .5em 0 0 3.5em;
-      padding: .5em 1em;
+      margin: 1.5em 0;
+      padding: .5em 0;
     }
 
     .main {
@@ -100,11 +119,6 @@
 
     .visual {
       width: 2.2em;
-    }
-
-    &.show-more a,
-    &.page-separator a {
-      margin-left: 2.7em;
     }
 
     .check-attempt {
