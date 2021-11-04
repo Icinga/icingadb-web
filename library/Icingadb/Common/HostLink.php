@@ -22,6 +22,6 @@ trait HostLink
 
         $content[] = $host->display_name;
 
-        return Html::tag('a', ['href' => Links::host($host)], $content);
+        return Html::tag('a', ['href' => Links::host($host), 'class' => 'subject'], $content);
     }
 }
