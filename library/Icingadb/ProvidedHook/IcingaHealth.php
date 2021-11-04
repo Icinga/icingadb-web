@@ -57,7 +57,12 @@ class IcingaHealth extends HealthHook
         }
     }
 
-    protected function getInstance(): Instance
+    /**
+     * Get an Icinga DB instance
+     *
+     * @return ?Instance
+     */
+    protected function getInstance()
     {
         if ($this->instance === null) {
             $this->instance = Instance::on($this->getDb())
