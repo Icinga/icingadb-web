@@ -107,16 +107,10 @@ abstract class ProblemsBadge extends NavigationItemRenderer
     /**
      * Get the title
      *
-     * @return string
+     * @return ?string
      */
-    public function getTitle(): string
+    public function getTitle()
     {
-        if ($this->title === null) {
-            throw new \LogicException(
-                'You are accessing an unset property. Please make sure to set it beforehand.'
-            );
-        }
-
         return $this->title;
     }
 
