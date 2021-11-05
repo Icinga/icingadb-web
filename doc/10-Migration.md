@@ -32,7 +32,7 @@ rules. Just copy them over.
 
 ![Url Migration Preview](res/url-migration-preview.png)
 
-The dashboard and navigation configuration does not change since these are related
+The dashboard and menu item configuration does not change since these are related
 to Icinga Web 2. However, if you've used the monitoring module's urls and you want
 to update them, this might be straight forward if it's only the url path that needs
 to change. Complex filters though can be cumbersome to rewrite.
@@ -41,6 +41,16 @@ That is why we provided the migration widget shown above. It will show up for ev
 monitoring module url for which there is a counterpart in Icinga DB Web. You can then
 switch to the respective view in Icinga DB Web with a single click and either use the
 new url from the address bar or add it the usual way to the dashboard and sidebar.
+
+Host and service actions on the other hand are part of the monitoring module. For them
+Icinga DB Web provides their own counterparts. You don't need to migrate them manually
+though. The `migrate` command of Icinga Web 2 (>= v2.9.4) provides an action for that:
+
+`icingacli migrate navigation [--user=<username>] [--delete]`
+
+By default this will migrate the configuration of all users and won't delete the old
+ones. It can be restricted to a single user and the removal of the old configuration
+can be enabled as well.
 
 ### Automation
 
