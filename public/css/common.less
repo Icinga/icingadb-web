@@ -88,7 +88,8 @@ div.show-more {
   }
 
   &.overdue,
-  &.overdue .tabs li.active a {
+  &.overdue .tabs li.active a,
+  &.overdue .object-meta-info-control {
     .var(background-color, gray-lighter);
   }
 
@@ -254,13 +255,13 @@ div.show-more {
 .footer {
   display: flex;
   .box-shadow(0, -1px, 0, 0, ~"var(--gray-lighter, @{gray-lighter})");
+  .var(color, text-color-light);
 
   .selection-count {
     flex: 1 1 auto;
 
     .selected-items {
       font-size: 1.25em;
-      .var(color, "gray");
     }
   }
 
@@ -276,7 +277,6 @@ div.show-more {
 
   .item-count {
     font-size: 1.25em;
-    .var(color, "gray");
   }
 
   .state-badges {

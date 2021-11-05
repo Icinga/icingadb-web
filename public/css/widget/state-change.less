@@ -36,7 +36,72 @@
   .state-ball.state-up {
     &.ball-size-l,
     &.ball-size-xl {
-      .var(background-color, body-bg-color);
+      background-color: var(--body-bg-color, @body-bg-color);
     }
+  }
+
+  // Avoid transparency on overlapping solid state-change state-balls
+  .state-ball.handled {
+    position: relative;
+    opacity: 1;
+
+    i {
+      position: relative;
+      z-index: 3;
+    }
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: 50%;
+      opacity: .6;
+      z-index: 2
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      background-color: var(--body-bg-color, @body-bg-color);
+      z-index: 1;
+    }
+
+    &.state-pending:before {
+      background-color: var(--color-pending, @color-pending);
+    }
+
+    &.state-down:before {
+      background-color: var(--color-down, @color-down);
+    }
+
+    &.state-warning:before {
+      background-color: var(--color-warning, @color-warning);
+    }
+
+    &.state-critical:before {
+      background-color: var(--color-critical, @color-critical);
+    }
+
+    &.state-unknown:before {
+      background-color: var(--color-unknown, @color-unknown);
+    }
+  }
+}
+
+.overdue .state-change .state-ball {
+  .box-shadow(0, 0, 0, 1px, ~"var(--gray-lighter, @{gray-lighter})");
+
+  &.handled:after {
+    background-color: var(--gray-lighter, @gray-lighter);
   }
 }

@@ -7,20 +7,16 @@
   padding: .25em;
   text-align: center;
 
+  &.handled {
+    opacity: .8;
+  }
+
   &.state-critical {
     .var(background-color, color-critical)
   }
 
-  &.state-critical.handled {
-    .var(background-color, color-critical-handled)
-  }
-
   &.state-down {
     .var(background-color, color-down)
-  }
-
-  &.state-down.handled {
-    .var(background-color, color-down-handled)
   }
 
   &.state-ok {
@@ -35,20 +31,12 @@
     .var(background-color, color-unknown)
   }
 
-  &.state-unknown.handled {
-    .var(background-color, color-unknown-handled)
-  }
-
   &.state-up {
     .var(background-color, color-up)
   }
 
   &.state-warning {
     .var(background-color, color-warning)
-  }
-
-  &.state-warning.handled {
-    .var(background-color, color-warning-handled)
   }
 }
 
