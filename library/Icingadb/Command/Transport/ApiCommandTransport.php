@@ -312,7 +312,7 @@ class ApiCommandTransport implements CommandTransportInterface
     {
         try {
             $response = (new Client())
-                ->get($this->getUriFor(null), [
+                ->get($this->getUriFor(''), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
                     'headers'       => ['Accept' => 'application/json'],
                     'http_errors'   => false,
