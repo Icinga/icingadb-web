@@ -98,7 +98,7 @@ class CommandTransport implements CommandTransportInterface
      *
      * @throws  CommandTransportException   If sending the Icinga command failed
      *
-     * @return  void
+     * @return  mixed
      */
     public function send(IcingaCommand $command, int $now = null)
     {

@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Html;
@@ -14,7 +15,7 @@ class HostDetail extends ObjectDetail
 {
     protected $serviceSummary;
 
-    public function __construct($object, ServicestateSummary $serviceSummary)
+    public function __construct(Host $object, ServicestateSummary $serviceSummary)
     {
         parent::__construct($object);
 

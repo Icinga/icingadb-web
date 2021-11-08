@@ -218,7 +218,14 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         );
     }
 
-    private function formatTimestamp($ts): string
+    /**
+     * Format the given timestamp
+     *
+     * @param int|float|null $ts
+     *
+     * @return EmptyState|string
+     */
+    private function formatTimestamp($ts)
     {
         if (empty($ts)) {
             return new EmptyState(t('n. a.'));
@@ -234,7 +241,14 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             ->format('Y-m-d\TH:i:s.vP');
     }
 
-    private function formatMillisecondTimestamp($ms): string
+    /**
+     * Format the given timestamp (in milliseconds)
+     *
+     * @param int|float|null $ms
+     *
+     * @return EmptyState|string
+     */
+    private function formatMillisecondTimestamp($ms)
     {
         return $this->formatTimestamp($ms / 1000.0);
     }
@@ -249,7 +263,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         return Format::seconds($ms / 1000.0);
     }
 
-    private function formatState(int $state): string
+    private function formatState(int $state)
     {
         switch (true) {
             case $this->object instanceof Host:

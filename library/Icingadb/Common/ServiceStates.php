@@ -56,13 +56,13 @@ class ServiceStates
     /**
      * Get the textual representation of the passed service state
      *
-     * @param int $state
+     * @param int|null $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function text(int $state): string
+    public static function text(int $state = null): string
     {
         switch (true) {
             case $state === self::OK:
@@ -93,13 +93,13 @@ class ServiceStates
     /**
      * Get the translated textual representation of the passed service state
      *
-     * @param int $state
+     * @param int|null $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function translated(int $state): string
+    public static function translated(int $state = null): string
     {
         switch (true) {
             case $state === self::OK:
