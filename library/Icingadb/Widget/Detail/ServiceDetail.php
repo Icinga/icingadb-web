@@ -5,9 +5,15 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
+use Icinga\Module\Icingadb\Model\Service;
 
 class ServiceDetail extends ObjectDetail
 {
+    public function __construct(Service $object)
+    {
+        parent::__construct($object);
+    }
+
     protected function assemble()
     {
         $this->add(ObjectDetailExtensionHook::injectExtensions([
