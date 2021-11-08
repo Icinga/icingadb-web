@@ -21,6 +21,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
 class ServiceController extends Controller
@@ -150,6 +151,8 @@ class ServiceController extends Controller
         if ($page > 1 && ! $compact) {
             $history->limit($page * $limitControl->getLimit());
         }
+
+        $history->filter(Filter::lessThanOrEqual('event_time', $before));
 
         yield $this->export($history);
 
