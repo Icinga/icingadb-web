@@ -122,28 +122,22 @@ abstract class ProblemsBadge extends NavigationItemRenderer
 
         $item->setCssClass('badge-nav-item icinga-module module-icingadb');
 
+        $html = new HtmlDocument();
+
         $badge = $this->createBadge();
-
-        if ($this->linkDisabled) {
-            $badge->addAttributes(['class' => 'disabled']);
-            $this->setEscapeLabel(false);
-            $label = $this->view()->escape($item->getLabel());
-            $item->setLabel($badge . $label);
-
-            return (new HtmlDocument())
-                ->add(new HtmlString(parent::render($item)))
-                ->render();
+        if ($badge !== null) {
+            if ($this->linkDisabled) {
+                $badge->addAttributes(['class' => 'disabled']);
+                $this->setEscapeLabel(false);
+                $label = $this->view()->escape($item->getLabel());
+                $item->setLabel($badge . $label);
+            } else {
+                $html->add(new Link($badge, $this->getUrl(), ['title' => $this->getTitle()]));
+            }
         }
 
-        $badge = new Link(
-            $badge,
-            $this->getUrl(),
-            ['title' => $this->getTitle()]
-        );
-
-        return (new HtmlDocument())
-            ->add(new HtmlString(parent::render($item)))
-            ->add($badge)
+        return $html
+            ->prepend(new HtmlString(parent::render($item)))
             ->render();
     }
 
