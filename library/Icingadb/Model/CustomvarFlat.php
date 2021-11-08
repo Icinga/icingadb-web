@@ -40,7 +40,9 @@ class CustomvarFlat extends Model
 
         $relations->belongsToMany('checkcommand', Checkcommand::class)
             ->through(CheckcommandCustomvar::class)
-            ->setCandidateKey('customvar_id');
+            ->setCandidateKey('customvar_id')
+            ->setTargetCandidateKey('command_id')
+            ->setTargetForeignKey('id');;
         $relations->belongsToMany('eventcommand', Eventcommand::class)
             ->through(EventcommandCustomvar::class)
             ->setCandidateKey('customvar_id');
