@@ -167,7 +167,7 @@ class Controller extends CompatController
 
         $searchBar = new SearchBar();
         $searchBar->setFilter($filter);
-        $searchBar->setAction($requestUrl->getAbsoluteUrl());
+        $searchBar->setAction($redirectUrl->getAbsoluteUrl());
         $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
 
         if (method_exists($this, 'completeAction')) {
