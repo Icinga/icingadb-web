@@ -274,20 +274,20 @@ namespace Icinga\Module\Icingadb {
             'priority' => 20
         ]);
         $problemSection->add(N_('Host Problems'), [
-            'renderer' => (new HostProblemsBadge())->disableLink(),
+            'renderer'    => (new HostProblemsBadge())->disableLink(),
             'icon'        => 'server',
             'description' => $this->translate('List current host problems'),
-            'url'       => 'icingadb/hosts?host.state.is_problem=y'
+            'url'         => 'icingadb/hosts?host.state.is_problem=y'
                 . '&sort=host.state.severity desc',
-            'priority'  => 50
+            'priority'    => 50
         ]);
         $problemSection->add(N_('Service Problems'), [
-            'renderer' => (new ServiceProblemsBadge())->disableLink(),
+            'renderer'    => (new ServiceProblemsBadge())->disableLink(),
             'icon'        => 'cog',
             'description' => $this->translate('List current service problems'),
-            'url'       => 'icingadb/services?service.state.is_problem=y'
+            'url'         => 'icingadb/services?service.state.is_problem=y'
                 . '&sort=service.state.severity desc',
-            'priority'  => 60
+            'priority'    => 60
         ]);
         $problemSection->add(N_('Service Grid'), [
             'icon'        => 'cogs',
@@ -298,9 +298,9 @@ namespace Icinga\Module\Icingadb {
 
         $problemSection->add(N_('Current Downtimes'), [
             'description' => $this->translate('List current downtimes'),
-            'url' => 'icingadb/downtimes?downtime.is_in_effect=y',
-            'priority' => 80,
-            'icon'     => 'plug'
+            'url'         => 'icingadb/downtimes?downtime.is_in_effect=y',
+            'priority'    => 80,
+            'icon'        => 'plug'
         ]);
 
         /**
@@ -309,27 +309,27 @@ namespace Icinga\Module\Icingadb {
          * Overview section in case monitoring is disabled
          */
         $overviewSection = $this->menuSection('Overview', [
-            'icon'      => 'binoculars',
-            'priority'  => 30
+            'icon'     => 'binoculars',
+            'priority' => 30
         ]);
 
         $overviewSection->add(N_('Tactical Overview'), [
-            'url' => 'icingadb/tactical',
+            'url'         => 'icingadb/tactical',
             'description' => $this->translate('Open tactical overview'),
-            'priority' => 40,
-            'icon'     => 'chart-pie'
+            'priority'    => 40,
+            'icon'        => 'chart-pie'
         ]);
         $overviewSection->add(N_('Hosts'), [
-            'priority' => 50,
+            'priority'    => 50,
             'description' => $this->translate('List hosts'),
-            'url'      => 'icingadb/hosts',
-            'icon'     => 'server'
+            'url'         => 'icingadb/hosts',
+            'icon'        => 'server'
         ]);
         $overviewSection->add(N_('Services'), [
-            'priority' => 50,
+            'priority'    => 50,
             'description' => $this->translate('List services'),
-            'url'      => 'icingadb/services',
-            'icon'     => 'cog'
+            'url'         => 'icingadb/services',
+            'icon'        => 'cog'
         ]);
         $auth = Auth::getInstance();
         $routeBlacklist = [];
@@ -343,50 +343,50 @@ namespace Icinga\Module\Icingadb {
         if (! array_key_exists('servicegroups', $routeBlacklist)) {
             $overviewSection->add(N_('Service Groups'), [
                 'description' => $this->translate('List service groups'),
-                'url' => 'icingadb/servicegroups',
-                'priority' => 60,
-                'icon'     => 'cogs'
+                'url'         => 'icingadb/servicegroups',
+                'priority'    => 60,
+                'icon'        => 'cogs'
             ]);
         }
 
         if (! array_key_exists('hostgroups', $routeBlacklist)) {
             $overviewSection->add(N_('Host Groups'), [
                 'description' => $this->translate('List host groups'),
-                'url' => 'icingadb/hostgroups',
-                'priority' => 60,
-                'icon'     => 'network-wired'
+                'url'         => 'icingadb/hostgroups',
+                'priority'    => 60,
+                'icon'        => 'network-wired'
             ]);
         }
 
         if (! array_key_exists('users', $routeBlacklist)) {
             $overviewSection->add(N_('Contacts'), [
                 'description' => $this->translate('List contacts'),
-                'url' => 'icingadb/users',
-                'priority' => 70,
-                'icon'     => 'user-friends'
+                'url'         => 'icingadb/users',
+                'priority'    => 70,
+                'icon'        => 'user-friends'
             ]);
         }
 
         if (! array_key_exists('usergroups', $routeBlacklist)) {
             $overviewSection->add(N_('Contactgroups'), [
                 'description' => $this->translate('List users'),
-                'url' => 'icingadb/usergroups',
-                'priority' => 70,
-                'icon'     => 'users'
+                'url'         => 'icingadb/usergroups',
+                'priority'    => 70,
+                'icon'        => 'users'
             ]);
         }
 
         $overviewSection->add(N_('Comments'), [
-            'url' => 'icingadb/comments',
+            'url'         => 'icingadb/comments',
             'description' => $this->translate('List comments'),
-            'priority' => 80,
-            'icon'     => 'comments'
+            'priority'    => 80,
+            'icon'        => 'comments'
         ]);
         $overviewSection->add(N_('Downtimes'), [
-            'url' => 'icingadb/downtimes',
+            'url'         => 'icingadb/downtimes',
             'description' => $this->translate('List downtimes'),
-            'priority' => 80,
-            'icon'     => 'plug'
+            'priority'    => 80,
+            'icon'        => 'plug'
         ]);
 
         /**
@@ -396,8 +396,8 @@ namespace Icinga\Module\Icingadb {
          */
 
         $section = $this->menuSection(N_('History'), array(
-            'icon'      => 'history',
-            'priority'  => 90
+            'icon'     => 'history',
+            'priority' => 90
         ));
 
         $section->add(N_('Event Overview'), array(
@@ -444,17 +444,17 @@ namespace Icinga\Module\Icingadb {
             'icon'     => 'cog'
         ]);
         $section->add(N_('Downtimes'), [
-            'url' => 'icingadb/downtimes',
+            'url'      => 'icingadb/downtimes',
             'priority' => 30,
             'icon'     => 'plug'
         ]);
         $section->add(N_('Comments'), [
-            'url' => 'icingadb/comments',
+            'url'      => 'icingadb/comments',
             'priority' => 40,
             'icon'     => 'comments'
         ]);
         $section->add(N_('Notifications'), [
-            'url' => 'icingadb/notifications',
+            'url'      => 'icingadb/notifications',
             'priority' => 50,
             'icon'     => 'bell'
         ]);
@@ -476,7 +476,7 @@ namespace Icinga\Module\Icingadb {
 
         if (! array_key_exists('users', $routeBlacklist)) {
             $section->add(N_('Users'), [
-                'url' => 'icingadb/users',
+                'url'      => 'icingadb/users',
                 'priority' => 60,
                 'icon'     => 'user-friends'
             ]);
@@ -484,7 +484,7 @@ namespace Icinga\Module\Icingadb {
 
         if (! array_key_exists('usergroups', $routeBlacklist)) {
             $section->add(N_('User Groups'), [
-                'url' => 'icingadb/usergroups',
+                'url'      => 'icingadb/usergroups',
                 'priority' => 70,
                 'icon'     => 'users'
             ]);
@@ -492,7 +492,7 @@ namespace Icinga\Module\Icingadb {
 
         if (! array_key_exists('hostgroups', $routeBlacklist)) {
             $section->add(N_('Host Groups'), [
-                'url' => 'icingadb/hostgroups',
+                'url'      => 'icingadb/hostgroups',
                 'priority' => 80,
                 'icon'     => 'network-wired'
             ]);
@@ -500,24 +500,24 @@ namespace Icinga\Module\Icingadb {
 
         if (! array_key_exists('servicegroups', $routeBlacklist)) {
             $section->add(N_('Service Groups'), [
-                'url' => 'icingadb/servicegroups',
+                'url'      => 'icingadb/servicegroups',
                 'priority' => 80,
                 'icon'     => 'cogs'
             ]);
         }
 
         $section->add(N_('History'), [
-            'url' => 'icingadb/history',
+            'url'      => 'icingadb/history',
             'priority' => 90,
             'icon'     => 'history'
         ]);
         $section->add(N_('Health'), [
-            'url' => 'icingadb/health',
+            'url'      => 'icingadb/health',
             'priority' => 100,
             'icon'     => 'heartbeat'
         ]);
         $section->add(N_('Tactical Overview'), [
-            'url' => 'icingadb/tactical',
+            'url'      => 'icingadb/tactical',
             'priority' => 110,
             'icon'     => 'chart-pie'
         ]);
