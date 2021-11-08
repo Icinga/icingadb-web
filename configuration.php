@@ -2,14 +2,12 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb
-{
-    use Exception;
+namespace Icinga\Module\Icingadb {
+
     use Icinga\Authentication\Auth;
     use Icinga\Module\Icingadb\Web\Navigation\Renderer\HostProblemsBadge;
     use Icinga\Module\Icingadb\Web\Navigation\Renderer\ServiceProblemsBadge;
     use Icinga\Util\StringHelper;
-    use ipl\Web\Widget\Icon;
     use RecursiveDirectoryIterator;
     use RecursiveIteratorIterator;
 
