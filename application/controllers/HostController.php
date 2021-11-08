@@ -24,6 +24,7 @@ use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
 
@@ -149,6 +150,8 @@ class HostController extends Controller
         if ($page > 1 && ! $compact) {
             $history->limit($page * $limitControl->getLimit());
         }
+
+        $history->filter(Filter::lessThanOrEqual('event_time', $before));
 
         yield $this->export($history);
 
