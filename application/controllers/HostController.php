@@ -63,7 +63,7 @@ class HostController extends Controller
     {
         $serviceSummary = ServicestateSummary::on($this->getDb())->with('state');
         $serviceSummary->getSelectBase()
-            ->where(['host_id = ?' => $this->host->id]);
+            ->where(['service.host_id = ?' => $this->host->id]);
 
         $this->applyRestrictions($serviceSummary);
 
