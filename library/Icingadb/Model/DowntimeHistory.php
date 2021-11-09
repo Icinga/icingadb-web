@@ -91,6 +91,7 @@ class DowntimeHistory extends Model
             'entry_time',
             'scheduled_start_time',
             'scheduled_end_time',
+            'flexible_duration',
             'start_time',
             'end_time',
             'trigger_time',
