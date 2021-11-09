@@ -5,17 +5,15 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Downtime;
-use Icinga\Module\Icingadb\Common\BaseListItem;
-use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
-use ipl\Html\Attributes;
+use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -57,14 +55,9 @@ abstract class BaseDowntimeListItem extends BaseListItem
     {
         if ($this->item->is_flexible && $this->item->is_in_effect) {
             $this->startTime = $this->item->start_time;
+            $this->endTime = $this->item->end_time;
         } else {
             $this->startTime = $this->item->scheduled_start_time;
-        }
-
-        if ($this->item->is_flexible && $this->item->is_in_effect) {
-//            $this->endTime = $this->item->end_time;
-            $this->endTime = $this->item->start_time + $this->item->flexible_duration;
-        } else {
             $this->endTime = $this->item->scheduled_end_time;
         }
 
@@ -83,7 +76,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
 
-        if ($this->isActive && $this->item->is_in_effect) {
+        if ($this->item->is_in_effect) {
             $this->getAttributes()->add('class', 'in-effect');
         }
     }

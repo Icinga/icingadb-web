@@ -41,18 +41,6 @@ class DowntimeDetail extends BaseHtmlElement
     /** @var Downtime */
     protected $downtime;
 
-    /** @var int */
-    protected $duration;
-
-    /** @var string */
-    protected $endTime;
-
-    /** @var bool  */
-    protected $isActive;
-
-    /** @var string */
-    protected $startTime;
-
     protected $defaultAttributes = ['class' => ['object-detail', 'downtime-detail']];
 
     protected $tag = 'div';
@@ -60,23 +48,6 @@ class DowntimeDetail extends BaseHtmlElement
     public function __construct(Downtime $downtime)
     {
         $this->downtime = $downtime;
-
-        if ($this->downtime->is_flexible && $this->downtime->is_in_effect) {
-            $this->startTime = $this->downtime->start_time;
-        } else {
-            $this->startTime = $this->downtime->scheduled_start_time;
-        }
-
-        if ($this->downtime->is_flexible && $this->downtime->is_in_effect) {
-            $this->endTime = $this->downtime->start_time + $this->downtime->flexible_duration;
-        } else {
-            $this->endTime = $this->downtime->scheduled_end_time;
-        }
-
-        $this->isActive = $this->downtime->is_in_effect
-            || $this->downtime->is_flexible && $this->downtime->scheduled_start_time <= time();
-
-        $this->duration = ($this->isActive ? $this->endTime : $this->startTime) - time();
     }
 
     protected function createCancelDowntimeForm()
@@ -159,9 +130,7 @@ class DowntimeDetail extends BaseHtmlElement
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Duration'),
-            DateFormatter::formatDuration(
-                $this->downtime->scheduled_end_time - $this->downtime->scheduled_start_time
-            )
+            DateFormatter::formatDuration($this->downtime->scheduled_duration)
         ));
         if ($this->downtime->is_flexible) {
             $this->add(new HorizontalKeyValue(
