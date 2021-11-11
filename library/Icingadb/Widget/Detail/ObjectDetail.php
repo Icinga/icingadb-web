@@ -477,16 +477,30 @@ class ObjectDetail extends BaseHtmlElement
     {
         $users = [];
         $usergroups = [];
+        $groupBy = false;
 
-        $objectFilter = Filter::equal(
-            'notification.' . ($this->objectType === 'host' ? 'host_id' : 'service_id'),
-            $this->object->id
-        );
+        if ($this->objectType === 'host') {
+            $objectFilter = Filter::all(
+                Filter::equal('notification.host_id', $this->object->id),
+                Filter::unequal('notification.service_id', '*')
+            );
+            $objectFilter->metaData()->set('forceOptimization', false);
+            $groupBy = true;
+        } else {
+            $objectFilter = Filter::equal(
+                'notification.service_id',
+                $this->object->id
+            );
+        }
 
         if ($this->isPermittedRoute('users')) {
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
             $this->applyRestrictions($userQuery);
+            if ($groupBy) {
+                $userQuery->getSelectBase()->groupBy(['user.id']);
+            }
+
             foreach ($userQuery as $user) {
                 $users[$user->name] = $user;
             }
@@ -496,6 +510,10 @@ class ObjectDetail extends BaseHtmlElement
             $usergroupQuery = Usergroup::on($this->getDb());
             $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);
+            if ($groupBy) {
+                $userQuery->getSelectBase()->groupBy(['usergroup.id']);
+            }
+
             foreach ($usergroupQuery as $usergroup) {
                 $usergroups[$usergroup->name] = $usergroup;
             }
