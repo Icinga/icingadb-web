@@ -24,6 +24,22 @@
         '   <button type="button" value="0"><i class="icon-"></i></button>\n' +
         '</li>';
 
+    const BACKEND_FORM = '<form id="setAsBackendForm" name="IcingaModuleIcingadbFormsSetAsBackendForm" ' +
+        'class="icinga-form icinga-controls" method="post" action="icingadb/migrate/checkbox-submit" ' +
+        'data-base-target="migrate-popup-backend-submit-blackhole">\n' +
+        '   <div class="wrapper">\n' +
+        '      <div class="checkbox-label">\n' +
+        '         <span><label for="setAsBackendForm-checkbox">Use Icinga DB As Backend</label></span>\n' +
+        '      </div>\n' +
+        '      <input type="checkbox" name="backend" value="1" id="setAsBackendForm-checkbox" class="autosubmit sr-only">\n' +
+        '      <label for="setAsBackendForm-checkbox" aria-hidden="true" class="toggle-switch">\n' +
+        '         <span class="toggle-slider"></span>\n' +
+        '      </label>\n' +
+        '     </div>\n' +
+        '   <input type="hidden" name="formUID" value="IcingaModuleIcingadbFormsSetAsBackendForm" id="IcingaModuleIcingadbFormsSetAsBackendForm">\n' +
+        '   <div id="migrate-popup-backend-submit-blackhole"></div>\n' +
+        '</form>';
+
     /**
      * Icinga DB Migration behavior.
      *
@@ -34,6 +50,10 @@
 
         this.icinga = icinga;
         this.knownMigrations = {};
+        this.knownBackendSupport = {};
+        this.urlMigrationReadyState = null;
+        this.backendSupportReadyState = null;
+        this.backendSupportRelated = {};
         this.$popup = null;
 
         // Some persistence, we don't want to annoy our users too much
@@ -44,7 +64,6 @@
 
         // We don't want to ask the server to migrate non-monitoring urls
         this.isMonitoringUrl = new RegExp('^' + icinga.config.baseUrl + '/monitoring/');
-
         this.on('rendered', this.onRendered, this);
         this.on('close-column', this.onColumnClose, this);
         this.on('click', '#migrate-popup button.close', this.onClose, this);
@@ -55,17 +74,32 @@
 
     Migrate.prototype = new Icinga.EventListener();
 
+    Migrate.prototype.update = function (data) {
+        if (data !== 'bogus') {
+            return;
+        }
+
+        $.each(this.backendSupportRelated, (id, _) => {
+            let $container = $('#' + id);
+            let req = this.icinga.loader.loadUrl($container.data('icingaUrl'), $container);
+            req.addToHistory = false;
+            req.scripted = true;
+        });
+    };
+
     Migrate.prototype.onRendered = function(event) {
         var _this = event.data.self;
         var $target = $(event.target);
 
         if (! $target.is('#main > .container')) {
-            var attrUrl = $target.attr('data-icinga-url');
-            var dataUrl = $target.data('icingaUrl');
-            if (!! attrUrl && attrUrl !== dataUrl) {
-                // Search urls are redirected, update any migration suggestions
-                _this.prepareMigration($target);
-                return;
+            if ($target.is('#main .container')) {
+                var attrUrl = $target.attr('data-icinga-url');
+                var dataUrl = $target.data('icingaUrl');
+                if (!! attrUrl && attrUrl !== dataUrl) {
+                    // Search urls are redirected, update any migration suggestions
+                    _this.prepareMigration($target);
+                    return;
+                }
             }
 
             // We are else really only interested in top-level containers
@@ -89,32 +123,47 @@
     };
 
     Migrate.prototype.prepareMigration = function($target) {
-        var urls = {};
-        var href;
+        let urls = {};
+        let modules = {}
 
-        var _this = this;
-        $target.each(function () {
-            var $container = $(this);
-            href = $container.data('icingaUrl');
+        $target.each((_, container) => {
+            let $container = $(container);
+            let href = $container.data('icingaUrl');
+            let containerId = $container.attr('id');
 
-            if (typeof href !== 'undefined' && href.match(_this.isMonitoringUrl)) {
-                var containerId = $container.attr('id');
-
+            if (typeof href !== 'undefined' && href.match(this.isMonitoringUrl)) {
                 if (
-                    typeof _this.previousMigrations[containerId] !== 'undefined'
-                    && _this.previousMigrations[containerId] === href
+                    typeof this.previousMigrations[containerId] !== 'undefined'
+                    && this.previousMigrations[containerId] === href
                 ) {
-                    delete _this.previousMigrations[containerId];
+                    delete this.previousMigrations[containerId];
                 } else {
                     urls[containerId] = href;
                 }
             }
+
+            let moduleName = $container.data('icingaModule');
+            if (!! moduleName && moduleName !== 'default' && moduleName !== 'monitoring' && moduleName !== 'icingadb') {
+                modules[containerId] = moduleName;
+            }
         });
 
-        if (this.icinga.utils.objectKeys(urls).length) {
+        if (Object.keys(urls).length) {
+            this.setUrlMigrationReadyState(false);
             this.migrateMonitoringUrls(urls);
         } else {
-            this.cleanupSuggestions();
+            this.setUrlMigrationReadyState(null);
+        }
+
+        if (Object.keys(modules).length) {
+            this.setBackendSupportReadyState(false);
+            this.prepareBackendCheckboxForm(modules);
+        } else {
+            this.setBackendSupportReadyState(null);
+        }
+
+        if (this.urlMigrationReadyState === null && this.backendSupportReadyState === null) {
+            this.cleanupPopup();
         }
     };
 
@@ -138,12 +187,26 @@
                     // Container moved
                     $suggestion.attr('id', 'suggest-' + $newContainer.attr('id'));
                     $suggestion.data('containerId', $newContainer.attr('id'));
-                } else {
-                    // Container closed
-                    $suggestion.remove();
                 }
             }
         });
+
+        let backendSupportRelated = { ..._this.backendSupportRelated };
+        $.each(backendSupportRelated, (id, module) => {
+            let $container = $('#' + id);
+            if (! $container.length || $container.data('icingaModule') !== module) {
+                let $newContainer = $('#main > .container').filter(function () {
+                    return $(this).data('icingaModule') === module;
+                });
+                if ($newContainer.length) {
+                    _this.backendSupportRelated[$newContainer.attr('id')] = module;
+                }
+
+                delete _this.backendSupportRelated[id];
+            }
+        });
+
+        _this.cleanupPopup();
     };
 
     Migrate.prototype.onClose = function(event) {
@@ -203,6 +266,7 @@
         var _this = this,
             containerIds = [],
             containerUrls = [];
+
         $.each(urls, function (containerId, containerUrl) {
             if (typeof _this.knownMigrations[containerUrl] === 'undefined') {
                 containerUrls.push(containerUrl);
@@ -223,11 +287,11 @@
             req.urls = urls;
             req.urlIndexToContainerId = containerIds;
             req.done(this.processUrlMigrationResults);
-            req.always(_this.cleanupSuggestions);
+            req.always(() => this.changeUrlMigrationReadyState(true));
         } else {
             // All urls have already been migrated once, show popup immediately
             this.addSuggestions(urls);
-            this.cleanupSuggestions();
+            this.changeUrlMigrationReadyState(true);
         }
     };
 
@@ -252,6 +316,85 @@
 
         this.addSuggestions(req.urls);
     };
+
+    Migrate.prototype.prepareBackendCheckboxForm = function(modules) {
+        let containerIds = [];
+        let moduleNames = [];
+
+        $.each(modules, (id, module) => {
+            if (typeof this.knownBackendSupport[module] === 'undefined') {
+                containerIds.push(id);
+                moduleNames.push(module);
+            }
+        });
+
+        if (moduleNames.length) {
+            let req = $.ajax({
+                context     : this,
+                type        : 'post',
+                url         : this.icinga.config.baseUrl + '/icingadb/migrate/backend-support',
+                headers     : { 'Accept': 'application/json' },
+                contentType : 'application/json',
+                data        : JSON.stringify(moduleNames)
+            });
+
+            req.modules = modules;
+            req.moduleIndexToContainerId = containerIds;
+            req.done(this.processBackendSupportResults);
+            req.always(() => this.changeBackendSupportReadyState(true));
+        } else {
+            // All modules have already been checked once, show popup immediately
+            this.setupBackendCheckboxForm(modules);
+            this.changeBackendSupportReadyState(true);
+        }
+    };
+
+    Migrate.prototype.processBackendSupportResults = function(data, textStatus, req) {
+        let result = data.data;
+
+        $.each(result, (i, state) => {
+            let containerId = req.moduleIndexToContainerId[i];
+            this.knownBackendSupport[req.modules[containerId]] = state;
+        });
+
+        this.setupBackendCheckboxForm(req.modules);
+    };
+
+    Migrate.prototype.setupBackendCheckboxForm = function(modules) {
+        let supportedModules = {};
+
+        $.each(modules, (id, module) => {
+            if (this.knownBackendSupport[module]) {
+                supportedModules[id] = module;
+            }
+        });
+
+        if (Object.keys(supportedModules).length) {
+            let $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
+            if (! $form.length) {
+                $form = $(BACKEND_FORM);
+                this.Popup().find('.suggestion-area > ul').after($form);
+            }
+
+            this.backendSupportRelated = { ...this.backendSupportRelated, ...supportedModules };
+
+            let req = $.ajax({
+                context : this,
+                type    : 'get',
+                url     : this.icinga.config.baseUrl + '/icingadb/migrate/checkbox-state'
+            });
+
+            req.done(this.setCheckboxState);
+        }
+    };
+
+    Migrate.prototype.setCheckboxState = function(isChecked, textStatus, req) {
+        var $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
+        var $checkbox = $form.find('input#setAsBackendForm-checkbox');
+
+        $checkbox.prop('checked', isChecked);
+        this.showPopup();
+    }
 
     Migrate.prototype.addSuggestions = function(urls) {
         var _this = this,
@@ -301,8 +444,7 @@
 
     Migrate.prototype.cleanupSuggestions = function() {
         var _this = this,
-            toBeRemoved = [],
-            willBeEmpty = true;
+            toBeRemoved = [];
         this.Popup().find('li').each(function () {
             var $suggestion = $(this);
             var $container = $('#' + $suggestion.data('containerId'));
@@ -316,22 +458,58 @@
                 || containerUrl === _this.knownMigrations[containerUrl]
             ) {
                 toBeRemoved.push($suggestion);
-            } else {
-                willBeEmpty = false;
             }
         });
 
-        if (willBeEmpty) {
+        return toBeRemoved;
+    };
+
+    Migrate.prototype.cleanupBackendForm = function () {
+        let $form = this.Popup().find('#setAsBackendForm');
+        if (! $form.length) {
+            return false;
+        }
+
+        let stillRelated = {};
+        $.each(this.backendSupportRelated, (id, module) => {
+            let $container = $('#' + id);
+            if ($container.length && $container.data('icingaModule') === module) {
+                stillRelated[id] = module;
+            }
+        });
+
+        this.backendSupportRelated = stillRelated;
+
+        if (Object.keys(stillRelated).length) {
+            return true;
+        }
+
+        return $form;
+    };
+
+    Migrate.prototype.cleanupPopup = function () {
+        let toBeRemoved = this.cleanupSuggestions();
+        let hasBackendForm = this.cleanupBackendForm();
+
+        if (hasBackendForm !== true && this.Popup().find('li').length === toBeRemoved.length) {
             this.hidePopup(function () {
                 // Let the transition finish first, looks cleaner
                 $.each(toBeRemoved, function (_, $suggestion) {
                     $suggestion.remove();
                 });
+
+                if (typeof hasBackendForm === 'object') {
+                    hasBackendForm.remove();
+                }
             });
         } else {
             $.each(toBeRemoved, function (_, $suggestion) {
                 $suggestion.remove();
             });
+
+            if (typeof hasBackendForm === 'object') {
+                hasBackendForm.remove();
+            }
         }
     };
 
@@ -375,6 +553,34 @@
         } else {
             this.minimizePopup();
             return true;
+        }
+    };
+
+    Migrate.prototype.setUrlMigrationReadyState = function (state) {
+        this.urlMigrationReadyState = state;
+    };
+
+    Migrate.prototype.changeUrlMigrationReadyState = function (state) {
+        this.setUrlMigrationReadyState(state);
+
+        if (this.backendSupportReadyState !== false) {
+            this.backendSupportReadyState = null;
+            this.urlMigrationReadyState = null;
+            this.cleanupPopup();
+        }
+    };
+
+    Migrate.prototype.setBackendSupportReadyState = function (state) {
+        this.backendSupportReadyState = state;
+    };
+
+    Migrate.prototype.changeBackendSupportReadyState = function (state) {
+        this.setBackendSupportReadyState(state);
+
+        if (this.urlMigrationReadyState !== false) {
+            this.backendSupportReadyState = null;
+            this.urlMigrationReadyState = null;
+            this.cleanupPopup();
         }
     };
 

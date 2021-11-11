@@ -540,6 +540,15 @@ namespace Icinga\Module\Icingadb {
         'title' => t('Configure the database backend'),
         'url'   => 'config/database'
     ]);
+
+    if ($this::exists('monitoring')) {
+        $this->provideConfigTab('backend', [
+            'label' => t('Backend'),
+            'title' => t('Configure IcingaDB as the Backend'),
+            'url'   => 'config/backend'
+        ]);
+    }
+
     $this->provideConfigTab('redis', [
         'label' => t('Redis'),
         'title' => t('Configure the Redis connections'),
@@ -561,6 +570,10 @@ namespace Icinga\Module\Icingadb {
     }
 
     $this->provideJsFile('action-list.js');
-    $this->provideJsFile('migrate.js');
     $this->provideJsFile('loadmore.js');
+
+    $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
+    if (! $forIe11) {
+        $this->provideJsFile('migrate.js');
+    }
 }
