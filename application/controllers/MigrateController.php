@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Exception;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
-use Icinga\Module\Icingadb\Icingadb;
+use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\Module\Icingadb\Web\Controller;
 use ipl\Web\Url;
 
@@ -66,7 +66,7 @@ class MigrateController extends Controller
         $this->assertHttpMethod('get');
 
         $this->getResponse()
-            ->setBody(Icingadb::isSetAsBackend())
+            ->setBody(IcingadbSupportHook::isIcingaDbSetAsPreferredBackend())
             ->sendResponse();
         exit;
     }

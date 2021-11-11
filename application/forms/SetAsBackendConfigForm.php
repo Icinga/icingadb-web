@@ -8,7 +8,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
-use Icinga\Module\Icingadb\Icingadb;
+use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Form;
@@ -22,7 +22,7 @@ class SetAsBackendConfigForm extends Form
         $this->addElement('checkbox', 'backend', [
             'label'         => t('Use icinga DB as backend for all modules'),
             'description'   => t('Use icinga db as backend resource for all modules'),
-            'value'         => Icingadb::isSetAsBackend(),
+            'value'         => IcingadbSupportHook::isIcingaDbSetAsPreferredBackend(),
         ]);
 
         $this->addElement(
@@ -86,7 +86,7 @@ class SetAsBackendConfigForm extends Form
             $preferences = new Preferences($preferencesStore->load());
             $webPreferences = $user->getPreferences()->get('icingaweb');
 
-            $webPreferences[Icingadb::PREFERENCE_NAME] = $setAsBackend;
+            $webPreferences[IcingadbSupportHook::PREFERENCE_NAME] = $setAsBackend;
             $preferences->icingaweb = $webPreferences;
         } catch (Exception $e) {
             Notification::error('Failed to save the preference');
