@@ -20,9 +20,4 @@ class SetAsBackendForm extends SetAsBackendConfigForm
         $this->removeElement('btn_submit');
         $this->removeElement('btn_submit_session');
     }
-
-    public function onSuccess()
-    {
-        $this->save($this->getElement('backend')->isChecked());
-    }
 }

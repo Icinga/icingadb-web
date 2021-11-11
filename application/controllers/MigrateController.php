@@ -7,8 +7,11 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Exception;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
+use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
 use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Web\Hook;
+use ipl\Html\HtmlString;
 use ipl\Web\Url;
 
 class MigrateController extends Controller
@@ -69,5 +72,53 @@ class MigrateController extends Controller
             ->setBody(IcingadbSupportHook::isIcingaDbSetAsPreferredBackend())
             ->sendResponse();
         exit;
+    }
+
+    public function checkboxSubmitAction()
+    {
+        $this->assertHttpMethod('post');
+
+        $form = (new SetAsBackendForm())
+            ->setOnSuccess(function () use (&$form) {
+                $this->addPart(HtmlString::create('"bogus"'), 'Behavior:Migrate');
+                $form->save($form->getElement('backend')->isChecked());
+                return false;
+            });
+        $form->handleRequest();
+    }
+
+    public function backendSupportAction()
+    {
+        $this->assertHttpMethod('post');
+        if (! $this->getRequest()->isApiRequest()) {
+            $this->httpBadRequest('No API request');
+        }
+
+        if (
+            ! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
+            || $matches[1] !== 'application/json'
+        ) {
+            $this->httpBadRequest('No JSON content');
+        }
+
+        $supportList = [];
+        foreach (Hook::all('Icingadb/IcingadbSupport') as $hook) {
+            /** @var IcingadbSupportHook $hook */
+            $supportList[$hook->getModule()->getName()] = $hook->supportsIcingaDb();
+        }
+
+        $moduleSupportStates = [];
+        foreach ($this->getRequest()->getPost() as $moduleName) {
+            if (isset($supportList[$moduleName])) {
+                $moduleSupportStates[] = $supportList[$moduleName];
+            } else {
+                $moduleSupportStates[] = false;
+            }
+        }
+
+        $this->getResponse()
+            ->json()
+            ->setSuccessData($moduleSupportStates)
+            ->sendResponse();
     }
 }

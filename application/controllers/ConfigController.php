@@ -8,7 +8,6 @@ use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Forms\SetAsBackendConfigForm;
 use Icinga\Module\Icingadb\Forms\DatabaseConfigForm;
 use Icinga\Module\Icingadb\Forms\RedisConfigForm;
-use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Widget\Tab;
@@ -50,11 +49,6 @@ class ConfigController extends Controller
 
     public function backendAction()
     {
-        // migration.js
-        (new SetAsBackendForm())
-            ->setRedirectUrl('__BACK__')
-            ->handleRequest();
-
         $form = new SetAsBackendConfigForm();
         $form->handleRequest();
 
