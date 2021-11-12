@@ -135,7 +135,8 @@ class ToggleObjectFeaturesForm extends CommandForm
                             self::LEAVE_UNCHANGED => t('Leave Unchanged'),
                             t('Disable All'),
                             t('Enable All')
-                        ]
+                        ],
+                        'value'         => self::LEAVE_UNCHANGED
                     ]
                 );
                 $decorator->decorate($this->getElement($feature));
