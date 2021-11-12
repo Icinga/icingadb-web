@@ -91,7 +91,7 @@ foreach ($pivotData as $hostName => $_) {
                             $service->service_display_name,
                             $service->host_display_name
                         ),
-                        'class'               => 'service-grid-link state-' . ServiceStates::text($service->service_state) . ($service->service_handled ? ' handled' : ''),
+                        'class'               => 'service-grid-link state-' . ServiceStates::text($service->service_state) . ($service->service_handled === 'y' ? ' handled' : ''),
                         'title'               => $service->service_output
                     )
                 ) ?>
