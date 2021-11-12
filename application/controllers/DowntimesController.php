@@ -68,6 +68,7 @@ class DowntimesController extends Controller
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
+
                 return;
             }
         } else {
