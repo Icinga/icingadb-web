@@ -228,9 +228,9 @@ class ServicesController extends Controller
 
         $problemToggle = $this->createProblemToggle();
         $sortControl = $this->createSortControl($query, [
-            'service.name' => t('Service Name'),
-            'host.name' => t('Host Name'),
-        ])->setDefault('service.name');
+            'service.display_name' => t('Service Name'),
+            'host.display_name' => t('Host Name'),
+        ])->setDefault('service.display_name');
         $searchBar = $this->createSearchBar($query, [
             LimitControl::DEFAULT_LIMIT_PARAM,
             $sortControl->getSortParam(),
@@ -258,18 +258,10 @@ class ServicesController extends Controller
         $this->addControl($searchBar);
         $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
 
-        if ($flipped) {
-            $xAxisCol = 'host_name';
-            $yAxisCol = 'service_name';
-        } else {
-            $xAxisCol = 'service_name';
-            $yAxisCol = 'host_name';
-        }
-
         $pivotFilter = $problemToggle->isChecked() ?
             Filter::equal('service.state.is_problem', 'y') : null;
 
-        $pivot = (new PivotTable($query, $xAxisCol, $yAxisCol, [
+        $columns = [
             'id',
             'host.id',
             'host_name' => 'host.name',
@@ -279,11 +271,22 @@ class ServicesController extends Controller
             'service_handled' => 'service.state.is_handled',
             'service_output' => 'service.state.output',
             'service_state' => 'service.state.soft_state'
-        ]))
-            ->setXAxisFilter($pivotFilter)
-            ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
-            ->setXAxisHeader($xAxisCol)
-            ->setYAxisHeader($yAxisCol);
+        ];
+
+        if ($flipped) {
+            $pivot = (new PivotTable($query, 'host_name', 'service_name', $columns))
+                ->setXAxisFilter($pivotFilter)
+                ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
+                ->setXAxisHeader('host_display_name')
+                ->setYAxisHeader('service_display_name');
+        } else {
+            $pivot = (new PivotTable($query, 'service_name', 'host_name', $columns))
+                ->setXAxisFilter($pivotFilter)
+                ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
+                ->setXAxisHeader('service_display_name')
+                ->setYAxisHeader('host_display_name');
+        }
+
 
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
