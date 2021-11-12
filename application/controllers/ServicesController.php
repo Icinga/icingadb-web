@@ -47,6 +47,7 @@ class ServicesController extends Controller
             'host.state',
             'icon_image'
         ]);
+        $services->getWith()['service.state']->setJoinType('INNER');
         $services->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($services);
