@@ -16,6 +16,11 @@ class HostStateBadges extends StateBadges
         return Links::hosts();
     }
 
+    protected function getType(): string
+    {
+        return 'host';
+    }
+
     protected function getPrefix(): string
     {
         return 'hosts';
