@@ -47,6 +47,7 @@ abstract class IcingadbSupportHook
      */
     final public static function useIcingaDbAsBackend(): bool
     {
-        return ! Icinga::app()->getModuleManager()->hasEnabled('monitoring') || self::isSetAsBackend();
+        return ! Icinga::app()->getModuleManager()->hasEnabled('monitoring')
+            || self::isIcingaDbSetAsPreferredBackend();
     }
 }
