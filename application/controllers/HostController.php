@@ -126,8 +126,8 @@ class HostController extends Controller
         $history
             ->getSelectBase()
             ->where([
-                'history_host.id = ?' => $this->host->id,
-                'history.object_type = ?' => 'host'
+                'history.host_id = ?' => $this->host->id,
+                'history.service_id IS NULL'
             ]);
 
         $before = $this->params->shift('before', time());
