@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
+use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 
@@ -159,7 +160,11 @@ class ToggleObjectFeaturesForm extends CommandForm
     protected function getCommand(Model $object): \Generator
     {
         foreach ($this->features as $feature => $spec) {
-            $featureState = $this->getElement($feature)->isChecked();
+            if ($this->getElement($feature) instanceof CheckboxElement) {
+                $featureState = $this->getElement($feature)->isChecked();
+            } else {
+                $featureState = $this->getElement($feature)->getValue();
+            }
 
             if (
                 ! $this->isGrantedOn($spec['permission'], $object)
