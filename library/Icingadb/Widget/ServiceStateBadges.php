@@ -16,6 +16,11 @@ class ServiceStateBadges extends StateBadges
         return Links::services();
     }
 
+    protected function getType(): string
+    {
+        return 'service';
+    }
+
     protected function getPrefix(): string
     {
         return 'services';

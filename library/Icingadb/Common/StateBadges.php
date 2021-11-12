@@ -19,6 +19,9 @@ abstract class StateBadges extends BaseHtmlElement
     /** @var object $item */
     protected $item;
 
+    /** @var string */
+    protected $type;
+
     /** @var string Prefix */
     protected $prefix;
 
@@ -37,6 +40,7 @@ abstract class StateBadges extends BaseHtmlElement
     public function __construct($item)
     {
         $this->item = $item;
+        $this->type = $this->getType();
         $this->prefix = $this->getPrefix();
         $this->url = $this->getBaseUrl();
     }
@@ -47,6 +51,13 @@ abstract class StateBadges extends BaseHtmlElement
      * @return Url
      */
     abstract protected function getBaseUrl(): Url;
+
+    /**
+     * Get the type of the items
+     *
+     * @return string
+     */
+    abstract protected function getType(): string;
 
     /**
      * Get the prefix for accessing state information
@@ -125,7 +136,7 @@ abstract class StateBadges extends BaseHtmlElement
         if (isset($this->item->$key) && $this->item->$key) {
             return Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$key, $state),
-                ['state.soft_state' => $this->getStateInt($state)]
+                [$this->type . '.state.soft_state' => $this->getStateInt($state)]
             ));
         }
 
@@ -148,14 +159,20 @@ abstract class StateBadges extends BaseHtmlElement
         if (isset($this->item->$unhandledKey) && $this->item->$unhandledKey) {
             $content[] = Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$unhandledKey, $state),
-                ['state.soft_state' => $this->getStateInt($state), 'state.is_handled' => 'n']
+                [
+                    $this->type . '.state.soft_state' => $this->getStateInt($state),
+                    $this->type . '.state.is_handled' => 'n'
+                ]
             ));
         }
 
         if (isset($this->item->$handledKey) && $this->item->$handledKey) {
             $content[] = Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$handledKey, $state, true),
-                ['state.soft_state' => $this->getStateInt($state), 'state.is_handled' => 'y']
+                [
+                    $this->type . '.state.soft_state' => $this->getStateInt($state),
+                    $this->type . '.state.is_handled' => 'y'
+                ]
             ));
         }
 
