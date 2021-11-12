@@ -45,8 +45,8 @@ class DowntimesController extends Controller
             [
                 'downtime.is_in_effect desc, downtime.start_time desc' => t('Is In Effect'),
                 'downtime.entry_time'                                  => t('Entry Time'),
-                'host.display_name, service.display_name'              => t('Host'),
-                'service.display_name, host.display_name'              => t('Service'),
+                'host.display_name'                                    => t('Host'),
+                'service.display_name'                                 => t('Service'),
                 'downtime.author'                                      => t('Author'),
                 'downtime.start_time desc'                             => t('Start Time'),
                 'downtime.end_time desc'                               => t('End Time'),
