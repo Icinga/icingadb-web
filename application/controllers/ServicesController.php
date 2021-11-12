@@ -47,6 +47,7 @@ class ServicesController extends Controller
             'host.state',
             'icon_image'
         ]);
+        $services->getWith()['service.state']->setJoinType('INNER');
         $services->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($services);
@@ -61,11 +62,11 @@ class ServicesController extends Controller
         $sortControl = $this->createSortControl(
             $services,
             [
-                'service.display_name, host.display_name' => t('Name'),
-                'service.state.severity desc'             => t('Severity'),
-                'service.state.soft_state'                => t('Current State'),
-                'service.state.last_state_change desc'    => t('Last State Change'),
-                'host.display_name, service.display_name' => t('Host')
+                'service.display_name'                 => t('Name'),
+                'service.state.severity desc'          => t('Severity'),
+                'service.state.soft_state'             => t('Current State'),
+                'service.state.last_state_change desc' => t('Last State Change'),
+                'host.display_name'                    => t('Host')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);

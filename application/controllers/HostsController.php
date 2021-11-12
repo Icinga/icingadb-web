@@ -38,6 +38,7 @@ class HostsController extends Controller
         $db = $this->getDb();
 
         $hosts = Host::on($db)->with(['state', 'icon_image', 'state.last_comment']);
+        $hosts->getWith()['host.state']->setJoinType('INNER');
         $hosts->setResultSetClass(VolatileStateResults::class);
 
         $this->handleSearchRequest($hosts);

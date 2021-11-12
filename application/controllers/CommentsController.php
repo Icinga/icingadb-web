@@ -43,11 +43,11 @@ class CommentsController extends Controller
         $sortControl = $this->createSortControl(
             $comments,
             [
-                'comment.entry_time desc'                 => t('Entry Time'),
-                'host.display_name, service.display_name' => t('Host'),
-                'service.display_name, host.display_name' => t('Service'),
-                'comment.author'                          => t('Author'),
-                'comment.expire_time desc'                => t('Expire Time')
+                'comment.entry_time desc'  => t('Entry Time'),
+                'host.display_name'        => t('Host'),
+                'service.display_name'     => t('Service'),
+                'comment.author'           => t('Author'),
+                'comment.expire_time desc' => t('Expire Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);

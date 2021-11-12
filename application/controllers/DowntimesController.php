@@ -43,16 +43,16 @@ class DowntimesController extends Controller
         $sortControl = $this->createSortControl(
             $downtimes,
             [
-                'downtime.is_in_effect, downtime.start_time desc' => t('Is In Effect'),
-                'downtime.entry_time'                             => t('Entry Time'),
-                'host.display_name, service.display_name'         => t('Host'),
-                'service.display_name, host.display_name'         => t('Service'),
-                'downtime.author'                                 => t('Author'),
-                'downtime.start_time desc'                        => t('Start Time'),
-                'downtime.end_time desc'                          => t('End Time'),
-                'downtime.scheduled_start_time desc'              => t('Scheduled Start Time'),
-                'downtime.scheduled_end_time desc'                => t('Scheduled End Time'),
-                'downtime.duration desc'                          => t('Duration')
+                'downtime.is_in_effect desc, downtime.start_time desc' => t('Is In Effect'),
+                'downtime.entry_time'                                  => t('Entry Time'),
+                'host.display_name'                                    => t('Host'),
+                'service.display_name'                                 => t('Service'),
+                'downtime.author'                                      => t('Author'),
+                'downtime.start_time desc'                             => t('Start Time'),
+                'downtime.end_time desc'                               => t('End Time'),
+                'downtime.scheduled_start_time desc'                   => t('Scheduled Start Time'),
+                'downtime.scheduled_end_time desc'                     => t('Scheduled End Time'),
+                'downtime.duration desc'                               => t('Duration')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
@@ -68,6 +68,7 @@ class DowntimesController extends Controller
             } else {
                 $this->addControl($searchBar);
                 $this->sendMultipartUpdate();
+
                 return;
             }
         } else {
