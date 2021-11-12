@@ -127,8 +127,8 @@ class ServiceController extends Controller
         $history
             ->getSelectBase()
             ->where([
-                'history_host_service.id = ?' => $this->service->id,
-                'history_service.id = ?' => $this->service->id
+                'history.host_id = ?'    => $this->service->host_id,
+                'history.service_id = ?' => $this->service->id
             ]);
 
         $before = $this->params->shift('before', time());
