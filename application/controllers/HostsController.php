@@ -216,7 +216,17 @@ class HostsController extends Controller
 
     protected function getCommandTargetsUrl(): Url
     {
-        return Links::hostsDetails()->setQueryString(QueryString::render($this->getFilter()));
+        $queryString = '';
+        $queryParts = explode('|', QueryString::render($this->getFilter()));
+
+        foreach ($queryParts as $i => $part) {
+            if ($i > 0) {
+                $queryString .= '|';
+            }
+            $queryString .= '(' . $part . ')';
+        }
+
+        return Links::hostsDetails()->setQueryString($queryString);
     }
 
     protected function getFeatureStatus()
