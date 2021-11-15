@@ -32,7 +32,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
-use Icinga\Module\Icingadb\Widget\Detail\PerfDataTable;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
@@ -477,15 +476,12 @@ class ObjectDetail extends BaseHtmlElement
     {
         $users = [];
         $usergroups = [];
-        $groupBy = false;
 
         if ($this->objectType === 'host') {
             $objectFilter = Filter::all(
                 Filter::equal('notification.host_id', $this->object->id),
-                Filter::unequal('notification.service_id', '*')
+                Filter::hasNotValue('notification.service_id')
             );
-            $objectFilter->metaData()->set('forceOptimization', false);
-            $groupBy = true;
         } else {
             $objectFilter = Filter::equal(
                 'notification.service_id',
@@ -497,9 +493,6 @@ class ObjectDetail extends BaseHtmlElement
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
             $this->applyRestrictions($userQuery);
-            if ($groupBy) {
-                $userQuery->getSelectBase()->groupBy(['user.id']);
-            }
 
             foreach ($userQuery as $user) {
                 $users[$user->name] = $user;
@@ -510,9 +503,6 @@ class ObjectDetail extends BaseHtmlElement
             $usergroupQuery = Usergroup::on($this->getDb());
             $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);
-            if ($groupBy) {
-                $userQuery->getSelectBase()->groupBy(['usergroup.id']);
-            }
 
             foreach ($usergroupQuery as $usergroup) {
                 $usergroups[$usergroup->name] = $usergroup;
