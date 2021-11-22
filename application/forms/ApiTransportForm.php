@@ -49,9 +49,9 @@ class ApiTransportForm extends CompatForm
             'description'   => t('User to authenticate with using HTTP Basic Auth')
         ]);
 
-        // TODO: Use a password element
-        $this->addElement('text', 'password', [
+        $this->addElement('password', 'password', [
             'required'      => true,
+            'autocomplete'  => 'new-password',
             'label'         => t('API Password')
         ]);
 
