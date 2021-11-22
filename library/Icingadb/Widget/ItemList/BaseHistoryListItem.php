@@ -207,6 +207,11 @@ abstract class BaseHistoryListItem extends BaseListItem
                     $previousState = 'previous_hard_state';
                     $state = 'hard_state';
                     $isSoftState = false;
+
+                    // To not render OK -> OK as hard state change
+                    if ($this->item->state->$state === 0 && $this->item->state->$previousState === 0) {
+                        $previousState = 'previous_soft_state';
+                    }
                 }
 
                 if ($this->item->object_type === 'host') {
