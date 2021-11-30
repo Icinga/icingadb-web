@@ -69,7 +69,7 @@ class ApiTransportForm extends CompatForm
             return $this;
         }
 
-        if ($this->getPopulatedValue('force_creation') === 'n') {
+        if ($this->getPopulatedValue('force_creation') === 'y') {
             return $this;
         }
 
