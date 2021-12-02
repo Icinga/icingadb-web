@@ -221,9 +221,11 @@ class ObjectDetail extends BaseHtmlElement
         $this->fetchCustomVars();
         $vars = (new CustomvarFlat())->unFlattenVars($this->object->customvar_flat);
         if (! empty($vars)) {
-            $customvarTable = new CustomVarTable($vars);
-            $customvarTable->setAttribute('id', $this->objectType . '-customvars');
-            $content[] = $customvarTable;
+            $content[] = new HtmlElement('div', Attributes::create([
+                'id' => $this->objectType . '-customvars',
+                'class' => 'collapsible',
+                'data-visible-height' => 200
+            ]), new CustomVarTable($vars, $this->object));
         } else {
             $content[] = new EmptyState(t('No custom variables configured.'));
         }
