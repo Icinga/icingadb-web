@@ -10,6 +10,7 @@ use Exception;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Widget\Detail\CustomVarTable;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
@@ -196,6 +197,28 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                     'state'                         => [$this, 'formatState']
                 ]
             )
+        ];
+    }
+
+    protected function createCustomVariables()
+    {
+        $query = $this->object->customvar
+            ->columns(['name', 'value']);
+
+        $result = [];
+        foreach ($query as $row) {
+            $result[$row->name] = json_decode($row->value, true) ?? $row->value;
+        }
+
+        if (! empty($result)) {
+            $vars = new CustomVarTable($result);
+        } else {
+            $vars = new EmptyState(t('No custom variables configured.'));
+        }
+
+        return [
+            new HtmlElement('h2', null, Text::create(t('Custom Variables'))),
+            $vars
         ];
     }
 
