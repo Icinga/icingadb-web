@@ -22,4 +22,38 @@
   .level-6 th {
     padding-left: 3em;
   }
+
+  thead th {
+    padding-left: 0;
+    text-align: left;
+    font-weight: bold;
+    font-size: 1.167em;
+
+    > span {
+      :nth-child(1),
+      :nth-child(2) {
+        display: none;
+      }
+    }
+  }
+
+  &.can-collapse thead th > span {
+    :nth-child(1) {
+      display: none;
+    }
+
+    :nth-child(2) {
+      display: inline-block;
+    }
+  }
+
+  &.collapsed thead th > span {
+    :nth-child(1) {
+      display: inline-block;
+    }
+
+    :nth-child(2) {
+      display: none;
+    }
+  }
 }
