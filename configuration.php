@@ -572,7 +572,11 @@ namespace Icinga\Module\Icingadb {
     $this->provideJsFile('action-list.js');
     $this->provideJsFile('loadmore.js');
 
-    $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
+    $forIe11 = false;
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
+    }
+
     if (! $forIe11) {
         $this->provideJsFile('migrate.js');
     }
