@@ -96,7 +96,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
                 'div',
                 [
                     'class' => 'progress-bar',
-                    'style' => 'width: ' . $ref . '%'
+                    'style' => sprintf('width: %F%%', $ref)
                 ]
             )
         );
