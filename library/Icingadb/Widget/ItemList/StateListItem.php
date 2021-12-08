@@ -83,7 +83,7 @@ abstract class StateListItem extends BaseListItem
                 }
             }
 
-            $iconImage->add(HtmlElement::create('img', [
+            $iconImage->addHtml(HtmlElement::create('img', [
                 'src' => $src,
                 'alt' => $this->item->icon_image_alt
             ]));
@@ -94,7 +94,7 @@ abstract class StateListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        $title->add(Html::sprintf(
+        $title->addHtml(Html::sprintf(
             t('%s is %s', '<hostname> is <state-text>'),
             $this->createSubject(),
             Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
@@ -120,13 +120,13 @@ abstract class StateListItem extends BaseListItem
                     $icon = Icons::HOST_DOWN;
             }
 
-            $stateBall->add(new Icon($icon));
+            $stateBall->addHtml(new Icon($icon));
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
-        $visual->add($stateBall);
+        $visual->addHtml($stateBall);
         if ($this->state->state_type === 'soft') {
-            $visual->add(new CheckAttempt((int) $this->state->attempt, (int) $this->item->max_check_attempts));
+            $visual->addHtml(new CheckAttempt((int) $this->state->attempt, (int) $this->item->max_check_attempts));
         }
     }
 
