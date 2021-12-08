@@ -8,6 +8,8 @@ $this->provideHook('ApplicationState');
 $this->provideHook('X509/Sni');
 $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
+$this->provideHook('Cube/IcingadbHosts', 'Cube/Hosts');
+$this->provideHook('Cube/IcingadbServices', 'Cube/Services');
 
 if (! $this::exists('monitoring')) {
     $modulePath = null;
