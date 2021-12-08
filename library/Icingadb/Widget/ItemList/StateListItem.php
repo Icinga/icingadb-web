@@ -62,10 +62,7 @@ abstract class StateListItem extends BaseListItem
             $src = $this->item->icon_image->icon_image;
 
             if (strpos($src, '.') === false) {
-                $iconImage->add(HtmlElement::create('i', [
-                    'class'     => 'fas fa-' . $src,
-                    'alt'       => $this->item->icon_image_alt
-                ]));
+                $iconImage->addHtml(new Icon($src));
 
                 return;
             }
