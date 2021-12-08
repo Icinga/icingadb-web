@@ -232,7 +232,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         }
 
         if (is_float($ts)) {
-            $dt = DateTime::createFromFormat('U.u', $ts);
+            $dt = DateTime::createFromFormat('U.u', sprintf('%F', $ts));
         } else {
             $dt = (new DateTime())->setTimestamp($ts);
         }
