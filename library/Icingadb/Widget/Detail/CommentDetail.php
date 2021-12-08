@@ -44,7 +44,9 @@ class CommentDetail extends BaseHtmlElement
             $details[] = Html::tag(
                 'p',
                 Html::sprintf(
-                    t('This acknowledgement expires %s.', '..<time-until>'),
+                    $this->comment->entry_type === 'ack'
+                        ? t('This acknowledgement expires %s.', '..<time-until>')
+                        : t('This comment expires %s.', '..<time-until>'),
                     new TimeUntil($this->comment->expire_time)
                 )
             );
