@@ -8,7 +8,6 @@ use Exception;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Hook\HostsDetailExtensionHook;
 use Icinga\Module\Icingadb\Hook\ServicesDetailExtensionHook;
 use InvalidArgumentException;
@@ -18,6 +17,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
+use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 
 abstract class ObjectsDetailExtensionHook extends BaseExtensionHook

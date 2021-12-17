@@ -5,11 +5,11 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Stdlib\BaseFilter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;

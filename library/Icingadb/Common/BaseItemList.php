@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Common;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
+use ipl\Stdlib\BaseFilter;
 
 /**
  * Base class for item lists

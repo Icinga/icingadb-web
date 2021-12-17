@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Chart\Donut;
-use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectsDetailExtensionHook;
@@ -17,6 +16,7 @@ use Icinga\Module\Icingadb\Widget\HostStateBadges;
 use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Query;
+use ipl\Stdlib\BaseFilter;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;

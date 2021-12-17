@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Stdlib\BaseFilter;
 
 abstract class BaseStatusBar extends BaseHtmlElement
 {
