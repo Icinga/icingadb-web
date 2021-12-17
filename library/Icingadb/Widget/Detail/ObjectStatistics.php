@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Module\Icingadb\Common\BaseFilter;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
+use ipl\Stdlib\BaseFilter;
 
 abstract class ObjectStatistics extends BaseHtmlElement
 {
