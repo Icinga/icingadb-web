@@ -6,5 +6,4 @@ namespace Icinga\Module\Icingadb\Web\Navigation;
 
 class IcingadbHostAction extends Action
 {
-
 }
