@@ -7,18 +7,24 @@
     margin-right: 0;
   }
 
+  .title > .subject + .badge,
+  .title > .badge + .subject,
   .title > .badge:last-of-type {
-    margin-right: 0;
+    margin-left: 0;
   }
 
   .title a {
-    &.subject {
-      margin-right: 0;
-    }
-
     &:not(.subject) {
       .text-ellipsis();
     }
+  }
+
+  .title .subject:not(:last-child) {
+    margin-left: 0;
+  }
+
+  .title .subject:nth-child(3):last-child {
+    margin-left: 0;
   }
 }
 
@@ -32,9 +38,9 @@
 }
 
 .comment-list.detailed .list-item {
-  .subject,
-  .badge {
-    margin-right: .5em;
+  .title > .subject:nth-child(3),
+  .title > .badge + .subject:last-child {
+    margin-left: .3em;
   }
 
   .caption {
