@@ -120,16 +120,15 @@ class PerfDataTable extends Table
                 }
 
                 foreach ($perfdata->toArray() as $column => $value) {
-                    $text = htmlspecialchars($value);
                     $cols[] = Table::td(
                         new HtmlElement(
                             'span',
                             Attributes::create([
-                                'class' => ($text ? '' : 'no-value')
+                                'class' => ($value ? '' : 'no-value')
                             ]),
-                            $text ? Text::create($text) : new EmptyState(t('None', 'value'))
+                            $value ? Text::create($value) : new EmptyState(t('None', 'value'))
                         ),
-                        [ 'class' => ($column == 'label' ? 'title' : null) ]
+                        [ 'class' => ($column === 'label' ? 'title' : null) ]
                     );
                 }
 
