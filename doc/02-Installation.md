@@ -6,8 +6,7 @@
 
 ## Requirements
 
-* PHP (>= 7.3)
-  * Older versions (7.0+) still work, but may stop doing so with near future updates
+* PHP (>= 7.2)
 * MySQL or PostgreSQL PHP libraries
 * The following PHP modules must be installed: cURL, dom, json, libxml, pdo
 * [Icinga DB](https://github.com/Icinga/icingadb)

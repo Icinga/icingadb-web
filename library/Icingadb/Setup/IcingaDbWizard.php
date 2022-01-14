@@ -51,26 +51,10 @@ class IcingaDbWizard extends Wizard implements SetupWizard
     {
         $set = new RequirementSet();
 
-        $phpVersion = Platform::getPhpVersion();
-
-        if (
-            version_compare($phpVersion, '7.0', '>=')
-            && version_compare($phpVersion, '7.3', '<')
-        ) {
-            $set->add(new PhpVersionRequirement([
-                'optional'      => true,
-                'condition'     => ['>=', '7.3'],
-                'description'   => t(
-                    'For Icinga DB Web PHP 7.3+ is highly recommended.'
-                    . ' Older versions still work, but may stop doing so with near future updates.'
-                )
-            ]));
-        } else {
-            $set->add(new PhpVersionRequirement([
-                'condition'     => ['>=', '7.3'],
-                'description'   => t('Icinga DB Web requires PHP version 7.3.')
-            ]));
-        }
+        $set->add(new PhpVersionRequirement([
+            'condition'     => ['>=', '7.2'],
+            'description'   => sprintf(t('Icinga DB Web requires PHP version %s.'), '7.2')
+        ]));
 
         $set->add(new WebLibraryRequirement([
             'condition'     => ['icinga-php-library', '>=', '0.8.0'],
