@@ -73,7 +73,7 @@ class IcingaDbWizard extends Wizard implements SetupWizard
         }
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-library', '>=', '0.7.0'],
+            'condition'     => ['icinga-php-library', '>=', '0.8.0'],
             'alias'         => 'Icinga PHP library',
             'description'   => t('The Icinga PHP library (IPL) is required for Icinga DB Web')
         ]));
