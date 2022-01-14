@@ -19,7 +19,7 @@ class IdKey implements RewriteFilterBehavior
         $column = $condition->metaData()->get('columnName');
         if ($column === 'id' || substr($column, -3) === '_id') {
             $value = $condition->getValue();
-            if ($value && ctype_alnum($value)) {
+            if ($value && is_string($value) && ctype_alnum($value)) {
                 $condition->setValue(hex2bin($value));
             }
         }
