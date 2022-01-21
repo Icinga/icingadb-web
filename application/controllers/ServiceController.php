@@ -112,7 +112,6 @@ class ServiceController extends Controller
 
         $history = History::on($db)->with([
             'host',
-            'host.service',
             'host.state',
             'service',
             'service.state',
