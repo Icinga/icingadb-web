@@ -178,7 +178,7 @@ trait Auth
                     ) {
                         $roleFilter->add(
                             Filter::any(
-                                Filter::unequal('service.id', '*'),
+                                Filter::hasNotValue('service.id'),
                                 $this->parseRestriction($restriction, 'icingadb/filter/services')
                             )
                         );
