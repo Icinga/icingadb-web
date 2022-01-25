@@ -100,11 +100,11 @@ class PerfDataSet implements IteratorAggregate
         $this->skipSpaces();
         if (in_array($this->perfdataStr[$this->parserPos], array('"', "'"))) {
             $quoteChar = $this->perfdataStr[$this->parserPos++];
-            $label = $this->readUntil('=');
+            $label = $this->readUntil($quoteChar);
             $this->parserPos++;
 
-            if (($closingPos = strpos($label, $quoteChar)) > 0) {
-                $label = substr($label, 0, $closingPos);
+            if ($this->perfdataStr[$this->parserPos] === '=') {
+                $this->parserPos++;
             }
         } else {
             $label = $this->readUntil('=');

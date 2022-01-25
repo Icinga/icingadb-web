@@ -548,6 +548,8 @@ class PerfData
                 return PerfDataFormat::grams($value);
             case $this->isLiters():
                 return PerfDataFormat::liters($value);
+            case ! is_numeric($value):
+                return $value;
             default:
                 return number_format($value, 2);
         }
@@ -593,7 +595,7 @@ class PerfData
      */
     public function getState(): int
     {
-        if ($this->value === null) {
+        if (! is_numeric($this->value)) {
             return ServiceStates::UNKNOWN;
         }
 
