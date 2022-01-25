@@ -5,17 +5,6 @@
     "use strict";
 
     /**
-     * Remove one leading and trailing bracket and all text outside those brackets
-     *
-     * @param {string} subject
-     *
-     * @returns {string}
-     */
-    var stripBrackets = function (subject) {
-        return subject.replace(/^[^(]*\({1,2}/, '(').replace(/\){1,2}[^)]*$/, ')');
-    };
-
-    /**
      * Parse the filter query contained in the given URL query string
      *
      * @param {string} queryString
@@ -23,7 +12,7 @@
      * @returns {array}
      */
     var parseSelectionQuery = function (queryString) {
-        return stripBrackets(queryString).split('|');
+        return queryString.split('|');
     };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
@@ -119,7 +108,7 @@
                     return $(this).attr('data-icinga-multiselect-filter');
                 });
 
-                url = $list.attr('data-icinga-multiselect-url') + '?(' + filters.toArray().join('|') + ')';
+                url = $list.attr('data-icinga-multiselect-url') + '?' + filters.toArray().join('|');
             }
 
             if ($list.is('[data-icinga-multiselect-url]')) {
@@ -155,7 +144,7 @@
             var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
 
             if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
-                $.each(parseSelectionQuery(detailUrl.query), function (i, filter) {
+                $.each(parseSelectionQuery(detailUrl.query.slice(1)), function (i, filter) {
                     $list.find(
                         '[data-icinga-multiselect-filter="' + filter + '"]'
                     ).removeClass('active');
@@ -192,14 +181,14 @@
             var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
 
             if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
-                $.each(parseSelectionQuery(detailUrl.query), function (i, filter) {
+                $.each(parseSelectionQuery(detailUrl.query.slice(1)), function (i, filter) {
                     $list.find(
                         '[data-icinga-multiselect-filter="' + filter + '"]'
                     ).addClass('active');
                 });
             } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
                 $list.find(
-                    '[data-icinga-detail-filter="(' + detailUrl.query.slice(1) + ')"]'
+                    '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
                 ).addClass('active');
             }
         }
