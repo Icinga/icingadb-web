@@ -104,7 +104,16 @@ trait DetailActions
     {
         $element->getAttributes()
             ->registerAttributeCallback('data-icinga-multiselect-filter', function () use ($filter) {
-                return $this->getDetailActionsDisabled() ? null : '(' . QueryString::render($filter) . ')';
+                if ($this->getDetailActionsDisabled()) {
+                    return null;
+                }
+
+                $queryString = QueryString::render($filter);
+                if ($filter instanceof Filter\Chain) {
+                    $queryString = '(' . $queryString . ')';
+                }
+
+                return $queryString;
             });
 
         return $this;
@@ -122,7 +131,7 @@ trait DetailActions
     {
         $element->getAttributes()
             ->registerAttributeCallback('data-icinga-detail-filter', function () use ($filter) {
-                return $this->getDetailActionsDisabled() ? null : '(' . QueryString::render($filter) . ')';
+                return $this->getDetailActionsDisabled() ? null : QueryString::render($filter);
             });
 
         return $this;
