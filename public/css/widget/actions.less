@@ -1,6 +1,5 @@
 .actions a {
-  border-bottom: 1px solid;
-  .var(border-bottom-color, gray-light);
+  border-bottom: 1px solid @gray-light;
   display: inline-block;
   margin-bottom: .25em;
 
@@ -8,8 +7,8 @@
   max-width: 32em;
 
   &:hover {
-    .var(border-color, icinga-blue-light);
-    .var(color, icinga-blue);
+    border-color: @icinga-blue-light;
+    color: @icinga-blue;
     text-decoration: none;
   }
 }

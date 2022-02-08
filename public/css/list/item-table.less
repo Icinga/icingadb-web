@@ -5,13 +5,12 @@
 
   > .empty-state {
     .rounded-corners();
-    .var(background-color, gray-lightest);
+    background-color: @gray-lightest;
   }
 
   .list-item {
     &:not(:last-child) > *:not(.visual) {
-      border-bottom: 1px solid;
-      .var(border-bottom-color, gray-light);
+      border-bottom: 1px solid @gray-light;
     }
   }
 }

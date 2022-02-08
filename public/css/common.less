@@ -20,7 +20,7 @@
 }
 
 .empty-state {
-  .var(color, gray-semilight);
+  color: @gray-semilight;
 }
 
 .pagination-control {
@@ -33,13 +33,13 @@ div.show-more {
 }
 
 .state-ball.state-not-available {
-  .ball-solid(~"var(--gray-light, @{gray-light})");
+  .ball-solid(@gray-light);
   .animate(pulse 1.5s infinite both);
 }
 
 .icon-ball {
   .ball();
-  .ball-outline(~"var(--gray, @{gray})");
+  .ball-outline(@gray);
   text-align: center;
 
   i:before {
@@ -50,7 +50,7 @@ div.show-more {
 .user-ball {
   .ball();
   .ball-size-xl();
-  .ball-solid(~"var(--gray-semilight, @{gray-semilight})");
+  .ball-solid(@gray-semilight);
   font-weight: bold;
   line-height: 1.75;
   text-transform: uppercase;
@@ -58,7 +58,7 @@ div.show-more {
 
 .usergroup-ball {
   .ball();
-  .ball-outline(~"var(--gray, @{gray})");
+  .ball-outline(@gray);
   .ball-size-xl();
   line-height: 1.75;
   text-transform: uppercase;
@@ -76,7 +76,7 @@ div.show-more {
 }
 
 .controls {
-  .box-shadow(0, 0, 0, 1px, ~"var(--gray-lighter, @{gray-lighter})");
+  .box-shadow(0, 0, 0, 1px, @gray-lighter);
   flex-shrink: 0;
   position: relative; // Required for the host meta info control
 
@@ -95,7 +95,7 @@ div.show-more {
   &.overdue,
   &.overdue .tabs li.active a,
   &.overdue .object-meta-info-control {
-    .var(background-color, gray-lighter);
+    background-color: @gray-lighter;
   }
 
   .filter {
@@ -192,7 +192,7 @@ div.show-more {
 
 .object-detail .plugin-output {
   .rounded-corners(.25em);
-  .var(background-color, gray-lighter);
+  background-color: @gray-lighter;
   padding: .5em;
 }
 
@@ -226,14 +226,14 @@ div.show-more {
 }
 
 .text-muted {
-  .var(color, "gray");
+  color: @gray;
 }
 
 .accompanying-text {
-  .var(color, text-color-light);
+  color: @text-color-light;
 
   .subject {
-    .var(color, text-color);
+    color: @text-color;
     .user-select(all);
   }
 }
@@ -246,22 +246,22 @@ div.show-more {
 .downtime-detail button {
   .button();
 
-  .var(background, body-bg-color);
+  background: @body-bg-color;
   border: 1px solid;
-  .var(border-color, color-critical);
-  .var(color, color-critical);
+  border-color: @color-critical;
+  color: @color-critical;
 
   &:hover,
   &:focus {
-    .var(background-color, color-critical);
-    .var(color, text-color-on-icinga-blue);
+    background-color: @color-critical;
+    color: @text-color-on-icinga-blue;
   }
 }
 
 .footer {
   display: flex;
-  .box-shadow(0, -1px, 0, 0, ~"var(--gray-lighter, @{gray-lighter})");
-  .var(color, text-color-light);
+  .box-shadow(0, -1px, 0, 0, @gray-lighter);
+  color: @text-color-light;
 
   .selection-count {
     flex: 1 1 auto;

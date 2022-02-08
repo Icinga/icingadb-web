@@ -4,30 +4,30 @@
   &.flexible.in-effect .marker {
     &.start,
     &.end {
-      .var(background-color, gray-light);
+      background-color: @gray-light;
     }
 
     &.flex-start,
     &.flex-end {
-      .var(background-color, icinga-blue);
+      background-color: @icinga-blue;
     }
   }
 
   .downtime-elapsed {
-    .var(background-color, color-ok);
+    background-color: @color-ok;
 
     &:before,
     &:after {
-      .var(background-color, color-ok);
+      background-color: @color-ok;
     }
   }
 
   .downtime-overrun {
-    .var(background-color, color-down);
+    background-color: @color-down;
 
     &:before,
     &:after {
-      .var(background-color, color-down);
+      background-color: @color-down;
     }
   }
 

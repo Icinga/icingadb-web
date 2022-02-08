@@ -1,26 +1,26 @@
 .cancel-button {
   .button();
 
-  .var(background, body-bg-color);
+  background: @body-bg-color;
   border: 1px solid;
-  .var(border-color, color-critical);
-  .var(color, color-critical);
+  border-color: @color-critical;
+  color: @color-critical;
 
   &:hover {
-    .var(background-color, color-critical);
-    .var(color, text-color-on-icinga-blue);
+    background-color: @color-critical;
+    color: @text-color-on-icinga-blue;
   }
 }
 
 .cancel-button[disabled] {
   background-color: transparent;
   border: 1px solid;
-  .var(border-color, disabled-gray);
-  .var(color, disabled-gray);
+  border-color: @disabled-gray;
+  color: @disabled-gray;
 
   &:hover {
     cursor: default;
-    .var(color, disabled-gray);
+    color: @disabled-gray;
     background-color: transparent;
   }
 }

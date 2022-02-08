@@ -27,12 +27,10 @@
   }
 
   a {
-    border-bottom: 1px dotted;
-    .var(border-bottom-color, text-color-light);
+    border-bottom: 1px dotted @text-color-light;
 
     &:hover, &:focus {
-      border-bottom: 1px solid;
-      .var(border-bottom-color, text-color);
+      border-bottom: 1px solid @text-color;
       text-decoration: none;
     }
 
@@ -58,12 +56,12 @@
 
     th {
       text-align: left;
-      .var(background-color, gray-lighter);
+      background-color: @gray-lighter;
     }
 
     &, th, td {
       border: 1px solid;
-      .var(border-color, gray-light);
+      border-color: @gray-light;
     }
   }
 }

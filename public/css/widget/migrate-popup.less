@@ -44,7 +44,7 @@
     pointer-events: auto;
 
     border-bottom-right-radius: 4px;
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
 
     .transition(none);
 
@@ -54,11 +54,11 @@
       content: '\f102';
       font-size: 1.25em;
       cursor: pointer;
-      .var(color, gray-light);
+      color: @gray-light;
     }
 
     i:hover:before {
-      .var(color, menu-highlight-color);
+      color: @menu-highlight-color;
     }
   }
 
@@ -81,7 +81,7 @@
     pointer-events: auto;
     font-size: .75em;
 
-    .var(background, body-bg-color);
+    background: @body-bg-color;
     border-radius: 0 0 4px 4px;
     box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.3);
 
@@ -91,7 +91,7 @@
 
     p {
       margin-bottom: .5em;
-      .var(color, text-color-light);
+      color: @text-color-light;
     }
 
     & > button.close {
@@ -130,7 +130,7 @@
       button[value="1"] {
         flex-grow: 1;
 
-        .var(color, text-color);
+        color: @text-color;
         text-decoration: underline;
       }
 
