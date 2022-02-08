@@ -3,8 +3,8 @@
   height: 6em;
   border-radius: 0.25em;
   border: 1px solid;
-  .var(border-color, gray-light);
-  .var(background-color, body-bg-color);
+  border-color: @gray-light;
+  background-color: @body-bg-color;
 }
 
 .comment-wrapper {
@@ -27,11 +27,9 @@
     height: 1.5em;
     left: 1.5em;
     top: ~"calc(-0.75em - 1px)";
-    border-left: 1px solid;
-    .var(border-left-color, gray-light);
-    border-top: 1px solid;
-    .var(border-top-color, gray-light);
-    .var(background-color, body-bg-color);
+    border-left: 1px solid @gray-light;
+    border-top: 1px solid @gray-light;
+    background-color: @body-bg-color;
     z-index: -1;
     transform: rotate(45deg);
   }

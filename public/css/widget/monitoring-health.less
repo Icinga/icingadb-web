@@ -18,8 +18,7 @@
     }
 
     .col:not(:last-child) {
-      border-right: 1px solid;
-      .var(border-right-color, gray-light);
+      border-right: 1px solid @gray-light;
     }
   }
 
@@ -27,7 +26,7 @@
   .instance-features {
     .rounded-corners();
     border: 1px solid;
-    .var(border-color, gray-light);
+    border-color: @gray-light;
     display: flex;
     width: 100%;
   }
@@ -70,13 +69,13 @@
 
     &.up {
       border: 1px solid;
-      .var(border-color, color-up);
-      .var(color, color-up);
+      border-color: @color-up;
+      color: @color-up;
     }
 
     &.down {
-      .var(background-color, color-down);
-      .var(color, body-bg-color);
+      background-color: @color-down;
+      color: @body-bg-color;
     }
   }
 
@@ -93,8 +92,7 @@
       justify-content: flex-end;
 
       &:not(:last-of-type) {
-        border-right: 1px solid;
-        .var(border-right-color, gray-light);
+        border-right: 1px solid @gray-light;
       }
 
       .control-label-group {

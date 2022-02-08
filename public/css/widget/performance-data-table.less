@@ -6,8 +6,7 @@
   display: block;
 
   tr:not(:last-child) {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-lighter);
+    border-bottom: 1px solid @gray-lighter;
   }
 
   td {
@@ -23,8 +22,7 @@
   }
 
   thead {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-light);
+    border-bottom: 1px solid @gray-light;
   }
 
   th:first-child,
@@ -52,7 +50,7 @@
   }
 
   .no-value {
-    .var(color, gray-semilight);
+    color: @gray-semilight;
     text-align: center;
     display: block;
   }

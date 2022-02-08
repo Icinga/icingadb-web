@@ -2,7 +2,7 @@
   display: inline-flex;
 
   .state-ball {
-    .box-shadow(0, 0, 0, 1px, ~"var(--body-bg-color, @{body-bg-color})");
+    .box-shadow(0, 0, 0, 1px, @body-bg-color);
   }
 
   .state-ball ~ .state-ball {
@@ -36,7 +36,7 @@
   .state-ball.state-up {
     &.ball-size-l,
     &.ball-size-xl {
-      background-color: var(--body-bg-color, @body-bg-color);
+      background-color: @body-bg-color;
     }
   }
 
@@ -72,36 +72,36 @@
       right: -2px;
       bottom: -2px;
       border-radius: 50%;
-      background-color: var(--body-bg-color, @body-bg-color);
+      background-color: @body-bg-color;
       z-index: 1;
     }
 
     &.state-pending:before {
-      background-color: var(--color-pending, @color-pending);
+      background-color: @color-pending;
     }
 
     &.state-down:before {
-      background-color: var(--color-down, @color-down);
+      background-color: @color-down;
     }
 
     &.state-warning:before {
-      background-color: var(--color-warning, @color-warning);
+      background-color: @color-warning;
     }
 
     &.state-critical:before {
-      background-color: var(--color-critical, @color-critical);
+      background-color: @color-critical;
     }
 
     &.state-unknown:before {
-      background-color: var(--color-unknown, @color-unknown);
+      background-color: @color-unknown;
     }
   }
 }
 
 .overdue .state-change .state-ball {
-  .box-shadow(0, 0, 0, 1px, ~"var(--gray-lighter, @{gray-lighter})");
+  .box-shadow(0, 0, 0, 1px, @gray-lighter);
 
   &.handled:after {
-    background-color: var(--gray-lighter, @gray-lighter);
+    background-color: @gray-lighter;
   }
 }

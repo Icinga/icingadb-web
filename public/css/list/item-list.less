@@ -5,7 +5,7 @@
 
   > .empty-state {
     .rounded-corners();
-    .var(background-color, gray-lighter);
+    background-color: @gray-lighter;
   }
 
   .show-more:hover,
@@ -15,7 +15,7 @@
 
   > .show-more a {
     .rounded-corners(.25em);
-    .var(background, low-sat-blue);
+    background: @low-sat-blue;
     text-align: center;
 
     &:hover {
@@ -35,7 +35,7 @@
   }
 
   > .page-separator a {
-    .var(color, "gray");
+    color: @gray;
     font-weight: bold;
 
     &:hover {
