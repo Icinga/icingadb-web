@@ -170,16 +170,18 @@ class Controller extends CompatController
         $searchBar->setAction($redirectUrl->getAbsoluteUrl());
         $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
 
+        $moduleName = $this->getRequest()->getModuleName();
+        $controllerName = $this->getRequest()->getControllerName();
         if (method_exists($this, 'completeAction')) {
             $searchBar->setSuggestionUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+                $moduleName . '/' . $controllerName . '/complete',
                 ['_disableLayout' => true, 'showCompact' => true]
             ));
         }
 
         if (method_exists($this, 'searchEditorAction')) {
             $searchBar->setEditorUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor'
+                $moduleName . '/' . $controllerName . '/search-editor'
             )->setParams($redirectUrl->getParams()));
         }
 
@@ -255,8 +257,11 @@ class Controller extends CompatController
      */
     public function createSearchEditor(Query $query, array $preserveParams = null): SearchEditor
     {
+        $moduleName = $this->getRequest()->getModuleName();
+        $controllerName = $this->getRequest()->getControllerName();
+
         $requestUrl = Url::fromRequest();
-        $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
+        $redirectUrl = Url::fromPath($moduleName . '/' . $controllerName);
         if (! empty($preserveParams)) {
             $redirectUrl->setParams($requestUrl->onlyWith($preserveParams)->getParams());
         }
@@ -267,7 +272,7 @@ class Controller extends CompatController
 
         if (method_exists($this, 'completeAction')) {
             $editor->setSuggestionUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
+                $moduleName . '/' . $controllerName . '/complete',
                 ['_disableLayout' => true, 'showCompact' => true]
             ));
         }
