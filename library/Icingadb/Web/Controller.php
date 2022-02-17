@@ -29,7 +29,6 @@ use Icinga\Util\Environment;
 use Icinga\Util\Json;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
-use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Contract\Paginatable;
@@ -118,27 +117,11 @@ class Controller extends CompatController
      */
     public function createSortControl(Query $query, array $columns): SortControl
     {
-        $default = (array) $query->getModel()->getDefaultSort();
-        $normalized = [];
-        foreach ($columns as $key => $value) {
-            $normalized[SortUtil::normalizeSortSpec($key)] = $value;
-        }
-        $sortControl = (new SortControl(Url::fromRequest()))
-            ->setColumns($normalized);
-
-        if (! empty($default)) {
-            $sortControl->setDefault(SortUtil::normalizeSortSpec($default));
-        }
-
-        $sort = $sortControl->getSort();
-
-        if (! empty($sort)) {
-            $query->orderBy(SortUtil::createOrderBy($sort));
-        }
+        $sortControl = SortControl::create($columns);
 
         $this->params->shift($sortControl->getSortParam());
 
-        return $sortControl;
+        return $sortControl->apply($query);
     }
 
     /**
