@@ -330,12 +330,12 @@ class RedisConfigForm extends ConfigForm
         );
         $this->config->setSection('redis1', [
             'host'      => $connectionConfig->get('redis1', 'host'),
-            'port'      => $connectionConfig->get('redis1', 'port')
+            'port'      => $connectionConfig->get('redis1', 'port'),
             'password'  => $connectionConfig->get('redis1', 'password')
         ]);
         $this->config->setSection('redis2', [
             'host'      => $connectionConfig->get('redis2', 'host'),
-            'port'      => $connectionConfig->get('redis2', 'port')
+            'port'      => $connectionConfig->get('redis2', 'port'),
             'password'  => $connectionConfig->get('redis2', 'password')
         ]);
 
