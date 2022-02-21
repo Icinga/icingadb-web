@@ -140,7 +140,7 @@ class RedisConfigForm extends ConfigForm
             'placeholder' => 6380
         ]);
 
-        $this->addElement('number', 'redis1_password', [
+        $this->addElement('password', 'redis1_password', [
             'description' => t('Redis Password'),
             'label'       => t('Redis Password'),
         ]);
@@ -177,7 +177,7 @@ class RedisConfigForm extends ConfigForm
             'placeholder' => 6380
         ]);
 
-        $this->addElement('number', 'redis2_password', [
+        $this->addElement('password', 'redis2_password', [
             'description' => t('Redis Password'),
             'label'       => t('Redis Password'),
         ]);
