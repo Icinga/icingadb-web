@@ -39,14 +39,16 @@ class RedisStep extends Step
         ];
         $redisConfig = [
             'redis1' => [
-                'host'  => $this->data['redis1_host'],
-                'port'  => $this->data['redis1_port'] ?: null
+                'host'      => $this->data['redis1_host'],
+                'port'      => $this->data['redis1_port'] ?: null
+                'password'  => $this->data['redis1_password'] ?: null
             ]
         ];
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
             $redisConfig['redis2'] = [
-                'host'  => $this->data['redis2_host'],
-                'port'  => $this->data['redis2_port'] ?: null
+                'host'      => $this->data['redis2_host'],
+                'port'      => $this->data['redis2_port'] ?: null
+                'password'  => $this->data['redis2_password'] ?: null
             ];
         }
 
@@ -117,6 +119,10 @@ class RedisStep extends Step
             new HtmlElement('strong', null, Text::create(t('Port'))),
             $this->data['redis1_port'] ?: 6380
         ]));
+        $primaryOptions->addHtml(Table::row([
+            new HtmlElement('strong', null, Text::create(t('Password'))),
+            $this->data['redis1_password'] ?: 6380
+        ]));
 
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
             $topic->addHtml(
@@ -132,6 +138,10 @@ class RedisStep extends Step
             $secondaryOptions->addHtml(Table::row([
                 new HtmlElement('strong', null, Text::create(t('Port'))),
                 $this->data['redis2_port'] ?: 6380
+            ]));
+            $secondaryOptions->addHtml(Table::row([
+                new HtmlElement('strong', null, Text::create(t('Password'))),
+                $this->data['redis2_password'] ?: 6380
             ]));
 
             $topic->addHtml(
