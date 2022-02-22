@@ -40,14 +40,14 @@ class RedisStep extends Step
         $redisConfig = [
             'redis1' => [
                 'host'      => $this->data['redis1_host'],
-                'port'      => $this->data['redis1_port'] ?: null
+                'port'      => $this->data['redis1_port'] ?: null,
                 'password'  => $this->data['redis1_password'] ?: null
             ]
         ];
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
             $redisConfig['redis2'] = [
                 'host'      => $this->data['redis2_host'],
-                'port'      => $this->data['redis2_port'] ?: null
+                'port'      => $this->data['redis2_port'] ?: null,
                 'password'  => $this->data['redis2_password'] ?: null
             ];
         }
