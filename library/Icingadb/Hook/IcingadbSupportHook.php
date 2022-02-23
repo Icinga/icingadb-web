@@ -32,9 +32,11 @@ abstract class IcingadbSupportHook
      */
     final public static function isIcingaDbSetAsPreferredBackend(): bool
     {
-        $webPreferences = Auth::getInstance()->getUser()->getPreferences()->get('icingaweb');
-        if (! empty($webPreferences) && array_key_exists(static::PREFERENCE_NAME, $webPreferences)) {
-            return (bool) $webPreferences[static::PREFERENCE_NAME];
+        if ($user = Auth::getInstance()->getUser()) {
+            $webPreferences = $user->getPreferences()->get('icingaweb');
+            if (! empty($webPreferences) && array_key_exists(static::PREFERENCE_NAME, $webPreferences)) {
+                return (bool) $webPreferences[static::PREFERENCE_NAME];
+            }
         }
 
         return false;
