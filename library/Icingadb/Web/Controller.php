@@ -190,6 +190,11 @@ class Controller extends CompatController
             $columnPath = $column->getSearchValue();
             if (($pos = strpos($columnPath, '.vars.')) !== false) {
                 try {
+                    if ($query instanceof UnionQuery) {
+                        // TODO: This can't be right. Finally solve this god-damn union-query-model structure!!!1
+                        $query = $query->getUnions()[0];
+                    }
+
                     $relationPath = $query->getResolver()->qualifyPath(
                         substr($columnPath, 0, $pos + 5),
                         $query->getModel()->getTableName()
