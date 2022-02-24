@@ -540,15 +540,6 @@ namespace Icinga\Module\Icingadb {
         'title' => t('Configure the database backend'),
         'url'   => 'config/database'
     ]);
-
-    if ($this::exists('monitoring')) {
-        $this->provideConfigTab('backend', [
-            'label' => t('Backend'),
-            'title' => t('Configure IcingaDB as the Backend'),
-            'url'   => 'config/backend'
-        ]);
-    }
-
     $this->provideConfigTab('redis', [
         'label' => t('Redis'),
         'title' => t('Configure the Redis connections'),

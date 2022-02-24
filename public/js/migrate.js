@@ -24,22 +24,6 @@
         '   <button type="button" value="0"><i class="icon-"></i></button>\n' +
         '</li>';
 
-    const BACKEND_FORM = '<form id="setAsBackendForm" name="IcingaModuleIcingadbFormsSetAsBackendForm" ' +
-        'class="icinga-form icinga-controls" method="post" action="icingadb/migrate/checkbox-submit" ' +
-        'data-base-target="migrate-popup-backend-submit-blackhole">\n' +
-        '   <div class="wrapper">\n' +
-        '      <div class="checkbox-label">\n' +
-        '         <span><label for="setAsBackendForm-checkbox">Use Icinga DB As Backend</label></span>\n' +
-        '      </div>\n' +
-        '      <input type="checkbox" name="backend" value="1" id="setAsBackendForm-checkbox" class="autosubmit sr-only">\n' +
-        '      <label for="setAsBackendForm-checkbox" aria-hidden="true" class="toggle-switch">\n' +
-        '         <span class="toggle-slider"></span>\n' +
-        '      </label>\n' +
-        '     </div>\n' +
-        '   <input type="hidden" name="formUID" value="IcingaModuleIcingadbFormsSetAsBackendForm" id="IcingaModuleIcingadbFormsSetAsBackendForm">\n' +
-        '   <div id="migrate-popup-backend-submit-blackhole"></div>\n' +
-        '</form>';
-
     /**
      * Icinga DB Migration behavior.
      *
@@ -370,29 +354,31 @@
         });
 
         if (Object.keys(supportedModules).length) {
-            let $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
-            if (! $form.length) {
-                $form = $(BACKEND_FORM);
-                this.Popup().find('.suggestion-area > ul').after($form);
-            }
-
             this.backendSupportRelated = { ...this.backendSupportRelated, ...supportedModules };
 
             let req = $.ajax({
                 context : this,
                 type    : 'get',
-                url     : this.icinga.config.baseUrl + '/icingadb/migrate/checkbox-state'
+                url     : this.icinga.config.baseUrl + '/icingadb/migrate/checkbox-state?showCompact'
             });
 
             req.done(this.setCheckboxState);
         }
     };
 
-    Migrate.prototype.setCheckboxState = function(isChecked, textStatus, req) {
-        var $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
-        var $checkbox = $form.find('input#setAsBackendForm-checkbox');
+    Migrate.prototype.setCheckboxState = function(html, textStatus, req) {
+        let $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
+        if (! $form.length) {
+            $form = $(html);
+            $form.attr('data-base-target', 'migrate-popup-backend-submit-blackhole');
+            $form.append('<div id="migrate-popup-backend-submit-blackhole"></div>');
 
-        $checkbox.prop('checked', isChecked);
+            this.Popup().find('.suggestion-area > ul').after($form);
+        } else {
+            let $newForm = $(html);
+            $form.find('[name=backend]').prop('checked', $newForm.find('[name=backend]').is(':checked'));
+        }
+
         this.showPopup();
     }
 
