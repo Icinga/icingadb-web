@@ -106,21 +106,7 @@ abstract class StateListItem extends BaseListItem
         $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
 
         if ($this->state->is_handled) {
-            switch (true) {
-                case $this->state->in_downtime:
-                    $icon = Icons::IN_DOWNTIME;
-                    break;
-                case $this->state->is_acknowledged:
-                    $icon = Icons::IS_ACKNOWLEDGED;
-                    break;
-                case $this->state->is_flapping:
-                    $icon = Icons::IS_FLAPPING;
-                    break;
-                default:
-                    $icon = Icons::HOST_DOWN;
-            }
-
-            $stateBall->addHtml(new Icon($icon));
+            $stateBall->addHtml(new Icon($this->getHandledIcon()));
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
@@ -139,6 +125,20 @@ abstract class StateListItem extends BaseListItem
             return $since;
         } elseif ($this->state->last_state_change !== null) {
             return new TimeSince($this->state->last_state_change);
+        }
+    }
+
+    protected function getHandledIcon(): string
+    {
+        switch (true) {
+            case $this->state->in_downtime:
+                return Icons::IN_DOWNTIME;
+            case $this->state->is_acknowledged:
+                return Icons::IS_ACKNOWLEDGED;
+            case $this->state->is_flapping:
+                return Icons::IS_FLAPPING;
+            default:
+                return Icons::HOST_DOWN;
         }
     }
 
