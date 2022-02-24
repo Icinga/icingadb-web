@@ -35,8 +35,7 @@
         var $item = $target.closest('.list-item');
         var $list = $item.parent('.action-list');
 
-        if ($target.closest('[data-no-icinga-ajax]').length > 0) {
-            // Quickfix? Interferes with loadmore.js otherwise
+        if ($target.is('a') && ! $target.is('.subject')) {
             return true;
         }
 
