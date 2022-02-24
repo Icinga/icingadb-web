@@ -5,15 +5,15 @@
 namespace Icinga\Module\Icingadb\Hook;
 
 use Icinga\Application\Icinga;
-use Icinga\Authentication\Auth;
 use Icinga\Module\Icingadb\Hook\Common\HookUtils;
+use Icinga\Web\Session;
 
 abstract class IcingadbSupportHook
 {
     use HookUtils;
 
     /** @var string key name of preference */
-    const PREFERENCE_NAME = 'icingadb_as_backend';
+    const PREFERENCE_NAME = 'icingadb.as_backend';
 
     /**
      * Return whether your module supports IcingaDB or not
@@ -32,14 +32,9 @@ abstract class IcingadbSupportHook
      */
     final public static function isIcingaDbSetAsPreferredBackend(): bool
     {
-        if ($user = Auth::getInstance()->getUser()) {
-            $webPreferences = $user->getPreferences()->get('icingaweb');
-            if (! empty($webPreferences) && array_key_exists(static::PREFERENCE_NAME, $webPreferences)) {
-                return (bool) $webPreferences[static::PREFERENCE_NAME];
-            }
-        }
-
-        return false;
+        return (bool) Session::getSession()
+            ->getNamespace('icingadb')
+            ->get(self::PREFERENCE_NAME, false);
     }
 
     /**
