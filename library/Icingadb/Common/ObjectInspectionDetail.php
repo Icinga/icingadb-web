@@ -142,6 +142,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                 'execution_time'        => [$this, 'formatMilliseconds'],
                 'latency'               => [$this, 'formatMilliseconds'],
                 'hard_state'            => [$this, 'formatState'],
+                'previous_soft_state'   => [$this, 'formatState'],
                 'previous_hard_state'   => [$this, 'formatState'],
                 'state'                 => [$this, 'formatState']
             ]
