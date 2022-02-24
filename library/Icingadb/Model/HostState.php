@@ -29,6 +29,7 @@ class HostState extends State
             'state_type'                    => t('Host State Type'),
             'soft_state'                    => t('Host Soft State'),
             'hard_state'                    => t('Host Hard State'),
+            'previous_soft_state'           => t('Host Previous Soft State'),
             'previous_hard_state'           => t('Host Previous Hard State'),
             'attempt'                       => t('Host State Attempt No.'),
             'severity'                      => t('Host State Severity'),

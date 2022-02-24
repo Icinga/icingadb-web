@@ -21,6 +21,7 @@ abstract class State extends Model
             'state_type',
             'soft_state',
             'hard_state',
+            'previous_soft_state',
             'previous_hard_state',
             'attempt',
             'severity',
