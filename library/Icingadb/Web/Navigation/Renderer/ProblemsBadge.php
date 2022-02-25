@@ -147,7 +147,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
 
         if ($count) {
             return (new StateBadge($count, $this->getState()))
-                    ->addAttributes(['class' => 'badge']);
+                    ->addAttributes(['class' => 'badge', 'title' => $this->getTitle()]);
         }
 
         return null;
