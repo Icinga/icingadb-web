@@ -101,7 +101,13 @@ class ViewModeSwitcher extends Form
      */
     public function getViewMode(): string
     {
-        return $this->getValue($this->getViewModeParam(), $this->getDefaultViewMode());
+        $viewMode = $this->getPopulatedValue($this->getViewModeParam(), $this->getDefaultViewMode());
+
+        if (array_key_exists($viewMode, static::$viewModes)) {
+            return $viewMode;
+        }
+
+        return $this->getDefaultViewMode();
     }
 
     /**
