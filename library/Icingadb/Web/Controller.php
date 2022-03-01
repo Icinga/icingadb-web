@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Version;
 use Icinga\Data\ConfigObject;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
@@ -680,10 +681,15 @@ class Controller extends CompatController
     }
 
     /**
-     * @todo Consider making this the default in Icinga Web 2
+     * @todo Remove once support for Icinga Web 2 v2.9.x is dropped
      */
     protected function sendAsPdf()
     {
+        if (version_compare(Version::VERSION, '2.10.0', '>=')) {
+            parent::sendAsPdf();
+            return;
+        }
+
         if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
             throw new ConfigurationError('The pdfexport module is required for exports to PDF');
         }
