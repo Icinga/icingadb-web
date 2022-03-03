@@ -35,6 +35,7 @@ class UserController extends Controller
         }
 
         $this->user = $user;
+        $this->view->title = $user->display_name;
     }
 
     public function indexAction()

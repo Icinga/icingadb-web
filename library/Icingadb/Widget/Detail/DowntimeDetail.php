@@ -27,6 +27,7 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
+use ipl\Web\Widget\StateBall;
 
 class DowntimeDetail extends BaseHtmlElement
 {
@@ -79,6 +80,30 @@ class DowntimeDetail extends BaseHtmlElement
         ]));
 
         $this->add(Html::tag('h2', t('Details')));
+
+        if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
+            $this->addHtml(new HorizontalKeyValue(
+                t('Type'),
+                $this->downtime->is_flexible ? t('Flexible') : t('Fixed')
+            ));
+            if ($this->downtime->object_type === 'host') {
+                $this->addHtml(new HorizontalKeyValue(t('Host'), [
+                    $this->downtime->host->name,
+                    ' ',
+                    new StateBall($this->downtime->host->state->getStateText())
+                ]));
+            } else {
+                $this->addHtml(new HorizontalKeyValue(t('Service'), Html::sprintf(
+                    t('%s on %s', '<service> on <host>'),
+                    [
+                        $this->downtime->service->name,
+                        ' ',
+                        new StateBall($this->downtime->service->state->getStateText())
+                    ],
+                    $this->downtime->host->name
+                )));
+            }
+        }
 
         if ($this->downtime->triggered_by_id !== null || $this->downtime->parent_id !== null) {
             if ($this->downtime->triggered_by_id !== null) {
@@ -170,7 +195,8 @@ class DowntimeDetail extends BaseHtmlElement
         $this->add($this->createTimeline());
 
         if (
-            $this->isGrantedOn(
+            getenv('ICINGAWEB_EXPORT_FORMAT') !== 'pdf'
+            && $this->isGrantedOn(
                 'icingadb/command/downtime/delete',
                 $this->downtime->{$this->downtime->object_type}
             )

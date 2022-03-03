@@ -57,6 +57,7 @@ class HostController extends Controller
         $this->loadTabsForObject($host);
 
         $this->setTitleTab($this->getRequest()->getActionName());
+        $this->view->title = $host->display_name;
     }
 
     public function indexAction()
