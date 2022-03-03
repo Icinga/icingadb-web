@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Web\Widget\HorizontalKeyValue;
 
 class UsergroupDetail extends BaseHtmlElement
 {
@@ -31,6 +32,14 @@ class UsergroupDetail extends BaseHtmlElement
     public function __construct(Usergroup $usergroup)
     {
         $this->usergroup = $usergroup;
+    }
+
+    protected function createPrintHeader()
+    {
+        return [
+            new HtmlElement('h2', null, Text::create(t('Details'))),
+            new HorizontalKeyValue(t('Name'), $this->usergroup->name)
+        ];
     }
 
     protected function createCustomVars(): array
@@ -74,6 +83,10 @@ class UsergroupDetail extends BaseHtmlElement
 
     protected function assemble()
     {
+        if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
+            $this->add($this->createPrintHeader());
+        }
+
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             500 => $this->createUserList(),
             700 => $this->createCustomVars()

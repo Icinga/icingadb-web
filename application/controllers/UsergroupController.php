@@ -35,6 +35,7 @@ class UsergroupController extends Controller
         }
 
         $this->usergroup = $usergroup;
+        $this->view->title = $usergroup->display_name;
     }
 
     public function indexAction()
