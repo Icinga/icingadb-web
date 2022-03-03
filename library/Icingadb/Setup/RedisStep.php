@@ -121,7 +121,7 @@ class RedisStep extends Step
         ]));
         $primaryOptions->addHtml(Table::row([
             new HtmlElement('strong', null, Text::create(t('Password'))),
-            $this->data['redis1_password'] ?: 6380
+            $this->data['redis1_password'] ?: mt('icingadb', 'None', 'non-existence of a value')
         ]));
 
         if (isset($this->data['redis2_host']) && $this->data['redis2_host']) {
@@ -141,7 +141,7 @@ class RedisStep extends Step
             ]));
             $secondaryOptions->addHtml(Table::row([
                 new HtmlElement('strong', null, Text::create(t('Password'))),
-                $this->data['redis2_password'] ?: 6380
+                $this->data['redis2_password'] ?: mt('icingadb', 'None', 'non-existence of a value')
             ]));
 
             $topic->addHtml(
