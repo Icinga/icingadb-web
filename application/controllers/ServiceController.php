@@ -61,6 +61,11 @@ class ServiceController extends Controller
         $this->loadTabsForObject($service);
 
         $this->setTitleTab($this->getRequest()->getActionName());
+        $this->view->title = sprintf(
+            t('%s on %s', '<service> on <host>'),
+            $service->display_name,
+            $service->host->display_name
+        );
     }
 
     public function indexAction()
