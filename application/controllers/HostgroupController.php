@@ -11,7 +11,9 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
+use ipl\Html\Html;
 use ipl\Stdlib\Filter;
+use ipl\Web\Widget\HorizontalKeyValue;
 
 class HostgroupController extends Controller
 {
@@ -40,6 +42,7 @@ class HostgroupController extends Controller
         }
 
         $this->hostgroup = $hostgroup;
+        $this->view->title = $hostgroup->display_name;
     }
 
     public function indexAction()
@@ -61,10 +64,20 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
-        $this->addControl((new HostgroupList([$this->hostgroup]))
-            ->setViewMode('minimal')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
+        if ($this->getRequest()->getParam('format') === 'pdf') {
+            $this->addContent((new HostgroupList([$this->hostgroup]))
+                ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
+                ->setNoSubjectLink());
+            $this->addContent(Html::tag('h2', null, t('Hosts')));
+        } else {
+            $this->addControl((new HostgroupList([$this->hostgroup]))
+                ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
+                ->setNoSubjectLink());
+        }
+
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);
