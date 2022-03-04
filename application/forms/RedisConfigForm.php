@@ -141,8 +141,9 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addElement('password', 'redis1_password', [
-            'description' => t('Redis Password'),
-            'label'       => t('Redis Password'),
+            'description'    => t('Redis Password'),
+            'label'          => t('Redis Password'),
+            'renderPassword' => true,
         ]);
 
         $this->addDisplayGroup(
@@ -178,8 +179,9 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addElement('password', 'redis2_password', [
-            'description' => t('Redis Password'),
-            'label'       => t('Redis Password'),
+            'description'    => t('Redis Password'),
+            'label'          => t('Redis Password'),
+            'renderPassword' => true,
         ]);
 
         $this->addDisplayGroup(
