@@ -27,7 +27,7 @@ class ServicegroupsController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('Service Groups'));
+        $this->addTitleTab(t('Service Groups'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();

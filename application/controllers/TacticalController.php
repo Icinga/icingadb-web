@@ -19,7 +19,7 @@ class TacticalController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('Tactical Overview'));
+        $this->addTitleTab(t('Tactical Overview'));
 
         $db = $this->getDb();
 

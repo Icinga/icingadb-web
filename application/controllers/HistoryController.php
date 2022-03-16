@@ -20,7 +20,7 @@ class HistoryController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('History'));
+        $this->addTitleTab(t('History'));
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
         $db = $this->getDb();

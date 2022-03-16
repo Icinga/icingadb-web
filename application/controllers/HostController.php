@@ -57,7 +57,7 @@ class HostController extends Controller
         $this->loadTabsForObject($host);
 
         $this->setTitleTab($this->getRequest()->getActionName());
-        $this->view->title = $host->display_name;
+        $this->setTitle($host->display_name);
     }
 
     public function indexAction()
@@ -272,7 +272,7 @@ class HostController extends Controller
         if ($tab !== null) {
             $tab->setActive();
 
-            $this->view->title = $tab->getLabel();
+            $this->setTitle($tab->getLabel());
         }
     }
 

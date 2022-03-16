@@ -24,7 +24,7 @@ class HostgroupController extends Controller
     {
         $this->assertRouteAccess('hostgroups');
 
-        $this->setTitle(t('Host Group'));
+        $this->addTitleTab(t('Host Group'));
 
         $name = $this->params->getRequired('name');
 
@@ -42,7 +42,7 @@ class HostgroupController extends Controller
         }
 
         $this->hostgroup = $hostgroup;
-        $this->view->title = $hostgroup->display_name;
+        $this->setTitle($hostgroup->display_name);
     }
 
     public function indexAction()

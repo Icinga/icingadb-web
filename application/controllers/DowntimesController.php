@@ -22,7 +22,7 @@ class DowntimesController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('Downtimes'));
+        $this->addTitleTab(t('Downtimes'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -144,7 +144,7 @@ class DowntimesController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle(t('Downtimes'));
+        $this->addTitleTab(t('Downtimes'));
 
         $db = $this->getDb();
 

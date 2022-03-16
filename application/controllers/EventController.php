@@ -19,7 +19,7 @@ class EventController extends Controller
 
     public function init()
     {
-        $this->setTitle(t('Event'));
+        $this->addTitleTab(t('Event'));
 
         $id = $this->params->getRequired('id');
 
