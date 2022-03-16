@@ -20,7 +20,7 @@ class NotificationsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('Notifications'));
+        $this->addTitleTab(t('Notifications'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();

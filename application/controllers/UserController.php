@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         $this->assertRouteAccess('users');
 
-        $this->setTitle(t('User'));
+        $this->addTitleTab(t('User'));
 
         $name = $this->params->getRequired('name');
 
@@ -35,7 +35,7 @@ class UserController extends Controller
         }
 
         $this->user = $user;
-        $this->view->title = $user->display_name;
+        $this->setTitle($user->display_name);
     }
 
     public function indexAction()

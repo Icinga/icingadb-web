@@ -22,7 +22,7 @@ class DowntimeController extends Controller
 
     public function init()
     {
-        $this->setTitle(t('Downtime'));
+        $this->addTitleTab(t('Downtime'));
 
         $name = $this->params->getRequired('name');
 

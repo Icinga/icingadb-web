@@ -24,7 +24,7 @@ class UsersController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('Users'));
+        $this->addTitleTab(t('Users'));
 
         $db = $this->getDb();
 

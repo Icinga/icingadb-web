@@ -35,7 +35,7 @@ class ServicesController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('Services'));
+        $this->addTitleTab(t('Services'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -133,7 +133,7 @@ class ServicesController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle(t('Services'));
+        $this->addTitleTab(t('Services'));
 
         $db = $this->getDb();
 
@@ -212,7 +212,7 @@ class ServicesController extends Controller
     public function gridAction()
     {
         $db = $this->getDb();
-        $this->setTitle(t('Service Grid'));
+        $this->addTitleTab(t('Service Grid'));
 
         $query = Service::on($db)->with([
             'state',

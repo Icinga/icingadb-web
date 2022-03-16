@@ -38,10 +38,10 @@ class CommandTransportController extends ConfigController
 
         $this->mergeTabs($this->Module()->getConfigTabs());
         $this->getTabs()->disableLegacyExtensions();
-        $this->view->title = $this->getTabs()
+        $this->setTitle($this->getTabs()
             ->activate('command-transports')
             ->getActiveTab()
-            ->getLabel();
+            ->getLabel());
     }
 
     public function showAction()
@@ -74,7 +74,7 @@ class CommandTransportController extends ConfigController
 
         $this->addContent($form);
 
-        $this->setTitle(sprintf($this->translate('Command Transport: %s'), $transportName));
+        $this->addTitleTab($this->translate('Command Transport: %s'), $transportName);
         $this->getTabs()->disableLegacyExtensions();
     }
 
@@ -93,7 +93,7 @@ class CommandTransportController extends ConfigController
 
         $this->addContent($form);
 
-        $this->setTitle($this->translate('Add Command Transport'));
+        $this->addTitleTab($this->translate('Add Command Transport'));
         $this->getTabs()->disableLegacyExtensions();
     }
 

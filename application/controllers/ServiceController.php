@@ -61,7 +61,7 @@ class ServiceController extends Controller
         $this->loadTabsForObject($service);
 
         $this->setTitleTab($this->getRequest()->getActionName());
-        $this->view->title = sprintf(
+        $this->setTitle(
             t('%s on %s', '<service> on <host>'),
             $service->display_name,
             $service->host->display_name
@@ -220,7 +220,7 @@ class ServiceController extends Controller
         if ($tab !== null) {
             $tab->setActive();
 
-            $this->view->title = $tab->getLabel();
+            $this->setTitle($tab->getLabel());
         }
     }
 

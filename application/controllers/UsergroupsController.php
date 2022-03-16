@@ -24,7 +24,7 @@ class UsergroupsController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('User Groups'));
+        $this->addTitleTab(t('User Groups'));
 
         $db = $this->getDb();
 

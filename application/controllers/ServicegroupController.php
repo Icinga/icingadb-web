@@ -23,7 +23,7 @@ class ServicegroupController extends Controller
     {
         $this->assertRouteAccess('servicegroups');
 
-        $this->setTitle(t('Service Group'));
+        $this->addTitleTab(t('Service Group'));
 
         $name = $this->params->getRequired('name');
 
@@ -41,7 +41,7 @@ class ServicegroupController extends Controller
         }
 
         $this->servicegroup = $servicegroup;
-        $this->view->title = $servicegroup->display_name;
+        $this->setTitle($servicegroup->display_name);
     }
 
     public function indexAction()
