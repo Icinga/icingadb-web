@@ -17,8 +17,8 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Common\BaseItemList;
+use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
 use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
@@ -29,27 +29,22 @@ use Icinga\Util\Environment;
 use Icinga\Util\Json;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
-use ipl\Orm\Common\SortUtil;
-use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Stdlib\Filter;
-use ipl\Stdlib\Seq;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
-use ipl\Web\Control\SearchBar;
-use ipl\Web\Control\SearchEditor;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
-use ipl\Web\Widget\ContinueWith;
 
 class Controller extends CompatController
 {
     use Auth;
     use Database;
+    use SearchControls;
 
     /** @var Filter\Rule Filter from query string parameters */
     private $filter;
@@ -122,234 +117,11 @@ class Controller extends CompatController
      */
     public function createSortControl(Query $query, array $columns): SortControl
     {
-        $default = (array) $query->getModel()->getDefaultSort();
-        $normalized = [];
-        foreach ($columns as $key => $value) {
-            $normalized[SortUtil::normalizeSortSpec($key)] = $value;
-        }
-        $sortControl = (new SortControl(Url::fromRequest()))
-            ->setColumns($normalized);
-
-        if (! empty($default)) {
-            $sortControl->setDefault(SortUtil::normalizeSortSpec($default));
-        }
-
-        $sort = $sortControl->getSort();
-
-        if (! empty($sort)) {
-            $query->orderBy(SortUtil::createOrderBy($sort));
-        }
+        $sortControl = SortControl::create($columns);
 
         $this->params->shift($sortControl->getSortParam());
 
-        return $sortControl;
-    }
-
-    /**
-     * Create and return the SearchBar
-     *
-     * @param Query $query The query being filtered
-     * @param array $preserveParams Query params to preserve when redirecting
-     *
-     * @return SearchBar
-     */
-    public function createSearchBar(Query $query, array $preserveParams = null): SearchBar
-    {
-        $requestUrl = Url::fromRequest();
-        $redirectUrl = $preserveParams !== null
-            ? $requestUrl->onlyWith($preserveParams)
-            : (clone $requestUrl)->setParams([]);
-
-        $filter = QueryString::fromString((string) $this->params)
-            ->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
-                $this->enrichFilterCondition($condition, $query);
-            })
-            ->parse();
-
-        $searchBar = new SearchBar();
-        $searchBar->setFilter($filter);
-        $searchBar->setAction($redirectUrl->getAbsoluteUrl());
-        $searchBar->setIdProtector([$this->getRequest(), 'protectId']);
-
-        if (method_exists($this, 'completeAction')) {
-            $searchBar->setSuggestionUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
-                ['_disableLayout' => true, 'showCompact' => true]
-            ));
-        }
-
-        if (method_exists($this, 'searchEditorAction')) {
-            $searchBar->setEditorUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/search-editor'
-            )->setParams($redirectUrl->getParams()));
-        }
-
-        $metaData = iterator_to_array(
-            ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
-        );
-        $columnValidator = function (SearchBar\ValidatedColumn $column) use ($query, $metaData) {
-            $columnPath = $column->getSearchValue();
-            if (($pos = strpos($columnPath, '.vars.')) !== false) {
-                try {
-                    if ($query instanceof UnionQuery) {
-                        // TODO: This can't be right. Finally solve this god-damn union-query-model structure!!!1
-                        $query = $query->getUnions()[0];
-                    }
-
-                    $relationPath = $query->getResolver()->qualifyPath(
-                        substr($columnPath, 0, $pos + 5),
-                        $query->getModel()->getTableName()
-                    );
-                    $query->getResolver()->resolveRelation($relationPath);
-                } catch (InvalidRelationException $e) {
-                    $column->setMessage(sprintf(
-                        t('"%s" is not a valid relation'),
-                        substr($e->getRelation(), 0, $pos)
-                    ));
-                }
-            } else {
-                if (strpos($columnPath, '.') === false) {
-                    $columnPath = $query->getResolver()->qualifyPath($columnPath, $query->getModel()->getTableName());
-                }
-
-                if (! isset($metaData[$columnPath])) {
-                    list($columnPath, $columnLabel) = Seq::find($metaData, $column->getSearchValue(), false);
-                    if ($columnPath === null) {
-                        $column->setMessage(t('Is not a valid column'));
-                    } else {
-                        $column->setSearchValue($columnPath);
-                        $column->setLabel($columnLabel);
-                    }
-                } else {
-                    $column->setLabel($metaData[$columnPath]);
-                }
-            }
-        };
-
-        $searchBar->on(SearchBar::ON_ADD, $columnValidator)
-            ->on(SearchBar::ON_INSERT, $columnValidator)
-            ->on(SearchBar::ON_SAVE, $columnValidator)
-            ->on(SearchBar::ON_SENT, function (SearchBar $form) use ($redirectUrl) {
-                $existingParams = $redirectUrl->getParams();
-                $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
-                foreach ($existingParams->toArray(false) as $name => $value) {
-                    if (is_int($name)) {
-                        $name = $value;
-                        $value = true;
-                    }
-
-                    $redirectUrl->getParams()->addEncoded($name, $value);
-                }
-
-                $form->setRedirectUrl($redirectUrl);
-            })->on(SearchBar::ON_SUCCESS, function (SearchBar $form) {
-                $this->getResponse()->redirectAndExit($form->getRedirectUrl());
-            })->handleRequest(ServerRequest::fromGlobals());
-
-        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
-
-        return $searchBar;
-    }
-
-    /**
-     * Create and return the SearchEditor
-     *
-     * @param Query $query The query being filtered
-     * @param array $preserveParams Query params to preserve when redirecting
-     *
-     * @return SearchEditor
-     */
-    public function createSearchEditor(Query $query, array $preserveParams = null): SearchEditor
-    {
-        $requestUrl = Url::fromRequest();
-        $redirectUrl = Url::fromPath('icingadb/' . $this->getRequest()->getControllerName());
-        if (! empty($preserveParams)) {
-            $redirectUrl->setParams($requestUrl->onlyWith($preserveParams)->getParams());
-        }
-
-        $editor = new SearchEditor();
-        $editor->setQueryString((string) $this->params->without($preserveParams));
-        $editor->setAction($requestUrl->getAbsoluteUrl());
-
-        if (method_exists($this, 'completeAction')) {
-            $editor->setSuggestionUrl(Url::fromPath(
-                'icingadb/' . $this->getRequest()->getControllerName() . '/complete',
-                ['_disableLayout' => true, 'showCompact' => true]
-            ));
-        }
-
-        $editor->getParser()->on(QueryString::ON_CONDITION, function (Filter\Condition $condition) use ($query) {
-            if ($condition->getColumn()) {
-                $this->enrichFilterCondition($condition, $query);
-            }
-        });
-
-        $metaData = iterator_to_array(
-            ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver())
-        );
-        $editor->on(SearchEditor::ON_VALIDATE_COLUMN, function (Filter\Condition $condition) use ($query, $metaData) {
-            $column = $condition->getColumn();
-            if (($pos = strpos($column, '.vars.')) !== false) {
-                try {
-                    $query->getResolver()->resolveRelation(substr($column, 0, $pos + 5));
-                } catch (InvalidRelationException $e) {
-                    throw new SearchBar\SearchException(sprintf(
-                        t('"%s" is not a valid relation'),
-                        substr($e->getRelation(), 0, $pos)
-                    ));
-                }
-            } else {
-                if (! isset($metaData[$column])) {
-                    $path = Seq::findKey($metaData, $condition->metaData()->get('columnLabel', $column), false);
-                    if ($path === null) {
-                        throw new SearchBar\SearchException(t('Is not a valid column'));
-                    } else {
-                        $condition->setColumn($path);
-                    }
-                }
-            }
-        })->on(SearchEditor::ON_SUCCESS, function (SearchEditor $form) use ($redirectUrl) {
-            $existingParams = $redirectUrl->getParams();
-            $redirectUrl->setQueryString(QueryString::render($form->getFilter()));
-            foreach ($existingParams->toArray(false) as $name => $value) {
-                if (is_int($name)) {
-                    $name = $value;
-                    $value = true;
-                }
-
-                $redirectUrl->getParams()->addEncoded($name, $value);
-            }
-
-            $this->getResponse()
-                ->setHeader('X-Icinga-Container', '_self')
-                ->redirectAndExit($redirectUrl);
-        })->handleRequest(ServerRequest::fromGlobals());
-
-        return $editor;
-    }
-
-    /**
-     * Create and return a ContinueWith
-     *
-     * This will automatically be appended to the SearchBar's wrapper. It's not necessary
-     * to add it separately as control or content!
-     *
-     * @param Url $detailsUrl
-     * @param SearchBar $searchBar
-     *
-     * @return ContinueWith
-     */
-    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar): ContinueWith
-    {
-        $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
-        $continueWith->setTitle(t('Show bulk processing actions for all filtered results'));
-        $continueWith->setBaseTarget('_next');
-        $continueWith->getAttributes()
-            ->set('id', $this->getRequest()->protectId('continue-with'));
-
-        $searchBar->getWrapper()->add($continueWith);
-
-        return $continueWith;
+        return $sortControl->apply($query);
     }
 
     /**
@@ -753,42 +525,6 @@ class Controller extends CompatController
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
         $this->_helper->notifyPostDispatch();
-    }
-
-    /**
-     * Enrich the filter condition with meta data from the query
-     *
-     * @param Filter\Condition $condition
-     * @param Query $query
-     *
-     * @return void
-     */
-    protected function enrichFilterCondition(Filter\Condition $condition, Query $query)
-    {
-        $path = $condition->getColumn();
-        if (strpos($path, '.') === false) {
-            $path = $query->getResolver()->qualifyPath($path, $query->getModel()->getTableName());
-            $condition->setColumn($path);
-        }
-
-        if (strpos($path, '.vars.') !== false) {
-            list($target, $varName) = explode('.vars.', $path);
-            if (strpos($target, '.') === false) {
-                // Programmatically translated since the full definition is available in class ObjectSuggestions
-                $condition->metaData()->set(
-                    'columnLabel',
-                    sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName)
-                );
-            }
-        } else {
-            $label = Seq::findValue(
-                ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver()),
-                $path
-            );
-            if ($label !== null) {
-                $condition->metaData()->set('columnLabel', $label);
-            }
-        }
     }
 
     protected function addContent(ValidHtml $content)
