@@ -17,6 +17,8 @@ class DeleteCommentForm extends CommandForm
     use Auth;
     use RedirectOption;
 
+    protected $defaultAttributes = ['class' => 'inline'];
+
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
