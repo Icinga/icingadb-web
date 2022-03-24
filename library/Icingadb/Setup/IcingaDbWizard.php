@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Setup;
 
-use Icinga\Application\Platform;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
@@ -57,13 +56,13 @@ class IcingaDbWizard extends Wizard implements SetupWizard
         ]));
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-library', '>=', '0.8.0'],
+            'condition'     => ['icinga-php-library', '>=', '0.9.0'],
             'alias'         => 'Icinga PHP library',
             'description'   => t('The Icinga PHP library (IPL) is required for Icinga DB Web')
         ]));
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-thirdparty', '>=', '0.10.0'],
+            'condition'     => ['icinga-php-thirdparty', '>=', '0.11.0'],
             'alias'         => 'Icinga PHP Thirdparty',
             'description'   => t('The Icinga PHP Thirdparty library is required for Icinga DB Web')
         ]));

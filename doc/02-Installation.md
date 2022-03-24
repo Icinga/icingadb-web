@@ -11,8 +11,8 @@
 * The following PHP modules must be installed: cURL, dom, json, libxml, pdo
 * [Icinga DB](https://github.com/Icinga/icingadb)
 * [Icinga Web 2](https://github.com/Icinga/icingaweb2) (>= 2.9)
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.8)
-* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10)
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.9)
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.11)
 * For exports to PDF the [pdfexport](https://github.com/Icinga/icingaweb2-module-pdfexport) (>= 0.10)
   module is required (Optional)
 
