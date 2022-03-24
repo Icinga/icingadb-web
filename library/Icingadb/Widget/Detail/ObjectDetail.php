@@ -17,11 +17,11 @@ use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
+use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
-use Icinga\Module\Icingadb\Compat\CompatObject;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Module\Icingadb\Hook\ActionsHook\ObjectActionsHook;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
@@ -34,7 +34,6 @@ use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
-use Icinga\Module\Icingadb\Widget\Detail\PerfDataTable;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
@@ -75,7 +74,7 @@ class ObjectDetail extends BaseHtmlElement
     public function __construct($object)
     {
         $this->object = $object;
-        $this->compatObject = CompatObject::fromModel($object);
+        $this->compatObject = CompatHost::fromModel($object);
         $this->objectType = $object instanceof Host ? 'host' : 'service';
     }
 

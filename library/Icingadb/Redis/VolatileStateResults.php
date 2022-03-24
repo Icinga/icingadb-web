@@ -27,7 +27,7 @@ class VolatileStateResults extends ResultSet
         return parent::current();
     }
 
-    public function key()
+    public function key(): int
     {
         if (! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
@@ -36,7 +36,7 @@ class VolatileStateResults extends ResultSet
         return parent::key();
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         if (! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->updatesApplied = true;

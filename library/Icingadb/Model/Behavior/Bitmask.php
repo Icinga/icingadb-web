@@ -62,7 +62,7 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
 
         $values = $condition->getValue();
         if (! is_array($values)) {
-            if (ctype_digit($values)) {
+            if (is_int($values) || ctype_digit($values)) {
                 return;
             }
 
