@@ -32,7 +32,7 @@ class HostsController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('Hosts'));
+        $this->addTitleTab(t('Hosts'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -123,7 +123,7 @@ class HostsController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle(t('Hosts'));
+        $this->addTitleTab(t('Hosts'));
 
         $db = $this->getDb();
 

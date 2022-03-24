@@ -19,7 +19,7 @@ class UsergroupController extends Controller
     {
         $this->assertRouteAccess('usergroups');
 
-        $this->setTitle(t('User Group'));
+        $this->addTitleTab(t('User Group'));
 
         $name = $this->params->getRequired('name');
 
@@ -35,6 +35,7 @@ class UsergroupController extends Controller
         }
 
         $this->usergroup = $usergroup;
+        $this->setTitle($usergroup->display_name);
     }
 
     public function indexAction()

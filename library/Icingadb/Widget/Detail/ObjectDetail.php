@@ -9,6 +9,7 @@ use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -30,6 +31,7 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
+use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\Detail\PerfDataTable;
@@ -48,6 +50,7 @@ use ipl\Html\Text;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\StateBall;
 
 class ObjectDetail extends BaseHtmlElement
 {
@@ -74,6 +77,40 @@ class ObjectDetail extends BaseHtmlElement
         $this->object = $object;
         $this->compatObject = CompatObject::fromModel($object);
         $this->objectType = $object instanceof Host ? 'host' : 'service';
+    }
+
+    protected function createPrintHeader()
+    {
+        $info = [new HorizontalKeyValue(t('Name'), $this->object->name)];
+
+        if ($this->objectType === 'host') {
+            $info[] = new HorizontalKeyValue(
+                t('IPv4 Address'),
+                $this->object->address ?: new EmptyState(t('None', 'address'))
+            );
+            $info[] = new HorizontalKeyValue(
+                t('IPv6 Address'),
+                $this->object->address6 ?: new EmptyState(t('None', 'address'))
+            );
+        }
+
+        $info[] = new HorizontalKeyValue(t('State'), [
+            $this->object->state->getStateTextTranslated(),
+            ' ',
+            new StateBall($this->object->state->getStateText())
+        ]);
+
+        $info[] = new HorizontalKeyValue(
+            t('Last State Change'),
+            DateFormatter::formatDateTime($this->object->state->last_state_change)
+        );
+
+        return [
+            new HtmlElement('h2', null, Text::create(
+                $this->objectType === 'host' ? t('Host') : t('Service')
+            )),
+            $info
+        ];
     }
 
     protected function createActions()

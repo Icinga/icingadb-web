@@ -22,7 +22,7 @@ class CommentController extends Controller
 
     public function init()
     {
-        $this->setTitle(t('Comment'));
+        $this->addTitleTab(t('Comment'));
 
         $name = $this->params->getRequired('name');
 

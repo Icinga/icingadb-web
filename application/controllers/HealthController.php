@@ -21,7 +21,7 @@ class HealthController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('Health'));
+        $this->addTitleTab(t('Health'));
 
         $db = $this->getDb();
 

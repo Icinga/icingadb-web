@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
+use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 
 class ServicegroupController extends Controller
@@ -22,7 +23,7 @@ class ServicegroupController extends Controller
     {
         $this->assertRouteAccess('servicegroups');
 
-        $this->setTitle(t('Service Group'));
+        $this->addTitleTab(t('Service Group'));
 
         $name = $this->params->getRequired('name');
 
@@ -40,6 +41,7 @@ class ServicegroupController extends Controller
         }
 
         $this->servicegroup = $servicegroup;
+        $this->setTitle($servicegroup->display_name);
     }
 
     public function indexAction()
@@ -67,10 +69,20 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
-        $this->addControl((new ServicegroupList([$this->servicegroup]))
-            ->setViewMode('minimal')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
+        if ($this->getRequest()->getParam('format') === 'pdf') {
+            $this->addContent((new ServicegroupList([$this->servicegroup]))
+                ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
+                ->setNoSubjectLink());
+            $this->addContent(Html::tag('h2', null, t('Services')));
+        } else {
+            $this->addControl((new ServicegroupList([$this->servicegroup]))
+                ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
+                ->setNoSubjectLink());
+        }
+
         $this->addControl($paginationControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($limitControl);

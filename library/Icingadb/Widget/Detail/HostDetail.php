@@ -36,6 +36,10 @@ class HostDetail extends ObjectDetail
 
     protected function assemble()
     {
+        if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
+            $this->add($this->createPrintHeader());
+        }
+
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             0   => $this->createPluginOutput(),
             190 => $this->createServiceStatistics(),

@@ -22,7 +22,7 @@ class CommentsController extends Controller
 {
     public function indexAction()
     {
-        $this->setTitle(t('Comments'));
+        $this->addTitleTab(t('Comments'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -138,7 +138,7 @@ class CommentsController extends Controller
 
     public function detailsAction()
     {
-        $this->setTitle(t('Comments'));
+        $this->addTitleTab(t('Comments'));
 
         $db = $this->getDb();
 

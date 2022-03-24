@@ -17,8 +17,15 @@ class ServiceProblemsBadge extends ProblemsBadge
     {
         $summary = ServicestateSummary::on($this->getDb())->with('state');
         $this->applyRestrictions($summary);
+        $count = (int) $summary->first()->services_critical_unhandled;
+        if ($count) {
+            $this->setTitle(sprintf(
+                tp('One unhandled service critical', '%d unhandled services critical', $count),
+                $count
+            ));
+        }
 
-        return $summary->first()->services_critical_unhandled;
+        return $count;
     }
 
     protected function getUrl(): Url

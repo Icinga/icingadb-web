@@ -61,6 +61,11 @@ class ServiceController extends Controller
         $this->loadTabsForObject($service);
 
         $this->setTitleTab($this->getRequest()->getActionName());
+        $this->setTitle(
+            t('%s on %s', '<service> on <host>'),
+            $service->display_name,
+            $service->host->display_name
+        );
     }
 
     public function indexAction()
@@ -112,7 +117,6 @@ class ServiceController extends Controller
 
         $history = History::on($db)->with([
             'host',
-            'host.service',
             'host.state',
             'service',
             'service.state',
@@ -216,7 +220,7 @@ class ServiceController extends Controller
         if ($tab !== null) {
             $tab->setActive();
 
-            $this->view->title = $tab->getLabel();
+            $this->setTitle($tab->getLabel());
         }
     }
 

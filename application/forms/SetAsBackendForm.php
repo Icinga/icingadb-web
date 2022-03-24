@@ -4,20 +4,31 @@
 
 namespace Icinga\Module\Icingadb\Forms;
 
-class SetAsBackendForm extends SetAsBackendConfigForm
+use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
+use Icinga\Web\Session;
+use ipl\Web\Compat\CompatForm;
+
+class SetAsBackendForm extends CompatForm
 {
-    public function init()
+    protected $defaultAttributes = [
+        'id'    => 'setAsBackendForm',
+        'class' => 'icinga-controls'
+    ];
+
+    protected function assemble()
     {
-        $this->setName('IcingaModuleIcingadbFormsSetAsBackendForm');
-        $this->setTokenDisabled();
-        // If you change name here, please change in migration.js also.
+        $this->addElement('checkbox', 'backend', [
+            'class' => 'autosubmit',
+            'label' => t('Use Icinga DB As Backend'),
+            'value' => IcingadbSupportHook::isIcingaDbSetAsPreferredBackend()
+        ]);
     }
 
-    public function createElements(array $formData)
+    public function onSuccess()
     {
-        parent::createElements([]);
-
-        $this->removeElement('btn_submit');
-        $this->removeElement('btn_submit_session');
+        Session::getSession()->getNamespace('icingadb')->set(
+            IcingadbSupportHook::PREFERENCE_NAME,
+            $this->getElement('backend')->isChecked()
+        );
     }
 }

@@ -154,11 +154,11 @@ class PluginOutput extends HtmlString
 
         if (preg_match('~<\w+(?>\s\w+=[^>]*)?>~', $output)) {
             // HTML
-            $output = preg_replace(
+            $output = HtmlPurifier::process(preg_replace(
                 self::HTML_PATTERNS,
                 self::HTML_REPLACEMENTS,
-                HtmlPurifier::process($output)
-            );
+                $output
+            ));
             $this->isHtml = true;
         } else {
             // Plaintext

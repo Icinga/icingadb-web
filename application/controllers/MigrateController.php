@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
@@ -68,23 +69,18 @@ class MigrateController extends Controller
     {
         $this->assertHttpMethod('get');
 
-        $this->getResponse()
-            ->setBody(IcingadbSupportHook::isIcingaDbSetAsPreferredBackend())
-            ->sendResponse();
-        exit;
+        $form = new SetAsBackendForm();
+        $form->setAction(Url::fromPath('icingadb/migrate/checkbox-submit')->getAbsoluteUrl());
+
+        $this->getDocument()->addHtml($form);
     }
 
     public function checkboxSubmitAction()
     {
         $this->assertHttpMethod('post');
+        $this->addPart(HtmlString::create('"bogus"'), 'Behavior:Migrate');
 
-        $form = (new SetAsBackendForm())
-            ->setOnSuccess(function () use (&$form) {
-                $this->addPart(HtmlString::create('"bogus"'), 'Behavior:Migrate');
-                $form->save($form->getElement('backend')->isChecked());
-                return false;
-            });
-        $form->handleRequest();
+        (new SetAsBackendForm())->handleRequest(ServerRequest::fromGlobals());
     }
 
     public function backendSupportAction()

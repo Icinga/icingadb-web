@@ -27,7 +27,7 @@ class HostgroupsController extends Controller
 
     public function indexAction()
     {
-        $this->setTitle(t('Host Groups'));
+        $this->addTitleTab(t('Host Groups'));
         $compact = $this->view->compact;
 
         $db = $this->getDb();

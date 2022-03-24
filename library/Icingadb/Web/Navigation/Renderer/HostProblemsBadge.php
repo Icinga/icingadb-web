@@ -17,8 +17,15 @@ class HostProblemsBadge extends ProblemsBadge
     {
         $summary = HoststateSummary::on($this->getDb())->with('state');
         $this->applyRestrictions($summary);
+        $count = (int) $summary->first()->hosts_down_unhandled;
+        if ($count) {
+            $this->setTitle(sprintf(
+                tp('One unhandled host down', '%d unhandled hosts down', $count),
+                $count
+            ));
+        }
 
-        return $summary->first()->hosts_down_unhandled;
+        return $count;
     }
 
     protected function getUrl(): Url
