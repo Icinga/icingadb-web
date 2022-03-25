@@ -169,8 +169,11 @@ class ObjectSuggestions extends Suggestions
 
     protected function fetchColumnSuggestions($searchTerm)
     {
+        $model = $this->getModel();
+        $query = $model::on($this->getDb());
+
         // Ordinary columns first
-        foreach (self::collectFilterColumns($this->getModel()) as $columnName => $columnMeta) {
+        foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
             yield $columnName => $columnMeta;
         }
 
@@ -269,12 +272,8 @@ class ObjectSuggestions extends Suggestions
      *
      * @return Generator
      */
-    public static function collectFilterColumns(Model $model, Resolver $resolver = null): Generator
+    public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
     {
-        if ($resolver === null) {
-            $resolver = new Resolver();
-        }
-
         $metaData = $resolver->getMetaData($model);
         foreach ($metaData as $columnName => $columnMeta) {
             yield $columnName => $columnMeta;

@@ -9,14 +9,26 @@ use Icinga\Application\Benchmark;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\Orm\Query;
 use ipl\Orm\Resolver;
 use ipl\Orm\ResultSet;
 use RuntimeException;
 
 class VolatileStateResults extends ResultSet
 {
+    /** @var Resolver */
+    private $resolver;
+
     /** @var bool Whether Redis updates were applied */
     private $updatesApplied = false;
+
+    public static function fromQuery(Query $query)
+    {
+        $self = parent::fromQuery($query);
+        $self->resolver = $query->getResolver();
+
+        return $self;
+    }
 
     public function current()
     {
@@ -59,7 +71,7 @@ class VolatileStateResults extends ResultSet
         $hostStates = [];
         foreach ($this as $row) {
             if ($type === null) {
-                $behaviors = (new Resolver())->getBehaviors($row->state);
+                $behaviors = $this->resolver->getBehaviors($row->state);
 
                 switch (true) {
                     case $row instanceof Host:
