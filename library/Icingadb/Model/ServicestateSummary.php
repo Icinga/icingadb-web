@@ -71,4 +71,9 @@ class ServicestateSummary extends Service
             ]
         );
     }
+
+    public function getDefaultSort()
+    {
+        return null;
+    }
 }

@@ -66,4 +66,9 @@ class HoststateSummary extends Host
             ]
         );
     }
+
+    public function getDefaultSort()
+    {
+        return null;
+    }
 }
