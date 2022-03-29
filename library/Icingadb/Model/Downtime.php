@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\IdKey;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
@@ -95,10 +96,12 @@ class Downtime extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new IdKey());
+
         $behaviors->add(new BoolCast([
             'is_flexible',
             'is_in_effect'
         ]));
+
         $behaviors->add(new Timestamp([
             'entry_time',
             'scheduled_start_time',
@@ -109,9 +112,22 @@ class Downtime extends Model
             'end_time',
             'duration'
         ]));
+
         $behaviors->add(new ReRoute([
             'hostgroup'    => 'host.hostgroup',
             'servicegroup' => 'service.servicegroup'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'triggered_by_id',
+            'parent_id',
+            'host_id',
+            'service_id',
+            'name_checksum',
+            'properties_checksum',
+            'zone_id'
         ]));
     }
 

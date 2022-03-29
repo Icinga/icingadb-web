@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -54,6 +55,14 @@ class Timeperiod extends Model
         $behaviors->add(new ReRoute([
             'hostgroup'     => 'host.hostgroup',
             'servicegroup'  => 'service.servicegroup'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'name_checksum',
+            'properties_checksum',
+            'zone_id'
         ]));
     }
 

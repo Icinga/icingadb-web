@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
@@ -70,9 +71,24 @@ class History extends Model
         $behaviors->add(new Timestamp([
             'event_time'
         ]));
+
         $behaviors->add(new ReRoute([
             'hostgroup'     => 'host.hostgroup',
             'servicegroup'  => 'service.servicegroup'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'endpoint_id',
+            'host_id',
+            'service_id',
+            'comment_history_id',
+            'downtime_history_id',
+            'flapping_history_id',
+            'notification_history_id',
+            'acknowledgement_history_id',
+            'state_history_id'
         ]));
     }
 

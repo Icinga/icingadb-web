@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\IdKey;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
@@ -81,12 +82,23 @@ class NotificationHistory extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new IdKey());
+
         $behaviors->add(new Timestamp([
             'send_time'
         ]));
+
         $behaviors->add(new ReRoute([
             'hostgroup'     => 'host.hostgroup',
             'servicegroup'  => 'service.servicegroup'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'endpoint_id',
+            'host_id',
+            'service_id',
+            'notification_id'
         ]));
     }
 

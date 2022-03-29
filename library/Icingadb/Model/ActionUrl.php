@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\ActionAndNoteUrl;
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -40,6 +41,11 @@ class ActionUrl extends Model
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new ActionAndNoteUrl(['action_url']));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id'
+        ]));
     }
 
     public function createRelations(Relations $relations)

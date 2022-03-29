@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\FlattenedObjectVars;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -31,6 +32,18 @@ class CustomvarFlat extends Model
             'flatname',
             'flatvalue'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new FlattenedObjectVars());
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'customvar_id',
+            'flatname_checksum'
+        ]));
     }
 
     public function createRelations(Relations $relations)
@@ -71,11 +84,6 @@ class CustomvarFlat extends Model
         $relations->belongsToMany('usergroup', Usergroup::class)
             ->through(UsergroupCustomvar::class)
             ->setCandidateKey('customvar_id');
-    }
-
-    public function createBehaviors(Behaviors $behaviors)
-    {
-        $behaviors->add(new FlattenedObjectVars());
     }
 
     /**

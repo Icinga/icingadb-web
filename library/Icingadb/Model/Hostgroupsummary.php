@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Expression;
 
@@ -154,5 +156,12 @@ class Hostgroupsummary extends UnionModel
         ];
 
         return $unions;
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id'
+        ]));
     }
 }

@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -53,6 +55,16 @@ class NotificationcommandArgument extends Model
             'set_if'                 => t('Notificationcommand Argument Set If'),
             'skip_key'               => t('Notificationcommand Argument Skip Key')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'notificationcommand_id',
+            'environment_id',
+            'properties_checksum'
+        ]));
     }
 
     public function createRelations(Relations $relations)

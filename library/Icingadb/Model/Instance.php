@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
@@ -51,6 +52,7 @@ class Instance extends Model
             'heartbeat',
             'icinga2_start_time'
         ]));
+
         $behaviors->add(new BoolCast([
             'responsible',
             'icinga2_active_host_checks_enabled',
@@ -59,6 +61,12 @@ class Instance extends Model
             'icinga2_flap_detection_enabled',
             'icinga2_notifications_enabled',
             'icinga2_performance_data_enabled'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'endpoint_id',
         ]));
     }
 

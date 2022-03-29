@@ -34,6 +34,14 @@ class Binary extends PropertyBehavior implements QueryAwareBehavior
             throw new \UnexpectedValueException(sprintf('Unexpected resource for %s', $key));
         }
 
+        if ($value === '*') {
+            /**
+             * Support IS (NOT) NULL filter transformation.
+             * {@see \ipl\Sql\Compat\FilterProcessor::assemblePredicate()}
+             */
+            return $value;
+        }
+
         return sprintf('\\x%s', bin2hex($value));
     }
 

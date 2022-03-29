@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -37,6 +39,15 @@ class TimeperiodRange extends Model
             'environment_id'    => t('Timeperiod Range Environment Id'),
             'range_value'       => t('Timeperiod Range Value')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'timeperiod_id',
+            'environment_id'
+        ]));
     }
 
     public function createRelations(Relations $relations)
