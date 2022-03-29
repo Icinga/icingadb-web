@@ -23,7 +23,7 @@ class Timestamp extends PropertyBehavior
             return $value;
         }
 
-        if (! ctype_digit($value)) {
+        if (is_string($value) && ! ctype_digit($value)) {
             $timestamp = strtotime($value);
             if ($timestamp === false) {
                 return $value;

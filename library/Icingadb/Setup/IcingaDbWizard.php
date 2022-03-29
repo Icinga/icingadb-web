@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Setup;
 
-use Icinga\Application\Platform;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
@@ -51,35 +50,19 @@ class IcingaDbWizard extends Wizard implements SetupWizard
     {
         $set = new RequirementSet();
 
-        $phpVersion = Platform::getPhpVersion();
-
-        if (
-            version_compare($phpVersion, '7.0', '>=')
-            && version_compare($phpVersion, '7.3', '<')
-        ) {
-            $set->add(new PhpVersionRequirement([
-                'optional'      => true,
-                'condition'     => ['>=', '7.3'],
-                'description'   => t(
-                    'For Icinga DB Web PHP 7.3+ is highly recommended.'
-                    . ' Older versions still work, but may stop doing so with near future updates.'
-                )
-            ]));
-        } else {
-            $set->add(new PhpVersionRequirement([
-                'condition'     => ['>=', '7.3'],
-                'description'   => t('Icinga DB Web requires PHP version 7.3.')
-            ]));
-        }
+        $set->add(new PhpVersionRequirement([
+            'condition'     => ['>=', '7.2'],
+            'description'   => sprintf(t('Icinga DB Web requires PHP version %s.'), '7.2')
+        ]));
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-library', '>=', '0.7.0'],
+            'condition'     => ['icinga-php-library', '>=', '0.9.0'],
             'alias'         => 'Icinga PHP library',
             'description'   => t('The Icinga PHP library (IPL) is required for Icinga DB Web')
         ]));
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-thirdparty', '>=', '0.10.0'],
+            'condition'     => ['icinga-php-thirdparty', '>=', '0.11.0'],
             'alias'         => 'Icinga PHP Thirdparty',
             'description'   => t('The Icinga PHP Thirdparty library is required for Icinga DB Web')
         ]));
