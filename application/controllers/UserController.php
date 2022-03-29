@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\UserDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use ipl\Stdlib\Filter;
 
 class UserController extends Controller
 {
@@ -24,8 +25,7 @@ class UserController extends Controller
         $name = $this->params->getRequired('name');
 
         $query = User::on($this->getDb());
-        $query->getSelectBase()
-            ->where(['user.name = ?' => $name]);
+        $query->filter(Filter::equal('user.name', $name));
 
         $this->applyRestrictions($query);
 

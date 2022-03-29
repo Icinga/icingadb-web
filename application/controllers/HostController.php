@@ -41,9 +41,9 @@ class HostController extends Controller
         $name = $this->params->getRequired('name');
 
         $query = Host::on($this->getDb())->with(['state', 'icon_image']);
-        $query->setResultSetClass(VolatileStateResults::class);
-        $query->getSelectBase()
-            ->where(['host.name = ?' => $name]);
+        $query
+            ->setResultSetClass(VolatileStateResults::class)
+            ->filter(Filter::equal('host.name', $name));
 
         $this->applyRestrictions($query);
 
@@ -63,8 +63,7 @@ class HostController extends Controller
     public function indexAction()
     {
         $serviceSummary = ServicestateSummary::on($this->getDb())->with('state');
-        $serviceSummary->getSelectBase()
-            ->where(['service.host_id = ?' => $this->host->id]);
+        $serviceSummary->filter(Filter::equal('service.host_id', $this->host->id));
 
         $this->applyRestrictions($serviceSummary);
 
@@ -193,11 +192,9 @@ class HostController extends Controller
             'host',
             'host.state'
         ]);
-        $services->setResultSetClass(VolatileStateResults::class);
-
         $services
-            ->getSelectBase()
-            ->where(['service_host.id = ?' => $this->host->id]);
+            ->setResultSetClass(VolatileStateResults::class)
+            ->filter(Filter::equal('host.id', $this->host->id));
 
         $this->applyRestrictions($services);
 

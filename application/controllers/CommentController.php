@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\CommentDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
 class CommentController extends Controller
@@ -34,9 +35,7 @@ class CommentController extends Controller
             'service.host',
             'service.host.state'
         ]);
-
-        $query->getSelectBase()
-            ->where(['comment.name = ?' => $name]);
+        $query->filter(Filter::equal('comment.name', $name));
 
         $this->applyRestrictions($query);
 

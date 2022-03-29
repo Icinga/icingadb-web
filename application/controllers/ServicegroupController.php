@@ -55,9 +55,10 @@ class ServicegroupController extends Controller
             'host',
             'host.state'
         ])->utilize('servicegroup');
-        $services->setResultSetClass(VolatileStateResults::class);
+        $services
+            ->setResultSetClass(VolatileStateResults::class)
+            ->filter(Filter::equal('servicegroup.id', $this->servicegroup->id));
 
-        $services->getSelectBase()->where(['service_servicegroup.id = ?' => $this->servicegroup->id]);
         $this->applyRestrictions($services);
 
         $limitControl = $this->createLimitControl();
