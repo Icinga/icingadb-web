@@ -240,16 +240,17 @@ class ObjectAuthorization
             return false;
         }
 
+        $granted = false;
         foreach ($this->getAuth()->getUser()->getRoles() as $role) {
-            if (! $role->grants($permission) || $role->denies($permission)) {
+            if ($role->denies($permission)) {
+                return false;
+            } elseif ($granted || ! $role->grants($permission)) {
                 continue;
             }
 
-            if (in_array($role->getName(), $roles, true)) {
-                return true;
-            }
+            $granted = in_array($role->getName(), $roles, true);
         }
 
-        return false;
+        return $granted;
     }
 }
