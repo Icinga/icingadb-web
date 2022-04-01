@@ -196,6 +196,11 @@ abstract class BaseHistoryListItem extends BaseListItem
             case 'state_change':
                 if ($this->item->state->state_type === 'soft') {
                     $stateType = 'soft_state';
+                    $previousStateType = 'previous_soft_state';
+
+                    if ($this->item->state->previous_soft_state === 0) {
+                        $previousStateType = 'hard_state';
+                    }
 
                     $visual->addHtml(new CheckAttempt(
                         (int) $this->item->state->attempt,
@@ -203,19 +208,31 @@ abstract class BaseHistoryListItem extends BaseListItem
                     ));
                 } else {
                     $stateType = 'hard_state';
+                    $previousStateType = 'previous_hard_state';
+
+                    if ($this->item->state->hard_state === $this->item->state->previous_hard_state) {
+                        $previousStateType = 'previous_soft_state';
+                    }
                 }
 
                 if ($this->item->object_type === 'host') {
                     $state = HostStates::text($this->item->state->$stateType);
-                    $previousSoftState = HostStates::text($this->item->state->previous_soft_state);
+                    $previousState = HostStates::text($this->item->state->$previousStateType);
                 } else {
                     $state = ServiceStates::text($this->item->state->$stateType);
-                    $previousSoftState = ServiceStates::text($this->item->state->previous_soft_state);
+                    $previousState = ServiceStates::text($this->item->state->$previousStateType);
                 }
 
-                $stateChange = new StateChange($state, $previousSoftState);
+                $stateChange = new StateChange($state, $previousState);
                 if ($stateType === 'soft_state') {
                     $stateChange->setCurrentStateBallSize(StateBall::SIZE_MEDIUM_LARGE);
+                }
+
+                if ($previousStateType === 'previous_soft_state') {
+                    $stateChange->setPreviousStateBallSize(StateBall::SIZE_MEDIUM_LARGE);
+                    if ($stateType === 'soft_state') {
+                        $visual->getAttributes()->add('class', 'small-state-change');
+                    }
                 }
 
                 $visual->prependHtml($stateChange);

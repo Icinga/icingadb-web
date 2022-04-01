@@ -1,10 +1,16 @@
 .state-change {
   display: inline-flex;
 
+  &.reversed-state-balls {
+    // This is needed, because with ~ we can address only subsequent nodes
+    flex-direction: row-reverse;
+  }
+
   .state-ball {
     .box-shadow(0, 0, 0, 1px, @body-bg-color);
   }
 
+  // Same on same
   .state-ball ~ .state-ball {
     &.ball-size-xs {
       margin-left: -.05em;
@@ -18,17 +24,31 @@
       margin-left: -.275em;
     }
 
+    &.ball-size-ml {
+      margin-left: -.375em;
+    }
+
     &.ball-size-l,
     &.ball-size-xl {
       margin-left: -.875em;
     }
   }
 
-  .ball-size-l ~ .ball-size-ml {
+  // big left, smaller right
+  &:not(.reversed-state-balls) .ball-size-l ~ .state-ball {
     &.ball-size-ml {
       margin-top: .25em;
-      margin-left: -.375em;
+      margin-left: -.5em;
       margin-right: .25em;
+    }
+  }
+
+  // smaller left, big right
+  &.reversed-state-balls .ball-size-l ~ .state-ball {
+    &.ball-size-ml {
+      z-index: -1;
+      margin-top: .25em;
+      margin-right: -.5em;
     }
   }
 

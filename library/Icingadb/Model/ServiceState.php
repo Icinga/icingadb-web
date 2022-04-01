@@ -26,6 +26,7 @@ class ServiceState extends State
             'state_type'                    => t('Service State Type'),
             'soft_state'                    => t('Service Soft State'),
             'hard_state'                    => t('Service Hard State'),
+            'previous_soft_state'           => t('Service Previous Soft State'),
             'previous_hard_state'           => t('Service Previous Hard State'),
             'attempt'                       => t('Service State Attempt No.'),
             'severity'                      => t('Service State Severity'),

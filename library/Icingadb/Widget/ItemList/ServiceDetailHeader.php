@@ -5,40 +5,59 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ServiceStates;
-use ipl\Html\Attributes;
+use Icinga\Module\Icingadb\Widget\CheckAttempt;
+use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\HtmlElement;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
 class ServiceDetailHeader extends ServiceListItemMinimal
 {
     protected function getStateBallSize(): string
     {
-        if ($this->state->state_type === 'soft') {
-            return StateBall::SIZE_MEDIUM_LARGE;
-        }
-
-        return StateBall::SIZE_BIG;
+        return '';
     }
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {
-        parent::assembleVisual($visual);
-
-        $isSoftState = false;
         if ($this->state->state_type === 'soft') {
-            $isSoftState = true;
+            $stateType = 'soft_state';
+            $previousStateType = 'previous_soft_state';
+
+            if ($this->state->previous_soft_state === 0) {
+                $previousStateType = 'hard_state';
+            }
+        } else {
+            $stateType = 'hard_state';
+            $previousStateType = 'previous_hard_state';
+
+            if ($this->state->hard_state === $this->state->previous_hard_state) {
+                $previousStateType = 'previous_soft_state';
+            }
         }
 
-        // When the current state type is a soft state change, then use the actual hard_state and not the prev. ones
-        $previousState = $isSoftState ? $this->state->hard_state : $this->state->previous_hard_state;
-        $previousHardState = ServiceStates::text($previousState);
+        $state = ServiceStates::text($this->state->$stateType);
+        $previousState = ServiceStates::text($this->state->$previousStateType);
 
-        $visual->getFirst('span')->addWrapper(new HtmlElement(
-            'div',
-            Attributes::create(['class' => 'state-change']),
-            new StateBall($previousHardState, StateBall::SIZE_BIG)
-        ));
+        $stateChange = new StateChange($state, $previousState);
+        if ($stateType === 'soft_state') {
+            $stateChange->setCurrentStateBallSize(StateBall::SIZE_MEDIUM_LARGE);
+        }
+
+        if ($previousStateType === 'previous_soft_state') {
+            $stateChange->setPreviousStateBallSize(StateBall::SIZE_MEDIUM_LARGE);
+            if ($stateType === 'soft_state') {
+                $visual->getAttributes()->add('class', 'small-state-change');
+            }
+        }
+
+        if ($this->state->is_handled) {
+            $currentStateBall = $stateChange->ensureAssembled()->getContent()[1];
+            $currentStateBall->addHtml(new Icon($this->getHandledIcon()));
+            $currentStateBall->getAttributes()->add('class', 'handled');
+        }
+
+        $visual->addHtml($stateChange);
     }
 
     protected function assemble()
