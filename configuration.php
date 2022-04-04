@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb {
 
+    use Icinga\Application\Icinga;
     use Icinga\Authentication\Auth;
     use Icinga\Module\Icingadb\Web\Navigation\Renderer\HostProblemsBadge;
     use Icinga\Module\Icingadb\Web\Navigation\Renderer\ServiceProblemsBadge;
@@ -568,7 +569,8 @@ namespace Icinga\Module\Icingadb {
         $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
     }
 
-    if (! $forIe11) {
+    $mg = Icinga::app()->getModuleManager();
+    if ($mg->hasEnabled('monitoring') && ! $forIe11) {
         $this->provideJsFile('migrate.js');
     }
 }
