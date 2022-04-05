@@ -295,7 +295,8 @@ class ObjectSuggestions extends Suggestions
         }
 
         if ($model instanceof UnionModel) {
-            $baseModelClass = $model->getUnions()[0][0];
+            $queries = $model->getUnions();
+            $baseModelClass = end($queries)[0];
             $model = new $baseModelClass();
         }
 
