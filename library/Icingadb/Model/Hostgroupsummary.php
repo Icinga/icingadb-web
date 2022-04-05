@@ -107,8 +107,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => new Expression('NULL'),
-                    'hostgroup_display_name' => new Expression('NULL'),
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
@@ -126,8 +126,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => new Expression('NULL'),
-                    'hostgroup_display_name' => new Expression('NULL'),
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),

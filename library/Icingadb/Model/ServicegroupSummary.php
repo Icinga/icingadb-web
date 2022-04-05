@@ -83,8 +83,8 @@ class ServicegroupSummary extends UnionModel
                 ],
                 [
                     'servicegroup_id'           => 'servicegroup.id',
-                    'servicegroup_name'         => new Expression('NULL'),
-                    'servicegroup_display_name' => new Expression('NULL'),
+                    'servicegroup_name'         => 'servicegroup.name',
+                    'servicegroup_display_name' => 'servicegroup.display_name',
                     'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
                     'service_handled'           => 'state.is_handled',
