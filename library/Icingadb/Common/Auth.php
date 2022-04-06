@@ -123,6 +123,7 @@ trait Auth
             $queries = [$query];
         }
 
+        $orgQuery = $query;
         foreach ($queries as $query) {
             $relations = [$query->getModel()->getTableName()];
             foreach ($query->getWith() as $relationPath => $relation) {
@@ -169,19 +170,24 @@ trait Auth
                     }
 
                     if ($applyHostRestriction && ($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
-                        $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/hosts'));
+                        $hostFilter = $this->parseRestriction($restriction, 'icingadb/filter/hosts');
+                        if ($orgQuery instanceof UnionQuery) {
+                            $this->forceQueryOptimization($hostFilter, 'hostgroup.name');
+                        }
+
+                        $roleFilter->add($hostFilter);
                     }
 
                     if (
                         $applyServiceRestriction
                         && ($restriction = $role->getRestrictions('icingadb/filter/services'))
                     ) {
-                        $roleFilter->add(
-                            Filter::any(
-                                Filter::unequal('service.id', '*'),
-                                $this->parseRestriction($restriction, 'icingadb/filter/services')
-                            )
-                        );
+                        $serviceFilter = $this->parseRestriction($restriction, 'icingadb/filter/services');
+                        if ($orgQuery instanceof UnionQuery) {
+                            $this->forceQueryOptimization($serviceFilter, 'servicegroup.name');
+                        }
+
+                        $roleFilter->add(Filter::any(Filter::unequal('service.id', '*'), $serviceFilter));
                     }
                 }
 
@@ -320,5 +326,28 @@ trait Auth
         }
 
         return $filter;
+    }
+
+    /**
+     * Force query optimization on the given service/host filter rule
+     *
+     * Applies forceOptimization, when the given filter rule contains the given filter column
+     *
+     * @param Filter\Rule $filterRule
+     * @param string $filterColumn
+     *
+     * @return void
+     */
+    protected function forceQueryOptimization(Filter\Rule $filterRule, string $filterColumn)
+    {
+        // TODO: This is really a very poor solution is therefore only a quick fix.
+        //  We need to somehow manage to make this more enjoyable and creative!
+        if ($filterRule instanceof Filter\Chain) {
+            foreach ($filterRule as $rule) {
+                $this->forceQueryOptimization($rule, $filterColumn);
+            }
+        } elseif ($filterRule->getColumn() === $filterColumn) {
+            $filterRule->metaData()->set('forceOptimization', true);
+        }
     }
 }
