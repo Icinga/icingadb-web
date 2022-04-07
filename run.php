@@ -8,6 +8,7 @@ $this->provideHook('ApplicationState');
 $this->provideHook('X509/Sni');
 $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
+$this->provideHook('Reporting/Report', 'Reporting/HostSlaReport');
 
 if (! $this::exists('monitoring')) {
     $modulePath = null;
