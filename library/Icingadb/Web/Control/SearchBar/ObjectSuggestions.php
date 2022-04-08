@@ -139,6 +139,7 @@ class ObjectSuggestions extends Suggestions
 
         $inputFilter = Filter::equal($columnPath, $searchTerm);
         $query->columns($columnPath);
+        $query->orderBy($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
         if ($searchFilter instanceof Filter\None) {
