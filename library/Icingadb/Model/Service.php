@@ -173,7 +173,7 @@ class Service extends Model
             ->setCandidateKey('notes_url_id')
             ->setForeignKey('id');
         $relations->belongsTo('icon_image', IconImage::class)
-            ->setCandidateKey(['environment_id', 'icon_image_id'])
+            ->setCandidateKey('icon_image_id')
             ->setJoinType('LEFT');
         $relations->belongsTo('zone', Zone::class);
         $relations->belongsTo('endpoint', Endpoint::class)
