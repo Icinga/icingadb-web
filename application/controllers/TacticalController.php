@@ -24,8 +24,7 @@ class TacticalController extends Controller
         $db = $this->getDb();
 
         $hoststateSummary = HoststateSummary::on($db)->with('state');
-        // With relation `host` because otherwise the filter editor only presents service cols
-        $servicestateSummary = ServicestateSummary::on($db)->with(['state', 'host']);
+        $servicestateSummary = ServicestateSummary::on($db)->with(['state']);
 
         $this->handleSearchRequest($servicestateSummary);
 
