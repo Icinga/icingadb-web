@@ -16,7 +16,7 @@ class IconImage extends Model
 
     public function getKeyName()
     {
-        return ['environment_id', 'id'];
+        return 'id';
     }
 
     public function getColumns()
