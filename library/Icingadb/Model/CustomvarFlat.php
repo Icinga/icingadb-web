@@ -36,14 +36,20 @@ class CustomvarFlat extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
-        $behaviors->add(new FlattenedObjectVars());
-
         $behaviors->add(new Binary([
             'id',
             'environment_id',
             'customvar_id',
             'flatname_checksum'
         ]));
+
+        /**
+         * TODO(lippserd): Process {@link FlattenedObjectVars} last,
+         * as it returns an incompatible type for a subsequent behavior:
+         *
+         * {@see https://github.com/Icinga/ipl-orm/issues/45}
+         */
+        $behaviors->add(new FlattenedObjectVars());
     }
 
     public function createRelations(Relations $relations)
