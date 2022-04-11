@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\Binary;
-use Icinga\Module\Icingadb\Model\Behavior\IdKey;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behaviors;
@@ -81,8 +80,6 @@ class NotificationHistory extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
-        $behaviors->add(new IdKey());
-
         $behaviors->add(new Timestamp([
             'send_time'
         ]));

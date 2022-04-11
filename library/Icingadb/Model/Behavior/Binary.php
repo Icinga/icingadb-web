@@ -6,13 +6,31 @@ namespace Icinga\Module\Icingadb\Model\Behavior;
 
 use ipl\Orm\Contract\PropertyBehavior;
 use ipl\Orm\Contract\QueryAwareBehavior;
+use ipl\Orm\Contract\RewriteFilterBehavior;
 use ipl\Orm\Query;
 use ipl\Sql\Adapter\Pgsql;
+use ipl\Stdlib\Filter\Condition;
 
 use function ipl\Stdlib\get_php_type;
 
-class Binary extends PropertyBehavior implements QueryAwareBehavior
+/**
+ * Support hex filters for binary columns and PHP resource (in) / bytea hex format (out) transformation for PostgreSQL
+ */
+class Binary extends PropertyBehavior implements QueryAwareBehavior, RewriteFilterBehavior
 {
+    /**
+     * Properties for {@link rewriteCondition()} to support hex filters for each adapter
+     *
+     * Set in {@link setQuery()} from the {@link $properties} array because the latter is reset for adapters other than
+     * {@link Pgsql}, so {@link fromDb()} and {@link toDb()} don't run for them.
+     *
+     * @var array
+     */
+    protected $rewriteSubjects;
+
+    /**
+     * @throws \UnexpectedValueException If value is set and not a resource
+     */
     public function fromDb($value, $key, $_)
     {
         if ($value !== null) {
@@ -28,6 +46,9 @@ class Binary extends PropertyBehavior implements QueryAwareBehavior
         return null;
     }
 
+    /**
+     * @throws \UnexpectedValueException If value is a resource
+     */
     public function toDb($value, $key, $_)
     {
         if (is_resource($value)) {
@@ -47,9 +68,40 @@ class Binary extends PropertyBehavior implements QueryAwareBehavior
 
     public function setQuery(Query $query)
     {
+        $this->rewriteSubjects = $this->properties;
+
         if (! $query->getDb()->getAdapter() instanceof Pgsql) {
             // Only process properties if the adapter is PostgreSQL.
             $this->properties = [];
+        }
+    }
+
+    public function rewriteCondition(Condition $condition, $relation = null)
+    {
+        /**
+         * TODO(lippserd): Duplicate code because {@link RewriteFilterBehavior}s come after {@link PropertyBehavior}s.
+         * {@see \ipl\Orm\Compat\FilterProcessor::requireAndResolveFilterColumns()}
+         */
+        $column = $condition->metaData()->get('columnName');
+        if (isset($this->rewriteSubjects[$column])) {
+            $value = $condition->getValue();
+
+            if (empty($this->properties) && is_resource($value)) {
+                // Only for PostgreSQL.
+                throw new \UnexpectedValueException(sprintf('Unexpected resource for %s', $column));
+            }
+
+            // ctype_xdigit expects strings.
+            $value = (string) $value;
+
+            if (ctype_xdigit($value)) {
+                if (empty($this->properties)) {
+                    // Only for PostgreSQL.
+                    $condition->setValue(sprintf('\\x%s', $value));
+                } else {
+                    $condition->setValue(hex2bin($value));
+                }
+            }
         }
     }
 }
