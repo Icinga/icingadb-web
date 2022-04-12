@@ -341,6 +341,14 @@ class Controller extends CompatController
             return true;
         }
 
+        // It only makes sense to export a single result to CSV or JSON
+        $query = $queries[0];
+
+        // No matter the format, a limit should only apply if set
+        if ($this->format !== null) {
+            $query->limit(Url::fromRequest()->getParam('limit'));
+        }
+
         if ($this->format === 'json' || $this->format === 'csv') {
             $isJsonFormat = $this->format === 'json';
             $response = $this->getResponse();
@@ -369,11 +377,7 @@ class Controller extends CompatController
             ob_end_clean();
             Environment::raiseExecutionTime();
 
-            $query = $queries[0];
-            $query->limit(Url::fromRequest()->getParam('limit'));
             $col = array_merge((array) $query->getModel()->getKeyName(), $query->getModel()->getColumns());
-            $tableName = $query->getModel()->getTableName();
-
             foreach ($query->getWith() as $relationPath => $relation) {
                 $relatedCols = $relation->getTarget()->getColumns();
                 foreach ($relatedCols as $alias => $name) {
@@ -394,7 +398,7 @@ class Controller extends CompatController
             foreach ($rs as $i => $row) {
                 $result = [];
                 if ($i > 0) {
-                    $separator = $isJsonFormat ? ',' : "\r\n";
+                    $separator = $isJsonFormat ? ",\n" : "\r\n";
                     echo $separator;
                 }
 
@@ -417,8 +421,9 @@ class Controller extends CompatController
                     }
 
                     if (
-                        $alias === 'id' || substr($alias, -3) === '_id'
-                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin'
+                        $val
+                        && ($alias === 'id' || substr($alias, -3) === '_id'
+                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin')
                     ) {
                         $val = base64_encode($val);
                     }
