@@ -87,7 +87,7 @@ class Action extends NavigationItem
      *
      * @return  ?string
      */
-    public function getFilter()
+    public function getFilter(): ?string
     {
         return $this->filter;
     }
@@ -110,7 +110,7 @@ class Action extends NavigationItem
         return $this;
     }
 
-    public function getUrl(): \Icinga\Web\Url
+    public function getUrl(): ?\Icinga\Web\Url
     {
         $url = parent::getUrl();
         if (! $this->resolved && $url === null && $this->rawUrl !== null) {
