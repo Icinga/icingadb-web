@@ -398,7 +398,7 @@ class Controller extends CompatController
             foreach ($rs as $i => $row) {
                 $result = [];
                 if ($i > 0) {
-                    $separator = $isJsonFormat ? ',' : "\r\n";
+                    $separator = $isJsonFormat ? ",\n" : "\r\n";
                     echo $separator;
                 }
 
