@@ -421,8 +421,9 @@ class Controller extends CompatController
                     }
 
                     if (
-                        $alias === 'id' || substr($alias, -3) === '_id'
-                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin'
+                        $val
+                        && ($alias === 'id' || substr($alias, -3) === '_id'
+                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin')
                     ) {
                         $val = base64_encode($val);
                     }
