@@ -7,10 +7,40 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\UnionModel;
+use ipl\Sql\Adapter\Pgsql;
+use ipl\Sql\Connection;
 use ipl\Sql\Expression;
+use ipl\Sql\Select;
 
 class ServicegroupSummary extends UnionModel
 {
+    public static function on(Connection $db)
+    {
+        $q = parent::on($db);
+
+        $q->on($q::ON_SELECT_ASSEMBLED, function (Select $select) use ($q) {
+            $model = $q->getModel();
+
+            $groupBy = $q->getResolver()->qualifyColumnsAndAliases((array) $model->getKeyName(), $model, false);
+
+            // For PostgreSQL, ALL non-aggregate SELECT columns must appear in the GROUP BY clause:
+            if ($q->getDb()->getAdapter() instanceof Pgsql) {
+                /**
+                 * Ignore Expressions, i.e. aggregate functions {@see getColumns()},
+                 * which do not need to be added to the GROUP BY.
+                 */
+                $candidates = array_filter($select->getColumns(), 'is_string');
+                // Remove already considered columns for the GROUP BY, i.e. the primary key.
+                $candidates = array_diff_assoc($candidates, $groupBy);
+                $groupBy = array_merge($groupBy, $candidates);
+            }
+
+            $select->groupBy($groupBy);
+        });
+
+        return $q;
+    }
+
     public function getTableName()
     {
         return 'servicegroup';
