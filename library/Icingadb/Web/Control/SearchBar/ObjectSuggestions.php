@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Util\ObjectSuggestionsCursor;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
@@ -18,7 +19,6 @@ use ipl\Orm\Model;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Resolver;
 use ipl\Orm\UnionModel;
-use ipl\Sql\Cursor;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use ipl\Stdlib\Filter;
@@ -161,7 +161,7 @@ class ObjectSuggestions extends Suggestions
         $this->applyRestrictions($query);
 
         try {
-            return (new Cursor($query->getDb(), $query->assembleSelect()->distinct()))
+            return (new ObjectSuggestionsCursor($query->getDb(), $query->assembleSelect()->distinct()))
                 ->setFetchMode(PDO::FETCH_COLUMN);
         } catch (InvalidColumnException $e) {
             throw new SearchException(sprintf(t('"%s" is not a valid column'), $e->getColumn()));
