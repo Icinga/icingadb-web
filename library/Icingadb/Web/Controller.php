@@ -188,6 +188,9 @@ class Controller extends CompatController
 
                 try {
                     $preferencesStore = PreferencesStore::create(new ConfigObject([
+                        //TODO: Don't set store key as it will no longer be needed once we drop support for
+                        // lower version of icingaweb2 then v2.11.
+                        //https://github.com/Icinga/icingaweb2/pull/4765
                         'store'     => Config::app()->get('global', 'config_backend', 'db'),
                         'resource'  => Config::app()->get('global', 'config_resource')
                     ]), $user);
