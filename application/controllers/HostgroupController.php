@@ -49,7 +49,7 @@ class HostgroupController extends Controller
     {
         $db = $this->getDb();
 
-        $hosts = Host::on($db)->with(['state', 'state.last_comment', 'icon_image'])->utilize('hostgroup');
+        $hosts = Host::on($db)->with(['state', 'state.last_comment', 'icon_image']);
         $hosts
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::equal('hostgroup.id', $this->hostgroup->id));

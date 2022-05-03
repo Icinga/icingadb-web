@@ -54,7 +54,7 @@ class ServicegroupController extends Controller
             'icon_image',
             'host',
             'host.state'
-        ])->utilize('servicegroup');
+        ]);
         $services
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::equal('servicegroup.id', $this->servicegroup->id));
