@@ -63,6 +63,15 @@ class Binary extends PropertyBehavior implements QueryAwareBehavior, RewriteFilt
             return $value;
         }
 
+        /**
+         * TODO(lippserd): If the filter is moved to a subquery, the value has already been processed.
+         * This is because our filter processor is unfortunately doing the transformation twice at the moment.
+         * {@see \ipl\Orm\Compat\FilterProcessor::requireAndResolveFilterColumns()}
+         */
+        if (substr($value, 0, 2) === '\\x') {
+            return $value;
+        }
+
         return sprintf('\\x%s', bin2hex($value));
     }
 
@@ -93,9 +102,12 @@ class Binary extends PropertyBehavior implements QueryAwareBehavior, RewriteFilt
 
             // ctype_xdigit expects strings.
             $value = (string) $value;
-
+            /**
+             * Although this code path is also affected by the duplicate behavior evaluation stated in {@link toDb()},
+             * no further adjustments are needed as ctype_xdigit returns false for binary and bytea hex strings.
+             */
             if (ctype_xdigit($value)) {
-                if (empty($this->properties)) {
+                if (empty($this->properties) && substr($value, 0, 2) !== '\\x') {
                     // Only for PostgreSQL.
                     $condition->setValue(sprintf('\\x%s', $value));
                 } else {
