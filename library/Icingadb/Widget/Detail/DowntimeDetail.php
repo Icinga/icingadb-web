@@ -124,7 +124,6 @@ class DowntimeDetail extends BaseHtmlElement
                     ($relatedDowntime->object_type === 'host'
                         ? $this->createHostLink($relatedDowntime->host, true)
                         : $this->createServiceLink($relatedDowntime->service, $relatedDowntime->host, true))
-                        ->addAttributes(['class' => 'subject'])
                 ))
             ));
         }
