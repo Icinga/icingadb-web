@@ -71,9 +71,9 @@ foreach ($pivotData as $serviceDescription => $_) {
             if ($service === null): ?>
                 <span aria-hidden="true">&middot;</span>
                 <?php continue; endif ?>
-            <?php $ariaDescribedById = $this->protectId($service->host_name . '_' . $service->service_name . '_desc') ?>
+            <?php $ariaDescribedById = $this->protectId($service->host_name . '_' . $service->name . '_desc') ?>
                 <span class="sr-only" id="<?= $ariaDescribedById ?>">
-                    <?= $this->escape($service->service_output) ?>
+                    <?= $this->escape($service->state->output) ?>
                 </span>
                 <?= $this->qlink(
                     '',
@@ -86,11 +86,11 @@ foreach ($pivotData as $serviceDescription => $_) {
                         'aria-describedby'    => $ariaDescribedById,
                         'aria-label'          => sprintf(
                             $this->translate('Show detailed information for service %s on host %s'),
-                            $service->service_display_name,
+                            $service->display_name,
                             $service->host_display_name
                         ),
-                        'class'               => 'service-grid-link state-' . ServiceStates::text($service->service_state) . ($service->service_handled === 'y' ? ' handled' : ''),
-                        'title'               => $service->service_output
+                        'class'               => 'service-grid-link state-' . $service->state->getStateText() . ($service->state->is_handled === 'y' ? ' handled' : ''),
+                        'title'               => $service->state->output
                     )
                 ) ?>
             </td>
