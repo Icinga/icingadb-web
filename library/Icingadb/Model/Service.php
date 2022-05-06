@@ -8,16 +8,14 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Defaults;
 use ipl\Orm\Model;
-use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
 
 class Service extends Model
 {
     use Auth;
-
-    protected $accessorsAndMutatorsEnabled = true;
 
     public function getTableName()
     {
@@ -137,25 +135,20 @@ class Service extends Model
         ]));
     }
 
-    /**
-     * Mutates flattened custom vars to an associative array
-     *
-     * @param  Query|ResultSet $_
-     *
-     * @return array
-     */
-    public function mutateVarsProperty($_): array
+    public function createDefaults(Defaults $defaults)
     {
-        if (! $this->customvar_flat instanceof ResultSet) {
-            $this->applyRestrictions($this->customvar_flat);
-        }
+        $defaults->add('vars', function (self $subject) {
+            if (! $subject->customvar_flat instanceof ResultSet) {
+                $this->applyRestrictions($subject->customvar_flat);
+            }
 
-        $vars = [];
-        foreach ($this->customvar_flat as $customVar) {
-            $vars[$customVar->flatname] = $customVar->flatvalue;
-        }
+            $vars = [];
+            foreach ($subject->customvar_flat as $customVar) {
+                $vars[$customVar->flatname] = $customVar->flatvalue;
+            }
 
-        return $vars;
+            return $vars;
+        });
     }
 
     public function createRelations(Relations $relations)

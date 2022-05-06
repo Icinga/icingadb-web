@@ -9,8 +9,6 @@ use ipl\Orm\Relations;
 
 class Customvar extends Model
 {
-    protected $accessorsAndMutatorsEnabled = true;
-
     public function getTableName()
     {
         return 'customvar';
@@ -59,17 +57,5 @@ class Customvar extends Model
             ->through(UsergroupCustomvar::class);
 
         $relations->hasMany('customvar_flat', CustomvarFlat::class);
-    }
-
-    protected function mutateValueProperty($json)
-    {
-        if (is_string($json)) {
-            $data = json_decode($json);
-            if ($data !== null) {
-                $json = $data;
-            }
-        }
-
-        return $json;
     }
 }
