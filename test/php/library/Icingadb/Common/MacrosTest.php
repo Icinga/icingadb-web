@@ -15,24 +15,24 @@ class MacrosTest extends TestCase
 {
     use Macros;
 
+    const VARS = [
+        'os'      => "Ubuntu",
+        'days[0]' => 'mo',
+        'days[1]' => 'tue',
+        'days[2]' => 'wed',
+        'days[3]' => 'thu',
+        'days[4]' => 'fr'
+    ];
+
     public function testHostMacros()
     {
         $mock = \Mockery::mock(Host::class);
         $mock->name = 'test';
         $mock->address = '1.1.1.1';
         $mock->address6 = '::1';
+        $mock->vars = self::VARS;
 
         $mock->hostgroup = new Query();
-
-        $mock->vars = null;
-        $mock->shouldReceive('mutateVarsProperty')->once()->andReturn([
-            'os'      => "Ubuntu",
-            'days[0]' => 'mo',
-            'days[1]' => 'tue',
-            'days[2]' => 'wed',
-            'days[3]' => 'thu',
-            'days[4]' => 'fr'
-        ]);
 
         $this->assertEquals($mock->name, $this->expandMacros('$host.name$', $mock));
         $this->assertEquals($mock->name, $this->expandMacros('$name$', $mock));
@@ -64,33 +64,15 @@ class MacrosTest extends TestCase
         $mock = \Mockery::mock(Service::class);
         $mock->name = 'test-service';
         $mock->description = 'A test service';
+        $mock->vars = self::VARS;
 
         $mock->servicegroup = new Query();
-
-        $mock->vars = null;
-        $mock->shouldReceive('mutateVarsProperty')->once()->andReturn([
-            'os'      => "Ubuntu",
-            'days[0]' => 'mo',
-            'days[1]' => 'tue',
-            'days[2]' => 'wed',
-            'days[3]' => 'thu',
-            'days[4]' => 'fr'
-        ]);
 
         $hostMock = \Mockery::mock(Host::class);
         $hostMock->name = 'test';
         $hostMock->address = '1.1.1.1';
         $hostMock->hostgroup = new ResultSet(new \ArrayIterator());
-
-        $hostMock->vars = null;
-        $hostMock->shouldReceive('mutateVarsProperty')->once()->andReturn([
-            'os'      => "Ubuntu",
-            'days[0]' => 'mo',
-            'days[1]' => 'tue',
-            'days[2]' => 'wed',
-            'days[3]' => 'thu',
-            'days[4]' => 'fr'
-        ]);
+        $hostMock->vars = self::VARS;
 
         $mock->host = $hostMock;
 
