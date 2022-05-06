@@ -267,24 +267,24 @@ class ServicesController extends Controller
             'host.id',
             'host_name' => 'host.name',
             'host_display_name' => 'host.display_name',
-            'service_name' => 'service.name',
-            'service_display_name' => 'service.display_name',
-            'service_handled' => 'service.state.is_handled',
-            'service_output' => 'service.state.output',
-            'service_state' => 'service.state.soft_state'
+            'name' => 'service.name',
+            'display_name' => 'service.display_name',
+            'service.state.is_handled',
+            'service.state.output',
+            'service.state.soft_state'
         ];
 
         if ($flipped) {
-            $pivot = (new PivotTable($query, 'host_name', 'service_name', $columns))
+            $pivot = (new PivotTable($query, 'host_name', 'name', $columns))
                 ->setXAxisFilter($pivotFilter)
                 ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
                 ->setXAxisHeader('host_display_name')
-                ->setYAxisHeader('service_display_name');
+                ->setYAxisHeader('display_name');
         } else {
-            $pivot = (new PivotTable($query, 'service_name', 'host_name', $columns))
+            $pivot = (new PivotTable($query, 'name', 'host_name', $columns))
                 ->setXAxisFilter($pivotFilter)
                 ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
-                ->setXAxisHeader('service_display_name')
+                ->setXAxisHeader('display_name')
                 ->setYAxisHeader('host_display_name');
         }
 
