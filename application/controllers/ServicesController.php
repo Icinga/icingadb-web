@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
@@ -214,25 +215,26 @@ class ServicesController extends Controller
         $db = $this->getDb();
         $this->addTitleTab(t('Service Grid'));
 
-        $query = Service::on($db)->with([
-            'state',
-            'host',
-            'host.state'
-        ]);
-        $query->setResultSetClass(VolatileStateResults::class);
+        $hostsQuery = Host::on($db);
+        $servicesQuery = Service::on($db);
+        $baseQuery = Service::on($db)
+            ->with('state')
+            ->with('host')
+            ->with('host.state')
+            ->setResultSetClass(VolatileStateResults::class);
 
-        $this->handleSearchRequest($query);
+        $this->handleSearchRequest($servicesQuery);
 
         $this->params->shift('page'); // Handled by PivotTable internally
         $this->params->shift('limit'); // Handled by PivotTable internally
         $flipped = $this->params->shift('flipped', false);
 
         $problemToggle = $this->createProblemToggle();
-        $sortControl = $this->createSortControl($query, [
+        $sortControl = $this->createSortControl($baseQuery, [
             'service.display_name' => t('Service Name'),
             'host.display_name' => t('Host Name'),
         ])->setDefault('service.display_name');
-        $searchBar = $this->createSearchBar($query, [
+        $searchBar = $this->createSearchBar($servicesQuery, [
             LimitControl::DEFAULT_LIMIT_PARAM,
             $sortControl->getSortParam(),
             'flipped',
@@ -252,7 +254,10 @@ class ServicesController extends Controller
             $filter = $searchBar->getFilter();
         }
 
-        $this->filter($query, $filter);
+        $this->filter($servicesQuery, $filter);
+
+        // Filters must apply to both axes
+        $this->filter($hostsQuery, $filter);
 
         $this->addControl($problemToggle);
         $this->addControl($sortControl);
@@ -275,13 +280,17 @@ class ServicesController extends Controller
         ];
 
         if ($flipped) {
-            $pivot = (new PivotTable($query, 'host_name', 'name', $columns))
+            $pivot = (new PivotTable($baseQuery, 'host_name', 'name', $columns))
+                ->setXAxisBaseQuery($hostsQuery)
+                ->setYAxisBaseQuery($servicesQuery)
                 ->setXAxisFilter($pivotFilter)
                 ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
                 ->setXAxisHeader('host_display_name')
                 ->setYAxisHeader('display_name');
         } else {
-            $pivot = (new PivotTable($query, 'name', 'host_name', $columns))
+            $pivot = (new PivotTable($baseQuery, 'name', 'host_name', $columns))
+                ->setXAxisBaseQuery($servicesQuery)
+                ->setYAxisBaseQuery($hostsQuery)
                 ->setXAxisFilter($pivotFilter)
                 ->setYAxisFilter($pivotFilter ? clone $pivotFilter : null)
                 ->setXAxisHeader('display_name')

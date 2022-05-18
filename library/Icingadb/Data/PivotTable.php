@@ -34,6 +34,10 @@ class PivotTable
      */
     protected $yAxisColumn;
 
+    protected $xAxisBaseQuery;
+
+    protected $yAxisBaseQuery;
+
     /**
      * The filter being applied on the query for the x-axis
      *
@@ -109,6 +113,20 @@ class PivotTable
         $this->xAxisColumn = $xAxisColumn;
         $this->yAxisColumn = $yAxisColumn;
         $this->gridcols = $gridcols;
+    }
+
+    public function setXAxisBaseQuery(Query $query)
+    {
+        $this->xAxisBaseQuery = $query;
+
+        return $this;
+    }
+
+    public function setYAxisBaseQuery(Query $query)
+    {
+        $this->yAxisBaseQuery = $query;
+
+        return $this;
     }
 
     /**
@@ -229,7 +247,7 @@ class PivotTable
     protected function queryXAxis(): Query
     {
         if ($this->xAxisQuery === null) {
-            $this->xAxisQuery = clone $this->baseQuery;
+            $this->xAxisQuery = $this->xAxisBaseQuery;
             $xAxisHeader = $this->getXAxisHeader();
             $table = $this->xAxisQuery->getModel()->getTableName();
             $xCol = explode('.', $this->gridcols[$this->xAxisColumn]);
@@ -278,7 +296,7 @@ class PivotTable
     protected function queryYAxis(): Query
     {
         if ($this->yAxisQuery === null) {
-            $this->yAxisQuery = clone $this->baseQuery;
+            $this->yAxisQuery = $this->yAxisBaseQuery;
             $yAxisHeader = $this->getYAxisHeader();
             $table = $this->yAxisQuery->getModel()->getTableName();
             $columns = [
