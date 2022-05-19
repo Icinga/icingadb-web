@@ -245,6 +245,35 @@ class UrlMigrator
     {
         return [
 
+            // Extraordinary columns
+            'addColumns' => function ($filter) {
+                /** @var Filter\Condition $filter */
+                $legacyColumns = array_filter(array_map('trim', explode(',', $filter->getValue())));
+
+                $columns = [
+                    'host.state.soft_state',
+                    'host.state.last_state_change',
+                    'host.icon_image.icon_image',
+                    'host.display_name',
+                    'host.state.output',
+                    'host.state.performance_data',
+                    'host.state.is_problem'
+                ];
+                foreach ($legacyColumns as $column) {
+                    if (($c = self::transformFilter(Filter::equal($column, 'bogus'), 'hosts')) !== false) {
+                        if ($c instanceof Filter\Condition) {
+                            $columns[] = $c->getColumn();
+                        }
+                    }
+                }
+
+                if (empty($columns)) {
+                    return false;
+                }
+
+                return Filter::equal('columns', implode(',', $columns));
+            },
+
             // Query columns
             'host_acknowledged' => [
                 'host.state.is_acknowledged' => self::NO_YES
@@ -445,6 +474,36 @@ class UrlMigrator
     protected static function servicesColumns(): array
     {
         return [
+
+            // Extraordinary columns
+            'addColumns' => function ($filter) {
+                /** @var Filter\Condition $filter */
+                $legacyColumns = array_filter(array_map('trim', explode(',', $filter->getValue())));
+
+                $columns = [
+                    'service.state.soft_state',
+                    'service.state.last_state_change',
+                    'service.icon_image.icon_image',
+                    'service.display_name',
+                    'service.host.display_name',
+                    'service.state.output',
+                    'service.state.performance_data',
+                    'service.state.is_problem'
+                ];
+                foreach ($legacyColumns as $column) {
+                    if (($c = self::transformFilter(Filter::equal($column, 'bogus'), 'services')) !== false) {
+                        if ($c instanceof Filter\Condition) {
+                            $columns[] = $c->getColumn();
+                        }
+                    }
+                }
+
+                if (empty($columns)) {
+                    return false;
+                }
+
+                return Filter::equal('columns', implode(',', $columns));
+            },
 
             // Query columns
             'host_acknowledged' => [
