@@ -126,6 +126,12 @@ class ObjectSuggestions extends Suggestions
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
         list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
 
+        $isCustomVar = false;
+        if (substr($targetPath, -5) === '.vars') {
+            $isCustomVar = true;
+            $targetPath = substr($targetPath, 0, -4) . 'customvar_flat';
+        }
+
         if (strpos($targetPath, '.') !== false) {
             try {
                 $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
@@ -134,7 +140,7 @@ class ObjectSuggestions extends Suggestions
             }
         }
 
-        if (substr($targetPath, -5) === '.vars') {
+        if ($isCustomVar) {
             $columnPath = $targetPath . '.flatvalue';
             $query->filter(Filter::like($targetPath . '.flatname', $columnName));
         }

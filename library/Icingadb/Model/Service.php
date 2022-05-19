@@ -193,7 +193,7 @@ class Service extends Model
             ->through(ServiceCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(ServiceCustomvar::class);
-        $relations->belongsToMany('vars', CustomvarFlat::class)
+        $relations->belongsToMany('vars', Vars::class)
             ->through(ServiceCustomvar::class);
         $relations->belongsToMany('servicegroup', Servicegroup::class)
             ->through(ServicegroupMember::class);
