@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Icingadb\Model\Behavior\Binary;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;

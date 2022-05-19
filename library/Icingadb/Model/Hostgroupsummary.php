@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Icingadb\Model\Behavior\Binary;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Adapter\Pgsql;
