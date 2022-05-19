@@ -17,6 +17,7 @@ use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
+use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Orm\Query;
@@ -60,19 +61,13 @@ class HostsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        if ($viewModeSwitcher->getViewMode() === 'tabular') {
-            $columns = $this->createColumnControl($hosts, [
-                'host.display_name' // There should be a link, always
-            ]);
-        } else {
-            // If the user interacts with the view mode switcher, there should be no error shown
-            $this->params->shift('columns');
-        }
+        $columns = $this->createColumnControl($hosts, $viewModeSwitcher);
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
-            $viewModeSwitcher->getViewModeParam()
+            $viewModeSwitcher->getViewModeParam(),
+            'columns'
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -105,8 +100,14 @@ class HostsController extends Controller
         $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar);
 
         $results = $hosts->execute();
-        $hostList = (new HostList($results))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+
+        if ($viewModeSwitcher->getViewMode() === 'tabular') {
+            $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
+                ->setSort($sortControl->getSort());
+        } else {
+            $hostList = (new HostList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode());
+        }
 
         $this->addContent($hostList);
 
@@ -196,7 +197,8 @@ class HostsController extends Controller
         $editor = $this->createSearchEditor(Host::on($this->getDb()), [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'columns'
         ]);
 
         $this->getDocument()->add($editor);
