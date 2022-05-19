@@ -73,6 +73,8 @@ class ServicestateSummary extends Service
     public static function on(Connection $db)
     {
         $q = parent::on($db);
+        $q->utilize('state');
+
         /** @var static $m */
         $m = $q->getModel();
         $q->columns($m->getSummaryColumns());

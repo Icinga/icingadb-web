@@ -53,7 +53,7 @@ class ServicesController extends Controller
 
         $summary = null;
         if (! $compact) {
-            $summary = ServicestateSummary::on($db)->with('state');
+            $summary = ServicestateSummary::on($db);
         }
 
         $limitControl = $this->createLimitControl();
@@ -389,7 +389,7 @@ class ServicesController extends Controller
 
     protected function getFeatureStatus()
     {
-        $summary = ServicestateSummary::on($this->getDb())->with(['state']);
+        $summary = ServicestateSummary::on($this->getDb());
         $this->filter($summary);
 
         return new FeatureStatus('service', $summary->first());
