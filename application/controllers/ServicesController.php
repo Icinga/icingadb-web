@@ -18,6 +18,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemTable\ServiceItemTable;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -70,19 +71,13 @@ class ServicesController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        if ($viewModeSwitcher->getViewMode() === 'tabular') {
-            $columns = $this->createColumnControl($services, [
-                'service.display_name' // There should be a link, always
-            ]);
-        } else {
-            // If the user interacts with the view mode switcher, there should be no error shown
-            $this->params->shift('columns');
-        }
+        $columns = $this->createColumnControl($services, $viewModeSwitcher);
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
-            $viewModeSwitcher->getViewModeParam()
+            $viewModeSwitcher->getViewModeParam(),
+            'columns'
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -115,8 +110,14 @@ class ServicesController extends Controller
         $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
 
         $results = $services->execute();
-        $serviceList = (new ServiceList($results))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+
+        if ($viewModeSwitcher->getViewMode() === 'tabular') {
+            $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
+                ->setSort($sortControl->getSort());
+        } else {
+            $serviceList = (new ServiceList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode());
+        }
 
         $this->addContent($serviceList);
 
@@ -211,7 +212,8 @@ class ServicesController extends Controller
         $editor = $this->createSearchEditor(Service::on($this->getDb()), [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'columns'
         ]);
 
         $this->getDocument()->add($editor);
