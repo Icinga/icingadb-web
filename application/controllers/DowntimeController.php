@@ -27,24 +27,23 @@ class DowntimeController extends Controller
 
         $name = $this->params->getRequired('name');
 
-        $query = Downtime::on($this->getDb())->with([
-            'host',
-            'host.state',
-            'service',
-            'service.state',
-            'service.host',
-            'service.host.state',
-            'parent',
-            'parent.host',
-            'parent.host.state',
-            'parent.service',
-            'parent.service.state',
-            'triggered_by',
-            'triggered_by.host',
-            'triggered_by.host.state',
-            'triggered_by.service',
-            'triggered_by.service.state'
-        ]);
+        $query = Downtime::on($this->getDb())
+            ->with('host')
+            ->with('host.state')
+            ->with('service')
+            ->with('service.state')
+            ->with('service.host')
+            ->with('service.host.state')
+            ->with('parent')
+            ->with('parent.host')
+            ->with('parent.host.state')
+            ->with('parent.service')
+            ->with('parent.service.state')
+            ->with('triggered_by')
+            ->with('triggered_by.host')
+            ->with('triggered_by.host.state')
+            ->with('triggered_by.service')
+            ->with('triggered_by.service.state');
         $query->filter(Filter::equal('downtime.name', $name));
 
         $this->applyRestrictions($query);

@@ -19,7 +19,7 @@ class ApplicationState extends ApplicationStateHook
     public function collectMessages()
     {
         $instance = Instance::on($this->getDb())
-            ->with(['endpoint'])
+            ->with('endpoint')
             ->filter(Filter::equal('responsible', true))
             ->orderBy('heartbeat', 'desc')
             ->first();

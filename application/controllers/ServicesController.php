@@ -40,13 +40,12 @@ class ServicesController extends Controller
 
         $db = $this->getDb();
 
-        $services = Service::on($db)->with([
-            'state',
-            'state.last_comment',
-            'host',
-            'host.state',
-            'icon_image'
-        ]);
+        $services = Service::on($db)
+            ->with('state')
+            ->with('state.last_comment')
+            ->with('host')
+            ->with('host.state')
+            ->with('icon_image');
         $services->getWith()['service.state']->setJoinType('INNER');
         $services->setResultSetClass(VolatileStateResults::class);
 
@@ -137,14 +136,13 @@ class ServicesController extends Controller
 
         $db = $this->getDb();
 
-        $services = Service::on($db)->with([
-            'state',
-            'icon_image',
-            'host',
-            'host.state'
-        ]);
-        $services->setResultSetClass(VolatileStateResults::class);
-        $summary = ServicestateSummary::on($db)->with(['state']);
+        $services = Service::on($db)
+            ->with('state')
+            ->with('icon_image')
+            ->with('host')
+            ->with('host.state')
+            ->setResultSetClass(VolatileStateResults::class);
+        $summary = ServicestateSummary::on($db);
 
         $this->filter($services);
         $this->filter($summary);
@@ -157,12 +155,12 @@ class ServicesController extends Controller
         $results = $services->execute();
         $summary = $summary->first();
 
-        $downtimes = Service::on($db)->with(['downtime']);
+        $downtimes = Service::on($db)->with('downtime');
         $downtimes->getWith()['service.downtime']->setJoinType('INNER');
         $this->filter($downtimes);
         $summary->downtimes_total = $downtimes->count();
 
-        $comments = Service::on($db)->with(['comment']);
+        $comments = Service::on($db)->with('comment');
         $comments->getWith()['service.comment']->setJoinType('INNER');
         // TODO: This should be automatically done by the model/resolver and added as ON condition
         $comments->filter(Filter::equal('comment.object_type', 'service'));
@@ -365,12 +363,11 @@ class ServicesController extends Controller
     {
         $db = $this->getDb();
 
-        $services = Service::on($db)->with([
-            'state',
-            'host',
-            'host.state'
-        ]);
-        $services->setResultSetClass(VolatileStateResults::class);
+        $services = Service::on($db)
+            ->with('state')
+            ->with('host')
+            ->with('host.state')
+            ->setResultSetClass(VolatileStateResults::class);
 
         switch ($this->getRequest()->getActionName()) {
             case 'acknowledge':

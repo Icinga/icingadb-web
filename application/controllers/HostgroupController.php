@@ -49,10 +49,13 @@ class HostgroupController extends Controller
     {
         $db = $this->getDb();
 
-        $hosts = Host::on($db)->with(['state', 'state.last_comment', 'icon_image']);
-        $hosts
+        $hosts = Host::on($db)
+            ->with('state')
+            ->with('state.last_comment')
+            ->with('icon_image')
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::equal('hostgroup.id', $this->hostgroup->id));
+
         $this->applyRestrictions($hosts);
 
         $limitControl = $this->createLimitControl();

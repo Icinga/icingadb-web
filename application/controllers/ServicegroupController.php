@@ -48,14 +48,12 @@ class ServicegroupController extends Controller
     {
         $db = $this->getDb();
 
-        $services = Service::on($db)->with([
-            'state',
-            'state.last_comment',
-            'icon_image',
-            'host',
-            'host.state'
-        ]);
-        $services
+        $services = Service::on($db)
+            ->with('state')
+            ->with('state.last_comment')
+            ->with('icon_image')
+            ->with('host')
+            ->with('host.state')
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::equal('servicegroup.id', $this->servicegroup->id));
 

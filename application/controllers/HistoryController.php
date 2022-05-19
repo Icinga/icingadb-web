@@ -24,18 +24,17 @@ class HistoryController extends Controller
 
         $db = $this->getDb();
 
-        $history = History::on($db)->with([
-            'host',
-            'host.state',
-            'service',
-            'service.state',
-            'comment',
-            'downtime',
-            'flapping',
-            'notification',
-            'acknowledgement',
-            'state'
-        ]);
+        $history = History::on($db)
+            ->with('host')
+            ->with('host.state')
+            ->with('service')
+            ->with('service.state')
+            ->with('comment')
+            ->with('downtime')
+            ->with('flapping')
+            ->with('notification')
+            ->with('acknowledgement')
+            ->with('state');
 
         $before = $this->params->shift('before', time());
         $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);

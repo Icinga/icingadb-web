@@ -163,14 +163,13 @@ class DowntimeDetail extends BaseHtmlElement
             ));
         }
 
-        $query = Downtime::on($this->getDb())->with([
-            'host',
-            'host.state',
-            'service',
-            'service.host',
-            'service.host.state',
-            'service.state'
-        ])
+        $query = Downtime::on($this->getDb())
+            ->with('host')
+            ->with('host.state')
+            ->with('service')
+            ->with('service.host')
+            ->with('service.host.state')
+            ->with('service.state')
             ->limit(3)
             ->filter(Filter::equal('parent_id', $this->downtime->id))
             ->orFilter(Filter::equal('triggered_by_id', $this->downtime->id));

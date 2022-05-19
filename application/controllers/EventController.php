@@ -24,28 +24,26 @@ class EventController extends Controller
         $id = $this->params->getRequired('id');
 
         $query = History::on($this->getDb())
-            ->with([
-               'host',
-               'host.state',
-               'service',
-               'service.state',
-               'comment',
-               'downtime',
-               'downtime.parent',
-               'downtime.parent.host',
-               'downtime.parent.host.state',
-               'downtime.parent.service',
-               'downtime.parent.service.state',
-               'downtime.triggered_by',
-               'downtime.triggered_by.host',
-               'downtime.triggered_by.host.state',
-               'downtime.triggered_by.service',
-               'downtime.triggered_by.service.state',
-               'flapping',
-               'notification',
-               'acknowledgement',
-               'state'
-            ])
+            ->with('host')
+            ->with('host.state')
+            ->with('service')
+            ->with('service.state')
+            ->with('comment')
+            ->with('downtime')
+            ->with('downtime.parent')
+            ->with('downtime.parent.host')
+            ->with('downtime.parent.host.state')
+            ->with('downtime.parent.service')
+            ->with('downtime.parent.service.state')
+            ->with('downtime.triggered_by')
+            ->with('downtime.triggered_by.host')
+            ->with('downtime.triggered_by.host.state')
+            ->with('downtime.triggered_by.service')
+            ->with('downtime.triggered_by.service.state')
+            ->with('flapping')
+            ->with('notification')
+            ->with('acknowledgement')
+            ->with('state')
             ->filter(Filter::equal('id', hex2bin($id)));
 
         $this->applyRestrictions($query);
