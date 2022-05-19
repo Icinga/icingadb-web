@@ -10,7 +10,9 @@ use Icinga\Exception\ConfigurationError;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Config as SqlConfig;
 use ipl\Sql\Connection;
+use ipl\Sql\Expression;
 use ipl\Sql\QueryBuilder;
+use ipl\Sql\Select;
 use PDO;
 
 trait Database
@@ -42,14 +44,56 @@ trait Database
 
             $adapter = $this->db->getAdapter();
             if ($adapter instanceof Pgsql) {
-                // user is a reserved key word in PostgreSQL, so we need to quote it.
-                // TODO(lippserd): This is pretty hacky, reconsider how to properly implement identifier quoting.
                 $quoted = $adapter->quoteIdentifier('user');
-                $this->db->getQueryBuilder()->on(QueryBuilder::ON_SELECT_ASSEMBLED, function (&$sql) use ($quoted) {
-                    $sql = str_replace(' user ', sprintf(' %s ', $quoted), $sql);
-                    $sql = str_replace(' user.', sprintf(' %s.', $quoted), $sql);
-                    $sql = str_replace('(user.', sprintf('(%s.', $quoted), $sql);
-                });
+                $this->db->getQueryBuilder()
+                    ->on(QueryBuilder::ON_SELECT_ASSEMBLED, function (&$sql) use ($quoted) {
+                        // user is a reserved key word in PostgreSQL, so we need to quote it.
+                        // TODO(lippserd): This is pretty hacky,
+                        // reconsider how to properly implement identifier quoting.
+                        $sql = str_replace(' user ', sprintf(' %s ', $quoted), $sql);
+                        $sql = str_replace(' user.', sprintf(' %s.', $quoted), $sql);
+                        $sql = str_replace('(user.', sprintf('(%s.', $quoted), $sql);
+                    })
+                    ->on(QueryBuilder::ON_ASSEMBLE_SELECT, function (Select $select) {
+                        // For SELECT DISTINCT, all ORDER BY columns must appear in SELECT list.
+                        if (! $select->getDistinct() || ! $select->hasOrderBy()) {
+                            return;
+                        }
+
+                        $candidates = [];
+                        foreach ($select->getOrderBy() as list($columnOrAlias, $_)) {
+                            if ($columnOrAlias instanceof Expression) {
+                                // Expressions can be and include anything,
+                                // also columns that aren't already part of the SELECT list,
+                                // so we're not trying to guess anything here.
+                                // Such expressions must be in the SELECT list if necessary and
+                                // referenced manually with an alias in ORDER BY.
+                                continue;
+                            }
+
+                            $candidates[$columnOrAlias] = true;
+                        }
+
+                        foreach ($select->getColumns() as $alias => $column) {
+                            if (is_int($alias)) {
+                                if ($column instanceof Expression) {
+                                    // This is the complement to the above consideration.
+                                    // If it is an unaliased expression, ignore it.
+                                    continue;
+                                }
+                            } else {
+                                unset($candidates[$alias]);
+                            }
+
+                            if (! $column instanceof Expression) {
+                                unset($candidates[$column]);
+                            }
+                        }
+
+                        if (! empty($candidates)) {
+                            $select->columns(array_keys($candidates));
+                        }
+                    });
             }
         }
 
