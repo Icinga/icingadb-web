@@ -19,6 +19,8 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Common\SearchControls;
+use Icinga\Module\Icingadb\Data\CsvResultSet;
+use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
 use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
@@ -353,11 +355,13 @@ class Controller extends CompatController
         }
 
         if ($this->format === 'json' || $this->format === 'csv') {
-            $isJsonFormat = $this->format === 'json';
             $response = $this->getResponse();
             $fileName = $this->view->title;
 
-            if ($isJsonFormat) {
+            ob_end_clean();
+            Environment::raiseExecutionTime();
+
+            if ($this->format === 'json') {
                 $response
                     ->setHeader('Content-Type', 'application/json')
                     ->setHeader('Cache-Control', 'no-store')
@@ -366,6 +370,8 @@ class Controller extends CompatController
                         'attachment; filename=' . $fileName . '.json'
                     )
                     ->sendResponse();
+
+                JsonResultSet::stream($query);
             } else {
                 $response
                     ->setHeader('Content-Type', 'text/csv')
@@ -375,86 +381,9 @@ class Controller extends CompatController
                         'attachment; filename=' . $fileName . '.csv'
                     )
                     ->sendResponse();
+
+                CsvResultSet::stream($query);
             }
-
-            ob_end_clean();
-            Environment::raiseExecutionTime();
-
-            $col = array_merge((array) $query->getModel()->getKeyName(), $query->getModel()->getColumns());
-            foreach ($query->getWith() as $relationPath => $relation) {
-                $relatedCols = $relation->getTarget()->getColumns();
-                foreach ($relatedCols as $alias => $name) {
-                    if (is_int($alias)) {
-                        $alias = $name;
-                    }
-
-                    $col[] = $relationPath . '.' . $alias;
-                }
-            }
-
-            if ($isJsonFormat) {
-                echo '[';
-            }
-
-            $rs = $query->execute()->disableCache();
-
-            foreach ($rs as $i => $row) {
-                $result = [];
-                if ($i > 0) {
-                    $separator = $isJsonFormat ? ",\n" : "\r\n";
-                    echo $separator;
-                }
-
-                foreach ($col as $alias => $name) {
-                    if (is_int($alias)) {
-                        $alias = $name;
-                    }
-
-                    if (strpos($alias, '.') !== false) {
-                        $properties = array_slice(explode('.', $alias), 1);
-                        $alias = implode('.', $properties);
-
-                        $val = $row;
-                        do {
-                            $column = array_shift($properties);
-                            $val = $val->$column;
-                        } while (! empty($properties) && $val !== null);
-                    } else {
-                        $val = $row->$alias;
-                    }
-
-                    if (
-                        $val
-                        && ($alias === 'id' || substr($alias, -3) === '_id'
-                        || substr($alias, -9) === '_checksum'  || substr($alias, -4) === '_bin')
-                    ) {
-                        $val = base64_encode($val);
-                    }
-
-                    if ($isJsonFormat) { // Json
-                        $result[$alias] = $val;
-                    } elseif (is_bool($val)) { // CSV
-                        $result[$alias] = $val ? 'true' : 'false';
-                    } elseif (is_string($val)) {
-                        $result[$alias] = '"' . str_replace('"', '""', $val) . '"';
-                    } else {
-                        $result[$alias] = $val;
-                    }
-                }
-
-                if ($i === 0 && ! $isJsonFormat) {
-                    echo implode(',', array_keys($result)) . "\r\n";
-                }
-
-                $data = $isJsonFormat ? Json::sanitize($result) : implode(',', array_values($result));
-                echo $data;
-            }
-
-            if ($isJsonFormat) {
-                echo ']';
-            }
-
-            exit;
         }
 
         $this->getTabs()->enableDataExports();
