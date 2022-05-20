@@ -843,7 +843,7 @@ class UrlMigrator
         $receivesStateNotifications = function ($state, $type = null) {
             return function ($filter) use ($state, $type) {
                 /** @var Filter\Condition $filter */
-                $negate = $filter instanceof Filter\Unequal;
+                $negate = $filter instanceof Filter\Unequal || $filter instanceof Filter\Unlike;
                 switch ($filter->getValue()) {
                     case '0':
                         $filter = Filter::any(

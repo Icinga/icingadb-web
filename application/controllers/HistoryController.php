@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use ipl\Sql\Sql;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -80,9 +79,11 @@ class HistoryController extends Controller
         $this->filter($history, $filter);
 
         $history->getWith()['history.host']->setJoinType('LEFT');
-        $history->getSelectBase()
+        $history->filter(Filter::any(
             // Because of LEFT JOINs, make sure we'll fetch history entries only for items which still exist:
-            ->where(['history_host.id IS NOT NULL', 'history_service.id IS NOT NULL'], Sql::ANY);
+            Filter::like('host.id', '*'),
+            Filter::like('service.id', '*')
+        ));
 
         yield $this->export($history);
 

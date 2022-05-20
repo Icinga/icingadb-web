@@ -95,7 +95,7 @@ class ObjectSuggestions extends Suggestions
 
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
-            $where = Filter::equal($model->getTableName() . '.' . $column, $searchTerm);
+            $where = Filter::like($model->getTableName() . '.' . $column, $searchTerm);
             $where->metaData()->set('columnLabel', $model->getMetaData()[$column]);
             $quickFilter->add($where);
         }
@@ -134,10 +134,10 @@ class ObjectSuggestions extends Suggestions
 
         if (substr($targetPath, -5) === '.vars') {
             $columnPath = $targetPath . '.flatvalue';
-            $query->filter(Filter::equal($targetPath . '.flatname', $columnName));
+            $query->filter(Filter::like($targetPath . '.flatname', $columnName));
         }
 
-        $inputFilter = Filter::equal($columnPath, $searchTerm);
+        $inputFilter = Filter::like($columnPath, $searchTerm);
         $query->columns($columnPath);
         $query->orderBy($columnPath);
 
@@ -253,7 +253,7 @@ class ObjectSuggestions extends Suggestions
 
         $customVars->columns('flatname');
         $this->applyRestrictions($customVars);
-        $customVars->filter(Filter::equal('flatname', $searchTerm));
+        $customVars->filter(Filter::like('flatname', $searchTerm));
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
 

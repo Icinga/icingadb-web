@@ -518,7 +518,7 @@ class ObjectDetail extends BaseHtmlElement
         if ($this->objectType === 'host') {
             $objectFilter = Filter::all(
                 Filter::equal('notification.host_id', $this->object->id),
-                Filter::unequal('notification.service_id', '*')
+                Filter::unlike('notification.service_id', '*')
             );
             $objectFilter->metaData()->set('forceOptimization', false);
             $groupBy = true;

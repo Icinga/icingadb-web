@@ -124,12 +124,10 @@ class HostController extends Controller
             'state'
         ]);
 
-        $history
-            ->getSelectBase()
-            ->where([
-                'history.host_id = ?' => $this->host->id,
-                'history.service_id IS NULL'
-            ]);
+        $history->filter(Filter::all(
+            Filter::equal('history.host_id', $this->host->id),
+            Filter::unlike('history.service_id', '*')
+        ));
 
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);

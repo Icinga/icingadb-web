@@ -187,7 +187,7 @@ trait Auth
                             $this->forceQueryOptimization($serviceFilter, 'servicegroup.name');
                         }
 
-                        $roleFilter->add(Filter::any(Filter::unequal('service.id', '*'), $serviceFilter));
+                        $roleFilter->add(Filter::any(Filter::unlike('service.id', '*'), $serviceFilter));
                     }
                 }
 
@@ -322,7 +322,7 @@ trait Auth
     {
         $filter = Filter::none();
         foreach (explode(',', $blacklist) as $value) {
-            $filter->add(Filter::equal($column, trim($value)));
+            $filter->add(Filter::like($column, trim($value)));
         }
 
         return $filter;
