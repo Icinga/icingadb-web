@@ -17,7 +17,7 @@ class FlattenedObjectVars implements RewriteFilterBehavior
 
         $column = $condition->metaData()->get('columnName');
         if ($column !== null && $column !== 'flatname' && $column !== 'flatvalue') {
-            $nameFilter = Filter::equal($relation . 'flatname', $column);
+            $nameFilter = Filter::like($relation . 'flatname', $column);
             $class = get_class($condition);
             $valueFilter = new $class($relation . 'flatvalue', $condition->getValue());
 

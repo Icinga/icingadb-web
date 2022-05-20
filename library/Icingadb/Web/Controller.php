@@ -282,7 +282,7 @@ class Controller extends CompatController
 
         $filter = Filter::any();
         foreach ($query->getModel()->getSearchColumns() as $column) {
-            $filter->add(Filter::equal($column, "*$q*"));
+            $filter->add(Filter::like($column, "*$q*"));
         }
 
         $requestUrl = Url::fromRequest();

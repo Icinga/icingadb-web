@@ -74,12 +74,11 @@ class NotificationsController extends Controller
 
         $notifications->filter(Filter::lessThanOrEqual('send_time', $before));
         $this->filter($notifications, $filter);
-        $notifications->getSelectBase()
+        $notifications->filter(Filter::any(
             // Make sure we'll fetch service history entries only for services which still exist
-            ->where([
-                'notification_history.service_id IS NULL',
-                'notification_history_service.id IS NOT NULL'
-            ], Sql::ANY);
+            Filter::unlike('service_id', '*'),
+            Filter::like('history.service.id', '*')
+        ));
 
         yield $this->export($notifications);
 
