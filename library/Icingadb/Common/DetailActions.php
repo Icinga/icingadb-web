@@ -130,6 +130,7 @@ trait DetailActions
     public function addDetailFilterAttribute(BaseHtmlElement $element, Filter\Rule $filter): self
     {
         $element->getAttributes()
+            ->set('data-action-item', true)
             ->registerAttributeCallback('data-icinga-detail-filter', function () use ($filter) {
                 return $this->getDetailActionsDisabled() ? null : QueryString::render($filter);
             });
