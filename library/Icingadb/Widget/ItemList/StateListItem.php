@@ -10,12 +10,11 @@ use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\EmptyState;
+use Icinga\Module\Icingadb\Widget\IconImage;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
-use ipl\Web\Url;
 use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
@@ -59,34 +58,7 @@ abstract class StateListItem extends BaseListItem
     protected function assembleIconImage(BaseHtmlElement $iconImage)
     {
         if (isset($this->item->icon_image->icon_image)) {
-            $src = $this->item->icon_image->icon_image;
-
-            if (strpos($src, '.') === false) {
-                $iconImage->addHtml(new Icon($src));
-
-                return;
-            }
-
-            if (strpos($src, '/') === false) {
-                $src = 'img/icons/' . $src;
-            }
-
-            if (getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf') {
-                $srcUrl = Url::fromPath($src);
-                $path = $srcUrl->getRelativeUrl();
-                if (! $srcUrl->isExternal() && file_exists($path) && is_file($path)) {
-                    $mimeType = @mime_content_type($path);
-                    $content = @file_get_contents($path);
-                    if ($mimeType !== false && $content !== false) {
-                        $src = "data:$mimeType;base64," . base64_encode($content);
-                    }
-                }
-            }
-
-            $iconImage->addHtml(HtmlElement::create('img', [
-                'src' => $src,
-                'alt' => $this->item->icon_image_alt
-            ]));
+            $iconImage->addHtml(new IconImage($this->item->icon_image->icon_image, $this->item->icon_image_alt));
         } else {
             $iconImage->addAttributes(['class' => 'placeholder']);
         }
