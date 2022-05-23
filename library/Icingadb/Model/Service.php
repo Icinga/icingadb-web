@@ -127,7 +127,8 @@ class Service extends Model
             'passive_checks_enabled',
             'event_handler_enabled',
             'notifications_enabled',
-            'flapping_enabled'
+            'flapping_enabled',
+            'is_volatile'
         ]));
 
         $behaviors->add(new ReRoute([
