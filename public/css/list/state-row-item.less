@@ -1,0 +1,42 @@
+// Style
+
+.row-item {
+  .plugin-output {
+    overflow: hidden;
+    .line-clamp();
+  }
+
+  .subject {
+    font-weight: bold;
+  }
+}
+
+// Layout
+
+.row-item {
+  .performance-data {
+    overflow: hidden;
+    .line-clamp(2);
+    white-space: normal;
+    margin-left: -.25em;
+
+    .inline-pie {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      margin-left: .25em;
+    }
+  }
+
+  .has-icon-images {
+    height: 2.5em;
+    vertical-align: middle;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      height: auto;
+      width: auto;
+    }
+  }
+}
