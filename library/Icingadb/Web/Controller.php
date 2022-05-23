@@ -71,6 +71,32 @@ class Controller extends CompatController
         return $this->filter;
     }
 
+    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher)
+    {
+        // All of that is essentially what `ColumnControl::apply()` should do
+        $columnsDef = $this->params->shift('columns');
+        if (! $columnsDef) {
+            return null;
+        }
+
+        $columns = [];
+        foreach (explode(',', $columnsDef) as $column) {
+            if ($column = trim($column)) {
+                $columns[] = $column;
+            }
+        }
+
+        $query->withColumns($columns);
+
+        if (! $this->getRequest()->getUrl()->hasParam($viewModeSwitcher->getViewModeParam())) {
+            $viewModeSwitcher->setViewMode('tabular');
+        }
+
+        // For now this also returns the columns, but they should be accessible
+        // by calling `ColumnControl::getColumns()` in the future
+        return $columns;
+    }
+
     /**
      * Create and return the LimitControl
      *

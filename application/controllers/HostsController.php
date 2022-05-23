@@ -60,6 +60,15 @@ class HostsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        if ($viewModeSwitcher->getViewMode() === 'tabular') {
+            $columns = $this->createColumnControl($hosts, [
+                'host.display_name' // There should be a link, always
+            ]);
+        } else {
+            // If the user interacts with the view mode switcher, there should be no error shown
+            $this->params->shift('columns');
+        }
+
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
