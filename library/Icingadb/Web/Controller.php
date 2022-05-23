@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemTable\BaseItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
 use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
 use Icinga\Security\SecurityException;
@@ -494,6 +495,8 @@ class Controller extends CompatController
     {
         if ($content instanceof BaseItemList) {
             $this->content->getAttributes()->add('class', 'full-width');
+        } elseif ($content instanceof BaseItemTable) {
+            $this->content->getAttributes()->add('class', 'full-height');
         }
 
         return parent::addContent($content);

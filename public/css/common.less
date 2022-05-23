@@ -14,6 +14,11 @@
   }
 }
 
+& > .content.full-height {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .plugin-output {
   .monospace();
   word-break: break-word;
@@ -79,6 +84,7 @@ div.show-more {
   .box-shadow(0, 0, 0, 1px, @gray-lighter);
   flex-shrink: 0;
   position: relative; // Required for the host meta info control
+  z-index: 1; // The content may clip, this ensures the separator is always visible
 
   > :not(:only-child) {
     margin-bottom: .5em;
