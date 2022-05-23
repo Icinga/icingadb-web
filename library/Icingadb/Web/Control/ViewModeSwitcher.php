@@ -31,7 +31,8 @@ class ViewModeSwitcher extends Form
     public static $viewModes = [
         'minimal'  => 'minimal',
         'common'   => 'default',
-        'detailed' => 'detailed'
+        'detailed' => 'detailed',
+        'tabular'  => 'tabular'
     ];
 
     /** @var string */
@@ -142,6 +143,10 @@ class ViewModeSwitcher extends Form
         $this->addElement(new HiddenElement($viewModeParam));
 
         foreach (static::$viewModes as $viewMode => $icon) {
+            if ($viewMode === 'tabular') {
+                continue;
+            }
+
             $protectedId = $this->protectId('view-mode-switcher-' . $icon);
             $input = new InputElement($viewModeParam, [
                 'class' => 'autosubmit',
