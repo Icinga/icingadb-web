@@ -568,7 +568,7 @@ class PerfData
             $html ? '<b>%s %s</b> (%s%%)' : '%s %s (%s%%)',
             htmlspecialchars($this->getLabel()),
             $this->format($this->value),
-            number_format($this->getPercentage(), 2)
+            number_format($this->getPercentage() ?? 0, 2)
         );
     }
 
