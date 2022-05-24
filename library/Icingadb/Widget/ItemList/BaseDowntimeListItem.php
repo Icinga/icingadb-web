@@ -68,7 +68,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
         $until = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
         $this->duration = explode(' ', DateFormatter::formatDuration(
-            $until <= 3600 ? $until : $until + (3600 - ($until % 3600))
+            $until <= 3600 ? $until : $until + (3600 - ((int) $until % 3600))
         ), 2)[0];
 
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
