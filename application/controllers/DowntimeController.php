@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
+use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
 class DowntimeController extends Controller
@@ -44,8 +45,7 @@ class DowntimeController extends Controller
             'triggered_by.service',
             'triggered_by.service.state'
         ]);
-        $query->getSelectBase()
-            ->where(['downtime.name = ?' => $name]);
+        $query->filter(Filter::equal('downtime.name', $name));
 
         $this->applyRestrictions($query);
 

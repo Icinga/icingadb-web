@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -96,6 +97,16 @@ class DowntimeHistory extends Model
             'end_time',
             'trigger_time',
             'cancel_time'
+        ]));
+
+        $behaviors->add(new Binary([
+            'downtime_id',
+            'environment_id',
+            'endpoint_id',
+            'triggered_by_id',
+            'parent_id',
+            'host_id',
+            'service_id'
         ]));
     }
 

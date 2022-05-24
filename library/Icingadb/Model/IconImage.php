@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -33,6 +35,14 @@ class IconImage extends Model
             'icon_image'        => t('Icon Image'),
             'environment_id'    => t('Icon Image Environment Id')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id'
+        ]));
     }
 
     public function createRelations(Relations $relations)

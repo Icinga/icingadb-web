@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
 use ipl\Orm\Model;
@@ -132,6 +133,22 @@ class Service extends Model
         $behaviors->add(new ReRoute([
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'name_checksum',
+            'properties_checksum',
+            'host_id',
+            'checkcommand_id',
+            'check_timeperiod_id',
+            'eventcommand_id',
+            'action_url_id',
+            'notes_url_id',
+            'icon_image_id',
+            'zone_id',
+            'command_endpoint_id'
         ]));
     }
 

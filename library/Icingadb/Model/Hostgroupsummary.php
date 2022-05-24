@@ -4,11 +4,43 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\UnionModel;
+use ipl\Sql\Adapter\Pgsql;
+use ipl\Sql\Connection;
 use ipl\Sql\Expression;
+use ipl\Sql\Select;
 
 class Hostgroupsummary extends UnionModel
 {
+    public static function on(Connection $db)
+    {
+        $q = parent::on($db);
+
+        $q->on($q::ON_SELECT_ASSEMBLED, function (Select $select) use ($q) {
+            $model = $q->getModel();
+
+            $groupBy = $q->getResolver()->qualifyColumnsAndAliases((array) $model->getKeyName(), $model, false);
+
+            // For PostgreSQL, ALL non-aggregate SELECT columns must appear in the GROUP BY clause:
+            if ($q->getDb()->getAdapter() instanceof Pgsql) {
+                /**
+                 * Ignore Expressions, i.e. aggregate functions {@see getColumns()},
+                 * which do not need to be added to the GROUP BY.
+                 */
+                $candidates = array_filter($select->getColumns(), 'is_string');
+                // Remove already considered columns for the GROUP BY, i.e. the primary key.
+                $candidates = array_diff_assoc($candidates, $groupBy);
+                $groupBy = array_merge($groupBy, $candidates);
+            }
+
+            $select->groupBy($groupBy);
+        });
+
+        return $q;
+    }
+
     public function getTableName()
     {
         return 'hostgroup';
@@ -98,22 +130,6 @@ class Hostgroupsummary extends UnionModel
     {
         $unions = [
             [
-                Hostgroup::class,
-                [],
-                [
-                    'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => 'hostgroup.name',
-                    'hostgroup_display_name' => 'hostgroup.display_name',
-                    'host_id'                => new Expression('NULL'),
-                    'host_state'             => new Expression('NULL'),
-                    'host_handled'           => new Expression('NULL'),
-                    'host_severity'          => new Expression('0'),
-                    'service_id'             => new Expression('NULL'),
-                    'service_state'          => new Expression('NULL'),
-                    'service_handled'        => new Expression('NULL')
-                ]
-            ],
-            [
                 Host::class,
                 [
                     'hostgroup',
@@ -121,8 +137,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => new Expression('NULL'),
-                    'hostgroup_display_name' => new Expression('NULL'),
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
@@ -140,8 +156,8 @@ class Hostgroupsummary extends UnionModel
                 ],
                 [
                     'hostgroup_id'           => 'hostgroup.id',
-                    'hostgroup_name'         => new Expression('NULL'),
-                    'hostgroup_display_name' => new Expression('NULL'),
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
@@ -150,9 +166,32 @@ class Hostgroupsummary extends UnionModel
                     'service_state'          => 'state.soft_state',
                     'service_handled'        => 'state.is_handled'
                 ]
+            ],
+            [
+                Hostgroup::class,
+                [],
+                [
+                    'hostgroup_id'           => 'hostgroup.id',
+                    'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_display_name' => 'hostgroup.display_name',
+                    'host_id'                => new Expression('NULL'),
+                    'host_state'             => new Expression('NULL'),
+                    'host_handled'           => new Expression('NULL'),
+                    'host_severity'          => new Expression('0'),
+                    'service_id'             => new Expression('NULL'),
+                    'service_state'          => new Expression('NULL'),
+                    'service_handled'        => new Expression('NULL')
+                ]
             ]
         ];
 
         return $unions;
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id'
+        ]));
     }
 }

@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\Bitmask;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -78,6 +79,7 @@ class User extends Model
             'hostgroup'     => 'notification.host.hostgroup',
             'servicegroup'  => 'notification.service.servicegroup'
         ]));
+
         $behaviors->add(new Bitmask([
             'states' => [
                 'ok'        => 1,
@@ -98,6 +100,15 @@ class User extends Model
                 'flapping_start'    => 128,
                 'flapping_end'      => 256
             ]
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'name_checksum',
+            'properties_checksum',
+            'timeperiod_id',
+            'zone_id'
         ]));
     }
 

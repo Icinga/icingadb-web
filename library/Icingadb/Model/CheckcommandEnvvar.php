@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -39,6 +41,16 @@ class CheckcommandEnvvar extends Model
             'properties_checksum'   => t('Checkcommand Properties Checksum'),
             'envvar_value'          => t('Checkcommand Envvar Value')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'checkcommand_id',
+            'environment_id',
+            'properties_checksum'
+        ]));
     }
 
     public function createRelations(Relations $relations)

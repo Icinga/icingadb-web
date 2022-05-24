@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -45,6 +47,17 @@ class Zone extends Model
             'parent_id'             => t('Zone Parent Id'),
             'depth'                 => t('Zone Depth')
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'name_checksum',
+            'properties_checksum',
+            'parent_id'
+        ]));
     }
 
     public function createRelations(Relations $relations)

@@ -4,11 +4,43 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\UnionModel;
+use ipl\Sql\Adapter\Pgsql;
+use ipl\Sql\Connection;
 use ipl\Sql\Expression;
+use ipl\Sql\Select;
 
 class ServicegroupSummary extends UnionModel
 {
+    public static function on(Connection $db)
+    {
+        $q = parent::on($db);
+
+        $q->on($q::ON_SELECT_ASSEMBLED, function (Select $select) use ($q) {
+            $model = $q->getModel();
+
+            $groupBy = $q->getResolver()->qualifyColumnsAndAliases((array) $model->getKeyName(), $model, false);
+
+            // For PostgreSQL, ALL non-aggregate SELECT columns must appear in the GROUP BY clause:
+            if ($q->getDb()->getAdapter() instanceof Pgsql) {
+                /**
+                 * Ignore Expressions, i.e. aggregate functions {@see getColumns()},
+                 * which do not need to be added to the GROUP BY.
+                 */
+                $candidates = array_filter($select->getColumns(), 'is_string');
+                // Remove already considered columns for the GROUP BY, i.e. the primary key.
+                $candidates = array_diff_assoc($candidates, $groupBy);
+                $groupBy = array_merge($groupBy, $candidates);
+            }
+
+            $select->groupBy($groupBy);
+        });
+
+        return $q;
+    }
+
     public function getTableName()
     {
         return 'servicegroup';
@@ -74,6 +106,22 @@ class ServicegroupSummary extends UnionModel
     {
         $unions = [
             [
+                Service::class,
+                [
+                    'servicegroup',
+                    'state'
+                ],
+                [
+                    'servicegroup_id'           => 'servicegroup.id',
+                    'servicegroup_name'         => 'servicegroup.name',
+                    'servicegroup_display_name' => 'servicegroup.display_name',
+                    'service_id'                => 'service.id',
+                    'service_state'             => 'state.soft_state',
+                    'service_handled'           => 'state.is_handled',
+                    'service_severity'          => 'state.severity'
+                ]
+            ],
+            [
                 Servicegroup::class,
                 [],
                 [
@@ -85,25 +133,16 @@ class ServicegroupSummary extends UnionModel
                     'service_handled'           => new Expression('NULL'),
                     'service_severity'          => new Expression('0')
                 ]
-            ],
-            [
-                Service::class,
-                [
-                    'servicegroup',
-                    'state'
-                ],
-                [
-                    'servicegroup_id'           => 'servicegroup.id',
-                    'servicegroup_name'         => new Expression('NULL'),
-                    'servicegroup_display_name' => new Expression('NULL'),
-                    'service_id'                => 'service.id',
-                    'service_state'             => 'state.soft_state',
-                    'service_handled'           => 'state.is_handled',
-                    'service_severity'          => 'state.severity'
-                ]
             ]
         ];
 
         return $unions;
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id'
+        ]));
     }
 }

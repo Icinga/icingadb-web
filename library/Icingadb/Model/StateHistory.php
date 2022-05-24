@@ -5,10 +5,10 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
-use ipl\Sql\Expression;
 
 /**
  * Model for table `state_history`
@@ -77,6 +77,14 @@ class StateHistory extends Model
     {
         $behaviors->add(new Timestamp([
             'event_time'
+        ]));
+
+        $behaviors->add(new Binary([
+            'id',
+            'environment_id',
+            'endpoint_id',
+            'host_id',
+            'service_id'
         ]));
     }
 

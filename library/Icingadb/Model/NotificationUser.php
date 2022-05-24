@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -26,6 +28,16 @@ class NotificationUser extends Model
             'user_id',
             'environment_id'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary([
+            'id',
+            'notification_id',
+            'user_id',
+            'environment_id'
+        ]));
     }
 
     public function createRelations(Relations $relations)

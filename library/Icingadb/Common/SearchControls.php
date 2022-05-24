@@ -54,7 +54,8 @@ trait SearchControls
                 try {
                     if ($query instanceof UnionQuery) {
                         // TODO: This can't be right. Finally solve this god-damn union-query-model structure!!!1
-                        $query = $query->getUnions()[0];
+                        $queries = $query->getUnions();
+                        $query = end($queries);
                     }
 
                     $relationPath = $query->getResolver()->qualifyPath(
