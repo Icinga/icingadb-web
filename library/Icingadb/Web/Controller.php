@@ -465,13 +465,13 @@ class Controller extends CompatController
      */
     protected function sendAsPdf()
     {
+        if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
+            throw new ConfigurationError('The pdfexport module is required for exports to PDF');
+        }
+
         if (version_compare(Version::VERSION, '2.10.0', '>=')) {
             parent::sendAsPdf();
             return;
-        }
-
-        if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
-            throw new ConfigurationError('The pdfexport module is required for exports to PDF');
         }
 
         putenv('ICINGAWEB_EXPORT_FORMAT=pdf');
