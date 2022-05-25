@@ -9,7 +9,7 @@ use Iterator;
 
 class ObjectSuggestionsCursor extends Cursor
 {
-    public function getIterator(): Iterator
+    public function getIterator(): \Traversable
     {
         foreach (parent::getIterator() as $key => $value) {
             // TODO(lippserd): This is a quick and dirty fix for PostgreSQL binary datatypes for which PDO returns
