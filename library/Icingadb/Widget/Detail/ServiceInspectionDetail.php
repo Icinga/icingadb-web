@@ -14,6 +14,7 @@ class ServiceInspectionDetail extends ObjectInspectionDetail
             $this->createSourceLocation(),
             $this->createLastCheckResult(),
             $this->createAttributes(),
+            $this->createCustomVariables(),
             $this->createRedisInfo()
         ]);
     }
