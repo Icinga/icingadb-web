@@ -139,22 +139,18 @@ class CheckStatistics extends Card
             )
         );
 
-        $intervalLine = Html::tag('hr', ['class' => 'interval-line']);
-
-        $bubbles = Html::tag(
-            'ul',
-            ['class' => 'below'],
-            [$lastUpdate, $interval, $nextCheck]
-        );
-
         $below = Html::tag(
-            'div',
+            'ul',
             [
-                'class' => 'below-wrapper',
+                'class' => 'below',
                 'style' => sprintf('width: %F%%;', $durationScale)
-            ],
-            [$intervalLine, $bubbles]
+            ]
         );
+        $below->add([
+            $lastUpdate,
+            $interval,
+            $nextCheck
+        ]);
 
         $body->add([$above, $timeline, $below]);
     }
