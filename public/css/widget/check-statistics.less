@@ -17,31 +17,24 @@
     display: inline-flex;
   }
 
-  .below-wrapper {
-    // The wrapper is needed because IE11 doesn't ignore absolutely positioned elements with
-    // justify-content:space-between: https://github.com/philipwalton/flexbugs/issues/111
-    position: relative;
+  &.progress-bar .below {
+    padding: 0;
     margin-left: 10%;
     margin-right: auto;
 
-    .below {
-      padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+    &:before {
+      background-color: @gray;
+      content: "";
+      display: block;
+      height: .25em;
+      width: 100%;
 
-    .interval-line {
       position: absolute;
       top: ~"calc(50% - .125em)";
-
-      width: 100%;
-      margin: 0;
-
-      border-style: solid;
-      border-color: @gray;
-      border-width: .25em 0 0 0;
     }
   }
 
