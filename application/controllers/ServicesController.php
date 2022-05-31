@@ -295,6 +295,26 @@ class ServicesController extends Controller
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
 
+        /** Preserve filter and params in view links (the `BaseFilter` implementation for view scripts -.-) */
+        $this->view->baseUrl = $this->getRequest()->getUrl()
+            ->onlyWith([
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                $sortControl->getSortParam(),
+                'flipped',
+                'page',
+                'problems'
+            ]);
+        $preservedParams = $this->view->baseUrl->getParams();
+        $this->view->baseUrl->setQueryString(QueryString::render($filter));
+        foreach ($preservedParams->toArray(false) as $name => $value) {
+            if (is_int($name)) {
+                $name = $value;
+                $value = true;
+            }
+
+            $this->view->baseUrl->getParams()->addEncoded($name, $value);
+        }
+
         $this->view->controls = $this->controls;
 
         if ($flipped) {
