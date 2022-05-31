@@ -18,7 +18,7 @@ class HostSlaReport extends SlaReport
 {
     public function getName()
     {
-        $name = t('Host SLA Report');
+        $name = t('Host SLA');
         if (Icinga::app()->getModuleManager()->hasEnabled('idoreports')) {
             $name .= ' (Icinga DB)';
         }

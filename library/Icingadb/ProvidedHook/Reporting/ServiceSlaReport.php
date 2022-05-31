@@ -18,7 +18,7 @@ class ServiceSlaReport extends SlaReport
 {
     public function getName()
     {
-        $name = t('Service SLA Report');
+        $name = t('Service SLA');
         if (Icinga::app()->getModuleManager()->hasEnabled('idoreports')) {
             $name .= ' (Icinga DB)';
         }
