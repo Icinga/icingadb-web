@@ -37,11 +37,11 @@ class CompatHost extends Host
         ],
         'host_active_checks_enabled_changed'    => null,
         'host_attempt'                          => null,
-        'host_check_command'                    => ['path' => ['checkcommand']],
+        'host_check_command'                    => ['path' => ['checkcommand_name']],
         'host_check_execution_time'             => ['path' => ['state', 'execution_time']],
         'host_check_latency'                    => ['path' => ['state', 'latency']],
         'host_check_source'                     => ['path' => ['state', 'check_source']],
-        'host_check_timeperiod'                 => ['path' => ['check_timeperiod']],
+        'host_check_timeperiod'                 => ['path' => ['check_timeperiod_name']],
         'host_current_check_attempt'            => ['path' => ['state', 'attempt']],
         'host_current_notification_number'      => null,
         'host_event_handler_enabled'            => [

@@ -121,8 +121,8 @@ abstract class BaseHistoryListItem extends BaseListItem
                     $caption->addHtml(new PluginOutputContainer(
                         (new PluginOutput($this->item->notification->text))
                             ->setCommandName($this->item->object_type === 'host'
-                                ? $this->item->host->checkcommand
-                                : $this->item->service->checkcommand)
+                                ? $this->item->host->checkcommand_name
+                                : $this->item->service->checkcommand_name)
                     ));
                 }
 
@@ -131,8 +131,8 @@ abstract class BaseHistoryListItem extends BaseListItem
                 $caption->addHtml(new PluginOutputContainer(
                     (new PluginOutput($this->item->state->output))
                         ->setCommandName($this->item->object_type === 'host'
-                            ? $this->item->host->checkcommand
-                            : $this->item->service->checkcommand)
+                            ? $this->item->host->checkcommand_name
+                            : $this->item->service->checkcommand_name)
                 ));
 
                 break;

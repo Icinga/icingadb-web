@@ -79,10 +79,10 @@ class Service extends Model
             'name'                      => t('Service Name'),
             'name_ci'                   => t('Service Name (CI)'),
             'display_name'              => t('Service Display Name'),
-            'checkcommand'              => t('Service Checkcommand'),
+            'checkcommand_name'         => t('Service Checkcommand'),
             'checkcommand_id'           => t('Service Checkcommand Id'),
             'max_check_attempts'        => t('Service Max Check Attempts'),
-            'check_timeperiod'          => t('Service Check Timeperiod'),
+            'check_timeperiod_name'     => t('Service Check Timeperiod'),
             'check_timeperiod_id'       => t('Service Check Timeperiod Id'),
             'check_timeout'             => t('Service Check Timeout'),
             'check_interval'            => t('Service Check Interval'),
@@ -95,7 +95,7 @@ class Service extends Model
             'flapping_threshold_low'    => t('Service Flapping Threshold Low'),
             'flapping_threshold_high'   => t('Service Flapping Threshold High'),
             'perfdata_enabled'          => t('Service Performance Data Enabled'),
-            'eventcommand'              => t('Service Eventcommand'),
+            'eventcommand_name'         => t('Service Eventcommand'),
             'eventcommand_id'           => t('Service Eventcommand Id'),
             'is_volatile'               => t('Service Is Volatile'),
             'action_url_id'             => t('Service Action Url Id'),
@@ -103,9 +103,9 @@ class Service extends Model
             'notes'                     => t('Service Notes'),
             'icon_image_id'             => t('Service Icon Image Id'),
             'icon_image_alt'            => t('Service Icon Image Alt'),
-            'zone'                      => t('Service Zone'),
+            'zone_name'                 => t('Service Zone'),
             'zone_id'                   => t('Service Zone Id'),
-            'command_endpoint'          => t('Service Command Endpoint'),
+            'command_endpoint_name'     => t('Service Command Endpoint'),
             'command_endpoint_id'       => t('Service Command Endpoint Id')
         ];
     }

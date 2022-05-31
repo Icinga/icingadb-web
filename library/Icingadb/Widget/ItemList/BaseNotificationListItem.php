@@ -80,8 +80,8 @@ abstract class BaseNotificationListItem extends BaseListItem
             $caption->addHtml(new PluginOutputContainer(
                 (new PluginOutput($this->item->text))
                     ->setCommandName($this->item->object_type === 'host'
-                        ? $this->item->host->checkcommand
-                        : $this->item->service->checkcommand)
+                        ? $this->item->host->checkcommand_name
+                        : $this->item->service->checkcommand_name)
             ));
         } else {
             $caption->add([
