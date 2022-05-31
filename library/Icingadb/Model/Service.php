@@ -38,10 +38,10 @@ class Service extends Model
             'name',
             'name_ci',
             'display_name',
-            'checkcommand',
+            'checkcommand_name',
             'checkcommand_id',
             'max_check_attempts',
-            'check_timeperiod',
+            'check_timeperiod_name',
             'check_timeperiod_id',
             'check_timeout',
             'check_interval',
@@ -54,7 +54,7 @@ class Service extends Model
             'flapping_threshold_low',
             'flapping_threshold_high',
             'perfdata_enabled',
-            'eventcommand',
+            'eventcommand_name',
             'eventcommand_id',
             'is_volatile',
             'action_url_id',
@@ -62,9 +62,9 @@ class Service extends Model
             'notes',
             'icon_image_id',
             'icon_image_alt',
-            'zone',
+            'zone_name',
             'zone_id',
-            'command_endpoint',
+            'command_endpoint_name',
             'command_endpoint_id'
         ];
     }
