@@ -31,6 +31,9 @@ abstract class SlaReport extends ReportHook
     /** @var float If an SLA value is lower than the threshold, it is considered not ok */
     const DEFAULT_THRESHOLD = 99.5;
 
+    /** @var int The amount of decimal places for the report result */
+    const DEFAULT_REPORT_PRECISION = 2;
+
     /**
      * Create and return a {@link ReportData} container
      *
@@ -164,10 +167,10 @@ abstract class SlaReport extends ReportHook
         $form->addElement('select', 'breakdown', [
             'label'   => t('Breakdown'),
             'options' => [
-                'none'  => 'None',
-                'day'   => 'Day',
-                'week'  => 'Week',
-                'month' => 'Month'
+                'none'  => t('None', 'SLA Report Breakdown'),
+                'day'   => t('Day'),
+                'week'  => t('Week'),
+                'month' => t('Month')
             ]
         ]);
 
@@ -177,6 +180,13 @@ abstract class SlaReport extends ReportHook
             'step'        => '0.01',
             'min'         => '1',
             'max'         => '100'
+        ]);
+
+        $form->addElement('number', 'sla_precision', [
+            'label'       => t('Amount Decimal Places'),
+            'placeholder' => static::DEFAULT_REPORT_PRECISION,
+            'min'         => '1',
+            'max'         => '12'
         ]);
     }
 
@@ -206,6 +216,7 @@ abstract class SlaReport extends ReportHook
         }
 
         $tableRows = [];
+        $precision = $config['sla_precision'] ?? static::DEFAULT_REPORT_PRECISION;
 
         foreach ($data->getRows() as $row) {
             $cells = [];
@@ -223,7 +234,7 @@ abstract class SlaReport extends ReportHook
                 $slaClass = 'ok';
             }
 
-            $cells[] = Html::tag('td', ['class' => "sla-column $slaClass"], round($sla, 2));
+            $cells[] = Html::tag('td', ['class' => "sla-column $slaClass"], round($sla, $precision));
 
             $tableRows[] = Html::tag('tr', null, $cells);
         }
@@ -237,9 +248,13 @@ abstract class SlaReport extends ReportHook
             $slaClass = 'ok';
         }
 
+        $total = $this instanceof HostSlaReport
+            ? sprintf(t('Total (%d Hosts)'), $data->count())
+            : sprintf(t('Total (%d Services)'), $data->count());
+
         $tableRows[] = Html::tag('tr', null, [
-            Html::tag('td', ['colspan' => count($data->getDimensions())], 'Total'),
-            Html::tag('td', ['class' => "sla-column $slaClass"], round($average, 2))
+            Html::tag('td', ['colspan' => count($data->getDimensions())], $total),
+            Html::tag('td', ['class' => "sla-column $slaClass"], round($average, $precision))
         ]);
 
         $table = Html::tag(
