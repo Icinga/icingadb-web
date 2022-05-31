@@ -243,7 +243,7 @@ trait Auth
                         ...$values
                     );
 
-                    $query->setColumns($columns);
+                    $query->columns($columns);
                 }
             }
 
