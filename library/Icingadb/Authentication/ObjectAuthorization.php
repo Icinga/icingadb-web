@@ -199,7 +199,7 @@ class ObjectAuthorization
         $rolesWithRestrictions = [];
         if (! empty($roleExpressions)) {
             if ($cache) {
-                $query->columns('id')->columns($roleExpressions);
+                $query->columns('id')->withColumns($roleExpressions);
                 $query->filter($filter);
             } else {
                 $query = [$this->getDb()->fetchOne((new Select())->columns($roleExpressions))];
