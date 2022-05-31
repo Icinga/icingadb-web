@@ -25,7 +25,7 @@ class HealthController extends Controller
 
         $db = $this->getDb();
 
-        $instance = Instance::on($db)->with('endpoint');
+        $instance = Instance::on($db)->with(['endpoint']);
         $hoststateSummary = HoststateSummary::on($db);
         $servicestateSummary = ServicestateSummary::on($db);
 

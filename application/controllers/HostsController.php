@@ -37,10 +37,7 @@ class HostsController extends Controller
 
         $db = $this->getDb();
 
-        $hosts = Host::on($db)
-            ->with('state')
-            ->with('icon_image')
-            ->with('state.last_comment');
+        $hosts = Host::on($db)->with(['state', 'icon_image', 'state.last_comment']);
         $hosts->getWith()['host.state']->setJoinType('INNER');
         $hosts->setResultSetClass(VolatileStateResults::class);
 
@@ -130,11 +127,9 @@ class HostsController extends Controller
 
         $db = $this->getDb();
 
-        $hosts = Host::on($db)
-            ->with('state')
-            ->with('icon_image')
-            ->setResultSetClass(VolatileStateResults::class);
-        $summary = HoststateSummary::on($db);
+        $hosts = Host::on($db)->with(['state', 'icon_image']);
+        $hosts->setResultSetClass(VolatileStateResults::class);
+        $summary = HoststateSummary::on($db)->with(['state']);
 
         $this->filter($hosts);
         $this->filter($summary);
@@ -147,12 +142,12 @@ class HostsController extends Controller
         $results = $hosts->execute();
         $summary = $summary->first();
 
-        $downtimes = Host::on($db)->with('downtime');
+        $downtimes = Host::on($db)->with(['downtime']);
         $downtimes->getWith()['host.downtime']->setJoinType('INNER');
         $this->filter($downtimes);
         $summary->downtimes_total = $downtimes->count();
 
-        $comments = Host::on($db)->with('comment');
+        $comments = Host::on($db)->with(['comment']);
         $comments->getWith()['host.comment']->setJoinType('INNER');
         // TODO: This should be automatically done by the model/resolver and added as ON condition
         $comments->filter(Filter::equal('comment.object_type', 'host'));

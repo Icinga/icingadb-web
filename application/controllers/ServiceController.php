@@ -37,11 +37,13 @@ class ServiceController extends Controller
         $name = $this->params->getRequired('name');
         $hostName = $this->params->getRequired('host.name');
 
-        $query = Service::on($this->getDb())
-            ->with('state')
-            ->with('icon_image')
-            ->with('host')
-            ->with('host.state')
+        $query = Service::on($this->getDb())->with([
+            'state',
+            'icon_image',
+            'host',
+            'host.state'
+        ]);
+        $query
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::all(
                 Filter::equal('service.name', $name),
@@ -114,18 +116,18 @@ class ServiceController extends Controller
 
         $db = $this->getDb();
 
-        $history = History::on($db)
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.state')
-            ->with('comment')
-            ->with('downtime')
-            ->with('flapping')
-            ->with('notification')
-            ->with('acknowledgement')
-            ->with('state');
-
+        $history = History::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.state',
+            'comment',
+            'downtime',
+            'flapping',
+            'notification',
+            'acknowledgement',
+            'state'
+        ]);
         $history->filter(Filter::all(
             Filter::equal('history.host_id', $this->service->host_id),
             Filter::equal('history.service_id', $this->service->id)

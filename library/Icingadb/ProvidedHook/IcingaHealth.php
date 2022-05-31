@@ -66,7 +66,7 @@ class IcingaHealth extends HealthHook
     {
         if ($this->instance === null) {
             $this->instance = Instance::on($this->getDb())
-                ->with('endpoint', ['name'])
+                ->with('endpoint')
                 ->columns([
                     'heartbeat',
                     'responsible',
@@ -77,7 +77,8 @@ class IcingaHealth extends HealthHook
                     'icinga2_notifications_enabled',
                     'icinga2_performance_data_enabled',
                     'icinga2_start_time',
-                    'icinga2_version'
+                    'icinga2_version',
+                    'endpoint.name'
                 ])
                 ->first();
         }

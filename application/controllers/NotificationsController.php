@@ -25,12 +25,13 @@ class NotificationsController extends Controller
 
         $db = $this->getDb();
 
-        $notifications = NotificationHistory::on($db)
-            ->with('history')
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.state');
+        $notifications = NotificationHistory::on($db)->with([
+            'history',
+            'host',
+            'host.state',
+            'service',
+            'service.state'
+        ]);
 
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());

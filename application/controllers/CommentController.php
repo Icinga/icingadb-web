@@ -27,14 +27,14 @@ class CommentController extends Controller
 
         $name = $this->params->getRequired('name');
 
-        $query = Comment::on($this->getDb())
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.state')
-            ->with('service.host')
-            ->with('service.host.state');
-
+        $query = Comment::on($this->getDb())->with([
+            'host',
+            'host.state',
+            'service',
+            'service.state',
+            'service.host',
+            'service.host.state'
+        ]);
         $query->filter(Filter::equal('comment.name', $name));
 
         $this->applyRestrictions($query);

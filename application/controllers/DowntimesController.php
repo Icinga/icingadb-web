@@ -27,13 +27,14 @@ class DowntimesController extends Controller
 
         $db = $this->getDb();
 
-        $downtimes = Downtime::on($db)
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.host')
-            ->with('service.host.state')
-            ->with('service.state');
+        $downtimes = Downtime::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
 
         $this->handleSearchRequest($downtimes);
 
@@ -115,13 +116,14 @@ class DowntimesController extends Controller
 
         $db = $this->getDb();
 
-        $downtimes = Downtime::on($db)
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.host')
-            ->with('service.host.state')
-            ->with('service.state');
+        $downtimes = Downtime::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
 
         $this->filter($downtimes);
 
@@ -146,13 +148,14 @@ class DowntimesController extends Controller
 
         $db = $this->getDb();
 
-        $downtimes = Downtime::on($db)
-            ->with('host')
-            ->with('host.state')
-            ->with('service')
-            ->with('service.host')
-            ->with('service.host.state')
-            ->with('service.state');
+        $downtimes = Downtime::on($db)->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
 
         $downtimes->limit(3)->peekAhead();
 
