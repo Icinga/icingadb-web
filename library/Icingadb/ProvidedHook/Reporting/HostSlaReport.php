@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook\Reporting;
 
+use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Reporting\ReportData;
 use Icinga\Module\Reporting\ReportRow;
@@ -17,7 +18,12 @@ class HostSlaReport extends SlaReport
 {
     public function getName()
     {
-        return t('Icinga DB Host SLA Report');
+        $name = t('Host SLA Report');
+        if (Icinga::app()->getModuleManager()->hasEnabled('idoreports')) {
+            $name .= ' (Icinga DB)';
+        }
+
+        return $name;
     }
 
     protected function createReportData()
