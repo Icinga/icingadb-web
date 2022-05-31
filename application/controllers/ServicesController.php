@@ -323,7 +323,7 @@ class ServicesController extends Controller
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             // TODO: Everything up to addContent() (inclusive) can be removed once the grid is a widget
-            $this->view->compact = true; // Relevant controls are transmitted separately
+            $this->view->controls = ''; // Relevant controls are transmitted separately
             $viewRenderer = $this->getHelper('viewRenderer');
             $viewRenderer->postDispatch();
             $viewRenderer->setNoRender(false);
