@@ -104,7 +104,8 @@ class PivotTable
             $this->order[$sort[0]] = $sort[1];
         }
 
-        $this->baseQuery = $query->resetColumns()->setColumns($gridcols)->resetOrderBy();
+        // ipl/sql branch put-reset-methods-into-the trait is required for resetOrderBy().
+        $this->baseQuery = $query->setColumns($gridcols)->resetOrderBy();
         $this->xAxisColumn = $xAxisColumn;
         $this->yAxisColumn = $yAxisColumn;
         $this->gridcols = $gridcols;
