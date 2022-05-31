@@ -138,7 +138,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $inputFilter = Filter::like($columnPath, $searchTerm);
-        $query->resetColumns()->columns($columnPath);
+        $query->columns($columnPath);
         $query->orderBy($columnPath);
 
         // This had so many iterations, if it still doesn't work, consider removing it entirely :(
