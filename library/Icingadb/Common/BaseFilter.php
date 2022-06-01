@@ -6,6 +6,9 @@ namespace Icinga\Module\Icingadb\Common;
 
 use ipl\Stdlib\Filter\Rule;
 
+/**
+ * @deprecated Use {@see \ipl\Stdlib\BaseFilter} instead. This will be removed with version 1.1
+ */
 trait BaseFilter
 {
     /** @var Rule Base filter */
