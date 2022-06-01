@@ -315,6 +315,10 @@ class ServicesController extends Controller
             $this->view->baseUrl->getParams()->addEncoded($name, $value);
         }
 
+        $searchBar->setEditorUrl(Url::fromPath(
+            "icingadb/services/grid-search-editor"
+        )->setParams($preservedParams));
+
         $this->view->controls = $this->controls;
 
         if ($flipped) {
@@ -337,6 +341,24 @@ class ServicesController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
+    }
+
+    public function gridSearchEditorAction()
+    {
+        $editor = $this->createSearchEditor(
+            Service::on($this->getDb()),
+            Url::fromPath('icingadb/services/grid'),
+            [
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                'flipped',
+                'page',
+                'problems'
+            ]
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 
     protected function fetchCommandTargets(): Query
