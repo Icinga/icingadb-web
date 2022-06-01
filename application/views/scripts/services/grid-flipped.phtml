@@ -26,6 +26,7 @@ foreach ($pivotData as $serviceDescription => $_) {
                 'default',
                 array(
                     'flippable'      => true,
+                    'baseUrl'        => $baseUrl,
                     'xAxisPaginator' => $horizontalPaginator,
                     'yAxisPaginator' => $verticalPaginator
                 )
@@ -107,7 +108,7 @@ foreach ($pivotData as $serviceDescription => $_) {
             <td>
                 <?php $expandLink = $this->qlink(
                     $this->translate('Load more'),
-                    Url::fromRequest(),
+                    $baseUrl,
                     array(
                         'limit' => ($horizontalItemsPerPage + 20)
                             . ','
@@ -128,7 +129,7 @@ foreach ($pivotData as $serviceDescription => $_) {
             <td colspan="<?= count($pivotHeader['cols']) + 1?>" class="service-grid-table-more">
                 <?php echo $this->qlink(
                     $this->translate('Load more'),
-                    Url::fromRequest(),
+                    $baseUrl,
                     array(
                         'limit' => $horizontalItemsPerPage
                             . ','

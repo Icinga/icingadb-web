@@ -3,7 +3,7 @@
 use Icinga\Web\Url;
 
 $showText = $this->translate('%s: Show %s %u to %u out of %u', 'pagination.joystick');
-$flipUrl = Url::fromRequest();
+$flipUrl = clone $baseUrl;
 if ($flipUrl->getParam('flipped')) {
     $flipUrl->remove('flipped');
 } else {
@@ -39,7 +39,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <?php if ($prevYAxisPage): ?>
         <?= $this->qlink(
           '',
-          Url::fromRequest(),
+          $baseUrl,
           array(
             'page' => $currentXAxisPage . ',' . $prevYAxisPage
           ),
@@ -67,7 +67,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <?php if ($prevXAxisPage): ?>
         <?= $this->qlink(
           '',
-          Url::fromRequest(),
+          $baseUrl,
           array(
             'page' => $prevXAxisPage . ',' . $currentYAxisPage
           ),
@@ -106,7 +106,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <?php if ($nextXAxisPage): ?>
         <?= $this->qlink(
           '',
-          Url::fromRequest(),
+          $baseUrl,
           array(
             'page' => $nextXAxisPage . ',' . $currentYAxisPage
           ),
@@ -135,7 +135,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <?php if ($nextYAxisPage): ?>
         <?= $this->qlink(
           '',
-          Url::fromRequest(),
+          $baseUrl,
           array(
             'page' => $currentXAxisPage . ',' . $nextYAxisPage
           ),

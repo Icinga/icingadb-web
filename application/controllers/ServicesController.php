@@ -295,15 +295,39 @@ class ServicesController extends Controller
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
 
+        /** Preserve filter and params in view links (the `BaseFilter` implementation for view scripts -.-) */
+        $this->view->baseUrl = $this->getRequest()->getUrl()
+            ->onlyWith([
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                $sortControl->getSortParam(),
+                'flipped',
+                'page',
+                'problems'
+            ]);
+        $preservedParams = $this->view->baseUrl->getParams();
+        $this->view->baseUrl->setQueryString(QueryString::render($filter));
+        foreach ($preservedParams->toArray(false) as $name => $value) {
+            if (is_int($name)) {
+                $name = $value;
+                $value = true;
+            }
+
+            $this->view->baseUrl->getParams()->addEncoded($name, $value);
+        }
+
+        $searchBar->setEditorUrl(Url::fromPath(
+            "icingadb/services/grid-search-editor"
+        )->setParams($preservedParams));
+
         $this->view->controls = $this->controls;
 
         if ($flipped) {
-            $this->render('grid-flipped');
+            $this->getHelper('viewRenderer')->setScriptAction('grid-flipped');
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             // TODO: Everything up to addContent() (inclusive) can be removed once the grid is a widget
-            $this->view->compact = true; // Relevant controls are transmitted separately
+            $this->view->controls = ''; // Relevant controls are transmitted separately
             $viewRenderer = $this->getHelper('viewRenderer');
             $viewRenderer->postDispatch();
             $viewRenderer->setNoRender(false);
@@ -317,6 +341,24 @@ class ServicesController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
+    }
+
+    public function gridSearchEditorAction()
+    {
+        $editor = $this->createSearchEditor(
+            Service::on($this->getDb()),
+            Url::fromPath('icingadb/services/grid'),
+            [
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                'flipped',
+                'page',
+                'problems'
+            ]
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 
     protected function fetchCommandTargets(): Query
