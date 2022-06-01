@@ -44,7 +44,7 @@ class DbResourcePage extends Form
         $this->getElement('name')->setValue('icingadb');
         $this->getElement('db')->setMultiOptions([
             'mysql' => 'MySQL',
-            //'pgsql' => 'PostgreSQL' TODO: Uncomment once supported
+            'pgsql' => 'PostgreSQL'
         ]);
 
         $this->removeElement('name');
