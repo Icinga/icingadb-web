@@ -318,7 +318,7 @@ class ServicesController extends Controller
         $this->view->controls = $this->controls;
 
         if ($flipped) {
-            $this->render('grid-flipped');
+            $this->getHelper('viewRenderer')->setScriptAction('grid-flipped');
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
