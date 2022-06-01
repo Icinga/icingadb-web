@@ -38,13 +38,14 @@ trait SearchControls
      * Create and return the SearchBar
      *
      * @param Query $query The query being filtered
+     * @param Url $redirectUrl Url to redirect to upon success
      * @param array $preserveParams Query params to preserve when redirecting
      *
      * @return SearchBar
      */
-    public function createSearchBar(Query $query, array $preserveParams = null): SearchBar
+    public function createSearchBar(Query $query, ...$params): SearchBar
     {
-        $searchBar = $this->webCreateSearchBar($query, $preserveParams);
+        $searchBar = $this->webCreateSearchBar($query, ...$params);
 
         $columnValidator = function (SearchBar\ValidatedColumn $column) use ($query) {
             $columnPath = $column->getSearchValue();
@@ -86,13 +87,14 @@ trait SearchControls
      * Create and return the SearchEditor
      *
      * @param Query $query The query being filtered
+     * @param Url $redirectUrl Url to redirect to upon success
      * @param array $preserveParams Query params to preserve when redirecting
      *
      * @return SearchEditor
      */
-    public function createSearchEditor(Query $query, array $preserveParams = null): SearchEditor
+    public function createSearchEditor(Query $query, ...$params): SearchEditor
     {
-        $editor = $this->webCreateSearchEditor($query, $preserveParams);
+        $editor = $this->webCreateSearchEditor($query, ...$params);
 
         $editor->on(SearchEditor::ON_VALIDATE_COLUMN, function (Filter\Condition $condition) use ($query) {
             $column = $condition->getColumn();
