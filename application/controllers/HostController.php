@@ -62,7 +62,7 @@ class HostController extends Controller
 
     public function indexAction()
     {
-        $serviceSummary = ServicestateSummary::on($this->getDb())->with('state');
+        $serviceSummary = ServicestateSummary::on($this->getDb());
         $serviceSummary->filter(Filter::equal('service.host_id', $this->host->id));
 
         $this->applyRestrictions($serviceSummary);

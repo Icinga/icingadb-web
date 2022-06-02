@@ -203,7 +203,12 @@ trait Auth
 
                 $columns = $query->getColumns();
                 if (empty($columns)) {
-                    $columns = [$flatvaluePath, '*'];
+                    $columns = [
+                        $customVarRelationName
+                            ? $resolver->qualifyColumn('flatname', $customVarRelationName)
+                            : 'flatname',
+                        $flatvaluePath
+                    ];
                 }
 
                 $flatvalue = null;
@@ -238,7 +243,7 @@ trait Auth
                         ...$values
                     );
 
-                    $query->setColumns($columns);
+                    $query->columns($columns);
                 }
             }
 
