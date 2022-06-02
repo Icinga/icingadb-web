@@ -23,8 +23,8 @@ class TacticalController extends Controller
 
         $db = $this->getDb();
 
-        $hoststateSummary = HoststateSummary::on($db);
-        $servicestateSummary = ServicestateSummary::on($db);
+        $hoststateSummary = HoststateSummary::on($db)->with('state');
+        $servicestateSummary = ServicestateSummary::on($db)->with(['state']);
 
         $this->handleSearchRequest($servicestateSummary);
 

@@ -15,7 +15,7 @@ class HostProblemsBadge extends ProblemsBadge
 
     protected function fetchProblemsCount()
     {
-        $summary = HoststateSummary::on($this->getDb());
+        $summary = HoststateSummary::on($this->getDb())->with('state');
         $this->applyRestrictions($summary);
         $count = (int) $summary->first()->hosts_down_unhandled;
         if ($count) {

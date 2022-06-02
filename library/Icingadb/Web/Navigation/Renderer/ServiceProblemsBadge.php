@@ -15,7 +15,7 @@ class ServiceProblemsBadge extends ProblemsBadge
 
     protected function fetchProblemsCount()
     {
-        $summary = ServicestateSummary::on($this->getDb());
+        $summary = ServicestateSummary::on($this->getDb())->with('state');
         $this->applyRestrictions($summary);
         $count = (int) $summary->first()->services_critical_unhandled;
         if ($count) {

@@ -45,7 +45,7 @@ class HostsController extends Controller
 
         $summary = null;
         if (! $compact) {
-            $summary = HoststateSummary::on($db);
+            $summary = HoststateSummary::on($db)->with('state');
         }
 
         $limitControl = $this->createLimitControl();
@@ -221,7 +221,7 @@ class HostsController extends Controller
 
     protected function getFeatureStatus()
     {
-        $summary = HoststateSummary::on($this->getDb());
+        $summary = HoststateSummary::on($this->getDb())->with(['state']);
         $this->filter($summary);
 
         return new FeatureStatus('host', $summary->first());
