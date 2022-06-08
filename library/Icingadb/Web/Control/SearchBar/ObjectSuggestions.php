@@ -96,7 +96,7 @@ class ObjectSuggestions extends Suggestions
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
             $where = Filter::like($model->getTableName() . '.' . $column, $searchTerm);
-            $where->metaData()->set('columnLabel', $model->getMetaData()[$column]);
+            $where->metaData()->set('columnLabel', $model->getColumnDefinitions()[$column]);
             $quickFilter->add($where);
         }
 
@@ -287,8 +287,8 @@ class ObjectSuggestions extends Suggestions
                         $resolver->qualifyPath($route, $model->getTableName()),
                         $model
                     );
-                    foreach ($relation->getTarget()->getMetaData() as $columnName => $columnMeta) {
-                        yield $name . '.' . $columnName => $columnMeta;
+                    foreach ($resolver->getColumnDefinitions($relation->getTarget()) as $columnName => $definition) {
+                        yield $name . '.' . $columnName => $definition->getLabel();
                     }
                 }
             }
