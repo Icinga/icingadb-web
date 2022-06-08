@@ -32,7 +32,7 @@ class NotificationcommandEnvvar extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'notificationcommand_id' => t('Notificationcommand Envvar Command Id'),

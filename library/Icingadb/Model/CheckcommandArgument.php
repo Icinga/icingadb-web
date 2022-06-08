@@ -39,7 +39,7 @@ class CheckcommandArgument extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'checkcommand_id'       => t('Checkcommand Argument Command Id'),

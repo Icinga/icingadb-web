@@ -45,7 +45,7 @@ class Comment extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'        => t('Comment Environment Id'),

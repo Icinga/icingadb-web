@@ -36,7 +36,7 @@ class Eventcommand extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'zone_id'               => t('Eventcommand Zone Id'),

@@ -29,7 +29,7 @@ class IconImage extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'icon_image'        => t('Icon Image'),

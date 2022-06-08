@@ -32,7 +32,7 @@ class CheckcommandEnvvar extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'checkcommand_id'       => t('Checkcommand Envvar Command Id'),

@@ -30,7 +30,7 @@ class NotesUrl extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'notes_url'         => t('Notes Url'),

@@ -39,7 +39,7 @@ class NotificationcommandArgument extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'notificationcommand_id' => t('Notificationcommand Argument Command Id'),

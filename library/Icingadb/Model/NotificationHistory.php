@@ -48,7 +48,7 @@ class NotificationHistory extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'id'                    => t('Notification History Id'),

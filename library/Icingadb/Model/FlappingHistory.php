@@ -45,7 +45,7 @@ class FlappingHistory extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'                => t('Flapping Environment Id (History)'),

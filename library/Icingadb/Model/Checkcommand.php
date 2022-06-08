@@ -36,7 +36,7 @@ class Checkcommand extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'zone_id'               => t('Checkcommand Zone Id'),

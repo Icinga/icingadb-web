@@ -31,7 +31,7 @@ class TimeperiodRange extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'timeperiod_id'     => t('Timeperiod Range Period Id'),

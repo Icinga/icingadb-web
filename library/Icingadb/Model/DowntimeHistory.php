@@ -55,7 +55,7 @@ class DowntimeHistory extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'        => t('Downtime Environment Id (History)'),

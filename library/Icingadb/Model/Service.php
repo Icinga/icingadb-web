@@ -69,7 +69,7 @@ class Service extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'            => t('Service Environment Id'),

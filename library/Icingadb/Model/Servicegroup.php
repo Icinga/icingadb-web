@@ -35,7 +35,7 @@ class Servicegroup extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'        => t('Servicegroup Environment Id'),
