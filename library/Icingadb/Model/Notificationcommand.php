@@ -77,7 +77,7 @@ class Notificationcommand extends Model
             ->through(NotificationcommandCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(NotificationcommandCustomvar::class);
-        $relations->belongsToMany('vars', CustomvarFlat::class)
+        $relations->belongsToMany('vars', Vars::class)
             ->through(NotificationcommandCustomvar::class);
 
         $relations->hasMany('notification', Notification::class);

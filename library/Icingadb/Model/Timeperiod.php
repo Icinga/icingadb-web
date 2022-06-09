@@ -75,7 +75,7 @@ class Timeperiod extends Model
             ->through(TimeperiodCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(TimeperiodCustomvar::class);
-        $relations->belongsToMany('vars', CustomvarFlat::class)
+        $relations->belongsToMany('vars', Vars::class)
             ->through(TimeperiodCustomvar::class);
 
         // TODO: Decide how to establish the override relations

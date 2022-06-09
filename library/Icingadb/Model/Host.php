@@ -136,7 +136,8 @@ class Host extends Model
             'passive_checks_enabled',
             'event_handler_enabled',
             'notifications_enabled',
-            'flapping_enabled'
+            'flapping_enabled',
+            'is_volatile'
         ]));
 
         $behaviors->add(new ReRoute([
@@ -203,7 +204,7 @@ class Host extends Model
             ->through(HostCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(HostCustomvar::class);
-        $relations->belongsToMany('vars', CustomvarFlat::class)
+        $relations->belongsToMany('vars', Vars::class)
             ->through(HostCustomvar::class);
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->through(HostgroupMember::class);

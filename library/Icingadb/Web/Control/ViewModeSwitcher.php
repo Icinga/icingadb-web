@@ -31,7 +31,8 @@ class ViewModeSwitcher extends Form
     public static $viewModes = [
         'minimal'  => 'minimal',
         'common'   => 'default',
-        'detailed' => 'detailed'
+        'detailed' => 'detailed',
+        'tabular'  => 'tabular'
     ];
 
     /** @var string */
@@ -111,6 +112,20 @@ class ViewModeSwitcher extends Form
     }
 
     /**
+     * Set the view mode
+     *
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function setViewMode(string $name)
+    {
+        $this->populate([$this->getViewModeParam() => $name]);
+
+        return $this;
+    }
+
+    /**
      * Set callback to protect ids with
      *
      * @param   callable $protector
@@ -136,12 +151,15 @@ class ViewModeSwitcher extends Form
     protected function assemble()
     {
         $viewModeParam = $this->getViewModeParam();
-        $currentViewMode = $this->getViewMode();
 
         $this->addElement($this->createUidElement());
         $this->addElement(new HiddenElement($viewModeParam));
 
         foreach (static::$viewModes as $viewMode => $icon) {
+            if ($viewMode === 'tabular') {
+                continue;
+            }
+
             $protectedId = $this->protectId('view-mode-switcher-' . $icon);
             $input = new InputElement($viewModeParam, [
                 'class' => 'autosubmit',
@@ -150,6 +168,9 @@ class ViewModeSwitcher extends Form
                 'type'  => 'radio',
                 'value' => $viewMode
             ]);
+            $input->getAttributes()->registerAttributeCallback('checked', function () use ($viewMode) {
+                return $viewMode === $this->getViewMode();
+            });
 
             $label = new HtmlElement(
                 'label',
@@ -158,27 +179,23 @@ class ViewModeSwitcher extends Form
                 ]),
                 new IcingaIcon($icon)
             );
+            $label->getAttributes()->registerAttributeCallback('title', function () use ($viewMode) {
+                switch ($viewMode) {
+                    case 'minimal':
+                        $active = t('Minimal view active');
+                        $inactive = t('Switch to minimal view');
+                        break;
+                    case 'common':
+                        $active = t('Common view active');
+                        $inactive = t('Switch to common view');
+                        break;
+                    case 'detailed':
+                        $active = t('Detailed view active');
+                        $inactive = t('Switch to detailed view');
+                }
 
-            switch ($viewMode) {
-                case 'minimal':
-                    $active = t('Minimal view active');
-                    $inactive = t('Switch to minimal view');
-                    break;
-                case 'common':
-                    $active = t('Common view active');
-                    $inactive = t('Switch to common view');
-                    break;
-                case 'detailed':
-                    $active = t('Detailed view active');
-                    $inactive = t('Switch to detailed view');
-            }
-
-            if ($viewMode === $currentViewMode) {
-                $input->getAttributes()->add('checked', true);
-                $label->getAttributes()->add('title', $active);
-            } else {
-                $label->getAttributes()->add('title', $inactive);
-            }
+                return $viewMode === $this->getViewMode() ? $active : $inactive;
+            });
 
             $this->addHtml($input, $label);
         }

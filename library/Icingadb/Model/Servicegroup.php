@@ -83,7 +83,7 @@ class Servicegroup extends Model
             ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(ServicegroupCustomvar::class);
-        $relations->belongsToMany('vars', CustomvarFlat::class)
+        $relations->belongsToMany('vars', Vars::class)
             ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('service', Service::class)
             ->through(ServicegroupMember::class);

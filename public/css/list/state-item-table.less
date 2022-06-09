@@ -1,0 +1,34 @@
+// Layout
+
+#layout.wide-layout .item-table th.has-plugin-output {
+  width: 50em;
+}
+#layout.default-layout .item-table th.has-plugin-output {
+  width: 30em;
+}
+#layout.compact-layout .item-table th.has-plugin-output {
+  width: 10em;
+}
+
+#layout.twocols table.item-table {
+  .has-plugin-output {
+    width: auto;
+  }
+}
+
+table.item-table {
+  th.has-visual {
+    button {
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    span > .icon:before {
+      margin: 0;
+    }
+  }
+
+  .visual {
+    text-align: center;
+  }
+}

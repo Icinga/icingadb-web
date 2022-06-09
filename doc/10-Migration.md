@@ -83,6 +83,22 @@ unchanged:
 **cURL example:**  
 `curl -s -HContent-Type:application/json -HAccept:application/json -u icingaadmin:icinga http://localhost/icingaweb2/icingadb/migrate/monitoring-url -d '["/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)","/icingaweb2/businessprocess/process/show?config=production"]'`
 
+
+## Views and Exports
+
+### Url Parameter `addColumns`
+
+The host and service list of the monitoring module allows to show/export additional information per object by using the
+URL parameter `addColumns`. Icinga DB Web has a very similar but much enhanced parameter: `columns`
+
+If you pass this to the host and service list of Icinga DB Web, you'll get an entirely different view mode in which you
+have full control over the information displayed. The parameter accepts a comma separated list of columns. This list
+also defines the order in which the columns are shown.
+
+As of now, there is no dedicated control in the UI to conveniently choose those columns. You can use all columns however,
+which are valid in the search bar as well. The migration widget mentioned earlier also assists you by providing an
+example set of columns conveying the same information shown in the monitoring module lists.
+
 ## Restrictions
 
 ### `monitoring/filter/objects`

@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Module\Icingadb\Model\Behavior\FlattenedObjectVars;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -42,14 +41,6 @@ class CustomvarFlat extends Model
             'customvar_id',
             'flatname_checksum'
         ]));
-
-        /**
-         * TODO(lippserd): Process {@link FlattenedObjectVars} last,
-         * as it returns an incompatible type for a subsequent behavior:
-         *
-         * {@see https://github.com/Icinga/ipl-orm/issues/45}
-         */
-        $behaviors->add(new FlattenedObjectVars());
     }
 
     public function createRelations(Relations $relations)
