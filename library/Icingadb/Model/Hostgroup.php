@@ -35,7 +35,7 @@ class Hostgroup extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'        => t('Hostgroup Environment Id'),

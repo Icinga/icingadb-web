@@ -36,7 +36,7 @@ class Notificationcommand extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'zone_id'               => t('Notificationcommand Zone Id'),

@@ -20,11 +20,10 @@ trait SearchControls
 {
     use \ipl\Web\Compat\SearchControls {
         \ipl\Web\Compat\SearchControls::createSearchBar as private webCreateSearchBar;
-        \ipl\Web\Compat\SearchControls::enrichFilterCondition as private webEnrichFilterCondition;
         \ipl\Web\Compat\SearchControls::createSearchEditor as private webCreateSearchEditor;
     }
 
-    public function fetchMetaData(Query $query): array
+    public function fetchFilterColumns(Query $query): array
     {
         return iterator_to_array(ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver()));
     }
@@ -135,30 +134,5 @@ trait SearchControls
         $searchBar->getWrapper()->add($continueWith);
 
         return $continueWith;
-    }
-
-    /**
-     * Enrich the filter condition with meta data from the query
-     *
-     * @param Filter\Condition $condition
-     * @param Query $query
-     *
-     * @return void
-     */
-    protected function enrichFilterCondition(Filter\Condition $condition, Query $query)
-    {
-        $this->webEnrichFilterCondition($condition, $query);
-
-        $path = $condition->getColumn();
-        if (strpos($path, '.vars.') !== false) {
-            list($target, $varName) = explode('.vars.', $path);
-            if (strpos($target, '.') === false) {
-                // Programmatically translated since the full definition is available in class ObjectSuggestions
-                $condition->metaData()->set(
-                    'columnLabel',
-                    sprintf(t(ucfirst($target) . ' %s', '..<customvar-name>'), $varName)
-                );
-            }
-        }
     }
 }

@@ -44,7 +44,7 @@ class Notification extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'         => t('Notification Environment Id'),

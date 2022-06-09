@@ -28,7 +28,7 @@ class Environment extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'name' => t('Environment Name')

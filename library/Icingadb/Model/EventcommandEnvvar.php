@@ -32,7 +32,7 @@ class EventcommandEnvvar extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'eventcommand_id'       => t('Eventcommand Envvar Command Id'),

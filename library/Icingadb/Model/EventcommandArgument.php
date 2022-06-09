@@ -39,7 +39,7 @@ class EventcommandArgument extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'eventcommand_id'       => t('Eventcommand Argument Command Id'),

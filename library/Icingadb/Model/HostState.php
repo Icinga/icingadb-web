@@ -22,7 +22,7 @@ class HostState extends State
         return 'host_id';
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'                => t('Host State Environment Id'),

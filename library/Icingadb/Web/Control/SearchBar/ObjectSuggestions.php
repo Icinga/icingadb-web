@@ -16,7 +16,9 @@ use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
+use ipl\Orm\Relation;
 use ipl\Orm\Relation\BelongsToMany;
+use ipl\Orm\Relation\HasOne;
 use ipl\Orm\Resolver;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Expression;
@@ -96,7 +98,7 @@ class ObjectSuggestions extends Suggestions
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
             $where = Filter::like($model->getTableName() . '.' . $column, $searchTerm);
-            $where->metaData()->set('columnLabel', $model->getMetaData()[$column]);
+            $where->metaData()->set('columnLabel', $model->getColumnDefinitions()[$column]);
             $quickFilter->add($where);
         }
 
@@ -275,9 +277,24 @@ class ObjectSuggestions extends Suggestions
      */
     public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
     {
-        $metaData = $resolver->getMetaData($model);
-        foreach ($metaData as $columnName => $columnMeta) {
-            yield $columnName => $columnMeta;
+        if ($model instanceof UnionModel) {
+            $models = [];
+            foreach ($model->getUnions() as $union) {
+                /** @var Model $unionModel */
+                $unionModel = new $union[0]();
+                $models[$unionModel->getTableName()] = $unionModel;
+                self::collectRelations($resolver, $unionModel, $models, []);
+            }
+        } else {
+            $models = [$model->getTableName() => $model];
+            self::collectRelations($resolver, $model, $models, []);
+        }
+
+        foreach ($models as $path => $model) {
+            /** @var Model $model */
+            foreach ($resolver->getColumnDefinitions($model) as $columnName => $definition) {
+                yield $path . '.' . $columnName => $definition->getLabel();
+            }
         }
 
         foreach ($resolver->getBehaviors($model) as $behavior) {
@@ -287,8 +304,8 @@ class ObjectSuggestions extends Suggestions
                         $resolver->qualifyPath($route, $model->getTableName()),
                         $model
                     );
-                    foreach ($relation->getTarget()->getMetaData() as $columnName => $columnMeta) {
-                        yield $name . '.' . $columnName => $columnMeta;
+                    foreach ($resolver->getColumnDefinitions($relation->getTarget()) as $columnName => $definition) {
+                        yield $name . '.' . $columnName => $definition->getLabel();
                     }
                 }
             }
@@ -312,14 +329,41 @@ class ObjectSuggestions extends Suggestions
         }
 
         foreach ($foreignMetaDataSources as list($path, $suffix)) {
-            $foreignMetaData = $resolver->resolveRelation(
+            $foreignColumnDefinitions = $resolver->getColumnDefinitions($resolver->resolveRelation(
                 $resolver->qualifyPath($path, $model->getTableName()),
                 $model
-            )
-                ->getTarget()
-                ->getMetaData();
-            foreach ($foreignMetaData as $columnName => $columnMeta) {
-                yield "$path.$columnName" => $columnMeta . $suffix;
+            )->getTarget());
+            foreach ($foreignColumnDefinitions as $columnName => $columnDefinition) {
+                yield "$path.$columnName" => $columnDefinition->getLabel() . $suffix;
+            }
+        }
+    }
+
+    /**
+     * Collect all direct relations of the given model
+     *
+     * A direct relation is either a direct descendant of the model
+     * or a descendant of such related in a to-one cardinality.
+     *
+     * @param Resolver $resolver
+     * @param Model $subject
+     * @param array $models
+     * @param array $path
+     */
+    protected static function collectRelations(Resolver $resolver, Model $subject, array &$models, array $path)
+    {
+        foreach ($resolver->getRelations($subject) as $name => $relation) {
+            /** @var Relation $relation */
+            $isHasOne = $relation instanceof HasOne;
+            if (empty($path) || $isHasOne) {
+                $relationPath = [$name];
+                if ($isHasOne && empty($path)) {
+                    array_unshift($relationPath, $subject->getTableName());
+                }
+
+                $relationPath = array_merge($path, $relationPath);
+                $models[join('.', $relationPath)] = $relation->getTarget();
+                self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
             }
         }
     }

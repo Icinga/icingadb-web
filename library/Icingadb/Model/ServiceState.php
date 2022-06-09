@@ -19,7 +19,7 @@ class ServiceState extends State
         return 'service_id';
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'                => t('Service State Environment Id'),

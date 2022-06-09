@@ -30,7 +30,7 @@ class ActionUrl extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'action_url'        => t('Action Url'),

@@ -48,7 +48,7 @@ class AcknowledgementHistory extends Model
         ];
     }
 
-    public function getMetaData()
+    public function getColumnDefinitions()
     {
         return [
             'environment_id'    => t('Acknowledgement Environment Id (History)'),

@@ -4,10 +4,11 @@
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
-use ipl\Orm\Contract\RewriteBehavior;
+use ipl\Orm\Contract\RewriteFilterBehavior;
+use ipl\Orm\Contract\RewritePathBehavior;
 use ipl\Stdlib\Filter;
 
-class ReRoute implements RewriteBehavior
+class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
 {
     protected $routes;
 
@@ -42,7 +43,7 @@ class ReRoute implements RewriteBehavior
         }
     }
 
-    public function rewritePath($path, $relation = null)
+    public function rewritePath(string $path, ?string $relation = null): ?string
     {
         $dot = strpos($path, '.');
         if ($dot !== false) {
@@ -54,9 +55,7 @@ class ReRoute implements RewriteBehavior
         if (isset($this->routes[$routeName])) {
             return $this->routes[$routeName] . ($dot !== false ? substr($path, $dot) : '');
         }
-    }
 
-    public function rewriteColumn($column, $relation = null)
-    {
+        return null;
     }
 }
