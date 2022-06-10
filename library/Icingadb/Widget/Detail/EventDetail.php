@@ -67,16 +67,16 @@ class EventDetail extends BaseHtmlElement
             HtmlElement::create('div', [
                 'id'    => 'check-output-' . (
                     $notification->object_type === 'host'
-                        ? $this->event->host->checkcommand
-                        : $this->event->service->checkcommand
+                        ? $this->event->host->checkcommand_name
+                        : $this->event->service->checkcommand_name
                 ),
                 'class' => 'collapsible',
                 'data-visible-height' => 100
             ], new PluginOutputContainer(
                 (new PluginOutput($notification->text))
                     ->setCommandName($notification->object_type === 'host'
-                        ? $this->event->host->checkcommand
-                        : $this->event->service->checkcommand)
+                        ? $this->event->host->checkcommand_name
+                        : $this->event->service->checkcommand_name)
             ))
         ];
 
@@ -165,16 +165,16 @@ class EventDetail extends BaseHtmlElement
             HtmlElement::create('div', [
                 'id'    => 'check-output-' . (
                     $stateChange->object_type === 'host'
-                        ? $this->event->host->checkcommand
-                        : $this->event->service->checkcommand
+                        ? $this->event->host->checkcommand_name
+                        : $this->event->service->checkcommand_name
                 ),
                 'class' => 'collapsible',
                 'data-visible-height' => 100
             ], new PluginOutputContainer(
                 (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
                     ->setCommandName($stateChange->object_type === 'host'
-                        ? $this->event->host->checkcommand
-                        : $this->event->service->checkcommand)
+                        ? $this->event->host->checkcommand_name
+                        : $this->event->service->checkcommand_name)
             ))
         ];
 

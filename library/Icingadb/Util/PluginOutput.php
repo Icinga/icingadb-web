@@ -134,7 +134,7 @@ class PluginOutput extends HtmlString
         }
 
         return (new static($object->state->output . "\n" . $object->state->long_output))
-            ->setCommandName($object->checkcommand);
+            ->setCommandName($object->checkcommand_name);
     }
 
     public function render()

@@ -169,7 +169,7 @@ class CheckStatistics extends Card
         ];
 
         $header->add([
-            new VerticalKeyValue(t('Command'), $this->object->checkcommand),
+            new VerticalKeyValue(t('Command'), $this->object->checkcommand_name),
             new VerticalKeyValue(
                 t('Attempts'),
                 new CheckAttempt((int) $this->object->state->attempt, (int) $this->object->max_check_attempts)

@@ -296,7 +296,7 @@ class UrlMigrator
             ],
             'host_alias' => self::DROP,
             'host_check_command' => [
-                'host.checkcommand' => self::USE_EXPR
+                'host.checkcommand_name' => self::USE_EXPR
             ],
             'host_check_execution_time' => [
                 'host.state.execution_time' => self::USE_EXPR
@@ -308,7 +308,7 @@ class UrlMigrator
                 'host.state.check_source' => self::USE_EXPR
             ],
             'host_check_timeperiod' => [
-                'host.check_timeperiod' => self::USE_EXPR
+                'host.check_timeperiod_name' => self::USE_EXPR
             ],
             'host_current_check_attempt' => [
                 'host.state.attempt' => self::USE_EXPR
@@ -604,13 +604,13 @@ class UrlMigrator
                 'service.state.attempt' => self::USE_EXPR
             ],
             'service_check_command' => [
-                'service.checkcommand' => self::USE_EXPR
+                'service.checkcommand_name' => self::USE_EXPR
             ],
             'service_check_source' => [
                 'service.state.check_source' => self::USE_EXPR
             ],
             'service_check_timeperiod' => [
-                'service.check_timeperiod' => self::USE_EXPR
+                'service.check_timeperiod_name' => self::USE_EXPR
             ],
             'service_current_check_attempt' => [
                 'service.state.attempt' => self::USE_EXPR

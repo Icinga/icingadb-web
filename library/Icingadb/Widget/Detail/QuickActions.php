@@ -111,7 +111,7 @@ class QuickActions extends BaseHtmlElement
                 'edit',
                 sprintf(
                     t('Submit a one time or so called passive result for the %s check'),
-                    $this->object->checkcommand
+                    $this->object->checkcommand_name
                 )
             );
         }

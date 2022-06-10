@@ -394,7 +394,7 @@ class ObjectDetail extends BaseHtmlElement
         } else {
             $content[] = new HtmlElement(
                 'div',
-                Attributes::create(['id' => 'check-perfdata-' . $this->object->checkcommand]),
+                Attributes::create(['id' => 'check-perfdata-' . $this->object->checkcommand_name]),
                 new PerfDataTable($this->object->state->normalized_performance_data)
             );
         }
@@ -415,7 +415,7 @@ class ObjectDetail extends BaseHtmlElement
             Html::tag(
                 'div',
                 [
-                    'id'    => 'check-output-' . $this->object->checkcommand,
+                    'id'    => 'check-output-' . $this->object->checkcommand_name,
                     'class' => 'collapsible',
                     'data-visible-height' => 100
                 ],
