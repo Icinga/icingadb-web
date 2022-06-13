@@ -522,12 +522,6 @@ namespace Icinga\Module\Icingadb {
             'description'   => $this->translate('List history'),
             'icon'          => 'history'
         ]);
-        $section->add(N_('Health'), [
-            'url'           => 'icingadb/health',
-            'priority'      => 100,
-            'description'   => $this->translate('Open health overview'),
-            'icon'          => 'heartbeat'
-        ]);
         $section->add(N_('Tactical Overview'), [
             'url'           => 'icingadb/tactical',
             'priority'      => 110,
