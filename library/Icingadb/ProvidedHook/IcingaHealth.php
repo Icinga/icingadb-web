@@ -31,10 +31,16 @@ class IcingaHealth extends HealthHook
         $instance = $this->getInstance();
         if ($instance === null) {
             $this->setState(self::STATE_UNKNOWN);
-            $this->setMessage(t('Icinga DB is not running or not writing into the database'));
+            $this->setMessage(t(
+                'Icinga DB is not running or not writing into the database'
+                . ' (make sure the icinga feature "icingadb" is enabled)'
+            ));
         } elseif ($instance->heartbeat < time() - 60) {
             $this->setState(self::STATE_CRITICAL);
-            $this->setMessage(t('Icinga DB is not running or not writing into the database'));
+            $this->setMessage(t(
+                'Icinga DB is not running or not writing into the database'
+                . ' (make sure the icinga feature "icingadb" is enabled)'
+            ));
         } else {
             $this->setState(self::STATE_OK);
             $this->setMessage(t('Icinga DB is running and writing into the database'));
