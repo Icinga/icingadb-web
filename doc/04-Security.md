@@ -61,25 +61,25 @@ unrestricted. It should be one or more [filter expressions](#filter-expressions)
 `icingadb/filter/services` will only allow users to access matching services. Other objects remain unrestricted.
 It should be one or more [filter expressions](#filter-expressions).
 
-### Blacklists
+### Denylists
 
-Blacklists prevent users from accessing information and in some cases will block them entirely from it.
+Denylists prevent users from accessing information and in some cases will block them entirely from it.
 
 > **Note:**
 >
-> Blacklists from multiple roles will further limit access.
+> Denylists from multiple roles will further limit access.
 
 Name                         | Description
 -----------------------------|------------------------------------------------------------------
-icingadb/blacklist/routes    | Prevent access to routes that are part of the list
-icingadb/blacklist/variables | Hide custom variables of Icinga objects that are part of the list
+icingadb/denylist/routes    | Prevent access to routes that are part of the list
+icingadb/denylist/variables | Hide custom variables of Icinga objects that are part of the list
 
-`icingadb/blacklist/routes` will block users from accessing defined routes and from related information elsewhere.
+`icingadb/denylist/routes` will block users from accessing defined routes and from related information elsewhere.
 For example, if `hostgroups` are part of the list a user won't have access to the hostgroup overview nor to a host's
 groups shown in its detail area. This should be a comma separated list. Possible values are: hostgroups, servicegroups,
 contacts, contactgroups
 
-`icingadb/blacklist/variables` will block users from accessing certain custom variables. A user affected by this won't
+`icingadb/denylist/variables` will block users from accessing certain custom variables. A user affected by this won't
 see that those variables even exist. This should be a comma separated list of [variable paths](#variable-paths). It is
 possible to use [match patterns](#match-patterns).
 
@@ -89,7 +89,7 @@ Protections prevent users from accessing actual data. They will know that there 
 
 > **Note:**
 >
-> Blacklists from multiple roles will further limit access.
+> Denylists from multiple roles will further limit access.
 
 Name                       | Description
 ---------------------------|-----------------------------------------------------------------------------

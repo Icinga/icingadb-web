@@ -118,7 +118,7 @@ or support for them has been dropped. Check the table below for details:
 
 ### `monitoring/blacklist/properties`
 
-This is now `icingadb/blacklist/variables`. However, it does not accept the same rules as
+This is now `icingadb/denylist/variables`. However, it does not accept the same rules as
 `monitoring/blacklist/properties`. It still accepts a comma separated list of GLOB like filters,
 but with some features removed:
 
@@ -133,5 +133,5 @@ Check the [security chapter](04-Security.md#variable-paths) for more details.
 The command permissions have not changed. It is only the module identifier that has changed of course:
 `monitoring.command.*` is now `icingadb.command.*`
 
-The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/blacklist/routes`.
+The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/denylist/routes`.
 Add `users,usergroups` to it to achieve the same effect.

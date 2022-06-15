@@ -118,12 +118,12 @@ namespace Icinga\Module\Icingadb {
     );
 
     $this->provideRestriction(
-        'icingadb/blacklist/routes',
+        'icingadb/denylist/routes',
         $this->translate('Prevent access to routes that are part of the list')
     );
 
     $this->provideRestriction(
-        'icingadb/blacklist/variables',
+        'icingadb/denylist/variables',
         $this->translate('Hide custom variables of Icinga objects that are part of the list')
     );
 
@@ -333,15 +333,15 @@ namespace Icinga\Module\Icingadb {
             'icon'        => 'cog'
         ]);
         $auth = Auth::getInstance();
-        $routeBlacklist = [];
+        $routeDenylist = [];
         if ($auth->isAuthenticated() && ! $auth->getUser()->isUnrestricted()) {
             // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
-            $routeBlacklist = array_flip(array_merge([], ...array_map(function ($restriction) {
+            $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
                 return StringHelper::trimSplit($restriction);
-            }, $auth->getRestrictions('icingadb/blacklist/routes'))));
+            }, $auth->getRestrictions('icingadb/denylist/routes'))));
         }
 
-        if (! array_key_exists('hostgroups', $routeBlacklist)) {
+        if (! array_key_exists('hostgroups', $routeDenylist)) {
             $overviewSection->add(N_('Host Groups'), [
                 'description' => $this->translate('List host groups'),
                 'url'         => 'icingadb/hostgroups',
@@ -350,7 +350,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('servicegroups', $routeBlacklist)) {
+        if (! array_key_exists('servicegroups', $routeDenylist)) {
             $overviewSection->add(N_('Service Groups'), [
                 'description' => $this->translate('List service groups'),
                 'url'         => 'icingadb/servicegroups',
@@ -359,7 +359,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('usergroups', $routeBlacklist)) {
+        if (! array_key_exists('usergroups', $routeDenylist)) {
             $overviewSection->add(N_('User Groups'), [
                 'description' => $this->translate('List user groups'),
                 'url'         => 'icingadb/usergroups',
@@ -368,7 +368,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('users', $routeBlacklist)) {
+        if (! array_key_exists('users', $routeDenylist)) {
             $overviewSection->add(N_('Users'), [
                 'description' => $this->translate('List users'),
                 'url'         => 'icingadb/users',
@@ -463,15 +463,15 @@ namespace Icinga\Module\Icingadb {
 
 
         $auth = Auth::getInstance();
-        $routeBlacklist = [];
+        $routeDenylist = [];
         if ($auth->isAuthenticated() && ! $auth->getUser()->isUnrestricted()) {
             // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
-            $routeBlacklist = array_flip(array_merge([], ...array_map(function ($restriction) {
+            $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
                 return StringHelper::trimSplit($restriction);
-            }, $auth->getRestrictions('icingadb/blacklist/routes'))));
+            }, $auth->getRestrictions('icingadb/denylist/routes'))));
         }
 
-        if (! array_key_exists('hostgroups', $routeBlacklist)) {
+        if (! array_key_exists('hostgroups', $routeDenylist)) {
             $section->add(N_('Host Groups'), [
                 'url'           => 'icingadb/hostgroups',
                 'priority'      => 50,
@@ -480,7 +480,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('servicegroups', $routeBlacklist)) {
+        if (! array_key_exists('servicegroups', $routeDenylist)) {
             $section->add(N_('Service Groups'), [
                 'url'           => 'icingadb/servicegroups',
                 'priority'      => 60,
@@ -489,7 +489,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('usergroups', $routeBlacklist)) {
+        if (! array_key_exists('usergroups', $routeDenylist)) {
             $section->add(N_('User Groups'), [
                 'url'           => 'icingadb/usergroups',
                 'priority'      => 70,
@@ -498,7 +498,7 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('users', $routeBlacklist)) {
+        if (! array_key_exists('users', $routeDenylist)) {
             $section->add(N_('Users'), [
                 'url'           => 'icingadb/users',
                 'priority'      => 80,
