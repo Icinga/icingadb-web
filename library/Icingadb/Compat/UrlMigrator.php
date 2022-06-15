@@ -23,6 +23,7 @@ class UrlMigrator
         'monitoring/host/services' => ['host', 'icingadb/host/services'],
         'monitoring/host/history' => ['host', 'icingadb/host/history'],
         'monitoring/list/services' => ['services', 'icingadb/services'],
+        'monitoring/list/servicegrid' => ['servicegrid', 'icingadb/services/grid'],
         'monitoring/services/show' => ['multipleServices', 'icingadb/services/details'],
         'monitoring/service/show' => ['service', 'icingadb/service'],
         'monitoring/service/history' => ['service', 'icingadb/service/history'],
@@ -799,6 +800,18 @@ class UrlMigrator
             'service_status_update_time' => self::DROP,
             'problems' => self::DROP,
         ];
+    }
+
+    protected static function servicegridColumns(): array
+    {
+        return array_merge(
+            static::servicesColumns(),
+            [
+                'problems' => [
+                    'problems' => self::USE_EXPR
+                ]
+            ]
+        );
     }
 
     protected static function multipleServicesColumns(): array
