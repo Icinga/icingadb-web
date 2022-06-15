@@ -106,15 +106,15 @@ example set of columns conveying the same information shown in the monitoring mo
 This is now `icingadb/filter/objects` but still accepts the same filter syntax. Only the columns have changed
 or support for them has been dropped. Check the table below for details:
 
-Old Column Name      | New Column Name
----------------------|-----------------------
-instance\_name       | -
-host\_name           | host.name
-hostgroup\_name      | hostgroup.name
-service\_description | service.name
-servicegroup\_name   | servicegroup.name
-\_host\_customvar    | host.vars.customvar
-\_service\_customvar | service.vars.customvar
+| Old Column Name      | New Column Name        |
+|----------------------|------------------------|
+| instance\_name       | -                      |
+| host\_name           | host.name              |
+| hostgroup\_name      | hostgroup.name         |
+| service\_description | service.name           |
+| servicegroup\_name   | servicegroup.name      |
+| \_host\_customvar    | host.vars.customvar    |
+| \_service\_customvar | service.vars.customvar |
 
 ### `monitoring/blacklist/properties`
 
