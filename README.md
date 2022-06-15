@@ -63,10 +63,6 @@ are easily accomplished with the `Continue With` control that operates on filter
 
 ![Continue With Preview](doc/res/continue-with-preview.png)
 
-## Installation
-
-To install Icinga DB Web see [Installation](doc/02-Installation.md).
-
 ## License
 
 Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
