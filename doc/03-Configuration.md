@@ -1,118 +1,63 @@
 # Configuration
 
-1. [Database](#database)
-2. [Redis](#redis)
-3. [Command Transports](#command-transports)
-4. [Security](#security)
+Icinga DB Web is configured via the web interface. Below you will find an overview of the necessary settings.
 
-## Database
+## Database Configuration
 
-If not already done during the installation of Icinga DB Web, setup the Icinga DB database backend now.
+Connection configuration for the database to which Icinga DB synchronizes monitoring data.
 
-Create a new [Icinga Web 2 resource](https://icinga.com/docs/icingaweb2/latest/doc/04-Resources/#database)
-for [Icinga DB's database](https://icinga.com/docs/icingadb/latest/doc/02-Installation/#configuring-mysql)
-using the `Configuration -> Application -> Resources` menu.
+1. Create a new resource for the Icinga DB database via the `Configuration → Application → Resources` menu.
 
-Then tell Icinga DB Web which database resource to use. This can be done in
-`Configuration -> Modules -> icingadb -> Database`.
+2. Configure the resource you just created as the database connection for the Icinga DB Web module using the
+   `Configuration → Modules → icingadb → Database` menu.
 
-## Redis
+## Redis Configuration
 
-To view the most recent state information in Icinga DB Web, make sure to configure the connection details to
-[Icinga DB's redis](https://icinga.com/docs/icingadb/latest/doc/02-Installation/#installing-icinga-db-redis)
-at `Configuration -> Modules -> icingadb -> Redis`.
+Connection configuration for the Redis server where Icinga 2 writes check results.
+This data is used to display the latest state information in Icinga DB Web.
 
-### Secondary Master
+1. Configure the connection to the Redis server through the `Configuration → Modules → icingadb → Redis` menu.
 
-If you are running a high availability zone with two masters, you can provide the Redis connection details
-of the secondary master as well. Icinga DB Web will then use that in case the primary one isn't available.
+!!! info
 
-### Using TLS
+    If you are running a high-availability Icinga 2 setup,
+    also configure the secondary master's Redis connection details.
+    Icinga DB Web then uses this connection if the primary one is not available.
 
-If you have setup Redis to only accept encrypted connections, you will need to tell Icinga DB Web the CA certificate
-being used for it. This will apply to both connections, the primary and secondary one.
+## Command Transport Configuration
 
-#### Authentication
+In order to acknowledge problems, force checks, schedule downtimes, etc.,
+Icinga DB Web needs access to the Icinga 2 API.
+For this you need an `ApiUser` object with at least the following permissions on the Icinga 2 side:
 
-It is also possible to authenticate requests over TLS. For this, tell Icinga DB Web which client certificate and
-private key to use.
+* `actions/*`
+* `objects/query/*`
+* `objects/modify/*`
+* `status/query`
 
-### Manual Configuration
+!!! tip
 
-The configuration is stored in two different configuration files.
+    For single-node setups it is recommended to manage API credentials in the `/etc/icinga2/conf.d/api-users.conf` file.
+    If you are running a high-availability Icinga 2 setup, please manage the credentials in the master zone.
 
-The TLS configuration is stored in Icinga DB Web's main configuration. It is located at
-`/etc/icingaweb2/modules/icingadb/config.ini` by default. In it, the section `redis`
-contains the relevant directives.
+1. Please add the following Icinga 2 configuration and change the password accordingly:
+   ```
+   object ApiUser "icingadb-web" {
+       password = "CHANGEME"
+       permissions = [ "actions/*", "objects/modify/*", "objects/query/*", "status/query" ]
+   }
+   ```
+2. Restart Icinga 2 for these changes to take effect.
+3. Then configure a command transport for Icinga DB Web
+   using the credentials you just created via the `Configuration → Modules → icingadb → Command Transports` menu.
 
-The connection configuration is stored in `/etc/icingaweb2/modules/icingadb/redis.ini`. In it, there may be two
-sections with the relevant directives: `redis1` and `redis2`
+!!! info
 
-#### Example
-
-**config.ini**
-```ini
-[redis]
-tls = "1"
-insecure = "0"
-ca = "/var/lib/icingaweb2/modules/icingadb/redis/d37c36724cbf43f204ace4caa5b1b919-ca.pem"
-cert = "/var/lib/icingaweb2/modules/icingadb/redis/d5d43b3a1a77227d8c0ee12adc04483c-cert.pem"
-key = "/var/lib/icingaweb2/modules/icingadb/redis/f27abcbe23546134a8515283f1987e15-key.pem"
-```
-
-**redis.ini**
-```ini
-[redis1]
-host = "redis-one"
-port = "6380"
-
-[redis2]
-host = "redis-two"
-port = "6380"
-```
-
-## Command Transports
-
-Command transports are used to perform actions on the Icinga master such as acknowledgements and scheduling downtimes.
-(amongst others)
-
-These can be configured in `Configuration -> Modules -> icingadb -> Command Transports`.
-
-### Icinga 2 Preparations
-
-If not already done, [set up Icinga 2's api](https://icinga.com/docs/icinga-2/latest/doc/12-icinga2-api/#setting-up-the-api).
-Icinga DB Web requires access to this api, so make sure to create a user with appropriate permissions and ensure it is
-reachable by the web server.
-
-#### Required Permissions
-
-* actions/*
-* objects/query/*
-* objects/modify/*
-
-### Multiple Transports
-
-You can define multiple command transports. Icinga DB Web will try one transport after another to send a command until
-it is successfully sent.
-
-### Manual Configuration
-
-The configuration is stored in an INI-file located at `/etc/icingaweb2/modules/icingadb/commandtransports.ini` by
-default. In it, every transport starts with a section header containing its name followed by its config directives.
-
-The section order also defines which transport is used first over another by Icinga DB Web.
-
-#### Example
-
-```ini
-[icinga2]
-transport = "api"
-host = "127.0.0.1" ; Icinga 2 host
-port = "5665"
-username = "icingaweb2"
-password = "bea11beb7b810ea9ce6ea" ; Change this!
-```
+    If you are running a high-availability Icinga 2 setup,
+    also configure the secondary master's API command transport.
+    Icinga DB Web then uses this transport if the primary one is not available.
 
 ## Security
 
-Setting up permissions and restrictions is covered in its own [chapter](04-Security.md).
+To grant users permissions to run commands and restrict them to specific views,
+see the [Security](04-Security.md) documentation for the necessary steps.
