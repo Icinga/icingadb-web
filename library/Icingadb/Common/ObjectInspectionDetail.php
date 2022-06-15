@@ -80,7 +80,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             $command = join(' ', array_map('escapeshellarg', $command));
         }
 
-        $blacklist = [
+        $denylist = [
             'command',
             'output',
             'type',
@@ -92,7 +92,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             new HtmlElement('pre', null, Text::create($command)),
             new HtmlElement('h2', null, Text::create(t('Execution Details'))),
             $this->createNameValueTable(
-                array_diff_key($this->attrs['last_check_result'], array_flip($blacklist)),
+                array_diff_key($this->attrs['last_check_result'], array_flip($denylist)),
                 [
                     'execution_end'     => [$this, 'formatTimestamp'],
                     'execution_start'   => [$this, 'formatTimestamp'],
@@ -126,14 +126,14 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             return [$title, sprintf('Failed to decode redis data: %s', $e->getMessage())];
         }
 
-        $blacklist = [
+        $denylist = [
             'commandline',
             'environment_id',
             'id'
         ];
 
         return [$title, $this->createNameValueTable(
-            array_diff_key($data, array_flip($blacklist)),
+            array_diff_key($data, array_flip($denylist)),
             [
                 'last_state_change'     => [$this, 'formatMillisecondTimestamp'],
                 'last_update'           => [$this, 'formatMillisecondTimestamp'],
@@ -152,7 +152,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
     protected function createAttributes(): array
     {
-        $blacklist = [
+        $denylist = [
             'name',
             '__name',
             'host_name',
@@ -171,7 +171,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         return [
             new HtmlElement('h2', null, Text::create(t('Object Attributes'))),
             $this->createNameValueTable(
-                array_diff_key($this->attrs, array_flip($blacklist)),
+                array_diff_key($this->attrs, array_flip($denylist)),
                 [
                     'acknowledgement_expiry'        => [$this, 'formatTimestamp'],
                     'acknowledgement_last_change'   => [$this, 'formatTimestamp'],
