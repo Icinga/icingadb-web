@@ -1,10 +1,5 @@
 # Migration
 
-1. [Configuration](#configuration)
-2. [Dashboards and Navigation](#dashboards-and-navigation)
-3. [Restrictions](#restrictions)
-4. [Permissions](#permissions)
-
 If you previously used the monitoring module, (built into Icinga Web 2) you may want to
 migrate your existing configuration, custom dashboards and navigation items as well as
 permissions or restrictions.
