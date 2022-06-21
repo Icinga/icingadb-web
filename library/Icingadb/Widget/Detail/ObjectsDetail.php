@@ -72,7 +72,7 @@ class ObjectsDetail extends BaseHtmlElement
                     tp('Host', 'Hosts', $this->summary->hosts_total),
                     $this->summary->hosts_total
                 ),
-                new HostStateBadges($badges)
+                $badges
             ]);
         } else {
             $servicesChart = (new Donut())
