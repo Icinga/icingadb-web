@@ -181,7 +181,6 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        // Ordinary columns first
         foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
             yield $columnName => $columnMeta;
         }
@@ -296,9 +295,9 @@ class ObjectSuggestions extends Suggestions
             self::collectRelations($resolver, $model, $models, []);
         }
 
-        foreach ($models as $path => $model) {
-            /** @var Model $model */
-            foreach ($resolver->getColumnDefinitions($model) as $columnName => $definition) {
+        foreach ($models as $path => $targetModel) {
+            /** @var Model $targetModel */
+            foreach ($resolver->getColumnDefinitions($targetModel) as $columnName => $definition) {
                 yield $path . '.' . $columnName => $definition->getLabel();
             }
         }
@@ -368,8 +367,11 @@ class ObjectSuggestions extends Suggestions
                 }
 
                 $relationPath = array_merge($path, $relationPath);
-                $models[join('.', $relationPath)] = $relation->getTarget();
-                self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
+
+                if (! in_array($relation->getTarget(), $models)) {
+                    $models[join('.', $relationPath)] = $relation->getTarget();
+                    self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
+                }
             }
         }
     }
