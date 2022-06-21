@@ -296,9 +296,9 @@ class ObjectSuggestions extends Suggestions
             self::collectRelations($resolver, $model, $models, []);
         }
 
-        foreach ($models as $path => $model) {
-            /** @var Model $model */
-            foreach ($resolver->getColumnDefinitions($model) as $columnName => $definition) {
+        foreach ($models as $path => $targetModel) {
+            /** @var Model $targetModel */
+            foreach ($resolver->getColumnDefinitions($targetModel) as $columnName => $definition) {
                 yield $path . '.' . $columnName => $definition->getLabel();
             }
         }
