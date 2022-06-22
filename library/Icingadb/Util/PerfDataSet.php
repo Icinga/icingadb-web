@@ -85,9 +85,11 @@ class PerfDataSet implements IteratorAggregate
             $value = trim($this->readUntil(' '));
 
             if ($label) {
-                $this->perfdata[] = new PerfData($label, $value);
+                $this->perfdata[$label] = new PerfData($label, $value);
             }
         }
+
+        ksort($this->perfdata, SORT_NATURAL);
     }
 
     /**
