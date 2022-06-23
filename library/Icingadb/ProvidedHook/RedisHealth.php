@@ -48,7 +48,7 @@ class RedisHealth extends HealthHook
                 $this->setMessage(t('Icinga Redis outdated. Make sure Icinga 2 is running and connected to Redis.'));
             }
         } catch (Exception $e) {
-            $this->setState(self::STATE_UNKNOWN);
+            $this->setState(self::STATE_CRITICAL);
             $this->setMessage(sprintf(t("Can't connect to Icinga Redis: %s"), $e->getMessage()));
         }
     }
