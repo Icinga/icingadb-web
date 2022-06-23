@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Redis;
 
+use Exception;
 use Generator;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
@@ -116,7 +117,13 @@ class VolatileStateResults extends ResultSet
 
     protected function fetchStates(string $key, array $ids): Generator
     {
-        $results = IcingaRedis::instance()->getConnection()->hmget($key, $ids);
+        try {
+            $results = IcingaRedis::instance()->getConnection()->hmget($key, $ids);
+        } catch (Exception $e) {
+            // TODO: (sd) find a way to display the exception as a permanent message in the footer
+            return;
+        }
+
         foreach ($results as $i => $json) {
             if ($json !== null) {
                 $data = json_decode($json, true);
