@@ -203,7 +203,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                     }
 
                     $visual->addHtml(new CheckAttempt(
-                        (int) $this->item->state->attempt,
+                        (int) $this->item->state->check_attempt,
                         (int) $this->item->state->max_check_attempts
                     ));
                 } else {

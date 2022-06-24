@@ -312,7 +312,7 @@ class UrlMigrator
                 'host.check_timeperiod_name' => self::USE_EXPR
             ],
             'host_current_check_attempt' => [
-                'host.state.attempt' => self::USE_EXPR
+                'host.state.check_attempt' => self::USE_EXPR
             ],
             'host_current_notification_number' => self::DROP,
             'host_display_name' => [
@@ -602,7 +602,7 @@ class UrlMigrator
             ],
             'service_active_checks_enabled_changed' => self::DROP,
             'service_attempt' => [
-                'service.state.attempt' => self::USE_EXPR
+                'service.state.check_attempt' => self::USE_EXPR
             ],
             'service_check_command' => [
                 'service.checkcommand_name' => self::USE_EXPR
@@ -614,7 +614,7 @@ class UrlMigrator
                 'service.check_timeperiod_name' => self::USE_EXPR
             ],
             'service_current_check_attempt' => [
-                'service.state.attempt' => self::USE_EXPR
+                'service.state.check_attempt' => self::USE_EXPR
             ],
             'service_current_notification_number' => self::DROP,
             'service_display_name' => [
