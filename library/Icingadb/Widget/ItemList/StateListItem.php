@@ -84,7 +84,9 @@ abstract class StateListItem extends BaseListItem
 
         $visual->addHtml($stateBall);
         if ($this->state->state_type === 'soft') {
-            $visual->addHtml(new CheckAttempt((int) $this->state->attempt, (int) $this->item->max_check_attempts));
+            $visual->addHtml(
+                new CheckAttempt((int) $this->state->check_attempt, (int) $this->item->max_check_attempts)
+            );
         }
     }
 
