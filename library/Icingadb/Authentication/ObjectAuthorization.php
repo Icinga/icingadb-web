@@ -120,7 +120,6 @@ class ObjectAuthorization
             $query
                 ->filter($filter)
                 ->filter(Filter::equal($object->getKeyName(), $uniqueId))
-                ->getSelectBase()
                 ->columns([new Expression('1')]);
 
             $result = $query->execute()->hasResult();
