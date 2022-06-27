@@ -52,6 +52,14 @@ class PerfDataTable extends Table
         uasort(
             $pieChartData,
             function ($a, $b) {
+                if ($a->isVisualizable() && ! $b->isVisualizable()) {
+                    return -1;
+                } elseif (! $a->isVisualizable() && $b->isVisualizable()) {
+                    return 1;
+                } elseif (! $a->isVisualizable() && ! $b->isVisualizable()) {
+                    return 0;
+                }
+
                 return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
             }
         );
