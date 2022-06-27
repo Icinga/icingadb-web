@@ -67,6 +67,9 @@ class VolatileStateResults extends ResultSet
         $type = null;
         $behaviors = null;
 
+        $keys = [];
+        $hostStateKeys = [];
+
         $states = [];
         $hostStates = [];
         foreach ($this as $row) {
@@ -86,8 +89,15 @@ class VolatileStateResults extends ResultSet
             }
 
             $states[bin2hex($row->id)] = $row->state;
+            if (empty($keys)) {
+                $keys = $row->state->getColumns();
+            }
+
             if ($type === 'service' && $row->host instanceof Host) {
                 $hostStates[bin2hex($row->host->id)] = $row->host->state;
+                if (empty($hostStateKeys)) {
+                    $hostStateKeys = $row->host->state->getColumns();
+                }
             }
         }
 
@@ -95,7 +105,7 @@ class VolatileStateResults extends ResultSet
             return;
         }
 
-        foreach ($this->fetchStates("icinga:{$type}:state", array_keys($states)) as $id => $data) {
+        foreach ($this->fetchStates("icinga:{$type}:state", array_keys($states), $keys) as $id => $data) {
             foreach ($data as $key => $value) {
                 $data[$key] = $behaviors->retrieveProperty($value, $key);
             }
@@ -104,7 +114,7 @@ class VolatileStateResults extends ResultSet
         }
 
         if ($type === 'service' && ! empty($hostStates)) {
-            foreach ($this->fetchStates('icinga:host:state', array_keys($hostStates)) as $id => $data) {
+            foreach ($this->fetchStates('icinga:host:state', array_keys($hostStates), $hostStateKeys) as $id => $data) {
                 foreach ($data as $key => $value) {
                     $data[$key] = $behaviors->retrieveProperty($value, $key);
                 }
@@ -114,13 +124,13 @@ class VolatileStateResults extends ResultSet
         }
     }
 
-    protected function fetchStates(string $key, array $ids): Generator
+    protected function fetchStates(string $key, array $ids, array $keys): Generator
     {
         $results = IcingaRedis::instance()->getConnection()->hmget($key, $ids);
         foreach ($results as $i => $json) {
             if ($json !== null) {
                 $data = json_decode($json, true);
-                $data = array_intersect_key($data, array_flip(VolatileState::$keys));
+                $data = array_intersect_key(array_merge(array_fill_keys($keys, null), $data), array_flip($keys));
 
                 yield $ids[$i] => $data;
             }
