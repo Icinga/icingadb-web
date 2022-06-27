@@ -6,6 +6,9 @@ all supported platforms from our official release repository.
 Please follow the steps listed for your target operating system,
 which guide you through setting up the repository and installing Icinga DB Web.
 
+To upgrade an existing Icinga DB Web installation to a newer version,
+see the [Upgrading](05-Upgrading.md) documentation for the necessary steps.
+
 ![Icinga DB Web](res/icingadb-web.png)
 
 Before installing Icinga DB Web, make sure you have installed the
