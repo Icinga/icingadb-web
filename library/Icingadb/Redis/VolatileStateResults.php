@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Redis;
 
+use Exception;
 use Generator;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
@@ -12,12 +13,16 @@ use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Query;
 use ipl\Orm\Resolver;
 use ipl\Orm\ResultSet;
+use Predis\Client;
 use RuntimeException;
 
 class VolatileStateResults extends ResultSet
 {
     /** @var Resolver */
     private $resolver;
+
+    /** @var Client */
+    private $redis;
 
     /** @var bool Whether Redis updates were applied */
     private $updatesApplied = false;
@@ -27,12 +32,28 @@ class VolatileStateResults extends ResultSet
         $self = parent::fromQuery($query);
         $self->resolver = $query->getResolver();
 
+        try {
+            $self->redis = IcingaRedis::instance()->getConnection();
+        } catch (Exception $e) {
+            // The error has already been logged
+        }
+
         return $self;
+    }
+
+    /**
+     * Get whether Redis is unavailable
+     *
+     * @return bool
+     */
+    public function isRedisUnavailable(): bool
+    {
+        return $this->redis === null;
     }
 
     public function current()
     {
-        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
+        if ($this->redis && ! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
         }
 
@@ -41,7 +62,7 @@ class VolatileStateResults extends ResultSet
 
     public function key(): int
     {
-        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
+        if ($this->redis && ! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
         }
 
@@ -50,7 +71,7 @@ class VolatileStateResults extends ResultSet
 
     public function rewind(): void
     {
-        if (! $this->updatesApplied && ! $this->isCacheDisabled) {
+        if ($this->redis && ! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->updatesApplied = true;
             $this->advance();
 
@@ -126,7 +147,7 @@ class VolatileStateResults extends ResultSet
 
     protected function fetchStates(string $key, array $ids, array $keys): Generator
     {
-        $results = IcingaRedis::instance()->getConnection()->hmget($key, $ids);
+        $results = $this->redis->hmget($key, $ids);
         foreach ($results as $i => $json) {
             if ($json !== null) {
                 $data = json_decode($json, true);
