@@ -12,29 +12,29 @@ The same applies to routes, objects and variables. To these, users can be restri
 > If a role [limits users](#filters) to a specific set of results, the command
 > permissions or refusals of the very same role only apply to these results.
 
-Name                                           | Allow...
------------------------------------------------|---------------------------------------------------------------
-icingadb/command/*                             | all commands
-icingadb/command/schedule-check                | to schedule host and service checks
-icingadb/command/schedule-check/active-only    | to schedule host and service checks (Only on objects with active checks enabled)
-icingadb/command/acknowledge-problem           | to acknowledge host and service problems
-icingadb/command/remove-acknowledgement        | to remove problem acknowledgements
-icingadb/command/comment/*                     | to add and delete host and service comments
-icingadb/command/comment/add                   | to add host and service comments
-icingadb/command/comment/delete                | to delete host and service comments
-icingadb/command/downtime/*                    | to schedule and delete host and service downtimes
-icingadb/command/downtime/schedule             | to schedule host and service downtimes
-icingadb/command/downtime/delete               | to delete host and service downtimes
-icingadb/command/process-check-result          | to process host and service check results
-icingadb/command/feature/instance              | to toggle instance-wide features
-icingadb/command/feature/object/*              | to toggle all features on host and service objects
-icingadb/command/feature/object/active-checks  | to toggle active checks on host and service objects
-icingadb/command/feature/object/passive-checks | to toggle passive checks on host and service objects
-icingadb/command/feature/object/notifications  | to toggle notifications on host and service objects
-icingadb/command/feature/object/event-handler  | to toggle event handlers on host and service objects
-icingadb/command/feature/object/flap-detection | to toggle flap detection on host and service objects
-icingadb/command/send-custom-notification      | to send custom notifications for hosts and services
-icingadb/object/show-source                    | to view an object's source data. (May contain sensitive data!)
+| Name                                           | Allow...                                                                         |
+|------------------------------------------------|----------------------------------------------------------------------------------|
+| icingadb/command/*                             | all commands                                                                     |
+| icingadb/command/schedule-check                | to schedule host and service checks                                              |
+| icingadb/command/schedule-check/active-only    | to schedule host and service checks (Only on objects with active checks enabled) |
+| icingadb/command/acknowledge-problem           | to acknowledge host and service problems                                         |
+| icingadb/command/remove-acknowledgement        | to remove problem acknowledgements                                               |
+| icingadb/command/comment/*                     | to add and delete host and service comments                                      |
+| icingadb/command/comment/add                   | to add host and service comments                                                 |
+| icingadb/command/comment/delete                | to delete host and service comments                                              |
+| icingadb/command/downtime/*                    | to schedule and delete host and service downtimes                                |
+| icingadb/command/downtime/schedule             | to schedule host and service downtimes                                           |
+| icingadb/command/downtime/delete               | to delete host and service downtimes                                             |
+| icingadb/command/process-check-result          | to process host and service check results                                        |
+| icingadb/command/feature/instance              | to toggle instance-wide features                                                 |
+| icingadb/command/feature/object/*              | to toggle all features on host and service objects                               |
+| icingadb/command/feature/object/active-checks  | to toggle active checks on host and service objects                              |
+| icingadb/command/feature/object/passive-checks | to toggle passive checks on host and service objects                             |
+| icingadb/command/feature/object/notifications  | to toggle notifications on host and service objects                              |
+| icingadb/command/feature/object/event-handler  | to toggle event handlers on host and service objects                             |
+| icingadb/command/feature/object/flap-detection | to toggle flap detection on host and service objects                             |
+| icingadb/command/send-custom-notification      | to send custom notifications for hosts and services                              |
+| icingadb/object/show-source                    | to view an object's source data. (May contain sensitive data!)                   |
 
 ## Restrictions
 
@@ -46,11 +46,11 @@ Filters limit users to a specific set of results.
 >
 > Filters from multiple roles will widen available access.
 
-Name                     | Description
--------------------------|-----------------------------------------------------------------------
-icingadb/filter/objects  | Restrict access to the Icinga objects that match the filter
-icingadb/filter/hosts    | Restrict access to the Icinga hosts and services that match the filter
-icingadb/filter/services | Restrict access to the Icinga services that match the filter
+| Name                     | Description                                                            |
+|--------------------------|------------------------------------------------------------------------|
+| icingadb/filter/objects  | Restrict access to the Icinga objects that match the filter            |
+| icingadb/filter/hosts    | Restrict access to the Icinga hosts and services that match the filter |
+| icingadb/filter/services | Restrict access to the Icinga services that match the filter           |
 
 `icingadb/filter/objects` will only allow users to access matching objects. This applies to all objects,
 not just hosts or services. It should be one or more [filter expressions](#filter-expressions).
@@ -61,25 +61,25 @@ unrestricted. It should be one or more [filter expressions](#filter-expressions)
 `icingadb/filter/services` will only allow users to access matching services. Other objects remain unrestricted.
 It should be one or more [filter expressions](#filter-expressions).
 
-### Blacklists
+### Denylists
 
-Blacklists prevent users from accessing information and in some cases will block them entirely from it.
+Denylists prevent users from accessing information and in some cases will block them entirely from it.
 
 > **Note:**
 >
-> Blacklists from multiple roles will further limit access.
+> Denylists from multiple roles will further limit access.
 
 Name                         | Description
 -----------------------------|------------------------------------------------------------------
-icingadb/blacklist/routes    | Prevent access to routes that are part of the list
-icingadb/blacklist/variables | Hide custom variables of Icinga objects that are part of the list
+icingadb/denylist/routes    | Prevent access to routes that are part of the list
+icingadb/denylist/variables | Hide custom variables of Icinga objects that are part of the list
 
-`icingadb/blacklist/routes` will block users from accessing defined routes and from related information elsewhere.
+`icingadb/denylist/routes` will block users from accessing defined routes and from related information elsewhere.
 For example, if `hostgroups` are part of the list a user won't have access to the hostgroup overview nor to a host's
 groups shown in its detail area. This should be a comma separated list. Possible values are: hostgroups, servicegroups,
 contacts, contactgroups
 
-`icingadb/blacklist/variables` will block users from accessing certain custom variables. A user affected by this won't
+`icingadb/denylist/variables` will block users from accessing certain custom variables. A user affected by this won't
 see that those variables even exist. This should be a comma separated list of [variable paths](#variable-paths). It is
 possible to use [match patterns](#match-patterns).
 
@@ -89,7 +89,7 @@ Protections prevent users from accessing actual data. They will know that there 
 
 > **Note:**
 >
-> Blacklists from multiple roles will further limit access.
+> Denylists from multiple roles will further limit access.
 
 Name                       | Description
 ---------------------------|-----------------------------------------------------------------------------

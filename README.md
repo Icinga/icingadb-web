@@ -4,85 +4,66 @@
 ![Build Status](https://github.com/icinga/icingaweb2-module-icingadb/workflows/PHP%20Tests/badge.svg?branch=master)
 [![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2-module-icingadb.svg)](https://github.com/Icinga/icingaweb2-module-icingadb)
 
-![Icinga Logo](https://icinga.com/wp-content/uploads/2014/06/icinga_logo.png)
+Icinga DB is a set of components for publishing, synchronizing and
+visualizing monitoring data in the Icinga ecosystem, consisting of:
 
-1. [Documentation](#documentation)
-2. [Installation](#installation)
-3. [Configuration](#configuration)
-4. [Migration](#migration)
-5. [New Features](#new-features)
-6. [Concepts](#concepts)
+* Icinga DB Web which connects to both a Redis server and a database to view and work with
+  most up-to-date monitoring data
+* Icinga 2 with its [Icinga DB feature](https://icinga.com/docs/icinga-2/latest/doc/14-features/#icinga-db) enabled,
+  responsible for publishing the data to the Redis server, i.e. configuration and its runtime updates, check results, state changes,
+  downtimes, acknowledgements, notifications, and other events such as flapping
+* And the [Icinga DB daemon](https://icinga.com/docs/icinga-db),
+  which synchronizes the data between the Redis server and the database
 
-**Icinga DB Web** pushes your monitoring stack to the next level.
-
-Based on the lessons learnt with the base monitoring module, it offers a modern
-and streamlined design to provide a clear and concise overview of your monitoring
-environment.
+![Icinga DB Architecture](doc/res/icingadb-architecture.png)
 
 ## Documentation
 
-The documentation is located in the [doc/](doc/) directory and also available
-on [icinga.com/docs](https://icinga.com/docs/icingadb-web/latest/).
+Icinga DB Web documentation is available at [icinga.com/docs](https://icinga.com/docs/icingadb-web/latest/).
 
-## Installation
+## Features
 
-For installing Icinga DB Web please check the [installation](https://icinga.com/docs/icingadb-web/latest/doc/02-Installation/)
-chapter.
+Icinga DB Web offers a modern and streamlined design to provide a clear and
+concise view of your monitoring environment, also with dark and light mode support.
 
-## Configuration
+![Icinga DB Dashboard](doc/res/icingadb-dashboard.png)
 
-To configure Icinga DB Web please check the [configuration](https://icinga.com/docs/icingadb-web/latest/doc/03-Configuration/)
-chapter.
+### Various List Layouts
 
-## Migration
-
-To migrate from the monitoring module to Icinga DB Web check the [migration](https://icinga.com/docs/icingadb-web/latest/doc/10-Migration/)
-chapter.
-
-## New Features
-
-### Multiple List Layouts
-
-The new view switcher displayed in the controls of lists allows to change their layout.
-The majority of lists use this to switch between various levels of detail. The service
-list below for example uses it to show a check's output at different lengths.
+The view switcher allows to control the level of detail displayed in host and service list views:
 
 ![View Switcher Preview](doc/res/view-switcher-preview.png)
 
-### New Search With Auto-Completion
+### Search with Autocomplete
 
-We have greatly expanded the search functionality in list views. The so called search-bar
-allows experienced users full control by keyboard to write their filters. It also aids
-with contextual auto completion. There's also an editor for a more easy manipulation.
+The search bar in list views can be used for everything from simple searches to creating complex filters.
+It allows full keyboard control and also supports contextual auto-completion.
+In addition, there is an editor for easier filter creation.
 
 ![Searchbar Completion Preview](doc/res/searchbar-completion-preview.png)
 
-### Cleaner Detail Views
+### Clean Detail Views
 
-A host's or service's detail view has been restructured to show more details but also
-to make more use of the available space. Important details also got moved to the top
-so that they are visible right away without having to scroll down.
+Host and service detail views are structured to make best use of available space.
+Related information is grouped and important information is at the top for instant access without having to scroll down.
 
 ![Service Detail Preview](doc/res/service-detail-preview.png)
 
 ### Modal Dialogs
 
-Acknowledging a problem, scheduling a downtime or sending a custom notification does
-not take you away from where you've been. Instead a modal dialog is shown on top of
-your current view.
+Any interaction that requires user input, such as acknowledging problems, scheduling downtimes, etc.,
+shows a modal dialog over the current view to preserve context and focus on interaction.
 
 ![Modal Dialog Preview](doc/res/modal-dialog-preview.png)
 
 ### Bulk Operations
 
-If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
-now is the time for it. Simply filter for the hosts or services you want to operate on
-and then click on the little forward icon on the right. No more *shift-click* nightmares!
-(Which are still possible, for the die-hard)
+Bulk interactions such as scheduling downtimes for multiple objects, acknowledging multiple problems, etc.
+are easily accomplished with the `Continue With` control that operates on filtered lists.
 
 ![Continue With Preview](doc/res/continue-with-preview.png)
 
-## Concepts
+## License
 
-To learn more about our widget/view designs check the [concepts](https://icinga.com/docs/icinga-db/latest/icinga-db-web/doc/11-Concepts/)
-chapter.
+Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
+[GNU General Public License Version 2](LICENSE).

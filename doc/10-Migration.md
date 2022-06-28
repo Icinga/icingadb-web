@@ -1,10 +1,5 @@
 # Migration
 
-1. [Configuration](#configuration)
-2. [Dashboards and Navigation](#dashboards-and-navigation)
-3. [Restrictions](#restrictions)
-4. [Permissions](#permissions)
-
 If you previously used the monitoring module, (built into Icinga Web 2) you may want to
 migrate your existing configuration, custom dashboards and navigation items as well as
 permissions or restrictions.
@@ -106,19 +101,19 @@ example set of columns conveying the same information shown in the monitoring mo
 This is now `icingadb/filter/objects` but still accepts the same filter syntax. Only the columns have changed
 or support for them has been dropped. Check the table below for details:
 
-Old Column Name      | New Column Name
----------------------|-----------------------
-instance\_name       | -
-host\_name           | host.name
-hostgroup\_name      | hostgroup.name
-service\_description | service.name
-servicegroup\_name   | servicegroup.name
-\_host\_customvar    | host.vars.customvar
-\_service\_customvar | service.vars.customvar
+| Old Column Name      | New Column Name        |
+|----------------------|------------------------|
+| instance\_name       | -                      |
+| host\_name           | host.name              |
+| hostgroup\_name      | hostgroup.name         |
+| service\_description | service.name           |
+| servicegroup\_name   | servicegroup.name      |
+| \_host\_customvar    | host.vars.customvar    |
+| \_service\_customvar | service.vars.customvar |
 
 ### `monitoring/blacklist/properties`
 
-This is now `icingadb/blacklist/variables`. However, it does not accept the same rules as
+This is now `icingadb/denylist/variables`. However, it does not accept the same rules as
 `monitoring/blacklist/properties`. It still accepts a comma separated list of GLOB like filters,
 but with some features removed:
 
@@ -133,5 +128,5 @@ Check the [security chapter](04-Security.md#variable-paths) for more details.
 The command permissions have not changed. It is only the module identifier that has changed of course:
 `monitoring.command.*` is now `icingadb.command.*`
 
-The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/blacklist/routes`.
+The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/denylist/routes`.
 Add `users,usergroups` to it to achieve the same effect.

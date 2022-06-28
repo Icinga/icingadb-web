@@ -1,73 +1,64 @@
-# About Icinga DB Web
+# Icinga DB Web
 
-1. [Installation](#installation)
-2. [Configuration](#configuration)
-3. [Migration](#migration)
-4. [New Features](#new-features)
-5. [Concepts](#concepts)
+Icinga DB is a set of components for publishing, synchronizing and
+visualizing monitoring data in the Icinga ecosystem, consisting of:
 
-**Icinga DB Web** pushes your monitoring stack to the next level.
+* Icinga DB Web which connects to both a Redis server and a database to view and work with monitoring data
+* Icinga 2 with its [Icinga DB feature](https://icinga.com/docs/icinga-2/latest/14-features/#icinga-db) enabled,
+  responsible for publishing monitoring configuration, check results,
+  states changes and history items to the Redis server
+* And the [Icinga DB daemon](https://icinga.com/docs/icinga-db/latest/01-About/),
+  which synchronizes monitoring data between the Redis server and the database
 
-Based on the lessons learnt with the base monitoring module, it offers a modern
-and streamlined design to provide a clear and concise overview of your monitoring
-environment.
+![Icinga DB Architecture](res/icingadb-architecture.png)
 
-## Installation
+## Features
 
-For installing Icinga DB Web please check the [installation](02-Installation.md) chapter.
+Icinga DB Web offers a modern and streamlined design to provide a clear and
+concise overview of your monitoring environment, also with dark and light mode support.
 
-## Configuration
+![Icinga DB Dashboard](res/icingadb-dashboard.png)
 
-To configure Icinga DB Web please check the [configuration](03-Configuration.md) chapter.
+### Various List Layouts
 
-## Migration
-
-To migrate from the monitoring module to Icinga DB Web check the [migration](10-Migration.md)
-chapter.
-
-## New Features
-
-### Multiple List Layouts
-
-The new view switcher displayed in the controls of lists allows to change their layout.
-The majority of lists use this to switch between various levels of detail. The service
-list below for example uses it to show a check's output at different lengths.
+The view switcher allows to control the level of detail displayed in host and service list views:
 
 ![View Switcher Preview](res/view-switcher-preview.png)
 
-### New Search With Auto-Completion
+### Search with Autocomplete
 
-We have greatly expanded the search functionality in list views. The so called search-bar
-allows experienced users full control by keyboard to write their filters. It also aids
-with contextual auto completion. There's also an editor for a more easy manipulation.
+The search bar in list views can be used for everything from simple searches to creating complex filters.
+It allows full keyboard control and also supports contextual auto-completion.
+In addition, there is an editor for easier filter creation.
 
 ![Searchbar Completion Preview](res/searchbar-completion-preview.png)
 
-### Cleaner Detail Views
+### Clean Detail Views
 
-A host's or service's detail view has been restructured to show more details but also
-to make more use of the available space. Important details also got moved to the top
-so that they are visible right away without having to scroll down.
+Host and service detail views are structured to make best use of available space.
+Related information is grouped and important information is at the top for instant access without having to scroll down.
 
 ![Service Detail Preview](res/service-detail-preview.png)
 
 ### Modal Dialogs
 
-Acknowledging a problem, scheduling a downtime or sending a custom notification does
-not take you away from where you've been. Instead a modal dialog is shown on top of
-your current view.
+Any interaction that requires user input, such as acknowledging problems, scheduling downtimes, etc.,
+shows a modal dialog over the current view to preserve context and focus on interaction.
 
 ![Modal Dialog Preview](res/modal-dialog-preview.png)
 
 ### Bulk Operations
 
-If you ever wanted to perform really big bulk acknowledgements or downtime schedules,
-now is the time for it. Simply filter for the hosts or services you want to operate on
-and then click on the little forward icon on the right. No more *shift-click* nightmares!
-(Which are still possible, for the die-hard)
+Bulk interactions such as scheduling downtimes for multiple objects, acknowledging multiple problems, etc.
+are easily accomplished with the `Continue With` control that operates on filtered lists.
 
 ![Continue With Preview](res/continue-with-preview.png)
 
-## Concepts
+## Installation
 
-To learn more about our widget/view designs check the [concepts](11-Concepts.md) chapter.
+To install Icinga DB Web see [Installation](02-Installation.md).
+
+## License
+
+Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
+[GNU General Public License Version 2](../LICENSE).
