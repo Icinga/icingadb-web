@@ -151,9 +151,10 @@ class VolatileStateResults extends ResultSet
         foreach ($results as $i => $json) {
             if ($json !== null) {
                 $data = json_decode($json, true);
-                $data = array_intersect_key(array_merge(array_fill_keys($keys, null), $data), array_flip($keys));
+                $keyMap = array_fill_keys($keys, null);
+                unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
 
-                yield $ids[$i] => $data;
+                yield $ids[$i] => array_intersect_key(array_merge($keyMap, $data), $keyMap);
             }
         }
     }
