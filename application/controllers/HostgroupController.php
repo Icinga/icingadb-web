@@ -59,7 +59,7 @@ class HostgroupController extends Controller
         $paginationControl = $this->createPaginationControl($hosts);
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $hostList = (new HostList($hosts))
+        $hostList = (new HostList($hosts->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         yield $this->export($hosts);

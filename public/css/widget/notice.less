@@ -1,0 +1,23 @@
+// Style
+
+.notice {
+  @margin: 1em / 1.25;
+  @padding: .75em / 1.25;
+
+  .rounded-corners();
+  padding: @padding;
+  color: @text-color-on-icinga-blue;
+  background-color: @state-warning;
+  font-weight: bold;
+  font-size: 1.25em;
+
+  // Layout
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 @margin @margin @margin;
+
+  > span {
+    .text-ellipsis();
+  }
+}

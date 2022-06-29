@@ -65,7 +65,7 @@ class ServicegroupController extends Controller
         $paginationControl = $this->createPaginationControl($services);
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $serviceList = (new ServiceList($services))
+        $serviceList = (new ServiceList($services->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         yield $this->export($services);
