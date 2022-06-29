@@ -84,11 +84,6 @@ class NotificationHistory extends Model
             'send_time'
         ]));
 
-        $behaviors->add(new ReRoute([
-            'hostgroup'     => 'host.hostgroup',
-            'servicegroup'  => 'service.servicegroup'
-        ]));
-
         $behaviors->add(new Binary([
             'id',
             'environment_id',
@@ -96,6 +91,11 @@ class NotificationHistory extends Model
             'host_id',
             'service_id',
             'notification_id'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 

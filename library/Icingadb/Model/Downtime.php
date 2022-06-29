@@ -110,11 +110,6 @@ class Downtime extends Model
             'duration'
         ]));
 
-        $behaviors->add(new ReRoute([
-            'hostgroup'    => 'host.hostgroup',
-            'servicegroup' => 'service.servicegroup'
-        ]));
-
         $behaviors->add(new Binary([
             'id',
             'environment_id',
@@ -125,6 +120,14 @@ class Downtime extends Model
             'name_checksum',
             'properties_checksum',
             'zone_id'
+        ]));
+
+        // As long as the rewriteCondition() expects only Filter\Condition as a first argument
+        // We have to add this reroute behavior after the binary because the filter condition might
+        // be transformed into a filter chain!
+        $behaviors->add(new ReRoute([
+            'hostgroup'    => 'host.hostgroup',
+            'servicegroup' => 'service.servicegroup'
         ]));
     }
 

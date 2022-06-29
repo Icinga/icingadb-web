@@ -88,11 +88,6 @@ class Comment extends Model
             'expire_time'
         ]));
 
-        $behaviors->add(new ReRoute([
-            'hostgroup'     => 'host.hostgroup',
-            'servicegroup'  => 'service.servicegroup'
-        ]));
-
         $behaviors->add(new Binary([
             'id',
             'environment_id',
@@ -101,6 +96,11 @@ class Comment extends Model
             'name_checksum',
             'properties_checksum',
             'zone_id'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 

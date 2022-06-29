@@ -72,11 +72,6 @@ class History extends Model
             'event_time'
         ]));
 
-        $behaviors->add(new ReRoute([
-            'hostgroup'     => 'host.hostgroup',
-            'servicegroup'  => 'service.servicegroup'
-        ]));
-
         $behaviors->add(new Binary([
             'id',
             'environment_id',
@@ -89,6 +84,11 @@ class History extends Model
             'notification_history_id',
             'acknowledgement_history_id',
             'state_history_id'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'hostgroup'     => 'host.hostgroup',
+            'servicegroup'  => 'service.servicegroup'
         ]));
     }
 
