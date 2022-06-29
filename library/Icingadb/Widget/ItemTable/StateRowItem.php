@@ -55,7 +55,7 @@ abstract class StateRowItem extends BaseRowItem
         $visual->addHtml($stateBall);
         if ($this->item->state->state_type === 'soft') {
             $visual->addHtml(new CheckAttempt(
-                (int) $this->item->state->attempt,
+                (int) $this->item->state->check_attempt,
                 (int) $this->item->max_check_attempts
             ));
         }

@@ -42,7 +42,7 @@ class CompatHost extends Host
         'host_check_latency'                    => ['path' => ['state', 'latency']],
         'host_check_source'                     => ['path' => ['state', 'check_source']],
         'host_check_timeperiod'                 => ['path' => ['check_timeperiod_name']],
-        'host_current_check_attempt'            => ['path' => ['state', 'attempt']],
+        'host_current_check_attempt'            => ['path' => ['state', 'check_attempt']],
         'host_current_notification_number'      => null,
         'host_event_handler_enabled'            => [
             'path' => ['event_handler_enabled'],

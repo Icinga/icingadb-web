@@ -216,7 +216,7 @@ class EventDetail extends BaseHtmlElement
         if ($stateChange->state_type === 'soft') {
             $eventInfo[] = new HorizontalKeyValue(t('Check Attempt'), sprintf(
                 t('%d of %d'),
-                $stateChange->attempt,
+                $stateChange->check_attempt,
                 $stateChange->max_check_attempts
             ));
         }
