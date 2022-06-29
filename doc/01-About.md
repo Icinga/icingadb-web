@@ -61,4 +61,4 @@ To install Icinga DB Web see [Installation](02-Installation.md).
 ## License
 
 Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
-[GNU General Public License Version 2](../LICENSE).
+GNU General Public License Version 2.
