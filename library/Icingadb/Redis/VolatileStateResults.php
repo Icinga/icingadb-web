@@ -154,6 +154,9 @@ class VolatileStateResults extends ResultSet
                 $keyMap = array_fill_keys($keys, null);
                 unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
 
+                // TODO: Remove once https://github.com/Icinga/icinga2/issues/9427 is fixed
+                $data['state_type'] = $data['state_type'] === 0 ? 'soft' : 'hard';
+
                 yield $ids[$i] => array_intersect_key(array_merge($keyMap, $data), $keyMap);
             }
         }
