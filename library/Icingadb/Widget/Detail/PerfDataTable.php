@@ -49,20 +49,6 @@ class PerfDataTable extends Table
     public function assemble()
     {
         $pieChartData = PerfDataSet::fromString($this->perfdataStr)->asArray();
-        uasort(
-            $pieChartData,
-            function ($a, $b) {
-                if ($a->isVisualizable() && ! $b->isVisualizable()) {
-                    return -1;
-                } elseif (! $a->isVisualizable() && $b->isVisualizable()) {
-                    return 1;
-                } elseif (! $a->isVisualizable() && ! $b->isVisualizable()) {
-                    return 0;
-                }
-
-                return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
-            }
-        );
         $keys = ['', 'label', 'value', 'min', 'max', 'warn', 'crit'];
         $columns = [];
         $labels = array_combine(
