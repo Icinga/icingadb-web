@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use ipl\Html\Html;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -13,6 +14,7 @@ use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Common\BaseListItem;
+use ipl\Html\FormattedString;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -21,6 +23,7 @@ use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
+use ipl\Web\Widget\TimeUntil;
 
 /**
  * Comment item of a comment list. Represents one database row.
@@ -101,7 +104,17 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        return new TimeAgo($this->item->entry_time);
+        if ($this->item->expire_time) {
+            return Html::tag(
+                'span',
+                FormattedString::create(t("expires %s"), new TimeUntil($this->item->expire_time))
+            );
+        }
+
+        return Html::tag(
+            'span',
+            FormattedString::create(t("created %s"), new TimeAgo($this->item->entry_time))
+        );
     }
 
     protected function init()
