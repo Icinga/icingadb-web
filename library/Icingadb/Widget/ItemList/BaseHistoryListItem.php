@@ -78,7 +78,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                     ->add(sprintf(
                         t('State Change Rate: %.2f%%; Start Threshold: %.2f%%'),
                         $this->item->flapping->percent_state_change_start,
-                        $this->item->host->flapping_threshold_high
+                        $this->item->flapping->flapping_threshold_high
                     ))
                     ->getAttributes()
                     ->add('class', 'plugin-output');
@@ -88,8 +88,8 @@ abstract class BaseHistoryListItem extends BaseListItem
                 $caption
                     ->add(sprintf(
                         t('State Change Rate: %.2f%%; End Threshold: %.2f%%; Flapping for %s'),
-                        $this->item->host->flapping_threshold_low,
-                        $this->item->host->flapping_threshold_high,
+                        $this->item->flapping->percent_state_change_end,
+                        $this->item->flapping->flapping_threshold_low,
                         DateFormatter::formatDuration(
                             $this->item->flapping->end_time - $this->item->flapping->start_time
                         )
