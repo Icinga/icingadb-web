@@ -325,22 +325,22 @@ class ObjectSuggestions extends Suggestions
 
         $foreignMetaDataSources = [];
         if (! $model instanceof Host) {
-            $foreignMetaDataSources[] = ['host.user', ' (' . t('Host') . ')'];
-            $foreignMetaDataSources[] = ['host.usergroup', ' (' . t('Host') . ')'];
+            $foreignMetaDataSources[] = 'host.user';
+            $foreignMetaDataSources[] = 'host.usergroup';
         }
 
         if (! $model instanceof Service) {
-            $foreignMetaDataSources[] = ['service.user', ' (' . t('Service') . ')'];
-            $foreignMetaDataSources[] = ['service.usergroup', ' (' . t('Service') . ')'];
+            $foreignMetaDataSources[] = 'service.user';
+            $foreignMetaDataSources[] = 'service.usergroup';
         }
 
-        foreach ($foreignMetaDataSources as list($path, $suffix)) {
+        foreach ($foreignMetaDataSources as $path) {
             $foreignColumnDefinitions = $resolver->getColumnDefinitions($resolver->resolveRelation(
                 $resolver->qualifyPath($path, $model->getTableName()),
                 $model
             )->getTarget());
             foreach ($foreignColumnDefinitions as $columnName => $columnDefinition) {
-                yield "$path.$columnName" => $columnDefinition->getLabel() . $suffix;
+                yield "$path.$columnName" => $columnDefinition->getLabel();
             }
         }
     }
