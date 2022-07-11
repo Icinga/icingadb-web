@@ -34,7 +34,7 @@ class NotesUrl extends Model
     {
         return [
             'notes_url'         => t('Notes Url'),
-            'environment_id'    => t('Notes Url Environment Id')
+            'environment_id'    => t('Environment Id')
         ];
     }
 

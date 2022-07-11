@@ -78,7 +78,7 @@ class Host extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'            => t('Host Environment Id'),
+            'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Host Name Checksum'),
             'properties_checksum'       => t('Host Properties Checksum'),
             'name'                      => t('Host Name'),
@@ -88,11 +88,11 @@ class Host extends Model
             'address6'                  => t('Host Address (IPv6)'),
             'address_bin'               => t('Host Address (IPv4, Binary)'),
             'address6_bin'              => t('Host Address (IPv6, Binary)'),
-            'checkcommand_name'         => t('Host Checkcommand'),
-            'checkcommand_id'           => t('Host Checkcommand Id'),
+            'checkcommand_name'         => t('Checkcommand Name'),
+            'checkcommand_id'           => t('Checkcommand Id'),
             'max_check_attempts'        => t('Host Max Check Attempts'),
-            'check_timeperiod_name'     => t('Host Check Timeperiod'),
-            'check_timeperiod_id'       => t('Host Check Timeperiod Id'),
+            'check_timeperiod_name'     => t('Check Timeperiod Name'),
+            'check_timeperiod_id'       => t('Check Timeperiod Id'),
             'check_timeout'             => t('Host Check Timeout'),
             'check_interval'            => t('Host Check Interval'),
             'check_retry_interval'      => t('Host Check Retry Inverval'),
@@ -104,18 +104,18 @@ class Host extends Model
             'flapping_threshold_low'    => t('Host Flapping Threshold Low'),
             'flapping_threshold_high'   => t('Host Flapping Threshold High'),
             'perfdata_enabled'          => t('Host Performance Data Enabled'),
-            'eventcommand_name'         => t('Host Eventcommand'),
-            'eventcommand_id'           => t('Host Eventcommand Id'),
+            'eventcommand_name'         => t('Eventcommand Name'),
+            'eventcommand_id'           => t('Eventcommand Id'),
             'is_volatile'               => t('Host Is Volatile'),
-            'action_url_id'             => t('Host Action Url Id'),
-            'notes_url_id'              => t('Host Notes Url Id'),
+            'action_url_id'             => t('Action Url Id'),
+            'notes_url_id'              => t('Notes Url Id'),
             'notes'                     => t('Host Notes'),
-            'icon_image_id'             => t('Host Icon Image Id'),
-            'icon_image_alt'            => t('Host Icon Image Alt'),
-            'zone_name'                 => t('Host Zone'),
-            'zone_id'                   => t('Host Zone Id'),
-            'command_endpoint_name'     => t('Host Command Endpoint'),
-            'command_endpoint_id'       => t('Host Command Endpoint Id')
+            'icon_image_id'             => t('Icon Image Id'),
+            'icon_image_alt'            => t('Icon Image Alt'),
+            'zone_name'                 => t('Zone Name'),
+            'zone_id'                   => t('Zone Id'),
+            'command_endpoint_name'     => t('Endpoint Name'),
+            'command_endpoint_id'       => t('Endpoint Id')
         ];
     }
 

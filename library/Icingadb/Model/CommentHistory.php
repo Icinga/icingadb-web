@@ -53,21 +53,21 @@ class CommentHistory extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'    => t('Comment Environment Id (History)'),
-            'endpoint_id'       => t('Comment Endpoint Id (History)'),
-            'object_type'       => t('Comment Object Type (History)'),
-            'host_id'           => t('Comment Host Id (History)'),
-            'service_id'        => t('Comment Service Id (History)'),
-            'entry_time'        => t('Comment Entry Time (History)'),
-            'author'            => t('Comment Author (History)'),
-            'removed_by'        => t('Comment Removed By (History)'),
-            'comment'           => t('Comment Comment (History)'),
-            'entry_type'        => t('Comment Entry Type (History)'),
-            'is_persistent'     => t('Comment Is Persistent (History)'),
-            'is_sticky'         => t('Comment Is Sticky (History)'),
-            'expire_time'       => t('Comment Expire Time (History)'),
-            'remove_time'       => t('Comment Remove Time (History)'),
-            'has_been_removed'  => t('Comment Has Been Removed (History)')
+            'environment_id'    => t('Environment Id'),
+            'endpoint_id'       => t('Endpoint Id'),
+            'object_type'       => t('Object Type'),
+            'host_id'           => t('Host Id'),
+            'service_id'        => t('Service Id'),
+            'entry_time'        => t('Comment Entry Time'),
+            'author'            => t('Comment Author'),
+            'removed_by'        => t('Comment Removed By'),
+            'comment'           => t('Comment Text'),
+            'entry_type'        => t('Comment Entry Type'),
+            'is_persistent'     => t('Comment Is Persistent'),
+            'is_sticky'         => t('Comment Is Sticky'),
+            'expire_time'       => t('Comment Expire Time'),
+            'remove_time'       => t('Comment Remove Time'),
+            'has_been_removed'  => t('Comment Has Been Removed')
         ];
     }
 

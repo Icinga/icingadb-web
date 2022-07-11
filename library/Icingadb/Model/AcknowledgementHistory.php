@@ -51,19 +51,19 @@ class AcknowledgementHistory extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'    => t('Acknowledgement Environment Id (History)'),
-            'endpoint_id'       => t('Acknowledgement Endpoint Id (History)'),
-            'object_type'       => t('Acknowledgement Object Type (History)'),
-            'host_id'           => t('Acknowledgement Host Id (History)'),
-            'service_id'        => t('Acknowledgement Service Id (History)'),
-            'set_time'          => t('Acknowledgement Set Time (History)'),
-            'clear_time'        => t('Acknowledgement Clear Time (History)'),
-            'author'            => t('Acknowledgement Author (History)'),
-            'cleared_by'        => t('Acknowledgement Cleared By (History)'),
-            'comment'           => t('Acknowledgement Comment (History)'),
-            'expire_time'       => t('Acknowledgement Expire Time (History)'),
-            'is_sticky'         => t('Acknowledgement Is Sticky (History)'),
-            'is_persistent'     => t('Acknowledgement Is Persistent (History)')
+            'environment_id'    => t('Environment Id'),
+            'endpoint_id'       => t('Endpoint Id'),
+            'object_type'       => t('Object Type'),
+            'host_id'           => t('Host Id'),
+            'service_id'        => t('Service Id'),
+            'set_time'          => t('Acknowledgement Set Time'),
+            'clear_time'        => t('Acknowledgement Clear Time'),
+            'author'            => t('Acknowledgement Author'),
+            'cleared_by'        => t('Acknowledgement Cleared By'),
+            'comment'           => t('Acknowledgement Comment'),
+            'expire_time'       => t('Acknowledgement Expire Time'),
+            'is_sticky'         => t('Acknowledgement Is Sticky'),
+            'is_persistent'     => t('Acknowledgement Is Persistent')
         ];
     }
 

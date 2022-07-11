@@ -48,10 +48,10 @@ class Comment extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Comment Environment Id'),
-            'object_type'           => t('Comment Object Type'),
-            'host_id'               => t('Comment Host Id'),
-            'service_id'            => t('Comment Service Id'),
+            'environment_id'        => t('Environment Id'),
+            'object_type'           => t('Object Type'),
+            'host_id'               => t('Host Id'),
+            'service_id'            => t('Service Id'),
             'name_checksum'         => t('Comment Name Checksum'),
             'properties_checksum'   => t('Comment Properties Checksum'),
             'name'                  => t('Comment Name'),
@@ -62,7 +62,7 @@ class Comment extends Model
             'is_persistent'         => t('Comment Is Persistent'),
             'is_sticky'             => t('Comment Is Sticky'),
             'expire_time'           => t('Comment Expire Time'),
-            'zone_id'               => t('Comment Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 

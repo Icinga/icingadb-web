@@ -45,7 +45,7 @@ class User extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('User Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('User Name Checksum'),
             'properties_checksum'   => t('User Properties Checksum'),
             'name'                  => t('User Name'),
@@ -54,10 +54,10 @@ class User extends Model
             'email'                 => t('User Email'),
             'pager'                 => t('User Pager'),
             'notifications_enabled' => t('User Receives Notifications'),
-            'timeperiod_id'         => t('User Timeperiod Id'),
+            'timeperiod_id'         => t('Timeperiod Id'),
             'states'                => t('User States'),
             'types'                 => t('User Types'),
-            'zone_id'               => t('User Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 

@@ -34,9 +34,9 @@ class TimeperiodRange extends Model
     public function getColumnDefinitions()
     {
         return [
-            'timeperiod_id'     => t('Timeperiod Range Period Id'),
+            'timeperiod_id'     => t('Timeperiod Id'),
             'range_key'         => t('Timeperiod Range Key'),
-            'environment_id'    => t('Timeperiod Range Environment Id'),
+            'environment_id'    => t('Environment Id'),
             'range_value'       => t('Timeperiod Range Value')
         ];
     }

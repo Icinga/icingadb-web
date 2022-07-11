@@ -54,22 +54,22 @@ class StateHistory extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('State Environment Id (History)'),
-            'endpoint_id'           => t('State Endpoint Id (History)'),
-            'object_type'           => t('State Object Type (History)'),
-            'host_id'               => t('State Host Id (History)'),
-            'service_id'            => t('State Service Id (History)'),
-            'event_time'            => t('State Event Time (History)'),
-            'state_type'            => t('State Type (History)'),
-            'soft_state'            => t('Soft State (History)'),
-            'hard_state'            => t('Hard State (History)'),
-            'check_attempt'         => t('State Attempt No. (History)'),
-            'previous_soft_state'   => t('Previous Soft State (History)'),
-            'previous_hard_state'   => t('Previous Hard State (History)'),
-            'output'                => t('State Output (History)'),
-            'long_output'           => t('State Long Output (History)'),
-            'max_check_attempts'    => t('State Max Check Attempts (History)'),
-            'check_source'          => t('State Check Source (History)')
+            'environment_id'        => t('Environment Id'),
+            'endpoint_id'           => t('Endpoint Id'),
+            'object_type'           => t('Object Type'),
+            'host_id'               => t('Host Id'),
+            'service_id'            => t('Service Id'),
+            'event_time'            => t('Event Time'),
+            'state_type'            => t('Event State Type'),
+            'soft_state'            => t('Event Soft State'),
+            'hard_state'            => t('Event Hard State'),
+            'check_attempt'         => t('Event Check Attempt No.'),
+            'previous_soft_state'   => t('Event Previous Soft State'),
+            'previous_hard_state'   => t('Event Previous Hard State'),
+            'output'                => t('Event Output'),
+            'long_output'           => t('Event Long Output'),
+            'max_check_attempts'    => t('Event Max Check Attempts'),
+            'check_source'          => t('Event Check Source')
         ];
     }
 

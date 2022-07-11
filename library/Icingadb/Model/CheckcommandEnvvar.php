@@ -35,9 +35,9 @@ class CheckcommandEnvvar extends Model
     public function getColumnDefinitions()
     {
         return [
-            'checkcommand_id'       => t('Checkcommand Envvar Command Id'),
+            'checkcommand_id'       => t('Checkcommand Id'),
             'envvar_key'            => t('Checkcommand Envvar Key'),
-            'environment_id'        => t('Checkcommand Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Checkcommand Properties Checksum'),
             'envvar_value'          => t('Checkcommand Envvar Value')
         ];

@@ -35,9 +35,9 @@ class EventcommandEnvvar extends Model
     public function getColumnDefinitions()
     {
         return [
-            'eventcommand_id'       => t('Eventcommand Envvar Command Id'),
+            'eventcommand_id'       => t('Eventcommand Id'),
             'envvar_key'            => t('Eventcommand Envvar Key'),
-            'environment_id'        => t('Eventcommand Envvar Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Eventcommand Envvar Properties Checksum'),
             'envvar_value'          => t('Eventcommand Envvar Value')
         ];
