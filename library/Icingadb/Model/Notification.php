@@ -47,21 +47,21 @@ class Notification extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'         => t('Notification Environment Id'),
+            'environment_id'         => t('Environment Id'),
             'name_checksum'          => t('Notification Name Checksum'),
             'properties_checksum'    => t('Notification Properties Checksum'),
             'name'                   => t('Notification Name'),
             'name_ci'                => t('Notification Name (CI)'),
-            'host_id'                => t('Notification Host Id'),
-            'service_id'             => t('Notification Service Id'),
-            'notificationcommand_id' => t('Notification Command Id'),
-            'times_begin'            => t('Notification Times Begin'),
-            'times_end'              => t('Notification Times End'),
+            'host_id'                => t('Host Id'),
+            'service_id'             => t('Service Id'),
+            'notificationcommand_id' => t('Notificationcommand Id'),
+            'times_begin'            => t('Notification Escalate After'),
+            'times_end'              => t('Notification Escalate Until'),
             'notification_interval'  => t('Notification Interval'),
-            'timeperiod_id'          => t('Notification Timeperiod Id'),
+            'timeperiod_id'          => t('Timeperiod Id'),
             'states'                 => t('Notification States'),
             'types'                  => t('Notification Types'),
-            'zone_id'                => t('Notification Zone Id')
+            'zone_id'                => t('Zone Id')
         ];
     }
 

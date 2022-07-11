@@ -33,7 +33,7 @@ class IconImage extends Model
     {
         return [
             'icon_image'        => t('Icon Image'),
-            'environment_id'    => t('Icon Image Environment Id')
+            'environment_id'    => t('Environment Id')
         ];
     }
 

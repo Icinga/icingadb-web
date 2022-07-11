@@ -36,12 +36,12 @@ class Endpoint extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Endpoint Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Endpoint Name Checksum'),
             'properties_checksum'   => t('Endpoint Properties Checksum'),
             'name'                  => t('Endpoint Name'),
             'name_ci'               => t('Endpoint Name (CI)'),
-            'zone_id'               => t('Endpoint Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 

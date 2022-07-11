@@ -39,8 +39,8 @@ class Checkcommand extends Model
     public function getColumnDefinitions()
     {
         return [
-            'zone_id'               => t('Checkcommand Zone Id'),
-            'environment_id'        => t('Checkcommand Environment Id'),
+            'zone_id'               => t('Zone Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Checkcommand Name Checksum'),
             'properties_checksum'   => t('Checkcommand Properties Checksum'),
             'name'                  => t('Checkcommand Name'),

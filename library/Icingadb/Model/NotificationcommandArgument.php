@@ -42,9 +42,9 @@ class NotificationcommandArgument extends Model
     public function getColumnDefinitions()
     {
         return [
-            'notificationcommand_id' => t('Notificationcommand Argument Command Id'),
+            'notificationcommand_id' => t('Notificationcommand Id'),
             'argument_key'           => t('Notificationcommand Argument Key'),
-            'environment_id'         => t('Notificationcommand Argument Environment Id'),
+            'environment_id'         => t('Environment Id'),
             'properties_checksum'    => t('Notificationcommand Argument Properties Checksum'),
             'argument_value'         => t('Notificationcommand Argument Value'),
             'argument_order'         => t('Notificationcommand Argument Order'),

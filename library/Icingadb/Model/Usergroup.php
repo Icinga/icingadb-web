@@ -38,13 +38,13 @@ class Usergroup extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Usergroup Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Usergroup Name Checksum'),
             'properties_checksum'   => t('Usergroup Properties Checksum'),
             'name'                  => t('Usergroup Name'),
             'name_ci'               => t('Usergroup Name (CI)'),
             'display_name'          => t('Usergroup Display Name'),
-            'zone_id'               => t('Usergroup Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 

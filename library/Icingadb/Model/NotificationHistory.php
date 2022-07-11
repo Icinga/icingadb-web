@@ -51,20 +51,20 @@ class NotificationHistory extends Model
     public function getColumnDefinitions()
     {
         return [
-            'id'                    => t('Notification History Id'),
-            'environment_id'        => t('Notification Environment Id (History)'),
-            'endpoint_id'           => t('Notification Endpoint Id (History)'),
-            'object_type'           => t('Notification Object Type (History)'),
-            'host_id'               => t('Notification Host Id (History)'),
-            'service_id'            => t('Notification Service Id (History)'),
-            'notification_id'       => t('Notification Id (History)'),
-            'type'                  => t('Notification Type (History)'),
-            'send_time'             => t('Notification Sent On (History)'),
-            'state'                 => t('Notification Object State (History)'),
-            'previous_hard_state'   => t('Notification Previous Object State (History)'),
-            'author'                => t('Notification Author (History)'),
-            'text'                  => t('Notification Text (History)'),
-            'users_notified'        => t('Notification Users Notified (History)')
+            'id'                    => t('History Id'),
+            'environment_id'        => t('Environment Id'),
+            'endpoint_id'           => t('Endpoint Id'),
+            'object_type'           => t('Object Type'),
+            'host_id'               => t('Host Id'),
+            'service_id'            => t('Service Id'),
+            'notification_id'       => t('Notification Id'),
+            'type'                  => t('Notification Type'),
+            'send_time'             => t('Notification Sent On'),
+            'state'                 => t('Hard State'),
+            'previous_hard_state'   => t('Previous Hard State'),
+            'author'                => t('Notification Author'),
+            'text'                  => t('Notification Text'),
+            'users_notified'        => t('Users Notified')
         ];
     }
 

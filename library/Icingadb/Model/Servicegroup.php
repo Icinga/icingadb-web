@@ -38,13 +38,13 @@ class Servicegroup extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Servicegroup Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Servicegroup Name Checksum'),
             'properties_checksum'   => t('Servicegroup Properties Checksum'),
             'name'                  => t('Servicegroup Name'),
             'name_ci'               => t('Servicegroup Name (CI)'),
             'display_name'          => t('Servicegroup Display Name'),
-            'zone_id'               => t('Servicegroup Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 
