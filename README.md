@@ -19,7 +19,7 @@ visualizing monitoring data in the Icinga ecosystem, consisting of:
 
 ## Documentation
 
-Icinga DB Web documentation is available at [icinga.com/docs](https://icinga.com/docs/icingadb-web/latest/).
+Icinga DB Web documentation is available at [icinga.com/docs](https://icinga.com/docs/icinga-db-web/latest/).
 
 ## Features
 
