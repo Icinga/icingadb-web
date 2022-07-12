@@ -118,7 +118,9 @@ class ServicegroupSummary extends UnionModel
                     'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
                     'service_handled'           => 'state.is_handled',
-                    'service_severity'          => 'state.severity'
+                    'service_severity'          => 'state.severity',
+                    'service_is_in_downtime'    => 'state.in_downtime',
+                    'service_is_acknowledged'   => 'state.is_acknowledged'
                 ]
             ],
             [
@@ -131,7 +133,9 @@ class ServicegroupSummary extends UnionModel
                     'service_id'                => new Expression('NULL'),
                     'service_state'             => new Expression('NULL'),
                     'service_handled'           => new Expression('NULL'),
-                    'service_severity'          => new Expression('0')
+                    'service_severity'          => new Expression('0'),
+                    'service_is_in_downtime'    => new Expression('0'),
+                    'service_is_acknowledged'   => new Expression('0')
                 ]
             ]
         ];

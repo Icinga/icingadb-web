@@ -143,9 +143,13 @@ class Hostgroupsummary extends UnionModel
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
                     'host_severity'          => 'state.severity',
+                    'host_is_in_downtime'    => 'state.in_downtime',
+                    'host_is_acknowledged'   => 'state.is_acknowledged',
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
-                    'service_handled'        => new Expression('NULL')
+                    'service_handled'        => new Expression('NULL'),
+                    'service_is_in_downtime' => new Expression('0'),
+                    'service_is_acknowledged' => new Expression('0')
                 ]
             ],
             [
@@ -162,9 +166,13 @@ class Hostgroupsummary extends UnionModel
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
+                    'host_is_in_downtime'    => new Expression('0'),
+                    'host_is_acknowledged'   => new Expression('0'),
                     'service_id'             => 'service.id',
                     'service_state'          => 'state.soft_state',
-                    'service_handled'        => 'state.is_handled'
+                    'service_handled'        => 'state.is_handled',
+                    'service_is_in_downtime' => 'state.in_downtime',
+                    'service_is_acknowledged' => 'state.is_acknowledged'
                 ]
             ],
             [
@@ -178,9 +186,13 @@ class Hostgroupsummary extends UnionModel
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
+                    'host_is_in_downtime'    => new Expression('0'),
+                    'host_is_acknowledged'   => new Expression('0'),
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
-                    'service_handled'        => new Expression('NULL')
+                    'service_handled'        => new Expression('NULL'),
+                    'service_is_in_downtime' => new Expression('0'),
+                    'service_is_acknowledged' => new Expression('0')
                 ]
             ]
         ];
