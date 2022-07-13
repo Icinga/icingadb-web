@@ -112,7 +112,7 @@ class Service extends Model
 
     public function getSearchColumns()
     {
-        return ['name_ci'];
+        return ['name_ci', 'host.name_ci'];
     }
 
     public function getDefaultSort()
