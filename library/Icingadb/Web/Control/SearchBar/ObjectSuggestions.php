@@ -242,7 +242,7 @@ class ObjectSuggestions extends Suggestions
 
     protected function matchSuggestion($path, $label, $searchTerm)
     {
-        if (preg_match('/_(?>id|bin|checksum)$/', $path)) {
+        if (preg_match('/[_.](id|bin|checksum)$/', $path)) {
             // Only suggest exotic columns if the user knows about them
             $trimmedSearch = trim($searchTerm, ' *');
             return substr($path, -strlen($trimmedSearch)) === $trimmedSearch;
