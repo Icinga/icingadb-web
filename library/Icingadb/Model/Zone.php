@@ -38,13 +38,13 @@ class Zone extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Zone Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Zone Name Checksum'),
             'properties_checksum'   => t('Zone Properties Checksum'),
             'name'                  => t('Zone Name'),
             'name_ci'               => t('Zone Name (CI)'),
             'is_global'             => t('Zone Is Global'),
-            'parent_id'             => t('Zone Parent Id'),
+            'parent_id'             => t('Parent Zone Id'),
             'depth'                 => t('Zone Depth')
         ];
     }

@@ -91,6 +91,29 @@ class ObjectSuggestions extends Suggestions
         return $this->model;
     }
 
+    protected function shouldShowRelationFor(string $column): bool
+    {
+        if (strpos($column, '.vars.') !== false) {
+            return false;
+        }
+
+        $tableName = $this->getModel()->getTableName();
+        $columnPath = explode('.', $column);
+
+        switch (count($columnPath)) {
+            case 3:
+                if ($columnPath[1] !== 'state' || ! in_array($tableName, ['host', 'service'])) {
+                    return true;
+                }
+
+                // For host/service state relation columns apply the same rules
+            case 2:
+                return $columnPath[0] !== $tableName;
+            default:
+                return true;
+        }
+    }
+
     protected function createQuickSearchFilter($searchTerm)
     {
         $model = $this->getModel();
@@ -219,7 +242,7 @@ class ObjectSuggestions extends Suggestions
 
     protected function matchSuggestion($path, $label, $searchTerm)
     {
-        if (preg_match('/_(?>id|bin|checksum)$/', $path)) {
+        if (preg_match('/[_.](id|bin|checksum)$/', $path)) {
             // Only suggest exotic columns if the user knows about them
             $trimmedSearch = trim($searchTerm, ' *');
             return substr($path, -strlen($trimmedSearch)) === $trimmedSearch;
@@ -325,22 +348,22 @@ class ObjectSuggestions extends Suggestions
 
         $foreignMetaDataSources = [];
         if (! $model instanceof Host) {
-            $foreignMetaDataSources[] = ['host.user', ' (' . t('Host') . ')'];
-            $foreignMetaDataSources[] = ['host.usergroup', ' (' . t('Host') . ')'];
+            $foreignMetaDataSources[] = 'host.user';
+            $foreignMetaDataSources[] = 'host.usergroup';
         }
 
         if (! $model instanceof Service) {
-            $foreignMetaDataSources[] = ['service.user', ' (' . t('Service') . ')'];
-            $foreignMetaDataSources[] = ['service.usergroup', ' (' . t('Service') . ')'];
+            $foreignMetaDataSources[] = 'service.user';
+            $foreignMetaDataSources[] = 'service.usergroup';
         }
 
-        foreach ($foreignMetaDataSources as list($path, $suffix)) {
+        foreach ($foreignMetaDataSources as $path) {
             $foreignColumnDefinitions = $resolver->getColumnDefinitions($resolver->resolveRelation(
                 $resolver->qualifyPath($path, $model->getTableName()),
                 $model
             )->getTarget());
             foreach ($foreignColumnDefinitions as $columnName => $columnDefinition) {
-                yield "$path.$columnName" => $columnDefinition->getLabel() . $suffix;
+                yield "$path.$columnName" => $columnDefinition->getLabel();
             }
         }
     }
@@ -361,7 +384,7 @@ class ObjectSuggestions extends Suggestions
         foreach ($resolver->getRelations($subject) as $name => $relation) {
             /** @var Relation $relation */
             $isHasOne = $relation instanceof HasOne;
-            if (empty($path) || $isHasOne) {
+            if (empty($path) || $name === 'state' || $name === 'last_comment') {
                 $relationPath = [$name];
                 if ($isHasOne && empty($path)) {
                     array_unshift($relationPath, $subject->getTableName());

@@ -39,8 +39,8 @@ class Notificationcommand extends Model
     public function getColumnDefinitions()
     {
         return [
-            'zone_id'               => t('Notificationcommand Zone Id'),
-            'environment_id'        => t('Notificationcommand Environment Id'),
+            'zone_id'               => t('Zone Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Notificationcommand Name Checksum'),
             'properties_checksum'   => t('Notificationcommand Properties Checksum'),
             'name'                  => t('Notificationcommand Name'),

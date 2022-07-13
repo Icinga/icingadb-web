@@ -56,12 +56,12 @@ class Downtime extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'       => t('Downtime Environment Id'),
-            'triggered_by_id'      => t('Downtime Triggered By Id'),
-            'parent_id'            => t('Downtime Parent Id'),
-            'object_type'          => t('Downtime Object Type'),
-            'host_id'              => t('Downtime Host Id'),
-            'service_id'           => t('Downtime Service Id'),
+            'environment_id'       => t('Environment Id'),
+            'triggered_by_id'      => t('Triggered By Downtime Id'),
+            'parent_id'            => t('Parent Downtime Id'),
+            'object_type'          => t('Object Type'),
+            'host_id'              => t('Host Id'),
+            'service_id'           => t('Service Id'),
             'name_checksum'        => t('Downtime Name Checksum'),
             'properties_checksum'  => t('Downtime Properties Checksum'),
             'name'                 => t('Downtime Name'),
@@ -77,8 +77,8 @@ class Downtime extends Model
             'start_time'           => t('Downtime Actual Start'),
             'end_time'             => t('Downtime Actual End'),
             'duration'             => t('Downtime Duration'),
-            'scheduled_by'         => t('Downtime Scheduled By'),
-            'zone_id'              => t('Downtime Zone Id')
+            'scheduled_by'         => t('Scheduled By Downtime'),
+            'zone_id'              => t('Zone Id')
         ];
     }
 

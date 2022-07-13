@@ -38,13 +38,13 @@ class Hostgroup extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'        => t('Hostgroup Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Hostgroup Name Checksum'),
             'properties_checksum'   => t('Hostgroup Properties Checksum'),
             'name'                  => t('Hostgroup Name'),
             'name_ci'               => t('Hostgroup Name (CI)'),
             'display_name'          => t('Hostgroup Display Name'),
-            'zone_id'               => t('Hostgroup Zone Id')
+            'zone_id'               => t('Zone Id')
         ];
     }
 

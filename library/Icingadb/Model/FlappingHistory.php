@@ -48,17 +48,17 @@ class FlappingHistory extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'                => t('Flapping Environment Id (History)'),
-            'endpoint_id'                   => t('Flapping Endpoint Id (History)'),
-            'object_type'                   => t('Flapping Object Type (History)'),
-            'host_id'                       => t('Flapping Host Id (History)'),
-            'service_id'                    => t('Flapping Service Id (History)'),
-            'start_time'                    => t('Flapping Start Time (History)'),
-            'end_time'                      => t('Flapping End Time (History)'),
-            'percent_state_change_start'    => t('Flapping Percent State Change Start (History)'),
-            'percent_state_change_end'      => t('Flapping Percent State Change End (History)'),
-            'flapping_threshold_low'        => t('Flapping Threshold Low (History)'),
-            'flapping_threshold_high'       => t('Flapping Threshold High (History)')
+            'environment_id'                => t('Environment Id'),
+            'endpoint_id'                   => t('Endpoint Id'),
+            'object_type'                   => t('Object Type'),
+            'host_id'                       => t('Host Id'),
+            'service_id'                    => t('Service Id'),
+            'start_time'                    => t('Flapping Start Time'),
+            'end_time'                      => t('Flapping End Time'),
+            'percent_state_change_start'    => t('Flapping Percent State Change Start'),
+            'percent_state_change_end'      => t('Flapping Percent State Change End'),
+            'flapping_threshold_low'        => t('Flapping Threshold Low'),
+            'flapping_threshold_high'       => t('Flapping Threshold High')
         ];
     }
 

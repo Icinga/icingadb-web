@@ -51,11 +51,11 @@ class History extends Model
     public function getColumnDefinitions()
     {
         return [
-            'environment_id'    => t('Environment Id (History)'),
-            'endpoint_id'       => t('Endpoint Id (History)'),
-            'object_type'       => t('Event Object Type'),
-            'host_id'           => t('Host Id (History)'),
-            'service_id'        => t('Service Id (History)'),
+            'environment_id'    => t('Environment Id'),
+            'endpoint_id'       => t('Endpoint Id'),
+            'object_type'       => t('Object Type'),
+            'host_id'           => t('Host Id'),
+            'service_id'        => t('Service Id'),
             'event_type'        => t('Event Type'),
             'event_time'        => t('Event Time')
         ];

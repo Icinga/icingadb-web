@@ -34,7 +34,7 @@ class ActionUrl extends Model
     {
         return [
             'action_url'        => t('Action Url'),
-            'environment_id'    => t('Action Url Environment Id')
+            'environment_id'    => t('Environment Id')
         ];
     }
 

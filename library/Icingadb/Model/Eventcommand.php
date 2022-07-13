@@ -39,8 +39,8 @@ class Eventcommand extends Model
     public function getColumnDefinitions()
     {
         return [
-            'zone_id'               => t('Eventcommand Zone Id'),
-            'environment_id'        => t('Eventcommand Environment id'),
+            'zone_id'               => t('Zone Id'),
+            'environment_id'        => t('Environment id'),
             'name_checksum'         => t('Eventcommand Name Checksum'),
             'properties_checksum'   => t('Eventcommand Properties Checksum'),
             'name'                  => t('Eventcommand Name'),

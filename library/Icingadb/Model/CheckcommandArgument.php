@@ -42,9 +42,9 @@ class CheckcommandArgument extends Model
     public function getColumnDefinitions()
     {
         return [
-            'checkcommand_id'       => t('Checkcommand Argument Command Id'),
+            'checkcommand_id'       => t('Checkcommand Id'),
             'argument_key'          => t('Checkcommand Argument Key'),
-            'environment_id'        => t('Checkcommand Argument Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Checkcommand Argument Properties Checksum'),
             'argument_value'        => t('Checkcommand Argument Value'),
             'argument_order'        => t('Checkcommand Argument Order'),

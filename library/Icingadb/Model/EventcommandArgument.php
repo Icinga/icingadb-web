@@ -42,9 +42,9 @@ class EventcommandArgument extends Model
     public function getColumnDefinitions()
     {
         return [
-            'eventcommand_id'       => t('Eventcommand Argument Command Id'),
+            'eventcommand_id'       => t('Eventcommand Id'),
             'argument_key'          => t('Eventcommand Argument Key'),
-            'environment_id'        => t('Eventcommand Argument Environment Id'),
+            'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Eventcommand Argument Properties Checksum'),
             'argument_value'        => t('Eventcommand Argument Value'),
             'argument_order'        => t('Eventcommand Argument Order'),
