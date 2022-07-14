@@ -55,8 +55,8 @@ class User extends Model
             'pager'                 => t('User Pager'),
             'notifications_enabled' => t('User Receives Notifications'),
             'timeperiod_id'         => t('Timeperiod Id'),
-            'states'                => t('User States'),
-            'types'                 => t('User Types'),
+            'states'                => t('Notification State Filter'),
+            'types'                 => t('Notification Type Filter'),
             'zone_id'               => t('Zone Id')
         ];
     }

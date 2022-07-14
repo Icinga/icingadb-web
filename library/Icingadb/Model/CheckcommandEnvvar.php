@@ -36,7 +36,7 @@ class CheckcommandEnvvar extends Model
     {
         return [
             'checkcommand_id'       => t('Checkcommand Id'),
-            'envvar_key'            => t('Checkcommand Envvar Key'),
+            'envvar_key'            => t('Checkcommand Envvar Name'),
             'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Checkcommand Properties Checksum'),
             'envvar_value'          => t('Checkcommand Envvar Value')
