@@ -43,17 +43,17 @@ class CheckcommandArgument extends Model
     {
         return [
             'checkcommand_id'       => t('Checkcommand Id'),
-            'argument_key'          => t('Checkcommand Argument Key'),
+            'argument_key'          => t('Checkcommand Argument Name'),
             'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Checkcommand Argument Properties Checksum'),
             'argument_value'        => t('Checkcommand Argument Value'),
-            'argument_order'        => t('Checkcommand Argument Order'),
+            'argument_order'        => t('Checkcommand Argument Position'),
             'description'           => t('Checkcommand Argument Description'),
-            'argument_key_override' => t('Checkcommand Argument Key Override'),
-            'repeat_key'            => t('Checkcommand Argument Repeat Key'),
+            'argument_key_override' => t('Checkcommand Argument Actual Name'),
+            'repeat_key'            => t('Checkcommand Argument Repeated'),
             'required'              => t('Checkcommand Argument Required'),
-            'set_if'                => t('Checkcommand Argument Set If'),
-            'skip_key'              => t('Checkcommand Argument Skip Key')
+            'set_if'                => t('Checkcommand Argument Condition'),
+            'skip_key'              => t('Checkcommand Argument Without Name')
         ];
     }
 

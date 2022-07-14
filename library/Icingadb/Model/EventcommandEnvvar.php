@@ -36,7 +36,7 @@ class EventcommandEnvvar extends Model
     {
         return [
             'eventcommand_id'       => t('Eventcommand Id'),
-            'envvar_key'            => t('Eventcommand Envvar Key'),
+            'envvar_key'            => t('Eventcommand Envvar Name'),
             'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Eventcommand Envvar Properties Checksum'),
             'envvar_value'          => t('Eventcommand Envvar Value')

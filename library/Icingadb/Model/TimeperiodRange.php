@@ -35,9 +35,9 @@ class TimeperiodRange extends Model
     {
         return [
             'timeperiod_id'     => t('Timeperiod Id'),
-            'range_key'         => t('Timeperiod Range Key'),
+            'range_key'         => t('Timeperiod Range Date(s)/Day'),
             'environment_id'    => t('Environment Id'),
-            'range_value'       => t('Timeperiod Range Value')
+            'range_value'       => t('Timeperiod Range Time')
         ];
     }
 

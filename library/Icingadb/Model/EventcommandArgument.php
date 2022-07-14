@@ -43,17 +43,17 @@ class EventcommandArgument extends Model
     {
         return [
             'eventcommand_id'       => t('Eventcommand Id'),
-            'argument_key'          => t('Eventcommand Argument Key'),
+            'argument_key'          => t('Eventcommand Argument Name'),
             'environment_id'        => t('Environment Id'),
             'properties_checksum'   => t('Eventcommand Argument Properties Checksum'),
             'argument_value'        => t('Eventcommand Argument Value'),
-            'argument_order'        => t('Eventcommand Argument Order'),
+            'argument_order'        => t('Eventcommand Argument Position'),
             'description'           => t('Eventcommand Argument Description'),
-            'argument_key_override' => t('Eventcommand Argument Key Override'),
-            'repeat_key'            => t('Eventcommand Argument Repeat Key'),
+            'argument_key_override' => t('Eventcommand Argument Actual Name'),
+            'repeat_key'            => t('Eventcommand Argument Repeated'),
             'required'              => t('Eventcommand Argument Required'),
-            'set_if'                => t('Eventcommand Argument Set If'),
-            'skip_key'              => t('Eventcommand Argument Skip Key')
+            'set_if'                => t('Eventcommand Argument Condition'),
+            'skip_key'              => t('Eventcommand Argument Without Name')
         ];
     }
 
