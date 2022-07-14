@@ -40,7 +40,7 @@ class Eventcommand extends Model
     {
         return [
             'zone_id'               => t('Zone Id'),
-            'environment_id'        => t('Environment id'),
+            'environment_id'        => t('Environment Id'),
             'name_checksum'         => t('Eventcommand Name Checksum'),
             'properties_checksum'   => t('Eventcommand Properties Checksum'),
             'name'                  => t('Eventcommand Name'),
