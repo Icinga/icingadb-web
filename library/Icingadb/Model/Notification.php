@@ -59,8 +59,8 @@ class Notification extends Model
             'times_end'              => t('Notification Escalate Until'),
             'notification_interval'  => t('Notification Interval'),
             'timeperiod_id'          => t('Timeperiod Id'),
-            'states'                 => t('Notification States'),
-            'types'                  => t('Notification Types'),
+            'states'                 => t('Notification State Filter'),
+            'types'                  => t('Notification Type Filter'),
             'zone_id'                => t('Zone Id')
         ];
     }
