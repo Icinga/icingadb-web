@@ -167,6 +167,19 @@ class Service extends Model
 
             return $vars;
         });
+
+        $defaults->add('customvars', function (self $subject) {
+            if (! $subject->customvar instanceof ResultSet) {
+                $this->applyRestrictions($subject->customvar);
+            }
+
+            $vars = [];
+            foreach ($subject->customvar as $customVar) {
+                $vars[$customVar->name] = json_decode($customVar->value, true);
+            }
+
+            return $vars;
+        });
     }
 
     public function createRelations(Relations $relations)
