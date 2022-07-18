@@ -6,12 +6,16 @@ namespace Icinga\Module\Icingadb\Compat;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Module\Icingadb\Model\Servicegroup;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use ipl\Orm\Query;
+use ipl\Stdlib\Filter;
 use LogicException;
 
 use function ipl\Stdlib\get_php_type;
@@ -19,9 +23,13 @@ use function ipl\Stdlib\get_php_type;
 trait CompatObject
 {
     use Auth;
+    use Database;
 
     /** @var array Non-obscured custom variables */
     protected $rawCustomvars;
+
+    /** @var array Non-obscured host custom variables */
+    protected $rawHostCustomvars;
 
     /** @var Model $object */
     private $object;
@@ -79,6 +87,45 @@ trait CompatObject
         return $this;
     }
 
+    protected function fetchRawHostCustomvars(): self
+    {
+        if ($this->rawHostCustomvars !== null) {
+            return $this;
+        }
+
+        $vars = $this->object->host->customvar->execute();
+
+        $customVars = [];
+        foreach ($vars as $row) {
+            $customVars[$row->name] = $row->value;
+        }
+
+        $this->rawHostCustomvars = $customVars;
+
+        return $this;
+    }
+
+    public function fetchComments()
+    {
+        $this->comments = [];
+
+        return $this;
+    }
+
+    public function fetchContactgroups()
+    {
+        $this->contactgroups = [];
+
+        return $this;
+    }
+
+    public function fetchContacts()
+    {
+        $this->contacts = [];
+
+        return $this;
+    }
+
     public function fetchCustomvars(): self
     {
         if ($this->customvars !== null) {
@@ -86,6 +133,130 @@ trait CompatObject
         }
 
         $this->customvars = (new CustomvarFlat())->unflattenVars($this->object->customvar_flat);
+
+        return $this;
+    }
+
+    public function fetchHostVariables()
+    {
+        if (isset($this->hostVariables)) {
+            return $this;
+        }
+
+        $this->hostVariables = [];
+        foreach ($this->object->customvar as $customvar) {
+            $this->hostVariables[strtolower($customvar->name)] = json_decode($customvar->value);
+        }
+
+        return $this;
+    }
+
+    public function fetchServiceVariables()
+    {
+        if (isset($this->serviceVariables)) {
+            return $this;
+        }
+
+        $this->serviceVariables = [];
+        foreach ($this->object->customvar as $customvar) {
+            $this->serviceVariables[strtolower($customvar->name)] = json_decode($customvar->value);
+        }
+
+        return $this;
+    }
+
+    public function fetchDowntimes()
+    {
+        $this->downtimes = [];
+
+        return $this;
+    }
+
+    public function fetchEventhistory()
+    {
+        $this->eventhistory = [];
+
+        return $this;
+    }
+
+    public function fetchHostgroups()
+    {
+        if ($this->type === self::TYPE_HOST) {
+            $hostname = $this->object->name;
+            $hostgroupQuery = clone $this->object->hostgroup;
+        } else {
+            $hostname = $this->object->host->name;
+            $hostgroupQuery = clone $this->object->host->hostgroup;
+        }
+
+        $hostgroupQuery
+            ->columns(['name', 'display_name'])
+            ->filter(Filter::equal('host.name', $hostname));
+
+        /** @var Query $hostgroupQuery */
+        $this->hostgroups = [];
+        foreach ($hostgroupQuery as $hostgroup) {
+            $this->hostgroups[$hostgroup->name] = $hostgroup->display_name;
+        }
+
+        return $this;
+    }
+
+    public function fetchServicegroups()
+    {
+        if ($this->type === self::TYPE_HOST) {
+            $hostname = $this->object->name;
+            $query = Servicegroup::on($this->getDb());
+        } else {
+            $hostname = $this->object->host->name;
+            $query = (clone $this->object->servicegroup);
+        }
+
+        $query
+            ->columns(['name', 'display_name'])
+            ->filter(Filter::equal('host.name', $hostname));
+
+        if ($this->type === self::TYPE_SERVICE) {
+            $query->filter(Filter::equal('service.name', $this->object->name));
+        }
+
+        $this->servicegroups = [];
+        foreach ($query as $serviceGroup) {
+            $this->servicegroups[$serviceGroup->name] = $serviceGroup->display_name;
+        }
+
+        return $this;
+    }
+
+    public function fetchStats()
+    {
+        $query = ServicestateSummary::on($this->getDb());
+
+        if ($this->type === self::TYPE_HOST) {
+            $query->filter(Filter::equal('host.name', $this->object->name));
+        } else {
+            $query->filter(Filter::all(
+                Filter::equal('host.name', $this->object->host->name),
+                Filter::equal('service.name', $this->object->name)
+            ));
+        }
+
+        $result = $query->first();
+
+        $this->stats = (object) [
+            'services_total' => $result->services_total,
+            'services_ok' => $result->services_ok,
+            'services_critical' => $result->services_critical_handled + $result->services_critical_unhandled,
+            'services_critical_unhandled' => $result->services_critical_unhandled,
+            'services_critical_handled' => $result->services_critical_handled,
+            'services_warning' => $result->services_warning_handled + $result->services_warning_unhandled,
+            'services_warning_unhandled' => $result->services_warning_unhandled,
+            'services_warning_handled' => $result->services_warning_handled,
+            'services_unknown' => $result->services_unknown_handled + $result->services_unknown_unhandled,
+            'services_unknown_unhandled' => $result->services_unknown_unhandled,
+            'services_unknown_handled' => $result->services_unknown_handled,
+            'services_pending' => $result->services_pending
+        ];
 
         return $this;
     }
@@ -107,7 +278,7 @@ trait CompatObject
                     $customvars = $this->fetchRawCustomvars()->rawCustomvars;
                     break;
                 case self::TYPE_HOST:
-                    $customvars = $this->getHost()->fetchRawCustomvars()->rawCustomvars;
+                    $customvars = $this->fetchRawHostCustomvars()->rawHostCustomvars;
                     break;
                 case self::TYPE_SERVICE:
                     throw new LogicException('Cannot fetch service custom variables for non-service objects');
