@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -21,6 +22,12 @@ class HistoryController extends Controller
     {
         $this->addTitleTab(t('History'));
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
+
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ];
 
         $db = $this->getDb();
 
@@ -38,7 +45,6 @@ class HistoryController extends Controller
         ]);
 
         $before = $this->params->shift('before', time());
-        $url = Url::fromPath('icingadb/history')->setParams(clone $this->params);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
@@ -49,11 +55,7 @@ class HistoryController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
-        $searchBar = $this->createSearchBar($history, [
-            $limitControl->getLimitParam(),
-            $sortControl->getSortParam(),
-            $viewModeSwitcher->getViewModeParam()
-        ]);
+        $searchBar = $this->createSearchBar($history, $preserveParams);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -91,6 +93,9 @@ class HistoryController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
+
+        $url = Url::fromRequest()->onlyWith($preserveParams);
+        $url->setQueryString(QueryString::render($filter) . '&' . $url->getParams()->toString());
 
         $historyList = (new HistoryList($history->execute()))
             ->setPageSize($limitControl->getLimit())
