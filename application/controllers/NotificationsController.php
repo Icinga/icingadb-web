@@ -14,6 +14,7 @@ use ipl\Sql\Sql;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -22,6 +23,12 @@ class NotificationsController extends Controller
     {
         $this->addTitleTab(t('Notifications'));
         $compact = $this->view->compact;
+
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ];
 
         $db = $this->getDb();
 
@@ -35,7 +42,6 @@ class NotificationsController extends Controller
 
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
-        $url = Url::fromPath('icingadb/notifications')->setParams(clone $this->params);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
@@ -46,11 +52,7 @@ class NotificationsController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
-        $searchBar = $this->createSearchBar($notifications, [
-            $limitControl->getLimitParam(),
-            $sortControl->getSortParam(),
-            $viewModeSwitcher->getViewModeParam()
-        ]);
+        $searchBar = $this->createSearchBar($notifications, $preserveParams);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -86,6 +88,9 @@ class NotificationsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
+
+        $url = Url::fromRequest()->onlyWith($preserveParams);
+        $url->setQueryString(QueryString::render($filter) . '&' . $url->getParams()->toString());
 
         $notificationList = (new NotificationList($notifications->execute()))
             ->setPageSize($limitControl->getLimit())
