@@ -169,7 +169,7 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             Html::tag('h2', t('Actions')),
-            new HtmlString($navigation->getRenderer()->setCssClass('actions')->render()),
+            new HtmlString($navigation->getRenderer()->setCssClass('object-detail-actions')->render()),
             $moduleActions->isEmpty() ? null : $moduleActions
         ];
     }
@@ -331,7 +331,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [];
 
         if (! $navigation->isEmpty() && $navigation->hasRenderableItems()) {
-            $content[] = new HtmlString($navigation->getRenderer()->setCssClass('actions')->render());
+            $content[] = new HtmlString($navigation->getRenderer()->setCssClass('object-detail-actions')->render());
         }
 
         if ($notes !== '') {

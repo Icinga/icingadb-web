@@ -53,7 +53,7 @@ abstract class ObjectActionsHook
                 );
         }
 
-        $list = new HtmlElement('ul', Attributes::create(['class' => 'actions']));
+        $list = new HtmlElement('ul', Attributes::create(['class' => 'object-detail-actions']));
         foreach (Hook::all($hookName) as $hook) {
             try {
                 foreach ($hook->getActionsForObject($object) as $link) {
