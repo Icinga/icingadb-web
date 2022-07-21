@@ -441,7 +441,7 @@ class ObjectDetail extends BaseHtmlElement
 
         $nativeExtensionProviders = [];
         foreach ($extensions as $extension) {
-            if ($extension->getAttributes()->has('data-icinga-module')) {
+            if ($extension instanceof BaseHtmlElement && $extension->getAttributes()->has('data-icinga-module')) {
                 $nativeExtensionProviders[$extension->getAttributes()->get('data-icinga-module')->getValue()] = true;
             }
         }
