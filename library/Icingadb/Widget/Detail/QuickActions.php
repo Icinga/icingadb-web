@@ -11,8 +11,10 @@ use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Web\Widget\Flyout;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Icon;
 
 class QuickActions extends BaseHtmlElement
@@ -22,13 +24,16 @@ class QuickActions extends BaseHtmlElement
     /** @var Host|Service */
     protected $object;
 
-    protected $tag = 'ul';
+    protected $tag = 'div';
 
     protected $defaultAttributes = ['class' => 'quick-actions'];
+
+    protected $menu;
 
     public function __construct($object)
     {
         $this->object = $object;
+        $this->menu = HtmlElement::create('ul', ['class' => 'nav flyout-menu']);
     }
 
     protected function assemble()
@@ -40,7 +45,7 @@ class QuickActions extends BaseHtmlElement
                         ->setAction($this->getLink('removeAcknowledgement'))
                         ->setObjects([$this->object]);
 
-                    $this->add(Html::tag('li', $removeAckForm));
+                    $this->menu->addHtml(Html::tag('li', $removeAckForm));
                 }
             } elseif ($this->isGrantedOn('icingadb/command/acknowledge-problem', $this->object)) {
                 $this->assembleAction(
@@ -59,7 +64,11 @@ class QuickActions extends BaseHtmlElement
                 && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $this->object)
             )
         ) {
-            $this->add(Html::tag('li', (new CheckNowForm())->setAction($this->getLink('checkNow'))));
+            $this->menu->addHtml(Html::tag(
+                'li',
+                ['class' => 'has-icon'],
+                (new CheckNowForm())->setAction($this->getLink('checkNow'))
+            ));
         }
 
         if ($this->isGrantedOn('icingadb/command/comment/add', $this->object)) {
@@ -115,6 +124,12 @@ class QuickActions extends BaseHtmlElement
                 )
             );
         }
+
+
+        $flyout = new Flyout(HtmlElement::create('button', null, new Icon('bars')), true);
+        $flyout->addHtml($this->menu);
+
+        $this->addHtml($flyout);
     }
 
     protected function assembleAction(string $action, string $label, string $icon, string $title)
@@ -134,7 +149,7 @@ class QuickActions extends BaseHtmlElement
             ]
         );
 
-        $this->add(Html::tag('li', $link));
+        $this->menu->addHtml(Html::tag('li', ['class' => 'has-icon'], $link));
     }
 
     protected function getLink($action)
