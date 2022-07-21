@@ -103,6 +103,11 @@ namespace Icinga\Module\Icingadb {
     );
 
     $this->provideRestriction(
+        'icingadb/scope/commands',
+        $this->translate('Restrict to which objects the command permissions this role grants will apply')
+    );
+
+    $this->provideRestriction(
         'icingadb/filter/objects',
         $this->translate('Restrict access to the Icinga objects that match the filter')
     );
