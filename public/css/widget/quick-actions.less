@@ -1,9 +1,11 @@
 .quick-actions {
-  display: flex;
-  flex-wrap: wrap;
-  list-style-type: none;
-  margin: 0 -.5em;
-  padding: 0;
+  .flyout-menu {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    margin: 0 -.5em;
+    padding: 0;
+  }
 
   a {
     text-decoration: none;
@@ -33,14 +35,45 @@
 }
 
 #layout.twocols:not(.wide-layout) {
-  .quick-actions {
+  .quick-actions .flyout-menu {
     justify-content: space-between;
-    min-width: 100%;
   }
 }
 
-#layout.wide-layout .controls {
-  .quick-actions {
-    float: left;
+#layout.minimal-layout .quick-actions {
+  > button {
+    display: block;
+    position: fixed;
+    bottom: ~"calc(env(safe-area-inset-bottom) + 4.5em)";
+    right: 1em;
+    padding: 0 1em;
+    background: @icinga-blue;
+    color: @text-color-on-icinga-blue;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,.25);
+    line-height: 3.5;
+    .appearance(none);
+    .rounded-corners(50%);
+    border: none;
+
+    .icon {
+      font-size: 1.5em;
+
+      &:before {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .flyout {
+    bottom: ~"calc(env(safe-area-inset-bottom) + 7.5em)";
+    top: auto;
+    position: fixed;
+    right: 1em;
+    left: 1em;
+
+    // Caret
+    &:before {
+      right: 1.125em;
+    }
   }
 }
