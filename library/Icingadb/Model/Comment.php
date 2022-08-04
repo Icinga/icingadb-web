@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\NonTextMatch;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -57,7 +58,14 @@ class Comment extends Model
             'name'                  => t('Comment Name'),
             'author'                => t('Comment Author'),
             'text'                  => t('Comment Text'),
-            'entry_type'            => t('Comment Type'),
+            'entry_type'            => [
+                'label' => t('Comment Type'),
+                'type' => 'enum',
+                'allowed_values' => [
+                    'comment' => t('Comment'),
+                    'ack' => t('Acknowledgement')
+                ]
+            ],
             'entry_time'            => t('Comment Entry Time'),
             'is_persistent'         => t('Comment Is Persistent'),
             'is_sticky'             => t('Comment Is Sticky'),
@@ -102,6 +110,8 @@ class Comment extends Model
             'properties_checksum',
             'zone_id'
         ]));
+
+        $behaviors->add(new NonTextMatch());
     }
 
     public function createRelations(Relations $relations)
