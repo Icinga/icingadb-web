@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\NonTextMatch;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
@@ -79,5 +80,7 @@ abstract class State extends Model
             'acknowledgement_comment_id',
             'last_comment_id'
         ]));
+
+        $behaviors->add(new NonTextMatch());
     }
 }
