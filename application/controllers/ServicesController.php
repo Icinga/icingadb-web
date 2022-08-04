@@ -123,7 +123,7 @@ class ServicesController extends Controller
 
         if ($compact) {
             $this->addContent(
-                (new ShowMore($results, Url::fromRequest()->without(['showCompact', 'limit'])))
+                (new ShowMore($results, Url::fromRequest()->without(['showCompact', 'limit', 'view'])))
                     ->setBaseTarget('_next')
                     ->setAttribute('title', sprintf(
                         t('Show all %d services'),
