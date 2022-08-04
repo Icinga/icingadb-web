@@ -14,6 +14,7 @@ class UrlMigrator
     const NO_YES = ['n', 'y'];
     const USE_EXPR = 'use-expr';
     const SORT_ONLY = 'sort-only';
+    const LOWER_EXPR = 'lower-expr';
     const DROP = 'drop';
 
     const SUPPORTED_PATHS = [
@@ -130,6 +131,9 @@ class UrlMigrator
 
                 switch (true) {
                     case $exprRule === self::USE_EXPR:
+                        break;
+                    case $exprRule === self::LOWER_EXPR:
+                        $filter->setValue(strtolower($filter->getValue()));
                         break;
                     case is_array($exprRule) && isset($exprRule[$filter->getValue()]):
                         $filter->setValue($exprRule[$filter->getValue()]);
@@ -1055,13 +1059,13 @@ class UrlMigrator
                 'comment.entry_time' => self::USE_EXPR
             ],
             'comment_type' => [
-                'comment.entry_type' => self::USE_EXPR
+                'comment.entry_type' => self::LOWER_EXPR
             ],
             'host_display_name' => [
                 'host.display_name' => self::USE_EXPR
             ],
             'object_type' => [
-                'comment.object_type' => self::USE_EXPR
+                'comment.object_type' => self::LOWER_EXPR
             ],
             'service_display_name' => [
                 'service.display_name' => self::USE_EXPR
@@ -1126,7 +1130,7 @@ class UrlMigrator
                 'host.state.soft_state' => self::USE_EXPR
             ],
             'object_type' => [
-                'downtime.object_type' => self::USE_EXPR
+                'downtime.object_type' => self::LOWER_EXPR
             ],
             'service_display_name' => [
                 'service.display_name' => self::USE_EXPR
@@ -1152,7 +1156,7 @@ class UrlMigrator
             // Query columns
             'id' => self::DROP,
             'object_type' => [
-                'history.object_type' => self::USE_EXPR
+                'history.object_type' => self::LOWER_EXPR
             ],
             'timestamp' => [
                 'history.event_time' => self::USE_EXPR
@@ -1165,7 +1169,7 @@ class UrlMigrator
             ],
             'type' => function ($filter) {
                 /** @var Filter\Condition $filter */
-                $expr = $filter->getValue();
+                $expr = strtolower($filter->getValue());
 
                 switch (true) {
                     // NotificationhistoryQuery
@@ -1194,10 +1198,12 @@ class UrlMigrator
                     // CommenthistoryQuery
                     case in_array($expr, ['comment', 'ack'], true):
                         $filter->setColumn('history.comment.entry_type');
+                        $filter->setValue($expr);
                         return Filter::all($filter, Filter::equal('history.event_type', 'comment_add'));
                     // CommentdeletionhistoryQuery
                     case in_array($expr, ['comment_deleted', 'ack_deleted'], true):
                         $filter->setColumn('history.comment.entry_type');
+                        $filter->setValue($expr);
                         return Filter::all($filter, Filter::equal('history.event_type', 'comment_remove'));
                     // FlappingstarthistoryQuery and CommenthistoryQuery
                     case in_array($expr, ['flapping', 'flapping_deleted'], true):
@@ -1238,7 +1244,7 @@ class UrlMigrator
                 'notification_history.send_time' => self::USE_EXPR
             ],
             'object_type' => [
-                'notification_history.object_type' => self::USE_EXPR
+                'notification_history.object_type' => self::LOWER_EXPR
             ],
             'service_host_name' => [
                 'host.name' => self::USE_EXPR
