@@ -9,6 +9,7 @@ use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Modules\Module;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
@@ -74,8 +75,16 @@ class ObjectDetail extends BaseHtmlElement
     public function __construct($object)
     {
         $this->object = $object;
-        $this->compatObject = CompatHost::fromModel($object);
         $this->objectType = $object instanceof Host ? 'host' : 'service';
+    }
+
+    protected function compatObject()
+    {
+        if ($this->compatObject === null) {
+            $this->compatObject = CompatHost::fromModel($this->object);
+        }
+
+        return $this->compatObject;
     }
 
     protected function createPrintHeader()
@@ -151,14 +160,16 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
-            $moduleName = ClassLoader::extractModuleName(get_class($hook));
-            if (! isset($nativeExtensionProviders[$moduleName])) {
-                try {
-                    $navigation->merge($hook->getNavigation($this->compatObject));
-                } catch (Exception $e) {
-                    Logger::error("Failed to load legacy action hook: %s\n%s", $e, $e->getTraceAsString());
-                    $navigation->addItem($moduleName, ['label' => IcingaException::describe($e), 'url' => '#']);
+        if (Module::exists('monitoring')) {
+            foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
+                $moduleName = ClassLoader::extractModuleName(get_class($hook));
+                if (! isset($nativeExtensionProviders[$moduleName])) {
+                    try {
+                        $navigation->merge($hook->getNavigation($this->compatObject()));
+                    } catch (Exception $e) {
+                        Logger::error("Failed to load legacy action hook: %s\n%s", $e, $e->getTraceAsString());
+                        $navigation->addItem($moduleName, ['label' => IcingaException::describe($e), 'url' => '#']);
+                    }
                 }
             }
         }
@@ -435,6 +446,10 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
+        if (! Module::exists('monitoring')) {
+            return $extensions;
+        }
+
         foreach (Hook::all('Grapher') as $grapher) {
             /** @var GrapherHook $grapher */
             $moduleName = ClassLoader::extractModuleName(get_class($grapher));
@@ -444,7 +459,7 @@ class ObjectDetail extends BaseHtmlElement
             }
 
             try {
-                $graph = HtmlString::create($grapher->getPreviewHtml($this->compatObject));
+                $graph = HtmlString::create($grapher->getPreviewHtml($this->compatObject()));
             } catch (Exception $e) {
                 Logger::error("Failed to load legacy grapher: %s\n%s", $e, $e->getTraceAsString());
                 $graph = Text::create(IcingaException::describe($e));
@@ -469,7 +484,7 @@ class ObjectDetail extends BaseHtmlElement
             try {
                 $renderedExtension = $extension
                     ->setView(Icinga::app()->getViewRenderer()->view)
-                    ->getHtmlForObject($this->compatObject);
+                    ->getHtmlForObject($this->compatObject());
 
                 $extensionHtml = new HtmlElement(
                     'div',
