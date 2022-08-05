@@ -100,7 +100,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                 break;
             case 'ack_clear':
             case 'ack_set':
-                $markdownLine = new MarkdownLine($this->item->acknowledgement->comment);
+                $markdownLine = new MarkdownLine($this->item->acknowledgement->comment ?? '');
                 $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
