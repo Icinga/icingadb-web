@@ -117,6 +117,7 @@ class PerfDataFormat
 
     public static function seconds($value): string
     {
+        $value = (float) $value;
         $absValue = abs($value);
 
         if ($absValue < 60) {
@@ -133,6 +134,7 @@ class PerfDataFormat
     protected static function formatForUnits($value, array &$units, int $base): string
     {
         $sign = '';
+        $value = (float) $value;
         if ($value < 0) {
             $value = abs($value);
             $sign = '-';
