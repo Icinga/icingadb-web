@@ -116,7 +116,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             return [$title, sprintf('Failed to load redis data: %s', $e->getMessage())];
         }
 
-        if ($json === false) {
+        if (! $json) {
             return [$title, new EmptyState(t('No data available in redis'))];
         }
 
