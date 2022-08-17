@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
@@ -100,13 +101,19 @@ abstract class BaseHistoryListItem extends BaseListItem
                 break;
             case 'ack_clear':
             case 'ack_set':
-                $markdownLine = new MarkdownLine($this->item->acknowledgement->comment);
-                $caption->getAttributes()->add($markdownLine->getAttributes());
-                $caption->add([
-                    new Icon(Icons::USER),
-                    $this->item->acknowledgement->author,
-                    ': '
-                ])->addFrom($markdownLine);
+                if (! isset($this->item->acknowledgement->comment) && ! isset($this->item->acknowledgement->author)) {
+                    $caption->addHtml(new EmptyState(
+                        t('This acknowledgement was set before Icinga DB history recording')
+                    ));
+                } else {
+                    $markdownLine = new MarkdownLine($this->item->acknowledgement->comment);
+                    $caption->getAttributes()->add($markdownLine->getAttributes());
+                    $caption->add([
+                        new Icon(Icons::USER),
+                        $this->item->acknowledgement->author,
+                        ': '
+                    ])->addFrom($markdownLine);
+                }
 
                 break;
             case 'notification':
