@@ -458,12 +458,16 @@ class EventDetail extends BaseHtmlElement
                 new HtmlElement('h2', null, Text::create(t('Comment'))),
                 new MarkdownText($acknowledgement->comment)
             ];
+        } elseif (! isset($acknowledgement->author)) {
+            $commentInfo[] = new EmptyState(t('This acknowledgement was set before Icinga DB history recording'));
         }
 
         $eventInfo = [
             new HtmlElement('h2', null, Text::create(t('Event Info'))),
             new HorizontalKeyValue(t('Set on'), DateFormatter::formatDateTime($acknowledgement->set_time)),
-            new HorizontalKeyValue(t('Author'), [new Icon('user'), $acknowledgement->author]),
+            new HorizontalKeyValue(t('Author'), $acknowledgement->author
+                ? [new Icon('user'), $acknowledgement->author]
+                : new EmptyState(t('n. a.'))),
             $acknowledgement->object_type === 'host'
                 ? new HorizontalKeyValue(t('Host'), HtmlElement::create(
                     'span',
@@ -488,11 +492,12 @@ class EventDetail extends BaseHtmlElement
                 ? DateFormatter::formatDateTime($acknowledgement->expire_time)
                 : new EmptyState(t('Never'))
             );
-            $eventInfo[] = new HorizontalKeyValue(t('Sticky'), $acknowledgement->is_sticky ? t('Yes') : t('No'));
-            $eventInfo[] = new HorizontalKeyValue(
-                t('Persistent'),
-                $acknowledgement->is_persistent ? t('Yes') : t('No')
-            );
+            $eventInfo[] = new HorizontalKeyValue(t('Sticky'), isset($acknowledgement->is_sticky)
+                ? ($acknowledgement->is_sticky ? t('Yes') : t('No'))
+                : new EmptyState(t('n. a.')));
+            $eventInfo[] = new HorizontalKeyValue(t('Persistent'), isset($acknowledgement->is_persistent)
+                ? ($acknowledgement->is_persistent ? t('Yes') : t('No'))
+                : new EmptyState(t('n. a.')));
         } else {
             $eventInfo[] = new HorizontalKeyValue(
                 t('Cleared on'),
