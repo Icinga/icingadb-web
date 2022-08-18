@@ -60,8 +60,14 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
         $parts = explode('.', substr($relation, 0, -5));
         $objectType = array_pop($parts);
 
+        $name = $def->getName();
+        if (substr($name, -3) === '[*]') {
+            // The suggestions also hide this from the label, so should this
+            $name = substr($name, 0, -3);
+        }
+
         // Programmatically translated since the full definition is available in class ObjectSuggestions
-        $def->setLabel(sprintf(t(ucfirst($objectType) . ' %s', '..<customvar-name>'), $def->getName()));
+        $def->setLabel(sprintf(t(ucfirst($objectType) . ' %s', '..<customvar-name>'), $name));
     }
 
     public function isSelectableColumn(string $name): bool
