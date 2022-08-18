@@ -37,7 +37,8 @@
     }
   }
 
-  &.can-collapse thead th > span {
+  &.can-collapse thead th > span, // Icinga Web 2 < 2.12
+  &[data-can-collapse] thead th > span { // >= 2.12
     :nth-child(1) {
       display: none;
     }
