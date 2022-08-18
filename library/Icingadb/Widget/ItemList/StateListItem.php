@@ -80,6 +80,8 @@ abstract class StateListItem extends BaseListItem
         if ($this->state->is_handled) {
             $stateBall->addHtml(new Icon($this->getHandledIcon()));
             $stateBall->getAttributes()->add('class', 'handled');
+        } elseif ($this->state->getStateText() === 'pending' && $this->state->in_downtime) {
+            $stateBall->addHtml(new Icon($this->getHandledIcon()));
         }
 
         $visual->addHtml($stateBall);
