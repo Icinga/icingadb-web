@@ -29,6 +29,7 @@ class IcingaHealth extends HealthHook
     public function checkHealth()
     {
         $instance = $this->getInstance();
+
         if ($instance === null) {
             $this->setState(self::STATE_UNKNOWN);
             $this->setMessage(t(
@@ -44,6 +45,26 @@ class IcingaHealth extends HealthHook
         } else {
             $this->setState(self::STATE_OK);
             $this->setMessage(t('Icinga DB is running and writing into the database'));
+            $warningMessages = [];
+
+            if (! $instance->icinga2_active_host_checks_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Active host checks are disabled');
+            }
+
+            if (! $instance->icinga2_active_service_checks_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Active service checks are disabled');
+            }
+
+            if (! $instance->icinga2_notifications_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Notifications are disabled');
+            }
+
+            if ($this->getState() === self::STATE_WARNING) {
+                $this->setMessage(implode("; ", $warningMessages));
+            }
         }
 
         if ($instance !== null) {
