@@ -12,6 +12,8 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use ipl\Orm\Query;
+use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 
@@ -83,5 +85,12 @@ class TacticalController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
+    {
+        parent::prepareSearchFilter($query, $search, $filter);
+
+        $filter->add(Filter::like('host.name_ci', "*$search*"));
     }
 }
