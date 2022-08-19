@@ -153,19 +153,24 @@ namespace Icinga\Module\Icingadb {
             99
         );
         $this->provideSearchUrl(
+            $this->translate('Services on Hosts'),
+            'icingadb/services?sort=service.state.severity&limit=10&_hostFilterOnly',
+            98
+        );
+        $this->provideSearchUrl(
             $this->translate('Services'),
             'icingadb/services?sort=service.state.severity&limit=10',
-            98
+            97
         );
         $this->provideSearchUrl(
             $this->translate('Hostgroups'),
             'icingadb/hostgroups?limit=10',
-            97
+            96
         );
         $this->provideSearchUrl(
             $this->translate('Servicegroups'),
             'icingadb/servicegroups?limit=10',
-            96
+            95
         );
 
         /**
