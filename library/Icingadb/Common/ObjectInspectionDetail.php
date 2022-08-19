@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Common;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
@@ -306,10 +307,16 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         foreach ($data as $name => $value) {
             if (empty($value) && ($value === null || is_string($value) || is_array($value))) {
                 $value = new EmptyState(t('n. a.'));
-            } elseif (isset($formatters[$name])) {
-                $value = call_user_func($formatters[$name], $value);
             } else {
-                $value = $this->formatJson($value);
+                try {
+                    if (isset($formatters[$name])) {
+                        $value = call_user_func($formatters[$name], $value);
+                    } else {
+                        $value = $this->formatJson($value);
+                    }
+                } catch (Exception $e) {
+                    $value = new EmptyState(IcingaException::describe($e));
+                }
             }
 
             $table->addHtml(Table::tr([
