@@ -117,11 +117,12 @@ class ObjectSuggestions extends Suggestions
     protected function createQuickSearchFilter($searchTerm)
     {
         $model = $this->getModel();
+        $resolver = $model::on($this->getDb())->getResolver();
 
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
-            $where = Filter::like($model->getTableName() . '.' . $column, $searchTerm);
-            $where->metaData()->set('columnLabel', $model->getColumnDefinitions()[$column]);
+            $where = Filter::like($resolver->qualifyColumn($column, $model->getTableName()), $searchTerm);
+            $where->metaData()->set('columnLabel', $resolver->getColumnDefinition($where->getColumn())->getLabel());
             $quickFilter->add($where);
         }
 

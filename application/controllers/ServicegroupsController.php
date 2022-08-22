@@ -77,7 +77,7 @@ class ServicegroupsController extends Controller
         $results = $servicegroups->execute();
 
         $this->addContent(
-            (new ServicegroupList($results))->setBaseFilter($this->getFilter())
+            (new ServicegroupList($results))->setBaseFilter($filter)
         );
 
         if ($compact) {

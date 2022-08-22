@@ -78,7 +78,7 @@ class HostgroupsController extends Controller
         $results = $hostgroups->execute();
 
         $this->addContent(
-            (new HostgroupList($results))->setBaseFilter($this->getFilter())
+            (new HostgroupList($results))->setBaseFilter($filter)
         );
 
         if ($compact) {
