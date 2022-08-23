@@ -310,22 +310,34 @@ class Controller extends CompatController
         }
 
         $filter = Filter::any();
+        $this->prepareSearchFilter($query, $q, $filter);
+
+        $redirectUrl = Url::fromRequest();
+        $redirectUrl->setQueryString(QueryString::render($filter));
+        foreach ($this->params->toArray(false) as $name => $value) {
+            $redirectUrl->getParams()->addEncoded($name, $value);
+        }
+
+        $this->getResponse()->redirectAndExit($redirectUrl);
+    }
+
+    /**
+     * Prepare the given search filter
+     *
+     * @param Query $query
+     * @param string $search
+     * @param Filter\Any $filter
+     *
+     * @return void
+     */
+    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
+    {
         foreach ($query->getModel()->getSearchColumns() as $column) {
             $filter->add(Filter::like(
                 $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName()),
-                "*$q*"
+                "*$search*"
             ));
         }
-
-        $requestUrl = Url::fromRequest();
-
-        $existingParams = $requestUrl->getParams()->without('q');
-        $requestUrl->setQueryString(QueryString::render($filter));
-        foreach ($existingParams->toArray(false) as $name => $value) {
-            $requestUrl->getParams()->addEncoded($name, $value);
-        }
-
-        $this->getResponse()->redirectAndExit($requestUrl);
     }
 
     /**

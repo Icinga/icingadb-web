@@ -91,4 +91,9 @@ class ServicestateSummary extends Service
     {
         return null;
     }
+
+    public function getSearchColumns()
+    {
+        return ['name_ci', 'host.name_ci'];
+    }
 }

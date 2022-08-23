@@ -409,6 +409,15 @@ class ServicesController extends Controller
         return new FeatureStatus('service', $summary->first());
     }
 
+    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
+    {
+        if ($this->params->shift('_hostFilterOnly', false)) {
+            $filter->add(Filter::like('host.name_ci', "*$search*"));
+        } else {
+            parent::prepareSearchFilter($query, $search, $filter);
+        }
+    }
+
     public function createProblemToggle(): ProblemToggle
     {
         $filter = $this->params->shift('problems');
