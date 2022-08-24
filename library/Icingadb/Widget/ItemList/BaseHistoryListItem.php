@@ -371,12 +371,19 @@ abstract class BaseHistoryListItem extends BaseListItem
         }
 
         if ($this->item->object_type === 'host') {
-            $link = $this->createHostLink($this->item->host, true);
+            if (isset($this->item->host->id)) {
+                $link = $this->createHostLink($this->item->host, true);
+            }
         } else {
-            $link = $this->createServiceLink($this->item->service, $this->item->host, true);
+            if (isset($this->item->host->id, $this->item->service->id)) {
+                $link = $this->createServiceLink($this->item->service, $this->item->host, true);
+            }
         }
 
-        $title->addHtml(Text::create(' '), $link);
+        $title->addHtml(Text::create(' '));
+        if (isset($link)) {
+            $title->addHtml($link);
+        }
     }
 
     protected function createTimestamp()
