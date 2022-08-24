@@ -125,22 +125,32 @@ abstract class BaseHistoryListItem extends BaseListItem
                         $this->item->notification->text
                     ]);
                 } else {
-                    $caption->addHtml(new PluginOutputContainer(
-                        (new PluginOutput($this->item->notification->text))
-                            ->setCommandName($this->item->object_type === 'host'
-                                ? $this->item->host->checkcommand_name
-                                : $this->item->service->checkcommand_name)
-                    ));
+                    $commandName = $this->item->object_type === 'host'
+                        ? $this->item->host->checkcommand_name
+                        : $this->item->service->checkcommand_name;
+                    if (isset($commandName)) {
+                        $caption->addHtml(new PluginOutputContainer(
+                            (new PluginOutput($this->item->notification->text))
+                                ->setCommandName($commandName)
+                        ));
+                    } else {
+                        $caption->addHtml(new EmptyState(t('Waiting for Icinga DB to synchronize the config.')));
+                    }
                 }
 
                 break;
             case 'state_change':
-                $caption->addHtml(new PluginOutputContainer(
-                    (new PluginOutput($this->item->state->output))
-                        ->setCommandName($this->item->object_type === 'host'
-                            ? $this->item->host->checkcommand_name
-                            : $this->item->service->checkcommand_name)
-                ));
+                $commandName = $this->item->object_type === 'host'
+                    ? $this->item->host->checkcommand_name
+                    : $this->item->service->checkcommand_name;
+                if (isset($commandName)) {
+                    $caption->addHtml(new PluginOutputContainer(
+                        (new PluginOutput($this->item->state->output))
+                            ->setCommandName($commandName)
+                    ));
+                } else {
+                    $caption->addHtml(new EmptyState(t('Waiting for Icinga DB to synchronize the config.')));
+                }
 
                 break;
         }
