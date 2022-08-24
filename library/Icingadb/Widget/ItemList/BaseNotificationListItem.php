@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Common\BaseListItem;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Stdlib\Filter;
@@ -77,12 +78,17 @@ abstract class BaseNotificationListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption)
     {
         if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
-            $caption->addHtml(new PluginOutputContainer(
-                (new PluginOutput($this->item->text))
-                    ->setCommandName($this->item->object_type === 'host'
-                        ? $this->item->host->checkcommand_name
-                        : $this->item->service->checkcommand_name)
-            ));
+            $commandName = $this->item->object_type === 'host'
+                ? $this->item->host->checkcommand_name
+                : $this->item->service->checkcommand_name;
+            if (isset($commandName)) {
+                $caption->addHtml(new PluginOutputContainer(
+                    (new PluginOutput($this->item->text))
+                        ->setCommandName($commandName)
+                ));
+            } else {
+                $caption->addHtml(new EmptyState(t('Waiting for Icinga DB to synchronize the config.')));
+            }
         } else {
             $caption->add([
                 new Icon(Icons::USER),
