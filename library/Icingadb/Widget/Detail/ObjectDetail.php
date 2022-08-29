@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Exception;
 use Icinga\Application\ClassLoader;
+use Icinga\Application\Hook;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -39,7 +40,6 @@ use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
-use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;

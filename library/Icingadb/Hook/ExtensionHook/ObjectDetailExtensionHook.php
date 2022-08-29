@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Hook\ExtensionHook;
 
 use Exception;
+use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Hook\EventDetailExtensionHook;
@@ -17,7 +18,6 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
-use Icinga\Web\Hook;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;

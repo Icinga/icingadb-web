@@ -6,9 +6,9 @@ namespace Icinga\Module\Icingadb\Hook\TabHook;
 
 use Exception;
 use Generator;
+use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Hook\TabHook;
-use Icinga\Web\Hook;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Model;
 use ipl\Stdlib\Str;
