@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Web\Url;
@@ -18,6 +19,7 @@ class CommentList extends BaseItemList
     use NoSubjectLink;
     use ObjectLinkDisabled;
     use ViewMode;
+    use TicketLinks;
 
     protected $defaultAttributes = ['class' => 'comment-list'];
 

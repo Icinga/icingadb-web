@@ -216,7 +216,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
-            $content[] = (new CommentList($comments))->setObjectLinkDisabled();
+            $content[] = (new CommentList($comments))->setObjectLinkDisabled()->setTicketLinkEnabled();
             $content[] = (new ShowMore($comments, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No comments created.'));
@@ -267,7 +267,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
-            $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled();
+            $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled()->setTicketLinkEnabled();
             $content[] = (new ShowMore($downtimes, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));

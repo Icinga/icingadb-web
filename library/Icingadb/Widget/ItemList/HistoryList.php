@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Orm\ResultSet;
@@ -18,6 +19,7 @@ class HistoryList extends BaseItemList
     use NoSubjectLink;
     use ViewMode;
     use LoadMore;
+    use TicketLinks;
 
     protected $defaultAttributes = ['class' => 'history-list'];
 

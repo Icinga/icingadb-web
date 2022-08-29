@@ -55,7 +55,7 @@ class CommentController extends Controller
             ->setCaptionDisabled()
             ->setNoSubjectLink());
 
-        $this->addContent(new CommentDetail($this->comment));
+        $this->addContent((new CommentDetail($this->comment))->setTicketLinkEnabled());
 
         $this->setAutorefreshInterval(10);
     }
