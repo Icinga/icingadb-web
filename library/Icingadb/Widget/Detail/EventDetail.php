@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
@@ -47,6 +48,7 @@ class EventDetail extends BaseHtmlElement
     use Database;
     use HostLink;
     use ServiceLink;
+    use TicketLinks;
 
     protected $tag = 'div';
 
@@ -253,7 +255,7 @@ class EventDetail extends BaseHtmlElement
     {
         $commentInfo = [
             new HtmlElement('h2', null, Text::create(t('Comment'))),
-            new MarkdownText($downtime->comment)
+            new MarkdownText($this->createTicketLinks($downtime->comment))
         ];
 
         $eventInfo = [new HtmlElement('h2', null, Text::create(t('Event Info')))];
@@ -352,7 +354,7 @@ class EventDetail extends BaseHtmlElement
     {
         $commentInfo = [
             new HtmlElement('h2', null, Text::create(t('Comment'))),
-            new MarkdownText($comment->comment)
+            new MarkdownText($this->createTicketLinks($comment->comment))
         ];
 
         $eventInfo = [new HtmlElement('h2', null, Text::create(t('Event Info')))];
@@ -464,7 +466,7 @@ class EventDetail extends BaseHtmlElement
         if ($acknowledgement->comment) {
             $commentInfo = [
                 new HtmlElement('h2', null, Text::create(t('Comment'))),
-                new MarkdownText($acknowledgement->comment)
+                new MarkdownText($this->createTicketLinks($acknowledgement->comment))
             ];
         } elseif (! isset($acknowledgement->author)) {
             $commentInfo[] = new EmptyState(t('This acknowledgement was set before Icinga DB history recording'));

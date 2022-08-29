@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
@@ -19,6 +20,7 @@ use ipl\Html\Html;
 class CommentDetail extends BaseHtmlElement
 {
     use Auth;
+    use TicketLinks;
 
     protected $comment;
 
@@ -35,7 +37,7 @@ class CommentDetail extends BaseHtmlElement
     {
         return [
             Html::tag('h2', t('Comment')),
-            new MarkdownText($this->comment->text)
+            new MarkdownText($this->createTicketLinks($this->comment->text))
         ];
     }
 

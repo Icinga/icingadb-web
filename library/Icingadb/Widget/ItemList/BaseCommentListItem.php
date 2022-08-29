@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use ipl\Html\Html;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -37,10 +38,12 @@ abstract class BaseCommentListItem extends BaseListItem
     use ServiceLink;
     use NoSubjectLink;
     use ObjectLinkDisabled;
+    use TicketLinks;
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $markdownLine = new MarkdownLine($this->item->text);
+        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->text));
+
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addFrom($markdownLine);
     }
@@ -119,6 +122,7 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function init()
     {
+        $this->setTicketLinkEnabled($this->list->getTicketLinkEnabled());
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->list->addMultiselectFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());

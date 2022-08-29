@@ -66,6 +66,6 @@ class EventController extends Controller
             ->setCaptionDisabled()
             ->setNoSubjectLink()
             ->setDetailActionsDisabled());
-        $this->addContent(new EventDetail($this->event));
+        $this->addContent((new EventDetail($this->event))->setTicketLinkEnabled());
     }
 }

@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
+use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use ipl\Web\Url;
 
@@ -18,6 +19,7 @@ class DowntimeList extends BaseItemList
     use NoSubjectLink;
     use ObjectLinkDisabled;
     use ViewMode;
+    use TicketLinks;
 
     protected $defaultAttributes = ['class' => 'downtime-list'];
 
