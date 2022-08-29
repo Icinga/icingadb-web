@@ -6,12 +6,12 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\Hook;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
 use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Web\Hook;
 use ipl\Html\HtmlString;
 use ipl\Web\Url;
 
