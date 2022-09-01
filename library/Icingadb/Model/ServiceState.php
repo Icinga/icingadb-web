@@ -23,12 +23,22 @@ class ServiceState extends State
     {
         return [
             'environment_id'                => t('Environment Id'),
-            'state_type'                    => t('Service State Type'),
+            'state_type'                    => [
+                'label' => t('Service State Type'),
+                'type' => 'enum',
+                'allowed_values' => [
+                    'hard' => t('Hard'),
+                    'soft' => t('Soft')
+                ]
+            ],
             'soft_state'                    => t('Service Soft State'),
             'hard_state'                    => t('Service Hard State'),
             'previous_soft_state'           => t('Service Previous Soft State'),
             'previous_hard_state'           => t('Service Previous Hard State'),
-            'check_attempt'                 => t('Service Check Attempt No.'),
+            'check_attempt'                 => [
+                'label' => t('Service Check Attempt No.'),
+                'type' => 'number'
+            ],
             'severity'                      => t('Service State Severity'),
             'output'                        => t('Service Output'),
             'long_output'                   => t('Service Long Output'),

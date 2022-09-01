@@ -16,6 +16,7 @@ use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
+use ipl\Orm\Query;
 use ipl\Orm\Relation;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Relation\HasOne;
@@ -36,6 +37,9 @@ class ObjectSuggestions extends Suggestions
 
     /** @var Model */
     protected $model;
+
+    /** @var Query */
+    protected $query;
 
     /** @var array */
     protected $customVarSources;
@@ -91,6 +95,15 @@ class ObjectSuggestions extends Suggestions
         return $this->model;
     }
 
+    public function getQuery(): Query
+    {
+        if ($this->query === null) {
+            $this->query = ($this->getModel())::on($this->getDb());
+        }
+
+        return $this->query;
+    }
+
     protected function shouldShowRelationFor(string $column): bool
     {
         if (strpos($column, '.vars.') !== false) {
@@ -132,7 +145,7 @@ class ObjectSuggestions extends Suggestions
     protected function fetchValueSuggestions($column, $searchTerm, Filter\Chain $searchFilter)
     {
         $model = $this->getModel();
-        $query = $model::on($this->getDb());
+        $query = $this->getQuery();
         $query->limit(static::DEFAULT_LIMIT);
 
         if (strpos($column, ' ') !== false) {
@@ -203,7 +216,7 @@ class ObjectSuggestions extends Suggestions
     protected function fetchColumnSuggestions($searchTerm)
     {
         $model = $this->getModel();
-        $query = $model::on($this->getDb());
+        $query = $this->getQuery();
 
         // Ordinary columns first
         foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
