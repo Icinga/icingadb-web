@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Model;
 
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Relations;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
@@ -111,11 +112,6 @@ class Hostgroupsummary extends UnionModel
         ];
     }
 
-    public function getAggregateColumns()
-    {
-        return true;
-    }
-
     public function getSearchColumns()
     {
         return ['display_name'];
@@ -193,5 +189,20 @@ class Hostgroupsummary extends UnionModel
         $behaviors->add(new Binary([
             'id'
         ]));
+
+        // This is because there is no better way
+        (new Hostgroup())->createBehaviors($behaviors);
+    }
+
+    public function createRelations(Relations $relations)
+    {
+        // This is because there is no better way
+        (new Hostgroup())->createRelations($relations);
+    }
+
+    public function getColumnDefinitions()
+    {
+        // This is because there is no better way
+        return (new Hostgroup())->getColumnDefinitions();
     }
 }
