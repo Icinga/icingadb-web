@@ -62,23 +62,28 @@ class EventDetail extends BaseHtmlElement
 
     protected function assembleNotificationEvent(NotificationHistory $notification)
     {
-        $pluginOutput = [
-            HtmlElement::create('h2', null, $notification->author ? t('Comment') : t('Plugin Output')),
-            HtmlElement::create('div', [
-                'id'    => 'check-output-' . (
-                    $notification->object_type === 'host'
-                        ? $this->event->host->checkcommand_name
-                        : $this->event->service->checkcommand_name
-                ),
-                'class' => 'collapsible',
-                'data-visible-height' => 100
-            ], new PluginOutputContainer(
-                (new PluginOutput($notification->text))
-                    ->setCommandName($notification->object_type === 'host'
-                        ? $this->event->host->checkcommand_name
-                        : $this->event->service->checkcommand_name)
-            ))
-        ];
+        $pluginOutput = [];
+
+        $commandName = $notification->object_type === 'host'
+            ? $this->event->host->checkcommand_name
+            : $this->event->service->checkcommand_name;
+        if (isset($commandName)) {
+            $pluginOutput = [
+                HtmlElement::create('h2', null, $notification->author ? t('Comment') : t('Plugin Output')),
+                HtmlElement::create('div', [
+                    'id'    => 'check-output-' . $commandName,
+                    'class' => 'collapsible',
+                    'data-visible-height' => 100
+                ], new PluginOutputContainer(
+                    (new PluginOutput($notification->text))
+                        ->setCommandName($notification->object_type === 'host'
+                            ? $this->event->host->checkcommand_name
+                            : $this->event->service->checkcommand_name)
+                ))
+            ];
+        } else {
+            $pluginOutput[] = new EmptyState(t('Waiting for Icinga DB to synchronize the config.'));
+        }
 
         if ($notification->object_type === 'host') {
             $objectKey = t('Host');
@@ -160,23 +165,26 @@ class EventDetail extends BaseHtmlElement
 
     protected function assembleStateChangeEvent(StateHistory $stateChange)
     {
-        $pluginOutput = [
-            new HtmlElement('h2', null, Text::create(t('Plugin Output'))),
-            HtmlElement::create('div', [
-                'id'    => 'check-output-' . (
-                    $stateChange->object_type === 'host'
-                        ? $this->event->host->checkcommand_name
-                        : $this->event->service->checkcommand_name
-                ),
-                'class' => 'collapsible',
-                'data-visible-height' => 100
-            ], new PluginOutputContainer(
-                (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
-                    ->setCommandName($stateChange->object_type === 'host'
-                        ? $this->event->host->checkcommand_name
-                        : $this->event->service->checkcommand_name)
-            ))
-        ];
+        $pluginOutput = [];
+
+        $commandName = $stateChange->object_type === 'host'
+            ? $this->event->host->checkcommand_name
+            : $this->event->service->checkcommand_name;
+        if (isset($commandName)) {
+            $pluginOutput = [
+                new HtmlElement('h2', null, Text::create(t('Plugin Output'))),
+                HtmlElement::create('div', [
+                    'id'    => 'check-output-' . $commandName,
+                    'class' => 'collapsible',
+                    'data-visible-height' => 100
+                ], new PluginOutputContainer(
+                    (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
+                        ->setCommandName($commandName)
+                ))
+            ];
+        } else {
+            $pluginOutput[] = new EmptyState(t('Waiting for Icinga DB to synchronize the config.'));
+        }
 
         if ($stateChange->object_type === 'host') {
             $objectKey = t('Host');

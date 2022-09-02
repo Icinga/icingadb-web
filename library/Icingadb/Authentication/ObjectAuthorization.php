@@ -44,6 +44,10 @@ class ObjectAuthorization
 
         $tableName = $for->getTableName();
         $uniqueId = $for->{$for->getKeyName()};
+        if (! isset($uniqueId)) {
+            return false;
+        }
+
         if (! isset(self::$knownGrants[$tableName][$uniqueId])) {
             $self->loadGrants(
                 get_class($for),
