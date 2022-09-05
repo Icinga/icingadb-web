@@ -107,10 +107,10 @@ abstract class StateListItem extends BaseListItem
     protected function getHandledIcon(): string
     {
         switch (true) {
-            case $this->state->in_downtime:
-                return Icons::IN_DOWNTIME;
             case $this->state->is_acknowledged:
                 return Icons::IS_ACKNOWLEDGED;
+            case $this->state->in_downtime:
+                return Icons::IN_DOWNTIME;
             case $this->state->is_flapping:
                 return Icons::IS_FLAPPING;
             default:
