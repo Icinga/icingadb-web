@@ -207,7 +207,7 @@ Make sure you use `icingadb` as the module name. The following requirements must
 * The following PHP modules must be installed: `cURL`, `dom`, `json`, `libxml`
 * [Icinga DB](https://github.com/Icinga/icingadb)
 * [Icinga Web 2](https://github.com/Icinga/icingaweb2) (≥2.9)
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥0.9)
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥0.10)
 * [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (≥0.11)
 <!-- {% endif %} --><!-- {# end else if not from_source #} -->
 
