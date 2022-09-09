@@ -10,7 +10,6 @@ use Icinga\Application\Hook;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Application\Modules\Module;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
@@ -160,7 +159,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (Module::exists('monitoring')) {
+        if (Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
             foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
                 $moduleName = ClassLoader::extractModuleName(get_class($hook));
                 if (! isset($nativeExtensionProviders[$moduleName])) {
@@ -446,7 +445,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (! Module::exists('monitoring')) {
+        if (! Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
             return $extensions;
         }
 
