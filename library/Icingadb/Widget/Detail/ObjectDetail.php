@@ -132,7 +132,7 @@ class ObjectDetail extends BaseHtmlElement
             $item->setObject($this->object);
         }
 
-        foreach ($this->object->action_url->action_url ?? [] as $url) {
+        foreach ($this->object->action_url->first()->action_url ?? [] as $url) {
             $url = $this->expandMacros($url, $this->object);
             $navigation->addItem(
                 Html::wantHtml([
@@ -320,7 +320,7 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        foreach ($this->object->notes_url->notes_url ?? [] as $url) {
+        foreach ($this->object->notes_url->first()->notes_url ?? [] as $url) {
             $url = $this->expandMacros($url, $this->object);
             $navigation->addItem(
                 Html::wantHtml([
