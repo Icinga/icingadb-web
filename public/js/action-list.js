@@ -21,6 +21,9 @@
             this.on('close-column', this.onColumnClose, this);
 
             this.on('rendered', '.container', this.onRendered, this);
+            this.on('keydown', '#main > .container, .action-list', this.onKeyDown, this);
+
+            this.lastActivatedItemUrl = null;
         }
 
         /**
@@ -88,6 +91,16 @@
                 $item.addClass('active');
             }
 
+            if ($item.hasClass('active')) {
+                _this.lastActivatedItemUrl = $item.data('icingaDetailFilter');
+            } else {
+                $activeItems = $list.find('[data-action-item].active');
+
+                _this.lastActivatedItemUrl = $activeItems.length
+                    ? $activeItems.last().data('icingaDetailFilter')
+                    : null;
+            }
+
             $activeItems = $list.find('[data-action-item].active');
             var footer = container.children('.footer');
 
@@ -134,6 +147,187 @@
                     url, _this.icinga.loader.getLinkTargetFor($target)
                 );
             }
+        }
+
+        onKeyDown(event) {
+            let list = document.querySelector('.action-list'); // col1 if both given, intended
+
+            if ((document.querySelector('.search-suggestions')
+                && document.querySelector('.search-suggestions').hasChildNodes()) // search suggestion list is visible
+                || ! list.querySelectorAll(':scope > [data-action-item]').length // no item
+                || document.querySelector('#modal') // modal is open
+            ) {
+                return;
+            }
+
+            let _this = event.data.self;
+            let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
+            let isMultiSelectableList = list.matches('[data-icinga-multiselect-url]');
+            let url;
+
+            if (isMultiSelectableList && (event.ctrlKey || event.metaKey) && event.keyCode === 65) { // ctrl|cmd + A
+                event.preventDefault();
+                let toActive = list.querySelectorAll(':scope > [data-action-item]:not(.active)');
+
+                if (toActive.length) {
+                    toActive.forEach(item => item.classList.add('active'));
+
+                    url = _this.createMultiSelectUrl(
+                        list.querySelectorAll(':scope > [data-action-item].active')
+                    );
+
+                    _this.icinga.loader.loadUrl(
+                        url, _this.icinga.loader.getLinkTargetFor($(list))
+                    );
+
+                    _this.lastActivatedItemUrl = list.lastChild.dataset.icingaDetailFilter;
+                }
+
+                return;
+            }
+
+            let pressedArrowDownKey = event.key === 'ArrowDown';
+            let pressedArrowUpKey = event.key === 'ArrowUp';
+
+            if (! pressedArrowDownKey && ! pressedArrowUpKey) {
+                return;
+            }
+
+            event.preventDefault();
+
+            let isMultiSelect = isMultiSelectableList && event.shiftKey;
+            let wasAllSelected = activeItems.length === list.querySelectorAll(':scope > [data-action-item]').length;
+            let lastActivatedItem = list.querySelector(`[data-icinga-detail-filter="${ _this.lastActivatedItemUrl }"]`);
+            let previousSibling = lastActivatedItem ? lastActivatedItem.previousElementSibling : null;
+            let nextSibling = lastActivatedItem ? lastActivatedItem.nextElementSibling : null;
+            let markAsLastActive = null; // initialized only if it is different from toActiveItem
+            let toActiveItem = null;
+
+            switch (true) {
+                case ! lastActivatedItem || activeItems.length === 0:
+                    toActiveItem = pressedArrowDownKey ? list.firstChild : list.lastChild;
+                    // reset all on manual page refresh
+                    activeItems.forEach(item => item.classList.remove('active'));
+                    break;
+                case isMultiSelect && pressedArrowDownKey:
+                    if (activeItems.length === 1) {
+                        toActiveItem = nextSibling;
+                    } else if (wasAllSelected && lastActivatedItem !== list.firstChild) {
+                        toActiveItem = lastActivatedItem === list.lastChild
+                            ? null
+                            : list.lastChild;
+                    } else if (nextSibling && nextSibling.classList.contains('active')) { // deactivate last activated by down to up select
+                        lastActivatedItem.classList.remove('active');
+
+                        toActiveItem = nextSibling;
+                    } else {
+                        while (nextSibling) {
+                            if (! nextSibling.classList.contains('active')) {
+                                break;
+                            }
+
+                            nextSibling = nextSibling.nextElementSibling;
+                        }
+
+                        toActiveItem = nextSibling;
+
+                        // if the next sibling element is already active, mark the last active element in list as last active
+                        while (nextSibling && nextSibling.nextElementSibling) {
+                            if (! nextSibling.nextElementSibling.classList.contains('active')) {
+                                break;
+                            }
+
+                            nextSibling = nextSibling.nextElementSibling;
+                        }
+
+                        markAsLastActive = nextSibling;
+                    }
+
+                    break;
+                case isMultiSelect && pressedArrowUpKey:
+                    if (activeItems.length === 1) {
+                        toActiveItem = previousSibling;
+                    } else if (wasAllSelected && lastActivatedItem !== list.lastChild) {
+                        toActiveItem = lastActivatedItem === list.firstChild
+                            ? null
+                            : list.lastChild;
+                    } else if (previousSibling && previousSibling.classList.contains('active')) {
+                        lastActivatedItem.classList.remove('active');
+                        toActiveItem = previousSibling;
+                    } else {
+                        while (previousSibling) {
+                            if (! previousSibling.classList.contains('active')) {
+                                break;
+                            }
+
+                            previousSibling = previousSibling.previousElementSibling;
+                        }
+
+                        toActiveItem = previousSibling;
+
+                        // if the previous sibling element is already active, mark the first active element in list as last active
+                        while (previousSibling && previousSibling.previousElementSibling) {
+                            if (! previousSibling.previousElementSibling.classList.contains('active')) {
+                                break;
+                            }
+
+                            previousSibling = previousSibling.previousElementSibling;
+                        }
+
+                        markAsLastActive = previousSibling;
+                    }
+
+                    break;
+                case pressedArrowDownKey:
+                case pressedArrowUpKey:
+                    toActiveItem = pressedArrowDownKey
+                        ? nextSibling ?? lastActivatedItem
+                        : previousSibling ?? lastActivatedItem;
+
+                    if (wasAllSelected && pressedArrowUpKey) {
+                        toActiveItem = previousSibling ?? lastActivatedItem
+                    }
+
+                    // toActiveItem could be `Load More` button
+                    if (toActiveItem && toActiveItem.hasAttribute('data-action-item')) {
+                        activeItems.forEach(item => item.classList.remove('active'));
+                    } else {
+                        toActiveItem = null;
+                    }
+
+                    break;
+            }
+
+            // $currentActiveItems already contain the first/last element of the list and have no prev/next element
+            if (! toActiveItem) {
+                return;
+            }
+
+            toActiveItem.classList.add('active');
+            _this.lastActivatedItemUrl = markAsLastActive
+                ? markAsLastActive.dataset.icingaDetailFilter
+                : toActiveItem.dataset.icingaDetailFilter;
+
+            activeItems = list.querySelectorAll(':scope > [data-action-item].active');
+
+            if (activeItems.length > 1) {
+                url = _this.createMultiSelectUrl(activeItems);
+            } else {
+                url = toActiveItem.querySelector('[href]').getAttribute('href');
+            }
+
+            _this.icinga.loader.loadUrl(
+                url, _this.icinga.loader.getLinkTargetFor($(toActiveItem))
+            );
+        }
+
+        createMultiSelectUrl(items) {
+            let filters = [];
+            items.forEach(item => {
+                filters.push(item.getAttribute('data-icinga-multiselect-filter'));
+            });
+
+            return items[0].parentElement.getAttribute('data-icinga-multiselect-url') + '?' + filters.join('|');
         }
 
         onColumnClose(event) {
