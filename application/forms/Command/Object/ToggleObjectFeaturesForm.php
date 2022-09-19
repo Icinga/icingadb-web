@@ -16,7 +16,7 @@ class ToggleObjectFeaturesForm extends CommandForm
 {
     use Auth;
 
-    const LEAVE_UNCHANGED = 'noop';
+    public const LEAVE_UNCHANGED = 'noop';
 
     protected $features;
 

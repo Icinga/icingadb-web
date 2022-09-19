@@ -21,7 +21,7 @@ use RecursiveIteratorIterator;
 class PluginOutput extends HtmlString
 {
     /** @var string[] Patterns to be replaced in plain text plugin output */
-    const TEXT_PATTERNS = [
+    public const TEXT_PATTERNS = [
         '~\\\t~',
         '~\\\n~',
         '~(\[|\()OK(\]|\))~',
@@ -34,7 +34,7 @@ class PluginOutput extends HtmlString
     ];
 
     /** @var string[] Replacements for {@see PluginOutput::TEXT_PATTERNS} */
-    const TEXT_REPLACEMENTS = [
+    public const TEXT_REPLACEMENTS = [
         "\t",
         "\n",
         '<span class="state-ball ball-size-m state-ok"></span>',
@@ -47,13 +47,13 @@ class PluginOutput extends HtmlString
     ];
 
     /** @var string[] Patterns to be replaced in html plugin output */
-    const HTML_PATTERNS = [
+    public const HTML_PATTERNS = [
         '~\\\t~',
         '~\\\n~'
     ];
 
     /** @var string[] Replacements for {@see PluginOutput::HTML_PATTERNS} */
-    const HTML_REPLACEMENTS = [
+    public const HTML_REPLACEMENTS = [
         "\t",
         "\n"
     ];

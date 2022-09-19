@@ -12,31 +12,31 @@ class ToggleObjectFeatureCommand extends ObjectCommand
     /**
      * Feature for enabling or disabling active checks of a host or service
      */
-    const FEATURE_ACTIVE_CHECKS = 'active_checks_enabled';
+    public const FEATURE_ACTIVE_CHECKS = 'active_checks_enabled';
 
     /**
      * Feature for enabling or disabling passive checks of a host or service
      */
-    const FEATURE_PASSIVE_CHECKS = 'passive_checks_enabled';
+    public const FEATURE_PASSIVE_CHECKS = 'passive_checks_enabled';
 
     /**
      * Feature for enabling or disabling notifications for a host or service
      *
      * Notifications will be sent out only if notifications are enabled on a program-wide basis as well.
      */
-    const FEATURE_NOTIFICATIONS = 'notifications_enabled';
+    public const FEATURE_NOTIFICATIONS = 'notifications_enabled';
 
     /**
      * Feature for enabling or disabling event handler for a host or service
      */
-    const FEATURE_EVENT_HANDLER = 'event_handler_enabled';
+    public const FEATURE_EVENT_HANDLER = 'event_handler_enabled';
 
     /**
      * Feature for enabling or disabling flap detection for a host or service.
      *
      * In order to enable flap detection flap detection must be enabled on a program-wide basis as well.
      */
-    const FEATURE_FLAP_DETECTION = 'flapping_enabled';
+    public const FEATURE_FLAP_DETECTION = 'flapping_enabled';
 
     /**
      * Feature that is to be enabled or disabled
