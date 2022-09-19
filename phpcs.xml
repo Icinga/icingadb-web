@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="Eagle">
-    <description>Sniff our code a while</description>
-
+<ruleset name="PSR12">
+    <!-- Test all PHP files except those in vendor/ -->
     <file>./</file>
-
+    <arg name="extensions" value="php"/>
     <exclude-pattern>vendor/*</exclude-pattern>
 
     <arg name="report-width" value="auto"/>
@@ -11,16 +10,6 @@
     <arg name="report-gitblame"/>
     <arg name="report-summary"/>
     <arg name="encoding" value="UTF-8"/>
-    <arg name="extensions" value="php"/>
 
-    <rule ref="PSR12">
-        <exclude name="PSR12.Properties.ConstantVisibility.NotFound"/>
-    </rule>
-
-    <rule ref="Generic.Files.LineLength">
-        <properties>
-            <property name="lineLimit" value="120"/>
-            <property name="absoluteLineLimit" value="0"/>
-        </properties>
-    </rule>
+    <rule ref="PSR12"/>
 </ruleset>
