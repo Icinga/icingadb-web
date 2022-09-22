@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Hook\CommentOutputHook;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use ipl\Html\BaseHtmlElement;
@@ -106,7 +107,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $markdownLine = new MarkdownLine($this->item->comment);
+        $markdownLine = new MarkdownLine(CommentOutputHook::processComment($this->item->comment));
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addHtml(
             new HtmlElement(

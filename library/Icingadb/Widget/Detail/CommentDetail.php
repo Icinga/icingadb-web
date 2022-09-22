@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Hook\CommentOutputHook;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
@@ -35,7 +36,7 @@ class CommentDetail extends BaseHtmlElement
     {
         return [
             Html::tag('h2', t('Comment')),
-            new MarkdownText($this->comment->text)
+            new MarkdownText(CommentOutputHook::processComment($this->comment->text))
         ];
     }
 

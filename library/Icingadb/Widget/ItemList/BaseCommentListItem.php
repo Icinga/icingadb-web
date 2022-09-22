@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Hook\CommentOutputHook;
 use ipl\Html\Html;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -40,7 +41,7 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $markdownLine = new MarkdownLine($this->item->text);
+        $markdownLine = new MarkdownLine(CommentOutputHook::processComment($this->item->text));
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addFrom($markdownLine);
     }

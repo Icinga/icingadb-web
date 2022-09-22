@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Hook\CommentOutputHook;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
@@ -54,7 +55,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         switch ($this->item->event_type) {
             case 'comment_add':
             case 'comment_remove':
-                $markdownLine = new MarkdownLine($this->item->comment->comment);
+                $markdownLine = new MarkdownLine(CommentOutputHook::processComment($this->item->comment->comment));
                 $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
@@ -65,7 +66,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                 break;
             case 'downtime_end':
             case 'downtime_start':
-                $markdownLine = new MarkdownLine($this->item->downtime->comment);
+                $markdownLine = new MarkdownLine(CommentOutputHook::processComment($this->item->downtime->comment));
                 $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
@@ -106,7 +107,9 @@ abstract class BaseHistoryListItem extends BaseListItem
                         t('This acknowledgement was set before Icinga DB history recording')
                     ));
                 } else {
-                    $markdownLine = new MarkdownLine($this->item->acknowledgement->comment);
+                    $markdownLine = new MarkdownLine(
+                        CommentOutputHook::processComment($this->item->acknowledgement->comment)
+                    );
                     $caption->getAttributes()->add($markdownLine->getAttributes());
                     $caption->add([
                         new Icon(Icons::USER),
