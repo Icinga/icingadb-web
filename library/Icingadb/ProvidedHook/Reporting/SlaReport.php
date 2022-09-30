@@ -71,6 +71,12 @@ abstract class SlaReport extends ReportHook
 
         if (isset($config['breakdown']) && $config['breakdown'] !== 'none') {
             switch ($config['breakdown']) {
+                case 'hour':
+                    $interval = new DateInterval('PT1H');
+                    $format = 'H:i:s';
+                    $boundary = '+1 hour';
+
+                    break;
                 case 'day':
                     $interval = new DateInterval('P1D');
                     $format = 'Y-m-d';
@@ -168,6 +174,7 @@ abstract class SlaReport extends ReportHook
             'label'   => t('Breakdown'),
             'options' => [
                 'none'  => t('None', 'SLA Report Breakdown'),
+                'hour'  => t('Hour'),
                 'day'   => t('Day'),
                 'week'  => t('Week'),
                 'month' => t('Month')
