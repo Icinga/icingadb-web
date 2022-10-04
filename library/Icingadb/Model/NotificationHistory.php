@@ -107,6 +107,7 @@ class NotificationHistory extends Model
             ->setForeignKey('notification_history_id');
         $relations->belongsTo('host', Host::class);
         $relations->belongsTo('service', Service::class)->setJoinType('LEFT');
+        $relations->belongsTo('notification', Notification::class)->setJoinType('LEFT');
 
         $relations->belongsToMany('user', User::class)
             ->through('user_notification_history');
