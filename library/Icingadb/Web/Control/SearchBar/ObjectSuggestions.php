@@ -384,10 +384,15 @@ class ObjectSuggestions extends Suggestions
     {
         foreach ($resolver->getRelations($subject) as $name => $relation) {
             /** @var Relation $relation */
-            $isHasOne = $relation instanceof HasOne;
-            if (empty($path) || $name === 'state' || $name === 'last_comment') {
+            if (
+                empty($path) || (
+                    $name === 'state'
+                    || $name === 'last_comment'
+                    || $name === 'notificationcommand' && $path[0] === 'notification'
+                )
+            ) {
                 $relationPath = [$name];
-                if ($isHasOne && empty($path)) {
+                if ($relation instanceof HasOne && empty($path)) {
                     array_unshift($relationPath, $subject->getTableName());
                 }
 
