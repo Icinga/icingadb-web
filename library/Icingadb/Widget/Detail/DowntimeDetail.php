@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Hook\CommentOutputHook;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
@@ -75,7 +76,7 @@ class DowntimeDetail extends BaseHtmlElement
             Html::sprintf(
                 t('%s commented: %s', '<username> ..: <comment>'),
                 $this->downtime->author,
-                new MarkdownText($this->downtime->comment)
+                new MarkdownText(CommentOutputHook::processComment($this->downtime->comment))
             )
         ]));
 
