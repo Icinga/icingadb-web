@@ -311,7 +311,7 @@ class ApiCommandTransport implements CommandTransportInterface
     public function probe()
     {
         try {
-            $response = (new Client(['timeout' => 15 ]))
+            $response = (new Client(['timeout' =>15]))
                 ->get($this->getUriFor(''), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
                     'headers'       => ['Accept' => 'application/json'],
