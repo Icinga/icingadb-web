@@ -11,6 +11,11 @@ $this->provideHook('health', 'RedisHealth');
 $this->provideHook('Reporting/Report', 'Reporting/HostSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/ServiceSlaReport');
 
+if ($this::exists('reporting')) {
+    $this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostSlaReport');
+    $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServiceSlaReport');
+}
+
 if (! $this::exists('monitoring')) {
     $modulePath = null;
     foreach ($this->app->getModuleManager()->getModuleDirs() as $path) {
