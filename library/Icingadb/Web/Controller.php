@@ -35,12 +35,10 @@ use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
-use ipl\Stdlib\Contract\Paginatable;
 use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
-use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -97,61 +95,6 @@ class Controller extends CompatController
         // For now this also returns the columns, but they should be accessible
         // by calling `ColumnControl::getColumns()` in the future
         return $columns;
-    }
-
-    /**
-     * Create and return the LimitControl
-     *
-     * This automatically shifts the limit URL parameter from {@link $params}.
-     *
-     * @return LimitControl
-     */
-    public function createLimitControl(): LimitControl
-    {
-        $limitControl = new LimitControl(Url::fromRequest());
-        $limitControl->setDefaultLimit($this->getPageSize(null));
-
-        $this->params->shift($limitControl->getLimitParam());
-
-        return $limitControl;
-    }
-
-    /**
-     * Create and return the PaginationControl
-     *
-     * This automatically shifts the pagination URL parameters from {@link $params}.
-     *
-     * @return PaginationControl
-     */
-    public function createPaginationControl(Paginatable $paginatable): PaginationControl
-    {
-        $paginationControl = new PaginationControl($paginatable, Url::fromRequest());
-        $paginationControl->setDefaultPageSize($this->getPageSize(null));
-        $paginationControl->setAttribute('id', $this->getRequest()->protectId('pagination-control'));
-
-        $this->params->shift($paginationControl->getPageParam());
-        $this->params->shift($paginationControl->getPageSizeParam());
-
-        return $paginationControl->apply();
-    }
-
-    /**
-     * Create and return the SortControl
-     *
-     * This automatically shifts the sort URL parameter from {@link $params}.
-     *
-     * @param Query $query
-     * @param array $columns Possible sort columns as sort string-label pairs
-     *
-     * @return SortControl
-     */
-    public function createSortControl(Query $query, array $columns): SortControl
-    {
-        $sortControl = SortControl::create($columns);
-
-        $this->params->shift($sortControl->getSortParam());
-
-        return $sortControl->apply($query);
     }
 
     /**
