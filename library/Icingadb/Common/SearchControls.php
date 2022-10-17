@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Web\Control\SearchBar;
 use ipl\Web\Url;
@@ -12,11 +13,34 @@ use ipl\Web\Widget\ContinueWith;
 
 trait SearchControls
 {
-    use \ipl\Web\Compat\SearchControls;
+    use \ipl\Web\Compat\SearchControls {
+        \ipl\Web\Compat\SearchControls::createSearchBar as private webCreateSearchBar;
+    }
 
     public function fetchFilterColumns(Query $query): array
     {
         return iterator_to_array(ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver()));
+    }
+
+    /**
+     * Create and return the SearchBar
+     *
+     * @param Query $query The query being filtered
+     * @param Url $redirectUrl Url to redirect to upon success
+     * @param array $preserveParams Query params to preserve when redirecting
+     *
+     * @return SearchBar
+     */
+    public function createSearchBar(Query $query, ...$params): SearchBar
+    {
+        $searchBar = $this->webCreateSearchBar($query, ...$params);
+
+        if (($wrapper = $searchBar->getWrapper()) && ! $wrapper->getWrapper()) {
+            // TODO: Remove this once ipl-web v0.7.0 is required
+            $searchBar->addWrapper(Html::tag('div', ['class' => 'search-controls']));
+        }
+
+        return $searchBar;
     }
 
     /**

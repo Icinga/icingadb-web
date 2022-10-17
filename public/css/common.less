@@ -143,6 +143,52 @@ div.show-more {
   .notice {
     display: none;
   }
+
+  // TODO: Remove once ipl-web v0.7.0 is required
+  &:not(.default-layout) {
+    .pagination-control {
+      float: left;
+    }
+
+    .sort-control {
+      display: flex;
+      justify-content: flex-end;
+
+      :not(.form-element) > label {
+        margin-right: 0;
+      }
+
+      .control-button {
+        margin: 0;
+      }
+    }
+
+    > :not(:only-child) {
+      margin-bottom: 0.5em;
+    }
+
+    .search-suggestions {
+      margin-bottom: 2.5em;
+    }
+
+    .search-controls {
+      clear: both;
+      display: flex;
+      min-width: 100%;
+
+      .search-bar {
+        flex: 1 1 auto;
+
+        & ~ .control-button:last-child {
+          margin-right: -.5em;
+        }
+
+        & ~ .control-button {
+          margin-left: .5em;
+        }
+      }
+    }
+  }
 }
 
 .content > h2:first-child,
