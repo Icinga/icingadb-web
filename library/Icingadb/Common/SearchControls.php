@@ -35,7 +35,10 @@ trait SearchControls
     {
         $searchBar = $this->webCreateSearchBar($query, ...$params);
 
-        Html::tag('div', ['class' => 'filter'])->wrap($searchBar);
+        if (($wrapper = $searchBar->getWrapper()) && ! $wrapper->getWrapper()) {
+            // TODO: Remove this once ipl-web v0.7.0 is required
+            $searchBar->addWrapper(Html::tag('div', ['class' => 'search-controls']));
+        }
 
         return $searchBar;
     }

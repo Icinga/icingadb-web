@@ -28,10 +28,6 @@
   color: @gray-semilight;
 }
 
-.pagination-control {
-  float: none;
-}
-
 div.show-more {
   .clearfix();
   float: right;
@@ -104,19 +100,6 @@ div.show-more {
     background-color: @gray-lighter;
   }
 
-  .filter {
-    display: flex;
-    min-width: 100%;
-
-    .search-bar {
-      flex: 1 1 auto;
-    }
-  }
-
-  .pagination-control {
-    float: left;
-  }
-
   .limit-control,
   .view-mode-switcher,
   .sort-control {
@@ -148,38 +131,9 @@ div.show-more {
     }
   }
 
-  .control-button {
+  .search-controls .continue-with {
+    margin-right: -.5em;
     margin-left: .5em;
-  }
-
-  .continue-with,
-  .search-editor-opener {
-    &:last-child {
-      margin-right: -.5em;
-    }
-  }
-
-  .search-suggestions {
-    margin-bottom: 2.5em;
-  }
-
-  .sort-control {
-    display: flex;
-    justify-content: flex-end;
-
-    // Icinga Web 2 override
-    label {
-      margin-right: 0;
-    }
-
-    // Icinga Web 2 override
-    .spinner {
-      height: 100%;
-    }
-
-    .control-button {
-      margin: 0;
-    }
   }
 
   .show-more {
@@ -188,6 +142,52 @@ div.show-more {
 
   .notice {
     display: none;
+  }
+
+  // TODO: Remove once ipl-web v0.7.0 is required
+  &:not(.default-layout) {
+    .pagination-control {
+      float: left;
+    }
+
+    .sort-control {
+      display: flex;
+      justify-content: flex-end;
+
+      :not(.form-element) > label {
+        margin-right: 0;
+      }
+
+      .control-button {
+        margin: 0;
+      }
+    }
+
+    > :not(:only-child) {
+      margin-bottom: 0.5em;
+    }
+
+    .search-suggestions {
+      margin-bottom: 2.5em;
+    }
+
+    .search-controls {
+      clear: both;
+      display: flex;
+      min-width: 100%;
+
+      .search-bar {
+        flex: 1 1 auto;
+
+        & ~ .control-button:last-child {
+          margin-right: -.5em;
+        }
+
+        & ~ .control-button {
+          margin-left: .5em;
+        }
+      }
+    }
   }
 }
 
