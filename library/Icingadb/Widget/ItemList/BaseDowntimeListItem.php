@@ -109,7 +109,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->comment));
+        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->comment ?? ''));
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addHtml(
             new HtmlElement(

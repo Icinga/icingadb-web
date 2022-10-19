@@ -57,7 +57,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         switch ($this->item->event_type) {
             case 'comment_add':
             case 'comment_remove':
-                $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->comment->comment));
+                $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->comment->comment ?? ''));
                 $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),
@@ -68,7 +68,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                 break;
             case 'downtime_end':
             case 'downtime_start':
-                $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->downtime->comment));
+                $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->downtime->comment ?? ''));
                 $caption->getAttributes()->add($markdownLine->getAttributes());
                 $caption->add([
                     new Icon(Icons::USER),

@@ -42,7 +42,7 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function assembleCaption(BaseHtmlElement $caption)
     {
-        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->text));
+        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->text ?? ''));
 
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addFrom($markdownLine);
