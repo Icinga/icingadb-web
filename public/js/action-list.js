@@ -35,7 +35,7 @@
         var $item = $target.closest('[data-action-item]');
         var $list = $item.closest('.action-list');
 
-        if ($target.is('a') && ! $target.is('.subject')) {
+        if ($target.is('a') && (! $target.is('.subject') || event.ctrlKey || event.metaKey)) {
             return true;
         }
 
