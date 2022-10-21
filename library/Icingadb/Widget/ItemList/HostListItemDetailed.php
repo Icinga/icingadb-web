@@ -31,7 +31,7 @@ class HostListItemDetailed extends BaseHostListItem
     {
         $statusIcons = new HtmlElement('div', Attributes::create(['class' => 'status-icons']));
 
-        if ($this->item->state->last_comment_id !== null) {
+        if ($this->item->state->last_comment->host_id === $this->item->id) {
             $comment = $this->item->state->last_comment;
             $comment->host = $this->item;
             $comment = (new CommentList([$comment]))

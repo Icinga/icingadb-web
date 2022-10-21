@@ -31,7 +31,7 @@ class ServiceListItemDetailed extends BaseServiceListItem
     {
         $statusIcons = new HtmlElement('div', Attributes::create(['class' => 'status-icons']));
 
-        if ($this->item->state->last_comment_id !== null) {
+        if ($this->item->state->last_comment->service_id === $this->item->id) {
             $comment = $this->item->state->last_comment;
             $comment->service = $this->item;
             $comment = (new CommentList([$comment]))
