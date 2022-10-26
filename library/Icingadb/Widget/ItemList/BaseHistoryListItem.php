@@ -132,10 +132,14 @@ abstract class BaseHistoryListItem extends BaseListItem
                         ? $this->item->host->checkcommand_name
                         : $this->item->service->checkcommand_name;
                     if (isset($commandName)) {
-                        $caption->addHtml(new PluginOutputContainer(
-                            (new PluginOutput($this->item->notification->text))
-                                ->setCommandName($commandName)
-                        ));
+                        if (empty($this->item->notification->text)) {
+                            $caption->addHtml(new EmptyState(t('Output unavailable.')));
+                        } else {
+                            $caption->addHtml(new PluginOutputContainer(
+                                (new PluginOutput($this->item->notification->text))
+                                    ->setCommandName($commandName)
+                            ));
+                        }
                     } else {
                         $caption->addHtml(new EmptyState(t('Waiting for Icinga DB to synchronize the config.')));
                     }
@@ -147,10 +151,14 @@ abstract class BaseHistoryListItem extends BaseListItem
                     ? $this->item->host->checkcommand_name
                     : $this->item->service->checkcommand_name;
                 if (isset($commandName)) {
-                    $caption->addHtml(new PluginOutputContainer(
-                        (new PluginOutput($this->item->state->output))
-                            ->setCommandName($commandName)
-                    ));
+                    if (empty($this->item->state->output)) {
+                        $caption->addHtml(new EmptyState(t('Output unavailable.')));
+                    } else {
+                        $caption->addHtml(new PluginOutputContainer(
+                            (new PluginOutput($this->item->state->output))
+                                ->setCommandName($commandName)
+                        ));
+                    }
                 } else {
                     $caption->addHtml(new EmptyState(t('Waiting for Icinga DB to synchronize the config.')));
                 }
