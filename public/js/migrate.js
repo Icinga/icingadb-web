@@ -11,9 +11,11 @@
     const POPUP_HTML = '<div class="icinga-module module-icingadb">\n' +
         '   <div id="migrate-popup">\n' +
         '       <div class="suggestion-area">\n' +
-        '           <p>Preview this in Icinga DB</p>\n' +
-        '           <ul></ul>\n' +
         '           <button type="button" class="close">Don\'t show this again</button>\n' +
+        '           <ul class="search-migration-suggestions"></ul>\n' +
+        '           <p class="search-migration-hint">Miss some results? Try the link(s) below</p>\n' +
+        '           <ul class="monitoring-migration-suggestions"></ul>\n' +
+        '           <p class="monitoring-migration-hint">Preview this in Icinga DB</p>\n' +
         '       </div>\n' +
         '       <div class="minimizer"><i class="icon-"></i></div>\n' +
         '    </div>\n' +
@@ -37,6 +39,7 @@
         this.knownBackendSupport = {};
         this.urlMigrationReadyState = null;
         this.backendSupportReadyState = null;
+        this.searchMigrationReadyState = null;
         this.backendSupportRelated = {};
         this.$popup = null;
 
@@ -48,6 +51,7 @@
 
         // We don't want to ask the server to migrate non-monitoring urls
         this.isMonitoringUrl = new RegExp('^' + icinga.config.baseUrl + '/monitoring/');
+
         this.on('rendered', this.onRendered, this);
         this.on('close-column', this.onColumnClose, this);
         this.on('click', '#migrate-popup button.close', this.onClose, this);
@@ -107,7 +111,8 @@
     };
 
     Migrate.prototype.prepareMigration = function($target) {
-        let urls = {};
+        let monitoringUrls = {};
+        let searchUrls = {};
         let modules = {}
 
         $target.each((_, container) => {
@@ -115,14 +120,18 @@
             let href = $container.data('icingaUrl');
             let containerId = $container.attr('id');
 
-            if (typeof href !== 'undefined' && href.match(this.isMonitoringUrl)) {
+            if (!! href) {
                 if (
                     typeof this.previousMigrations[containerId] !== 'undefined'
                     && this.previousMigrations[containerId] === href
                 ) {
                     delete this.previousMigrations[containerId];
                 } else {
-                    urls[containerId] = href;
+                    if (href.match(this.isMonitoringUrl)) {
+                        monitoringUrls[containerId] = href;
+                    } else if ($container.find('[data-enrichment-type="search-bar"]').length) {
+                        searchUrls[containerId] = href;
+                    }
                 }
             }
 
@@ -132,11 +141,18 @@
             }
         });
 
-        if (Object.keys(urls).length) {
+        if (Object.keys(monitoringUrls).length) {
             this.setUrlMigrationReadyState(false);
-            this.migrateMonitoringUrls(urls);
+            this.migrateUrls(monitoringUrls, 'monitoring');
         } else {
             this.setUrlMigrationReadyState(null);
+        }
+
+        if (Object.keys(searchUrls).length) {
+            this.setSearchMigrationReadyState(false);
+            this.migrateUrls(searchUrls, 'search');
+        } else {
+            this.setSearchMigrationReadyState(null);
         }
 
         if (Object.keys(modules).length) {
@@ -146,7 +162,11 @@
             this.setBackendSupportReadyState(null);
         }
 
-        if (this.urlMigrationReadyState === null && this.backendSupportReadyState === null) {
+        if (
+            this.urlMigrationReadyState === null
+            && this.backendSupportReadyState === null
+            && this.searchMigrationReadyState === null
+        ) {
             this.cleanupPopup();
         }
     };
@@ -221,7 +241,7 @@
             _this.knownMigrations[containerUrl] = false;
         }
 
-        if (_this.Popup().find('li').length === 1) {
+        if (_this.Popup().find('li').length === 1 && ! _this.Popup().find('#setAsBackendForm').length) {
             _this.hidePopup(function () {
                 // Let the transition finish first, looks cleaner
                 $suggestion.remove();
@@ -246,7 +266,7 @@
         }
     };
 
-    Migrate.prototype.migrateMonitoringUrls = function(urls) {
+    Migrate.prototype.migrateUrls = function(urls, type) {
         var _this = this,
             containerIds = [],
             containerUrls = [];
@@ -258,24 +278,34 @@
             }
         });
 
+        let endpoint, changeCallback;
+        if (type === 'monitoring') {
+            endpoint = 'monitoring-url';
+            changeCallback = this.changeUrlMigrationReadyState.bind(this);
+        } else {
+            endpoint = 'search-url';
+            changeCallback = this.changeSearchMigrationReadyState.bind(this);
+        }
+
         if (containerUrls.length) {
             var req = $.ajax({
                 context     : this,
                 type        : 'post',
-                url         : this.icinga.config.baseUrl + '/icingadb/migrate/monitoring-url',
+                url         : this.icinga.config.baseUrl + '/icingadb/migrate/' + endpoint,
                 headers     : { 'Accept': 'application/json' },
                 contentType : 'application/json',
                 data        : JSON.stringify(containerUrls)
             });
 
             req.urls = urls;
+            req.suggestionType = type;
             req.urlIndexToContainerId = containerIds;
             req.done(this.processUrlMigrationResults);
-            req.always(() => this.changeUrlMigrationReadyState(true));
+            req.always(() => changeCallback(true));
         } else {
             // All urls have already been migrated once, show popup immediately
-            this.addSuggestions(urls);
-            this.changeUrlMigrationReadyState(true);
+            this.addSuggestions(urls, type);
+            changeCallback(true);
         }
     };
 
@@ -298,7 +328,7 @@
             _this.knownMigrations[req.urls[containerId]] = migratedUrl;
         });
 
-        this.addSuggestions(req.urls);
+        this.addSuggestions(req.urls, req.suggestionType);
     };
 
     Migrate.prototype.prepareBackendCheckboxForm = function(modules) {
@@ -373,7 +403,7 @@
             $form.attr('data-base-target', 'migrate-popup-backend-submit-blackhole');
             $form.append('<div id="migrate-popup-backend-submit-blackhole"></div>');
 
-            this.Popup().find('.suggestion-area > ul').after($form);
+            this.Popup().find('.monitoring-migration-suggestions').before($form);
         } else {
             let $newForm = $(html);
             $form.find('[name=backend]').prop('checked', $newForm.find('[name=backend]').is(':checked'));
@@ -382,10 +412,17 @@
         this.showPopup();
     }
 
-    Migrate.prototype.addSuggestions = function(urls) {
+    Migrate.prototype.addSuggestions = function(urls, type) {
+        var where;
+        if (type === 'monitoring') {
+            where = '.monitoring-migration-suggestions';
+        } else {
+            where = '.search-migration-suggestions';
+        }
+
         var _this = this,
             hasSuggestions = false,
-            $ul = this.Popup().find('.suggestion-area > ul');
+            $ul = this.Popup().find('.suggestion-area > ul' + where);
         $.each(urls, function (containerId, containerUrl) {
             // No urls for which the user clicked "No" or an error occurred and only migrated urls please
             if (_this.knownMigrations[containerUrl] !== false && _this.knownMigrations[containerUrl] !== containerUrl) {
@@ -425,6 +462,9 @@
 
         if (hasSuggestions) {
             this.showPopup();
+            if (type === 'search') {
+                this.maximizePopup();
+            }
         }
     };
 
@@ -442,6 +482,8 @@
                 || _this.knownMigrations[containerUrl] === false
                 // Already migrated or no migration necessary
                 || containerUrl === _this.knownMigrations[containerUrl]
+                // The container URL changed
+                || containerUrl !== $suggestion.data('containerUrl')
             ) {
                 toBeRemoved.push($suggestion);
             }
@@ -478,7 +520,7 @@
         let hasBackendForm = this.cleanupBackendForm();
 
         if (hasBackendForm !== true && this.Popup().find('li').length === toBeRemoved.length) {
-            this.hidePopup(function () {
+            this.hidePopup(() => {
                 // Let the transition finish first, looks cleaner
                 $.each(toBeRemoved, function (_, $suggestion) {
                     $suggestion.remove();
@@ -496,13 +538,20 @@
             if (typeof hasBackendForm === 'object') {
                 hasBackendForm.remove();
             }
+
+            // Let showPopup() handle the automatic minimization in case all search suggestions have been removed
+            this.showPopup();
         }
     };
 
     Migrate.prototype.showPopup = function() {
         var $popup = this.Popup();
-        if (this.storage.get('minimized')) {
-            $popup.addClass('active minimized hidden');
+        if (this.storage.get('minimized') && ! this.forceFullyMaximized()) {
+            if (this.isShown()) {
+                this.minimizePopup();
+            } else {
+                $popup.addClass('active minimized hidden');
+            }
         } else {
             $popup.addClass('active');
         }
@@ -532,6 +581,10 @@
         this.Popup().removeClass('minimized hidden');
     };
 
+    Migrate.prototype.forceFullyMaximized = function() {
+        return this.Popup().find('.search-migration-suggestions:not(:empty)').length > 0;
+    };
+
     Migrate.prototype.togglePopup = function() {
         if (this.Popup().is('.minimized')) {
             this.maximizePopup();
@@ -549,7 +602,23 @@
     Migrate.prototype.changeUrlMigrationReadyState = function (state) {
         this.setUrlMigrationReadyState(state);
 
-        if (this.backendSupportReadyState !== false) {
+        if (this.backendSupportReadyState !== false && this.searchMigrationReadyState !== false) {
+            this.searchMigrationReadyState = null;
+            this.backendSupportReadyState = null;
+            this.urlMigrationReadyState = null;
+            this.cleanupPopup();
+        }
+    };
+
+    Migrate.prototype.setSearchMigrationReadyState = function (state) {
+        this.searchMigrationReadyState = state;
+    };
+
+    Migrate.prototype.changeSearchMigrationReadyState = function (state) {
+        this.setSearchMigrationReadyState(state);
+
+        if (this.backendSupportReadyState !== false && this.urlMigrationReadyState !== false) {
+            this.searchMigrationReadyState = null;
             this.backendSupportReadyState = null;
             this.urlMigrationReadyState = null;
             this.cleanupPopup();
@@ -563,7 +632,8 @@
     Migrate.prototype.changeBackendSupportReadyState = function (state) {
         this.setBackendSupportReadyState(state);
 
-        if (this.urlMigrationReadyState !== false) {
+        if (this.urlMigrationReadyState !== false && this.searchMigrationReadyState !== false) {
+            this.searchMigrationReadyState = null;
             this.backendSupportReadyState = null;
             this.urlMigrationReadyState = null;
             this.cleanupPopup();
