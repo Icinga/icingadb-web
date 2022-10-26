@@ -521,7 +521,7 @@ class EventDetail extends BaseHtmlElement
             } else {
                 $expired = false;
                 if ($acknowledgement->expire_time) {
-                    $now = (new DateTime())->setTimezone(new DateTimeZone(DateTimeZone::UTC));
+                    $now = (new DateTime())->setTimezone(new DateTimeZone('UTC'));
                     $expiresOn = clone $now;
                     $expiresOn->setTimestamp($acknowledgement->expire_time);
                     if ($now <= $expiresOn) {
