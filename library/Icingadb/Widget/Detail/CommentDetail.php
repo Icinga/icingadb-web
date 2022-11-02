@@ -11,6 +11,8 @@ use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeUntil;
@@ -108,7 +110,7 @@ class CommentDetail extends BaseHtmlElement
         }
 
         $action = Links::commentsDelete();
-        $action->setParam('name', $this->comment->name);
+        $action->setQueryString(QueryString::render(Filter::equal('name', $this->comment->name)));
 
         return (new DeleteCommentForm())
             ->setObjects([$this->comment])
