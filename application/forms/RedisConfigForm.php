@@ -407,6 +407,7 @@ class RedisConfigForm extends ConfigForm
 
         $redis2Host = $this->getValue('redis2_host');
         $redis2Port = $this->getValue('redis2_port');
+        $redis2Password = $this->getValue('redis2_password');
         $redis2Section = $connectionConfig->getSection('redis2');
         if (! empty($redis2Host)) {
             $redis2Section['host'] = $redis2Host;
