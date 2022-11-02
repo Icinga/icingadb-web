@@ -399,10 +399,19 @@ class RedisConfigForm extends ConfigForm
         if (! empty($redis1Port)) {
             $redis1Section['port'] = $redis1Port;
             $this->getElement('redis1_port')->setValue(null);
+        } else {
+            $redis1Section['port'] = null;
         }
+
         if (! empty($redis1Password)) {
             $redis1Section['password'] = $redis1Password;
             $this->getElement('redis1_password')->setValue(null);
+        } else {
+            $redis1Section['password'] = null;
+        }
+
+        if (! array_filter($redis1Section->toArray())) {
+            $connectionConfig->removeSection('redis1');
         }
 
         $redis2Host = $this->getValue('redis2_host');
@@ -413,15 +422,27 @@ class RedisConfigForm extends ConfigForm
             $redis2Section['host'] = $redis2Host;
             $this->getElement('redis2_host')->setValue(null);
             $connectionConfig->setSection('redis2', $redis2Section);
+        } else {
+            $redis2Section['host'] = null;
         }
+
         if (! empty($redis2Port)) {
             $redis2Section['port'] = $redis2Port;
             $this->getElement('redis2_port')->setValue(null);
             $connectionConfig->setSection('redis2', $redis2Section);
+        } else {
+            $redis2Section['port'] = null;
         }
+
         if (! empty($redis2Password)) {
             $redis2Section['password'] = $redis2Password;
             $this->getElement('redis2_password')->setValue(null);
+        } else {
+            $redis2Section['password'] = null;
+        }
+
+        if (! array_filter($redis2Section->toArray())) {
+            $connectionConfig->removeSection('redis2');
         }
 
         $connectionConfig->saveIni();
