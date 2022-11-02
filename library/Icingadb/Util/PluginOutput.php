@@ -82,6 +82,11 @@ class PluginOutput extends HtmlString
     public function isHtml(): bool
     {
         if ($this->isHtml === null) {
+            if (empty($this->getContent())) {
+                // "Nothing" can't be HTML
+                return false;
+            }
+
             throw new LogicException('Output not rendered yet');
         }
 
