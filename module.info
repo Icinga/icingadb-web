@@ -1,5 +1,5 @@
 Module: icingadb
-Version: 1.0.1
+Version: 1.0.2
 Requires:
   Libraries: icinga-php-library (>=0.10.0), icinga-php-thirdparty (>=0.11.0)
 Description: Icinga DB Web
