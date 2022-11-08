@@ -77,7 +77,7 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
             array(
                 'description'   => t('Schedule child downtimes.'),
                 'label'         => t('Child Options'),
-                'multiOptions'  => [
+                'options'       => [
                     0 => t('Do nothing with child hosts'),
                     1 => t('Schedule triggered downtime for all child hosts'),
                     2 => t('Schedule non-triggered downtime for all child hosts')

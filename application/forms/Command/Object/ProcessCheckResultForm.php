@@ -79,7 +79,7 @@ class ProcessCheckResultForm extends CommandForm
                 'required'      => true,
                 'label'         => t('Status'),
                 'description'   => t('The state this check result should report'),
-                'multiOptions'  => $object instanceof Host ? [
+                'options'       => $object instanceof Host ? [
                     ProcessCheckResultCommand::HOST_UP          => t('UP', 'icinga.state'),
                     ProcessCheckResultCommand::HOST_DOWN        => t('DOWN', 'icinga.state')
                 ] : [
