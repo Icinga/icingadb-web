@@ -15,6 +15,7 @@ use Icinga\Module\Reporting\ReportRow;
 use Icinga\Module\Reporting\Timerange;
 use ipl\Html\Form;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Filter\QueryString;
 
@@ -194,6 +195,14 @@ abstract class SlaReport extends ReportHook
             'placeholder' => static::DEFAULT_REPORT_PRECISION,
             'min'         => '1',
             'max'         => '12'
+        ]);
+
+        $form->addElement('checkbox', 'export_total', [
+            'label'          => t('Export Total Averages'),
+            'description'    => t('Export total averages to CSV and JSON'),
+            // Instead of y/n, 0/1 can be implicitly cast to bool which is done where the config is actually used.
+            'checkedValue'   => '1',
+            'uncheckedValue' => '0'
         ]);
     }
 
