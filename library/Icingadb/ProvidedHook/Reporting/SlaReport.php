@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\ProvidedHook\Reporting;
 
 use DateInterval;
 use DatePeriod;
+use Generator;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Widget\EmptyState;
@@ -15,6 +16,8 @@ use Icinga\Module\Reporting\ReportRow;
 use Icinga\Module\Reporting\Timerange;
 use ipl\Html\Form;
 use ipl\Html\Html;
+use ipl\Orm\Query;
+use ipl\Sql\Expression;
 use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Filter\QueryString;
 
@@ -57,9 +60,9 @@ abstract class SlaReport extends ReportHook
      * @param Timerange $timerange
      * @param Rule|null $filter
      *
-     * @return iterable
+     * @return Query
      */
-    abstract protected function fetchSla(Timerange $timerange, Rule $filter = null);
+    abstract protected function fetchSla(Timerange $timerange, Rule $filter = null): Query;
 
     protected function fetchReportData(Timerange $timerange, array $config = null)
     {
@@ -68,6 +71,27 @@ abstract class SlaReport extends ReportHook
 
         $filter = trim((string) $config['filter']) ?: '*';
         $filter = $filter !== '*' ? QueryString::parse($filter) : null;
+
+        $yieldSla = function (Timerange $timerange, Rule $filter = null) use ($config): Generator {
+            $sla = $this->fetchSla($timerange, $filter);
+
+            if ($config['only-violation'] === '1') {
+                $threshold = $config['threshold'] ?? static::DEFAULT_THRESHOLD;
+
+                $sla->assembleSelect();
+                $sla->getSelectBase()->where(new Expression(
+                    '(%s) < %F',
+                    [$sla->getColumns()['sla']->getStatement(), $threshold]
+                ));
+                //$sla->filter(Filter::lessThan('sla', $threshold));
+                //$sla->getSelectBase()->where(['sla < ?' => $threshold]) requires to wrap Model again and
+                // order by sla after
+            }
+
+            foreach ($sla as $row) {
+                yield $row;
+            }
+        };
 
         if (isset($config['breakdown']) && $config['breakdown'] !== 'none') {
             switch ($config['breakdown']) {
@@ -96,7 +120,7 @@ abstract class SlaReport extends ReportHook
             $rd->setDimensions($dimensions);
 
             foreach ($this->yieldTimerange($timerange, $interval, $boundary) as list($start, $end)) {
-                foreach ($this->fetchSla(new Timerange($start, $end), $filter) as $row) {
+                foreach ($yieldSla(new Timerange($start, $end), $filter) as $row) {
                     $row = $this->createReportRow($row);
 
                     if ($row === null) {
@@ -111,7 +135,7 @@ abstract class SlaReport extends ReportHook
                 }
             }
         } else {
-            foreach ($this->fetchSla($timerange, $filter) as $row) {
+            foreach ($yieldSla($timerange, $filter) as $row) {
                 $rows[] = $this->createReportRow($row);
             }
         }
@@ -129,7 +153,7 @@ abstract class SlaReport extends ReportHook
      * @param string|null  $boundary English text datetime description for calculating bounds to get
      *                               calendar days, weeks or months instead of relative times according to interval
      *
-     * @return \Generator
+     * @return Generator
      */
     protected function yieldTimerange(Timerange $timerange, DateInterval $interval, $boundary = null)
     {
@@ -187,6 +211,12 @@ abstract class SlaReport extends ReportHook
             'placeholder' => static::DEFAULT_REPORT_PRECISION,
             'min'         => '1',
             'max'         => '12'
+        ]);
+
+        $form->addElement('checkbox', 'only-violation', [
+            'label'          => t('Show only critical SLA'),
+            'checkedValue'   => '1',
+            'uncheckedValue' => '0'
         ]);
     }
 

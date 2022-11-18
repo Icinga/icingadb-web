@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Reporting\ReportData;
 use Icinga\Module\Reporting\ReportRow;
 use Icinga\Module\Reporting\Timerange;
+use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter\Rule;
 
@@ -44,7 +45,7 @@ class ServiceSlaReport extends SlaReport
             ->setValues([(float) $row->sla]);
     }
 
-    protected function fetchSla(Timerange $timerange, Rule $filter = null)
+    protected function fetchSla(Timerange $timerange, Rule $filter = null): Query
     {
         $sla = Service::on($this->getDb())
             ->columns([
