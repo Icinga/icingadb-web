@@ -61,8 +61,8 @@ wget https://packages.icinga.com/centos/ICINGA-release.repo -O /etc/yum.repos.d/
 <!-- {% endif %} -->
 
 ```bash
-apt-get update
-apt-get -y install apt-transport-https wget gnupg
+apt update
+apt -y install apt-transport-https wget gnupg
 
 wget -O - https://packages.icinga.com/icinga.key | apt-key add -
 
@@ -72,7 +72,7 @@ DIST=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release); \
  echo "deb-src https://packages.icinga.com/debian icinga-${DIST} main" >> \
  /etc/apt/sources.list.d/${DIST}-icinga.list
 
-apt-get update
+apt update
 ```
 <!-- {% endif %} -->
 
@@ -118,8 +118,8 @@ zypper ref
 <!-- {% endif %} -->
 
 ```bash
-apt-get update
-apt-get -y install apt-transport-https wget gnupg
+apt update
+apt -y install apt-transport-https wget gnupg
 
 wget -O - https://packages.icinga.com/icinga.key | apt-key add -
 
@@ -129,7 +129,7 @@ wget -O - https://packages.icinga.com/icinga.key | apt-key add -
  echo "deb-src https://packages.icinga.com/ubuntu icinga-${DIST} main" >> \
  /etc/apt/sources.list.d/${DIST}-icinga.list
 
-apt-get update
+apt update
 ```
 <!-- {% endif %} -->
 
@@ -164,7 +164,7 @@ yum install icingadb-web
 #### Debian / Ubuntu
 <!-- {% endif %} -->
 ```bash
-apt-get install icingadb-web
+apt install icingadb-web
 ```
 <!-- {% endif %} -->
 
