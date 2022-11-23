@@ -161,12 +161,15 @@ abstract class SlaReport extends ReportHook
     public function initConfigForm(Form $form)
     {
         $form->addElement('text', 'filter', [
-            'label' => t('Filter')
+            'description' => t('Filter for objects you want to create the report for'),
+            'label'       => t('Filter')
         ]);
 
         $form->addElement('select', 'breakdown', [
-            'label'   => t('Breakdown'),
-            'options' => [
+            'description' => t('Choose breakdown to set the level of detail. '
+                . 'The shorter the breakdown, the higher the level of detail'),
+            'label'       => t('Breakdown'),
+            'options'     => [
                 'none'  => t('None', 'SLA Report Breakdown'),
                 'day'   => t('Day'),
                 'week'  => t('Week'),
@@ -175,6 +178,8 @@ abstract class SlaReport extends ReportHook
         ]);
 
         $form->addElement('number', 'threshold', [
+            'description' => t('Percentage of uptime your SLA guarantees. '
+                . 'SLA over the threshold will be colored in red'),
             'label'       => t('Threshold'),
             'placeholder' => static::DEFAULT_THRESHOLD,
             'step'        => '0.01',
@@ -183,6 +188,7 @@ abstract class SlaReport extends ReportHook
         ]);
 
         $form->addElement('number', 'sla_precision', [
+            'description' => t('The SLA precision'),
             'label'       => t('Amount Decimal Places'),
             'placeholder' => static::DEFAULT_REPORT_PRECISION,
             'min'         => '1',
