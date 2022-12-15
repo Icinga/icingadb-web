@@ -75,6 +75,11 @@
         var _this = event.data.self;
         var $target = $(event.target);
 
+        if (_this.tempStorage.get('closed') || $('#layout.fullscreen-layout').length) {
+            // Don't bother in case the user closed the popup or we're in fullscreen
+            return;
+        }
+
         if (! $target.is('#main > .container')) {
             if ($target.is('#main .container')) {
                 var attrUrl = $target.attr('data-icinga-url');
@@ -87,11 +92,6 @@
             }
 
             // We are else really only interested in top-level containers
-            return;
-        }
-
-        if (_this.tempStorage.get('closed') || $('#layout.fullscreen-layout').length) {
-            // Don't bother in case the user closed the popup or we're in fullscreen
             return;
         }
 
