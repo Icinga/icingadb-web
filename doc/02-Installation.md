@@ -107,7 +107,12 @@ wget https://packages.icinga.com/subscription/rhel/ICINGA-release.repo -O /etc/y
 ```bash
 rpm --import https://packages.icinga.com/icinga.key
 
-zypper ar https://packages.icinga.com/subscription/sles/ICINGA-release.repo
+wget https://packages.icinga.com/subscription/sles/ICINGA-release.repo -O /etc/zypp/repos.d/ICINGA-release.repo
+```
+
+Now edit your `/etc/zypp/repos.d/ICINGA-release.repo` file with your credentials.
+
+```
 zypper ref
 ```
 <!-- {% endif %} -->
