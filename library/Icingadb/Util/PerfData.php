@@ -312,7 +312,8 @@ class PerfData
      */
     public function isVisualizable(): bool
     {
-        return isset($this->minValue) && isset($this->maxValue) && isset($this->value);
+        return is_numeric($this->minValue ?? null) && is_numeric($this->maxValue ?? null)
+            && is_numeric($this->value ?? null);
     }
 
     /**
