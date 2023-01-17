@@ -426,11 +426,15 @@ class PerfData
         $parts = explode(';', $this->perfdataValue);
 
         $matches = array();
-        if (preg_match('@^(-?(?:\d+)?(?:\.\d+)?)([a-zA-Z%°]{1,3})$@u', $parts[0], $matches)) {
+        if (preg_match('@^(U|-?(?:\d+)?(?:\.\d+)?)([a-zA-TV-Z%°]{1,3})$@u', $parts[0], $matches)) {
             $this->unit = $matches[2];
             $this->value = $matches[1];
         } else {
             $this->value = $parts[0];
+        }
+
+        if (! is_numeric($this->value)) {
+            $this->value = null;
         }
 
         switch (count($parts)) {
