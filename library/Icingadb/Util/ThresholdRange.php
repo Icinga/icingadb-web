@@ -92,7 +92,7 @@ class ThresholdRange
      *
      * @return  $this
      */
-    public function setMin(float $min): self
+    public function setMin(?float $min): self
     {
         $this->min = $min;
         return $this;
@@ -115,7 +115,7 @@ class ThresholdRange
      *
      * @return  $this
      */
-    public function setMax(float $max): self
+    public function setMax(?float $max): self
     {
         $this->max = $max;
         return $this;
