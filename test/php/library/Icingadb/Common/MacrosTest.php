@@ -26,80 +26,92 @@ class MacrosTest extends TestCase
 
     public function testHostMacros()
     {
-        $mock = \Mockery::mock(Host::class);
-        $mock->name = 'test';
-        $mock->address = '1.1.1.1';
-        $mock->address6 = '::1';
-        $mock->vars = self::VARS;
+        $host = new Host();
+        $host->name = 'test';
+        $host->address = '1.1.1.1';
+        $host->address6 = '::1';
+        $host->vars = self::VARS;
 
-        $mock->hostgroup = new Query();
+        $host->hostgroup = new Query();
 
-        $this->assertEquals($mock->name, $this->expandMacros('$host.name$', $mock));
-        $this->assertEquals($mock->name, $this->expandMacros('$name$', $mock));
-        $this->assertEquals($mock->address, $this->expandMacros('$host.address$', $mock));
-        $this->assertEquals($mock->address6, $this->expandMacros('$host.address6$', $mock));
+        $this->assertEquals($host->name, $this->expandMacros('$host.name$', $host));
+        $this->assertEquals($host->name, $this->expandMacros('$name$', $host));
+        $this->assertEquals($host->address, $this->expandMacros('$host.address$', $host));
+        $this->assertEquals($host->address6, $this->expandMacros('$host.address6$', $host));
 
         // A Host can have more than one hostgroups
-        $this->assertEquals('$host.hostgroup$', $this->expandMacros('$host.hostgroup$', $mock));
-        $this->assertEquals('$host.hostgroup.name$', $this->expandMacros('$host.hostgroup.name$', $mock));
+        $this->assertEquals('$host.hostgroup$', $this->expandMacros('$host.hostgroup$', $host));
+        $this->assertEquals('$host.hostgroup.name$', $this->expandMacros('$host.hostgroup.name$', $host));
 
         // Host custom vars
-        $this->assertEquals($mock->vars['os'], $this->expandMacros('$host.vars.os$', $mock));
-        $this->assertEquals($mock->vars['os'], $this->expandMacros('$vars.os$', $mock));
-        $this->assertEquals($mock->vars['days[2]'], $this->expandMacros('$vars.days[2]$', $mock));
-        $this->assertEquals($mock->vars['days[4]'], $this->expandMacros('$host.vars.days[4]$', $mock));
+        $this->assertEquals($host->vars['os'], $this->expandMacros('$host.vars.os$', $host));
+        $this->assertEquals($host->vars['os'], $this->expandMacros('$vars.os$', $host));
+        $this->assertEquals($host->vars['days[2]'], $this->expandMacros('$vars.days[2]$', $host));
+        $this->assertEquals($host->vars['days[4]'], $this->expandMacros('$host.vars.days[4]$', $host));
 
         // Host to service relation
-        $this->assertEquals('$service.name$', $this->expandMacros('$service.name$', $mock));
-        $this->assertEquals('$service.address$', $this->expandMacros('$service.address$', $mock));
+        $this->assertEquals('$service.name$', $this->expandMacros('$service.name$', $host));
+        $this->assertEquals('$service.address$', $this->expandMacros('$service.address$', $host));
 
         // Service custom vars
-        $this->assertEquals('$service.vars.os$', $this->expandMacros('$service.vars.os$', $mock));
-        $this->assertEquals('$service.vars.days[0]$', $this->expandMacros('$service.vars.days[0]$', $mock));
-        $this->assertEquals('$service.vars.days[2]$', $this->expandMacros('$service.vars.days[2]$', $mock));
+        $this->assertEquals('$service.vars.os$', $this->expandMacros('$service.vars.os$', $host));
+        $this->assertEquals('$service.vars.days[0]$', $this->expandMacros('$service.vars.days[0]$', $host));
+        $this->assertEquals('$service.vars.days[2]$', $this->expandMacros('$service.vars.days[2]$', $host));
     }
 
     public function testServiceMacros()
     {
-        $mock = \Mockery::mock(Service::class);
-        $mock->name = 'test-service';
-        $mock->description = 'A test service';
-        $mock->vars = self::VARS;
+        $service = new Service();
+        $service->name = 'test-service';
+        $service->description = 'A test service';
+        $service->vars = self::VARS;
 
-        $mock->servicegroup = new Query();
+        $service->servicegroup = new Query();
 
-        $hostMock = \Mockery::mock(Host::class);
-        $hostMock->name = 'test';
-        $hostMock->address = '1.1.1.1';
-        $hostMock->hostgroup = new ResultSet(new \ArrayIterator());
-        $hostMock->vars = self::VARS;
+        $host = new Host();
+        $host->name = 'test';
+        $host->address = '1.1.1.1';
+        $host->hostgroup = new ResultSet(new \ArrayIterator());
+        $host->vars = self::VARS;
 
-        $mock->host = $hostMock;
+        $service->host = $host;
 
-        $this->assertEquals($mock->name, $this->expandMacros('$service.name$', $mock));
-        $this->assertEquals($mock->name, $this->expandMacros('$name$', $mock));
-        $this->assertEquals($mock->description, $this->expandMacros('$service.description$', $mock));
+        $this->assertEquals($service->name, $this->expandMacros('$service.name$', $service));
+        $this->assertEquals($service->name, $this->expandMacros('$name$', $service));
+        $this->assertEquals($service->description, $this->expandMacros('$service.description$', $service));
 
         // A Service can have more than one hostgroups
-        $this->assertEquals('$service.servicegroup$', $this->expandMacros('$service.servicegroup$', $mock));
-        $this->assertEquals('$service.servicegroup.name$', $this->expandMacros('$service.servicegroup.name$', $mock));
+        $this->assertEquals(
+            '$service.servicegroup$',
+            $this->expandMacros('$service.servicegroup$', $service)
+        );
+        $this->assertEquals(
+            '$service.servicegroup.name$',
+            $this->expandMacros('$service.servicegroup.name$', $service)
+        );
 
         // Service custom vars
-        $this->assertEquals($mock->vars['os'], $this->expandMacros('$service.vars.os$', $mock));
-        $this->assertEquals($mock->vars['os'], $this->expandMacros('$vars.os$', $mock));
-        $this->assertEquals($mock->vars['days[2]'], $this->expandMacros('$vars.days[2]$', $mock));
-        $this->assertEquals($mock->vars['days[4]'], $this->expandMacros('$service.vars.days[4]$', $mock));
+        $this->assertEquals($service->vars['os'], $this->expandMacros('$service.vars.os$', $service));
+        $this->assertEquals($service->vars['os'], $this->expandMacros('$vars.os$', $service));
+        $this->assertEquals($service->vars['days[2]'], $this->expandMacros('$vars.days[2]$', $service));
+        $this->assertEquals($service->vars['days[4]'], $this->expandMacros('$service.vars.days[4]$', $service));
 
-        $this->assertEquals($hostMock->name, $this->expandMacros('$host.name$', $mock));
-        $this->assertEquals($hostMock->address, $this->expandMacros('$host.address$', $mock));
+        $this->assertEquals($host->name, $this->expandMacros('$host.name$', $service));
+        $this->assertEquals($host->address, $this->expandMacros('$host.address$', $service));
 
         // Host custom vars
-        $this->assertEquals($hostMock->vars['os'], $this->expandMacros('$host.vars.os$', $mock));
-        $this->assertEquals($hostMock->vars['days[0]'], $this->expandMacros('$host.vars.days[0]$', $mock));
-        $this->assertEquals($hostMock->vars['days[3]'], $this->expandMacros('$host.vars.days[3]$', $mock));
+        $this->assertEquals($host->vars['os'], $this->expandMacros('$host.vars.os$', $service));
+        $this->assertEquals($host->vars['days[0]'], $this->expandMacros('$host.vars.days[0]$', $service));
+        $this->assertEquals($host->vars['days[3]'], $this->expandMacros('$host.vars.days[3]$', $service));
 
         // A Host can have more than one hostgroups
-        $this->assertEquals('$host.hostgroup$', $this->expandMacros('$host.hostgroup$', $mock));
-        $this->assertEquals('$host.hostgroup.name$', $this->expandMacros('$host.hostgroup.name$', $mock));
+        $this->assertEquals(
+            '$host.hostgroup$',
+            $this->expandMacros('$host.hostgroup$', $service)
+        );
+        $this->assertEquals(
+            '$host.hostgroup.name$',
+            $this->expandMacros('$host.hostgroup.name$', $service)
+        );
     }
 }
