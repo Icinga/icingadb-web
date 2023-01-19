@@ -115,7 +115,7 @@ class PerfDataSet implements IteratorAggregate
         $this->skipSpaces();
         if (in_array($this->perfdataStr[$this->parserPos], array('"', "'"))) {
             $quoteChar = $this->perfdataStr[$this->parserPos++];
-            $label = $this->readUntil($quoteChar);
+            $label = $this->readUntil($quoteChar, '=');
             $this->parserPos++;
 
             if ($this->perfdataStr[$this->parserPos] === '=') {
@@ -133,15 +133,28 @@ class PerfDataSet implements IteratorAggregate
     /**
      * Return all characters between the current parser position and the given character
      *
-     * @param   string  $stopChar   The character on which to stop
+     * @param string $stopChar The character on which to stop
+     * @param string $backtrackOn The character on which to backtrack
      *
-     * @return  string
+     * @return string
      */
-    protected function readUntil(string $stopChar): string
+    protected function readUntil(string $stopChar, string $backtrackOn = null): string
     {
         $start = $this->parserPos;
-        while ($this->parserPos < strlen($this->perfdataStr) && $this->perfdataStr[$this->parserPos] !== $stopChar) {
+        $breakCharEncounteredAt = null;
+        $stringExhaustedAt = strlen($this->perfdataStr);
+        while ($this->parserPos < $stringExhaustedAt) {
+            if ($this->perfdataStr[$this->parserPos] === $stopChar) {
+                break;
+            } elseif ($breakCharEncounteredAt === null && $this->perfdataStr[$this->parserPos] === $backtrackOn) {
+                $breakCharEncounteredAt = $this->parserPos;
+            }
+
             $this->parserPos++;
+        }
+
+        if ($breakCharEncounteredAt !== null && $this->parserPos === $stringExhaustedAt) {
+            $this->parserPos = $breakCharEncounteredAt;
         }
 
         return substr($this->perfdataStr, $start, $this->parserPos - $start);
