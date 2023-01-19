@@ -4,6 +4,13 @@
 
     "use strict";
 
+    try {
+        var notjQuery = require('icinga/icinga-php-library/notjQuery');
+    } catch (e) {
+        console.warn('Unable to provide input enrichments. Libraries not available:', e);
+        return;
+    }
+
     /**
      * Parse the filter query contained in the given URL query string
      *
@@ -167,43 +174,51 @@
     };
 
     ActionList.prototype.onRendered = function (event) {
-        var $target = $(event.target);
+        let container = event.target;
+        let isTopLevelContainer = container.matches('#main > :scope');
 
-        if ($target.attr('id') !== 'col1') {
+        if (event.currentTarget !== container) {
+            // Nested containers are not processed multiple times
+            return;
+        } else if (isTopLevelContainer && container.id !== 'col1') {
             return;
         }
 
-        var $list = $target.find('.action-list');
+        let list = container.querySelector('.action-list');
 
-        if ($list.length && $list.is('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-            var _this = event.data.self;
-            var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
+        if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
+            let _this = event.data.self;
+            let detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
 
-            if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
-                $.each(parseSelectionQuery(detailUrl.query.slice(1)), function (i, filter) {
-                    $list.find(
-                        '[data-icinga-multiselect-filter="' + filter + '"]'
-                    ).addClass('active');
-                });
-            } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
-                $list.find(
-                    '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
-                ).addClass('active');
+            if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
+                for (const filter of parseSelectionQuery(detailUrl.query.slice(1))) {
+                    let item = list.querySelector('[data-icinga-multiselect-filter="' + filter + '"]');
+                    if (item) {
+                        item.classList.add('active');
+                    }
+                }
+            } else if (list.dataset.icingaDetailUrl === detailUrl.path) {
+                let item = list.querySelector('[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]');
+                if (item) {
+                    item.classList.add('active');
+                }
             }
         }
 
-        if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
-            var $activeItems = $list.find('[data-action-item].active');
+        if (list && isTopLevelContainer && list.matches('[data-icinga-multiselect-url]')) {
+            let activeItems = list.querySelectorAll('[data-action-item].active');
 
-            if ($activeItems.length) {
-                if (! $target.children('.footer').length) {
-                    $target.append('<div class="footer" data-action-list-automatically-added></div>');
+            if (activeItems.length) {
+                if (! container.querySelector('.footer')) {
+                    container.appendChild(notjQuery.render(
+                        '<div class="footer" data-action-list-automatically-added></div>'
+                    ));
                 }
 
-                var label = $list.data('icinga-multiselect-count-label').replace('%d', $activeItems.length);
-                $target.children('.footer').prepend(
+                let label = list.dataset.icingaMultiselectCountLabel.replace('%d', activeItems.length);
+                container.querySelector('.footer').prepend(notjQuery.render(
                     '<div class="selection-count"><span class="selected-items">' + label + '</span></div>'
-                );
+                ));
             }
         }
     };
