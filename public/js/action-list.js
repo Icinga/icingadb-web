@@ -155,7 +155,7 @@
                         '[data-icinga-multiselect-filter="' + filter + '"]'
                     ).removeClass('active');
                 });
-            } else if ($list.attr('data-icinga-detail-url') === detailUrl.path) {
+            } else if (_this.matchesDetailUrl($list.attr('data-icinga-detail-url'), detailUrl.path)) {
                 $list.find(
                     '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
                 ).removeClass('active');
@@ -197,7 +197,7 @@
                         item.classList.add('active');
                     }
                 }
-            } else if (list.dataset.icingaDetailUrl === detailUrl.path) {
+            } else if (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)) {
                 let item = list.querySelector('[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]');
                 if (item) {
                     item.classList.add('active');
@@ -221,6 +221,15 @@
                 ));
             }
         }
+    };
+
+    ActionList.prototype.matchesDetailUrl = function (itemUrl, detailUrl) {
+        if (itemUrl === detailUrl) {
+            return true;
+        }
+
+        // The slash is used to avoid false positives (e.g. icingadb/hostgroup and icingadb/host)
+        return detailUrl.startsWith(itemUrl + '/');
     };
 
     Icinga.Behaviors.ActionList = ActionList;
