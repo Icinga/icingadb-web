@@ -112,6 +112,10 @@ abstract class SlaReport extends ReportHook
             }
         } else {
             foreach ($this->fetchSla($timerange, $filter) as $row) {
+                if ($row->sla === null) {
+                    $row->sla = 0.0;
+                }
+
                 $rows[] = $this->createReportRow($row);
             }
         }
