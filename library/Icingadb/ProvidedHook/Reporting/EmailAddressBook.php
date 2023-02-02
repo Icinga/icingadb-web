@@ -5,9 +5,9 @@ namespace Icinga\Module\Icingadb\ProvidedHook\Reporting;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\User;
-use Icinga\Module\Reporting\Hook\EmailProviderHook;
+use Icinga\Module\Reporting\Hook\EmailAddressBookHook;
 
-class EmailProvider extends EmailProviderHook
+class EmailAddressBook extends EmailAddressBookHook
 {
     use Database;
 
@@ -15,7 +15,7 @@ class EmailProvider extends EmailProviderHook
      * @return array
      * @throws ConfigurationError
      */
-    public function getContactEmails(): array
+    public function listEmailAddresses(): array
     {
         $emails = [];
 
