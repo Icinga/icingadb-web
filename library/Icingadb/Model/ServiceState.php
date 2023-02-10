@@ -19,6 +19,14 @@ class ServiceState extends State
         return 'service_id';
     }
 
+    public function getColumns()
+    {
+        $columns = parent::getColumns();
+        $columns[] = 'host_id';
+
+        return $columns;
+    }
+
     public function getColumnDefinitions()
     {
         return [
