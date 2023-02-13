@@ -33,6 +33,6 @@ class ServiceSlaReport extends SlaReport
     {
         return (new ReportRow())
             ->setDimensions([$row->host_display_name, $row->display_name])
-            ->setValues([(float) $row->sla]);
+            ->setValues([$row->sla]);
     }
 }

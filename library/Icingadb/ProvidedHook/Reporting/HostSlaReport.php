@@ -31,12 +31,8 @@ class HostSlaReport extends SlaReport
 
     protected function createReportRow($row)
     {
-        if ($row->sla === null) {
-            return null;
-        }
-
         return (new ReportRow())
             ->setDimensions([$row->display_name])
-            ->setValues([(float) $row->sla]);
+            ->setValues([$row->sla]);
     }
 }

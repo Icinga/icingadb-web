@@ -119,20 +119,29 @@ abstract class SlaReport extends ReportHook
             // We only have one metric
             $sla = $row->getValues()[0];
 
-            if ($sla < $threshold) {
+            if ($sla === null) {
+                $slaClass = 'unknown';
+            } elseif ($sla < $threshold) {
                 $slaClass = 'nok';
             } else {
                 $slaClass = 'ok';
             }
 
-            $cells[] = Html::tag('td', ['class' => "sla-column $slaClass"], round($sla, $precision));
+            $cells[] = Html::tag(
+                'td',
+                ['class' => "sla-column $slaClass"],
+                $sla === null ? t('N/A') : round($sla, $precision)
+            );
 
             $tableRows[] = Html::tag('tr', null, $cells);
         }
 
         // We only have one average
         $average = $data->getAverages()[0];
-        if ($average < $threshold) {
+
+        if ($average === null) {
+            $slaClass = 'unknown';
+        } elseif ($average < $threshold) {
             $slaClass = 'nok';
         } else {
             $slaClass = 'ok';
@@ -144,7 +153,11 @@ abstract class SlaReport extends ReportHook
 
         $tableRows[] = Html::tag('tr', null, [
             Html::tag('td', ['colspan' => count($data->getDimensions())], $total),
-            Html::tag('td', ['class' => "sla-column $slaClass"], round($average, $precision))
+            Html::tag(
+                'td',
+                ['class' => "sla-column $slaClass"],
+                $average === null ? t('N/A') : round($average, $precision)
+            )
         ]);
 
         $table = Html::tag(

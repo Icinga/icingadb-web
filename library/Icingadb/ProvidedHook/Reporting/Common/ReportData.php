@@ -24,8 +24,16 @@ class ReportData extends BaseReportData
                 $problemTime += $timeline->getProblemTime();
             }
 
+            if ($totalTime <= 0) {
+                continue;
+            }
+
             ++$count;
             $totals += 100 * ($totalTime - $problemTime) / $totalTime;
+        }
+
+        if ($count === 0) {
+            return [null];
         }
 
         return [$totals / $count];

@@ -325,7 +325,8 @@ trait SlaReportUtils
                         $serviceFilter,
                         Filter::greaterThan('event_time', $start)
                     )
-                );
+                )
+                ->limit(1);
 
             $hardState = $hardState->first();
 
