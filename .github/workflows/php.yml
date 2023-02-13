@@ -54,6 +54,22 @@ jobs:
         php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
 
+    services:
+      mysql:
+        image: mariadb
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: icingadb_web_unittest
+          MYSQL_USER: icingadb_web_unittest
+          MYSQL_PASSWORD: icingadb_web_unittest
+        options: >-
+          --health-cmd "mysql -s -uroot -proot -e'SHOW DATABASES;' 2> /dev/null | grep icingadb_web_unittest > test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306/tcp
+
     steps:
       - name: Checkout code base
         uses: actions/checkout@v3
@@ -63,6 +79,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           tools: phpunit:${{ matrix.phpunit-version || env.phpunit-version }}
+          extensions: mysql
 
       - name: Setup Icinga Web
         run: |
@@ -78,4 +95,5 @@ jobs:
       - name: PHPUnit
         env:
           ICINGAWEB_LIBDIR: _libraries
+          ICINGADBWEB_TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
         run: phpunit --verbose --bootstrap _icingaweb2/test/php/bootstrap.php
