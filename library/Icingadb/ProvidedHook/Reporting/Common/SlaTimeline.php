@@ -69,9 +69,9 @@ class SlaTimeline implements Countable
     /**
      * Get the calculated SLA result of this timeline
      *
-     * @return float
+     * @return ?float
      */
-    public function getResult(): float
+    public function getResult(): ?float
     {
         $problemTime = 0;
         $activeDowntimes = 0;
@@ -111,6 +111,10 @@ class SlaTimeline implements Countable
 
         $this->problemTime = $problemTime;
         $this->totalTime = $totalTime;
+
+        if ($totalTime <= 0) {
+            return null;
+        }
 
         return 100 * ($totalTime - $problemTime) / $totalTime;
     }
