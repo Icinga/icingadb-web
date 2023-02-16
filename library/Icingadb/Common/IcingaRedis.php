@@ -176,7 +176,7 @@ class IcingaRedis
     public static function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
-            $moduleConfig = Config::module('redis');
+            $moduleConfig = Config::module('icingadb');
         }
 
         if ($redisConfig === null) {
