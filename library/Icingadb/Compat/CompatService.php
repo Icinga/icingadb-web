@@ -126,10 +126,7 @@ class CompatService extends Service
         ],
         'service_passive_checks_enabled_changed'    => null,
         'service_percent_state_change'              => null,
-        'service_perfdata'                          => [
-            'path' => ['state', 'performance_data'],
-            'type' => 'bool'
-        ],
+        'service_perfdata'                          => ['path' => ['state', 'performance_data']],
         'service_process_perfdata'                  => [
             'path' => ['perfdata_enabled'],
             'type' => 'bool'
