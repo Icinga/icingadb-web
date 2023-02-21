@@ -14,6 +14,9 @@ namespace Icinga\Module\Icingadb {
 
     /** @var \Icinga\Application\Modules\Module $this */
 
+    $auth = Auth::getInstance();
+    $authenticated = Icinga::app()->isWeb() && $auth->isAuthenticated();
+
     $this->provideSetupWizard('Icinga\Module\Icingadb\Setup\IcingaDbWizard');
 
     $this->providePermission(
@@ -132,7 +135,7 @@ namespace Icinga\Module\Icingadb {
         $this->translate('Obfuscate custom variable values of Icinga objects that are part of the list')
     );
 
-    if (! $this::exists('monitoring')) {
+    if (! $this::exists('monitoring') || ($authenticated && ! $auth->getUser()->can('module/monitoring'))) {
         /*
         * Available navigation items
         */
@@ -337,9 +340,8 @@ namespace Icinga\Module\Icingadb {
             'url'         => 'icingadb/services',
             'icon'        => 'cog'
         ]);
-        $auth = Auth::getInstance();
         $routeDenylist = [];
-        if ($auth->isAuthenticated() && ! $auth->getUser()->isUnrestricted()) {
+        if ($authenticated && ! $auth->getUser()->isUnrestricted()) {
             // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
             $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
                 return StringHelper::trimSplit($restriction);
@@ -466,10 +468,8 @@ namespace Icinga\Module\Icingadb {
             'priority'    => 40
         ]);
 
-
-        $auth = Auth::getInstance();
         $routeDenylist = [];
-        if ($auth->isAuthenticated() && ! $auth->getUser()->isUnrestricted()) {
+        if ($authenticated && ! $auth->getUser()->isUnrestricted()) {
             // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
             $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
                 return StringHelper::trimSplit($restriction);
