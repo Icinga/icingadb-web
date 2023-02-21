@@ -91,10 +91,7 @@ class CompatHost extends Host
         ],
         'host_passive_checks_enabled_changed'   => null,
         'host_percent_state_change'             => null,
-        'host_perfdata'                         => [
-            'path' => ['state', 'performance_data'],
-            'type' => 'bool'
-        ],
+        'host_perfdata'                         => ['path' => ['state', 'performance_data']],
         'host_process_perfdata'                 => [
             'path' => ['perfdata_enabled'],
             'type' => 'bool'
