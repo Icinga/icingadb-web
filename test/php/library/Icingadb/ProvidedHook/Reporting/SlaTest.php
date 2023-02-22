@@ -282,6 +282,19 @@ class SlaTest extends TestCase
         $this->assertSame(60.0, $timeline->getResult());
     }
 
+    public function testPendingStateAfterIntervalEndReducesTotalTime()
+    {
+        $this->insertSlaHistoryEvents([
+            'state' => [['event_time' => 2500000, 'hard_state' => 0, 'previous_hard_state' => 99]]
+        ]);
+
+        $timeline = $this->report->getSlaTimeline($this->start, $this->end, 'host', $this->hostId);
+        $this->assertNull($timeline->getResult());
+
+        $timeline = $this->report->getSlaTimeline($this->start, $this->end, 'service', $this->serviceId);
+        $this->assertNull($timeline->getResult());
+    }
+
     protected function makeId(): string
     {
         return random_bytes(20);

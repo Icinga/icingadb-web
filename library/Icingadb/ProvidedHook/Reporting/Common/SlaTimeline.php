@@ -80,7 +80,7 @@ class SlaTimeline implements Countable
 
         $lastHardState = $this->initialHardState;
         foreach ($this->events as $event) {
-            if ($event->previousHardState === 99) {
+            if ($event->previousHardState === 99 || ($lastHardState === 99 && $event->type !== static::STATE_CHANGE)) {
                 $totalTime -= $event->time - $lastEventTime;
             } elseif (
                 (

@@ -202,11 +202,13 @@ trait SlaReportUtils
 
                 $info = $objectInfo[$key];
                 if (
-                    $report->sla === null
-                    || (
-                        ! $info->isFromBeforeInterval
-                        && count($timeline) <= 1
-                        && $slaWithBreakdown
+                    $slaWithBreakdown
+                    && (
+                        $report->sla === null
+                        || (
+                            ! $info->isFromBeforeInterval
+                            && count($timeline) <= 1
+                        )
                     )
                 ) {
                     // This is only the case when the object doesn't have any history events in a given
