@@ -274,10 +274,16 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteComment(DeleteCommentCommand $command): IcingaApiCommand
     {
+        $comments = [];
+
+        foreach ($command->getObjects() as $object) {
+            $comments[] = $object->name;
+        }
+
         $endpoint = 'actions/remove-comment';
         $data = [
             'author'    => $command->getAuthor(),
-            'comment'   => $command->getCommentName()
+            'comments'  => $comments
         ];
 
         return IcingaApiCommand::create($endpoint, $data);

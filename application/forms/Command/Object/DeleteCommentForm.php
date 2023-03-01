@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
@@ -55,13 +56,17 @@ class DeleteCommentForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
-                continue;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if ($this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
+                    yield $object;
+                }
             }
+        })();
 
+        if ($granted->valid()) {
             $command = new DeleteCommentCommand();
-            $command->setCommentName($object->name);
+            $command->setObjects($granted);
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
             yield $command;
