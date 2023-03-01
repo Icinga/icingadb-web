@@ -291,10 +291,16 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command): IcingaApiCommand
     {
+        $downtimes = [];
+
+        foreach ($command->getObjects() as $object) {
+            $downtimes[] = $object->name;
+        }
+
         $endpoint = 'actions/remove-downtime';
         $data = [
             'author'    => $command->getAuthor(),
-            'downtime'  => $command->getDowntimeName()
+            'downtimes' => $downtimes
         ];
 
         return IcingaApiCommand::create($endpoint, $data);

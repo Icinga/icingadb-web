@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
@@ -67,16 +68,20 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (
-                ! $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})
-                || $object->scheduled_by !== null
-            ) {
-                continue;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if (
+                    $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})
+                    && $object->scheduled_by === null
+                ) {
+                    yield $object;
+                }
             }
+        })();
 
+        if ($granted->valid()) {
             $command = new DeleteDowntimeCommand();
-            $command->setDowntimeName($object->name);
+            $command->setObjects($granted);
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
             yield $command;
