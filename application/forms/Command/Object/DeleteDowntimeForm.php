@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Web\Common\RedirectOption;
@@ -14,7 +13,6 @@ use Traversable;
 
 class DeleteDowntimeForm extends CommandForm
 {
-    use Auth;
     use RedirectOption;
 
     protected $defaultAttributes = ['class' => 'inline'];

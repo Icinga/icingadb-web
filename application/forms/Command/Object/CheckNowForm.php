@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Web\Widget\Icon;
@@ -13,8 +12,6 @@ use Traversable;
 
 class CheckNowForm extends CommandForm
 {
-    use Auth;
-
     protected $defaultAttributes = ['class' => 'inline'];
 
     public function __construct()

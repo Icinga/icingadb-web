@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Instance;
 
 use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
@@ -13,8 +12,6 @@ use Traversable;
 
 class ToggleInstanceFeaturesForm extends CommandForm
 {
-    use Auth;
-
     protected $features;
 
     protected $featureStatus;

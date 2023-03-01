@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use Icinga\Module\Icingadb\Command\Object\RemoveAcknowledgementCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
@@ -14,8 +13,6 @@ use Traversable;
 
 class RemoveAcknowledgementForm extends CommandForm
 {
-    use Auth;
-
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {

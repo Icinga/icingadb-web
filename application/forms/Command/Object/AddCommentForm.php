@@ -8,7 +8,6 @@ use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\AddCommentCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
@@ -22,8 +21,6 @@ use Traversable;
 
 class AddCommentForm extends CommandForm
 {
-    use Auth;
-
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {

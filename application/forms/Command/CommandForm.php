@@ -6,9 +6,11 @@ namespace Icinga\Module\Icingadb\Forms\Command;
 
 use ArrayIterator;
 use Exception;
+use Generator;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use ipl\Html\Form;
@@ -18,6 +20,7 @@ use Traversable;
 
 abstract class CommandForm extends Form
 {
+    use Auth;
     use CsrfCounterMeasure;
 
     protected $defaultAttributes = ['class' => 'icinga-form icinga-controls'];
@@ -125,5 +128,22 @@ abstract class CommandForm extends Form
     protected function sendCommand(IcingaCommand $command)
     {
         (new CommandTransport())->send($command);
+    }
+
+    /**
+     * Yield the $objects the currently logged in user has the permission $permission for
+     *
+     * @param string      $permission
+     * @param Traversable $objects
+     *
+     * @return Generator
+     */
+    protected function filterGrantedOn(string $permission, Traversable $objects): Generator
+    {
+        foreach ($objects as $object) {
+            if ($this->isGrantedOn($permission, $object)) {
+                yield $object;
+            }
+        }
     }
 }
