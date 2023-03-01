@@ -141,13 +141,11 @@ class AddCommentForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/comment/add', $object)) {
-                continue;
-            }
+        $granted = $this->filterGrantedOn('icingadb/command/comment/add', $objects);
 
+        if ($granted->valid()) {
             $command = new AddCommentCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 

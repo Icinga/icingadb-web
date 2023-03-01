@@ -158,26 +158,24 @@ class ToggleObjectFeaturesForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            foreach ($this->features as $feature => $spec) {
-                if ($this->getElement($feature) instanceof CheckboxElement) {
-                    $featureState = $this->getElement($feature)->isChecked();
-                } else {
-                    $featureState = $this->getElement($feature)->getValue();
-                }
+        foreach ($this->features as $feature => $spec) {
+            if ($this->getElement($feature) instanceof CheckboxElement) {
+                $state = $this->getElement($feature)->isChecked();
+            } else {
+                $state = $this->getElement($feature)->getValue();
+            }
 
-                if (
-                    ! $this->isGrantedOn($spec['permission'], $object)
-                    || $featureState === self::LEAVE_UNCHANGED
-                    || (int) $featureState === (int) $this->featureStatus[$feature]
-                ) {
-                    continue;
-                }
+            if ($state === self::LEAVE_UNCHANGED || (int) $state === (int) $this->featureStatus[$feature]) {
+                continue;
+            }
 
+            $granted = $this->filterGrantedOn($spec['permission'], $objects);
+
+            if ($granted->valid()) {
                 $command = new ToggleObjectFeatureCommand();
-                $command->setObjects([$object]);
+                $command->setObjects($granted);
                 $command->setFeature($feature);
-                $command->setEnabled((int) $featureState);
+                $command->setEnabled((int) $state);
 
                 $this->submittedFeatures[] = $command;
 

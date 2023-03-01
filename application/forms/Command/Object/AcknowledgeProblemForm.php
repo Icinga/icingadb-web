@@ -186,13 +186,11 @@ class AcknowledgeProblemForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {
-                continue;
-            }
+        $granted = $this->filterGrantedOn('icingadb/command/acknowledge-problem', $objects);
 
+        if ($granted->valid()) {
             $command = new AcknowledgeProblemCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
             $command->setNotify($this->getElement('notify')->isChecked());

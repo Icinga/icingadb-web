@@ -62,13 +62,11 @@ class RemoveAcknowledgementForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object)) {
-                continue;
-            }
+        $granted = $this->filterGrantedOn('icingadb/command/remove-acknowledgement', $objects);
 
+        if ($granted->valid()) {
             $command = new RemoveAcknowledgementCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
             yield $command;

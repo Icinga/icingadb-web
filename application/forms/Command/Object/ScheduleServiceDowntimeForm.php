@@ -244,13 +244,11 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
-                continue;
-            }
+        $granted = $this->filterGrantedOn('icingadb/command/downtime/schedule', $objects);
 
+        if ($granted->valid()) {
             $command = new ScheduleServiceDowntimeCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
             $command->setStart($this->getValue('start')->getTimestamp());

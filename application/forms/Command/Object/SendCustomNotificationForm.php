@@ -108,13 +108,11 @@ class SendCustomNotificationForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (! $this->isGrantedOn('icingadb/command/send-custom-notification', $object)) {
-                continue;
-            }
+        $granted = $this->filterGrantedOn('icingadb/command/send-custom-notification', $objects);
 
+        if ($granted->valid()) {
             $command = new SendCustomNotificationCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setComment($this->getValue('comment'));
             $command->setForced($this->getElement('forced')->isChecked());
             $command->setAuthor($this->getAuth()->getUser()->getUsername());

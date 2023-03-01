@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use DateInterval;
 use DateTime;
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
@@ -108,19 +109,23 @@ class ScheduleCheckForm extends CommandForm
 
     protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($objects as $object) {
-            if (
-                ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
-                && (
-                    ! $object->active_checks_enabled
-                    || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-                )
-            ) {
-                continue;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if (
+                    $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                    || (
+                        $object->active_checks_enabled
+                        && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                    )
+                ) {
+                    yield $object;
+                }
             }
+        })();
 
+        if ($granted->valid()) {
             $command = new ScheduleCheckCommand();
-            $command->setObjects([$object]);
+            $command->setObjects($granted);
             $command->setForced($this->getElement('force_check')->isChecked());
             $command->setCheckTime($this->getValue('check_time')->getTimestamp());
 
