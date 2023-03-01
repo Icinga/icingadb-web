@@ -14,9 +14,9 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ScheduleCheckForm extends CommandForm
 {
@@ -109,26 +109,25 @@ class ScheduleCheckForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ScheduleCheckCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
-            && (
-                ! $object->active_checks_enabled
-                || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-            )
-        ) {
-            return null;
+        foreach ($objects as $object) {
+            if (
+                ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                && (
+                    ! $object->active_checks_enabled
+                    || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                )
+            ) {
+                continue;
+            }
+
+            $command = new ScheduleCheckCommand();
+            $command->setObject($object);
+            $command->setForced($this->getElement('force_check')->isChecked());
+            $command->setCheckTime($this->getValue('check_time')->getTimestamp());
+
+            yield $command;
         }
-
-        $command = new ScheduleCheckCommand();
-        $command->setObject($object);
-        $command->setForced($this->getElement('force_check')->isChecked());
-        $command->setCheckTime($this->getValue('check_time')->getTimestamp());
-
-        return $command;
     }
 }

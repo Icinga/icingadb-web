@@ -11,6 +11,7 @@ use Icinga\Web\Notification;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
 {
@@ -158,31 +159,33 @@ class ToggleObjectFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommand(Model $object): \Generator
+    protected function getCommands(Traversable $objects): Traversable
     {
-        foreach ($this->features as $feature => $spec) {
-            if ($this->getElement($feature) instanceof CheckboxElement) {
-                $featureState = $this->getElement($feature)->isChecked();
-            } else {
-                $featureState = $this->getElement($feature)->getValue();
+        foreach ($objects as $object) {
+            foreach ($this->features as $feature => $spec) {
+                if ($this->getElement($feature) instanceof CheckboxElement) {
+                    $featureState = $this->getElement($feature)->isChecked();
+                } else {
+                    $featureState = $this->getElement($feature)->getValue();
+                }
+
+                if (
+                    ! $this->isGrantedOn($spec['permission'], $object)
+                    || $featureState === self::LEAVE_UNCHANGED
+                    || (int) $featureState === (int) $this->featureStatus[$feature]
+                ) {
+                    continue;
+                }
+
+                $command = new ToggleObjectFeatureCommand();
+                $command->setObject($object);
+                $command->setFeature($feature);
+                $command->setEnabled((int) $featureState);
+
+                $this->submittedFeatures[] = $command;
+
+                yield $command;
             }
-
-            if (
-                ! $this->isGrantedOn($spec['permission'], $object)
-                || $featureState === self::LEAVE_UNCHANGED
-                || (int) $featureState === (int) $this->featureStatus[$feature]
-            ) {
-                continue;
-            }
-
-            $command = new ToggleObjectFeatureCommand();
-            $command->setObject($object);
-            $command->setFeature($feature);
-            $command->setEnabled((int) $featureState);
-
-            $this->submittedFeatures[] = $command;
-
-            yield $command;
         }
     }
 }

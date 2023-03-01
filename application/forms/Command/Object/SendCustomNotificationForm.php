@@ -13,9 +13,9 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class SendCustomNotificationForm extends CommandForm
 {
@@ -109,21 +109,20 @@ class SendCustomNotificationForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?SendCustomNotificationCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/send-custom-notification', $object)) {
-            return null;
+        foreach ($objects as $object) {
+            if (! $this->isGrantedOn('icingadb/command/send-custom-notification', $object)) {
+                continue;
+            }
+
+            $command = new SendCustomNotificationCommand();
+            $command->setObject($object);
+            $command->setComment($this->getValue('comment'));
+            $command->setForced($this->getElement('forced')->isChecked());
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+
+            yield $command;
         }
-
-        $command = new SendCustomNotificationCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setForced($this->getElement('forced')->isChecked());
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-
-        return $command;
     }
 }

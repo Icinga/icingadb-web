@@ -14,10 +14,10 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ScheduleServiceDowntimeForm extends CommandForm
 {
@@ -245,29 +245,28 @@ class ScheduleServiceDowntimeForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ScheduleServiceDowntimeCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
-            return null;
+        foreach ($objects as $object) {
+            if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
+                continue;
+            }
+
+            $command = new ScheduleServiceDowntimeCommand();
+            $command->setObject($object);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+            $command->setStart($this->getValue('start')->getTimestamp());
+            $command->setEnd($this->getValue('end')->getTimestamp());
+
+            if ($this->getElement('flexible')->isChecked()) {
+                $command->setFixed(false);
+                $command->setDuration(
+                    $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
+                );
+            }
+
+            yield $command;
         }
-
-        $command = new ScheduleServiceDowntimeCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-        $command->setStart($this->getValue('start')->getTimestamp());
-        $command->setEnd($this->getValue('end')->getTimestamp());
-
-        if ($this->getElement('flexible')->isChecked()) {
-            $command->setFixed(false);
-            $command->setDuration(
-                $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
-            );
-        }
-
-        return $command;
     }
 }

@@ -15,10 +15,10 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class AcknowledgeProblemForm extends CommandForm
 {
@@ -187,28 +187,27 @@ class AcknowledgeProblemForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?AcknowledgeProblemCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {
-            return null;
+        foreach ($objects as $object) {
+            if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {
+                continue;
+            }
+
+            $command = new AcknowledgeProblemCommand();
+            $command->setObject($object);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+            $command->setNotify($this->getElement('notify')->isChecked());
+            $command->setSticky($this->getElement('sticky')->isChecked());
+            $command->setPersistent($this->getElement('persistent')->isChecked());
+
+            if (($expireTime = $this->getValue('expire_time')) !== null) {
+                /** @var DateTime $expireTime */
+                $command->setExpireTime($expireTime->getTimestamp());
+            }
+
+            yield $command;
         }
-
-        $command = new AcknowledgeProblemCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-        $command->setNotify($this->getElement('notify')->isChecked());
-        $command->setSticky($this->getElement('sticky')->isChecked());
-        $command->setPersistent($this->getElement('persistent')->isChecked());
-
-        if (($expireTime = $this->getValue('expire_time')) !== null) {
-            /** @var DateTime $expireTime */
-            $command->setExpireTime($expireTime->getTimestamp());
-        }
-
-        return $command;
     }
 }

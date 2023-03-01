@@ -15,10 +15,10 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class AddCommentForm extends CommandForm
 {
@@ -142,25 +142,24 @@ class AddCommentForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?AddCommentCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/comment/add', $object)) {
-            return null;
+        foreach ($objects as $object) {
+            if (! $this->isGrantedOn('icingadb/command/comment/add', $object)) {
+                continue;
+            }
+
+            $command = new AddCommentCommand();
+            $command->setObject($object);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+
+            if (($expireTime = $this->getValue('expire_time'))) {
+                /** @var DateTime $expireTime */
+                $command->setExpireTime($expireTime->getTimestamp());
+            }
+
+            yield $command;
         }
-
-        $command = new AddCommentCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-
-        if (($expireTime = $this->getValue('expire_time'))) {
-            /** @var DateTime $expireTime */
-            $command->setExpireTime($expireTime->getTimestamp());
-        }
-
-        return $command;
     }
 }

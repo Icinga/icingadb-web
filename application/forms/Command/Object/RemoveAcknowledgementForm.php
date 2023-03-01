@@ -9,8 +9,8 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class RemoveAcknowledgementForm extends CommandForm
 {
@@ -63,19 +63,18 @@ class RemoveAcknowledgementForm extends CommandForm
         );
     }
 
-    /**
-     * @return ?RemoveAcknowledgementCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object)) {
-            return null;
+        foreach ($objects as $object) {
+            if (! $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object)) {
+                continue;
+            }
+
+            $command = new RemoveAcknowledgementCommand();
+            $command->setObject($object);
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+
+            yield $command;
         }
-
-        $command = new RemoveAcknowledgementCommand();
-        $command->setObject($object);
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-
-        return $command;
     }
 }

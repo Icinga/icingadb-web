@@ -15,6 +15,7 @@ use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ProcessCheckResultForm extends CommandForm
 {
@@ -136,24 +137,23 @@ class ProcessCheckResultForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ProcessCheckResultCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $object->passive_checks_enabled
-            || ! $this->isGrantedOn('icingadb/command/process-check-result', $object)
-        ) {
-            return null;
+        foreach ($objects as $object) {
+            if (
+                ! $object->passive_checks_enabled
+                || ! $this->isGrantedOn('icingadb/command/process-check-result', $object)
+            ) {
+                continue;
+            }
+
+            $command = new ProcessCheckResultCommand();
+            $command->setObject($object);
+            $command->setStatus($this->getValue('status'));
+            $command->setOutput($this->getValue('output'));
+            $command->setPerformanceData($this->getValue('perfdata'));
+
+            yield $command;
         }
-
-        $command = new ProcessCheckResultCommand();
-        $command->setObject($object);
-        $command->setStatus($this->getValue('status'));
-        $command->setOutput($this->getValue('output'));
-        $command->setPerformanceData($this->getValue('perfdata'));
-
-        return $command;
     }
 }

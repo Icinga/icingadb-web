@@ -8,8 +8,8 @@ use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Traversable;
 
 class ToggleInstanceFeaturesForm extends CommandForm
 {
@@ -136,7 +136,7 @@ class ToggleInstanceFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommand(Model $object): \Generator
+    protected function getCommands(Traversable $objects): Traversable
     {
         foreach ($this->features as $feature => $spec) {
             $featureState = $this->getElement($feature)->isChecked();
