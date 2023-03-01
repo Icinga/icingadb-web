@@ -86,7 +86,7 @@ class HostController extends Controller
     public function sourceAction()
     {
         $this->assertPermission('icingadb/object/show-source');
-        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObject($this->host));
+        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObjects([$this->host]));
 
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);

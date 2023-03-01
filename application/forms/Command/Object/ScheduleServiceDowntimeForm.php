@@ -253,7 +253,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
             }
 
             $command = new ScheduleServiceDowntimeCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
             $command->setStart($this->getValue('start')->getTimestamp());

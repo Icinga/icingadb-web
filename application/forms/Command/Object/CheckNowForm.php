@@ -60,7 +60,7 @@ class CheckNowForm extends CommandForm
             }
 
             $command = new ScheduleCheckCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setCheckTime(time());
             $command->setForced();
 

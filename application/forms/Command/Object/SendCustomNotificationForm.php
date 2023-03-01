@@ -117,7 +117,7 @@ class SendCustomNotificationForm extends CommandForm
             }
 
             $command = new SendCustomNotificationCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setComment($this->getValue('comment'));
             $command->setForced($this->getElement('forced')->isChecked());
             $command->setAuthor($this->getAuth()->getUser()->getUsername());

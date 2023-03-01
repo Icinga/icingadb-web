@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Command\Object;
 /**
  * Remove a problem acknowledgement from a host or service
  */
-class RemoveAcknowledgementCommand extends ObjectCommand
+class RemoveAcknowledgementCommand extends ObjectsCommand
 {
     use CommandAuthor;
 }

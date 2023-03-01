@@ -178,7 +178,7 @@ class ToggleObjectFeaturesForm extends CommandForm
                 }
 
                 $command = new ToggleObjectFeatureCommand();
-                $command->setObject($object);
+                $command->setObjects([$object]);
                 $command->setFeature($feature);
                 $command->setEnabled((int) $featureState);
 

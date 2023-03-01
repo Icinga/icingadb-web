@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Command\Object;
 /**
  * Schedule a check
  */
-class ScheduleCheckCommand extends ObjectCommand
+class ScheduleCheckCommand extends ObjectsCommand
 {
     /**
      * Time when the next check of a host or service is to be scheduled

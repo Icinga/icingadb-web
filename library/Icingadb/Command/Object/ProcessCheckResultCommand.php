@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Command\Object;
 /**
  * Submit a passive check result for a host or service
  */
-class ProcessCheckResultCommand extends ObjectCommand
+class ProcessCheckResultCommand extends ObjectsCommand
 {
     /**
      * Host up

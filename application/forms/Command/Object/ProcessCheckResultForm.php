@@ -148,7 +148,7 @@ class ProcessCheckResultForm extends CommandForm
             }
 
             $command = new ProcessCheckResultCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setStatus($this->getValue('status'));
             $command->setOutput($this->getValue('output'));
             $command->setPerformanceData($this->getValue('perfdata'));

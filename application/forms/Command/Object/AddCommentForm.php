@@ -150,7 +150,7 @@ class AddCommentForm extends CommandForm
             }
 
             $command = new AddCommentCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 

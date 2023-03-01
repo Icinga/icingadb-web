@@ -101,7 +101,7 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
                 $command = new ScheduleHostDowntimeCommand();
             }
 
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
             $command->setStart($this->getValue('start')->getTimestamp());

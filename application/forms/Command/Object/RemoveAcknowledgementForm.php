@@ -71,7 +71,7 @@ class RemoveAcknowledgementForm extends CommandForm
             }
 
             $command = new RemoveAcknowledgementCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
             yield $command;

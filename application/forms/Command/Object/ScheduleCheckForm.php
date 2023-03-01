@@ -123,7 +123,7 @@ class ScheduleCheckForm extends CommandForm
             }
 
             $command = new ScheduleCheckCommand();
-            $command->setObject($object);
+            $command->setObjects([$object]);
             $command->setForced($this->getElement('force_check')->isChecked());
             $command->setCheckTime($this->getValue('check_time')->getTimestamp());
 
