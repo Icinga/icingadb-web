@@ -37,8 +37,9 @@ class DowntimeCard extends BaseHtmlElement
 
     protected function assemble()
     {
-        $timeline = Html::tag('div', ['class' => 'downtime-timeline timeline']);
-        $hPadding = 10;
+        $timelineWrapper = Html::tag('div', ['class' => 'w-100 downtime-timeline timeline']);
+        $timeline = Html::tag('rect', ['fill' => 'red', 'width' => '50', 'height' => '20', 'x' => '0', 'y' => '0']);
+        $hPadding = 15;
 
         $above = Html::tag('ul', ['class' => 'above']);
         $below = Html::tag('ul', ['class' => 'below']);
@@ -46,6 +47,7 @@ class DowntimeCard extends BaseHtmlElement
         $flexProgress = null;
         $markerFlexStart = null;
         $markerFlexEnd = null;
+        $svg = Html::tag('svg', ['class' => 'w-100']);
 
         if ($this->downtime->scheduled_end_time < time()) {
             $endTime = new TimeAgo($this->downtime->scheduled_end_time);
@@ -88,6 +90,15 @@ class DowntimeCard extends BaseHtmlElement
             ]);
 
             if (time() > $this->downtime->scheduled_end_time) {
+                $timelineProgress = Html::tag('rect', [
+                    'fill' => 'red',
+                    'width' => $this->calcRelativeLeft($this->downtime->scheduled_end_time, $this->downtime->start_time),
+                    'height' => '20',
+                    'x' => '0',
+                    'y' => '0'
+                ]);
+
+                /*
                 $timelineProgress = Html::tag('div', [
                     'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
@@ -95,7 +106,7 @@ class DowntimeCard extends BaseHtmlElement
                         $hPadding + $this->calcRelativeLeft($this->downtime->start_time),
                         $this->calcRelativeLeft($this->downtime->scheduled_end_time, $this->downtime->start_time)
                     )
-                ]);
+                ]);*/
                 $flexProgress = Html::tag('div', [
                     'class' => 'timeline-overlay downtime-overrun',
                     'style' => sprintf(
@@ -105,6 +116,15 @@ class DowntimeCard extends BaseHtmlElement
                     )
                 ]);
             } else {
+                $timelineProgress = Html::tag('rect', [
+                    'fill' => 'red',
+                    'width' => $hPadding + $this->calcRelativeLeft(time()) - $flexStartLeft,
+                    'height' => '20',
+                    'x' => '0',
+                    'y' => '0'
+                ]);
+
+/*
                 $timelineProgress = Html::tag('div', [
                     'class' => 'timeline-overlay downtime-elapsed',
                     'style' => sprintf(
@@ -112,7 +132,7 @@ class DowntimeCard extends BaseHtmlElement
                         $flexStartLeft,
                         $hPadding + $this->calcRelativeLeft(time()) - $flexStartLeft
                     )
-                ]);
+                ]);*/
             }
 
             $above->add([
@@ -167,6 +187,15 @@ class DowntimeCard extends BaseHtmlElement
         } elseif ($this->downtime->is_flexible) {
             $this->addAttributes(['class' => 'flexible']);
 
+
+            $timelineProgress = Html::tag('rect', [
+                'fill' => 'red',
+                'width' => $this->calcRelativeLeft(time()),
+                'height' => '20',
+                'x' => '0',
+                'y' => '0'
+            ]);
+            /*
             $timelineProgress = Html::tag('div', [
                 'class' => 'timeline-overlay downtime-elapsed',
                 'style' => sprintf(
@@ -174,7 +203,7 @@ class DowntimeCard extends BaseHtmlElement
                     $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time),
                     $this->calcRelativeLeft(time())
                 )
-            ]);
+            ]);*/
 
             $above->add([
                 Html::tag(
@@ -210,6 +239,14 @@ class DowntimeCard extends BaseHtmlElement
 
             $below = null;
         } else {
+            $timelineProgress = Html::tag('rect', [
+                'fill' => 'red',
+                'width' => $this->calcRelativeLeft(time()),
+                'height' => '20',
+                'x' => '0',
+                'y' => '0'
+            ]);
+            /*
             $timelineProgress = Html::tag('div', [
                 'class' => 'timeline-overlay downtime-elapsed',
                 'style' => sprintf(
@@ -217,7 +254,7 @@ class DowntimeCard extends BaseHtmlElement
                     $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time),
                     $this->calcRelativeLeft(time())
                 )
-            ]);
+            ]);*/
 
             $below->add([
                 Html::tag(
@@ -270,43 +307,42 @@ class DowntimeCard extends BaseHtmlElement
         );
         $above->add($now);
 
-        $markerStart = Html::tag('div', [
+        $markerStart = Html::tag('circle', [
             'class' => 'marker start',
-            'style' => sprintf(
-                'left: %F%%',
-                $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time)
-            )
+            'r'     => '10',
+            'cx'    => $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_start_time),
+            'cy'    => '5'
         ]);
 
-        $markerNow = Html::tag('div', [
+        $markerNow = Html::tag('circle', [
             'class' => 'marker now',
-            'style' => sprintf(
-                'left: %F%%',
-                $hPadding + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3)
-            )
+            'r'     => '10',
+            'cx'    => $hPadding + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3),
+            'cy'    => '5'
         ]);
 
-        $markerEnd = Html::tag('div', [
+        $markerEnd = Html::tag('circle', [
             'class' => 'marker end',
-            'style' => sprintf(
-                'left: %F%%',
-                $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time)
-            )
+            'r'     => '10',
+            'cx'    => $hPadding + $this->calcRelativeLeft($this->downtime->scheduled_end_time),
+            'cy'    => '5'
         ]);
 
-        $timeline->add([
-            $timelineProgress,
-            $flexProgress,
+        $svg->add([
             $markerStart,
-            $markerEnd,
-            $markerFlexStart,
-            $markerFlexEnd,
             $markerNow,
+            $markerEnd,
+            $timeline,
+            $timelineProgress
+        ]);
+
+        $timelineWrapper->add([
+            $svg,
         ]);
 
         $this->add([
             $above,
-            $timeline,
+            $timelineWrapper,
             $below
         ]);
     }
