@@ -116,8 +116,10 @@
     }
 
     .timeline {
-      .rounded-corners(.5em);
-      background-color: @gray-lighter;
+      fill: @gray-lighter;
+    }
+
+    .timeline-wrapper {
       height: 1em;
       margin: 1em 0;
       position: relative;
@@ -125,8 +127,6 @@
       z-index: 1;
 
       .marker {
-        .rounded-corners(50%);
-        background-color: @gray-light;
         fill: @gray-light;
         height: .857em;
         margin-left: -.857/2em;
@@ -138,13 +138,11 @@
         top: 2/12em;
 
         &.now {
-          background-color: @gray;
           fill: @gray;
         }
 
         &.start,
         &.end {
-          background-color: @icinga-blue;
           fill: @icinga-blue;
         }
       }

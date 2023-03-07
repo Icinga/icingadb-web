@@ -37,7 +37,7 @@ class DowntimeCard extends BaseHtmlElement
 
     protected function assemble()
     {
-        $timelineWrapper = Html::tag('div', ['class' => 'w-100 timeline']);
+        $timelineWrapper = Html::tag('div', ['class' => 'w-100 timeline-wrapper']);
         $hPadding = 10;
 
         $above = Html::tag('ul', ['class' => 'above']);
@@ -47,14 +47,15 @@ class DowntimeCard extends BaseHtmlElement
         $markerFlexStart = null;
         $markerFlexEnd = null;
         $timeline = Html::tag('rect', [
-            'fill'   => 'blue',
+            'class'  => 'timeline',
             'width'  => '100%',
             'height' => '10',
+            'rx'     => '5',
             'x'      => '0',
             'y'      => '0'
         ]);
         $timelineProgress = Html::tag('rect', [
-            'fill'   => 'red',
+            'class'  => 'downtime-elapsed',
             'width'  => '0%',
             'height' => '10',
             'x'      => '0',
@@ -134,6 +135,11 @@ class DowntimeCard extends BaseHtmlElement
                         )
                     );
             }
+
+            $a = Html::tag('rect', [
+                'class' => 'start', 'positioned',
+                ''
+            ]);
 
             $above->add([
                 Html::tag(
@@ -321,6 +327,7 @@ class DowntimeCard extends BaseHtmlElement
             $markerStart,
             $markerNow,
             $markerEnd,
+            $a,
         ]);
 
         $timelineWrapper->add([
