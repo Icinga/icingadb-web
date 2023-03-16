@@ -5,11 +5,13 @@
     &.start,
     &.end {
       background-color: @gray-light;
+      fill: @gray-light;
     }
 
     &.flex-start,
     &.flex-end {
       background-color: @icinga-blue;
+      fill: @icinga-blue;
     }
   }
 
@@ -20,15 +22,18 @@
     &:before,
     &:after {
       background-color: @color-ok;
+      fill: @color-ok;
     }
   }
 
   .downtime-overrun {
     background-color: @color-down;
+    fill: @color-down;
 
     &:before,
     &:after {
       background-color: @color-down;
+      fill: @color-down;
     }
   }
 
@@ -45,4 +50,22 @@
   .below {
     padding: 2em 10%;
   }
+}
+
+.f1 {
+  display: table;
+  height: 150px;
+  overflow: hidden;
+}
+
+.f2 {
+  display: table;
+  height: 150px;
+  overflow: hidden;
+}
+
+.f3 {
+  display: table;
+  height: 150px;
+  overflow: hidden;
 }

@@ -93,14 +93,18 @@ class DowntimeCard extends BaseHtmlElement
                 $evade = true;
             }
 
-            $markerFlexStart = Html::tag('div', [
+            $markerFlexStart = Html::tag('circle', [
                 'class' => 'marker flex-start',
-                'style' => sprintf('left: %F%%', $flexStartLeft)
+                'r'     => '5',
+                'cx'    => $flexStartLeft . '%',
+                'cy'    => '5'
             ]);
 
-            $markerFlexEnd = Html::tag('div', [
+            $markerFlexEnd = Html::tag('circle', [
                 'class' => 'marker flex-end',
-                'style' => sprintf('left: %F%%', $flexEndLeft)
+                'r'     => '5',
+                'cx'    => $flexEndLeft . '%',
+                'cy'    => '5'
             ]);
 
             if (time() > $this->downtime->scheduled_end_time) {
@@ -136,10 +140,6 @@ class DowntimeCard extends BaseHtmlElement
                     );
             }
 
-            $a = Html::tag('rect', [
-                'class' => 'start', 'positioned',
-                ''
-            ]);
 
             $above->add([
                 Html::tag(
@@ -321,13 +321,30 @@ class DowntimeCard extends BaseHtmlElement
             'cy'    => '5'
         ]);
 
+        $startMarker = Html::tag('foreignObject', [
+            'x' => '50', 'y' => '100', 'width' => '250', 'height' => '100'
+        ]);
+        $bubble = Html::tag('xhtml:div', ['class' => 'bubble upwards']);
+        $verticalKeyValue = Html::tag('xhtml:div', ['class' => 'vertical-key-value']);
+        $timeValue = Html::tag('xhtml:span', ['class' => 'value']);
+        $time = Html::tag('xhtml:time', ['class' => 'time-ago', 'datetime' => '2023-03-14 14:31:25', 'title' => '2023-03-14 14:31:25']);
+        $textKey = Html::tag('span', ['class' => 'key']);
+
+        $timeValue->add($time);
+        $verticalKeyValue->add($timeValue);
+        $verticalKeyValue->add($textKey);
+        $bubble->add($verticalKeyValue);
+        $startMarker->add($bubble);
+
         $svg->add([
             $timeline,
             $timelineProgress,
             $markerStart,
             $markerNow,
+            $markerFlexStart,
+            $markerFlexEnd,
             $markerEnd,
-            $a,
+            $startMarker
         ]);
 
         $timelineWrapper->add([
@@ -335,9 +352,9 @@ class DowntimeCard extends BaseHtmlElement
         ]);
 
         $this->add([
-            $above,
+            //   $above,
             $timelineWrapper,
-            $below
+            //   $below
         ]);
     }
 
