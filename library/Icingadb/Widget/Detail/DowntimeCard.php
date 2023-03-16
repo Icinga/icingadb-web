@@ -329,6 +329,8 @@ class DowntimeCard extends BaseHtmlElement
         $timeValue = Html::tag('xhtml:span', ['class' => 'value']);
         $time = Html::tag('xhtml:time', ['class' => 'time-ago', 'datetime' => '2023-03-14 14:31:25', 'title' => '2023-03-14 14:31:25']);
         $textKey = Html::tag('span', ['class' => 'key']);
+        $textKey->setContent('Start');
+        $time->setContent('49m ago');
 
         $timeValue->add($time);
         $verticalKeyValue->add($timeValue);
