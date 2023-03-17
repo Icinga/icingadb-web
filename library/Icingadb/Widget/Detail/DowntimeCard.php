@@ -322,7 +322,7 @@ class DowntimeCard extends BaseHtmlElement
         ]);
 
         $startMarker = Html::tag('foreignObject', [
-            'x' => '50', 'y' => '100', 'width' => '250', 'height' => '100'
+            'x' => $hPadding + $this->calcRelativeLeft(time(), null, null, -$hPadding + 3) . '%', 'y' => 15, 'width' => '250', 'height' => '100'
         ]);
         $bubble = Html::tag('xhtml:div', ['class' => 'bubble upwards']);
         $verticalKeyValue = Html::tag('xhtml:div', ['class' => 'vertical-key-value']);
