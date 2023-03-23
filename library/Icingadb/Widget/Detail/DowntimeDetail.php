@@ -46,9 +46,12 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct(Downtime $downtime)
+    protected $nonce;
+
+    public function __construct(Downtime $downtime, string $nonce)
     {
         $this->downtime = $downtime;
+        $this->nonce = $nonce;
     }
 
     protected function createCancelDowntimeForm()
@@ -64,7 +67,7 @@ class DowntimeDetail extends BaseHtmlElement
 
     protected function createTimeline(): DowntimeCard
     {
-        return new DowntimeCard($this->downtime);
+        return new DowntimeCard($this->downtime, $this->nonce);
     }
 
     protected function assemble()

@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
+use Icinga\Util\Csp;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
@@ -59,7 +60,7 @@ class DowntimeController extends Controller
 
     public function indexAction()
     {
-        $detail = new DowntimeDetail($this->downtime);
+        $detail = new DowntimeDetail($this->downtime, Csp::getStyleNonce());
 
         $this->addControl((new DowntimeList([$this->downtime]))
             ->setViewMode('minimal')
@@ -68,6 +69,7 @@ class DowntimeController extends Controller
             ->setNoSubjectLink());
 
         $this->addContent($detail);
+
 
         $this->setAutorefreshInterval(10);
     }
