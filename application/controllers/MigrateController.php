@@ -97,18 +97,21 @@ class MigrateController extends Controller
             $this->httpBadRequest('No JSON content');
         }
 
-        $supportList = [];
-        foreach (Hook::all('Icingadb/IcingadbSupport') as $hook) {
-            /** @var IcingadbSupportHook $hook */
-            $supportList[$hook->getModule()->getName()] = $hook->supportsIcingaDb();
-        }
-
         $moduleSupportStates = [];
-        foreach ($this->getRequest()->getPost() as $moduleName) {
-            if (isset($supportList[$moduleName])) {
-                $moduleSupportStates[] = $supportList[$moduleName];
-            } else {
-                $moduleSupportStates[] = false;
+        if ($this->Auth()->hasPermission('module/monitoring')) {
+            $supportList = [];
+            foreach (Hook::all('Icingadb/IcingadbSupport') as $hook) {
+                /** @var IcingadbSupportHook $hook */
+                $supportList[$hook->getModule()->getName()] = $hook->supportsIcingaDb();
+            }
+
+            $moduleSupportStates = [];
+            foreach ($this->getRequest()->getPost() as $moduleName) {
+                if (isset($supportList[$moduleName])) {
+                    $moduleSupportStates[] = $supportList[$moduleName];
+                } else {
+                    $moduleSupportStates[] = false;
+                }
             }
         }
 
