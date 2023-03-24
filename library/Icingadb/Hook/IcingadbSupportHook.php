@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Hook;
 
 use Icinga\Application\Icinga;
+use Icinga\Authentication\Auth;
 use Icinga\Module\Icingadb\Hook\Common\HookUtils;
 use Icinga\Web\Session;
 
@@ -40,11 +41,12 @@ abstract class IcingadbSupportHook
     /**
      * Whether to use icingadb as the backend
      *
-     * @return bool Returns true if monitoring module is disabled or icingadb is selected as backend, false otherwise.
+     * @return bool Returns true if monitoring module is accessible or icingadb is selected as backend, false otherwise.
      */
     final public static function useIcingaDbAsBackend(): bool
     {
         return ! Icinga::app()->getModuleManager()->hasEnabled('monitoring')
+            || ! Auth::getInstance()->hasPermission('module/monitoring')
             || self::isIcingaDbSetAsPreferredBackend();
     }
 }
