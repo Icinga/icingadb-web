@@ -82,7 +82,6 @@ class AddCommentForm extends CommandForm
         $decorator->decorate($this->getElement('comment'));
 
         $config = Config::module('icingadb');
-        $commentExpire = (bool) $config->get('settings', 'comment_expire', false);
 
         $this->addElement(
             'checkbox',
@@ -90,14 +89,14 @@ class AddCommentForm extends CommandForm
             [
                 'ignore'        => true,
                 'class'         => 'autosubmit',
-                'value'         => $commentExpire,
+                'value'         => (bool) $config->get('settings', 'comment_expire', false),
                 'label'         => t('Use Expire Time'),
                 'description'   => t('If the comment should expire, check this option.')
             ]
         );
         $decorator->decorate($this->getElement('expire'));
 
-        if ($commentExpire || $this->getPopulatedValue('expire') === 'y') {
+        if ($this->getElement('expire')->isChecked()) {
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval($config->get('settings', 'comment_expire_time', 'PT1H')));
 

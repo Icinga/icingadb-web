@@ -126,22 +126,20 @@ class AcknowledgeProblemForm extends CommandForm
         );
         $decorator->decorate($this->getElement('sticky'));
 
-        $acknowledgeExpire = (bool) $config->get('settings', 'acknowledge_expire', false);
-
         $this->addElement(
             'checkbox',
             'expire',
             [
                 'ignore'        => true,
                 'class'         => 'autosubmit',
-                'value'         => $acknowledgeExpire,
+                'value'         => (bool) $config->get('settings', 'acknowledge_expire', false),
                 'label'         => t('Use Expire Time'),
                 'description'   => t('If the acknowledgement should expire, check this option.')
             ]
         );
         $decorator->decorate($this->getElement('expire'));
 
-        if ($acknowledgeExpire || $this->getPopulatedValue('expire') === 'y') {
+        if ($this->getElement('expire')->isChecked()) {
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval($config->get('settings', 'acknowledge_expire_time', 'PT1H')));
 
