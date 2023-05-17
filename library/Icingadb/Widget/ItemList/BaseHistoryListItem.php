@@ -303,7 +303,7 @@ abstract class BaseHistoryListItem extends BaseListItem
                     } else {
                         $subjectLabel = t('Downtime cancelled by author');
                     }
-                } elseif (isset($this->item->downtime->cancel_time)) {
+                } elseif ($this->item->downtime->has_been_cancelled === 'y') {
                     $subjectLabel = t('Downtime cancelled');
                 } else {
                     $subjectLabel = t('Downtime ended');
