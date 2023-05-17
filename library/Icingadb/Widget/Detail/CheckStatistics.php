@@ -40,11 +40,12 @@ class CheckStatistics extends Card
 
         $overdueBar = null;
         $nextCheckTime = $this->object->state->next_check;
+        $checkInterval = $this->getCheckInterval();
         if ($this->object->state->is_overdue) {
             $nextCheckTime = $this->object->state->next_update;
             $leftNow = $durationScale + $hPadding / 2;
 
-            $overdueScale = ($durationScale / 2) * (time() - $nextCheckTime) / (10 * $this->object->check_interval);
+            $overdueScale = ($durationScale / 2) * (time() - $nextCheckTime) / (10 * $checkInterval);
             if ($overdueScale > $durationScale / 2) {
                 $overdueScale = $durationScale / 2;
             }
@@ -59,7 +60,7 @@ class CheckStatistics extends Card
                 )
             ]);
         } else {
-            $leftNow = $durationScale * (1 - ($nextCheckTime - time()) / $this->object->check_interval);
+            $leftNow = $durationScale * (1 - ($nextCheckTime - time()) / $checkInterval);
             if ($leftNow > $durationScale) {
                 $leftNow = $durationScale;
             } elseif ($leftNow < 0) {
@@ -125,8 +126,8 @@ class CheckStatistics extends Card
             ['class' => 'interval'],
             new VerticalKeyValue(
                 t('Interval'),
-                $this->object->check_interval
-                    ? Format::seconds($this->object->check_interval)
+                $checkInterval
+                    ? Format::seconds($checkInterval)
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         );
@@ -200,5 +201,32 @@ class CheckStatistics extends Card
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         ]);
+    }
+
+    /**
+     * Get the active `check_interval` OR `check_retry_interval`
+     *
+     * @return int
+     */
+    protected function getCheckInterval(): int
+    {
+        if (! ($this->object->state->is_problem && $this->object->state->state_type === 'soft')) {
+            return $this->object->check_interval;
+        }
+
+        $delay = $this->object->state->execution_time + $this->object->state->latency + 5;
+        $interval = $this->object->state->next_check - $this->object->state->last_update;
+
+        // In case passive check is used, the check_retry_interval has no effect.
+        // Since there is no flag in the database to check if the passive check was triggered.
+        // We have to manually check if the check_retry_interval matches the calculated interval.
+        if (
+            $this->object->check_retry_interval - $delay <= $interval
+            && $this->object->check_retry_interval + $delay >= $interval
+        ) {
+            return $this->object->check_retry_interval;
+        }
+
+        return $this->object->check_interval;
     }
 }
