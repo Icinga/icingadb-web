@@ -198,7 +198,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        $dateTime = DateFormatter::formatDateTime($this->endTime);
+        $dateTime = DateFormatter::formatDateTime($this->isActive ? $this->endTime : $this->startTime);
 
         return Html::tag(
             'time',
