@@ -176,8 +176,10 @@ class ObjectAuthorization
                 continue;
             }
 
-            $inspectedRoles[] = $role->getName();
-            $roleName = $this->getDb()->quoteIdentifier($role->getName());
+            $roleName = str_replace('.', '_', $role->getName());
+            $inspectedRoles[$roleName] = $role->getName();
+
+            $roleName = $this->getDb()->quoteIdentifier($roleName);
 
             if ($cache) {
                 FilterProcessor::apply($roleFilter, $query);
@@ -210,10 +212,10 @@ class ObjectAuthorization
 
             foreach ($query as $row) {
                 $roles = $rolesWithoutRestrictions;
-                foreach ($inspectedRoles as $alias) {
+                foreach ($inspectedRoles as $alias => $roleName) {
                     if ($row->$alias) {
-                        $rolesWithRestrictions[$alias] = true;
-                        $roles[] = $alias;
+                        $rolesWithRestrictions[$roleName] = true;
+                        $roles[] = $roleName;
                     }
                 }
 
