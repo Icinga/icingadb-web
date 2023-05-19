@@ -15,12 +15,12 @@ use ipl\Html\HtmlString;
 
 class ConfigController extends Controller
 {
-//    public function init()
-//    {
-//        $this->assertPermission('config/modules');
-//
-//        parent::init();
-//    }
+    public function init()
+    {
+        $this->assertPermission('config/modules');
+
+        parent::init();
+    }
 
     public function databaseAction()
     {
