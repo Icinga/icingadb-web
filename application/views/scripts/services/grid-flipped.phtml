@@ -97,12 +97,13 @@ foreach ($pivotData as $serviceDescription => $_) {
             </td>
         <?php endforeach ?>
         <?php
-        $horizontalItemsPerPage = $this->horizontalPaginator->getLimit();
-        $horizontalTotalPages = ceil($this->horizontalPaginator->count() / $horizontalItemsPerPage);
+        $horizontalTotalItems = $this->horizontalPaginator->count();
+        $horizontalItemsPerPage = $this->horizontalPaginator->getLimit() ?? $horizontalTotalItems;
+        $horizontalTotalPages = ceil($horizontalTotalItems / $horizontalItemsPerPage);
 
-
-        $verticalItemsPerPage = $this->verticalPaginator->getLimit();
-        $verticalTotalPages = ceil($this->verticalPaginator->count() / $verticalItemsPerPage);
+        $verticalTotalItems = $this->verticalPaginator->count();
+        $verticalItemsPerPage = $this->verticalPaginator->getLimit() ?? $verticalTotalItems;
+        $verticalTotalPages = ceil($verticalTotalItems / $verticalItemsPerPage);
 
         if (! $this->compact && $horizontalTotalPages > 1): ?>
             <td>

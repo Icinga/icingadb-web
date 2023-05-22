@@ -342,9 +342,10 @@ class PivotTable
 
         $query = $this->queryXAxis();
 
-        $query->limit($limit);
-
-        $query->offset($page > 0 ? ($page - 1) * $limit : 0);
+        if ($limit !== 0) {
+            $query->limit($limit);
+            $query->offset($page > 0 ? ($page - 1) * $limit : 0);
+        }
 
         return $query;
     }
@@ -370,10 +371,12 @@ class PivotTable
                 $page = $this->getPaginationParameter('y', 'page', 1);
             }
         }
-
         $query = $this->queryYAxis();
-        $query->limit($limit);
-        $query->offset($page > 0 ? ($page - 1) * $limit : 0);
+
+        if ($limit !== 0) {
+            $query->limit($limit);
+            $query->offset($page > 0 ? ($page - 1) * $limit : 0);
+        }
 
         return $query;
     }
