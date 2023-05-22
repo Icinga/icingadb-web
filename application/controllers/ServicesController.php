@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Widget\ItemTable\ServiceItemTable;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
@@ -222,6 +223,8 @@ class ServicesController extends Controller
 
     public function gridAction()
     {
+        Environment::raiseExecutionTime();
+
         $db = $this->getDb();
         $this->addTitleTab(t('Service Grid'));
 
@@ -298,7 +301,6 @@ class ServicesController extends Controller
                 ->setXAxisHeader('display_name')
                 ->setYAxisHeader('host_display_name');
         }
-
 
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();

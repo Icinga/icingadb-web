@@ -15,20 +15,20 @@ if ($flipUrl->hasParam('page')) {
 if ($flipUrl->hasParam('limit')) {
     $flipUrl->setParam('limit', implode(',', array_reverse(explode(',', $flipUrl->getParam('limit')))));
 }
-$yAxisItemCountPerPage = $yAxisPaginator->getLimit();
+
 $yAxisTotalItem = $yAxisPaginator->count();
+$yAxisItemCountPerPage = $yAxisPaginator->getLimit() ?? $yAxisTotalItem;
 $totalYAxisPages = ceil($yAxisTotalItem / $yAxisItemCountPerPage);
 $currentYAxisPage = round($yAxisPaginator->getOffset() / $yAxisItemCountPerPage) + 1;
 $prevYAxisPage = $currentYAxisPage > 1 ? $currentYAxisPage - 1 : null;
 $nextYAxisPage = $currentYAxisPage < $totalYAxisPages ? $currentYAxisPage + 1 : null;
 
-$xAxisItemCountPerPage = $xAxisPaginator->getLimit();
 $xAxisTotalItem = $xAxisPaginator->count();
+$xAxisItemCountPerPage = $xAxisPaginator->getLimit() ?? $xAxisTotalItem;
 $totalXAxisPages = ceil($xAxisTotalItem / $xAxisItemCountPerPage);
 $currentXAxisPage = round($xAxisPaginator->getOffset() / $xAxisItemCountPerPage) + 1;
 $prevXAxisPage = $currentXAxisPage > 1 ? $currentXAxisPage - 1 : null;
 $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : null;
-
 ?>
 
 <table class="joystick-pagination">
