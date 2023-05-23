@@ -147,7 +147,7 @@ class ServiceController extends Controller
         $sortControl = $this->createSortControl(
             $history,
             [
-                'history.event_time desc' => t('Event Time')
+                'history.event_time desc, history.event_type desc' => t('Event Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
