@@ -33,7 +33,7 @@ class ServiceMetaInfo extends BaseHtmlElement
             new VerticalKeyValue('service.name', $this->service->name),
             new VerticalKeyValue(
                 'last_state_change',
-                DateFormatter::formatDateTime($this->service->state->last_state_change)
+                DateFormatter::formatDateTime($this->service->state->last_state_change->getTimestamp())
             )
         );
 

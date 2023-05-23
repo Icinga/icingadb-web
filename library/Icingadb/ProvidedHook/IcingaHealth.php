@@ -36,7 +36,7 @@ class IcingaHealth extends HealthHook
                 'Icinga DB is not running or not writing into the database'
                 . ' (make sure the icinga feature "icingadb" is enabled)'
             ));
-        } elseif ($instance->heartbeat < time() - 60) {
+        } elseif ($instance->heartbeat->getTimestamp() < time() - 60) {
             $this->setState(self::STATE_CRITICAL);
             $this->setMessage(t(
                 'Icinga DB is not running or not writing into the database'
@@ -69,7 +69,7 @@ class IcingaHealth extends HealthHook
 
         if ($instance !== null) {
             $this->setMetrics([
-                'heartbeat' => $instance->heartbeat,
+                'heartbeat' => $instance->heartbeat->getTimestamp(),
                 'responsible' => $instance->responsible,
                 'icinga2_active_host_checks_enabled' => $instance->icinga2_active_host_checks_enabled,
                 'icinga2_active_service_checks_enabled' => $instance->icinga2_active_service_checks_enabled,
@@ -77,7 +77,7 @@ class IcingaHealth extends HealthHook
                 'icinga2_flap_detection_enabled' => $instance->icinga2_flap_detection_enabled,
                 'icinga2_notifications_enabled' => $instance->icinga2_notifications_enabled,
                 'icinga2_performance_data_enabled' => $instance->icinga2_performance_data_enabled,
-                'icinga2_start_time' => $instance->icinga2_start_time,
+                'icinga2_start_time' => $instance->icinga2_start_time->getTimestamp(),
                 'icinga2_version' => $instance->icinga2_version,
                 'endpoint' => ['name' => $instance->endpoint->name]
             ]);

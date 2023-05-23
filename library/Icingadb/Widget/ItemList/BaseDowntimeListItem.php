@@ -56,17 +56,17 @@ abstract class BaseDowntimeListItem extends BaseListItem
     protected function init()
     {
         if ($this->item->is_flexible && $this->item->is_in_effect) {
-            $this->startTime = $this->item->start_time;
-            $this->endTime = $this->item->end_time;
+            $this->startTime = $this->item->start_time->getTimestamp();
+            $this->endTime = $this->item->end_time->getTimestamp();
         } else {
-            $this->startTime = $this->item->scheduled_start_time;
-            $this->endTime = $this->item->scheduled_end_time;
+            $this->startTime = $this->item->scheduled_start_time->getTimestamp();
+            $this->endTime = $this->item->scheduled_end_time->getTimestamp();
         }
 
         $this->currentTime = time();
 
         $this->isActive = $this->item->is_in_effect
-            || $this->item->is_flexible && $this->item->scheduled_start_time <= $this->currentTime;
+            || $this->item->is_flexible && $this->item->scheduled_start_time->getTimestamp() <= $this->currentTime;
 
         $until = ($this->isActive ? $this->endTime : $this->startTime) - $this->currentTime;
         $this->duration = explode(' ', DateFormatter::formatDuration(

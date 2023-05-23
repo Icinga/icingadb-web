@@ -67,7 +67,7 @@ class ApplicationState extends ApplicationStateHook
             Session::getSession()->getNamespace('icingadb')->delete('db.no-instance-since');
         }
 
-        $outdatedDbHeartbeat = $instance->heartbeat < time() - 60;
+        $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
 
         if ($lastIcingaHeartbeat === null) {
             $missingSince = Session::getSession()
@@ -85,7 +85,7 @@ class ApplicationState extends ApplicationStateHook
         }
 
         switch (true) {
-            case $outdatedDbHeartbeat && $instance->heartbeat > $lastIcingaHeartbeat:
+            case $outdatedDbHeartbeat && $instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat:
                 $this->addError(
                     'icingadb/redis-outdated',
                     $lastIcingaHeartbeat,
@@ -96,7 +96,7 @@ class ApplicationState extends ApplicationStateHook
             case $outdatedDbHeartbeat:
                 $this->addError(
                     'icingadb/icingadb-down',
-                    $instance->heartbeat,
+                    $instance->heartbeat->getTimestamp(),
                     t(
                         'It seems that Icinga DB is not running.'
                         . ' Make sure Icinga DB is running and writing into the database.'

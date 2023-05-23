@@ -73,20 +73,20 @@ class CommentDetail extends BaseHtmlElement
             );
             $details[] = new HorizontalKeyValue(
                 t('Created'),
-                DateFormatter::formatDateTime($this->comment->entry_time)
+                DateFormatter::formatDateTime($this->comment->entry_time->getTimestamp())
             );
-            $details[] = new HorizontalKeyValue(t('Expires'), $this->comment->expire_time != 0
-                ? DateFormatter::formatDateTime($this->comment->expire_time)
+            $details[] = new HorizontalKeyValue(t('Expires'), $this->comment->expire_time !== null
+                ? DateFormatter::formatDateTime($this->comment->expire_time->getTimestamp())
                 : t('Never'));
         } else {
-            if ($this->comment->expire_time != 0) {
+            if ($this->comment->expire_time !== null) {
                 $details[] = Html::tag(
                     'p',
                     Html::sprintf(
                         $this->comment->entry_type === 'ack'
                             ? t('This acknowledgement expires %s.', '..<time-until>')
                             : t('This comment expires %s.', '..<time-until>'),
-                        new TimeUntil($this->comment->expire_time)
+                        new TimeUntil($this->comment->expire_time->getTimestamp())
                     )
                 );
             }

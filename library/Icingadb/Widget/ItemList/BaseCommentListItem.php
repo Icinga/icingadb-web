@@ -76,7 +76,7 @@ abstract class BaseCommentListItem extends BaseListItem
             $headerParts[] = new HtmlElement('span', Attributes::create(['class' => 'ack-badge badge']), ...$label);
         }
 
-        if ($expires != 0) {
+        if ($expires !== null) {
             $headerParts[] = Text::create(' ');
             $headerParts[] = new HtmlElement(
                 'span',
@@ -110,13 +110,13 @@ abstract class BaseCommentListItem extends BaseListItem
         if ($this->item->expire_time) {
             return Html::tag(
                 'span',
-                FormattedString::create(t("expires %s"), new TimeUntil($this->item->expire_time))
+                FormattedString::create(t("expires %s"), new TimeUntil($this->item->expire_time->getTimestamp()))
             );
         }
 
         return Html::tag(
             'span',
-            FormattedString::create(t("created %s"), new TimeAgo($this->item->entry_time))
+            FormattedString::create(t("created %s"), new TimeAgo($this->item->entry_time->getTimestamp()))
         );
     }
 

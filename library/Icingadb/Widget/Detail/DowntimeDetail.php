@@ -130,36 +130,36 @@ class DowntimeDetail extends BaseHtmlElement
 
         $this->add(new HorizontalKeyValue(
             t('Created'),
-            WebDateFormatter::formatDateTime($this->downtime->entry_time)
+            WebDateFormatter::formatDateTime($this->downtime->entry_time->getTimestamp())
         ));
         $this->add(new HorizontalKeyValue(
             t('Start time'),
             $this->downtime->start_time
-                ? WebDateFormatter::formatDateTime($this->downtime->start_time)
+                ? WebDateFormatter::formatDateTime($this->downtime->start_time->getTimestamp())
                 : new EmptyState(t('Not started yet'))
         ));
         $this->add(new HorizontalKeyValue(
             t('End time'),
             $this->downtime->end_time
-                ? WebDateFormatter::formatDateTime($this->downtime->end_time)
+                ? WebDateFormatter::formatDateTime($this->downtime->end_time->getTimestamp())
                 : new EmptyState(t('Not started yet'))
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Start'),
-            WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time)
+            WebDateFormatter::formatDateTime($this->downtime->scheduled_start_time->getTimestamp())
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled End'),
-            WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time)
+            WebDateFormatter::formatDateTime($this->downtime->scheduled_end_time->getTimestamp())
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Duration'),
-            DateFormatter::formatDuration($this->downtime->scheduled_duration)
+            DateFormatter::formatDuration($this->downtime->scheduled_duration->getTimestamp())
         ));
         if ($this->downtime->is_flexible) {
             $this->add(new HorizontalKeyValue(
                 t('Flexible Duration'),
-                DateFormatter::formatDuration($this->downtime->flexible_duration)
+                DateFormatter::formatDuration($this->downtime->flexible_duration->getTimestamp())
             ));
         }
 
