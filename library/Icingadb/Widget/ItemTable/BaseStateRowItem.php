@@ -9,14 +9,15 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
 
-abstract class BaseRowItem extends BaseHtmlElement
+/** @todo Figure out what this might (should) have in common with the new BaseTableRowItem implementation */
+abstract class BaseStateRowItem extends BaseHtmlElement
 {
     protected $defaultAttributes = ['class' => 'row-item'];
 
     /** @var Model */
     protected $item;
 
-    /** @var BaseItemTable */
+    /** @var StateItemTable */
     protected $list;
 
     protected $tag = 'tr';
@@ -25,9 +26,9 @@ abstract class BaseRowItem extends BaseHtmlElement
      * Create a new row item
      *
      * @param Model $item
-     * @param BaseItemTable $list
+     * @param StateItemTable $list
      */
-    public function __construct(Model $item, BaseItemTable $list)
+    public function __construct(Model $item, StateItemTable $list)
     {
         $this->item = $item;
         $this->list = $list;
