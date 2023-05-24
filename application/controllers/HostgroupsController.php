@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
+use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
@@ -78,7 +78,7 @@ class HostgroupsController extends Controller
         $results = $hostgroups->execute();
 
         $this->addContent(
-            (new HostgroupList($results))->setBaseFilter($filter)
+            (new HostgroupTable($results))->setBaseFilter($filter)
         );
 
         if ($compact) {

@@ -16,6 +16,7 @@ use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\BaseItemTable;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Common\SearchControls;
@@ -511,7 +512,7 @@ class Controller extends CompatController
 
     protected function addContent(ValidHtml $content)
     {
-        if ($content instanceof BaseItemList) {
+        if ($content instanceof BaseItemList || $content instanceof BaseItemTable) {
             $this->content->getAttributes()->add('class', 'full-width');
         } elseif ($content instanceof StateItemTable) {
             $this->content->getAttributes()->add('class', 'full-height');
