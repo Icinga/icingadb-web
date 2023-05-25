@@ -69,7 +69,9 @@ class HostgroupListItem extends BaseTableRowItem
 
     protected function assembleTitle(BaseHtmlElement $title)
     {
-        $title->addHtml(
+        $wrapper = new HtmlElement('div', Attributes::create(['class' => 'wrapper']));
+
+        $wrapper->addHtml(
             $this->getNoSubjectLink()
                 ? new HtmlElement(
                     'span',
@@ -78,7 +80,9 @@ class HostgroupListItem extends BaseTableRowItem
                 )
                 : new Link($this->item->display_name, Links::hostgroup($this->item), ['class' => 'subject']),
             new HtmlElement('br'),
-            Text::create($this->item->name)
+            new HtmlElement('span', null, Text::create($this->item->name))
         );
+
+        $title->add($wrapper);
     }
 }
