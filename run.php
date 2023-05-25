@@ -10,6 +10,7 @@ $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
 $this->provideHook('Reporting/Report', 'Reporting/HostSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/ServiceSlaReport');
+$this->provideHook('Reporting/EmailAddressBook', 'Reporting/EmailAddressBook');
 
 if (! $this::exists('monitoring')) {
     $modulePath = null;
