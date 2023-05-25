@@ -15,12 +15,14 @@ use Icinga\Module\Icingadb\Widget\Detail\CustomVarTable;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 use ipl\Html\Text;
 use ipl\Orm\Model;
+use ipl\Web\Widget\CopyToClipboard;
 
 abstract class ObjectInspectionDetail extends BaseHtmlElement
 {
@@ -90,7 +92,11 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, Text::create(t('Executed Command'))),
-            new HtmlElement('pre', null, Text::create($command)),
+            CopyToClipboard::attachTo(new HtmlElement(
+                'pre',
+                Attributes::create(['id' => 'executed-command']),
+                Text::create($command)
+            )),
             new HtmlElement('h2', null, Text::create(t('Execution Details'))),
             $this->createNameValueTable(
                 array_diff_key($this->attrs['last_check_result'], array_flip($denylist)),

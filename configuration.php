@@ -565,6 +565,7 @@ namespace Icinga\Module\Icingadb {
 
     $this->provideJsFile('action-list.js');
     $this->provideJsFile('loadmore.js');
+    $this->provideJsFile('copy-to-clipboard.js');
 
     $mg = Icinga::app()->getModuleManager();
     if ($mg->hasEnabled('monitoring')) {
