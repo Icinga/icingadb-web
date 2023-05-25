@@ -8,7 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\UserDetail;
-use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Widget\ItemTable\UserTableRow;
 use ipl\Stdlib\Filter;
 
 class UserController extends Controller
@@ -40,7 +40,7 @@ class UserController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new UserList([$this->user]))->setNoSubjectLink()->setDetailActionsDisabled());
+        $this->addControl(new UserTableRow($this->user));
         $this->addContent(new UserDetail($this->user));
 
         $this->setAutorefreshInterval(10);

@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
+use Icinga\Module\Icingadb\Widget\ItemTable\ServicegroupTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
@@ -77,7 +77,7 @@ class ServicegroupsController extends Controller
         $results = $servicegroups->execute();
 
         $this->addContent(
-            (new ServicegroupList($results))->setBaseFilter($filter)
+            (new ServicegroupTable($results))->setBaseFilter($filter)
         );
 
         if ($compact) {

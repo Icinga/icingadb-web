@@ -318,10 +318,17 @@ div.show-more {
   &.servicegroup-table {
     --columns: 1;
   }
+
+  &.user-table, // TODO: make them lists.....
+  &.usergroup-table {
+    --columns: 0;
+  }
 }
 
 .hostgroup-table,
-.servicegroup-table {
+.servicegroup-table,
+.usergroup-table,
+.user-table {
   .title .content > * {
     display: block;
     max-width: fit-content;
@@ -333,7 +340,9 @@ div.show-more {
 }
 
 .controls .hostgroup-table-row,
-.controls .servicegroup-table-row {
+.controls .servicegroup-table-row,
+.controls .usergroup-table-row,
+.controls .user-table-row {
   .title .content {
     display: inline-flex;
     align-items: center;
