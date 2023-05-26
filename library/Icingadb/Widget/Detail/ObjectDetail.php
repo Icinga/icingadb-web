@@ -579,6 +579,7 @@ class ObjectDetail extends BaseHtmlElement
         $customvarFlat = $this->object->customvar_flat;
         if (! $customvarFlat instanceof ResultSet) {
             $this->applyRestrictions($customvarFlat);
+            $customvarFlat->withColumns(['customvar.name', 'customvar.value']);
             $this->object->customvar_flat = $customvarFlat->execute();
         }
     }
