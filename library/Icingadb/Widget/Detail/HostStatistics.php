@@ -42,10 +42,10 @@ class HostStatistics extends ObjectStatistics
         }
 
         return new Link(
-            new VerticalKeyValue(
+            (new VerticalKeyValue(
                 tp('Host', 'Hosts', $this->summary->hosts_total),
-                $this->summary->hosts_total
-            ),
+                $this->shortenAmount($this->summary->hosts_total)
+            ))->setAttribute('title', $this->summary->hosts_total),
             $url
         );
     }

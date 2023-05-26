@@ -23,6 +23,31 @@ abstract class ObjectStatistics extends BaseHtmlElement
 
     abstract protected function createBadges(): ValidHtml;
 
+    /**
+     * Shorten the given amount to 4 characters max
+     *
+     * @param int $amount
+     *
+     * @return string
+     */
+    protected function shortenAmount(int $amount): string
+    {
+        if ($amount < 10000) {
+            return (string) $amount;
+        }
+
+        if ($amount < 999500) {
+            return sprintf('%dk', round($amount / 1000.0));
+        }
+
+        if ($amount < 9959000) {
+            return sprintf('%.1fM', $amount / 1000000.0);
+        }
+
+        // I think we can rule out amounts over 1 Billion
+        return sprintf('%dM', $amount / 1000000.0);
+    }
+
     protected function assemble()
     {
         $this->add([

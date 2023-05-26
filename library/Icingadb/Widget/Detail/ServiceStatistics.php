@@ -46,10 +46,10 @@ class ServiceStatistics extends ObjectStatistics
         }
 
         return new Link(
-            new VerticalKeyValue(
+            (new VerticalKeyValue(
                 tp('Service', 'Services', $this->summary->services_total),
-                $this->summary->services_total
-            ),
+                $this->shortenAmount($this->summary->services_total)
+            ))->setAttribute('title', $this->summary->services_total),
             $url
         );
     }
