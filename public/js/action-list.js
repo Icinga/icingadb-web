@@ -24,6 +24,8 @@
             this.on('keydown', '#main > .container, .action-list', this.onKeyDown, this);
 
             this.lastActivatedItemUrl = null;
+            this.lastTimeoutId = null;
+            this.isProcessingRequest = false;
         }
 
         /**
@@ -207,6 +209,8 @@
 
             event.preventDefault();
 
+            document.querySelector('.container[id^=col]').dataset.suspendAutorefresh = '';
+
             let isMultiSelect = isMultiSelectableList && event.shiftKey;
             let wasAllSelected = activeItems.length === list.querySelectorAll(':scope > [data-action-item]').length;
             let lastActivatedItem = list.querySelector(`[data-icinga-detail-filter="${ _this.lastActivatedItemUrl }"]`);
@@ -330,9 +334,15 @@
 
             _this.addSelectionCountToFooter(list);
 
-            _this.icinga.loader.loadUrl(
-                url, _this.icinga.loader.getLinkTargetFor($(toActiveItem))
-            );
+            _this.isProcessingRequest = true;
+            clearTimeout(_this.lastTimeoutId);
+            _this.lastTimeoutId = setTimeout(() => {
+                let req = _this.icinga.loader.loadUrl(url, _this.icinga.loader.getLinkTargetFor($(toActiveItem)));
+                req.done(() => {
+                    _this.isProcessingRequest = false;
+                    delete document.querySelector('.container[id^=col]').dataset.suspendAutorefresh;
+                });
+            }, 250);
         }
 
         createMultiSelectUrl(items) {
@@ -373,11 +383,12 @@
         }
 
         onRendered(event) {
+            let _this = event.data.self;
             let container = event.target;
             let isTopLevelContainer = container.matches('#main > :scope');
 
-            if (event.currentTarget !== container) {
-                // Nested containers are not processed multiple times
+            if (event.currentTarget !== container || _this.isProcessingRequest) {
+                // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
             } else if (isTopLevelContainer && container.id !== 'col1') {
                 return;
@@ -386,7 +397,6 @@
             let list = container.querySelector('.action-list');
 
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-                let _this = event.data.self;
                 let detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
 
                 if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
