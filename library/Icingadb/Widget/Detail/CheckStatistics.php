@@ -192,13 +192,13 @@ class CheckStatistics extends Card
             new VerticalKeyValue(
                 t('Execution time'),
                 $this->object->state->execution_time
-                    ? Format::seconds($this->object->state->execution_time->getTimestamp())
+                    ? Format::seconds($this->object->state->execution_time / 1000)
                     : (new EmptyState(t('n. a.')))->setTag('span')
             ),
             new VerticalKeyValue(
                 t('Latency'),
                 $this->object->state->latency
-                    ? Format::seconds($this->object->state->latency->getTimestamp())
+                    ? Format::seconds($this->object->state->latency / 1000)
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         ]);
@@ -215,9 +215,7 @@ class CheckStatistics extends Card
             return $this->object->check_interval;
         }
 
-        $delay = $this->object->state->execution_time->getTimestamp()
-            + $this->object->state->latency->getTimestamp()
-            + 5;
+        $delay = ($this->object->state->execution_time + $this->object->state->latency) / 1000 + 5;
         $interval = $this->object->state->next_check->getTimestamp()
             - $this->object->state->last_update->getTimestamp();
 

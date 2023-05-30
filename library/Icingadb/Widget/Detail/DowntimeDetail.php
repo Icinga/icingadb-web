@@ -154,12 +154,12 @@ class DowntimeDetail extends BaseHtmlElement
         ));
         $this->add(new HorizontalKeyValue(
             t('Scheduled Duration'),
-            DateFormatter::formatDuration($this->downtime->scheduled_duration->getTimestamp())
+            DateFormatter::formatDuration($this->downtime->scheduled_duration / 1000)
         ));
         if ($this->downtime->is_flexible) {
             $this->add(new HorizontalKeyValue(
                 t('Flexible Duration'),
-                DateFormatter::formatDuration($this->downtime->flexible_duration->getTimestamp())
+                DateFormatter::formatDuration($this->downtime->flexible_duration / 1000)
             ));
         }
 

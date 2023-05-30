@@ -65,8 +65,6 @@ abstract class State extends Model
         ]));
 
         $behaviors->add(new MillisecondTimestamp([
-            'execution_time',
-            'latency',
             'last_update',
             'last_state_change',
             'next_check',

@@ -103,11 +103,8 @@ class Downtime extends Model
             'entry_time',
             'scheduled_start_time',
             'scheduled_end_time',
-            'scheduled_duration',
-            'flexible_duration',
             'start_time',
-            'end_time',
-            'duration'
+            'end_time'
         ]));
 
         $behaviors->add(new Binary([

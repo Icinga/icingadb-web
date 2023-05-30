@@ -356,7 +356,7 @@ class EventDetail extends BaseHtmlElement
             $eventInfo[] = new HorizontalKeyValue(t('Flexible'), t('Yes'));
             $eventInfo[] = new HorizontalKeyValue(
                 t('Duration'),
-                DateFormatter::formatDuration($downtime->flexible_duration->getTimestamp())
+                DateFormatter::formatDuration($downtime->flexible_duration / 1000)
             );
         }
 
