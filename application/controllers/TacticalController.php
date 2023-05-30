@@ -91,11 +91,4 @@ class TacticalController extends Controller
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
     }
-
-    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
-    {
-        parent::prepareSearchFilter($query, $search, $filter);
-
-        $filter->add(Filter::like('host.name_ci', "*$search*"));
-    }
 }
