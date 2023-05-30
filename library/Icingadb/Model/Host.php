@@ -121,7 +121,7 @@ class Host extends Model
 
     public function getSearchColumns()
     {
-        return ['name_ci'];
+        return ['name_ci', 'display_name'];
     }
 
     public function getDefaultSort()
