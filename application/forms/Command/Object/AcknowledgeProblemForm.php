@@ -16,6 +16,7 @@ use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
+use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 
@@ -153,7 +154,19 @@ class AcknowledgeProblemForm extends CommandForm
                     'label'                     => t('Expire Time'),
                     'description'               => t(
                         'Choose the date and time when Icinga should delete the acknowledgement.'
-                    )
+                    ),
+                    'validators'                => [
+                        'DateTime' => ['break_chain_on_failure' => true],
+                        'Callback' => function ($value, $validator) {
+                            /** @var CallbackValidator $validator */
+                            if ($value <= (new DateTime())) {
+                                $validator->addMessage(t('The expire time must not be in the past'));
+                                return false;
+                            }
+
+                            return true;
+                        }
+                    ]
                 ]
             );
             $decorator->decorate($this->getElement('expire_time'));
