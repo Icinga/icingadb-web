@@ -299,10 +299,11 @@ class Controller extends CompatController
      * Process a search request
      *
      * @param Query $query
+     * @param array $additionalColumns
      *
      * @return void
      */
-    public function handleSearchRequest(Query $query)
+    public function handleSearchRequest(Query $query, array $additionalColumns = [])
     {
         $q = trim($this->params->shift('q', ''), ' *');
         if (! $q) {
@@ -310,7 +311,7 @@ class Controller extends CompatController
         }
 
         $filter = Filter::any();
-        $this->prepareSearchFilter($query, $q, $filter);
+        $this->prepareSearchFilter($query, $q, $filter, $additionalColumns);
 
         $redirectUrl = Url::fromRequest();
         $redirectUrl->setQueryString(QueryString::render($filter));
@@ -327,12 +328,14 @@ class Controller extends CompatController
      * @param Query $query
      * @param string $search
      * @param Filter\Any $filter
+     * @param array $additionalColumns
      *
      * @return void
      */
-    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
+    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
-        foreach ($query->getModel()->getSearchColumns() as $column) {
+        $columns = array_merge($query->getModel()->getSearchColumns(), $additionalColumns);
+        foreach ($columns as $column) {
             $filter->add(Filter::like(
                 $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName()),
                 "*$search*"

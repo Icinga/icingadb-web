@@ -28,7 +28,12 @@ class TacticalController extends Controller
         $hoststateSummary = HoststateSummary::on($db);
         $servicestateSummary = ServicestateSummary::on($db);
 
-        $this->handleSearchRequest($servicestateSummary);
+        $this->handleSearchRequest($servicestateSummary, [
+            'host.name_ci',
+            'host.display_name',
+            'host.address',
+            'host.address6'
+        ]);
 
         $searchBar = $this->createSearchBar($servicestateSummary);
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
