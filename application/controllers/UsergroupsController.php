@@ -30,8 +30,6 @@ class UsergroupsController extends Controller
 
         $usergroups = Usergroup::on($db);
 
-        $this->handleSearchRequest($usergroups);
-
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($usergroups);
         $sortControl = $this->createSortControl(

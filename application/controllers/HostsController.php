@@ -42,7 +42,7 @@ class HostsController extends Controller
         $hosts->getWith()['host.state']->setJoinType('INNER');
         $hosts->setResultSetClass(VolatileStateResults::class);
 
-        $this->handleSearchRequest($hosts);
+        $this->handleSearchRequest($hosts, ['address', 'address6']);
 
         $summary = null;
         if (! $compact) {

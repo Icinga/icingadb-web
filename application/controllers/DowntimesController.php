@@ -36,8 +36,6 @@ class DowntimesController extends Controller
             'service.state'
         ]);
 
-        $this->handleSearchRequest($downtimes);
-
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($downtimes);
         $sortControl = $this->createSortControl(

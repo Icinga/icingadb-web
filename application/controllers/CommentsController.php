@@ -36,8 +36,6 @@ class CommentsController extends Controller
             'service.state'
         ]);
 
-        $this->handleSearchRequest($comments);
-
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($comments);
         $sortControl = $this->createSortControl(

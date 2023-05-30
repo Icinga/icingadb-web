@@ -30,8 +30,6 @@ class UsersController extends Controller
 
         $users = User::on($db);
 
-        $this->handleSearchRequest($users);
-
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($users);
         $sortControl = $this->createSortControl(

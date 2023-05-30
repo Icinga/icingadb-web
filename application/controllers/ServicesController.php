@@ -411,12 +411,14 @@ class ServicesController extends Controller
         return new FeatureStatus('service', $summary->first());
     }
 
-    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter)
+    protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
         if ($this->params->shift('_hostFilterOnly', false)) {
-            $filter->add(Filter::like('host.name_ci', "*$search*"));
+            foreach (['host.name_ci', 'host.display_name', 'host.address', 'host.address6'] as $column) {
+                $filter->add(Filter::like($column, "*$search*"));
+            }
         } else {
-            parent::prepareSearchFilter($query, $search, $filter);
+            parent::prepareSearchFilter($query, $search, $filter, $additionalColumns);
         }
     }
 
