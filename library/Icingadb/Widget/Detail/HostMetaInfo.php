@@ -47,7 +47,7 @@ class HostMetaInfo extends BaseHtmlElement
             ),
             new VerticalKeyValue(
                 'last_state_change',
-                DateFormatter::formatDateTime($this->host->state->last_state_change)
+                DateFormatter::formatDateTime($this->host->state->last_state_change->getTimestamp())
             )
         );
 

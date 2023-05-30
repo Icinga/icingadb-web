@@ -5,8 +5,8 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
-use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
@@ -64,9 +64,7 @@ abstract class State extends Model
             'in_downtime'
         ]));
 
-        $behaviors->add(new Timestamp([
-            'execution_time',
-            'latency',
+        $behaviors->add(new MillisecondTimestamp([
             'last_update',
             'last_state_change',
             'next_check',

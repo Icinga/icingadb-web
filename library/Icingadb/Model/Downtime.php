@@ -6,8 +6,8 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
-use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -99,15 +99,12 @@ class Downtime extends Model
             'is_in_effect'
         ]));
 
-        $behaviors->add(new Timestamp([
+        $behaviors->add(new MillisecondTimestamp([
             'entry_time',
             'scheduled_start_time',
             'scheduled_end_time',
-            'scheduled_duration',
-            'flexible_duration',
             'start_time',
-            'end_time',
-            'duration'
+            'end_time'
         ]));
 
         $behaviors->add(new Binary([

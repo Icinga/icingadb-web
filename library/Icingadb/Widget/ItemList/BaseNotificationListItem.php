@@ -184,6 +184,6 @@ abstract class BaseNotificationListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        return new TimeAgo($this->item->send_time);
+        return new TimeAgo($this->item->send_time->getTimestamp());
     }
 }

@@ -39,10 +39,11 @@ class CheckStatistics extends Card
         $timeline = Html::tag('div', ['class' => 'check-timeline timeline']);
 
         $overdueBar = null;
-        $nextCheckTime = $this->object->state->next_check;
+
+        $nextCheckTime = $this->object->state->next_check->getTimestamp();
         $checkInterval = $this->getCheckInterval();
         if ($this->object->state->is_overdue) {
-            $nextCheckTime = $this->object->state->next_update;
+            $nextCheckTime = $this->object->state->next_update->getTimestamp();
             $leftNow = $durationScale + $hPadding / 2;
 
             $overdueScale = ($durationScale / 2) * (time() - $nextCheckTime) / (10 * $checkInterval);
@@ -90,7 +91,7 @@ class CheckStatistics extends Card
             'class' => 'marker start',
             'style' => 'left: ' . $hPadding . '%',
             'title' => $this->object->state->last_update !== null
-                ? DateFormatter::formatDateTime($this->object->state->last_update)
+                ? DateFormatter::formatDateTime($this->object->state->last_update->getTimestamp())
                 : null
         ]);
         $markerNext = Html::tag('div', [
@@ -117,7 +118,7 @@ class CheckStatistics extends Card
                 'div',
                 ['class' => 'bubble upwards'],
                 new VerticalKeyValue(t('Last update'), $this->object->state->last_update !== null
-                    ? new TimeAgo($this->object->state->last_update)
+                    ? new TimeAgo($this->object->state->last_update->getTimestamp())
                     : t('PENDING'))
             )
         );
@@ -191,13 +192,13 @@ class CheckStatistics extends Card
             new VerticalKeyValue(
                 t('Execution time'),
                 $this->object->state->execution_time
-                    ? Format::seconds($this->object->state->execution_time)
+                    ? Format::seconds($this->object->state->execution_time / 1000)
                     : (new EmptyState(t('n. a.')))->setTag('span')
             ),
             new VerticalKeyValue(
                 t('Latency'),
                 $this->object->state->latency
-                    ? Format::seconds($this->object->state->latency)
+                    ? Format::seconds($this->object->state->latency / 1000)
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         ]);
@@ -214,8 +215,9 @@ class CheckStatistics extends Card
             return $this->object->check_interval;
         }
 
-        $delay = $this->object->state->execution_time + $this->object->state->latency + 5;
-        $interval = $this->object->state->next_check - $this->object->state->last_update;
+        $delay = ($this->object->state->execution_time + $this->object->state->latency) / 1000 + 5;
+        $interval = $this->object->state->next_check->getTimestamp()
+            - $this->object->state->last_update->getTimestamp();
 
         // In case passive check is used, the check_retry_interval has no effect.
         // Since there is no flag in the database to check if the passive check was triggered.

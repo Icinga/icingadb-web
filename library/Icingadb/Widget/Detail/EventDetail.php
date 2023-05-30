@@ -121,7 +121,10 @@ class EventDetail extends BaseHtmlElement
 
         $eventInfo = [
             new HtmlElement('h2', null, Text::create(t('Event Info'))),
-            new HorizontalKeyValue(t('Sent On'), DateFormatter::formatDateTime($notification->send_time))
+            new HorizontalKeyValue(
+                t('Sent On'),
+                DateFormatter::formatDateTime($notification->send_time->getTimestamp())
+            )
         ];
 
         if ($notification->author) {
@@ -230,7 +233,10 @@ class EventDetail extends BaseHtmlElement
 
         $eventInfo = [
             new HtmlElement('h2', null, Text::create(t('Event Info'))),
-            new HorizontalKeyValue(t('Occurred On'), DateFormatter::formatDateTime($stateChange->event_time)),
+            new HorizontalKeyValue(
+                t('Occurred On'),
+                DateFormatter::formatDateTime($stateChange->event_time->getTimestamp())
+            ),
             new HorizontalKeyValue(t('Scheduling Source'), $stateChange->scheduling_source),
             new HorizontalKeyValue(t('Check Source'), $stateChange->check_source)
         ];
@@ -319,29 +325,38 @@ class EventDetail extends BaseHtmlElement
                     HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
                 )
             ));
-        $eventInfo[] = new HorizontalKeyValue(t('Entered On'), DateFormatter::formatDateTime($downtime->entry_time));
+        $eventInfo[] = new HorizontalKeyValue(
+            t('Entered On'),
+            DateFormatter::formatDateTime($downtime->entry_time->getTimestamp())
+        );
         $eventInfo[] = new HorizontalKeyValue(t('Author'), [new Icon('user'), $downtime->author]);
             // TODO: The following should be presented in a specific widget (maybe just like the downtime card)
         $eventInfo[] = new HorizontalKeyValue(
             t('Triggered On'),
-            DateFormatter::formatDateTime($downtime->trigger_time)
+            DateFormatter::formatDateTime($downtime->trigger_time->getTimestamp())
         );
         $eventInfo[] = new HorizontalKeyValue(
             t('Scheduled Start'),
-            DateFormatter::formatDateTime($downtime->scheduled_start_time)
+            DateFormatter::formatDateTime($downtime->scheduled_start_time->getTimestamp())
         );
-        $eventInfo[] = new HorizontalKeyValue(t('Actual Start'), DateFormatter::formatDateTime($downtime->start_time));
+        $eventInfo[] = new HorizontalKeyValue(
+            t('Actual Start'),
+            DateFormatter::formatDateTime($downtime->start_time->getTimestamp())
+        );
         $eventInfo[] = new HorizontalKeyValue(
             t('Scheduled End'),
-            DateFormatter::formatDateTime($downtime->scheduled_end_time)
+            DateFormatter::formatDateTime($downtime->scheduled_end_time->getTimestamp())
         );
-        $eventInfo[] = new HorizontalKeyValue(t('Actual End'), DateFormatter::formatDateTime($downtime->end_time));
+        $eventInfo[] = new HorizontalKeyValue(
+            t('Actual End'),
+            DateFormatter::formatDateTime($downtime->end_time->getTimestamp())
+        );
 
         if ($downtime->is_flexible) {
             $eventInfo[] = new HorizontalKeyValue(t('Flexible'), t('Yes'));
             $eventInfo[] = new HorizontalKeyValue(
                 t('Duration'),
-                DateFormatter::formatDuration($downtime->flexible_duration)
+                DateFormatter::formatDuration($downtime->flexible_duration / 1000)
             );
         }
 
@@ -349,7 +364,10 @@ class EventDetail extends BaseHtmlElement
         if ($downtime->has_been_cancelled) {
             $cancelInfo = [
                 new HtmlElement('h2', null, Text::create(t('This downtime has been cancelled'))),
-                new HorizontalKeyValue(t('Cancelled On'), DateFormatter::formatDateTime($downtime->cancel_time)),
+                new HorizontalKeyValue(
+                    t('Cancelled On'),
+                    DateFormatter::formatDateTime($downtime->cancel_time->getTimestamp())
+                ),
                 new HorizontalKeyValue(t('Cancelled by'), [new Icon('user'), $downtime->cancelled_by])
             ];
         }
@@ -385,12 +403,15 @@ class EventDetail extends BaseHtmlElement
                     HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
                 )
             ));
-        $eventInfo[] = new HorizontalKeyValue(t('Entered On'), DateFormatter::formatDateTime($comment->entry_time));
+        $eventInfo[] = new HorizontalKeyValue(
+            t('Entered On'),
+            DateFormatter::formatDateTime($comment->entry_time->getTimestamp())
+        );
         $eventInfo[] = new HorizontalKeyValue(t('Author'), [new Icon('user'), $comment->author]);
         $eventInfo[] = new HorizontalKeyValue(
             t('Expires On'),
             $comment->expire_time
-                ? DateFormatter::formatDateTime($comment->expire_time)
+                ? DateFormatter::formatDateTime($comment->expire_time->getTimestamp())
                 : new EmptyState(t('Never'))
         );
 
@@ -409,7 +430,7 @@ class EventDetail extends BaseHtmlElement
             if ($comment->removed_by) {
                 $removedInfo[] = new HorizontalKeyValue(
                     t('Removed On'),
-                    DateFormatter::formatDateTime($comment->remove_time)
+                    DateFormatter::formatDateTime($comment->remove_time->getTimestamp())
                 );
                 $removedInfo[] = new HorizontalKeyValue(
                     t('Removed by'),
@@ -418,7 +439,7 @@ class EventDetail extends BaseHtmlElement
             } else {
                 $removedInfo[] = new HorizontalKeyValue(
                     t('Expired On'),
-                    DateFormatter::formatDateTime($comment->remove_time)
+                    DateFormatter::formatDateTime($comment->remove_time->getTimestamp())
                 );
             }
         }
@@ -450,7 +471,10 @@ class EventDetail extends BaseHtmlElement
                         HtmlElement::create('span', ['class' => 'subject'], $this->event->host->display_name)
                     )
                 )),
-            new HorizontalKeyValue(t('Started on'), DateFormatter::formatDateTime($flapping->start_time))
+            new HorizontalKeyValue(
+                t('Started on'),
+                DateFormatter::formatDateTime($flapping->start_time->getTimestamp())
+            )
         ];
         if ($this->event->event_type === 'flapping_start') {
             $eventInfo[] = new HorizontalKeyValue(t('Reason'), sprintf(
@@ -459,7 +483,10 @@ class EventDetail extends BaseHtmlElement
                 $flapping->flapping_threshold_high
             ));
         } else {
-            $eventInfo[] = new HorizontalKeyValue(t('Ended on'), DateFormatter::formatDateTime($flapping->end_time));
+            $eventInfo[] = new HorizontalKeyValue(
+                t('Ended on'),
+                DateFormatter::formatDateTime($flapping->end_time->getTimestamp())
+            );
             $eventInfo[] = new HorizontalKeyValue(t('Reason'), sprintf(
                 t('State change rate of %.2f%% undercut the threshold (%.2f%%)'),
                 $flapping->percent_state_change_end,
@@ -486,7 +513,10 @@ class EventDetail extends BaseHtmlElement
 
         $eventInfo = [
             new HtmlElement('h2', null, Text::create(t('Event Info'))),
-            new HorizontalKeyValue(t('Set on'), DateFormatter::formatDateTime($acknowledgement->set_time)),
+            new HorizontalKeyValue(
+                t('Set on'),
+                DateFormatter::formatDateTime($acknowledgement->set_time->getTimestamp())
+            ),
             new HorizontalKeyValue(t('Author'), $acknowledgement->author
                 ? [new Icon('user'), $acknowledgement->author]
                 : new EmptyState(t('n. a.'))),
@@ -511,7 +541,7 @@ class EventDetail extends BaseHtmlElement
             $eventInfo[] = new HorizontalKeyValue(
                 t('Expires On'),
                 $acknowledgement->expire_time
-                ? DateFormatter::formatDateTime($acknowledgement->expire_time)
+                ? DateFormatter::formatDateTime($acknowledgement->expire_time->getTimestamp())
                 : new EmptyState(t('Never'))
             );
             $eventInfo[] = new HorizontalKeyValue(t('Sticky'), isset($acknowledgement->is_sticky)
@@ -523,7 +553,11 @@ class EventDetail extends BaseHtmlElement
         } else {
             $eventInfo[] = new HorizontalKeyValue(
                 t('Cleared on'),
-                DateFormatter::formatDateTime($acknowledgement->clear_time ?: $this->event->event_time)
+                DateFormatter::formatDateTime(
+                    $acknowledgement->clear_time
+                        ? $acknowledgement->clear_time->getTimestamp()
+                        : $this->event->event_time->getTimestamp()
+                )
             );
             if ($acknowledgement->cleared_by) {
                 $eventInfo[] = new HorizontalKeyValue(
@@ -535,12 +569,12 @@ class EventDetail extends BaseHtmlElement
                 if ($acknowledgement->expire_time) {
                     $now = (new DateTime())->setTimezone(new DateTimeZone('UTC'));
                     $expiresOn = clone $now;
-                    $expiresOn->setTimestamp($acknowledgement->expire_time);
+                    $expiresOn->setTimestamp($acknowledgement->expire_time->getTimestamp());
                     if ($now <= $expiresOn) {
                         $expired = true;
                         $eventInfo[] = new HorizontalKeyValue(t('Removal Reason'), t(
                             'The acknowledgement expired on %s',
-                            DateFormatter::formatDateTime($acknowledgement->expire_time)
+                            DateFormatter::formatDateTime($acknowledgement->expire_time->getTimestamp())
                         ));
                     }
                 }

@@ -5,8 +5,8 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
-use Icinga\Module\Icingadb\Model\Behavior\Timestamp;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -74,7 +74,7 @@ class AcknowledgementHistory extends Model
             'is_persistent'
         ]));
 
-        $behaviors->add(new Timestamp([
+        $behaviors->add(new MillisecondTimestamp([
             'set_time',
             'clear_time',
             'expire_time'

@@ -95,7 +95,8 @@ abstract class BaseHistoryListItem extends BaseListItem
                         $this->item->flapping->percent_state_change_end,
                         $this->item->flapping->flapping_threshold_low,
                         DateFormatter::formatDuration(
-                            $this->item->flapping->end_time - $this->item->flapping->start_time
+                            $this->item->flapping->end_time->getTimestamp()
+                            - $this->item->flapping->start_time->getTimestamp()
                         )
                     ))
                     ->getAttributes()
@@ -399,6 +400,6 @@ abstract class BaseHistoryListItem extends BaseListItem
 
     protected function createTimestamp()
     {
-        return new TimeAgo($this->item->event_time);
+        return new TimeAgo($this->item->event_time->getTimestamp());
     }
 }

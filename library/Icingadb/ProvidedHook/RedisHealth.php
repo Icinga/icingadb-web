@@ -39,11 +39,11 @@ class RedisHealth extends HealthHook
                 return;
             }
 
-            $outdatedDbHeartbeat = $instance->heartbeat < time() - 60;
-            if (! $outdatedDbHeartbeat || $instance->heartbeat <= $lastIcingaHeartbeat) {
+            $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
+            if (! $outdatedDbHeartbeat || $instance->heartbeat->getTimestamp() <= $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_OK);
                 $this->setMessage(t('Icinga Redis available and up to date.'));
-            } elseif ($instance->heartbeat > $lastIcingaHeartbeat) {
+            } elseif ($instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_CRITICAL);
                 $this->setMessage(t('Icinga Redis outdated. Make sure Icinga 2 is running and connected to Redis.'));
             }
