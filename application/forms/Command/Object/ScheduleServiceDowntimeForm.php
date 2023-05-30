@@ -179,10 +179,22 @@ class ScheduleServiceDowntimeForm extends CommandForm
                 'number',
                 'hours',
                 [
-                    'required'  => true,
-                    'label'     => t('Duration'),
-                    'value'     => $this->flexibleDuration->h,
-                    'min'       => 0
+                    'required'   => true,
+                    'label'      => t('Duration'),
+                    'value'      => $this->flexibleDuration->h,
+                    'min'        => 0,
+                    'validators' => [
+                        'Callback' => function ($value, $validator) {
+                            /** @var CallbackValidator $validator */
+
+                            if ($this->getValue('minutes') == 0 && $value == 0) {
+                                $validator->addMessage(t('The duration must not be zero'));
+                                return false;
+                            }
+
+                            return true;
+                        }
+                    ]
                 ]
             );
             $this->registerElement($hoursInput);
@@ -202,9 +214,15 @@ class ScheduleServiceDowntimeForm extends CommandForm
                 new HtmlElement('label', null, new HtmlElement('span', null, Text::create(t('Minutes'))))
             );
 
-            $hoursInput->getWrapper()
-                ->add($minutesInput)
-                ->getAttributes()->add('class', 'downtime-duration');
+            $hoursInput->getWrapper()->on(
+                IcingaFormDecorator::ON_ASSEMBLED,
+                function ($hoursInputWrapper) use ($minutesInput, $hoursInput) {
+                    $hoursInputWrapper
+                        ->insertAfter($minutesInput, $hoursInput)
+                        ->getAttributes()->add('class', 'downtime-duration');
+                }
+            );
+
             $hoursInput->prependWrapper(
                 new HtmlElement('label', null, new HtmlElement('span', null, Text::create(t('Hours'))))
             );
