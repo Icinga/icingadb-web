@@ -101,7 +101,12 @@ class ServiceListItemDetailed extends BaseServiceListItem
             }
         }
 
-        $footer->addHtml($statusIcons);
-        $footer->addHtml($performanceData);
+        if (!empty($statusIcons->getContent())) {
+            $footer->addHtml($statusIcons);
+        }
+
+        if (!empty($performanceData->getContent())) {
+            $footer->addHtml($performanceData);
+        }
     }
 }
