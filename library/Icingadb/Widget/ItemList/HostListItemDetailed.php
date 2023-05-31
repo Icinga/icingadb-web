@@ -97,7 +97,12 @@ class HostListItemDetailed extends BaseHostListItem
             }
         }
 
-        $footer->addHtml($statusIcons);
-        $footer->addHtml($performanceData);
+        if (!empty($statusIcons->getContent())) {
+            $footer->addHtml($statusIcons);
+        }
+
+        if (!empty($performanceData->getContent())) {
+            $footer->addHtml($performanceData);
+        }
     }
 }

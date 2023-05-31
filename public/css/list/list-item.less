@@ -58,7 +58,9 @@
   }
 
   footer {
-    padding-top: .5em;
+    :not(:empty) {
+      padding-top: .5em;
+    }
 
     .status-icons {
       color: @text-color-light;
@@ -130,6 +132,8 @@
     }
 
     .performance-data {
+      margin-left: auto;
+
       .inline-pie {
         display: inline-block;
         line-height: 1.5*.857em;
