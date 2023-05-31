@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Util\ObjectSuggestionsCursor;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
@@ -243,7 +244,7 @@ class ObjectSuggestions extends Suggestions
 
     protected function matchSuggestion($path, $label, $searchTerm)
     {
-        if (preg_match('/[_.](id|bin|checksum)$/', $path)) {
+        if (preg_match('/[_.](id|bin|checksum)$/', $path) || substr_count($path, '.') > 2) {
             // Only suggest exotic columns if the user knows about them
             $trimmedSearch = trim($searchTerm, ' *');
             return substr($path, -strlen($trimmedSearch)) === $trimmedSearch;
@@ -308,19 +309,27 @@ class ObjectSuggestions extends Suggestions
     public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
     {
         if ($model instanceof UnionModel) {
-            $models = [];
-            foreach ($model->getUnions() as $union) {
-                /** @var Model $unionModel */
-                $unionModel = new $union[0]();
-                $models[$unionModel->getTableName()] = $unionModel;
-                self::collectRelations($resolver, $unionModel, $models, []);
-            }
+            $models = function () use ($model, $resolver) {
+                foreach ($model->getUnions() as $union) {
+                    /** @var Model $unionModel */
+                    $unionModel = new $union[0]();
+
+                    yield $unionModel->getTableName() => $unionModel;
+                    $knownRelations = [get_class($unionModel) => true];
+
+                    yield from self::collectRelations($resolver, $unionModel, [], $knownRelations);
+                }
+            };
         } else {
-            $models = [$model->getTableName() => $model];
-            self::collectRelations($resolver, $model, $models, []);
+            $models = function () use ($model, $resolver) {
+                yield $model->getTableName() => $model;
+                $knownRelations = [get_class($model) => true];
+
+                yield from self::collectRelations($resolver, $model, [], $knownRelations);
+            };
         }
 
-        foreach ($models as $path => $targetModel) {
+        foreach ($models() as $path => $targetModel) {
             /** @var Model $targetModel */
             foreach ($resolver->getColumnDefinitions($targetModel) as $columnName => $definition) {
                 yield $path . '.' . $columnName => $definition->getLabel();
@@ -377,29 +386,39 @@ class ObjectSuggestions extends Suggestions
      *
      * @param Resolver $resolver
      * @param Model $subject
-     * @param array $models
      * @param array $path
+     * @param array $knownRelations
      */
-    protected static function collectRelations(Resolver $resolver, Model $subject, array &$models, array $path)
-    {
+    protected static function collectRelations(
+        Resolver $resolver,
+        Model $subject,
+        array $path,
+        array &$knownRelations
+    ): Generator {
+        $relatedRelations = [];
         foreach ($resolver->getRelations($subject) as $name => $relation) {
             /** @var Relation $relation */
-            if (
-                empty($path) || (
-                    $name === 'state'
-                    || $name === 'last_comment'
-                    || $name === 'notificationcommand' && $path[0] === 'notification'
-                )
-            ) {
+            $isSelfJoin = $relation->getTarget() instanceof $subject; // downtime.triggered_by, downtime.parent
+            $isKnown = isset($knownRelations[$relation->getTargetClass()]);
+
+            if (empty($path) || $relation->isOne() && ! $isKnown && ! $isSelfJoin) {
                 $relationPath = [$name];
                 if ($relation instanceof HasOne && empty($path)) {
                     array_unshift($relationPath, $subject->getTableName());
                 }
 
                 $relationPath = array_merge($path, $relationPath);
-                $models[join('.', $relationPath)] = $relation->getTarget();
-                self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
+                yield join('.', $relationPath) => $relation->getTarget();
+                $knownRelations[$relation->getTargetClass()] = true;
+
+                if (! $relation->getTarget() instanceof State) {
+                    $relatedRelations[] = [$relationPath, $relation->getTarget()];
+                }
             }
+        }
+
+        foreach ($relatedRelations as [$path, $target]) {
+            yield from self::collectRelations($resolver, $target, $path, $knownRelations);
         }
     }
 }
