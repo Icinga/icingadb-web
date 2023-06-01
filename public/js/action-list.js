@@ -150,16 +150,12 @@
                 footer.prepend(selectionCount);
             }
 
-            let label = list.dataset.icingaMultiselectCountLabel.replace('%d', activeItemCount);
-            selectionCount.querySelector('.selected-items').innerText = label;
+            let selectedItems = selectionCount.querySelector('.selected-items');
+            selectedItems.innerText = activeItemCount
+                ? list.dataset.icingaMultiselectCountLabel.replace('%d', activeItemCount)
+                : list.dataset.icingaMultiselectHintLabel;
 
-            if (activeItemCount === 0) {
-                if (footer.matches('[data-action-list-automatically-added]')) { // comments, downtimes list
-                    footer.remove();
-                } else {
-                    selectionCount.remove();
-                }
-            }
+            activeItemCount === 0 ? selectedItems.classList.add('hint') : selectedItems.classList.remove('hint');
         }
 
         onKeyDown(event) {

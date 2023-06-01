@@ -51,6 +51,11 @@ trait DetailActions
             })
             ->registerAttributeCallback('data-icinga-multiselect-count-label', function () {
                 return $this->getDetailActionsDisabled() ? null : t('%d Item(s) selected');
+            })
+            ->registerAttributeCallback('data-icinga-multiselect-hint-label', function () {
+                return $this->getDetailActionsDisabled()
+                    ? null
+                    : t('Use shift/cmd + click/arrow keys to select multiple items');
             });
 
         return $this;
