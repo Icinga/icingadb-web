@@ -54,7 +54,7 @@ class ServicegroupsController extends Controller
 
     public function gridAction()
     {
-        $this->setTitle(t('Service Group Grid'));
+        $this->addTitleTab(t('Service Group Grid'));
 
         yield from $this->renderServiceGroups();
     }
@@ -71,15 +71,26 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
+
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $defaultSort = null;
+        if ($viewModeSwitcher->getViewMode() === 'minimal') {
+            $defaultSort = ['services_severity DESC', 'display_name'];
+        }
+
         $sortControl = $this->createSortControl(
             $servicegroups,
             [
-                'display_name'           => t('Name'),
-                'services_severity desc' => t('Severity'),
-                'services_total desc'    => t('Total Services')
-            ]
+                'display_name'                         => t('Name'),
+                'services_severity desc, display_name' => t('Severity'),
+                'services_total desc'                  => t('Total Services')
+            ],
+            $defaultSort
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $this->params->shift($sortControl->getSortParam());
+
         $searchBar = $this->createSearchBar($servicegroups, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),

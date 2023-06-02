@@ -59,7 +59,7 @@ class HostgroupsController extends Controller
 
     public function gridAction()
     {
-        $this->setTitle(t('Host Group Grid'));
+        $this->addTitleTab(t('Host Group Grid'));
 
         $db = $this->getDb();
 
@@ -85,15 +85,24 @@ class HostgroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
+
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $defaultSort = null;
+        if ($viewModeSwitcher->getViewMode() === 'minimal') {
+            $defaultSort = ['hosts_severity DESC', 'display_name'];
+        }
+
         $sortControl = $this->createSortControl(
             $hostgroups,
             [
-                'display_name'        => t('Name'),
-                'hosts_severity desc' => t('Severity'),
-                'hosts_total desc'    => t('Total Hosts'),
-            ]
+                'display_name'                      => t('Name'),
+                'hosts_severity desc, display_name' => t('Severity'),
+                'hosts_total desc'                  => t('Total Hosts'),
+            ],
+            $defaultSort
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
         $searchBar = $this->createSearchBar($hostgroups, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
