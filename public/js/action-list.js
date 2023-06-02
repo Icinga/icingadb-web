@@ -357,6 +357,13 @@
             let list = document.querySelector('.action-list');
             let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
 
+            toActiveItem.nextElementSibling
+                ? toActiveItem.nextElementSibling.scrollIntoView({block: "nearest"})
+                : null;
+            toActiveItem.previousElementSibling
+                ? toActiveItem.previousElementSibling.scrollIntoView({block: "nearest"})
+                : null;
+
             let url = null;
             if (activeItems.length > 1) {
                 url = this.createMultiSelectUrl(activeItems);
