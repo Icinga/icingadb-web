@@ -21,7 +21,7 @@
             this.on('close-column', this.onColumnClose, this);
 
             this.on('rendered', '.container', this.onRendered, this);
-            this.on('keydown', '#main > .container, .action-list', this.onKeyDown, this);
+            this.on('keydown', '#body', this.onKeyDown, this);
 
             this.on('click', '.load-more[data-no-icinga-ajax] a', this.onLoadMoreClick, this);
             this.on('keypress', '.load-more[data-no-icinga-ajax] a', this.onKeyPress, this);
@@ -90,38 +90,27 @@
                 $item.addClass('active');
             }
 
+            $activeItems = $list.find('[data-action-item].active');
             if ($item.hasClass('active')) {
-                _this.lastActivatedItemUrl = $item.data('icingaDetailFilter');
+                _this.setLastActivatedItemUrl($item.data('icingaDetailFilter'));
             } else {
-                $activeItems = $list.find('[data-action-item].active');
-
-                _this.lastActivatedItemUrl = $activeItems.length
+                _this.setLastActivatedItemUrl(
+                    $activeItems.length
                     ? $activeItems.last().data('icingaDetailFilter')
-                    : null;
+                    : null
+                );
             }
 
             _this.addSelectionCountToFooter($list[0]);
 
-            $activeItems = $list.find('[data-action-item].active');
             if ($activeItems.length === 0) {
                 if (_this.icinga.loader.getLinkTargetFor($target).attr('id') === 'col2') {
                     _this.icinga.ui.layout1col();
                 }
             } else {
-                var url;
-
-                if ($activeItems.length === 1) {
-                    url = $target.is('a') ? $target.attr('href') : $activeItems.find('[href]').first().attr('href');
-                } else {
-                    var filters = $activeItems.map(function () {
-                        return $(this).attr('data-icinga-multiselect-filter');
-                    });
-
-                    url = $list.attr('data-icinga-multiselect-url') + '?' + filters.toArray().join('|');
-                }
-
-                _this.icinga.loader.loadUrl(
-                    url, _this.icinga.loader.getLinkTargetFor($target)
+                _this.loadDetailUrl(
+                    $list[0],
+                    $target.is('a') ? $target.attr('href') : null
                 );
             }
         }
@@ -159,229 +148,246 @@
                 ? list.dataset.icingaMultiselectCountLabel.replace('%d', activeItemCount)
                 : list.dataset.icingaMultiselectHintLabel;
 
-            activeItemCount === 0 ? selectedItems.classList.add('hint') : selectedItems.classList.remove('hint');
+            if (activeItemCount === 0) {
+                selectedItems.classList.add('hint');
+            } else {
+                selectedItems.classList.remove('hint');
+            }
         }
 
         onKeyDown(event) {
-            let list = document.querySelector('.action-list'); // col1 if both given, intended
-
-            if ((document.querySelector('.search-suggestions')
-                && document.querySelector('.search-suggestions').hasChildNodes()) // search suggestion list is visible
-                || ! list.querySelectorAll(':scope > [data-action-item]').length // no item
-                || document.querySelector('#modal') // modal is open
-            ) {
-                return;
-            }
-
             let _this = event.data.self;
-            let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
-            let isMultiSelectableList = list.matches('[data-icinga-multiselect-url]');
-            let url;
-
-            if (isMultiSelectableList && (event.ctrlKey || event.metaKey) && event.keyCode === 65) { // ctrl|cmd + A
-                event.preventDefault();
-                let toActive = list.querySelectorAll(':scope > [data-action-item]:not(.active)');
-
-                if (toActive.length) {
-                    toActive.forEach(item => item.classList.add('active'));
-
-                    url = _this.createMultiSelectUrl(
-                        list.querySelectorAll(':scope > [data-action-item].active')
-                    );
-
-                    _this.icinga.loader.loadUrl(
-                        url, _this.icinga.loader.getLinkTargetFor($(list))
-                    );
-
-                    _this.lastActivatedItemUrl = list.lastChild.dataset.icingaDetailFilter;
-                    _this.addSelectionCountToFooter(list);
-                }
-
-                return;
-            }
-
+            let list = null;
             let pressedArrowDownKey = event.key === 'ArrowDown';
             let pressedArrowUpKey = event.key === 'ArrowUp';
+            let focusedElement = document.activeElement;
 
-            if ((! pressedArrowDownKey && ! pressedArrowUpKey) || _this.isProcessingLoadMore) {
+            if (_this.isProcessingLoadMore || (
+                event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey
+            )) {
+                return;
+            }
+
+            if (focusedElement && (
+                focusedElement.matches('#main > :scope')
+                || focusedElement.matches('#body'))
+            ) {
+                let activeItem = document.querySelector(
+                    '#main > .container > .content > .action-list > .active'
+                );
+                if (activeItem) {
+                    list = activeItem.parentElement;
+                } else {
+                    list = focusedElement.querySelector('#main > .container > .content > .action-list');
+                }
+            } else if (focusedElement) {
+                list = focusedElement.closest('.content > .action-list');
+            }
+
+            if (! list) {
+                return;
+            }
+
+            let listItemsLength = list.querySelectorAll(':scope > [data-action-item]').length;
+            let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
+            let isMultiSelectableList = list.matches('[data-icinga-multiselect-url]');
+
+            if (isMultiSelectableList && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+                event.preventDefault();
+                _this.selectAll(list);
                 return;
             }
 
             event.preventDefault();
 
-            document.querySelector('.container[id^=col]').dataset.suspendAutorefresh = '';
+            list.closest('#main > .container').dataset.suspendAutorefresh = '';
 
-            let isMultiSelect = isMultiSelectableList && event.shiftKey;
-            let wasAllSelected = activeItems.length === list.querySelectorAll(':scope > [data-action-item]').length;
-            let lastActivatedItem = list.querySelector(`[data-icinga-detail-filter="${ _this.lastActivatedItemUrl }"]`);
-            let previousSibling = lastActivatedItem ? lastActivatedItem.previousElementSibling : null;
-            let nextSibling = lastActivatedItem ? lastActivatedItem.nextElementSibling : null;
+            let wasAllSelected = activeItems.length === listItemsLength;
+            let lastActivatedItem = list.querySelector(
+                `[data-icinga-detail-filter="${ _this.lastActivatedItemUrl }"]`
+            );
+            let directionalNextItem = _this.getDirectionalNext(lastActivatedItem, event.key);
             let markAsLastActive = null; // initialized only if it is different from toActiveItem
             let toActiveItem = null;
 
-            switch (true) {
-                case ! lastActivatedItem || activeItems.length === 0:
-                    toActiveItem = pressedArrowDownKey ? list.firstChild : list.lastChild;
-                    // reset all on manual page refresh
-                    activeItems.forEach(item => item.classList.remove('active'));
+
+            if (! lastActivatedItem || activeItems.length === 0) {
+                toActiveItem = pressedArrowDownKey ? list.firstChild : list.lastChild;
+                // reset all on manual page refresh
+                _this.clearSelection(activeItems);
+                if (toActiveItem.classList.contains('load-more')) {
+                    toActiveItem = toActiveItem.previousElementSibling;
+                }
+            } else if (isMultiSelectableList && event.shiftKey) {
+                if (activeItems.length === 1) {
+                    toActiveItem = directionalNextItem;
+                } else if (wasAllSelected && (
+                    (lastActivatedItem !== list.firstChild && pressedArrowDownKey)
+                    || (lastActivatedItem !== list.lastChild && pressedArrowUpKey)
+                )) {
+                    if (pressedArrowDownKey) {
+                        toActiveItem = lastActivatedItem === list.lastChild ? null : list.lastChild;
+                    } else {
+                        toActiveItem = lastActivatedItem === list.firstChild ? null : list.lastChild;
+                    }
+
+                } else if (directionalNextItem && directionalNextItem.classList.contains('active')) {
+                    // deactivate last activated by down to up select
+                    _this.clearSelection([lastActivatedItem]);
+                    if (wasAllSelected) {
+                        _this.scrollItemIntoView(lastActivatedItem, event.key);
+                    }
+
+                    toActiveItem = directionalNextItem;
+                } else {
+                    [toActiveItem, markAsLastActive] = _this.findToActiveItem(lastActivatedItem, event.key);
+                }
+            } else {
+                toActiveItem = directionalNextItem ?? lastActivatedItem;
+
+                if (toActiveItem) {
                     if (toActiveItem.classList.contains('load-more')) {
-                        toActiveItem = toActiveItem.previousElementSibling;
-                    }
-                    break;
-                case isMultiSelect && pressedArrowDownKey:
-                    if (activeItems.length === 1) {
-                        toActiveItem = nextSibling;
-                    } else if (wasAllSelected && lastActivatedItem !== list.firstChild) {
-                        toActiveItem = lastActivatedItem === list.lastChild
-                            ? null
-                            : list.lastChild;
-                    } else if (nextSibling && nextSibling.classList.contains('active')) { // deactivate last activated by down to up select
-                        lastActivatedItem.classList.remove('active');
-
-                        toActiveItem = nextSibling;
-                    } else {
-                        while (nextSibling) {
-                            if (! nextSibling.classList.contains('active')) {
-                                break;
-                            }
-
-                            nextSibling = nextSibling.nextElementSibling;
-                        }
-
-                        toActiveItem = nextSibling;
-
-                        // if the next sibling element is already active, mark the last active element in list as last active
-                        while (nextSibling && nextSibling.nextElementSibling) {
-                            if (! nextSibling.nextElementSibling.classList.contains('active')) {
-                                break;
-                            }
-
-                            nextSibling = nextSibling.nextElementSibling;
-                        }
-
-                        markAsLastActive = nextSibling;
+                        _this.handleLoadMoreNavigate(toActiveItem, lastActivatedItem, event.key);
+                        return;
                     }
 
-                    break;
-                case isMultiSelect && pressedArrowUpKey:
-                    if (activeItems.length === 1) {
-                        toActiveItem = previousSibling;
-                    } else if (wasAllSelected && lastActivatedItem !== list.lastChild) {
-                        toActiveItem = lastActivatedItem === list.firstChild
-                            ? null
-                            : list.lastChild;
-                    } else if (previousSibling && previousSibling.classList.contains('active')) {
-                        lastActivatedItem.classList.remove('active');
-                        toActiveItem = previousSibling;
-                    } else {
-                        while (previousSibling) {
-                            if (! previousSibling.classList.contains('active')) {
-                                break;
-                            }
-
-                            previousSibling = previousSibling.previousElementSibling;
-                        }
-
-                        toActiveItem = previousSibling;
-
-                        // if the previous sibling element is already active, mark the first active element in list as last active
-                        while (previousSibling && previousSibling.previousElementSibling) {
-                            if (! previousSibling.previousElementSibling.classList.contains('active')) {
-                                break;
-                            }
-
-                            previousSibling = previousSibling.previousElementSibling;
-                        }
-
-                        markAsLastActive = previousSibling;
+                    _this.clearSelection(activeItems);
+                    if (toActiveItem.classList.contains('page-separator')) {
+                        toActiveItem = _this.getDirectionalNext(toActiveItem, event.key);
                     }
-
-                    break;
-                case pressedArrowDownKey:
-                case pressedArrowUpKey:
-                    toActiveItem = pressedArrowDownKey
-                        ? nextSibling ?? lastActivatedItem
-                        : previousSibling ?? lastActivatedItem;
-
-                    if (wasAllSelected && pressedArrowUpKey) {
-                        toActiveItem = previousSibling ?? lastActivatedItem
-                    }
-
-                    if (toActiveItem && ! toActiveItem.classList.contains('load-more')) {
-                        activeItems.forEach(item => item.classList.remove('active'));
-
-                        if (toActiveItem.classList.contains('page-separator')) {
-                            toActiveItem = pressedArrowDownKey
-                                ? toActiveItem.nextElementSibling
-                                : toActiveItem.previousElementSibling;
-                        }
-                    }
-
-                    break;
+                }
             }
 
-            // $currentActiveItems already contain the first/last element of the list and have no prev/next element
             if (! toActiveItem) {
                 return;
             }
 
-            if (toActiveItem.classList.contains('load-more')) {
-                let req = _this.loadMore($(toActiveItem.querySelector('a')));
-                _this.isProcessingLoadMore = true;
-                req.done(function (toActiveItem) {
-                    _this.isProcessingLoadMore = false;
-                    // list has now new items, so select the lastActivatedItem and then move forward
-                    toActiveItem = list.querySelector(`[data-icinga-detail-filter="${ lastActivatedItem.dataset.icingaDetailFilter }"]`);
-                    toActiveItem = toActiveItem.nextElementSibling;
-                    while (toActiveItem) {
-                        if (toActiveItem.hasAttribute('data-action-item')) {
-                            activeItems.forEach(item => item.classList.remove('active'));
-                            _this.setActive(toActiveItem);
-                            return;
-                        }
+            _this.setActive(toActiveItem);
+            _this.setLastActivatedItemUrl(
+                markAsLastActive ? markAsLastActive.dataset.icingaDetailFilter : toActiveItem.dataset.icingaDetailFilter
+            );
+            _this.scrollItemIntoView(toActiveItem, event.key);
+            _this.addSelectionCountToFooter(list);
+            _this.loadDetailUrl(list);
+        }
 
-                        toActiveItem = toActiveItem.nextElementSibling;
-                    }
-                });
-            } else {
-                _this.setActive(toActiveItem, markAsLastActive);
+        getDirectionalNext(item, eventKey) {
+            if (! item) {
+                return null;
+            }
+
+            return eventKey === 'ArrowUp' ? item.previousElementSibling : item.nextElementSibling;
+        }
+
+        findToActiveItem(lastActivatedItem, eventKey) {
+            let toActiveItem;
+            let markAsLastActive;
+
+            toActiveItem = this.getDirectionalNext(lastActivatedItem, eventKey);
+
+            while (toActiveItem) {
+                if (! toActiveItem.classList.contains('active')) {
+                    break;
+                }
+
+                toActiveItem = this.getDirectionalNext(toActiveItem, eventKey);
+            }
+
+            markAsLastActive = toActiveItem;
+            // if the next/previous sibling element is already active,
+            // mark the last/first active element in list as last active
+            while (markAsLastActive && this.getDirectionalNext(markAsLastActive, eventKey)) {
+                if (! this.getDirectionalNext(markAsLastActive, eventKey).classList.contains('active')) {
+                    break;
+                }
+
+                markAsLastActive = this.getDirectionalNext(markAsLastActive, eventKey);
+            }
+
+            return [toActiveItem, markAsLastActive];
+        }
+
+        selectAll(list) {
+            this.setActive(list.querySelectorAll(':scope > [data-action-item]:not(.active)'));
+            this.setLastActivatedItemUrl(list.lastChild.dataset.icingaDetailFilter);
+            this.addSelectionCountToFooter(list);
+            this.loadDetailUrl(list);
+        }
+
+        clearSelection(selectedItems) {
+            selectedItems.forEach(item => item.classList.remove('active'));
+        }
+
+        setLastActivatedItemUrl (url) {
+            this.lastActivatedItemUrl = url;
+        }
+
+        scrollItemIntoView(item, pressedKey) {
+            item.scrollIntoView({block: "nearest"});
+
+            let directionalNext = this.getDirectionalNext(item, pressedKey);
+
+            if (directionalNext) {
+                directionalNext.scrollIntoView({block: "nearest"});
             }
         }
 
-        setActive(toActiveItem, markAsLastActive) {
-            toActiveItem.classList.add('active');
-            this.lastActivatedItemUrl = markAsLastActive
-                ? markAsLastActive.dataset.icingaDetailFilter
-                : toActiveItem.dataset.icingaDetailFilter;
+        loadDetailUrl(list, anchorUrl = null) {
+            let url = anchorUrl;
+            if (url === null) {
+                let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
 
-            let list = document.querySelector('.action-list');
-            let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
-
-            toActiveItem.nextElementSibling
-                ? toActiveItem.nextElementSibling.scrollIntoView({block: "nearest"})
-                : null;
-            toActiveItem.previousElementSibling
-                ? toActiveItem.previousElementSibling.scrollIntoView({block: "nearest"})
-                : null;
-
-            let url = null;
-            if (activeItems.length > 1) {
-                url = this.createMultiSelectUrl(activeItems);
-            } else {
-                url = toActiveItem.querySelector('[href]').getAttribute('href');
+                if (activeItems.length > 1) {
+                    url = this.createMultiSelectUrl(activeItems);
+                } else {
+                    url = activeItems[0].querySelector('[href]').getAttribute('href');
+                }
             }
-
-            this.addSelectionCountToFooter(list);
 
             this.isProcessingRequest = true;
             clearTimeout(this.lastTimeoutId);
             this.lastTimeoutId = setTimeout(() => {
-                let req = this.icinga.loader.loadUrl(url, this.icinga.loader.getLinkTargetFor($(toActiveItem)));
+                let req = this.icinga.loader.loadUrl(url, this.icinga.loader.getLinkTargetFor($(list)));
+                this.lastTimeoutId = null;
                 req.done(() => {
                     this.isProcessingRequest = false;
-                    delete document.querySelector('.container[id^=col]').dataset.suspendAutorefresh;
+                    let container = list.closest('#main > .container');
+                    if (container) { // avoid call on null error
+                        delete container.dataset.suspendAutorefresh;
+                    }
                 });
             }, 250);
+        }
+
+        setActive(toActiveItem) {
+            if (toActiveItem instanceof HTMLElement) {
+                toActiveItem.classList.add('active');
+            } else {
+                toActiveItem.forEach(item => item.classList.add('active'));
+            }
+        }
+
+        handleLoadMoreNavigate(loadMoreElement, lastActivatedItem, pressedKey) {
+            let req = this.loadMore($(loadMoreElement.querySelector('a')));
+            this.isProcessingLoadMore = true;
+            req.done(() => {
+                this.isProcessingLoadMore = false;
+                // list has now new items, so select the lastActivatedItem and then move forward
+                let toActiveItem = lastActivatedItem.nextElementSibling;
+                while (toActiveItem) {
+                    if (toActiveItem.hasAttribute('data-action-item')) {
+                        this.clearSelection([lastActivatedItem]);
+                        this.setActive(toActiveItem);
+                        this.setLastActivatedItemUrl(toActiveItem.dataset.icingaDetailFilter);
+                        this.scrollItemIntoView(toActiveItem, pressedKey);
+                        this.addSelectionCountToFooter(toActiveItem.parentElement);
+                        this.loadDetailUrl(toActiveItem.parentElement);
+                        return;
+                    }
+
+                    toActiveItem = toActiveItem.nextElementSibling;
+                }
+            });
         }
 
         onLoadMoreClick(event) {
@@ -451,7 +457,9 @@
                 filters.push(item.getAttribute('data-icinga-multiselect-filter'));
             });
 
-            return items[0].parentElement.getAttribute('data-icinga-multiselect-url') + '?' + filters.join('|');
+            return items[0].parentElement.getAttribute('data-icinga-multiselect-url')
+                + '?'
+                + filters.join('|');
         }
 
         onColumnClose(event) {
@@ -497,23 +505,28 @@
             let list = container.querySelector('.action-list');
 
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-                let detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
+                let detailUrl = _this.icinga.utils.parseUrl(
+                    _this.icinga.history.getCol2State().replace(/^#!/, '')
+                );
 
+                let item = null;
                 if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
                     for (const filter of _this.parseSelectionQuery(detailUrl.query.slice(1))) {
-                        let item = list.querySelector('[data-icinga-multiselect-filter="' + filter + '"]');
+                        item = list.querySelector('[data-icinga-multiselect-filter="' + filter + '"]');
                         if (item) {
                             item.classList.add('active');
                         }
                     }
                 } else if (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)) {
-                    let item = list.querySelector('[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]');
+                    item = list.querySelector('[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]');
                     if (item) {
                         item.classList.add('active');
                     }
                 }
 
-                _this.addSelectionCountToFooter(list);
+                if (isTopLevelContainer) {
+                    _this.addSelectionCountToFooter(list);
+                }
             }
         }
 
