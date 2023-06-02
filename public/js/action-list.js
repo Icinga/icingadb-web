@@ -23,9 +23,13 @@
             this.on('rendered', '.container', this.onRendered, this);
             this.on('keydown', '#main > .container, .action-list', this.onKeyDown, this);
 
+            this.on('click', '.load-more[data-no-icinga-ajax] a', this.onLoadMoreClick, this);
+            this.on('keypress', '.load-more[data-no-icinga-ajax] a', this.onKeyPress, this);
+
             this.lastActivatedItemUrl = null;
             this.lastTimeoutId = null;
             this.isProcessingRequest = false;
+            this.isProcessingLoadMore = false;
         }
 
         /**
@@ -199,7 +203,7 @@
             let pressedArrowDownKey = event.key === 'ArrowDown';
             let pressedArrowUpKey = event.key === 'ArrowUp';
 
-            if (! pressedArrowDownKey && ! pressedArrowUpKey) {
+            if ((! pressedArrowDownKey && ! pressedArrowUpKey) || _this.isProcessingLoadMore) {
                 return;
             }
 
@@ -220,6 +224,9 @@
                     toActiveItem = pressedArrowDownKey ? list.firstChild : list.lastChild;
                     // reset all on manual page refresh
                     activeItems.forEach(item => item.classList.remove('active'));
+                    if (toActiveItem.classList.contains('load-more')) {
+                        toActiveItem = toActiveItem.previousElementSibling;
+                    }
                     break;
                 case isMultiSelect && pressedArrowDownKey:
                     if (activeItems.length === 1) {
@@ -300,11 +307,14 @@
                         toActiveItem = previousSibling ?? lastActivatedItem
                     }
 
-                    // toActiveItem could be `Load More` button
-                    if (toActiveItem && toActiveItem.hasAttribute('data-action-item')) {
+                    if (toActiveItem && ! toActiveItem.classList.contains('load-more')) {
                         activeItems.forEach(item => item.classList.remove('active'));
-                    } else {
-                        toActiveItem = null;
+
+                        if (toActiveItem.classList.contains('page-separator')) {
+                            toActiveItem = pressedArrowDownKey
+                                ? toActiveItem.nextElementSibling
+                                : toActiveItem.previousElementSibling;
+                        }
                     }
 
                     break;
@@ -315,30 +325,117 @@
                 return;
             }
 
+            if (toActiveItem.classList.contains('load-more')) {
+                let req = _this.loadMore($(toActiveItem.querySelector('a')));
+                _this.isProcessingLoadMore = true;
+                req.done(function (toActiveItem) {
+                    _this.isProcessingLoadMore = false;
+                    // list has now new items, so select the lastActivatedItem and then move forward
+                    toActiveItem = list.querySelector(`[data-icinga-detail-filter="${ lastActivatedItem.dataset.icingaDetailFilter }"]`);
+                    toActiveItem = toActiveItem.nextElementSibling;
+                    while (toActiveItem) {
+                        if (toActiveItem.hasAttribute('data-action-item')) {
+                            activeItems.forEach(item => item.classList.remove('active'));
+                            _this.setActive(toActiveItem);
+                            return;
+                        }
+
+                        toActiveItem = toActiveItem.nextElementSibling;
+                    }
+                });
+            } else {
+                _this.setActive(toActiveItem, markAsLastActive);
+            }
+        }
+
+        setActive(toActiveItem, markAsLastActive) {
             toActiveItem.classList.add('active');
-            _this.lastActivatedItemUrl = markAsLastActive
+            this.lastActivatedItemUrl = markAsLastActive
                 ? markAsLastActive.dataset.icingaDetailFilter
                 : toActiveItem.dataset.icingaDetailFilter;
 
-            activeItems = list.querySelectorAll(':scope > [data-action-item].active');
+            let list = document.querySelector('.action-list');
+            let activeItems = list.querySelectorAll(':scope > [data-action-item].active');
 
+            let url = null;
             if (activeItems.length > 1) {
-                url = _this.createMultiSelectUrl(activeItems);
+                url = this.createMultiSelectUrl(activeItems);
             } else {
                 url = toActiveItem.querySelector('[href]').getAttribute('href');
             }
 
-            _this.addSelectionCountToFooter(list);
+            this.addSelectionCountToFooter(list);
 
-            _this.isProcessingRequest = true;
-            clearTimeout(_this.lastTimeoutId);
-            _this.lastTimeoutId = setTimeout(() => {
-                let req = _this.icinga.loader.loadUrl(url, _this.icinga.loader.getLinkTargetFor($(toActiveItem)));
+            this.isProcessingRequest = true;
+            clearTimeout(this.lastTimeoutId);
+            this.lastTimeoutId = setTimeout(() => {
+                let req = this.icinga.loader.loadUrl(url, this.icinga.loader.getLinkTargetFor($(toActiveItem)));
                 req.done(() => {
-                    _this.isProcessingRequest = false;
+                    this.isProcessingRequest = false;
                     delete document.querySelector('.container[id^=col]').dataset.suspendAutorefresh;
                 });
             }, 250);
+        }
+
+        onLoadMoreClick(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            event.data.self.loadMore($(event.target));
+
+            return false;
+        }
+
+        onKeyPress(event) {
+            if (event.key === ' ') { // space
+                event.data.self.onLoadMoreClick(event);
+            }
+        }
+
+        loadMore($anchor) {
+            var $loadMore = $anchor.parent();
+            var progressTimer = this.icinga.timer.register(function () {
+                var label = $anchor.html();
+
+                var dots = label.substr(-3);
+                if (dots.slice(0, 1) !== '.') {
+                    dots = '.  ';
+                } else {
+                    label = label.slice(0, -3);
+                    if (dots === '...') {
+                        dots = '.  ';
+                    } else if (dots === '.. ') {
+                        dots = '...';
+                    } else if (dots === '.  ') {
+                        dots = '.. ';
+                    }
+                }
+
+                $anchor.html(label + dots);
+            }, null, 250);
+
+            var url = $anchor.attr('href');
+            var req = this.icinga.loader.loadUrl(
+                // Add showCompact, we don't want controls in paged results
+                this.icinga.utils.addUrlFlag(url, 'showCompact'),
+                $loadMore.parent(),
+                undefined,
+                undefined,
+                'append',
+                false,
+                progressTimer
+            );
+            req.addToHistory = false;
+            req.done(function () {
+                $loadMore.remove();
+
+                // Set data-icinga-url to make it available for Icinga.History.getCurrentState()
+                req.$target.closest('.container').data('icingaUrl', url);
+
+                this.icinga.history.replaceCurrentState();
+            });
+
+            return req;
         }
 
         createMultiSelectUrl(items) {

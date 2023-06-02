@@ -100,7 +100,10 @@ trait LoadMore
                     ->setAnchor('page-' . ($pageNumber))
             ))
                 ->setLabel(t('Load More'))
-                ->setAttribute('data-no-icinga-ajax', true);
+                ->setAttributes([
+                    'class' => 'load-more',
+                    'data-no-icinga-ajax' => true
+                ]);
 
             $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
         }
