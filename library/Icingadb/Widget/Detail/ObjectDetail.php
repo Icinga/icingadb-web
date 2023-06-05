@@ -33,6 +33,7 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
@@ -417,7 +418,12 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($this->object->state->output) && empty($this->object->state->long_output)) {
             $pluginOutput = new EmptyState(t('Output unavailable.'));
         } else {
-            $pluginOutput = new PluginOutputContainer(PluginOutput::fromObject($this->object));
+            $pluginOutput = CopyToClipboard::attachTo(
+                (new PluginOutputContainer(PluginOutput::fromObject($this->object)))
+                    ->addAttributes([
+                        'id' => 'plugin-output'
+                    ])
+            );
         }
 
         return [

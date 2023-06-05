@@ -26,6 +26,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\EmptyState;
+use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\UserList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
@@ -73,11 +74,16 @@ class EventDetail extends BaseHtmlElement
             if (empty($notification->text)) {
                 $notificationText = new EmptyState(t('Output unavailable.'));
             } else {
-                $notificationText = new PluginOutputContainer(
-                    (new PluginOutput($notification->text))
-                        ->setCommandName($notification->object_type === 'host'
-                            ? $this->event->host->checkcommand_name
-                            : $this->event->service->checkcommand_name)
+                $notificationText = CopyToClipboard::attachTo(
+                    (new PluginOutputContainer(
+                        (new PluginOutput($notification->text))
+                            ->setCommandName($notification->object_type === 'host'
+                                ? $this->event->host->checkcommand_name
+                                : $this->event->service->checkcommand_name)
+                    ))
+                    ->addAttributes(
+                        ['id' => 'plugin-output']
+                    )
                 );
             }
 
@@ -185,9 +191,11 @@ class EventDetail extends BaseHtmlElement
             if (empty($stateChange->output) && empty($stateChange->long_output)) {
                 $commandOutput = new EmptyState(t('Output unavailable.'));
             } else {
-                $commandOutput = new PluginOutputContainer(
-                    (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
-                        ->setCommandName($commandName)
+                $commandOutput = CopyToClipboard::attachTo(
+                    (new PluginOutputContainer(
+                        (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
+                            ->setCommandName($commandName)
+                    ))->addAttributes(['id' => 'plugin-output'])
                 );
             }
 

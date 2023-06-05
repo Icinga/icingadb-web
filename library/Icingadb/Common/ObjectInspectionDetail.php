@@ -242,7 +242,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             return Json::encode($json, JSON_UNESCAPED_SLASHES);
         }
 
-        return new HtmlElement(
+        return  new HtmlElement(
             'pre',
             null,
             Text::create(Json::encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
@@ -319,6 +319,12 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                         $value = call_user_func($formatters[$name], $value);
                     } else {
                         $value = $this->formatJson($value);
+
+                        if ($value instanceof BaseHtmlElement) {
+                            $value = CopyToClipboard::attachTo(
+                                $value->addAttributes(['id' => $name])
+                            );
+                        }
                     }
                 } catch (Exception $e) {
                     $value = new EmptyState(IcingaException::describe($e));
