@@ -132,18 +132,30 @@ class CheckStatistics extends Card
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         );
+
+        if ($this->isChecksDisabled()) {
+            $nextCheckBubbleContent = new VerticalKeyValue(
+                t('Next Check'),
+                t('n.a')
+            );
+
+            $this->addAttributes(['class' => 'checks-disabled']);
+        } else {
+            $nextCheckBubbleContent = $this->object->state->is_overdue
+                ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
+                : new VerticalKeyValue(
+                    t('Next Check'),
+                    $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : t('PENDING')
+                );
+        }
+
         $nextCheck = Html::tag(
             'li',
             ['class' => 'end'],
             Html::tag(
                 'div',
                 ['class' => 'bubble upwards'],
-                $this->object->state->is_overdue
-                    ? new VerticalKeyValue(t('Overdue'), new TimeSince($nextCheckTime))
-                    : new VerticalKeyValue(
-                        t('Next Check'),
-                        $nextCheckTime !== null ? new TimeUntil($nextCheckTime) : t('PENDING')
-                    )
+                $nextCheckBubbleContent
             )
         );
 
@@ -161,6 +173,16 @@ class CheckStatistics extends Card
         ]);
 
         $body->add([$above, $timeline, $below]);
+    }
+
+    /**
+     * Checks if both active and passive checks are disabled
+     *
+     * @return bool
+     */
+    protected function isChecksDisabled(): bool
+    {
+        return ! ($this->object->active_checks_enabled || $this->object->passive_checks_enabled);
     }
 
     protected function assembleFooter(BaseHtmlElement $footer)
@@ -230,5 +252,22 @@ class CheckStatistics extends Card
         }
 
         return $this->object->check_interval;
+    }
+
+    protected function assemble()
+    {
+        parent::assemble();
+
+        if ($this->isChecksDisabled()) {
+            $this->add(Html::tag(
+                'div',
+                ['class' => 'checks-disabled-overlay'],
+                Html::tag(
+                    'strong',
+                    ['class' => 'notes'],
+                    t('active and passive checks are disabled')
+                )
+            ));
+        }
     }
 }
