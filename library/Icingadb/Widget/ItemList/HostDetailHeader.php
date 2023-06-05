@@ -5,10 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\HostStates;
-use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Html\BaseHtmlElement;
-use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
 class HostDetailHeader extends HostListItemMinimal
@@ -51,9 +49,10 @@ class HostDetailHeader extends HostListItemMinimal
             }
         }
 
+        $currentStateBall = $stateChange->ensureAssembled()->getContent()[1];
+        $currentStateBall->add($this->state->getIcon());
+
         if ($this->state->is_handled) {
-            $currentStateBall = $stateChange->ensureAssembled()->getContent()[1];
-            $currentStateBall->addHtml(new Icon($this->getHandledIcon()));
             $currentStateBall->getAttributes()->add('class', 'handled');
         }
 

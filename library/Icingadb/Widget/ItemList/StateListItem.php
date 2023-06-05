@@ -76,12 +76,9 @@ abstract class StateListItem extends BaseListItem
     protected function assembleVisual(BaseHtmlElement $visual)
     {
         $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
-
+        $stateBall->add($this->state->getIcon());
         if ($this->state->is_handled) {
-            $stateBall->addHtml(new Icon($this->getHandledIcon()));
             $stateBall->getAttributes()->add('class', 'handled');
-        } elseif ($this->state->getStateText() === 'pending' && $this->state->in_downtime) {
-            $stateBall->addHtml(new Icon($this->getHandledIcon()));
         }
 
         $visual->addHtml($stateBall);
@@ -101,20 +98,6 @@ abstract class StateListItem extends BaseListItem
             return $since;
         } elseif ($this->state->last_state_change->getTimestamp() > 0) {
             return new TimeSince($this->state->last_state_change->getTimestamp());
-        }
-    }
-
-    protected function getHandledIcon(): string
-    {
-        switch (true) {
-            case $this->state->is_acknowledged:
-                return Icons::IS_ACKNOWLEDGED;
-            case $this->state->in_downtime:
-                return Icons::IN_DOWNTIME;
-            case $this->state->is_flapping:
-                return Icons::IS_FLAPPING;
-            default:
-                return Icons::HOST_DOWN;
         }
     }
 
