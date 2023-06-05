@@ -29,67 +29,32 @@ class HostgroupsController extends Controller
     public function indexAction()
     {
         $this->addTitleTab(t('Host Groups'));
+        $compact = $this->view->compact;
 
         $db = $this->getDb();
 
         $hostgroups = Hostgroupsummary::on($db);
 
-        yield from $this->renderHostGroups($hostgroups);
-    }
-
-    public function completeAction()
-    {
-        $suggestions = new ObjectSuggestions();
-        $suggestions->setModel(Hostgroup::class);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
-        $this->getDocument()->add($suggestions);
-    }
-
-    public function searchEditorAction()
-    {
-        $editor = $this->createSearchEditor(Hostgroupsummary::on($this->getDb()), [
-            LimitControl::DEFAULT_LIMIT_PARAM,
-            SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
-        ]);
-
-        $this->getDocument()->add($editor);
-        $this->setTitle(t('Adjust Filter'));
-    }
-
-    public function gridAction()
-    {
-        $this->addTitleTab(t('Host Group Grid'));
-
-        $db = $this->getDb();
-
-        $hostgroups = Hostgroupsummary::on($db)->without([
-            'services_critical_handled',
-            'services_critical_unhandled',
-            'services_ok',
-            'services_pending',
-            'services_total',
-            'services_unknown_handled',
-            'services_unknown_unhandled',
-            'services_warning_handled',
-            'services_warning_unhandled',
-        ]);
-
-        yield from $this->renderHostGroups($hostgroups);
-    }
-
-    protected function renderHostGroups(Query $hostgroups)
-    {
-        $compact = $this->view->compact;
         $this->handleSearchRequest($hostgroups);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
-
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $defaultSort = null;
-        if ($viewModeSwitcher->getViewMode() === 'minimal') {
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $hostgroups->without([
+                'services_critical_handled',
+                'services_critical_unhandled',
+                'services_ok',
+                'services_pending',
+                'services_total',
+                'services_unknown_handled',
+                'services_unknown_unhandled',
+                'services_warning_handled',
+                'services_warning_unhandled',
+            ]);
+
             $defaultSort = ['hosts_severity DESC', 'display_name'];
         }
 
@@ -155,5 +120,25 @@ class HostgroupsController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Hostgroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(Hostgroupsummary::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }

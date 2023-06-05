@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
@@ -106,14 +107,21 @@ class Controller extends CompatController
      * @param LimitControl      $limitControl
      * @param bool              $verticalPagination
      *
-     * @return ViewModeSwitcher
+     * @return ViewModeSwitcher|GridViewModeSwitcher
      */
     public function createViewModeSwitcher(
         PaginationControl $paginationControl,
         LimitControl $limitControl,
         bool $verticalPagination = false
     ): ViewModeSwitcher {
-        $viewModeSwitcher = new ViewModeSwitcher();
+        $controllerName = $this->getRequest()->getControllerName();
+
+        if ($controllerName === 'hostgroups' || $controllerName === 'servicegroups') {
+            $viewModeSwitcher = new GridViewModeSwitcher();
+        } else {
+            $viewModeSwitcher = new ViewModeSwitcher();
+        }
+
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
         $user = $this->Auth()->getUser();
@@ -156,16 +164,6 @@ class Controller extends CompatController
                 $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
                 $requestUrl = Url::fromRequest();
 
-                if ($viewMode === 'minimal' && $requestUrl->getPath() === 'icingadb/hostgroups') {
-                    $requestUrl = Url::fromPath('icingadb/hostgroups/grid')->setParams($requestUrl->getParams());
-                } elseif ($viewMode !== 'minimal' && $requestUrl->getPath() === 'icingadb/hostgroups/grid') {
-                    $requestUrl = Url::fromPath('icingadb/hostgroups')->setParams($requestUrl->getParams());
-                } elseif ($viewMode === 'minimal' && $requestUrl->getPath() === 'icingadb/servicegroups') {
-                    $requestUrl = Url::fromPath('icingadb/servicegroups/grid')->setParams($requestUrl->getParams());
-                } elseif ($viewMode !== 'minimal' && $requestUrl->getPath() === 'icingadb/servicegroups/grid') {
-                    $requestUrl = Url::fromPath('icingadb/servicegroups')->setParams($requestUrl->getParams());
-                }
-
                 $preferredModes[$requestUrl->getPath()] = $viewMode;
                 $user->setAdditional('icingadb.view_modes', $preferredModes);
 
@@ -191,7 +189,7 @@ class Controller extends CompatController
 
                 $requestUrl->setParam($viewModeSwitcher->getViewModeParam(), $viewMode);
                 if (! $requestUrl->hasParam($limitParam)) {
-                    if ($viewMode === 'minimal') {
+                    if ($viewMode === 'minimal' || $viewMode === 'grid') {
                         $session->set('previous_page', $currentPage);
                         $session->set('request_path', $requestUrl->getPath());
 
@@ -204,7 +202,10 @@ class Controller extends CompatController
                         }
 
                         $session->set('current_page', $currentPage);
-                    } elseif ($viewModeSwitcher->getDefaultViewMode() === 'minimal') {
+                    } elseif (
+                        $viewModeSwitcher->getDefaultViewMode() === 'minimal'
+                        || $viewModeSwitcher->getDefaultViewMode() === 'grid'
+                    ) {
                         $limit = $paginationControl->getLimit();
                         if ($currentPage === $session->get('current_page')) {
                             // No other page numbers have been selected, i.e the user only
@@ -230,7 +231,8 @@ class Controller extends CompatController
             }
         )->handleRequest(ServerRequest::fromGlobals());
 
-        if ($viewModeSwitcher->getViewMode() === 'minimal') {
+        $viewMode = $viewModeSwitcher->getViewMode();
+        if ($viewMode === 'minimal' || $viewMode === 'grid') {
             $hasLimitParam = Url::fromRequest()->hasParam($limitControl->getLimitParam());
 
             if ($paginationControl->getDefaultPageSize() <= LimitControl::DEFAULT_LIMIT && ! $hasLimitParam) {

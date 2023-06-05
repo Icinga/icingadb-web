@@ -28,39 +28,6 @@ class ServicegroupsController extends Controller
     public function indexAction()
     {
         $this->addTitleTab(t('Service Groups'));
-
-        yield from $this->renderServiceGroups();
-    }
-
-    public function completeAction()
-    {
-        $suggestions = new ObjectSuggestions();
-        $suggestions->setModel(Servicegroup::class);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
-        $this->getDocument()->add($suggestions);
-    }
-
-    public function searchEditorAction()
-    {
-        $editor = $this->createSearchEditor(ServicegroupSummary::on($this->getDb()), [
-            LimitControl::DEFAULT_LIMIT_PARAM,
-            SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
-        ]);
-
-        $this->getDocument()->add($editor);
-        $this->setTitle(t('Adjust Filter'));
-    }
-
-    public function gridAction()
-    {
-        $this->addTitleTab(t('Service Group Grid'));
-
-        yield from $this->renderServiceGroups();
-    }
-
-    protected function renderServiceGroups()
-    {
         $compact = $this->view->compact;
 
         $db = $this->getDb();
@@ -71,11 +38,10 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
-
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $defaultSort = null;
-        if ($viewModeSwitcher->getViewMode() === 'minimal') {
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
             $defaultSort = ['services_severity DESC', 'display_name'];
         }
 
@@ -88,8 +54,6 @@ class ServicegroupsController extends Controller
             ],
             $defaultSort
         );
-
-        $this->params->shift($sortControl->getSortParam());
 
         $searchBar = $this->createSearchBar($servicegroups, [
             $limitControl->getLimitParam(),
@@ -143,5 +107,25 @@ class ServicegroupsController extends Controller
         }
 
         $this->setAutorefreshInterval(30);
+    }
+
+    public function completeAction()
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Servicegroup::class);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction()
+    {
+        $editor = $this->createSearchEditor(ServicegroupSummary::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }
