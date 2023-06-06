@@ -40,7 +40,7 @@ class HostController extends Controller
     {
         $name = $this->params->getRequired('name');
 
-        $query = Host::on($this->getDb())->with(['state', 'icon_image']);
+        $query = Host::on($this->getDb())->with(['state', 'icon_image', 'timeperiod']);
         $query
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::equal('host.name', $name));
