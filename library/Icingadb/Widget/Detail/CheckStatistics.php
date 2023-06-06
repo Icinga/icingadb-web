@@ -191,6 +191,15 @@ class CheckStatistics extends Card
             t('Scheduling Source') . ':',
             $this->object->state->scheduling_source ?? (new EmptyState(t('n. a.')))->setTag('span')
         ));
+
+        if ($this->object->timeperiod->id) {
+            $footer->add(new HorizontalKeyValue(
+                t('Timeperiod') . ':',
+                $this->object->timeperiod->display_name ?? $this->object->timeperiod->name
+            ));
+
+            $footer->addAttributes(['class' => 'space-between']);
+        }
     }
 
     protected function assembleHeader(BaseHtmlElement $header)

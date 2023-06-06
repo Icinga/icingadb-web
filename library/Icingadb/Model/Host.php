@@ -199,7 +199,8 @@ class Host extends Model
         $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
-            ->setCandidateKey('check_timeperiod_id');
+            ->setCandidateKey('check_timeperiod_id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('action_url', ActionUrl::class)
             ->setCandidateKey('action_url_id')
             ->setForeignKey('id');

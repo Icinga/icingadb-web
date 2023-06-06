@@ -41,7 +41,8 @@ class ServiceController extends Controller
             'state',
             'icon_image',
             'host',
-            'host.state'
+            'host.state',
+            'timeperiod'
         ]);
         $query
             ->setResultSetClass(VolatileStateResults::class)

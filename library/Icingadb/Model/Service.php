@@ -188,7 +188,8 @@ class Service extends Model
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
-            ->setCandidateKey('check_timeperiod_id');
+            ->setCandidateKey('check_timeperiod_id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('action_url', ActionUrl::class)
             ->setCandidateKey('action_url_id')
