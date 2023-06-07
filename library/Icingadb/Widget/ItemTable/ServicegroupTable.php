@@ -5,10 +5,13 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\BaseItemTable;
+use Icinga\Module\Icingadb\Common\ViewMode;
 use ipl\Web\Url;
 
 class ServicegroupTable extends BaseItemTable
 {
+    use ViewMode;
+
     protected $defaultAttributes = ['class' => 'servicegroup-table'];
 
     protected function init()
@@ -18,6 +21,12 @@ class ServicegroupTable extends BaseItemTable
 
     protected function getItemClass(): string
     {
+        if ($this->getViewMode() === 'grid') {
+            $this->addAttributes(['class' => 'group-grid']);
+            return ServicegroupGridCell::class;
+        }
+
+        $this->addAttributes(['class' => 'table-layout']);
         return ServicegroupTableRow::class;
     }
 }

@@ -22,18 +22,18 @@ use ipl\Web\Widget\Link;
  * @property Servicegroup $item
  * @property ServicegroupTable $table
  */
-class ServicegroupTableRow extends BaseTableRowItem
+class ServicegroupTableRow extends BaseServiceGroupItem
 {
+    use TableRowLayout;
+
     protected $defaultAttributes = ['class' => 'servicegroup-table-row'];
 
-    protected function init()
-    {
-        if (isset($this->table)) {
-            $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
-        }
-    }
-
-    protected function assembleColumns(HtmlDocument $columns)
+    /**
+     * Create Service statistics cell
+     *
+     * @return BaseHtmlElement[]
+     */
+    protected function createStatistics(): array
     {
         $serviceStats = new ServiceStatistics($this->item);
 
@@ -44,20 +44,6 @@ class ServicegroupTableRow extends BaseTableRowItem
             );
         }
 
-        $columns->addHtml($this->createColumn($serviceStats));
-    }
-
-    protected function assembleTitle(BaseHtmlElement $title)
-    {
-        $title->addHtml(
-            isset($this->table)
-                ? new Link($this->item->display_name, Links::servicegroup($this->item), ['class' => 'subject'])
-                : new HtmlElement(
-                    'span',
-                    Attributes::create(['class' => 'subject']),
-                    Text::create($this->item->display_name)
-                ),
-            new HtmlElement('span', null, Text::create($this->item->name))
-        );
+        return [$this->createColumn($serviceStats)];
     }
 }

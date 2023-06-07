@@ -101,7 +101,9 @@ class HostgroupsController extends Controller
         $results = $hostgroups->execute();
 
         $this->addContent(
-            (new HostgroupTable($results))->setBaseFilter($filter)
+            (new HostgroupTable($results))
+                ->setBaseFilter($filter)
+                ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
         if ($compact) {

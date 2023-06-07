@@ -88,7 +88,9 @@ class ServicegroupsController extends Controller
         $results = $servicegroups->execute();
 
         $this->addContent(
-            (new ServicegroupTable($results))->setBaseFilter($filter)
+            (new ServicegroupTable($results))
+                ->setBaseFilter($filter)
+                ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
         if ($compact) {

@@ -180,24 +180,38 @@ class ViewModeSwitcher extends Form
                 new IcingaIcon($icon)
             );
             $label->getAttributes()->registerAttributeCallback('title', function () use ($viewMode) {
-                switch ($viewMode) {
-                    case 'minimal':
-                        $active = t('Minimal view active');
-                        $inactive = t('Switch to minimal view');
-                        break;
-                    case 'common':
-                        $active = t('Common view active');
-                        $inactive = t('Switch to common view');
-                        break;
-                    case 'detailed':
-                        $active = t('Detailed view active');
-                        $inactive = t('Switch to detailed view');
-                }
 
-                return $viewMode === $this->getViewMode() ? $active : $inactive;
+                return $this->getTitle($viewMode);
             });
 
             $this->addHtml($input, $label);
         }
+    }
+
+    /**
+     * Return the title for the view mode when it is active and inactive
+     *
+     * @param string $viewMode
+     *
+     * @return string Title for the view mode when it is active and inactive
+     */
+    protected function getTitle(string $viewMode): string
+    {
+        switch ($viewMode) {
+            case 'minimal':
+                $active = t('Minimal view active');
+                $inactive = t('Switch to minimal view');
+                break;
+            case 'common':
+                $active = t('Common view active');
+                $inactive = t('Switch to common view');
+                break;
+            case 'detailed':
+                $active = t('Detailed view active');
+                $inactive = t('Switch to detailed view');
+                break;
+        }
+
+        return $viewMode === $this->getViewMode() ? $active : $inactive;
     }
 }

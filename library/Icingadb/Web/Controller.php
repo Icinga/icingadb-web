@@ -116,6 +116,7 @@ class Controller extends CompatController
     ): ViewModeSwitcher {
         $controllerName = $this->getRequest()->getControllerName();
 
+        // TODO: Make this configurable somehow. The route shouldn't be checked to choose the view modes!
         if ($controllerName === 'hostgroups' || $controllerName === 'servicegroups') {
             $viewModeSwitcher = new GridViewModeSwitcher();
         } else {

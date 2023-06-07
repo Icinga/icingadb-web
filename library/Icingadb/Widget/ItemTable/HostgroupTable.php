@@ -5,10 +5,13 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\BaseItemTable;
+use Icinga\Module\Icingadb\Common\ViewMode;
 use ipl\Web\Url;
 
 class HostgroupTable extends BaseItemTable
 {
+    use ViewMode;
+
     protected $defaultAttributes = ['class' => 'hostgroup-table'];
 
     protected function init()
@@ -18,6 +21,12 @@ class HostgroupTable extends BaseItemTable
 
     protected function getItemClass(): string
     {
+        if ($this->getViewMode() === 'grid') {
+            $this->addAttributes(['class' => 'group-grid']);
+            return HostgroupGridCell::class;
+        }
+
+        $this->addAttributes(['class' => 'table-layout']);
         return HostgroupTableRow::class;
     }
 }
