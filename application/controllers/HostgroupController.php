@@ -10,10 +10,9 @@ use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
-use Icinga\Module\Icingadb\Widget\ItemList\HostgroupList;
+use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTableRow;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
-use ipl\Web\Widget\HorizontalKeyValue;
 
 class HostgroupController extends Controller
 {
@@ -66,16 +65,10 @@ class HostgroupController extends Controller
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {
-            $this->addContent((new HostgroupList([$this->hostgroup]))
-                ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
-                ->setNoSubjectLink());
+            $this->addContent(new HostgroupTableRow($this->hostgroup));
             $this->addContent(Html::tag('h2', null, t('Hosts')));
         } else {
-            $this->addControl((new HostgroupList([$this->hostgroup]))
-                ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
-                ->setNoSubjectLink());
+            $this->addControl(new HostgroupTableRow($this->hostgroup));
         }
 
         $this->addControl($paginationControl);

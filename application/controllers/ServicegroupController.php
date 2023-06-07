@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
-use Icinga\Module\Icingadb\Widget\ItemList\ServicegroupList;
+use Icinga\Module\Icingadb\Widget\ItemTable\ServicegroupTableRow;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 
@@ -72,16 +72,10 @@ class ServicegroupController extends Controller
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {
-            $this->addContent((new ServicegroupList([$this->servicegroup]))
-                ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
-                ->setNoSubjectLink());
+            $this->addContent(new ServicegroupTableRow($this->servicegroup));
             $this->addContent(Html::tag('h2', null, t('Services')));
         } else {
-            $this->addControl((new ServicegroupList([$this->servicegroup]))
-                ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
-                ->setNoSubjectLink());
+            $this->addControl(new ServicegroupTableRow($this->servicegroup));
         }
 
         $this->addControl($paginationControl);

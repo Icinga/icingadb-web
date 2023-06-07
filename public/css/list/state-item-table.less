@@ -1,4 +1,179 @@
+// Style
+
+.state-item-table {
+  padding: 0;
+
+  thead {
+    th {
+      font-weight: normal;
+
+      // Border styles start
+      form {
+        padding: 0 0 0 1px;
+        border-bottom: 1px solid @gray-light;
+        background: linear-gradient(to top, @gray-light, @body-bg-color);
+
+        button {
+          background: @body-bg-color;
+        }
+      }
+      &:first-child form {
+        padding-left: 0;
+      }
+      // Border styles end
+    }
+
+    button {
+      .appearance(none);
+      border: none;
+      background: none;
+      padding: .1em .5em;
+
+      text-align: left;
+      color: @text-color-light;
+
+      > .icon {
+        opacity: 0;
+        width: 0;
+        transition: opacity .25s linear, width .25s ease;
+      }
+      &:hover .icon,
+      &:focus .icon,
+      &.active .icon {
+        opacity: 1;
+        width: 1em;
+      }
+
+      &.active {
+        font-weight: bold;
+      }
+    }
+  }
+
+  > .empty-state,
+  > tbody > tr:first-child .empty-state {
+    .rounded-corners();
+    background-color: @gray-lightest;
+  }
+
+  .list-item:not(:last-child) > *:not(.visual),
+  .row-item:not(:last-child) {
+    border-bottom: 1px solid @gray-light;
+  }
+}
+
+@media print {
+  .list-item.page-break-follows {
+    &:not(:last-child) > *:not(.visual) {
+      border-bottom: none;
+    }
+  }
+}
+
 // Layout
+
+table.state-item-table {
+  table-layout: fixed;
+}
+
+.state-item-table {
+  display: table;
+  width: 100%;
+  margin: 0;
+
+  thead {
+    position: sticky;
+    top: 0;
+
+    th {
+      // That's layout, yes, controls overflow when scrolling
+      padding: 1em 0 0 0;
+      background: @body-bg-color;
+    }
+
+    th button {
+      width: 100%;
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: space-between;
+
+      span {
+        .text-ellipsis();
+      }
+    }
+  }
+
+  th.has-visual {
+    width: 3em;
+  }
+
+  tbody td {
+    .text-ellipsis();
+    vertical-align: top;
+  }
+
+  .list-item {
+    display: table-row;
+  }
+
+  .list-item > .col {
+    display: table-cell;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &:not(:last-child) {
+      padding-right: 1em;
+    }
+
+    &.title {
+      .text-ellipsis();
+      width: 100%;
+    }
+
+    > * {
+      display: inline-block;
+
+      &:not(:last-child) {
+        margin-right: .5em;
+      }
+    }
+  }
+
+  .list-item > *:not(.visual) {
+    padding: .5em 0;
+  }
+
+  .list-item > .visual {
+    display: table-cell;
+    padding: .5em 1em 0 0;
+  }
+
+  > .empty-state,
+  > tbody > tr:first-child .empty-state {
+    margin: 0 1em;
+    padding: 1em;
+    text-align: center;
+  }
+}
+
+.content.full-width .state-item-table .list-item {
+  // The .list-item itself can't have padding because of `display:table-row`
+  &:before, &:after {
+    display: inline-block;
+    content: '\00a0';
+    width: 1em;
+  }
+}
+
+#layout.twocols table.state-item-table {
+  > thead > tr > th,
+  > tbody > tr > td {
+    &:nth-child(n+6) {
+      display: none;
+      width: 0;
+    }
+  }
+}
 
 #layout.wide-layout .item-table th.has-plugin-output {
   width: 50em;

@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Widget\EmptyState;
-use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -74,7 +74,7 @@ class UsergroupDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, Text::create(t('Users'))),
-            new UserList($users),
+            new UserTable($users),
             $showMoreLink
         ];
     }

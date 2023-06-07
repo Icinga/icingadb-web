@@ -24,7 +24,7 @@ use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeSince;
 use ipl\Web\Widget\TimeUntil;
 
-abstract class StateRowItem extends BaseRowItem
+abstract class StateRowItem extends BaseStateRowItem
 {
     /** @var StateItemTable */
     protected $list;

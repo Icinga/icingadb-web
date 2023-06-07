@@ -27,7 +27,7 @@ use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
-use Icinga\Module\Icingadb\Widget\ItemList\UserList;
+use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
@@ -159,7 +159,7 @@ class EventDetail extends BaseHtmlElement
             $users = $users->execute();
             /** @var ResultSet $users */
 
-            $notifiedUsers[] = new UserList($users);
+            $notifiedUsers[] = new UserTable($users);
             $notifiedUsers[] = (new ShowMore(
                 $users,
                 Links::users()->addParams(['notification_history.id' => bin2hex($notification->id)]),

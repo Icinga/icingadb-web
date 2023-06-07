@@ -16,13 +16,14 @@ use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\BaseItemTable;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\BaseItemList;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use Icinga\Module\Icingadb\Widget\ItemTable\BaseItemTable;
+use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
 use Icinga\Module\Pdfexport\ProvidedHook\Pdfexport;
 use Icinga\Security\SecurityException;
@@ -511,9 +512,9 @@ class Controller extends CompatController
 
     protected function addContent(ValidHtml $content)
     {
-        if ($content instanceof BaseItemList) {
+        if ($content instanceof BaseItemList || $content instanceof BaseItemTable) {
             $this->content->getAttributes()->add('class', 'full-width');
-        } elseif ($content instanceof BaseItemTable) {
+        } elseif ($content instanceof StateItemTable) {
             $this->content->getAttributes()->add('class', 'full-height');
         }
 

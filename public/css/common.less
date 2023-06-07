@@ -8,7 +8,8 @@
   padding-left: 0;
   padding-right: 0;
 
-  .list-item {
+  .list-item,
+  .table-row {
     padding-left: 1em;
     padding-right: 1em;
   }
@@ -309,14 +310,54 @@ div.show-more {
   }
 }
 
-.hostgroup-list.minimal,
-.servicegroup-list.minimal {
-  .col {
-    padding: 0;
+.item-table {
+  &.hostgroup-table {
+    --columns: 2;
   }
 
-  .title br {
-    display: none;
+  &.servicegroup-table {
+    --columns: 1;
+  }
+
+  &.user-table, // TODO: make them lists.....
+  &.usergroup-table {
+    --columns: 0;
+  }
+}
+
+.hostgroup-table,
+.servicegroup-table,
+.usergroup-table,
+.user-table {
+  .title .content > * {
+    display: block;
+    max-width: fit-content;
+  }
+
+  .object-statistics-total {
+    width: 3.75em;
+  }
+}
+
+.controls .hostgroup-table-row,
+.controls .servicegroup-table-row,
+.controls .usergroup-table-row,
+.controls .user-table-row {
+  .title .content {
+    display: inline-flex;
+    align-items: center;
+
+    > :first-child {
+      flex: 0 1 auto;
+    }
+
+    > :last-child {
+      flex: 1 1 auto;
+    }
+
+    .subject {
+      margin-right: .5em;
+    }
   }
 
   .vertical-key-value {
@@ -332,11 +373,6 @@ div.show-more {
       vertical-align: middle;
     }
   }
-}
-
-.hostgroup-list > col.object-statistics-graph,
-.servicegropup-list > col.object-statistics-graph {
-  padding-right: .25em;
 }
 
 .history-list,

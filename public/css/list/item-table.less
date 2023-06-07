@@ -1,176 +1,171 @@
 // Style
 
-.item-table {
-  padding: 0;
+ul.item-table {
+  list-style-type: none;
 
-  thead {
-    th {
-      font-weight: normal;
-
-      // Border styles start
-      form {
-        padding: 0 0 0 1px;
-        border-bottom: 1px solid @gray-light;
-        background: linear-gradient(to top, @gray-light, @body-bg-color);
-
-        button {
-          background: @body-bg-color;
-        }
-      }
-      &:first-child form {
-        padding-left: 0;
-      }
-      // Border styles end
+  li:not(:last-of-type) {
+    .col {
+      border-bottom: 1px solid @gray-light;
     }
 
-    button {
-      .appearance(none);
-      border: none;
-      background: none;
-      padding: .1em .5em;
-
-      text-align: left;
-      color: @text-color-light;
-
-      > .icon {
-        opacity: 0;
-        width: 0;
-        transition: opacity .25s linear, width .25s ease;
-      }
-      &:hover .icon,
-      &:focus .icon,
-      &.active .icon {
-        opacity: 1;
-        width: 1em;
-      }
-
-      &.active {
-        font-weight: bold;
-      }
+    .visual {
+      border-bottom: 1px solid @default-bg;
     }
   }
+}
 
-  > .empty-state,
-  > tbody > tr:first-child .empty-state {
+div.item-table {
+  > .empty-state {
     .rounded-corners();
-    background-color: @gray-lightest;
+    background-color: @gray-lighter;
   }
+}
 
-  .list-item:not(:last-child) > *:not(.visual),
-  .row-item:not(:last-child) {
-    border-bottom: 1px solid @gray-light;
+.table-row {
+  color: @text-color-light;
+
+  .title {
+    .subject {
+      color: @text-color;
+    }
+
+    a {
+      font-weight: bold;
+
+      &:hover {
+        color: @icinga-blue;
+        text-decoration: none;
+      }
+    }
   }
 }
 
 @media print {
-  .list-item.page-break-follows {
-    &:not(:last-child) > *:not(.visual) {
+  .item-table li.page-break-follows:not(:last-of-type) {
+    .col {
       border-bottom: none;
+    }
+
+    .visual {
+      margin-bottom: 0;
     }
   }
 }
 
 // Layout
 
-table.item-table {
-  table-layout: fixed;
+.item-table {
+  --columns: 1;
 }
 
-.item-table {
-  display: table;
-  width: 100%;
-  margin: 0;
+.table-row {
+  .title {
+    display: flex;
 
-  thead {
-    position: sticky;
-    top: 0;
-
-    th {
-      // That's layout, yes, controls overflow when scrolling
-      padding: 1em 0 0 0;
-      background: @body-bg-color;
+    .visual {
+      width: 2.5em;
+      padding: .5em 0;
+      margin-top: -.5em;
+      margin-bottom: -.5em;
     }
 
-    th button {
-      width: 100%;
-      display: inline-flex;
-      align-items: baseline;
-      justify-content: space-between;
+    .content {
+      flex: 1 1 auto;
+      width: 0;
 
-      span {
+      > * {
         .text-ellipsis();
       }
     }
   }
 
-  th.has-visual {
-    width: 3em;
-  }
-
-  tbody td {
-    .text-ellipsis();
-    vertical-align: top;
-  }
-
-  .list-item {
-    display: table-row;
-  }
-
-  .list-item > .col {
-    display: table-cell;
-    vertical-align: middle;
+  .col {
     white-space: nowrap;
+  }
+}
 
-    &:not(:last-child) {
+ul.item-table {
+  display: grid;
+
+  grid-template-columns: 1fr repeat(var(--columns), auto);
+
+  > .table-row {
+    &:not(:last-of-type) .title .visual {
+      margin-bottom: ~"calc(-.5em - 1px)";
+    }
+
+    .col:not(.title) {
+      display: grid;
+      align-items: center;
+    }
+
+    .col {
+      padding: .5em 0;
+    }
+
+    .col:not(:last-child) {
       padding-right: 1em;
     }
+  }
+}
 
-    &.title {
-      .text-ellipsis();
-      width: 100%;
-    }
+ul.item-table {
+  margin: 0;
+  padding: 0;
 
-    > * {
-      display: inline-block;
+  > li {
+    display: contents;
 
-      &:not(:last-child) {
-        margin-right: .5em;
+    &:hover,
+    &.active {
+      .col, &::before, &::after {
+        // The li might get a background on hover. Though, this won't be visible
+        // as it has no box model since we apply display:contents to it.
+        background-color: inherit;
       }
     }
   }
+}
 
-  .list-item > *:not(.visual) {
-    padding: .5em 0;
+.content.full-width ul.item-table {
+  // Again, since the li has no box model, it cannot have padding. So the first
+  // and last child need to get the left and right padding respectively.
+  // But we don't want to have a border that spans to the very right or left,
+  // so pseudo elements are required. We could add empty cells instead, but
+  // that would require hard coding the width here, which I'd like to avoid.
+
+  grid-template-columns: ~"auto 1fr repeat(calc(var(--columns) + 1), auto)";
+
+  > li.table-row {
+    &::before, &::after {
+      display: inline-block;
+      content: '\00a0';
+      margin-bottom: 1px;
+    }
+
+    &::before {
+      padding-left: inherit;
+    }
+
+    &::after {
+      padding-right: inherit;
+    }
   }
+}
 
-  .list-item > .visual {
-    display: table-cell;
-    padding: .5em 1em 0 0;
-  }
-
-  > .empty-state,
-  > tbody > tr:first-child .empty-state {
+div.item-table {
+  > .empty-state {
     margin: 0 1em;
     padding: 1em;
     text-align: center;
   }
 }
 
-.content.full-width .item-table .list-item {
-  // The .list-item itself can't have padding because of `display:table-row`
-  &:before, &:after {
-    display: inline-block;
-    content: '\00a0';
-    width: 1em;
-  }
-}
+div.table-row {
+  display: flex;
+  column-gap: 1em;
 
-#layout.twocols table.item-table {
-  > thead > tr > th,
-  > tbody > tr > td {
-    &:nth-child(n+6) {
-      display: none;
-      width: 0;
-    }
+  .title {
+    flex: 1 1 auto;
   }
 }

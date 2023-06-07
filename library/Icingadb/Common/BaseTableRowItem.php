@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -13,13 +12,13 @@ use ipl\Html\HtmlElement;
 
 abstract class BaseTableRowItem extends BaseHtmlElement
 {
-    protected $baseAttributes = ['class' => 'list-item'];
+    protected $baseAttributes = ['class' => 'table-row'];
 
     /** @var object The associated list item */
     protected $item;
 
-    /** @var BaseItemList The list where the item is part of */
-    protected $list;
+    /** @var ?BaseItemTable The list where the item is part of */
+    protected $table;
 
     protected $tag = 'li';
 
@@ -27,12 +26,16 @@ abstract class BaseTableRowItem extends BaseHtmlElement
      * Create a new table row item
      *
      * @param object       $item
-     * @param BaseItemList $list
+     * @param BaseItemTable $table
      */
-    public function __construct($item, BaseItemList $list)
+    public function __construct($item, BaseItemTable $table = null)
     {
         $this->item = $item;
-        $this->list = $list;
+        $this->table = $table;
+
+        if ($table === null) {
+            $this->setTag('div');
+        }
 
         $this->addAttributes($this->baseAttributes);
 
@@ -49,7 +52,15 @@ abstract class BaseTableRowItem extends BaseHtmlElement
 
     protected function createColumn($content = null): BaseHtmlElement
     {
-        return Html::tag('div', ['class' => 'col'], $content);
+        return new HtmlElement(
+            'div',
+            Attributes::create(['class' => 'col']),
+            new HtmlElement(
+                'div',
+                Attributes::create(['class' => 'content']),
+                ...Html::wantHtmlList($content)
+            )
+        );
     }
 
     protected function createColumns(): HtmlDocument
@@ -65,7 +76,9 @@ abstract class BaseTableRowItem extends BaseHtmlElement
     {
         $title = $this->createColumn()->addAttributes(['class' => 'title']);
 
-        $this->assembleTitle($title);
+        $this->assembleTitle($title->getFirst('div'));
+
+        $title->prepend($this->createVisual());
 
         return $title;
     }
@@ -94,7 +107,6 @@ abstract class BaseTableRowItem extends BaseHtmlElement
     protected function assemble()
     {
         $this->add([
-            $this->createVisual(),
             $this->createTitle(),
             $this->createColumns()
         ]);

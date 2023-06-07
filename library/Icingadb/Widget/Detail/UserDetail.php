@@ -12,7 +12,7 @@ use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Attributes;
 use ipl\Web\Widget\HorizontalKeyValue;
-use Icinga\Module\Icingadb\Widget\ItemList\UsergroupList;
+use Icinga\Module\Icingadb\Widget\ItemTable\UsergroupTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -84,7 +84,7 @@ class UserDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, Text::create(t('Groups'))),
-            new UsergroupList($userGroups),
+            new UsergroupTable($userGroups),
             $showMoreLink
         ];
     }
