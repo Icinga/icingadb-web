@@ -214,6 +214,11 @@ class Service extends Model
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->through(HostgroupMember::class);
 
+        $relations->hasMany('sla_history_state', SlaHistoryState::class)
+            ->setJoinType('LEFT');
+        $relations->hasMany('sla_history_downtime', SlaHistoryDowntime::class)
+            ->setJoinType('LEFT');
+
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class)->setJoinType('LEFT');
         $relations->hasMany('downtime', Downtime::class)->setJoinType('LEFT');
