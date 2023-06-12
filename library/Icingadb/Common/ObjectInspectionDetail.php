@@ -15,7 +15,6 @@ use Icinga\Module\Icingadb\Widget\Detail\CustomVarTable;
 use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
-use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
 use ipl\Html\HtmlElement;
@@ -90,13 +89,17 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             'active'
         ];
 
+        $execCommand = new HtmlElement(
+            'pre',
+            null,
+            Text::create($command)
+        );
+
+        CopyToClipboard::attachTo($execCommand);
+
         return [
             new HtmlElement('h2', null, Text::create(t('Executed Command'))),
-            CopyToClipboard::attachTo(new HtmlElement(
-                'pre',
-                Attributes::create(['id' => 'executed-command']),
-                Text::create($command)
-            )),
+            $execCommand,
             new HtmlElement('h2', null, Text::create(t('Execution Details'))),
             $this->createNameValueTable(
                 array_diff_key($this->attrs['last_check_result'], array_flip($denylist)),
@@ -242,7 +245,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             return Json::encode($json, JSON_UNESCAPED_SLASHES);
         }
 
-        return  new HtmlElement(
+        return new HtmlElement(
             'pre',
             null,
             Text::create(Json::encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))
@@ -321,9 +324,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                         $value = $this->formatJson($value);
 
                         if ($value instanceof BaseHtmlElement) {
-                            $value = CopyToClipboard::attachTo(
-                                $value->addAttributes(['id' => $name])
-                            );
+                            CopyToClipboard::attachTo($value);
                         }
                     }
                 } catch (Exception $e) {

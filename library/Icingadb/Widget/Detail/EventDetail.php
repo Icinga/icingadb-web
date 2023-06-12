@@ -74,17 +74,14 @@ class EventDetail extends BaseHtmlElement
             if (empty($notification->text)) {
                 $notificationText = new EmptyState(t('Output unavailable.'));
             } else {
-                $notificationText = CopyToClipboard::attachTo(
-                    (new PluginOutputContainer(
-                        (new PluginOutput($notification->text))
-                            ->setCommandName($notification->object_type === 'host'
-                                ? $this->event->host->checkcommand_name
-                                : $this->event->service->checkcommand_name)
-                    ))
-                    ->addAttributes(
-                        ['id' => 'plugin-output']
-                    )
+                $notificationText = new PluginOutputContainer(
+                    (new PluginOutput($notification->text))
+                        ->setCommandName($notification->object_type === 'host'
+                            ? $this->event->host->checkcommand_name
+                            : $this->event->service->checkcommand_name)
                 );
+
+                CopyToClipboard::attachTo($notificationText);
             }
 
             $pluginOutput = [
@@ -191,12 +188,12 @@ class EventDetail extends BaseHtmlElement
             if (empty($stateChange->output) && empty($stateChange->long_output)) {
                 $commandOutput = new EmptyState(t('Output unavailable.'));
             } else {
-                $commandOutput = CopyToClipboard::attachTo(
-                    (new PluginOutputContainer(
-                        (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
-                            ->setCommandName($commandName)
-                    ))->addAttributes(['id' => 'plugin-output'])
+                $commandOutput = new PluginOutputContainer(
+                    (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
+                        ->setCommandName($commandName)
                 );
+
+                CopyToClipboard::attachTo($commandOutput);
             }
 
             $pluginOutput = [
