@@ -49,12 +49,8 @@ class HostDetailHeader extends HostListItemMinimal
             }
         }
 
-        $currentStateBall = $stateChange->ensureAssembled()->getContent()[1];
-        $currentStateBall->add($this->state->getIcon());
-
-        if ($this->state->is_handled) {
-            $currentStateBall->getAttributes()->add('class', 'handled');
-        }
+        $stateChange->setIcon($this->state->getIcon());
+        $stateChange->setHandled($this->state->is_handled);
 
         $visual->addHtml($stateChange);
     }
