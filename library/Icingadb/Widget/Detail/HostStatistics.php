@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Chart\Donut;
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Widget\HostStateBadges;
 use ipl\Html\ValidHtml;
@@ -38,7 +37,7 @@ class HostStatistics extends ObjectStatistics
     {
         $url = Links::hosts();
         if ($this->hasBaseFilter()) {
-            $url->addFilter(Filter::fromQueryString(QueryString::render($this->getBaseFilter())));
+            $url->setQueryString(QueryString::render($this->getBaseFilter()));
         }
 
         return new Link(
