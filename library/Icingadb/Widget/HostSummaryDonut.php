@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Chart\Donut;
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\BaseFilter;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
@@ -42,9 +41,7 @@ class HostSummaryDonut extends Card
             ->addSlice($this->summary->hosts_unreachable_unhandled, ['class' => 'slice-state-unreachable'])
             ->addSlice($this->summary->hosts_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->hosts_down_unhandled)
-            ->setLabelBigUrl(Links::hosts()->addFilter(
-                Filter::fromQueryString(QueryString::render($this->getBaseFilter()))
-            )->addParams([
+            ->setLabelBigUrl(Links::hosts()->setQueryString(QueryString::render($this->getBaseFilter()))->addParams([
                 'host.state.soft_state' => 1,
                 'host.state.is_handled' => 'n',
                 'sort' => 'host.state.last_state_change'

@@ -76,6 +76,9 @@
   }
 
   .suggestion-area {
+    display: flex;
+    flex-direction: column-reverse;
+
     padding: .75em;
     flex-grow: 1;
     pointer-events: auto;
@@ -90,12 +93,19 @@
     }
 
     p {
+      display: none;
       margin-bottom: .5em;
       color: @text-color-light;
     }
 
+    form ~ .monitoring-migration-hint,
+    .search-migration-suggestions:not(:empty) + .search-migration-hint,
+    .monitoring-migration-suggestions:not(:empty) + .monitoring-migration-hint {
+      display: block;
+    }
+
     & > button.close {
-      float: right;
+      margin-left: auto;
       margin-top: 1em;
 
       &:hover {
@@ -105,7 +115,7 @@
 
     ul {
       padding: 0;
-      margin: .5em 0 0;
+      margin: 0;
       list-style-type: none;
     }
 
@@ -115,6 +125,10 @@
 
       &:last-of-type {
         margin-bottom: 0;
+      }
+
+      &:first-of-type {
+        margin-top: 0;
       }
     }
 
@@ -143,7 +157,6 @@
     }
 
     form {
-      margin-top: 0.5em;
       width: 100%;
 
       .control-group {
@@ -158,6 +171,11 @@
           margin-left: auto;
         }
       }
+    }
+
+    .search-migration-suggestions:not(:empty) ~ form,
+    .search-migration-suggestions:not(:empty) ~ .monitoring-migration-suggestions:not(:empty) {
+      margin-bottom: .5em;
     }
   }
 }

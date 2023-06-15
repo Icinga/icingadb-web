@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Widget\StateBadge;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -116,7 +115,9 @@ abstract class StateBadges extends BaseHtmlElement
         }
 
         if ($this->hasBaseFilter()) {
-            $url->addFilter(Filter::fromQueryString(QueryString::render($this->getBaseFilter())));
+            $urlParams = $url->getParams()->toArray(false);
+            $url->setQueryString(QueryString::render($this->getBaseFilter()))
+                ->addParams($urlParams);
         }
 
         return new Link($content, $url);

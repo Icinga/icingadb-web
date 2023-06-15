@@ -565,9 +565,5 @@ namespace Icinga\Module\Icingadb {
 
     $this->provideJsFile('action-list.js');
     $this->provideJsFile('loadmore.js');
-
-    $mg = Icinga::app()->getModuleManager();
-    if ($mg->hasEnabled('monitoring')) {
-        $this->provideJsFile('migrate.js');
-    }
+    $this->provideJsFile('migrate.js');
 }

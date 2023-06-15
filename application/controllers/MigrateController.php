@@ -7,12 +7,15 @@ namespace Icinga\Module\Icingadb\Controllers;
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Hook;
+use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
 use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\Module\Icingadb\Web\Controller;
 use ipl\Html\HtmlString;
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class MigrateController extends Controller
@@ -65,6 +68,55 @@ class MigrateController extends Controller
         $response->sendResponse();
     }
 
+    public function searchUrlAction()
+    {
+        $this->assertHttpMethod('post');
+        if (! $this->getRequest()->isApiRequest()) {
+            $this->httpBadRequest('No API request');
+        }
+
+        if (
+            ! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
+            || $matches[1] !== 'application/json'
+        ) {
+            $this->httpBadRequest('No JSON content');
+        }
+
+        $traverseFilter = function ($filter) use (&$traverseFilter) {
+            if ($filter instanceof Filter\Chain) {
+                foreach ($filter as $child) {
+                    $newChild = $traverseFilter($child);
+                    if ($newChild !== null) {
+                        $filter->replace($child, $newChild);
+                    }
+                }
+            } elseif ($filter instanceof Filter\Equal) {
+                if (strpos($filter->getValue(), '*') !== false) {
+                    return Filter::like($filter->getColumn(), $filter->getValue());
+                }
+            } elseif ($filter instanceof Filter\Unequal) {
+                if (strpos($filter->getValue(), '*') !== false) {
+                    return Filter::unlike($filter->getColumn(), $filter->getValue());
+                }
+            }
+        };
+
+        $urls = $this->getRequest()->getPost();
+
+        $result = [];
+        foreach ($urls as $urlString) {
+            $url = Url::fromPath($urlString);
+            $filter = QueryString::parse($url->getQueryString());
+            $filter = $traverseFilter($filter) ?? $filter;
+            $result[] = $url->setQueryString(QueryString::render($filter))->getAbsoluteUrl();
+        }
+
+        $response = $this->getResponse()->json();
+        $response->setSuccessData($result);
+
+        $response->sendResponse();
+    }
+
     public function checkboxStateAction()
     {
         $this->assertHttpMethod('get');
@@ -98,7 +150,10 @@ class MigrateController extends Controller
         }
 
         $moduleSupportStates = [];
-        if ($this->Auth()->hasPermission('module/monitoring')) {
+        if (
+            Icinga::app()->getModuleManager()->hasEnabled('monitoring')
+            && $this->Auth()->hasPermission('module/monitoring')
+        ) {
             $supportList = [];
             foreach (Hook::all('Icingadb/IcingadbSupport') as $hook) {
                 /** @var IcingadbSupportHook $hook */
