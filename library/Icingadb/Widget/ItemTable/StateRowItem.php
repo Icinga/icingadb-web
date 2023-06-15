@@ -29,26 +29,12 @@ abstract class StateRowItem extends BaseStateRowItem
     /** @var StateItemTable */
     protected $list;
 
-    protected function getHandledIcon(): string
-    {
-        switch (true) {
-            case $this->item->state->in_downtime:
-                return Icons::IN_DOWNTIME;
-            case $this->item->state->is_acknowledged:
-                return Icons::IS_ACKNOWLEDGED;
-            case $this->item->state->is_flapping:
-                return Icons::IS_FLAPPING;
-            default:
-                return Icons::HOST_DOWN;
-        }
-    }
-
     protected function assembleVisual(BaseHtmlElement $visual)
     {
         $stateBall = new StateBall($this->item->state->getStateText(), StateBall::SIZE_LARGE);
+        $stateBall->add($this->item->state->getIcon());
 
         if ($this->item->state->is_handled) {
-            $stateBall->addHtml(new Icon($this->getHandledIcon()));
             $stateBall->getAttributes()->add('class', 'handled');
         }
 

@@ -5,10 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ServiceStates;
-use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Html\BaseHtmlElement;
-use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
 class ServiceDetailHeader extends ServiceListItemMinimal
@@ -51,11 +49,8 @@ class ServiceDetailHeader extends ServiceListItemMinimal
             }
         }
 
-        if ($this->state->is_handled) {
-            $currentStateBall = $stateChange->ensureAssembled()->getContent()[1];
-            $currentStateBall->addHtml(new Icon($this->getHandledIcon()));
-            $currentStateBall->getAttributes()->add('class', 'handled');
-        }
+        $stateChange->setIcon($this->state->getIcon());
+        $stateChange->setHandled($this->state->is_handled);
 
         $visual->addHtml($stateChange);
     }

@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use ipl\Html\BaseHtmlElement;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 
 class StateChange extends BaseHtmlElement
@@ -20,6 +21,12 @@ class StateChange extends BaseHtmlElement
     protected $defaultAttributes = ['class' => 'state-change'];
 
     protected $tag = 'div';
+
+    /** @var ?Icon Current state ball icon */
+    protected $icon;
+
+    /** @var bool Whether the state is handled */
+    protected $isHandled = false;
 
     public function __construct(string $state, string $previousState)
     {
@@ -55,20 +62,48 @@ class StateChange extends BaseHtmlElement
         return $this;
     }
 
+    /**
+     * Set the current state ball icon
+     *
+     * @param $icon
+     *
+     * @return $this
+     */
+    public function setIcon($icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Set whether the current state is handled
+     *
+     * @return $this
+     */
+    public function setHandled($isHandled = true): self
+    {
+        $this->isHandled = $isHandled;
+
+        return $this;
+    }
+
     protected function assemble()
     {
+        $currentStateBall = (new StateBall($this->state, $this->currentStateBallSize))
+            ->add($this->icon);
+
+        if ($this->isHandled) {
+            $currentStateBall->getAttributes()->add('class', 'handled');
+        }
+
+        $previousStateBall = new StateBall($this->previousState, $this->previousStateBallSize);
         if ($this->isRightBiggerThanLeft()) {
             $this->getAttributes()->add('class', 'reversed-state-balls');
 
-            $this->addHtml(
-                new StateBall($this->state, $this->currentStateBallSize),
-                new StateBall($this->previousState, $this->previousStateBallSize)
-            );
+            $this->addHtml($currentStateBall, $previousStateBall);
         } else {
-            $this->addHtml(
-                new StateBall($this->previousState, $this->previousStateBallSize),
-                new StateBall($this->state, $this->currentStateBallSize)
-            );
+            $this->addHtml($previousStateBall, $currentStateBall);
         }
     }
 
