@@ -9,7 +9,7 @@
   padding-right: 0;
 
   .list-item,
-  .table-row {
+  .table-layout .table-row {
     padding-left: 1em;
     padding-right: 1em;
   }
@@ -311,12 +311,14 @@ div.show-more {
 }
 
 .item-table {
-  &.hostgroup-table {
-    --columns: 2;
-  }
+  &.table-layout {
+    &.hostgroup-table {
+      --columns: 2;
+    }
 
-  &.servicegroup-table {
-    --columns: 1;
+    &.servicegroup-table {
+      --columns: 1;
+    }
   }
 
   &.user-table, // TODO: make them lists.....

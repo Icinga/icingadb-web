@@ -1,49 +1,42 @@
 // HostGroup- and -ServiceGroupGrid styles
-.content.full-width {
-  ul.item-table {
-    &.group-grid {
 
-      margin-left: 1em;
-      grid-template-columns: repeat(auto-fit, 15em);
-      column-gap: 2em;
+ul.item-table.group-grid {
+  grid-template-columns: repeat(auto-fit, 15em);
+  grid-gap: 1em 2em;
 
-      li.group-grid-cell {
-        .title {
-          border: unset;
-          align-items: center;
+  .table-row {
+    margin: -.25em;
+    padding: .25em;
+    border-radius: .5em;
+  }
 
-          > .visual {
-            margin-right: 1em;
+  li.group-grid-cell {
+    .title {
+      align-items: center;
+    }
 
-            .state-badge {
-              width: 2.5em;
-              height: 2.5em;
-              padding: unset;
-              line-height: 2.5;
+    .visual {
+      margin-right: 1em;
+    }
 
-              &.state-empty {
-                background-color: @gray-light;
-              }
-            }
-          }
+    .content {
+      line-height: 1;
 
-          > .content a {
-            line-height: 2;
-            display: inline-block;
-            max-width: 10em;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            text-align: center;
-          }
-        }
-      }
-
-      > li.table-row::before,
-      > li.table-row::after {
-        padding: unset;
-        content: unset;
+      a {
+        display: inline-block;
+        max-width: 10em;
+        text-align: center;
       }
     }
+
+    .state-badge {
+      width: 2.5em;
+      height: 2.5em;
+      line-height: 2;
+    }
   }
+}
+
+.content.full-width ul.item-table.group-grid {
+  margin: 0 1em;
 }
