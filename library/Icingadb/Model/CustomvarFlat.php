@@ -113,7 +113,10 @@ class CustomvarFlat extends Model
 
                 $registerValue($data[$step], $source[$step] ?? null, $path, $value);
             } else {
-                $data[$step] = $value;
+                // Since empty custom vars of type dictionaries and arrays have null values in customvar_flat table,
+                // we won't be able to render them as such. Therefore, we have to use the value of the `customvar`
+                // table if it's not null, otherwise the current value, which is a "null" string.
+                $data[$step] = $source[$step] ?? $value;
             }
         };
 
