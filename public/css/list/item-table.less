@@ -2,16 +2,6 @@
 
 ul.item-table {
   list-style-type: none;
-
-  li:not(:last-of-type) {
-    .col {
-      border-bottom: 1px solid @gray-light;
-    }
-
-    .visual {
-      border-bottom: 1px solid @default-bg;
-    }
-  }
 }
 
 div.item-table {
@@ -54,10 +44,6 @@ div.item-table {
 
 // Layout
 
-.item-table {
-  --columns: 1;
-}
-
 .table-row {
   .title {
     display: flex;
@@ -87,70 +73,17 @@ div.item-table {
 ul.item-table {
   display: grid;
 
-  grid-template-columns: 1fr repeat(var(--columns), auto);
-
   > .table-row {
-    &:not(:last-of-type) .title .visual {
-      margin-bottom: ~"calc(-.5em - 1px)";
-    }
-
     .col:not(.title) {
       display: grid;
       align-items: center;
-    }
-
-    .col {
-      padding: .5em 0;
-    }
-
-    .col:not(:last-child) {
-      padding-right: 1em;
     }
   }
 }
 
 ul.item-table {
-  margin: 0;
   padding: 0;
-
-  > li {
-    display: contents;
-
-    &:hover,
-    &.active {
-      .col, &::before, &::after {
-        // The li might get a background on hover. Though, this won't be visible
-        // as it has no box model since we apply display:contents to it.
-        background-color: inherit;
-      }
-    }
-  }
-}
-
-.content.full-width ul.item-table {
-  // Again, since the li has no box model, it cannot have padding. So the first
-  // and last child need to get the left and right padding respectively.
-  // But we don't want to have a border that spans to the very right or left,
-  // so pseudo elements are required. We could add empty cells instead, but
-  // that would require hard coding the width here, which I'd like to avoid.
-
-  grid-template-columns: ~"auto 1fr repeat(calc(var(--columns) + 1), auto)";
-
-  > li.table-row {
-    &::before, &::after {
-      display: inline-block;
-      content: '\00a0';
-      margin-bottom: 1px;
-    }
-
-    &::before {
-      padding-left: inherit;
-    }
-
-    &::after {
-      padding-right: inherit;
-    }
-  }
+  margin: 0;
 }
 
 div.item-table {

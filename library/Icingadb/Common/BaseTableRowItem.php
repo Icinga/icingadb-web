@@ -42,9 +42,11 @@ abstract class BaseTableRowItem extends BaseHtmlElement
         $this->init();
     }
 
-    abstract protected function assembleColumns(HtmlDocument $columns);
-
     abstract protected function assembleTitle(BaseHtmlElement $title);
+
+    protected function assembleColumns(HtmlDocument $columns)
+    {
+    }
 
     protected function assembleVisual(BaseHtmlElement $visual)
     {

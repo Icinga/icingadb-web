@@ -38,17 +38,27 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $defaultSort = null;
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $defaultSort = ['services_severity DESC', 'display_name'];
+        }
+
         $sortControl = $this->createSortControl(
             $servicegroups,
             [
-                'display_name'           => t('Name'),
-                'services_severity desc' => t('Severity'),
-                'services_total desc'    => t('Total Services')
-            ]
+                'display_name'                         => t('Name'),
+                'services_severity desc, display_name' => t('Severity'),
+                'services_total desc'                  => t('Total Services')
+            ],
+            $defaultSort
         );
+
         $searchBar = $this->createSearchBar($servicegroups, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -72,12 +82,15 @@ class ServicegroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $results = $servicegroups->execute();
 
         $this->addContent(
-            (new ServicegroupTable($results))->setBaseFilter($filter)
+            (new ServicegroupTable($results))
+                ->setBaseFilter($filter)
+                ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
         if ($compact) {

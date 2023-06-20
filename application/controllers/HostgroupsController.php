@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use ipl\Orm\Query;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
@@ -38,18 +39,39 @@ class HostgroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $defaultSort = null;
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $hostgroups->without([
+                'services_critical_handled',
+                'services_critical_unhandled',
+                'services_ok',
+                'services_pending',
+                'services_total',
+                'services_unknown_handled',
+                'services_unknown_unhandled',
+                'services_warning_handled',
+                'services_warning_unhandled',
+            ]);
+
+            $defaultSort = ['hosts_severity DESC', 'display_name'];
+        }
+
         $sortControl = $this->createSortControl(
             $hostgroups,
             [
-                'display_name'        => t('Name'),
-                'hosts_severity desc' => t('Severity'),
-                'hosts_total desc'    => t('Total Hosts'),
-                'services_total desc' => t('Total Services')
-            ]
+                'display_name'                      => t('Name'),
+                'hosts_severity desc, display_name' => t('Severity'),
+                'hosts_total desc'                  => t('Total Hosts'),
+            ],
+            $defaultSort
         );
+
         $searchBar = $this->createSearchBar($hostgroups, [
             $limitControl->getLimitParam(),
-            $sortControl->getSortParam()
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam()
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
@@ -73,12 +95,15 @@ class HostgroupsController extends Controller
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
         $results = $hostgroups->execute();
 
         $this->addContent(
-            (new HostgroupTable($results))->setBaseFilter($filter)
+            (new HostgroupTable($results))
+                ->setBaseFilter($filter)
+                ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
         if ($compact) {
