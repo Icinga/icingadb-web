@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Data;
 
+use DateTime;
+use DateTimeZone;
 use Icinga\Util\Json;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -18,7 +20,7 @@ class JsonResultSet extends ResultSet
         return $this->createObject(parent::current());
     }
 
-    protected function formatValue(string $key, ?string $value): ?string
+    protected function formatValue(string $key, $value): ?string
     {
         if (
             $value
@@ -31,6 +33,11 @@ class JsonResultSet extends ResultSet
             )
         ) {
             $value = bin2hex($value);
+        }
+
+        if ($value instanceof DateTime) {
+            return $value->setTimezone(new DateTimeZone('UTC'))
+                ->format('Y-m-d\TH:i:s.vP');
         }
 
         return $value;
