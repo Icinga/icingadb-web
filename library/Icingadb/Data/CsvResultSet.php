@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Data;
 
+use DateTime;
+use DateTimeZone;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\ResultSet;
@@ -17,7 +19,7 @@ class CsvResultSet extends ResultSet
         return $this->extractKeysAndValues(parent::current());
     }
 
-    protected function formatValue(string $key, ?string $value): ?string
+    protected function formatValue(string $key, $value): ?string
     {
         if (
             $value
@@ -38,6 +40,9 @@ class CsvResultSet extends ResultSet
             return '"' . str_replace('"', '""', $value) . '"';
         } elseif (is_array($value)) {
             return '"' . implode(',', $value) . '"';
+        } elseif ($value instanceof DateTime) {
+            return $value->setTimezone(new DateTimeZone('UTC'))
+                ->format('Y-m-d\TH:i:s.vP');
         } else {
             return $value;
         }
