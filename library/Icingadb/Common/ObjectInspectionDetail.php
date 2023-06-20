@@ -21,6 +21,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 use ipl\Html\Text;
 use ipl\Orm\Model;
+use ipl\Web\Widget\CopyToClipboard;
 
 abstract class ObjectInspectionDetail extends BaseHtmlElement
 {
@@ -88,9 +89,17 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             'active'
         ];
 
+        $execCommand = new HtmlElement(
+            'pre',
+            null,
+            Text::create($command)
+        );
+
+        CopyToClipboard::attachTo($execCommand);
+
         return [
             new HtmlElement('h2', null, Text::create(t('Executed Command'))),
-            new HtmlElement('pre', null, Text::create($command)),
+            $execCommand,
             new HtmlElement('h2', null, Text::create(t('Execution Details'))),
             $this->createNameValueTable(
                 array_diff_key($this->attrs['last_check_result'], array_flip($denylist)),
@@ -313,6 +322,10 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
                         $value = call_user_func($formatters[$name], $value);
                     } else {
                         $value = $this->formatJson($value);
+
+                        if ($value instanceof BaseHtmlElement) {
+                            CopyToClipboard::attachTo($value);
+                        }
                     }
                 } catch (Exception $e) {
                     $value = new EmptyState(IcingaException::describe($e));

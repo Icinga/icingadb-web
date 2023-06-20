@@ -26,6 +26,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\EmptyState;
+use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
@@ -79,6 +80,8 @@ class EventDetail extends BaseHtmlElement
                             ? $this->event->host->checkcommand_name
                             : $this->event->service->checkcommand_name)
                 );
+
+                CopyToClipboard::attachTo($notificationText);
             }
 
             $pluginOutput = [
@@ -189,6 +192,8 @@ class EventDetail extends BaseHtmlElement
                     (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
                         ->setCommandName($commandName)
                 );
+
+                CopyToClipboard::attachTo($commandOutput);
             }
 
             $pluginOutput = [
