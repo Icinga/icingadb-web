@@ -3,7 +3,7 @@
 .downtime-list .list-item,
 .downtime-detail .list-item {
   .progress {
-    .progress-bar {
+    > .bar {
       background-color: @color-ok;
     }
   }
@@ -19,7 +19,7 @@
   &:first-child .main {
     border-top: none;
 
-    .progress-bar {
+    .progress > .bar {
       border-top: 1px solid @gray-light;
     }
   }
@@ -52,13 +52,13 @@
     min-width: 100%;
     position: relative;
 
-    .progress-bar {
+    > .bar {
       height: 100%;
       max-width: 100%;
     }
   }
 
-  &:first-child .main .progress-bar {
+  &:first-child .main .progress > .bar {
     height: ~"calc(100% + 1px)"; // +1px due to the border added exclusively for the first item
   }
 

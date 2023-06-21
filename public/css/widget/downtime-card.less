@@ -1,47 +1,10 @@
 .downtime-progress {
   .progress-bar();
 
-  &.flexible.in-effect .marker {
-    &.start,
-    &.end {
-      background-color: @gray-light;
+  &.progress-bar .timeline .downtime-elapsed {
+    &::before,
+    > .bar {
+      background-color: @state-ok;
     }
-
-    &.flex-start,
-    &.flex-end {
-      background-color: @icinga-blue;
-    }
-  }
-
-  .downtime-elapsed {
-    background-color: @color-ok;
-
-    &:before,
-    &:after {
-      background-color: @color-ok;
-    }
-  }
-
-  .downtime-overrun {
-    background-color: @color-down;
-
-    &:before,
-    &:after {
-      background-color: @color-down;
-    }
-  }
-
-  .downtime-elapsed + .downtime-overrun {
-    &:before {
-      display: none;
-    }
-  }
-}
-
-.downtime-progress.progress-bar {
-  // This requires more specificity, otherwise it has no effect
-  .above,
-  .below {
-    padding: 2em 10%;
   }
 }
