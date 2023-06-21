@@ -2,68 +2,148 @@
   position: relative;
   .card();
   .progress-bar();
-  .card-footer {
-    display: flex;
-    justify-content: center;
-    border-top: 1px solid @gray-light;
-
-    &.space-between {
-      justify-content: space-between;
-      padding: 0 0.5em;
-    }
-
-    .key {
-      width: auto;
-      margin-right: .28125em; //calculated &nbsp; width
-      font-size: .83333333em;
-    }
-  }
 
   .check-attempt {
     display: inline-flex;
   }
 
-  &.progress-bar .below {
-    padding: 0;
-    margin-left: 10%;
-    margin-right: auto;
+  .bubble {
+    &.top-left-aligned,
+    &.top-right-aligned {
+      &::before {
+        display: none;
+      }
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+      svg {
+        position: absolute;
+        top: -1em;
+        width: 1em;
+        height: 1em;
 
-    &:before {
-      background-color: @gray;
-      content: "";
-      display: block;
-      height: .25em;
-      width: 100%;
+        .bg {
+          fill: @body-bg-color;
+        }
 
-      position: absolute;
-      top: ~"calc(50% - .125em)";
+        .border {
+          fill: @gray-light;
+        }
+      }
+    }
+
+    &.top-left-aligned {
+      transform: unset;
+      border-top-left-radius: 0;
+
+      svg {
+        left: -1px;
+      }
+    }
+
+    &.top-right-aligned {
+      transform: translate(-100%);
+      border-top-right-radius: 0;
+
+      svg {
+        right: -1px;
+      }
     }
   }
 
-  .interval {
-    background-color: @body-bg-color;
-    position: relative;
+  // ATTENTION!: `&.progress-bar {` must not be used here, seems to confuse the less parser!!!!111
+
+  &.progress-bar .timeline .progress.running {
+    &::before,
+    > .bar {
+      background: @state-ok;
+    }
   }
 
-  .check-overdue {
-    background-color: @color-down;
-    opacity: 1;
+  &.progress-bar .check-timeline {
+    margin-top: .5em;
+  }
+  &.progress-bar .above {
+    margin-top: .5em;
+  }
 
-    &:before,
-    &:after {
-      background-color: @color-down;
+  .interval-line {
+    position: absolute;
+    height: 100%;
+
+    &::before {
+      position: absolute;
+      top: ~"calc(50% - .125em)";
+      display: block;
+      height: .25em;
+      width: 100%;
+      content: "";
+
+      background-color: @gray-light;
+    }
+
+    .vertical-key-value {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+
+      padding: 0 .2em;
+      background-color: @body-bg-color;
+    }
+
+    .start,
+    .end {
+      position: absolute;
+      top: 50%;
+      width: .25em;
+      height: 1em;
+      background-color: @gray;
+    }
+
+    .start {
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    .end {
+      right: 0;
+      transform: translate(50%, -50%);
+    }
+  }
+
+  .execution-line .vertical-key-value {
+    z-index: 1;
+  }
+
+  &.check-overdue {
+    --duration-scale: 60%;
+    --overlay-scale: 20%;
+
+    .above {
+      .now {
+        position: absolute;
+        right: var(--hPadding);
+        bottom: 0;
+
+        .bubble {
+          // to move the center of the bubble to the end of the wrapper.
+          transform: translate(50%, 0);
+        }
+      }
+    }
+
+    .timeline-overlay {
+      background: linear-gradient(90deg, @gray-light 0, @color-down 2em);
+      opacity: 1;
+
+      &::after {
+        background-color: @color-down;
+      }
     }
   }
 
   &.checks-disabled.progress-bar {
     .timeline {
       .marker {
-        &.start,
-        &.end {
+        &.highlighted {
           background-color: @gray;
         }
       }
