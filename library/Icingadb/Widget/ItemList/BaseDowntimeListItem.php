@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -86,25 +87,19 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function createProgress(): BaseHtmlElement
     {
-        $ref = floor(
-            (float) ($this->currentTime - $this->startTime)
-            / (float) ($this->endTime - $this->startTime)
-            * 100
-        );
-
-        $progress = Html::tag(
+        return new HtmlElement(
             'div',
-            ['class' => 'progress'],
-            Html::tag(
+            Attributes::create([
+                'class' => 'progress',
+                'data-animate-progress' => true,
+                'data-start-time' => $this->startTime,
+                'data-end-time' => $this->endTime
+            ]),
+            new HtmlElement(
                 'div',
-                [
-                    'class' => 'progress-bar',
-                    'style' => sprintf('width: %F%%', $ref)
-                ]
+                Attributes::create(['class' => 'bar'])
             )
         );
-
-        return $progress;
     }
 
     protected function assembleCaption(BaseHtmlElement $caption)
