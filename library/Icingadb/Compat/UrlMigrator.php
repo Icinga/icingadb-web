@@ -141,6 +141,8 @@ class UrlMigrator
                     default:
                         $filter->setValue($exprRule);
                 }
+
+                $rewritten = $this->transformWildcardFilter($rewritten);
             } elseif ($column === 'sort') {
                 $column = $filter->getValue();
                 if (isset($legacyColumns[$column])) {
@@ -178,6 +180,7 @@ class UrlMigrator
                 return false;
             } elseif (preg_match('/^_(host|service)_([\w.]+)/i', $column, $groups)) {
                 $rewritten = $filter->setColumn($groups[1] . '.vars.' . $groups[2]);
+                $rewritten = $this->transformWildcardFilter($rewritten);
             }
         } else {
             /** @var Filter\Chain $filter */
@@ -196,6 +199,19 @@ class UrlMigrator
         }
 
         return $rewritten;
+    }
+
+    private function transformWildcardFilter(Filter\Condition $filter)
+    {
+        if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
+            if ($filter instanceof Filter\Equal) {
+                return Filter::like($filter->getColumn(), $filter->getValue());
+            } elseif ($filter instanceof Filter\Unequal) {
+                return Filter::unlike($filter->getColumn(), $filter->getValue());
+            }
+        }
+
+        return $filter;
     }
 
     protected static function commonColumns(): array
