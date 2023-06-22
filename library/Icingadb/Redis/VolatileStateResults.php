@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Redis;
 use Exception;
 use Generator;
 use Icinga\Application\Benchmark;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
@@ -18,6 +19,8 @@ use RuntimeException;
 
 class VolatileStateResults extends ResultSet
 {
+    use Auth;
+
     /** @var Resolver */
     private $resolver;
 
@@ -91,6 +94,8 @@ class VolatileStateResults extends ResultSet
         $keys = [];
         $hostStateKeys = [];
 
+        $showSourceGranted = $this->getAuth()->hasPermission('icingadb/object/show-source');
+
         $states = [];
         $hostStates = [];
         foreach ($this as $row) {
@@ -112,6 +117,9 @@ class VolatileStateResults extends ResultSet
             $states[bin2hex($row->id)] = $row->state;
             if (empty($keys)) {
                 $keys = $row->state->getColumns();
+                if (! $showSourceGranted) {
+                    $keys = array_diff($keys, ['check_commandline']);
+                }
             }
 
             if ($type === 'service' && $row->host instanceof Host) {

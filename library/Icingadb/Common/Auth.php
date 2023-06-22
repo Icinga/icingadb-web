@@ -137,6 +137,9 @@ trait Auth
                 // Hence why the hosts restriction is also applied if only services are queried.
                 || $applyServiceRestriction;
 
+            $hostStateRelation = array_search('host_state', $relations, true);
+            $serviceStateRelation = array_search('service_state', $relations, true);
+
             $resolver = $query->getResolver();
 
             $queryFilter = Filter::any();
@@ -193,6 +196,34 @@ trait Auth
 
                 if (! $roleFilter->isEmpty()) {
                     $queryFilter->add($roleFilter);
+                }
+            }
+
+            if (! $this->getAuth()->hasPermission('icingadb/object/show-source')) {
+                // In case the user does not have permission to see the object's `Source` tab, then the user must be
+                // restricted from accessing the executed command for the object.
+                $columns = $query->getColumns();
+                $commandColumns = [];
+                if ($hostStateRelation !== false) {
+                    $commandColumns[] = $resolver->qualifyColumn('check_commandline', $hostStateRelation);
+                }
+
+                if ($serviceStateRelation !== false) {
+                    $commandColumns[] = $resolver->qualifyColumn('check_commandline', $serviceStateRelation);
+                }
+
+                if (! empty($columns)) {
+                    foreach ($commandColumns as $commandColumn) {
+                        $commandColumnPath = array_search($commandColumn, $columns, true);
+                        if ($commandColumnPath !== false) {
+                            $columns[$commandColumn] = new Expression("'***'");
+                            unset($columns[$commandColumnPath]);
+                        }
+                    }
+
+                    $query->columns($columns);
+                } else {
+                    $query->withoutColumns($commandColumns);
                 }
             }
 
