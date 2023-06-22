@@ -96,7 +96,7 @@ abstract class StateListItem extends BaseListItem
             $since->prepend(t('Overdue') . ' ');
             $since->prependHtml(new Icon(Icons::WARNING));
             return $since;
-        } elseif ($this->state->last_state_change->getTimestamp() > 0) {
+        } elseif ($this->state->last_state_change !== null && $this->state->last_state_change->getTimestamp() > 0) {
             return new TimeSince($this->state->last_state_change->getTimestamp());
         }
     }

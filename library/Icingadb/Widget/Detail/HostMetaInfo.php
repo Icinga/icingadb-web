@@ -47,7 +47,9 @@ class HostMetaInfo extends BaseHtmlElement
             ),
             new VerticalKeyValue(
                 'last_state_change',
-                DateFormatter::formatDateTime($this->host->state->last_state_change->getTimestamp())
+                $this->host->state->last_state_change !== null
+                    ? DateFormatter::formatDateTime($this->host->state->last_state_change->getTimestamp())
+                    : (new EmptyState(t('n. a.')))->setTag('span')
             )
         );
 
