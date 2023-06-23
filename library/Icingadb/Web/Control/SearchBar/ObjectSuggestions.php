@@ -148,7 +148,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
-        list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath);
+        list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath, 2);
 
         $isCustomVar = false;
         if (substr($targetPath, -5) === '.vars') {
