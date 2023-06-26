@@ -133,7 +133,12 @@ class CustomvarFlat extends Model
                 $source = [$realName => $var->customvar->value];
 
                 $sourcePath = ltrim(substr($var->flatname, strlen($realName)), '.');
-                $path = array_merge([$realName], $sourcePath ? explode('.', $sourcePath) : []);
+                $path = array_merge(
+                    [$realName],
+                    $sourcePath
+                        ? preg_split('/(?<=\w|])\.|(?<!^|\.)(?=\[)/', $sourcePath)
+                        : []
+                );
             } else {
                 $path = explode('.', $var->flatname);
                 $source = null;
