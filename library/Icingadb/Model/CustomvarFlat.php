@@ -101,9 +101,19 @@ class CustomvarFlat extends Model
                 $step = $m[1];
             }
 
-            while ($source !== null && ! empty($path) && (! is_array($source) || ! isset($source[$step]))) {
-                $step = sprintf($isIndex ? '[%d].%s' : '%s.%s', $step, array_shift($path));
-                $isIndex = false;
+            if ($source !== null) {
+                while (! isset($source[$step])) {
+                    if ($isIndex) {
+                        $step = sprintf('[%d]', $step);
+                        $isIndex = false;
+                    } else {
+                        if (empty($path)) {
+                            break;
+                        }
+
+                        $step = implode('.', [$step, array_shift($path)]);
+                    }
+                }
             }
 
             if (! empty($path)) {
