@@ -42,7 +42,7 @@ class MigrateController extends Controller
             $url = Url::fromPath($urlString);
             if (UrlMigrator::isSupportedUrl($url)) {
                 try {
-                    $urlString = UrlMigrator::transformUrl($url)->getAbsoluteUrl();
+                    $urlString = rawurldecode(UrlMigrator::transformUrl($url)->getAbsoluteUrl());
                 } catch (Exception $e) {
                     $errors[$urlString] = [
                         IcingaException::describe($e),
@@ -108,7 +108,7 @@ class MigrateController extends Controller
             $url = Url::fromPath($urlString);
             $filter = QueryString::parse($url->getQueryString());
             $filter = $traverseFilter($filter) ?? $filter;
-            $result[] = $url->setQueryString(QueryString::render($filter))->getAbsoluteUrl();
+            $result[] = rawurldecode($url->setQueryString(QueryString::render($filter))->getAbsoluteUrl());
         }
 
         $response = $this->getResponse()->json();
