@@ -117,7 +117,7 @@
 
         $target.each((_, container) => {
             let $container = $(container);
-            let href = $container.data('icingaUrl');
+            let href = decodeURI($container.data('icingaUrl'));
             let containerId = $container.attr('id');
 
             if (!! href) {
@@ -180,12 +180,12 @@
 
             var containerUrl = '';
             if ($container.length) {
-                containerUrl = $container.data('icingaUrl');
+                containerUrl = decodeURI($container.data('icingaUrl'));
             }
 
             if (suggestionUrl !== containerUrl) {
                 var $newContainer = $('#main > .container').filter(function () {
-                    return $(this).data('icingaUrl') === suggestionUrl;
+                    return decodeURI($(this).data('icingaUrl')) === suggestionUrl;
                 });
                 if ($newContainer.length) {
                     // Container moved
@@ -224,7 +224,7 @@
         var $button = $(event.target).closest('button');
         var $suggestion = $button.parent();
         var $container = $('#' + $suggestion.data('containerId'));
-        var containerUrl = $container.data('icingaUrl');
+        var containerUrl = decodeURI($container.data('icingaUrl'));
 
         if ($button.attr('value') === '1') {
             // Yes
@@ -474,7 +474,7 @@
         this.Popup().find('li').each(function () {
             var $suggestion = $(this);
             var $container = $('#' + $suggestion.data('containerId'));
-            var containerUrl = $container.data('icingaUrl');
+            var containerUrl = decodeURI($container.data('icingaUrl'));
             if (
                 // Unknown url, yet
                 typeof _this.knownMigrations[containerUrl] === 'undefined'
