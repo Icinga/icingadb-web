@@ -19,6 +19,7 @@
 
             this.on('click', '.action-list [data-action-item]:not(.page-separator), .action-list [data-action-item] a[href]', this.onClick, this);
             this.on('close-column', this.onColumnClose, this);
+            this.on('column-moved', this.onColumnMoved, this);
 
             this.on('rendered', '.container', this.onRendered, this);
             this.on('keydown', '#body', this.onKeyDown, this);
@@ -487,6 +488,14 @@
                 }
 
                 _this.addSelectionCountToFooter($list[0]);
+            }
+        }
+
+        onColumnMoved (event, sourceId) {
+            let _this = event.data.self;
+
+            if (event.target.id === 'col2' && sourceId === 'col1') { // only for browser-back (col1 shifted to col2)
+                _this.clearSelection(event.target.querySelectorAll('.action-list .active'));
             }
         }
 
