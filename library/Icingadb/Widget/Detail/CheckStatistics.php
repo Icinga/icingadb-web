@@ -95,7 +95,10 @@ SVG;
             $progressBar->addHtml(new HtmlElement('div', Attributes::create(['class' => 'now'])));
         }
 
-        if ($nextCheckTime !== null && $nextCheckTime < $now) {
+        if ($nextCheckTime !== null && ! $this->object->state->is_overdue && $nextCheckTime < $now) {
+            // If the next check is already in the past but not overdue, it means the check is probably running.
+            // Icinga only updates the state once the check reports a result, that's why we have to simulate the
+            // execution start and end time, as well as the next check time.
             $lastUpdateTime = $nextCheckTime;
             $nextCheckTime = $this->object->state->next_update->getTimestamp() - $executionTime;
             $executionEndTime = $lastUpdateTime + $executionTime;
