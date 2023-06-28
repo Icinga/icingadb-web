@@ -538,18 +538,23 @@
          * Create the detail url for multi selectable list
          *
          * @param items List items
+         * @param withBaseUrl Default to true
          *
          * @returns {string} The url
          */
-        createMultiSelectUrl(items) {
+        createMultiSelectUrl(items, withBaseUrl = true) {
             let filters = [];
             items.forEach(item => {
                 filters.push(item.getAttribute('data-icinga-multiselect-filter'));
             });
 
-            return items[0].parentElement.getAttribute('data-icinga-multiselect-url')
-                + '?'
-                + filters.join('|');
+            let url = '?' + filters.join('|');
+
+            if (withBaseUrl) {
+                return items[0].parentElement.getAttribute('data-icinga-multiselect-url') + url;
+            }
+
+            return url;
         }
 
         onColumnClose(event) {
@@ -598,21 +603,47 @@
             let _this = event.data.self;
             let container = event.target;
             let isTopLevelContainer = container.matches('#main > :scope');
+            let detailUrl = _this.icinga.utils.parseUrl(
+                _this.icinga.history.getCol2State().replace(/^#!/, '')
+            );
+            let list = null;
 
             if (event.currentTarget !== container || _this.isProcessingRequest) {
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
             } else if (isTopLevelContainer && container.id !== 'col1') {
-                return;
-            }
-
-            let list = container.querySelector('.action-list');
-
-            if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-                let detailUrl = _this.icinga.utils.parseUrl(
-                    _this.icinga.history.getCol2State().replace(/^#!/, '')
+                let detailQuery = detailUrl.query;
+                let detailItem = document.querySelector(
+                    '#main > .container .action-list > li[data-icinga-detail-filter="'
+                    + detailQuery.replace('?', '') + '"],' +
+                    '#main > .container .action-list > li[data-icinga-multiselect-filter="'
+                    + detailQuery.split('|', 1).toString().replace('?', '') + '"]'
                 );
 
+                if (! detailItem) {
+                    return;
+                }
+
+                list = detailItem.parentElement;
+                let activeItems = list.querySelectorAll('[data-action-item].active');
+
+                if (activeItems.length && (
+                        (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)
+                            && detailQuery !== '?' + activeItems[0].dataset.icingaDetailFilter
+                        )
+                        || (list.dataset.icingaMultiselectUrl === detailUrl.path
+                            && detailQuery !== _this.createMultiSelectUrl(activeItems, false)
+                        )
+                )) {
+                    _this.clearSelection(activeItems);
+                } else {
+                    return;
+                }
+            } else {
+                list = container.querySelector('.action-list');
+            }
+
+            if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
                 let item = null;
                 if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
                     for (const filter of _this.parseSelectionQuery(detailUrl.query.slice(1))) {
