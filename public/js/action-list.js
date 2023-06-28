@@ -116,6 +116,11 @@
             }
         }
 
+        /**
+         * Add the selection count to footer if list allow multi selection
+         *
+         * @param list
+         */
         addSelectionCountToFooter(list) {
             if (! list.matches('[data-icinga-multiselect-url]')) {
                 return;
@@ -156,6 +161,15 @@
             }
         }
 
+        /**
+         * Key navigation for .action-list
+         *
+         * - `Shift + ArrowUp|ArrowDown` = Multiselect
+         * - `ArrowUp|ArrowDown` = Select next/previous
+         * - `Ctrl|cmd + A` = Select all on currect page
+         *
+         * @param event
+         */
         onKeyDown(event) {
             let _this = event.data.self;
             let list = null;
@@ -272,6 +286,14 @@
             _this.loadDetailUrl(list);
         }
 
+        /**
+         * Get the next list item according to the pressed key (`ArrowUp` or `ArrowDown`)
+         *
+         * @param item The list item from which we want the next item
+         * @param eventKey Pressed key (`ArrowUp` or `ArrowDown`)
+         *
+         * @returns {Element|null}
+         */
         getDirectionalNext(item, eventKey) {
             if (! item) {
                 return null;
@@ -280,6 +302,14 @@
             return eventKey === 'ArrowUp' ? item.previousElementSibling : item.nextElementSibling;
         }
 
+        /**
+         * Find the list item that should be activated next
+         *
+         * @param lastActivatedItem
+         * @param eventKey Pressed key (`ArrowUp` or `ArrowDown`)
+         *
+         * @returns {Element[]}
+         */
         findToActiveItem(lastActivatedItem, eventKey) {
             let toActiveItem;
             let markAsLastActive;
@@ -308,6 +338,11 @@
             return [toActiveItem, markAsLastActive];
         }
 
+        /**
+         * Select All list items
+         *
+         * @param list The action list
+         */
         selectAll(list) {
             this.setActive(list.querySelectorAll(':scope > [data-action-item]:not(.active)'));
             this.setLastActivatedItemUrl(list.lastChild.dataset.icingaDetailFilter);
@@ -315,17 +350,32 @@
             this.loadDetailUrl(list);
         }
 
+        /**
+         * Clear the selection by removing .active class
+         *
+         * @param selectedItems The items with class active
+         */
         clearSelection(selectedItems) {
             selectedItems.forEach(item => item.classList.remove('active'));
         }
 
+        /**
+         * Set the last activated item Url
+         *
+         * @param url
+         */
         setLastActivatedItemUrl (url) {
             this.lastActivatedItemUrl = url;
         }
 
+        /**
+         * Scroll the given item into view
+         *
+         * @param item Item to scroll into view
+         * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
+         */
         scrollItemIntoView(item, pressedKey) {
             item.scrollIntoView({block: "nearest"});
-
             let directionalNext = this.getDirectionalNext(item, pressedKey);
 
             if (directionalNext) {
@@ -333,6 +383,12 @@
             }
         }
 
+        /**
+         * Load the detail url with selected items
+         *
+         * @param list The action list
+         * @param anchorUrl If any anchor is clicked (e.g. host in service list)
+         */
         loadDetailUrl(list, anchorUrl = null) {
             let url = anchorUrl;
             if (url === null) {
@@ -360,6 +416,11 @@
             }, 250);
         }
 
+        /**
+         * Add .active class to given list item
+         *
+         * @param toActiveItem The list item(s)
+         */
         setActive(toActiveItem) {
             if (toActiveItem instanceof HTMLElement) {
                 toActiveItem.classList.add('active');
@@ -368,6 +429,13 @@
             }
         }
 
+        /**
+         * Handle the navigation on load-more button
+         *
+         * @param loadMoreElement
+         * @param lastActivatedItem
+         * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
+         */
         handleLoadMoreNavigate(loadMoreElement, lastActivatedItem, pressedKey) {
             let req = this.loadMore($(loadMoreElement.querySelector('a')));
             this.isProcessingLoadMore = true;
@@ -391,6 +459,13 @@
             });
         }
 
+        /**
+         * Click on load-more button
+         *
+         * @param event
+         *
+         * @returns {boolean}
+         */
         onLoadMoreClick(event) {
             event.stopPropagation();
             event.preventDefault();
@@ -406,6 +481,13 @@
             }
         }
 
+        /**
+         * Load more list items based on the given anchor
+         *
+         * @param $anchor
+         *
+         * @returns {*|{getAllResponseHeaders: function(): *|null, abort: function(*): this, setRequestHeader: function(*, *): this, readyState: number, getResponseHeader: function(*): null|*, overrideMimeType: function(*): this, statusCode: function(*): this}|jQuery|boolean}
+         */
         loadMore($anchor) {
             var $loadMore = $anchor.parent();
             var progressTimer = this.icinga.timer.register(function () {
@@ -452,6 +534,13 @@
             return req;
         }
 
+        /**
+         * Create the detail url for multi selectable list
+         *
+         * @param items List items
+         *
+         * @returns {string} The url
+         */
         createMultiSelectUrl(items) {
             let filters = [];
             items.forEach(item => {
@@ -491,6 +580,12 @@
             }
         }
 
+        /**
+         * Triggers when column is moved to left or right
+         *
+         * @param event
+         * @param sourceId The content is moved from
+         */
         onColumnMoved (event, sourceId) {
             let _this = event.data.self;
 
