@@ -18,7 +18,7 @@
             super(icinga);
 
             this.on('click', '.action-list [data-action-item]:not(.page-separator), .action-list [data-action-item] a[href]', this.onClick, this);
-            this.on('close-column', this.onColumnClose, this);
+            this.on('close-column', '#main > #col2', this.onColumnClose, this);
             this.on('column-moved', this.onColumnMoved, this);
 
             this.on('rendered', '.container', this.onRendered, this);
@@ -558,31 +558,32 @@
         }
 
         onColumnClose(event) {
-            var $target = $(event.target);
-
-            if ($target.attr('id') !== 'col2') {
-                return;
+            let _this = event.data.self;
+            let list = _this.findDetailUrlActionList();
+            if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
+                _this.clearSelection(list.querySelectorAll(':scope > [data-action-item].active'));
+                _this.addSelectionCountToFooter(list);
             }
+        }
 
-            var $list = $('#col1').find('.action-list');
-            if ($list.length && $list.is('[data-icinga-multiselect-url]')) {
-                var _this = event.data.self;
-                var detailUrl = _this.icinga.utils.parseUrl(_this.icinga.history.getCol2State().replace(/^#!/, ''));
+        /**
+         * Find the action list using the detail url
+         *
+         * @return Element|null
+         */
+        findDetailUrlActionList() {
+            let detailUrl = this.icinga.utils.parseUrl(
+                this.icinga.history.getCol2State().replace(/^#!/, '')
+            );
 
-                if ($list.attr('data-icinga-multiselect-url') === detailUrl.path) {
-                    $.each(_this.parseSelectionQuery(detailUrl.query.slice(1)), function (i, filter) {
-                        $list.find(
-                            '[data-icinga-multiselect-filter="' + filter + '"]'
-                        ).removeClass('active');
-                    });
-                } else if (_this.matchesDetailUrl($list.attr('data-icinga-detail-url'), detailUrl.path)) {
-                    $list.find(
-                        '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
-                    ).removeClass('active');
-                }
+            let detailItem = document.querySelector(
+                '#main > .container .action-list > li[data-icinga-detail-filter="'
+                + detailUrl.query.replace('?', '') + '"],' +
+                '#main > .container .action-list > li[data-icinga-multiselect-filter="'
+                + detailUrl.query.split('|', 1).toString().replace('?', '') + '"]'
+            );
 
-                _this.addSelectionCountToFooter($list[0]);
-            }
+            return detailItem ? detailItem.parentElement : null;
         }
 
         /**
@@ -612,27 +613,17 @@
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
             } else if (isTopLevelContainer && container.id !== 'col1') {
-                let detailQuery = detailUrl.query;
-                let detailItem = document.querySelector(
-                    '#main > .container .action-list > li[data-icinga-detail-filter="'
-                    + detailQuery.replace('?', '') + '"],' +
-                    '#main > .container .action-list > li[data-icinga-multiselect-filter="'
-                    + detailQuery.split('|', 1).toString().replace('?', '') + '"]'
-                );
-
-                if (! detailItem) {
-                    return;
-                }
-
-                list = detailItem.parentElement;
-                let activeItems = list.querySelectorAll('[data-action-item].active');
+                list = _this.findDetailUrlActionList();
+                let activeItems = list
+                    ? list.querySelectorAll('[data-action-item].active')
+                    : [];
 
                 if (activeItems.length && (
                         (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)
-                            && detailQuery !== '?' + activeItems[0].dataset.icingaDetailFilter
+                            && detailUrl.query !== '?' + activeItems[0].dataset.icingaDetailFilter
                         )
                         || (list.dataset.icingaMultiselectUrl === detailUrl.path
-                            && detailQuery !== _this.createMultiSelectUrl(activeItems, false)
+                            && detailUrl.query !== _this.createMultiSelectUrl(activeItems, false)
                         )
                 )) {
                     _this.clearSelection(activeItems);
