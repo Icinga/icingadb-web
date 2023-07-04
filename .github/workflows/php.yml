@@ -66,7 +66,7 @@ jobs:
 
       - name: Setup Icinga Web
         run: |
-          git clone --depth 1 https://github.com/Icinga/icingaweb2.git _icingaweb2
+          git clone --depth 1 -b remove-t-and-mt-from-basetestcase https://github.com/Icinga/icingaweb2.git _icingaweb2
           ln -s `pwd` _icingaweb2/modules/icingadb
 
       - name: Setup Libraries
