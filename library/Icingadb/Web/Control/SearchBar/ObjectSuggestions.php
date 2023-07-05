@@ -212,15 +212,16 @@ class ObjectSuggestions extends Suggestions
 
         // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
         $titleAdded = false;
+        $parsedArrayVars = [];
         foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
             $search = $name = $customVar->flatname;
-            if (preg_match('/\w+\[(\d+)]$/', $search, $matches)) {
-                // array vars need to be specifically handled
-                if ($matches[1] !== '0') {
+            if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
+                $name = substr($search, 0, -(strlen($matches[1]) + 2));
+                if (isset($parsedArrayVars[$name])) {
                     continue;
                 }
 
-                $name = substr($search, 0, -3);
+                $parsedArrayVars[$name] = true;
                 $search = $name . '[*]';
             }
 
