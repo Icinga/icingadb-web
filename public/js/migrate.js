@@ -1,8 +1,15 @@
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-;(function(Icinga, $) {
+;(function(Icinga, jQuery) {
 
     'use strict';
+
+    try {
+        var $ = require('icinga/icinga-php-library/notjQuery');
+    } catch (e) {
+        console.warn('Library not available:', e);
+        return;
+    }
 
     const ANIMATION_LENGTH = 350;
 
@@ -41,7 +48,7 @@
             this.backendSupportReadyState = null;
             this.searchMigrationReadyState = null;
             this.backendSupportRelated = {};
-            this.$popup = null;
+            this.popup = null;
 
             // Some persistence, we don't want to annoy our users too much
             this.storage = Icinga.Storage.BehaviorStorage('icingadb.migrate');
@@ -65,8 +72,8 @@
                 return;
             }
 
-            $.each(this.backendSupportRelated, (id, _) => {
-                let $container = $('#' + id);
+            Object.keys(this.backendSupportRelated).forEach(id => {
+                let $container = jQuery('#' + id);
                 let req = this.icinga.loader.loadUrl($container.data('icingaUrl'), $container);
                 req.addToHistory = false;
                 req.scripted = true;
@@ -74,21 +81,23 @@
         }
 
         onRendered(event) {
-            var _this = event.data.self;
-            var $target = $(event.target);
+            let _this = event.data.self;
+            let target = event.target;
 
-            if (_this.tempStorage.get('closed') || $('#layout.fullscreen-layout').length) {
+            if (_this.tempStorage.get('closed')
+                || document.querySelector('#layout.fullscreen-layout') !== null
+            ) {
                 // Don't bother in case the user closed the popup or we're in fullscreen
                 return;
             }
 
-            if (!$target.is('#main > .container')) {
-                if ($target.is('#main .container')) {
-                    var attrUrl = $target.attr('data-icinga-url');
-                    var dataUrl = $target.data('icingaUrl');
+            if (! target.matches('#main > .container')) {
+                if (target.matches('#main .container')) {
+                    let attrUrl = target.getAttribute('data-icinga-url');
+                    let dataUrl = jQuery(target).data('icingaUrl');
                     if (!! attrUrl && attrUrl !== dataUrl) {
                         // Search urls are redirected, update any migration suggestions
-                        _this.prepareMigration($target);
+                        _this.prepareMigration(target);
                         return;
                     }
                 }
@@ -97,26 +106,29 @@
                 return;
             }
 
-            var $dashboard = $target.children('.dashboard');
-            if ($dashboard.length) {
+            let dashboard = target.querySelector('.dashboard');
+            if (dashboard !== null) {
                 // After a page load dashlets have no id as `renderContentToContainer()` didn't ran yet
                 _this.icinga.ui.assignUniqueContainerIds();
 
-                $target = $dashboard.children('.container');
+                target = dashboard.querySelectorAll('.container');
             }
 
-            _this.prepareMigration($target);
+            _this.prepareMigration(target);
         }
 
-        prepareMigration($target) {
+        prepareMigration(target) {
             let monitoringUrls = {};
             let searchUrls = {};
             let modules = {}
 
-            $target.each((_, container) => {
-                let $container = $(container);
-                let href = decodeURI($container.data('icingaUrl'));
-                let containerId = $container.attr('id');
+            if (target instanceof HTMLElement) {
+                target = [target];
+            }
+
+            target.forEach(container => {
+                let href = decodeURI(jQuery(container).data('icingaUrl'));
+                let containerId = container.id;
 
                 if (!!href) {
                     if (
@@ -127,14 +139,19 @@
                     } else {
                         if (href.match(this.isMonitoringUrl)) {
                             monitoringUrls[containerId] = href;
-                        } else if ($container.find('[data-enrichment-type="search-bar"]').length) {
+                        } else if (container.querySelectorAll('[data-enrichment-type="search-bar"]').length) {
                             searchUrls[containerId] = href;
                         }
                     }
                 }
 
-                let moduleName = $container.data('icingaModule');
-                if (!! moduleName && moduleName !== 'default' && moduleName !== 'monitoring' && moduleName !== 'icingadb') {
+                let moduleName = jQuery(container).data('icingaModule');
+                if (
+                    !! moduleName
+                    && moduleName !== 'default'
+                    && moduleName !== 'monitoring'
+                    && moduleName !== 'icingadb'
+                ) {
                     modules[containerId] = moduleName;
                 }
             });
@@ -170,38 +187,40 @@
         }
 
         onColumnClose(event) {
-            var _this = event.data.self;
-            _this.Popup().find('.suggestion-area > ul li').each(function () {
-                var $suggestion = $(this);
-                var suggestionUrl = $suggestion.data('containerUrl');
-                var $container = $('#' + $suggestion.data('containerId'));
+            let _this = event.data.self;
+            _this.Popup().querySelectorAll('.suggestion-area > ul li').forEach(suggestion => {
+                let suggestionUrl = suggestion.dataset.containerUrl;
+                let container = document.querySelector('#' + suggestion.dataset.containerId);
 
-                var containerUrl = '';
-                if ($container.length) {
-                    containerUrl = decodeURI($container.data('icingaUrl'));
+                let containerUrl = '';
+                if (container) {
+                    containerUrl = decodeURI(jQuery(container).data('icingaUrl'));
                 }
 
                 if (suggestionUrl !== containerUrl) {
-                    var $newContainer = $('#main > .container').filter(function () {
-                        return decodeURI($(this).data('icingaUrl')) === suggestionUrl;
-                    });
-                    if ($newContainer.length) {
+                    let newContainer = Array.from(document.querySelectorAll('#main > .container'))
+                        .filter(container => {
+                            return decodeURI(jQuery(container).data('icingaUrl')) === suggestionUrl;
+                        });
+
+                    if (newContainer.length) {
                         // Container moved
-                        $suggestion.attr('id', 'suggest-' + $newContainer.attr('id'));
-                        $suggestion.data('containerId', $newContainer.attr('id'));
+                        suggestion.setAttribute('id', 'suggest-' + newContainer[0].id);
+                        suggestion.dataset.containerId =  newContainer[0].id;
                     }
                 }
             });
 
             let backendSupportRelated = { ..._this.backendSupportRelated };
-            $.each(backendSupportRelated, (id, module) => {
-                let $container = $('#' + id);
-                if (! $container.length || $container.data('icingaModule') !== module) {
-                    let $newContainer = $('#main > .container').filter(function () {
-                        return $(this).data('icingaModule') === module;
-                    });
-                    if ($newContainer.length) {
-                        _this.backendSupportRelated[$newContainer.attr('id')] = module;
+            Object.entries(backendSupportRelated).forEach(entry => {
+                let [id, module] = entry;
+                let container = document.querySelector('#' + id);
+                if (container === null || jQuery(container).data('icingaModule') !== module) {
+                    let newContainer = Array.from(document.querySelectorAll('#main > .container'))
+                        .filter(container => { return jQuery(container).data('icingaModule') === module; });
+
+                    if (newContainer.length) {
+                        _this.backendSupportRelated[newContainer[0].id] = module;
                     }
 
                     delete _this.backendSupportRelated[id];
@@ -212,45 +231,50 @@
         }
 
         onClose(event) {
-            var _this = event.data.self;
+            let _this = event.data.self;
             _this.tempStorage.set('closed', true);
             _this.hidePopup();
         }
 
         onDecision(event) {
-            var _this = event.data.self;
-            var $button = $(event.target).closest('button');
-            var $suggestion = $button.parent();
-            var $container = $('#' + $suggestion.data('containerId'));
-            var containerUrl = decodeURI($container.data('icingaUrl'));
+            let _this = event.data.self;
+            let button = event.target.closest('button');
+            let suggestion = button.parentElement;
+            let container = document.querySelector('#' + suggestion.dataset.containerId);
+            let containerUrl = decodeURI(jQuery(container).data('icingaUrl'));
 
-            if ($button.attr('value') === '1') {
+            if (button.value === '1') {
                 // Yes
-                var newHref = _this.knownMigrations[containerUrl];
-                _this.icinga.loader.loadUrl(newHref, $container);
+                let newHref = _this.knownMigrations[containerUrl];
+                _this.icinga.loader.loadUrl(newHref, jQuery(container));
 
-                _this.previousMigrations[$suggestion.data('containerId')] = containerUrl;
+                _this.previousMigrations[suggestion.dataset.containerId] = containerUrl;
 
-                if ($container.parent().is('.dashboard')) {
-                    $container.find('h1 a').attr('href', _this.icinga.utils.removeUrlParams(newHref, ['showCompact']));
+                if (container.parentElement.matches('.dashboard')) {
+                    container.querySelector('h1 a').setAttribute(
+                        'href',
+                        _this.icinga.utils.removeUrlParams(newHref, ['showCompact'])
+                    );
                 }
             } else {
                 // No
                 _this.knownMigrations[containerUrl] = false;
             }
 
-            if (_this.Popup().find('li').length === 1 && ! _this.Popup().find('#setAsBackendForm').length) {
+            if (_this.Popup().querySelectorAll('li').length === 1
+                && ! _this.Popup().querySelector('#setAsBackendForm')
+            ) {
                 _this.hidePopup(function () {
                     // Let the transition finish first, looks cleaner
-                    $suggestion.remove();
+                    suggestion.remove();
                 });
             } else {
-                $suggestion.remove();
+                suggestion.remove();
             }
         }
 
         onHandleClicked(event) {
-            var _this = event.data.self;
+            let _this = event.data.self;
             if (_this.togglePopup()) {
                 _this.storage.set('minimized', true);
             } else {
@@ -265,12 +289,12 @@
         }
 
         migrateUrls(urls, type) {
-            var _this = this,
-                containerIds = [],
-                containerUrls = [];
+                let containerIds = [],
+                    containerUrls = [];
 
-            $.each(urls, function (containerId, containerUrl) {
-                if (typeof _this.knownMigrations[containerUrl] === 'undefined') {
+            Object.entries(urls).forEach(entry => {
+                let [containerId, containerUrl] = entry;
+                if (typeof this.knownMigrations[containerUrl] === 'undefined') {
                     containerUrls.push(containerUrl);
                     containerIds.push(containerId);
                 }
@@ -286,7 +310,7 @@
             }
 
             if (containerUrls.length) {
-                var req = $.ajax({
+                let req = jQuery.ajax({
                     context: this,
                     type: 'post',
                     url: this.icinga.config.baseUrl + '/icingadb/migrate/' + endpoint,
@@ -308,22 +332,22 @@
         }
 
         processUrlMigrationResults(data, textStatus, req) {
-            var _this = this;
-            var result, containerId;
+            let result, containerId;
 
             if (data.status === 'success') {
                 result = data.data;
             } else {  // if (data.status === 'fail')
                 result = data.data.result;
 
-                $.each(data.data.errors, function (k, error) {
-                    _this.icinga.logger.error('[Migrate] Erroneous url "' + k + '": ' + error[0] + '\n' + error[1]);
+                Object.entries(data.data.errors).forEach(entry => {
+                    let [k, error] = entry;
+                    this.icinga.logger.error('[Migrate] Erroneous url "' + k + '": ' + error[0] + '\n' + error[1]);
                 });
             }
 
-            $.each(result, function (i, migratedUrl) {
+            result.forEach((migratedUrl, i) => {
                 containerId = req.urlIndexToContainerId[i];
-                _this.knownMigrations[req.urls[containerId]] = migratedUrl;
+                this.knownMigrations[req.urls[containerId]] = migratedUrl;
             });
 
             this.addSuggestions(req.urls, req.suggestionType);
@@ -333,7 +357,8 @@
             let containerIds = [];
             let moduleNames = [];
 
-            $.each(modules, (id, module) => {
+            Object.entries(modules).forEach(entry => {
+                let [id, module] = entry;
                 if (typeof this.knownBackendSupport[module] === 'undefined') {
                     containerIds.push(id);
                     moduleNames.push(module);
@@ -341,7 +366,7 @@
             });
 
             if (moduleNames.length) {
-                let req = $.ajax({
+                let req = jQuery.ajax({
                     context     : this,
                     type        : 'post',
                     url         : this.icinga.config.baseUrl + '/icingadb/migrate/backend-support',
@@ -364,7 +389,7 @@
         processBackendSupportResults(data, textStatus, req) {
             let result = data.data;
 
-            $.each(result, (i, state) => {
+            result.forEach((state, i) => {
                 let containerId = req.moduleIndexToContainerId[i];
                 this.knownBackendSupport[req.modules[containerId]] = state;
             });
@@ -375,7 +400,8 @@
         setupBackendCheckboxForm(modules) {
             let supportedModules = {};
 
-            $.each(modules, (id, module) => {
+            Object.entries(modules).forEach(entry => {
+                let [id, module] = entry;
                 if (this.knownBackendSupport[module]) {
                     supportedModules[id] = module;
                 }
@@ -384,7 +410,7 @@
             if (Object.keys(supportedModules).length) {
                 this.backendSupportRelated = { ...this.backendSupportRelated, ...supportedModules };
 
-                let req = $.ajax({
+                let req = jQuery.ajax({
                     context : this,
                     type    : 'get',
                     url     : this.icinga.config.baseUrl + '/icingadb/migrate/checkbox-state?showCompact'
@@ -395,66 +421,71 @@
         }
 
         setCheckboxState(html, textStatus, req) {
-            let $form = this.Popup().find('.suggestion-area > #setAsBackendForm');
-            if (! $form.length) {
-                $form = $(html);
-                $form.attr('data-base-target', 'migrate-popup-backend-submit-blackhole');
-                $form.append('<div id="migrate-popup-backend-submit-blackhole"></div>');
+            let form = this.Popup().querySelector('.suggestion-area > #setAsBackendForm');
+            if (form === null) {
+                form = $.render(html);
+                form.setAttribute('data-base-target', 'migrate-popup-backend-submit-blackhole');
+                form.append($.render('<div id="migrate-popup-backend-submit-blackhole"></div>'));
 
-                this.Popup().find('.monitoring-migration-suggestions').before($form);
+                let monitoringSuggestions = this.Popup().querySelector('.monitoring-migration-suggestions');
+                monitoringSuggestions.parentElement.insertBefore(form, monitoringSuggestions);
             } else {
-                let $newForm = $(html);
-                $form.find('[name=backend]').prop('checked', $newForm.find('[name=backend]').is(':checked'));
+                let newForm = $.render(html);
+                form.querySelector('[name=backend]').checked
+                    = newForm.querySelector('[name=backend]').checked;
             }
 
             this.showPopup();
         }
 
         addSuggestions(urls, type) {
-            var where;
+            let where;
             if (type === 'monitoring') {
                 where = '.monitoring-migration-suggestions';
             } else {
                 where = '.search-migration-suggestions';
             }
 
-            var _this = this,
-                hasSuggestions = false,
-                $ul = this.Popup().find('.suggestion-area > ul' + where);
-            $.each(urls, function (containerId, containerUrl) {
+            let hasSuggestions = false,
+                ul = this.Popup().querySelector('.suggestion-area > ul' + where);
+            Object.entries(urls).forEach(entry => {
+                let [containerId, containerUrl] = entry;
                 // No urls for which the user clicked "No" or an error occurred and only migrated urls please
-                if (_this.knownMigrations[containerUrl] !== false && _this.knownMigrations[containerUrl] !== containerUrl) {
-                    var $container = $('#' + containerId);
+                if (
+                    this.knownMigrations[containerUrl] !== false
+                    && this.knownMigrations[containerUrl] !== containerUrl
+                ) {
+                    let container = document.querySelector('#' + containerId);
 
-                    var $suggestion = $ul.find('li#suggest-' + containerId);
-                    if ($suggestion.length) {
-                        if ($suggestion.data('containerUrl') === containerUrl) {
+                    let suggestion = ul.querySelector('li#suggest-' + containerId);
+                    if (suggestion !== null) {
+                        if (suggestion.dataset.containerUrl === containerUrl) {
                             // There's already a suggestion for this exact container and url
                             hasSuggestions = true;
                             return;
                         }
 
-                        $suggestion.data('containerUrl', containerUrl);
+                        suggestion.dataset.containerUrl = containerUrl
                     } else {
-                        $suggestion = $(SUGGESTION_HTML);
-                        $suggestion.attr('id', 'suggest-' + containerId);
-                        $suggestion.data('containerId', containerId);
-                        $suggestion.data('containerUrl', containerUrl);
-                        $ul.append($suggestion);
+                        suggestion = $.render(SUGGESTION_HTML);
+                        suggestion.setAttribute('id', 'suggest-' + containerId);
+                        suggestion.dataset.containerId = containerId;
+                        suggestion.dataset.containerUrl = containerUrl;
+                        ul.append(suggestion);
                     }
 
                     hasSuggestions = true;
 
-                    var title;
-                    if ($container.data('icingaTitle')) {
-                        title = $container.data('icingaTitle').split(' :: ').slice(0, -1).join(' :: ');
-                    } else if ($container.parent().is('.dashboard')) {
-                        title = $container.find('h1 a').text();
+                    let title;
+                    if (jQuery(container).data('icingaTitle')) {
+                        title = jQuery(container).data('icingaTitle').split(' :: ').slice(0, -1).join(' :: ');
+                    } else if (container.parentElement.matches('.dashboard')) {
+                        title = container.querySelector('h1 a').textContent;
                     } else {
-                        title = $container.find('.tabs li.active a').text();
+                        title = container.querySelector('.tabs li.active a').textContent;
                     }
 
-                    $suggestion.find('button:first-of-type').text(title);
+                    suggestion.querySelector('button:first-of-type').textContent = title;
                 }
             });
 
@@ -467,23 +498,21 @@
         }
 
         cleanupSuggestions() {
-            var _this = this,
-                toBeRemoved = [];
-            this.Popup().find('li').each(function () {
-                var $suggestion = $(this);
-                var $container = $('#' + $suggestion.data('containerId'));
-                var containerUrl = decodeURI($container.data('icingaUrl'));
+            let toBeRemoved = [];
+            this.Popup().querySelectorAll('li').forEach(suggestion => {
+                let container = document.querySelector('#' + suggestion.dataset.containerId);
+                let containerUrl =  decodeURI(jQuery(container).data('icingaUrl'));
                 if (
                     // Unknown url, yet
-                    typeof _this.knownMigrations[containerUrl] === 'undefined'
+                    typeof this.knownMigrations[containerUrl] === 'undefined'
                     // User doesn't want to migrate
-                    || _this.knownMigrations[containerUrl] === false
+                    || this.knownMigrations[containerUrl] === false
                     // Already migrated or no migration necessary
-                    || containerUrl === _this.knownMigrations[containerUrl]
+                    || containerUrl === this.knownMigrations[containerUrl]
                     // The container URL changed
-                    || containerUrl !== $suggestion.data('containerUrl')
+                    || containerUrl !== suggestion.dataset.containerUrl
                 ) {
-                    toBeRemoved.push($suggestion);
+                    toBeRemoved.push(suggestion);
                 }
             });
 
@@ -491,15 +520,16 @@
         }
 
         cleanupBackendForm() {
-            let $form = this.Popup().find('#setAsBackendForm');
-            if (! $form.length) {
+            let form = this.Popup().querySelector('#setAsBackendForm');
+            if (form === null) {
                 return false;
             }
 
             let stillRelated = {};
-            $.each(this.backendSupportRelated, (id, module) => {
-                let $container = $('#' + id);
-                if ($container.length && $container.data('icingaModule') === module) {
+            Object.entries(this.backendSupportRelated).forEach(entry => {
+                let [id, module] = entry;
+                let container = document.querySelector('#' + id);
+                if (container && jQuery(container).data('icingaModule') === module) {
                     stillRelated[id] = module;
                 }
             });
@@ -510,28 +540,24 @@
                 return true;
             }
 
-            return $form;
+            return form;
         }
 
         cleanupPopup() {
             let toBeRemoved = this.cleanupSuggestions();
             let hasBackendForm = this.cleanupBackendForm();
 
-            if (hasBackendForm !== true && this.Popup().find('li').length === toBeRemoved.length) {
+            if (hasBackendForm !== true && this.Popup().querySelectorAll('li').length === toBeRemoved.length) {
                 this.hidePopup(() => {
                     // Let the transition finish first, looks cleaner
-                    $.each(toBeRemoved, function (_, $suggestion) {
-                        $suggestion.remove();
-                    });
+                    toBeRemoved.forEach(suggestion => suggestion.remove());
 
                     if (typeof hasBackendForm === 'object') {
                         hasBackendForm.remove();
                     }
                 });
             } else {
-                $.each(toBeRemoved, function (_, $suggestion) {
-                    $suggestion.remove();
-                });
+                toBeRemoved.forEach(suggestion => suggestion.remove());
 
                 if (typeof hasBackendForm === 'object') {
                     hasBackendForm.remove();
@@ -543,20 +569,20 @@
         }
 
         showPopup() {
-            var $popup = this.Popup();
+            let popup = this.Popup();
             if (this.storage.get('minimized') && ! this.forceFullyMaximized()) {
                 if (this.isShown()) {
                     this.minimizePopup();
                 } else {
-                    $popup.addClass('active minimized hidden');
+                    popup.classList.add('active', 'minimized', 'hidden');
                 }
             } else {
-                $popup.addClass('active');
+                popup.classList.add('active');
             }
         }
 
         hidePopup(after) {
-            this.Popup().removeClass('active minimized hidden');
+            this.Popup().classList.remove('active', 'minimized', 'hidden');
 
             if (typeof after === 'function') {
                 setTimeout(after, ANIMATION_LENGTH);
@@ -564,27 +590,27 @@
         }
 
         isShown() {
-            return this.Popup().is('.active');
+            return this.Popup().matches('.active');
         }
 
         minimizePopup() {
-            var $popup = this.Popup();
-            $popup.addClass('minimized');
+            let popup = this.Popup();
+            popup.classList.add('minimized');
             setTimeout(function () {
-                $popup.addClass('hidden');
+                popup.classList.add('hidden');
             }, ANIMATION_LENGTH);
         }
 
         maximizePopup() {
-            this.Popup().removeClass('minimized hidden');
+            this.Popup().classList.remove('minimized', 'hidden');
         }
 
         forceFullyMaximized() {
-            return this.Popup().find('.search-migration-suggestions:not(:empty)').length > 0;
+            return this.Popup().querySelectorAll('.search-migration-suggestions:not(:empty)').length > 0;
         }
 
         togglePopup() {
-            if (this.Popup().is('.minimized')) {
+            if (this.Popup().matches('.minimized')) {
                 this.maximizePopup();
                 return false;
             } else {
@@ -640,12 +666,12 @@
 
         Popup() {
             // Node.contains() is used due to `?renderLayout`
-            if (this.$popup === null || ! document.body.contains(this.$popup[0])) {
-                $('#layout').append($(POPUP_HTML));
-                this.$popup = $('#migrate-popup');
+            if (this.popup === null || ! document.body.contains(this.popup)) {
+                document.querySelector('#layout').append($.render(POPUP_HTML));
+                this.popup = document.querySelector('#migrate-popup');
             }
 
-            return this.$popup;
+            return this.popup;
         }
     }
 
