@@ -14,6 +14,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\TemplateString;
 use ipl\Html\Text;
 use ipl\Stdlib\BaseFilter;
+use ipl\Stdlib\Filter;
 use ipl\Web\Common\Card;
 use ipl\Web\Filter\QueryString;
 
@@ -33,6 +34,14 @@ class ServiceSummaryDonut extends Card
 
     protected function assembleBody(BaseHtmlElement $body)
     {
+        $labelBigUrlFilter = Filter::all(
+            Filter::equal('service.state.soft_state', 2),
+            Filter::equal('service.state.is_handled', 'n')
+        );
+        if ($this->hasBaseFilter()) {
+            $labelBigUrlFilter->add($this->getBaseFilter());
+        }
+
         $donut = (new Donut())
             ->addSlice($this->summary->services_ok, ['class' => 'slice-state-ok'])
             ->addSlice($this->summary->services_warning_handled, ['class' => 'slice-state-warning-handled'])
@@ -43,9 +52,7 @@ class ServiceSummaryDonut extends Card
             ->addSlice($this->summary->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
             ->addSlice($this->summary->services_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->services_critical_unhandled)
-            ->setLabelBigUrl(Links::services()->setQueryString(QueryString::render($this->getBaseFilter()))->addParams([
-                'service.state.soft_state' => 2,
-                'service.state.is_handled' => 'n',
+            ->setLabelBigUrl(Links::services()->setQueryString(QueryString::render($labelBigUrlFilter))->addParams([
                 'sort' => 'service.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->services_critical_unhandled > 0)

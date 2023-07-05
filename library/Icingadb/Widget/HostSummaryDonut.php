@@ -14,6 +14,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\TemplateString;
 use ipl\Html\Text;
 use ipl\Stdlib\BaseFilter;
+use ipl\Stdlib\Filter;
 use ipl\Web\Common\Card;
 use ipl\Web\Filter\QueryString;
 
@@ -33,6 +34,14 @@ class HostSummaryDonut extends Card
 
     protected function assembleBody(BaseHtmlElement $body)
     {
+        $labelBigUrlFilter = Filter::all(
+            Filter::equal('host.state.soft_state', 1),
+            Filter::equal('host.state.is_handled', 'n')
+        );
+        if ($this->hasBaseFilter()) {
+            $labelBigUrlFilter->add($this->getBaseFilter());
+        }
+
         $donut = (new Donut())
             ->addSlice($this->summary->hosts_up, ['class' => 'slice-state-ok'])
             ->addSlice($this->summary->hosts_down_handled, ['class' => 'slice-state-critical-handled'])
@@ -41,9 +50,7 @@ class HostSummaryDonut extends Card
             ->addSlice($this->summary->hosts_unreachable_unhandled, ['class' => 'slice-state-unreachable'])
             ->addSlice($this->summary->hosts_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->hosts_down_unhandled)
-            ->setLabelBigUrl(Links::hosts()->setQueryString(QueryString::render($this->getBaseFilter()))->addParams([
-                'host.state.soft_state' => 1,
-                'host.state.is_handled' => 'n',
+            ->setLabelBigUrl(Links::hosts()->setQueryString(QueryString::render($labelBigUrlFilter))->addParams([
                 'sort' => 'host.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)

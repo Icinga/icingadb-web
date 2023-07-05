@@ -16,6 +16,6 @@ class HostStatusBar extends BaseStatusBar
 
     protected function createStateBadges(): BaseHtmlElement
     {
-        return new HostStateBadges($this->summary);
+        return (new HostStateBadges($this->summary))->setBaseFilter($this->getBaseFilter());
     }
 }
