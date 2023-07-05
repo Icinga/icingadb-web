@@ -101,9 +101,19 @@ class CustomvarFlat extends Model
                 $step = $m[1];
             }
 
-            while ($source !== null && ! empty($path) && (! is_array($source) || ! isset($source[$step]))) {
-                $step = sprintf($isIndex ? '[%d].%s' : '%s.%s', $step, array_shift($path));
-                $isIndex = false;
+            if ($source !== null) {
+                while (! isset($source[$step])) {
+                    if ($isIndex) {
+                        $step = sprintf('[%d]', $step);
+                        $isIndex = false;
+                    } else {
+                        if (empty($path)) {
+                            break;
+                        }
+
+                        $step = implode('.', [$step, array_shift($path)]);
+                    }
+                }
             }
 
             if (! empty($path)) {
@@ -113,7 +123,10 @@ class CustomvarFlat extends Model
 
                 $registerValue($data[$step], $source[$step] ?? null, $path, $value);
             } else {
-                $data[$step] = $value;
+                // Since empty custom vars of type dictionaries and arrays have null values in customvar_flat table,
+                // we won't be able to render them as such. Therefore, we have to use the value of the `customvar`
+                // table if it's not null, otherwise the current value, which is a "null" string.
+                $data[$step] = $source[$step] ?? $value;
             }
         };
 
@@ -130,7 +143,12 @@ class CustomvarFlat extends Model
                 $source = [$realName => $var->customvar->value];
 
                 $sourcePath = ltrim(substr($var->flatname, strlen($realName)), '.');
-                $path = array_merge([$realName], $sourcePath ? explode('.', $sourcePath) : []);
+                $path = array_merge(
+                    [$realName],
+                    $sourcePath
+                        ? preg_split('/(?<=\w|])\.|(?<!^|\.)(?=\[)/', $sourcePath)
+                        : []
+                );
             } else {
                 $path = explode('.', $var->flatname);
                 $source = null;
