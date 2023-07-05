@@ -107,8 +107,13 @@ class MigrateController extends Controller
         foreach ($urls as $urlString) {
             $url = Url::fromPath($urlString);
             $filter = QueryString::parse($url->getQueryString());
-            $filter = $traverseFilter($filter) ?? $filter;
-            $result[] = rawurldecode($url->setQueryString(QueryString::render($filter))->getAbsoluteUrl());
+
+            $newFilter = $traverseFilter($filter);
+            if ($newFilter !== null) {
+                $result[] = rawurldecode($url->setQueryString(QueryString::render($newFilter))->getAbsoluteUrl());
+            } else {
+                $result[] = $url->getAbsoluteUrl();
+            }
         }
 
         $response = $this->getResponse()->json();
