@@ -46,10 +46,7 @@
 
         onClick(event) {
             let _this = event.data.self;
-            let activeItems;
             let target = event.currentTarget;
-            let item = target.closest('[data-action-item]');
-            let list = target.closest('.action-list');
 
             if (target.matches('a') && (! target.matches('.subject') || event.ctrlKey || event.metaKey)) {
                 return true;
@@ -59,58 +56,69 @@
             event.stopImmediatePropagation();
             event.stopPropagation();
 
-            if (list.matches('[data-icinga-multiselect-url]')) {
+            let item = target.closest('[data-action-item]');
+            let list = target.closest('.action-list');
+            let activeItems = Array.from(list.querySelectorAll(':scope > [data-action-item].active'));
+            let toActiveItems = [],
+                toDeactivateItems = [];
+
+            list.closest('#main > .container').dataset.suspendAutorefresh = '';
+
+            if (list.matches('[data-icinga-multiselect-url]') && (event.ctrlKey || event.metaKey || event.shiftKey)) {
                 if (event.ctrlKey || event.metaKey) {
-                    item.classList.toggle('active');
-                } else if (event.shiftKey) {
-                    document.getSelection().removeAllRanges();
-                    let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
-                    activeItems = list.querySelectorAll(':scope > [data-action-item].active');
-
-                    _this.clearSelection(activeItems);
-
-                    let startIndex = allItems.indexOf(item);
-                    let endIndex = activeItems[0] ? allItems.indexOf(activeItems[0]) : 0;
-
-                    if (startIndex > endIndex) {
-                        for (let i = startIndex; i >= endIndex; i--) {
-                            _this.setActive(allItems[i]);
-                        }
+                    if (item.classList.contains('active')) {
+                        toDeactivateItems.push(item);
                     } else {
-                        endIndex = allItems.indexOf(activeItems[activeItems.length - 1]);
-                        for (let i = startIndex; i <= endIndex; i++) {
-                            _this.setActive(allItems[i]);
-                        }
+                        toActiveItems.push(item);
                     }
                 } else {
-                    _this.clearSelection(list.querySelectorAll('[data-action-item].active'));
-                    _this.setActive(item);
+                    document.getSelection().removeAllRanges();
+
+                    let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
+
+                    let startIndex = allItems.indexOf(item);
+                    if(startIndex < 0) {
+                        startIndex = 0;
+                    }
+
+                    let endIndex = activeItems.length ? allItems.indexOf(activeItems[0]) : 0;
+                    if (startIndex > endIndex) {
+                        toActiveItems = allItems.slice(endIndex, startIndex + 1);
+                    } else {
+                        endIndex = activeItems.length ? allItems.indexOf(activeItems[activeItems.length - 1]) : 0;
+                        toActiveItems = allItems.slice(startIndex, endIndex + 1);
+                    }
+
+                    toDeactivateItems = activeItems.filter(item => ! toActiveItems.includes(item));
+                    toActiveItems = toActiveItems.filter(item => ! activeItems.includes(item));
                 }
             } else {
-                _this.clearSelection(list.querySelectorAll('[data-action-item].active'));
-                _this.setActive(item);
+                toDeactivateItems = activeItems;
+                toActiveItems.push(item);
             }
 
-            activeItems = list.querySelectorAll('[data-action-item].active');
-            if (item.classList.contains('active')) {
-                _this.setLastActivatedItemUrl(item.dataset.icingaDetailFilter);
-            } else {
-                _this.setLastActivatedItemUrl(
-                    activeItems.length
-                        ? activeItems[activeItems.length - 1].dataset.icingaDetailFilter
-                        : null
-                );
+            if (activeItems.length === 1
+                && toActiveItems.length === 0
+                && _this.icinga.loader.getLinkTargetFor($(target)).attr('id') === 'col2'
+            ) {
+                _this.icinga.ui.layout1col();
+                return;
             }
 
+            let lastActivatedUrl = null;
+            if (toActiveItems.includes(item)) {
+                lastActivatedUrl = item.dataset.icingaDetailFilter;
+            } else if (activeItems.length > 1) {
+                lastActivatedUrl = activeItems[activeItems.length - 1] === item
+                    ? activeItems[activeItems.length - 2].dataset.icingaDetailFilter
+                    : activeItems[activeItems.length - 1].dataset.icingaDetailFilter;
+            }
+
+            _this.clearSelection(toDeactivateItems);
+            _this.setActive(toActiveItems);
             _this.addSelectionCountToFooter(list);
-
-            if (activeItems.length === 0) {
-                if (_this.icinga.loader.getLinkTargetFor($(target)).attr('id') === 'col2') {
-                    _this.icinga.ui.layout1col();
-                }
-            } else {
-                _this.loadDetailUrl(list, target.matches('a') ? target.href : null);
-            }
+            _this.setLastActivatedItemUrl(lastActivatedUrl);
+            _this.loadDetailUrl(list, target.matches('a') ? target.href : null);
         }
 
         /**
