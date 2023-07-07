@@ -45,13 +45,13 @@
         }
 
         onClick(event) {
-            var _this = event.data.self;
-            var $activeItems;
-            var $target = $(event.currentTarget);
-            var $item = $target.closest('[data-action-item]');
-            var $list = $item.closest('.action-list');
+            let _this = event.data.self;
+            let activeItems;
+            let target = event.currentTarget;
+            let item = target.closest('[data-action-item]');
+            let list = target.closest('.action-list');
 
-            if ($target.is('a') && (! $target.is('.subject') || event.ctrlKey || event.metaKey)) {
+            if (target.matches('a') && (! target.matches('.subject') || event.ctrlKey || event.metaKey)) {
                 return true;
             }
 
@@ -59,60 +59,57 @@
             event.stopImmediatePropagation();
             event.stopPropagation();
 
-            if ($list.is('[data-icinga-multiselect-url]')) {
+            if (list.matches('[data-icinga-multiselect-url]')) {
                 if (event.ctrlKey || event.metaKey) {
-                    $item.toggleClass('active');
+                    item.classList.toggle('active');
                 } else if (event.shiftKey) {
                     document.getSelection().removeAllRanges();
+                    let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
+                    activeItems = list.querySelectorAll(':scope > [data-action-item].active');
 
-                    $activeItems = $list.find('[data-action-item].active');
+                    _this.clearSelection(activeItems);
 
-                    var $firstActiveItem = $activeItems.first();
+                    let startIndex = allItems.indexOf(item);
+                    let endIndex = activeItems[0] ? allItems.indexOf(activeItems[0]) : 0;
 
-                    $activeItems.removeClass('active');
-
-                    $firstActiveItem.addClass('active');
-                    $item.addClass('active');
-
-                    if ($item.index() > $firstActiveItem.index()) {
-                        $item.prevUntil($firstActiveItem).addClass('active');
+                    if (startIndex > endIndex) {
+                        for (let i = startIndex; i >= endIndex; i--) {
+                            _this.setActive(allItems[i]);
+                        }
                     } else {
-                        var $lastActiveItem = $activeItems.last();
-
-                        $lastActiveItem.addClass('active');
-                        $item.nextUntil($lastActiveItem).addClass('active');
+                        endIndex = allItems.indexOf(activeItems[activeItems.length - 1]);
+                        for (let i = startIndex; i <= endIndex; i++) {
+                            _this.setActive(allItems[i]);
+                        }
                     }
                 } else {
-                    $list.find('[data-action-item].active').removeClass('active');
-                    $item.addClass('active');
+                    _this.clearSelection(list.querySelectorAll('[data-action-item].active'));
+                    _this.setActive(item);
                 }
             } else {
-                $list.find('[data-action-item].active').removeClass('active');
-                $item.addClass('active');
+                _this.clearSelection(list.querySelectorAll('[data-action-item].active'));
+                _this.setActive(item);
             }
 
-            $activeItems = $list.find('[data-action-item].active');
-            if ($item.hasClass('active')) {
-                _this.setLastActivatedItemUrl($item.data('icingaDetailFilter'));
+            activeItems = list.querySelectorAll('[data-action-item].active');
+            if (item.classList.contains('active')) {
+                _this.setLastActivatedItemUrl(item.dataset.icingaDetailFilter);
             } else {
                 _this.setLastActivatedItemUrl(
-                    $activeItems.length
-                    ? $activeItems.last().data('icingaDetailFilter')
-                    : null
+                    activeItems.length
+                        ? activeItems[activeItems.length - 1].dataset.icingaDetailFilter
+                        : null
                 );
             }
 
-            _this.addSelectionCountToFooter($list[0]);
+            _this.addSelectionCountToFooter(list);
 
-            if ($activeItems.length === 0) {
-                if (_this.icinga.loader.getLinkTargetFor($target).attr('id') === 'col2') {
+            if (activeItems.length === 0) {
+                if (_this.icinga.loader.getLinkTargetFor($(target)).attr('id') === 'col2') {
                     _this.icinga.ui.layout1col();
                 }
             } else {
-                _this.loadDetailUrl(
-                    $list[0],
-                    $target.is('a') ? $target.attr('href') : null
-                );
+                _this.loadDetailUrl(list, target.matches('a') ? target.href : null);
             }
         }
 
@@ -437,7 +434,7 @@
          * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
          */
         handleLoadMoreNavigate(loadMoreElement, lastActivatedItem, pressedKey) {
-            let req = this.loadMore($(loadMoreElement.querySelector('a')));
+            let req = this.loadMore(loadMoreElement.firstChild);
             this.isProcessingLoadMore = true;
             req.done(() => {
                 this.isProcessingLoadMore = false;
@@ -470,7 +467,7 @@
             event.stopPropagation();
             event.preventDefault();
 
-            event.data.self.loadMore($(event.target));
+            event.data.self.loadMore(event.target);
 
             return false;
         }
@@ -484,14 +481,14 @@
         /**
          * Load more list items based on the given anchor
          *
-         * @param $anchor
+         * @param anchor
          *
          * @returns {*|{getAllResponseHeaders: function(): *|null, abort: function(*): this, setRequestHeader: function(*, *): this, readyState: number, getResponseHeader: function(*): null|*, overrideMimeType: function(*): this, statusCode: function(*): this}|jQuery|boolean}
          */
-        loadMore($anchor) {
-            var $loadMore = $anchor.parent();
+        loadMore(anchor) {
+            let showMore = anchor.parentElement;
             var progressTimer = this.icinga.timer.register(function () {
-                var label = $anchor.html();
+                var label = anchor.innerText;
 
                 var dots = label.substr(-3);
                 if (dots.slice(0, 1) !== '.') {
@@ -507,14 +504,14 @@
                     }
                 }
 
-                $anchor.html(label + dots);
+                anchor.innerText = label + dots;
             }, null, 250);
 
-            var url = $anchor.attr('href');
-            var req = this.icinga.loader.loadUrl(
+            let url = anchor.href;
+            let req = this.icinga.loader.loadUrl(
                 // Add showCompact, we don't want controls in paged results
                 this.icinga.utils.addUrlFlag(url, 'showCompact'),
-                $loadMore.parent(),
+                $(showMore.parentElement),
                 undefined,
                 undefined,
                 'append',
@@ -523,7 +520,7 @@
             );
             req.addToHistory = false;
             req.done(function () {
-                $loadMore.remove();
+                showMore.remove();
 
                 // Set data-icinga-url to make it available for Icinga.History.getCurrentState()
                 req.$target.closest('.container').data('icingaUrl', url);
