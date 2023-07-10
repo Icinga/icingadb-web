@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBadge;
@@ -16,15 +18,17 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
     protected function createGroupBadge(): Link
     {
-        $url = Url::fromPath('icingadb/services/grid')->addParams(['servicegroup.name' => $this->item->name]);
+        $url = Url::fromPath('icingadb/services/grid');
+        $urlFilter = Filter::all(Filter::equal('servicegroup.name', $this->item->name));
 
         if ($this->item->services_critical_unhandled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 2))
+                ->add(Filter::equal('service.state.is_handled', 'n'))
+                ->add(Filter::equal('service.state.is_reachable', 'y'));
+
             return new Link(
                 new StateBadge($this->item->services_critical_unhandled, 'critical'),
-                $url->addParams([
-                    'state.soft_state' => 2,
-                    'state.is_handled' => 'n'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -38,12 +42,15 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_critical_handled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 2))
+                ->add(Filter::any(
+                    Filter::equal('service.state.is_handled', 'y'),
+                    Filter::equal('service.state.is_reachable', 'n')
+                ));
+
             return new Link(
                 new StateBadge($this->item->services_critical_handled, 'critical', true),
-                $url->addParams([
-                    'state.soft_state' => 2,
-                    'state.is_handled' => 'y'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -59,12 +66,13 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_warning_unhandled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 1))
+                ->add(Filter::equal('service.state.is_handled', 'n'))
+                ->add(Filter::equal('service.state.is_reachable', 'y'));
+
             return new Link(
                 new StateBadge($this->item->services_warning_unhandled, 'warning'),
-                $url->addParams([
-                    'state.soft_state' => 1,
-                    'state.is_handled' => 'n'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -78,12 +86,15 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_warning_handled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 1))
+                ->add(Filter::any(
+                    Filter::equal('service.state.is_handled', 'y'),
+                    Filter::equal('service.state.is_reachable', 'n')
+                ));
+
             return new Link(
                 new StateBadge($this->item->services_warning_handled, 'warning', true),
-                $url->addParams([
-                    'state.soft_state' => 1,
-                    'state.is_handled' => 'y'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -99,12 +110,13 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_unknown_unhandled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 3))
+                ->add(Filter::equal('service.state.is_handled', 'n'))
+                ->add(Filter::equal('service.state.is_reachable', 'y'));
+
             return new Link(
                 new StateBadge($this->item->services_unknown_unhandled, 'unknown'),
-                $url->addParams([
-                    'state.soft_state' => 3,
-                    'state.is_handled' => 'n'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -118,12 +130,15 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_unknown_handled > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 3))
+                ->add(Filter::any(
+                    Filter::equal('service.state.is_handled', 'y'),
+                    Filter::equal('service.state.is_reachable', 'n')
+                ));
+
             return new Link(
                 new StateBadge($this->item->services_unknown_handled, 'unknown', true),
-                $url->addParams([
-                    'state.soft_state' => 3,
-                    'state.is_handled' => 'y'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -139,9 +154,11 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_pending > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 99));
+
             return new Link(
                 new StateBadge($this->item->services_pending, 'pending'),
-                $url->addParams(['state.soft_state' => 99]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -155,9 +172,11 @@ class ServicegroupGridCell extends BaseServiceGroupItem
                 ]
             );
         } elseif ($this->item->services_ok > 0) {
+            $urlFilter->add(Filter::equal('service.state.soft_state', 0));
+
             return new Link(
                 new StateBadge($this->item->services_ok, 'ok'),
-                $url->addParams(['state.soft_state' => 0]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(

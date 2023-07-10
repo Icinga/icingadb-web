@@ -58,10 +58,12 @@ class ServicegroupSummary extends UnionModel
             'display_name'                => 'servicegroup_display_name',
             'name'                        => 'servicegroup_name',
             'services_critical_handled'   => new Expression(
-                'SUM(CASE WHEN service_state = 2 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 2'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_critical_unhandled' => new Expression(
-                'SUM(CASE WHEN service_state = 2 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 2'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_ok'                 => new Expression(
                 'SUM(CASE WHEN service_state = 0 THEN 1 ELSE 0 END)'
@@ -73,16 +75,20 @@ class ServicegroupSummary extends UnionModel
                 'SUM(CASE WHEN service_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
             'services_unknown_handled'    => new Expression(
-                'SUM(CASE WHEN service_state = 3 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 3'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_unknown_unhandled'  => new Expression(
-                'SUM(CASE WHEN service_state = 3 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 3'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_warning_handled'    => new Expression(
-                'SUM(CASE WHEN service_state = 1 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 1'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_warning_unhandled'  => new Expression(
-                'SUM(CASE WHEN service_state = 1 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 1'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_severity'           => new Expression('MAX(service_severity)')
         ];
@@ -114,6 +120,7 @@ class ServicegroupSummary extends UnionModel
                     'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
                     'service_handled'           => 'state.is_handled',
+                    'service_reachable'         => 'state.is_reachable',
                     'service_severity'          => 'state.severity'
                 ]
             ],
@@ -127,6 +134,7 @@ class ServicegroupSummary extends UnionModel
                     'service_id'                => new Expression('NULL'),
                     'service_state'             => new Expression('NULL'),
                     'service_handled'           => new Expression('NULL'),
+                    'service_reachable'         => new Expression('NULL'),
                     'service_severity'          => new Expression('0')
                 ]
             ]
