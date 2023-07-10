@@ -605,7 +605,7 @@
             }
         }
 
-        onRendered(event) {
+        onRendered(event, isAutoRefresh) {
             let _this = event.data.self;
             let container = event.target;
             let isTopLevelContainer = container.matches('#main > :scope');
@@ -613,47 +613,45 @@
                 _this.icinga.history.getCol2State().replace(/^#!/, '')
             );
             let list = null;
+            let toActiveItems = [];
 
             if (event.currentTarget !== container || _this.isProcessingRequest) {
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
             } else if (isTopLevelContainer && container.id !== 'col1') {
-                list = _this.findDetailUrlActionList();
-                let activeItems = list
-                    ? list.querySelectorAll('[data-action-item].active')
-                    : [];
-
-                if (activeItems.length && (
-                        (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)
-                            && detailUrl.query !== '?' + activeItems[0].dataset.icingaDetailFilter
-                        )
-                        || (list.dataset.icingaMultiselectUrl === detailUrl.path
-                            && detailUrl.query !== _this.createMultiSelectUrl(activeItems, false)
-                        )
-                )) {
-                    _this.clearSelection(activeItems);
-                } else {
+                if (isAutoRefresh) {
                     return;
                 }
+                // only for browser back/forward navigation
+                list = _this.findDetailUrlActionList();
             } else {
                 list = container.querySelector('.action-list');
             }
 
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-                let item = null;
+                let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
                 if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
                     for (const filter of _this.parseSelectionQuery(detailUrl.query.slice(1))) {
-                        item = list.querySelector('[data-icinga-multiselect-filter="' + filter + '"]');
+                        let item = list.querySelector(
+                            '[data-icinga-multiselect-filter="' + filter + '"]'
+                        );
+
                         if (item) {
-                            item.classList.add('active');
+                            toActiveItems.push(item);
                         }
                     }
                 } else if (_this.matchesDetailUrl(list.dataset.icingaDetailUrl, detailUrl.path)) {
-                    item = list.querySelector('[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]');
+                    let item = list.querySelector(
+                        '[data-icinga-detail-filter="' + detailUrl.query.slice(1) + '"]'
+                    );
+
                     if (item) {
-                        item.classList.add('active');
+                        toActiveItems.push(item);
                     }
                 }
+
+                _this.clearSelection(allItems.filter(item => ! toActiveItems.includes(item)));
+                _this.setActive(toActiveItems);
 
                 if (isTopLevelContainer) {
                     _this.addSelectionCountToFooter(list);
