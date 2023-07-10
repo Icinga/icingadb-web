@@ -294,11 +294,7 @@ SVG;
     {
         $checkSource = (new EmptyState(t('n. a.')))->setTag('span');
         if ($this->object->state->check_source) {
-            $checkSource = [
-                new StateBall($this->object->state->is_reachable ? 'up' : 'down', StateBall::SIZE_MEDIUM),
-                ' ',
-                $this->object->state->check_source
-            ];
+            $checkSource = Text::create($this->object->state->check_source);
         }
 
         $header->addHtml(
