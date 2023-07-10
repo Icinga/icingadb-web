@@ -21,7 +21,7 @@
             this.on('close-column', '#main > #col2', this.onColumnClose, this);
             this.on('column-moved', this.onColumnMoved, this);
 
-            this.on('rendered', '.container', this.onRendered, this);
+            this.on('rendered', '#main > .container', this.onRendered, this);
             this.on('keydown', '#body', this.onKeyDown, this);
 
             this.on('click', '.load-more[data-no-icinga-ajax] a', this.onLoadMoreClick, this);
