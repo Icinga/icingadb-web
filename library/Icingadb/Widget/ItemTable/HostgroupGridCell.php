@@ -56,45 +56,6 @@ class HostgroupGridCell extends BaseHostGroupItem
                     )
                 ]
             );
-        } elseif ($this->item->hosts_unreachable_unhandled > 0) {
-            return new Link(
-                new StateBadge($this->item->hosts_unreachable_unhandled, 'unreachable'),
-                $url->addParams([
-                    'state.soft_state' => 2,
-                    'state.is_handled' => 'n'
-                ]),
-                [
-                    'title' => sprintf(
-                        $this->translatePlural(
-                            'List %d host that is currently in UNREACHABLE state in host group "%s"',
-                            'List %d hosts which are currently in UNREACHABLE state in host group "%s"',
-                            $this->item->hosts_unreachable_unhandled
-                        ),
-                        $this->item->hosts_unreachable_unhandled,
-                        $this->item->display_name
-                    )
-                ]
-            );
-        } elseif ($this->item->hosts_unreachable_handled > 0) {
-            return new Link(
-                new StateBadge($this->item->hosts_unreachable_handled, 'unreachable', true),
-                $url->addParams([
-                    'state.soft_state' => 2,
-                    'state.is_handled' => 'y'
-                ]),
-                [
-                    'title' => sprintf(
-                        $this->translatePlural(
-                            'List %d host that is currently in UNREACHABLE (Acknowledged) state in host group "%s"',
-                            'List %d hosts which are currently in UNREACHABLE (Acknowledged) state in host group'
-                            . ' "%s"',
-                            $this->item->hosts_unreachable_handled
-                        ),
-                        $this->item->hosts_unreachable_handled,
-                        $this->item->display_name
-                    )
-                ]
-            );
         } elseif ($this->item->hosts_pending > 0) {
             return new Link(
                 new StateBadge($this->item->hosts_pending, 'pending'),

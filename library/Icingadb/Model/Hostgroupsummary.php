@@ -71,12 +71,6 @@ class Hostgroupsummary extends UnionModel
             'hosts_unreachable'           => new Expression(
                 'SUM(CASE WHEN host_state = 2 THEN 1 ELSE 0 END)'
             ),
-            'hosts_unreachable_handled'   => new Expression(
-                'SUM(CASE WHEN host_state = 2 AND host_handled = \'y\' THEN 1 ELSE 0 END)'
-            ),
-            'hosts_unreachable_unhandled' => new Expression(
-                'SUM(CASE WHEN host_state = 2 AND host_handled = \'n\' THEN 1 ELSE 0 END)'
-            ),
             'hosts_up'                    => new Expression(
                 'SUM(CASE WHEN host_state = 0 THEN 1 ELSE 0 END)'
             ),
