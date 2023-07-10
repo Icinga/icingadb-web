@@ -50,7 +50,7 @@ class HostDetailHeader extends HostListItemMinimal
         }
 
         $stateChange->setIcon($this->state->getIcon());
-        $stateChange->setHandled($this->state->is_handled);
+        $stateChange->setHandled($this->state->is_handled || ! $this->state->is_reachable);
 
         $visual->addHtml($stateChange);
     }

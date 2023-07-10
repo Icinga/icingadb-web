@@ -57,19 +57,18 @@ class Hostgroupsummary extends UnionModel
         return [
             'display_name'                => 'hostgroup_display_name',
             'hosts_down_handled'          => new Expression(
-                'SUM(CASE WHEN host_state = 1 AND host_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN host_state = 1'
+                . ' AND (host_handled = \'y\' OR host_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'hosts_down_unhandled'        => new Expression(
-                'SUM(CASE WHEN host_state = 1 AND host_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN host_state = 1'
+                . ' AND host_handled = \'n\' AND host_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'hosts_pending'               => new Expression(
                 'SUM(CASE WHEN host_state = 99 THEN 1 ELSE 0 END)'
             ),
             'hosts_total'                 => new Expression(
                 'SUM(CASE WHEN host_id IS NOT NULL THEN 1 ELSE 0 END)'
-            ),
-            'hosts_unreachable'           => new Expression(
-                'SUM(CASE WHEN host_state = 2 THEN 1 ELSE 0 END)'
             ),
             'hosts_up'                    => new Expression(
                 'SUM(CASE WHEN host_state = 0 THEN 1 ELSE 0 END)'
@@ -132,6 +131,7 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
+                    'host_reachable'         => 'state.is_reachable',
                     'host_severity'          => 'state.severity',
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
@@ -151,6 +151,7 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
+                    'host_reachable'         => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
                     'service_id'             => 'service.id',
                     'service_state'          => 'state.soft_state',
@@ -167,6 +168,7 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
+                    'host_reachable'         => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),

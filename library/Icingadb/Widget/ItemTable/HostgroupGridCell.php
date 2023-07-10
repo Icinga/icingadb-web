@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
+use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBadge;
@@ -16,15 +18,17 @@ class HostgroupGridCell extends BaseHostGroupItem
 
     protected function createGroupBadge(): Link
     {
-        $url = Url::fromPath('icingadb/hosts')->addParams(['hostgroup.name' => $this->item->name]);
+        $url = Url::fromPath('icingadb/hosts');
+        $urlFilter = Filter::all(Filter::equal('hostgroup.name', $this->item->name));
 
         if ($this->item->hosts_down_unhandled > 0) {
+            $urlFilter->add(Filter::equal('host.state.soft_state', 1))
+                ->add(Filter::equal('host.state.is_handled', 'n'))
+                ->add(Filter::equal('host.state.is_reachable', 'y'));
+
             return new Link(
                 new StateBadge($this->item->hosts_down_unhandled, 'down'),
-                $url->addParams([
-                    'state.soft_state' => 1,
-                    'state.is_handled' => 'n'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -38,12 +42,15 @@ class HostgroupGridCell extends BaseHostGroupItem
                 ]
             );
         } elseif ($this->item->hosts_down_handled > 0) {
+            $urlFilter->add(Filter::equal('host.state.soft_state', 1))
+                ->add(Filter::any(
+                    Filter::equal('host.state.is_handled', 'y'),
+                    Filter::equal('host.state.is_reachable', 'n')
+                ));
+
             return new Link(
                 new StateBadge($this->item->hosts_down_handled, 'down', true),
-                $url->addParams([
-                    'state.soft_state' => 1,
-                    'state.is_handled' => 'y'
-                ]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -57,9 +64,11 @@ class HostgroupGridCell extends BaseHostGroupItem
                 ]
             );
         } elseif ($this->item->hosts_pending > 0) {
+            $urlFilter->add(Filter::equal('host.state.soft_state', 99));
+
             return new Link(
                 new StateBadge($this->item->hosts_pending, 'pending'),
-                $url->addParams(['state.soft_state' => 99]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -73,9 +82,11 @@ class HostgroupGridCell extends BaseHostGroupItem
                 ]
             );
         } elseif ($this->item->hosts_up > 0) {
+            $urlFilter->add(Filter::equal('host.state.soft_state', 0));
+
             return new Link(
                 new StateBadge($this->item->hosts_up, 'up'),
-                $url->addParams(['state.soft_state' => 0]),
+                $url->setQueryString(QueryString::render($urlFilter)),
                 [
                     'title' => sprintf(
                         $this->translatePlural(

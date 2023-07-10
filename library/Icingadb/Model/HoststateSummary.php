@@ -23,11 +23,11 @@ class HoststateSummary extends Host
             ),
             'hosts_down_handled' => new Expression(
                 'SUM(CASE WHEN host_state.soft_state = 1'
-                . ' AND host_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
+                . ' AND (host_state.is_handled = \'y\' OR host_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'hosts_down_unhandled' => new Expression(
                 'SUM(CASE WHEN host_state.soft_state = 1'
-                . ' AND host_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
+                . ' AND host_state.is_handled = \'n\' AND host_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'hosts_event_handler_enabled' => new Expression(
                 'SUM(CASE WHEN host.event_handler_enabled = \'y\' THEN 1 ELSE 0 END)'
@@ -47,9 +47,6 @@ class HoststateSummary extends Host
             ),
             'hosts_total' => new Expression(
                 'SUM(CASE WHEN host.id IS NOT NULL THEN 1 ELSE 0 END)'
-            ),
-            'hosts_unreachable' => new Expression(
-                'SUM(CASE WHEN host_state.soft_state = 2 THEN 1 ELSE 0 END)'
             ),
             'hosts_up' => new Expression(
                 'SUM(CASE WHEN host_state.soft_state = 0 THEN 1 ELSE 0 END)'

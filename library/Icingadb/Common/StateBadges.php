@@ -169,7 +169,8 @@ abstract class StateBadges extends BaseHtmlElement
                 new StateBadge($this->item->$unhandledKey, $state),
                 Filter::all(
                     Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
-                    Filter::equal($this->type . '.state.is_handled', 'n')
+                    Filter::equal($this->type . '.state.is_handled', 'n'),
+                    Filter::equal($this->type . '.state.is_reachable', 'y')
                 )
             ));
         }
@@ -179,7 +180,10 @@ abstract class StateBadges extends BaseHtmlElement
                 new StateBadge($this->item->$handledKey, $state, true),
                 Filter::all(
                     Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
-                    Filter::equal($this->type . '.state.is_handled', 'y')
+                    Filter::any(
+                        Filter::equal($this->type . '.state.is_handled', 'y'),
+                        Filter::equal($this->type . '.state.is_reachable', 'n')
+                    )
                 )
             ));
         }
