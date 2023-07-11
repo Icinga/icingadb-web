@@ -271,6 +271,7 @@
 
                 if (toActiveItem) {
                     if (toActiveItem.classList.contains('load-more')) {
+                        clearTimeout(_this.lastTimeoutId);
                         _this.handleLoadMoreNavigate(toActiveItem, lastActivatedItem, event.key);
                         return;
                     }
