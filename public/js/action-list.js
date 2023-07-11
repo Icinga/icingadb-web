@@ -222,16 +222,20 @@
 
             list.closest('#main > .container').dataset.suspendAutorefresh = '';
 
+            let markAsLastActive = null; // initialized only if it is different from toActiveItem
+            let toActiveItem = null;
             let wasAllSelected = activeItems.length === listItemsLength;
             let lastActivatedItem = list.querySelector(
                 `[data-icinga-detail-filter="${ _this.lastActivatedItemUrl }"]`
             );
+
+            if (! lastActivatedItem && activeItems.length) {
+                lastActivatedItem = activeItems[activeItems.length - 1];
+            }
+
             let directionalNextItem = _this.getDirectionalNext(lastActivatedItem, event.key);
-            let markAsLastActive = null; // initialized only if it is different from toActiveItem
-            let toActiveItem = null;
 
-
-            if (! lastActivatedItem || activeItems.length === 0) {
+            if (activeItems.length === 0) {
                 toActiveItem = pressedArrowDownKey ? list.firstChild : list.lastChild;
                 // reset all on manual page refresh
                 _this.clearSelection(activeItems);
