@@ -35,6 +35,20 @@ abstract class ObjectsCommand extends IcingaCommand
     }
 
     /**
+     * Set the involved object
+     *
+     * @param Model $object
+     *
+     * @return $this
+     *
+     * @deprecated Use setObjects() instead
+     */
+    public function setObject(Model $object): self
+    {
+        return $this->setObjects([$object]);
+    }
+
+    /**
      * Get the involved objects
      *
      * @return Traversable
