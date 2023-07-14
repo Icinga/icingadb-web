@@ -13,7 +13,7 @@ use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 
-class CreateServiceSlaReport extends ServicesDetailExtensionHook
+class CreateServicesSlaReport extends ServicesDetailExtensionHook
 {
     use Translation;
 

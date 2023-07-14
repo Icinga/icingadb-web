@@ -13,7 +13,7 @@ use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 
-class CreateHostSlaReport extends HostsDetailExtensionHook
+class CreateHostsSlaReport extends HostsDetailExtensionHook
 {
     use Translation;
 

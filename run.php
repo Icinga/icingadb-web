@@ -14,8 +14,8 @@ $this->provideHook('Reporting/Report', 'Reporting/ServiceSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/TotalServiceSlaReport');
 
 if ($this::exists('reporting')) {
-    $this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostSlaReport');
-    $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServiceSlaReport');
+    $this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostsSlaReport');
+    $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServicesSlaReport');
 }
 
 if (! $this::exists('monitoring')) {
