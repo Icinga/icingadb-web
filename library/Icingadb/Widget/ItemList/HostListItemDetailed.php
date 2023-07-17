@@ -20,7 +20,7 @@ class HostListItemDetailed extends BaseHostListItem
     use ListItemDetailedLayout;
 
     /** @var int Max pie charts to be shown */
-    const PIE_CHART_LIMIT = 5;
+    public const PIE_CHART_LIMIT = 5;
 
     protected function getStateBallSize(): string
     {

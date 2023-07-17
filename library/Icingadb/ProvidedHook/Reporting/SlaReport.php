@@ -30,10 +30,10 @@ abstract class SlaReport extends ReportHook
     use Database;
 
     /** @var float If an SLA value is lower than the threshold, it is considered not ok */
-    const DEFAULT_THRESHOLD = 99.5;
+    public const DEFAULT_THRESHOLD = 99.5;
 
     /** @var int The amount of decimal places for the report result */
-    const DEFAULT_REPORT_PRECISION = 2;
+    public const DEFAULT_REPORT_PRECISION = 2;
 
     /**
      * Create and return a {@link ReportData} container

@@ -14,7 +14,7 @@ abstract class IcingadbSupportHook
     use HookUtils;
 
     /** @var string key name of preference */
-    const PREFERENCE_NAME = 'icingadb.as_backend';
+    public const PREFERENCE_NAME = 'icingadb.as_backend';
 
     /**
      * Return whether your module supports IcingaDB or not

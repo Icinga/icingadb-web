@@ -22,7 +22,7 @@ class ApiCommandTransport implements CommandTransportInterface
     /**
      * Transport identifier
      */
-    const TRANSPORT = 'api';
+    public const TRANSPORT = 'api';
 
     /**
      * API host

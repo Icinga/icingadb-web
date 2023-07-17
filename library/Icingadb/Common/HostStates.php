@@ -9,13 +9,13 @@ namespace Icinga\Module\Icingadb\Common;
  */
 class HostStates
 {
-    const UP = 0;
+    public const UP = 0;
 
-    const DOWN = 1;
+    public const DOWN = 1;
 
-    const UNREACHABLE = 2;
+    public const UNREACHABLE = 2;
 
-    const PENDING = 99;
+    public const PENDING = 99;
 
     /**
      * Get the integer value of the given textual host state
