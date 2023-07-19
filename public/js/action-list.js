@@ -182,9 +182,11 @@
             let pressedArrowUpKey = event.key === 'ArrowUp';
             let focusedElement = document.activeElement;
 
-            if (_this.isProcessingLoadMore || (
-                event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey
-            )) {
+            if (
+                _this.isProcessingLoadMore
+                || ! event.key // input auto-completion is triggered
+                || (event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey)
+            ) {
                 return;
             }
 
