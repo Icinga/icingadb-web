@@ -15,6 +15,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Web\Common\Card;
 use ipl\Web\Widget\EmptyState;
+use ipl\Web\Compat\StyleWithNonce;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
@@ -53,6 +54,9 @@ SVG;
 
     protected function assembleBody(BaseHtmlElement $body)
     {
+        $styleElement = (new StyleWithNonce())
+            ->setModule('icingadb');
+
         $hPadding = 10;
         $durationScale = 80;
         $checkInterval = $this->getCheckInterval();
@@ -129,7 +133,7 @@ SVG;
             }
         }
 
-        $progressBar->getAttributes()->add('style', sprintf('width: %s%%', $leftNow));
+        $styleElement->addFor($progressBar, ['width' => sprintf('%F%%', $leftNow)]);
 
         $leftExecutionEnd = $nextCheckTime !== null ? $durationScale * (
             1 - ($nextCheckTime - $executionEndTime) / ($nextCheckTime - $lastUpdateTime)
@@ -143,10 +147,10 @@ SVG;
             'class' => ['highlighted', 'marker', 'right'],
             'title' => $nextCheckTime !== null ? DateFormatter::formatDateTime($nextCheckTime) : null
         ]));
-        $markerExecutionEnd = new HtmlElement('div', Attributes::create([
-            'class' => ['highlighted', 'marker'],
-            'style' => sprintf('left: %F%%', $hPadding + $leftExecutionEnd),
-        ]));
+        $markerExecutionEnd = new HtmlElement('div', Attributes::create(['class' => ['highlighted', 'marker']]));
+        $styleElement->addFor($markerExecutionEnd, [
+            'left' => sprintf('%F%%', $hPadding + $leftExecutionEnd)
+        ]);
 
         $progress = new HtmlElement('div', Attributes::create([
             'class' => ['progress', time() < $executionEndTime ? 'running' : null]
@@ -183,10 +187,7 @@ SVG;
         );
         $executionEnd = new HtmlElement(
             'li',
-            Attributes::create([
-                'class' => 'positioned',
-                'style' => sprintf('left: %F%%', $hPadding + $leftExecutionEnd)
-            ]),
+            Attributes::create(['class' => 'positioned']),
             new HtmlElement(
                 'div',
                 Attributes::create(['class' => ['bubble', 'upwards', 'top-left-aligned']]),
@@ -202,16 +203,11 @@ SVG;
             )
         );
 
+        $styleElement->addFor($executionEnd, ['left' => sprintf('%F%%', $hPadding + $leftExecutionEnd)]);
+
         $intervalLine = new HtmlElement(
             'li',
-            Attributes::create([
-                'class' => 'interval-line',
-                'style' => sprintf(
-                    'left: %F%%; width: %F%%;',
-                    $hPadding + $leftExecutionEnd,
-                    $durationScale - $leftExecutionEnd
-                )
-            ]),
+            Attributes::create(['class' => 'interval-line']),
             new VerticalKeyValue(
                 t('Interval'),
                 $checkInterval
@@ -219,12 +215,15 @@ SVG;
                     : (new EmptyState(t('n. a.')))->setTag('span')
             )
         );
+
+        $styleElement->addFor($intervalLine, [
+            'left'  => sprintf('%F%%', $hPadding + $leftExecutionEnd),
+            'width' => sprintf('%F%%', $durationScale - $leftExecutionEnd)
+        ]);
+
         $executionLine = new HtmlElement(
             'li',
-            Attributes::create([
-                'class' => ['interval-line', 'execution-line'],
-                'style' => sprintf('left: %F%%; width: %F%%;', $hPadding, $leftExecutionEnd)
-            ]),
+            Attributes::create(['class' => ['interval-line', 'execution-line']]),
             new VerticalKeyValue(
                 sprintf('%s / %s', t('Execution Time'), t('Latency')),
                 FormattedString::create(
@@ -238,6 +237,12 @@ SVG;
                 )
             )
         );
+
+        $styleElement->addFor($executionLine, [
+            'left'  => sprintf('%F%%', $hPadding),
+            'width' => sprintf('%F%%', $leftExecutionEnd)
+        ]);
+
         if ($executionEndTime !== null) {
             $executionLine->addHtml(new HtmlElement('div', Attributes::create(['class' => 'start'])));
             $executionLine->addHtml(new HtmlElement('div', Attributes::create(['class' => 'end'])));
@@ -282,7 +287,7 @@ SVG;
             $nextCheck
         );
 
-        $body->addHtml($above, $timeline, $below);
+        $body->addHtml($above, $timeline, $below, $styleElement);
     }
 
     /**
