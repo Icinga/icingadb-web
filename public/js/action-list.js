@@ -182,9 +182,11 @@
             let pressedArrowUpKey = event.key === 'ArrowUp';
             let focusedElement = document.activeElement;
 
-            if (_this.isProcessingLoadMore || (
-                event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey
-            )) {
+            if (
+                _this.isProcessingLoadMore
+                || ! event.key // input auto-completion is triggered
+                || (event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey)
+            ) {
                 return;
             }
 
@@ -614,27 +616,21 @@
             let _this = event.data.self;
             let container = event.target;
             let isTopLevelContainer = container.matches('#main > :scope');
-            let detailUrl = _this.icinga.utils.parseUrl(
-                _this.icinga.history.getCol2State().replace(/^#!/, '')
-            );
-            let list = null;
-            let toActiveItems = [];
 
             if (event.currentTarget !== container || _this.isProcessingRequest) {
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
-            } else if (isTopLevelContainer && container.id !== 'col1') {
-                if (isAutoRefresh) {
-                    return;
-                }
-                // only for browser back/forward navigation
-                list = _this.findDetailUrlActionList();
-            } else {
-                list = container.querySelector('.action-list');
+            } else if (isAutoRefresh && isTopLevelContainer && container.id !== 'col1') {
+                return;
             }
 
+            let list = _this.findDetailUrlActionList();
+
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
-                let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
+                let detailUrl = _this.icinga.utils.parseUrl(
+                    _this.icinga.history.getCol2State().replace(/^#!/, '')
+                );
+                let toActiveItems = [];
                 if (list.dataset.icingaMultiselectUrl === detailUrl.path) {
                     for (const filter of _this.parseSelectionQuery(detailUrl.query.slice(1))) {
                         let item = list.querySelector(
@@ -655,6 +651,7 @@
                     }
                 }
 
+                let allItems = Array.from(list.querySelectorAll(':scope > [data-action-item]'));
                 _this.clearSelection(allItems.filter(item => ! toActiveItems.includes(item)));
                 _this.setActive(toActiveItems);
 
