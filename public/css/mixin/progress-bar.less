@@ -162,7 +162,7 @@
         left: var(--hPadding);
         width: var(--duration-scale);
 
-        &::before {
+        &[data-animate-progress]::before {
           content: "";
           display: block;
           width: .5em + @marker-gap;
