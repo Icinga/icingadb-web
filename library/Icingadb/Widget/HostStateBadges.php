@@ -6,7 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
-use ipl\Web\Common\StateBadges;
+use Icinga\Module\Icingadb\Common\StateBadges;
 use ipl\Web\Url;
 
 class HostStateBadges extends StateBadges
