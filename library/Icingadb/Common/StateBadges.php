@@ -7,6 +7,8 @@ namespace Icinga\Module\Icingadb\Common;
 use Icinga\Module\Icingadb\Widget\StateBadge;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Stdlib\BaseFilter;
+use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
@@ -101,22 +103,29 @@ abstract class StateBadges extends BaseHtmlElement
     /**
      * Create a badge link
      *
-     * @param       $content
-     * @param array $params
+     * @param mixed $content
+     * @param ?array $filter
      *
      * @return Link
      */
-    public function createLink($content, array $params = null): Link
+    public function createLink($content, array $filter = null): Link
     {
         $url = clone $this->getUrl();
 
-        if (! empty($params)) {
-            $url->getParams()->mergeValues($params);
+        $urlFilter = Filter::all();
+        if (! empty($filter)) {
+            foreach ($filter as $column => $value) {
+                $urlFilter->add(Filter::equal($column, $value));
+            }
         }
 
         if ($this->hasBaseFilter()) {
+            $urlFilter->add($this->getBaseFilter());
+        }
+
+        if (! $urlFilter->isEmpty()) {
             $urlParams = $url->getParams()->toArray(false);
-            $url->setQueryString(QueryString::render($this->getBaseFilter()))
+            $url->setQueryString(QueryString::render($urlFilter))
                 ->addParams($urlParams);
         }
 
