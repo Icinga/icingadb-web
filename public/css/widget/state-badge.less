@@ -1,0 +1,52 @@
+.state-badge {
+  .rounded-corners();
+  color: @text-color-on-icinga-blue;
+  display: inline-block;
+  font-size: 1em;
+  min-width: 2em;
+  padding: .25em;
+  text-align: center;
+
+  &.handled {
+    opacity: .8;
+  }
+
+  &.state-critical {
+    background-color: @color-critical;
+  }
+
+  &.state-down {
+    background-color: @color-down;
+  }
+
+  &.state-ok {
+    background-color: @color-ok;
+  }
+
+  &.state-pending {
+    background-color: @color-pending;
+  }
+
+  &.state-unknown {
+    background-color: @color-unknown;
+  }
+
+  &.state-up {
+    background-color: @color-up;
+  }
+
+  &.state-warning {
+    background-color: @color-warning;
+  }
+
+  &.state-none {
+    background-color: @state-none;
+    color: @text-color-light;
+  }
+}
+
+a .state-badge {
+  &:not(.disabled):hover {
+    filter: brightness(80%);
+  }
+}
