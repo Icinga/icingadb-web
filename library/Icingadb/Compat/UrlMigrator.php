@@ -44,7 +44,7 @@ class UrlMigrator
     public static function isSupportedUrl(Url $url): bool
     {
         $supportedPaths = self::SUPPORTED_PATHS;
-        return isset($supportedPaths[$url->getPath()]);
+        return isset($supportedPaths[ltrim($url->getPath(), '/')]);
     }
 
     public static function hasQueryTransformer(string $name): bool
@@ -58,7 +58,7 @@ class UrlMigrator
             throw new InvalidArgumentException(sprintf('Url path "%s" is not supported', $url->getPath()));
         }
 
-        list($queryTransformer, $dbRoute) = self::SUPPORTED_PATHS[$url->getPath()];
+        list($queryTransformer, $dbRoute) = self::SUPPORTED_PATHS[ltrim($url->getPath(), '/')];
 
         $url = clone $url;
         $url->setPath($dbRoute);
