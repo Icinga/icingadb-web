@@ -92,6 +92,7 @@ abstract class State extends Model
         switch (true) {
             case $this->is_acknowledged:
                 $icon = new Icon(Icons::IS_ACKNOWLEDGED);
+
                 break;
             case $this->in_downtime:
                 $icon = new Icon(
@@ -106,9 +107,21 @@ abstract class State extends Model
                 break;
             case $this->is_flapping:
                 $icon = new Icon(Icons::IS_FLAPPING);
+
+                break;
+            case ! $this->is_reachable:
+                $icon = new Icon(Icons::HOST_DOWN, [
+                    'title' => sprintf(
+                        '%s (%s)',
+                        strtoupper($this->getStateTextTranslated()),
+                        t('is unreachable')
+                    )
+                ]);
+
                 break;
             case $this->is_handled:
                 $icon = new Icon(Icons::HOST_DOWN);
+
                 break;
         }
 

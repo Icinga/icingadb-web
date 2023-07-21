@@ -115,6 +115,11 @@ SVG;
             $leftNow = 100;
         } elseif ($nextCheckTime === null) {
             $leftNow = 0;
+        } elseif (! $this->object->state->is_reachable && time() - $executionEndTime > $checkInterval * 2) {
+            // We have no way of knowing whether the dependency pauses check scheduling.
+            // The only way to detect this, is to measure how old the last update is.
+            $nextCheckTime = null;
+            $leftNow = 0;
         } else {
             $leftNow = 100 * (1 - ($nextCheckTime - time()) / ($nextCheckTime - $lastUpdateTime));
             if ($leftNow > 100) {
@@ -294,11 +299,7 @@ SVG;
     {
         $checkSource = (new EmptyState(t('n. a.')))->setTag('span');
         if ($this->object->state->check_source) {
-            $checkSource = [
-                new StateBall($this->object->state->is_reachable ? 'up' : 'down', StateBall::SIZE_MEDIUM),
-                ' ',
-                $this->object->state->check_source
-            ];
+            $checkSource = Text::create($this->object->state->check_source);
         }
 
         $header->addHtml(

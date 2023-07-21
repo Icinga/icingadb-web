@@ -57,10 +57,12 @@ class Hostgroupsummary extends UnionModel
         return [
             'display_name'                => 'hostgroup_display_name',
             'hosts_down_handled'          => new Expression(
-                'SUM(CASE WHEN host_state = 1 AND host_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN host_state = 1'
+                . ' AND (host_handled = \'y\' OR host_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'hosts_down_unhandled'        => new Expression(
-                'SUM(CASE WHEN host_state = 1 AND host_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN host_state = 1'
+                . ' AND host_handled = \'n\' AND host_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'hosts_pending'               => new Expression(
                 'SUM(CASE WHEN host_state = 99 THEN 1 ELSE 0 END)'
@@ -68,25 +70,18 @@ class Hostgroupsummary extends UnionModel
             'hosts_total'                 => new Expression(
                 'SUM(CASE WHEN host_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
-            'hosts_unreachable'           => new Expression(
-                'SUM(CASE WHEN host_state = 2 THEN 1 ELSE 0 END)'
-            ),
-            'hosts_unreachable_handled'   => new Expression(
-                'SUM(CASE WHEN host_state = 2 AND host_handled = \'y\' THEN 1 ELSE 0 END)'
-            ),
-            'hosts_unreachable_unhandled' => new Expression(
-                'SUM(CASE WHEN host_state = 2 AND host_handled = \'n\' THEN 1 ELSE 0 END)'
-            ),
             'hosts_up'                    => new Expression(
                 'SUM(CASE WHEN host_state = 0 THEN 1 ELSE 0 END)'
             ),
             'hosts_severity'              => new Expression('MAX(host_severity)'),
             'name'                        => 'hostgroup_name',
             'services_critical_handled'   => new Expression(
-                'SUM(CASE WHEN service_state = 2 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 2'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_critical_unhandled' => new Expression(
-                'SUM(CASE WHEN service_state = 2 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 2'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_ok'                 => new Expression(
                 'SUM(CASE WHEN service_state = 0 THEN 1 ELSE 0 END)'
@@ -98,16 +93,20 @@ class Hostgroupsummary extends UnionModel
                 'SUM(CASE WHEN service_id IS NOT NULL THEN 1 ELSE 0 END)'
             ),
             'services_unknown_handled'    => new Expression(
-                'SUM(CASE WHEN service_state = 3 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 3'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_unknown_unhandled'  => new Expression(
-                'SUM(CASE WHEN service_state = 3 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 3'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_warning_handled'    => new Expression(
-                'SUM(CASE WHEN service_state = 1 AND service_handled = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 1'
+                . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_warning_unhandled'  => new Expression(
-                'SUM(CASE WHEN service_state = 1 AND service_handled = \'n\' THEN 1 ELSE 0 END)'
+                'SUM(CASE WHEN service_state = 1'
+                . ' AND service_handled = \'n\' AND service_reachable = \'y\' THEN 1 ELSE 0 END)'
             )
         ];
     }
@@ -138,10 +137,12 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
                     'host_handled'           => 'state.is_handled',
+                    'host_reachable'         => 'state.is_reachable',
                     'host_severity'          => 'state.severity',
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
-                    'service_handled'        => new Expression('NULL')
+                    'service_handled'        => new Expression('NULL'),
+                    'service_reachable'      => new Expression('NULL')
                 ]
             ],
             [
@@ -157,10 +158,12 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
+                    'host_reachable'         => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
                     'service_id'             => 'service.id',
                     'service_state'          => 'state.soft_state',
-                    'service_handled'        => 'state.is_handled'
+                    'service_handled'        => 'state.is_handled',
+                    'service_reachable'      => 'state.is_reachable'
                 ]
             ],
             [
@@ -173,10 +176,12 @@ class Hostgroupsummary extends UnionModel
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
                     'host_handled'           => new Expression('NULL'),
+                    'host_reachable'         => new Expression('NULL'),
                     'host_severity'          => new Expression('0'),
                     'service_id'             => new Expression('NULL'),
                     'service_state'          => new Expression('NULL'),
-                    'service_handled'        => new Expression('NULL')
+                    'service_handled'        => new Expression('NULL'),
+                    'service_reachable'      => new Expression('NULL')
                 ]
             ]
         ];

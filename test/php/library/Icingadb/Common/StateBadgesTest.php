@@ -20,7 +20,7 @@ class StateBadgesTest extends TestCase
                 Filter::equal('bar', 'foo')
             ));
 
-        $link = $stateBadges->createLink('test', ['rab' => 'oof']);
+        $link = $stateBadges->createLink('test', Filter::equal('rab', 'oof'));
 
         $this->assertSame(
             'rab=oof&(foo=bar|bar=foo)',

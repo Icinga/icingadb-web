@@ -23,11 +23,11 @@ class ServicestateSummary extends Service
             ),
             'services_critical_handled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 2'
-                . ' AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
+                . ' AND (service_state.is_handled = \'y\' OR service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_critical_unhandled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 2'
-                . ' AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
+                . ' AND service_state.is_handled = \'n\' AND service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_event_handler_enabled' => new Expression(
                 'SUM(CASE WHEN service.event_handler_enabled = \'y\' THEN 1 ELSE 0 END)'
@@ -53,19 +53,19 @@ class ServicestateSummary extends Service
             ),
             'services_unknown_handled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 3'
-                . ' AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
+                . ' AND (service_state.is_handled = \'y\' OR service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_unknown_unhandled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 3'
-                . ' AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
+                . ' AND service_state.is_handled = \'n\' AND service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
             ),
             'services_warning_handled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 1'
-                . ' AND service_state.is_handled = \'y\' THEN 1 ELSE 0 END)'
+                . ' AND (service_state.is_handled = \'y\' OR service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
             ),
             'services_warning_unhandled' => new Expression(
                 'SUM(CASE WHEN service_state.soft_state = 1'
-                . ' AND service_state.is_handled = \'n\' THEN 1 ELSE 0 END)'
+                . ' AND service_state.is_handled = \'n\' AND service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
             )
         ];
     }

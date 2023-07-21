@@ -104,19 +104,17 @@ abstract class StateBadges extends BaseHtmlElement
      * Create a badge link
      *
      * @param mixed $content
-     * @param ?array $filter
+     * @param ?Filter\Rule $filter
      *
      * @return Link
      */
-    public function createLink($content, array $filter = null): Link
+    public function createLink($content, Filter\Rule $filter = null): Link
     {
         $url = clone $this->getUrl();
 
         $urlFilter = Filter::all();
-        if (! empty($filter)) {
-            foreach ($filter as $column => $value) {
-                $urlFilter->add(Filter::equal($column, $value));
-            }
+        if ($filter !== null) {
+            $urlFilter->add($filter);
         }
 
         if ($this->hasBaseFilter()) {
@@ -146,7 +144,7 @@ abstract class StateBadges extends BaseHtmlElement
         if (isset($this->item->$key) && $this->item->$key) {
             return Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$key, $state),
-                [$this->type . '.state.soft_state' => $this->getStateInt($state)]
+                Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state))
             ));
         }
 
@@ -169,20 +167,24 @@ abstract class StateBadges extends BaseHtmlElement
         if (isset($this->item->$unhandledKey) && $this->item->$unhandledKey) {
             $content[] = Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$unhandledKey, $state),
-                [
-                    $this->type . '.state.soft_state' => $this->getStateInt($state),
-                    $this->type . '.state.is_handled' => 'n'
-                ]
+                Filter::all(
+                    Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
+                    Filter::equal($this->type . '.state.is_handled', 'n'),
+                    Filter::equal($this->type . '.state.is_reachable', 'y')
+                )
             ));
         }
 
         if (isset($this->item->$handledKey) && $this->item->$handledKey) {
             $content[] = Html::tag('li', $this->createLink(
                 new StateBadge($this->item->$handledKey, $state, true),
-                [
-                    $this->type . '.state.soft_state' => $this->getStateInt($state),
-                    $this->type . '.state.is_handled' => 'y'
-                ]
+                Filter::all(
+                    Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
+                    Filter::any(
+                        Filter::equal($this->type . '.state.is_handled', 'y'),
+                        Filter::equal($this->type . '.state.is_reachable', 'n')
+                    )
+                )
             ));
         }
 

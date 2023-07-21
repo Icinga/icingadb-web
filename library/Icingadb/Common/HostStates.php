@@ -13,8 +13,6 @@ class HostStates
 
     const DOWN = 1;
 
-    const UNREACHABLE = 2;
-
     const PENDING = 99;
 
     /**
@@ -34,9 +32,6 @@ class HostStates
                 break;
             case 'down':
                 $int = self::DOWN;
-                break;
-            case 'unreachable':
-                $int = self::UNREACHABLE;
                 break;
             case 'pending':
                 $int = self::PENDING;
@@ -65,9 +60,6 @@ class HostStates
                 break;
             case $state === self::DOWN:
                 $text = 'down';
-                break;
-            case $state === self::UNREACHABLE:
-                $text = 'unreachable';
                 break;
             case $state === self::PENDING:
                 $text = 'pending';
@@ -99,9 +91,6 @@ class HostStates
                 break;
             case $state === self::DOWN:
                 $text = t('down');
-                break;
-            case $state === self::UNREACHABLE:
-                $text = t('unreachable');
                 break;
             case $state === self::PENDING:
                 $text = t('pending');

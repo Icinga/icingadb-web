@@ -77,7 +77,7 @@ abstract class StateListItem extends BaseListItem
     {
         $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
         $stateBall->add($this->state->getIcon());
-        if ($this->state->is_handled) {
+        if ($this->state->is_handled || ! $this->state->is_reachable) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
