@@ -7,12 +7,12 @@ namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Widget\StateBadge;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Link;
+use ipl\Web\Widget\StateBadge;
 
 abstract class ProblemsBadge extends NavigationItemRenderer
 {
