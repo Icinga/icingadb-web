@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Widget\StateBadge;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Stdlib\BaseFilter;
@@ -12,6 +11,7 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
+use ipl\Web\Widget\StateBadge;
 
 abstract class StateBadges extends BaseHtmlElement
 {
