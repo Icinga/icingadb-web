@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Exception;
+use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Predis\Client as Redis;
@@ -32,6 +33,22 @@ class IcingaRedis
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Get whether Redis is unavailable
+     *
+     * @return bool
+     */
+    public static function isUnavailable(): bool
+    {
+        $self = self::instance();
+
+        if ($self->redis === null) {
+            $self->getConnection();
+        }
+
+        return $self->redisUnavailable;
     }
 
     /**
@@ -93,6 +110,72 @@ class IcingaRedis
         }
 
         return $this->redis;
+    }
+
+    /**
+     * Fetch host states
+     *
+     * @param array $ids The host ids to fetch results for
+     * @param array $columns The columns to include in the results
+     *
+     * @return Generator
+     */
+    public static function fetchHostState(array $ids, array $columns): Generator
+    {
+        return self::fetchState('icinga:host:state', $ids, $columns);
+    }
+
+    /**
+     * Fetch service states
+     *
+     * @param array $ids The service ids to fetch results for
+     * @param array $columns The columns to include in the results
+     *
+     * @return Generator
+     */
+    public static function fetchServiceState(array $ids, array $columns): Generator
+    {
+        return self::fetchState('icinga:service:state', $ids, $columns);
+    }
+
+    /**
+     * Fetch object states
+     *
+     * @param string $key The object key to access
+     * @param array $ids The object ids to fetch results for
+     * @param array $columns The columns to include in the results
+     *
+     * @return Generator
+     */
+    protected static function fetchState(string $key, array $ids, array $columns): Generator
+    {
+        try {
+            $results = self::instance()->getConnection()->hmget($key, $ids);
+        } catch (Exception $_) {
+            // The error has already been logged elsewhere
+            return;
+        }
+
+        foreach ($results as $i => $json) {
+            if ($json !== null) {
+                $data = json_decode($json, true);
+                $keyMap = array_fill_keys($columns, null);
+                unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
+
+                // TODO: Remove once https://github.com/Icinga/icinga2/issues/9427 is fixed
+                $data['state_type'] = $data['state_type'] === 0 ? 'soft' : 'hard';
+
+                if (isset($data['in_downtime']) && is_bool($data['in_downtime'])) {
+                    $data['in_downtime'] = $data['in_downtime'] ? 'y' : 'n';
+                }
+
+                if (isset($data['is_acknowledged']) && is_int($data['is_acknowledged'])) {
+                    $data['is_acknowledged'] = $data['is_acknowledged'] ? 'y' : 'n';
+                }
+
+                yield $ids[$i] => array_intersect_key(array_merge($keyMap, $data), $keyMap);
+            }
+        }
     }
 
     /**
