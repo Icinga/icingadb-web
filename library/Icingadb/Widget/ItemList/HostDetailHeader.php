@@ -16,7 +16,7 @@ class HostDetailHeader extends HostListItemMinimal
         return '';
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         if ($this->state->state_type === 'soft') {
             $stateType = 'soft_state';
@@ -55,7 +55,7 @@ class HostDetailHeader extends HostListItemMinimal
         $visual->addHtml($stateChange);
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $attributes = $this->list->getAttributes();
         if (! in_array('minimal', $attributes->get('class')->getValue())) {

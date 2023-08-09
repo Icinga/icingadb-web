@@ -4,17 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Common\BaseTableRowItem;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
-use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\HtmlDocument;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
 use ipl\Stdlib\Filter;
-use ipl\Web\Widget\Link;
 
 /**
  * Servicegroup item of a servicegroup list. Represents one database row.

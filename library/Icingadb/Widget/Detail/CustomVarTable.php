@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Hook\CustomVarRendererHook;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -13,6 +12,7 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use Closure;
 

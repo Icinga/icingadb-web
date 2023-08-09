@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\User;
 use ipl\Html\Attributes;
@@ -13,6 +12,7 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseTableRowItem;
 use ipl\Web\Widget\Link;
 
 /**
@@ -25,14 +25,14 @@ class UserTableRow extends BaseTableRowItem
 {
     protected $defaultAttributes = ['class' => 'user-table-row'];
 
-    protected function init()
+    protected function init(): void
     {
         if (isset($this->table)) {
             $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
         }
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         $visual->addHtml(new HtmlElement(
             'div',
@@ -41,7 +41,7 @@ class UserTableRow extends BaseTableRowItem
         ));
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(
             isset($this->table)
@@ -55,7 +55,7 @@ class UserTableRow extends BaseTableRowItem
         );
     }
 
-    protected function assembleColumns(HtmlDocument $columns)
+    protected function assembleColumns(HtmlDocument $columns): void
     {
     }
 }

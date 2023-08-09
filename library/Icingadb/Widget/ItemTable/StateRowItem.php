@@ -5,13 +5,11 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\HostStates;
-use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\IconImage;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use ipl\Html\Attributes;
@@ -19,6 +17,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeSince;

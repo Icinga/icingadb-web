@@ -4,18 +4,21 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Common\BaseItemTable;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\ViewMode;
+use ipl\Web\Common\BaseItemTable;
 use ipl\Web\Url;
 
 class HostgroupTable extends BaseItemTable
 {
+    use DetailActions;
     use ViewMode;
 
     protected $defaultAttributes = ['class' => 'hostgroup-table'];
 
-    protected function init()
+    protected function init(): void
     {
+        $this->initializeDetailActions();
         $this->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
     }
 

@@ -9,19 +9,19 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\TicketLinks;
-use Icinga\Module\Icingadb\Widget\EmptyState;
-use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\TicketLinks;
+use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Util\PluginOutput;
-use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseListItem;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Html\BaseHtmlElement;
@@ -43,7 +43,7 @@ abstract class BaseHistoryListItem extends BaseListItem
     /** @var HistoryList */
     protected $list;
 
-    protected function init()
+    protected function init(): void
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
         $this->setTicketLinkEnabled($this->list->getTicketLinkEnabled());
@@ -52,7 +52,7 @@ abstract class BaseHistoryListItem extends BaseListItem
 
     abstract protected function getStateBallSize(): string;
 
-    protected function assembleCaption(BaseHtmlElement $caption)
+    protected function assembleCaption(BaseHtmlElement $caption): void
     {
         switch ($this->item->event_type) {
             case 'comment_add':
@@ -168,7 +168,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         }
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         switch ($this->item->event_type) {
             case 'comment_add':
@@ -270,7 +270,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         }
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         switch ($this->item->event_type) {
             case 'comment_add':
@@ -398,7 +398,7 @@ abstract class BaseHistoryListItem extends BaseListItem
         }
     }
 
-    protected function createTimestamp()
+    protected function createTimestamp(): ?BaseHtmlElement
     {
         return new TimeAgo($this->item->event_time->getTimestamp());
     }

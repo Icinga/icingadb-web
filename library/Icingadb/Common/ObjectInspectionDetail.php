@@ -12,7 +12,6 @@ use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Widget\Detail\CustomVarTable;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
 use ipl\Html\BaseHtmlElement;
@@ -22,6 +21,7 @@ use ipl\Html\Table;
 use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\Widget\CopyToClipboard;
+use ipl\Web\Widget\EmptyState;
 
 abstract class ObjectInspectionDetail extends BaseHtmlElement
 {

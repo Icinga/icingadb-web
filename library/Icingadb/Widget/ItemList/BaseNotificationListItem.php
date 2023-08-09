@@ -12,11 +12,11 @@ use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Util\PluginOutput;
-use Icinga\Module\Icingadb\Common\BaseListItem;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseListItem;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\TimeAgo;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
@@ -34,7 +34,7 @@ abstract class BaseNotificationListItem extends BaseListItem
     /** @var NotificationList */
     protected $list;
 
-    protected function init()
+    protected function init(): void
     {
         $this->setNoSubjectLink($this->list->getNoSubjectLink());
         $this->list->addDetailFilterAttribute($this, Filter::equal('id', bin2hex($this->item->history->id)));
@@ -75,7 +75,7 @@ abstract class BaseNotificationListItem extends BaseListItem
 
     abstract protected function getStateBallSize();
 
-    protected function assembleCaption(BaseHtmlElement $caption)
+    protected function assembleCaption(BaseHtmlElement $caption): void
     {
         if (in_array($this->item->type, ['flapping_end', 'flapping_start', 'problem', 'recovery'])) {
             $commandName = $this->item->object_type === 'host'
@@ -103,7 +103,7 @@ abstract class BaseNotificationListItem extends BaseListItem
         }
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         switch ($this->item->type) {
             case 'acknowledgement':
@@ -157,7 +157,7 @@ abstract class BaseNotificationListItem extends BaseListItem
         }
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         if ($this->getNoSubjectLink()) {
             $title->addHtml(HtmlElement::create(
@@ -182,7 +182,7 @@ abstract class BaseNotificationListItem extends BaseListItem
         $title->addHtml(Text::create(' '), $link);
     }
 
-    protected function createTimestamp()
+    protected function createTimestamp(): ?BaseHtmlElement
     {
         return new TimeAgo($this->item->send_time->getTimestamp());
     }

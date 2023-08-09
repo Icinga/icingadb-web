@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Common\BaseTableRowItem;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Hostgroup;
 use ipl\Html\Attributes;
@@ -13,6 +12,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseTableRowItem;
 use ipl\Web\Widget\Link;
 
 /**
@@ -25,7 +25,7 @@ abstract class BaseHostGroupItem extends BaseTableRowItem
 {
     use Translation;
 
-    protected function init()
+    protected function init(): void
     {
         if (isset($this->table)) {
             $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));

@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Form;
@@ -14,6 +13,7 @@ use ipl\Html\HtmlString;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 
 /** @todo Figure out what this might (should) have in common with the new BaseItemTable implementation */

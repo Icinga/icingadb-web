@@ -11,7 +11,7 @@ class DowntimeListItem extends BaseDowntimeListItem
 {
     use ListItemCommonLayout;
 
-    protected function assembleMain(BaseHtmlElement $main)
+    protected function assembleMain(BaseHtmlElement $main): void
     {
         if ($this->item->is_in_effect) {
             $main->add($this->createProgress());

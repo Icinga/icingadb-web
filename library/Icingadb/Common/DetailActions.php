@@ -70,7 +70,6 @@ trait DetailActions
      */
     protected function setMultiselectUrl(Url $url): self
     {
-        /** @var BaseHtmlElement $this */
         $this->getAttributes()
             ->registerAttributeCallback('data-icinga-multiselect-url', function () use ($url) {
                 return $this->getDetailActionsDisabled() ? null : (string) $url;
@@ -88,7 +87,6 @@ trait DetailActions
      */
     protected function setDetailUrl(Url $url): self
     {
-        /** @var BaseHtmlElement $this */
         $this->getAttributes()
             ->registerAttributeCallback('data-icinga-detail-url', function () use ($url) {
                 return $this->getDetailActionsDisabled() ? null : (string) $url;

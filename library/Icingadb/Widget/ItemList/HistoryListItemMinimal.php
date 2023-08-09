@@ -11,7 +11,7 @@ class HistoryListItemMinimal extends BaseHistoryListItem
 {
     use ListItemMinimalLayout;
 
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 

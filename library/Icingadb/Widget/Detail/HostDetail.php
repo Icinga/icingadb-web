@@ -7,9 +7,9 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
+use ipl\Web\Widget\EmptyState;
 
 class HostDetail extends ObjectDetail
 {

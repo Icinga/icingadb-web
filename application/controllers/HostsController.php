@@ -18,8 +18,8 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
@@ -121,7 +121,9 @@ class HostsController extends Controller
                     ))
             );
         } else {
-            $this->addFooter((new HostStatusBar($summary->first()))->setBaseFilter($filter));
+            /** @var HoststateSummary $hostsSummary */
+            $hostsSummary = $summary->first();
+            $this->addFooter((new HostStatusBar($hostsSummary))->setBaseFilter($filter));
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {

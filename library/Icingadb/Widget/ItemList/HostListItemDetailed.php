@@ -27,7 +27,7 @@ class HostListItemDetailed extends BaseHostListItem
         return StateBall::SIZE_LARGE;
     }
 
-    protected function assembleFooter(BaseHtmlElement $footer)
+    protected function assembleFooter(BaseHtmlElement $footer): void
     {
         $statusIcons = new HtmlElement('div', Attributes::create(['class' => 'status-icons']));
 

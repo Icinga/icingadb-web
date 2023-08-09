@@ -11,7 +11,7 @@ class NotificationListItemMinimal extends BaseNotificationListItem
 {
     use ListItemMinimalLayout;
 
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 

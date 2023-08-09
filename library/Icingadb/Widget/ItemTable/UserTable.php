@@ -4,15 +4,19 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Common\BaseItemTable;
+use Icinga\Module\Icingadb\Common\DetailActions;
+use ipl\Web\Common\BaseItemTable;
 use ipl\Web\Url;
 
 class UserTable extends BaseItemTable
 {
+    use DetailActions;
+
     protected $defaultAttributes = ['class' => 'user-table'];
 
-    protected function init()
+    protected function init(): void
     {
+        $this->initializeDetailActions();
         $this->setDetailUrl(Url::fromPath('icingadb/user'));
     }
 

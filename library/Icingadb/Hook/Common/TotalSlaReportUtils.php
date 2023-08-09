@@ -5,9 +5,9 @@
 namespace Icinga\Module\Icingadb\Hook\Common;
 
 use Icinga\Module\Icingadb\ProvidedHook\Reporting\HostSlaReport;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Reporting\Timerange;
 use ipl\Html\Html;
+use ipl\Web\Widget\EmptyState;
 
 use function ipl\I18n\t;
 

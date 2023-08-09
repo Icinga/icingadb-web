@@ -2081,206 +2081,6 @@ parameters:
 			path: library/Icingadb/Command/Transport/CommandTransportInterface.php
 
 		-
-			message: "#^Call to an undefined method ipl\\\\Html\\\\BaseHtmlElement\\:\\:getDetailActionsDisabled\\(\\)\\.$#"
-			count: 2
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type iterable\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:setDetailUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:setHasIconImages\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:setMultiselectUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:\\$baseAttributes has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemList\\:\\:\\$data type has no value type specified in iterable type iterable\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemList.php
-
-		-
-			message: "#^Call to an undefined method ipl\\\\Html\\\\BaseHtmlElement\\:\\:getDetailActionsDisabled\\(\\)\\.$#"
-			count: 2
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type iterable\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:setDetailUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:setMultiselectUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:\\$baseAttributes has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseItemTable\\:\\:\\$data type has no value type specified in iterable type iterable\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleFooter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleIconImage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseListItem\\:\\:\\$baseAttributes has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseOrderedItemList\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseOrderedItemList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseStatusBar\\:\\:__construct\\(\\) has parameter \\$summary with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseStatusBar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseStatusBar\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseStatusBar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseStatusBar\\:\\:assembleTotal\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseStatusBar.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseStatusBar\\:\\:\\$summary has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseStatusBar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:assembleColumns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:createColumn\\(\\) has parameter \\$content with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Common\\\\BaseTableRowItem\\:\\:\\$baseAttributes has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/BaseTableRowItem.php
-
-		-
 			message: "#^Cannot access offset 'in_downtime' on mixed\\.$#"
 			count: 4
 			path: library/Icingadb/Common/IcingaRedis.php
@@ -8061,16 +7861,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/UsergroupDetail.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\EmptyState\\:\\:__construct\\(\\) has parameter \\$content with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/EmptyState.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\EmptyState\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/EmptyState.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Health\\:\\:__construct\\(\\) has parameter \\$data with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Health.php
@@ -8091,7 +7881,12 @@ parameters:
 			path: library/Icingadb/Widget/HostStateBadges.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\HostStatusBar\\:\\:assembleTotal\\(\\) has no return type specified\\.$#"
+			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/HostStatusBar.php
+
+		-
+			message: "#^Parameter \\#3 \\$number of function tp expects int\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/HostStatusBar.php
 
@@ -8156,32 +7951,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
@@ -8226,32 +7996,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
 
@@ -8436,32 +8181,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
@@ -8489,11 +8209,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$host of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:createServiceLink\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host, object given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHostListItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHostListItem.php
 
 		-
 			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
@@ -8561,32 +8276,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:getStateBallSize\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseNotificationListItem\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseNotificationListItem.php
 
@@ -8611,11 +8301,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseServiceListItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
-
-		-
 			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
@@ -8636,27 +8321,12 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommandTransportList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommandTransportList.php
-
-		-
 			message: "#^Access to an undefined property object\\:\\:\\$name\\.$#"
 			count: 7
 			path: library/Icingadb/Widget/ItemList/CommandTransportListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommandTransportListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommandTransportListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommandTransportListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommandTransportListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommandTransportListItem\\:\\:init\\(\\) has no return type specified\\.$#"
+			message: "#^Call to an undefined method ipl\\\\Web\\\\Common\\\\BaseItemList\\:\\:addDetailFilterAttribute\\(\\)\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/CommandTransportListItem.php
 
@@ -8666,112 +8336,12 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/CommentList.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentList\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItemMinimal\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\CommentListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/CommentListItemMinimal.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeList\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/DowntimeList.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeList\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItemMinimal\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\DowntimeListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/DowntimeListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryList\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryList.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryList\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryList\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/HistoryList.php
 
@@ -8781,94 +8351,9 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/HistoryList.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryList\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryList\\:\\:\\$data \\(ipl\\\\Orm\\\\ResultSet\\) does not accept Generator\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemDetailed\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemDetailed\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemMinimal\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HistoryListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HistoryListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostDetailHeader\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostDetailHeader.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostDetailHeader\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostDetailHeader.php
-
-		-
 			message: "#^Parameter \\#2 \\$haystack of function in_array expects array, array\\|bool\\|string\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/HostDetailHeader.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItem.php
 
 		-
 			message: "#^Cannot access property \\$is_flapping on mixed\\.$#"
@@ -8891,49 +8376,9 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemDetailed\\:\\:assembleFooter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemDetailed\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemDetailed\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\HostListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationList\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationList.php
 
 		-
 			message: "#^Parameter \\#2 \\$value of method Icinga\\\\Web\\\\Url\\:\\:setParam\\(\\) expects array\\|bool\\|string, int given\\.$#"
@@ -8941,99 +8386,14 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/NotificationList.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationList\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationList.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationList\\:\\:\\$data \\(ipl\\\\Orm\\\\ResultSet\\) does not accept Generator\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemDetailed\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemDetailed\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemMinimal\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\NotificationListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/NotificationListItemMinimal.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\PageSeparatorItem\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/PageSeparatorItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceDetailHeader\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceDetailHeader.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceDetailHeader\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceDetailHeader.php
-
-		-
 			message: "#^Parameter \\#2 \\$haystack of function in_array expects array, array\\|bool\\|string\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/ServiceDetailHeader.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceList\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceList.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItem\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItem\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItem.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItem\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItem.php
 
 		-
 			message: "#^Cannot access property \\$display_name on mixed\\.$#"
@@ -9061,44 +8421,9 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemDetailed\\:\\:assembleFooter\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemDetailed\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemDetailed\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemMinimal\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemMinimal\\:\\:assembleMain\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemMinimal.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\ServiceListItemMinimal\\:\\:\\$captionDisabled has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemMinimal.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateList\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateList.php
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$icon_image_alt\\.$#"
@@ -9121,42 +8446,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:assembleCaption\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:assembleIconImage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:createSubject\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:createTimestamp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 
@@ -9164,11 +8454,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$object of static method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:fromObject\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host\\|Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service, object given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\BaseHostGroupItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseHostGroupItem.php
 
 		-
 			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
@@ -9184,11 +8469,6 @@ parameters:
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/BaseHostGroupItem.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\BaseServiceGroupItem\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseServiceGroupItem.php
 
 		-
 			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
@@ -9231,22 +8511,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/BaseStateRowItem.php
 
 		-
-			message: "#^Call to an undefined method ipl\\\\Html\\\\BaseHtmlElement\\:\\:getDetailActionsDisabled\\(\\)\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/HostItemTable.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostItemTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostItemTable\\:\\:setDetailUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostItemTable\\:\\:setMultiselectUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/HostItemTable.php
 
@@ -9286,21 +8551,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/HostRowItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupGridCell\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupGridCell\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupGridCell\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
@@ -9321,21 +8571,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupTableRow\\:\\:assembleColumns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\HostgroupTableRow\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
-
-		-
 			message: "#^Parameter \\#1 \\.\\.\\.\\$rules of static method ipl\\\\Stdlib\\\\Filter\\:\\:all\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 2
 			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
@@ -9351,22 +8586,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
 
 		-
-			message: "#^Call to an undefined method ipl\\\\Html\\\\BaseHtmlElement\\:\\:getDetailActionsDisabled\\(\\)\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/ServiceItemTable.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServiceItemTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServiceItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServiceItemTable\\:\\:setDetailUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServiceItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServiceItemTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServiceItemTable\\:\\:setMultiselectUrl\\(\\) should return \\$this\\(Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServiceItemTable\\) but returns ipl\\\\Html\\\\BaseHtmlElement\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/ServiceItemTable.php
 
@@ -9411,21 +8631,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/ServiceRowItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupGridCell\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupGridCell\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupGridCell\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
@@ -9444,21 +8649,6 @@ parameters:
 			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 8
 			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupTable.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupTableRow\\:\\:assembleColumns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\ServicegroupTableRow\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupTableRow.php
 
 		-
 			message: "#^Parameter \\#1 \\.\\.\\.\\$rules of static method ipl\\\\Stdlib\\\\Filter\\:\\:all\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
@@ -9646,32 +8836,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UserTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTable.php
-
-		-
 			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UserTableRow\\:\\:assembleColumns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UserTableRow\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UserTableRow\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UserTableRow\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
 
@@ -9686,32 +8851,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UsergroupTable\\:\\:init\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTable.php
-
-		-
 			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UsergroupTableRow\\:\\:assembleColumns\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UsergroupTableRow\\:\\:assembleTitle\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UsergroupTableRow\\:\\:assembleVisual\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\UsergroupTableRow\\:\\:init\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
 
@@ -9724,16 +8864,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Notice\\:\\:__construct\\(\\) has parameter \\$content with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Notice.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Notice\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Notice.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ServiceStateBadges\\:\\:assemble\\(\\) has no return type specified\\.$#"
@@ -9741,7 +8871,12 @@ parameters:
 			path: library/Icingadb/Widget/ServiceStateBadges.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ServiceStatusBar\\:\\:assembleTotal\\(\\) has no return type specified\\.$#"
+			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/ServiceStatusBar.php
+
+		-
+			message: "#^Parameter \\#3 \\$number of function tp expects int\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ServiceStatusBar.php
 
@@ -9779,26 +8914,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$rule of method ipl\\\\Stdlib\\\\Filter\\\\Chain\\:\\:add\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ServiceSummaryDonut.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ShowMore\\:\\:assemble\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ShowMore.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ShowMore\\:\\:\\$label has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ShowMore.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ShowMore\\:\\:\\$resultSet has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ShowMore.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ShowMore\\:\\:\\$url has no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ShowMore.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\StateChange\\:\\:assemble\\(\\) has no return type specified\\.$#"

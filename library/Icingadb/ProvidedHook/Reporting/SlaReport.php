@@ -8,16 +8,15 @@ use DateInterval;
 use DatePeriod;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Reporting\Hook\ReportHook;
 use Icinga\Module\Reporting\ReportData;
 use Icinga\Module\Reporting\ReportRow;
 use Icinga\Module\Reporting\Timerange;
 use ipl\Html\Form;
 use ipl\Html\Html;
-use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Filter\QueryString;
+use ipl\Web\Widget\EmptyState;
 
 use function ipl\I18n\t;
 

@@ -4,27 +4,27 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\BaseOrderedListItem;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseOrderedListItem;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
 class CommandTransportListItem extends BaseOrderedListItem
 {
-    protected function init()
+    protected function init(): void
     {
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
-    protected function assembleHeader(BaseHtmlElement $header)
+    protected function assembleHeader(BaseHtmlElement $header): void
     {
     }
 
-    protected function assembleMain(BaseHtmlElement $main)
+    protected function assembleMain(BaseHtmlElement $main): void
     {
         $main->addHtml(new Link(
             new HtmlElement('strong', null, Text::create($this->item->name)),
@@ -64,7 +64,8 @@ class CommandTransportListItem extends BaseOrderedListItem
         }
     }
 
-    protected function createVisual()
+    protected function createVisual(): ?BaseHtmlElement
     {
+        return null;
     }
 }

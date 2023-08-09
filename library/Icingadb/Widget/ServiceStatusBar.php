@@ -9,7 +9,7 @@ use ipl\Html\BaseHtmlElement;
 
 class ServiceStatusBar extends BaseStatusBar
 {
-    protected function assembleTotal(BaseHtmlElement $total)
+    protected function assembleTotal(BaseHtmlElement $total): void
     {
         $total->add(sprintf(
             tp('%d Service', '%d Services', $this->summary->services_total),
