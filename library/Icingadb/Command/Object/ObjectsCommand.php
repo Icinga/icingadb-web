@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Command\Object;
 
+use ArrayIterator;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use ipl\Orm\Model;
 use Traversable;
@@ -45,7 +46,7 @@ abstract class ObjectsCommand extends IcingaCommand
      */
     public function setObject(Model $object): self
     {
-        return $this->setObjects([$object]);
+        return $this->setObjects(new ArrayIterator([$object]));
     }
 
     /**
