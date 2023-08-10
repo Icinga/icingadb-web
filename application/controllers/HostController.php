@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use ArrayIterator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
@@ -86,7 +87,11 @@ class HostController extends Controller
     public function sourceAction()
     {
         $this->assertPermission('icingadb/object/show-source');
-        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObjects([$this->host]));
+
+        $apiResult = (new CommandTransport())->send(
+            (new GetObjectCommand())
+                ->setObjects(new ArrayIterator([$this->host]))
+        );
 
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);

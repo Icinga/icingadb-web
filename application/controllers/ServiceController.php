@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use ArrayIterator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
@@ -91,7 +92,11 @@ class ServiceController extends Controller
     public function sourceAction()
     {
         $this->assertPermission('icingadb/object/show-source');
-        $apiResult = (new CommandTransport())->send((new GetObjectCommand())->setObjects([$this->service]));
+
+        $apiResult = (new CommandTransport())->send(
+            (new GetObjectCommand())
+                ->setObjects(new ArrayIterator([$this->service]))
+        );
 
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
