@@ -4,17 +4,15 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class CheckNowForm extends CommandForm
 {
-    use Auth;
-
     protected $defaultAttributes = ['class' => 'inline'];
 
     public function __construct()
@@ -46,26 +44,29 @@ class CheckNowForm extends CommandForm
         );
     }
 
-    /**
-     * @return ?ScheduleCheckCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
-            && (
-                ! $object->active_checks_enabled
-                || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-            )
-        ) {
-            return null;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if (
+                    $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                    || (
+                        $object->active_checks_enabled
+                        && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                    )
+                ) {
+                    yield $object;
+                }
+            }
+        })();
+
+        if ($granted->valid()) {
+            $command = new ScheduleCheckCommand();
+            $command->setObjects($granted);
+            $command->setCheckTime(time());
+            $command->setForced();
+
+            yield $command;
         }
-
-        $command = new ScheduleCheckCommand();
-        $command->setObject($object);
-        $command->setCheckTime(time());
-        $command->setForced();
-
-        return $command;
     }
 }

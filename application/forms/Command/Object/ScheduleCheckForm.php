@@ -6,22 +6,20 @@ namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use DateInterval;
 use DateTime;
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ScheduleCheckForm extends CommandForm
 {
-    use Auth;
-
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
@@ -109,26 +107,29 @@ class ScheduleCheckForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ScheduleCheckCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $this->isGrantedOn('icingadb/command/schedule-check', $object)
-            && (
-                ! $object->active_checks_enabled
-                || ! $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-            )
-        ) {
-            return null;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if (
+                    $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                    || (
+                        $object->active_checks_enabled
+                        && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                    )
+                ) {
+                    yield $object;
+                }
+            }
+        })();
+
+        if ($granted->valid()) {
+            $command = new ScheduleCheckCommand();
+            $command->setObjects($granted);
+            $command->setForced($this->getElement('force_check')->isChecked());
+            $command->setCheckTime($this->getValue('check_time')->getTimestamp());
+
+            yield $command;
         }
-
-        $command = new ScheduleCheckCommand();
-        $command->setObject($object);
-        $command->setForced($this->getElement('force_check')->isChecked());
-        $command->setCheckTime($this->getValue('check_time')->getTimestamp());
-
-        return $command;
     }
 }

@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Command\Object;
 /**
  * Enable or disable a feature of an Icinga object, i.e. host or service
  */
-class ToggleObjectFeatureCommand extends ObjectCommand
+class ToggleObjectFeatureCommand extends ObjectsCommand
 {
     /**
      * Feature for enabling or disabling active checks of a host or service

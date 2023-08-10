@@ -7,7 +7,7 @@ namespace Icinga\Module\Icingadb\Command\Object;
 /**
  * Base class for commands adding comments
  */
-abstract class WithCommentCommand extends ObjectCommand
+abstract class WithCommentCommand extends ObjectsCommand
 {
     use CommandAuthor;
 

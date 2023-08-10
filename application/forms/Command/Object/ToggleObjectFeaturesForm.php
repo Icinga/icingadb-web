@@ -5,17 +5,15 @@
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
 use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
 {
-    use Auth;
-
     const LEAVE_UNCHANGED = 'noop';
 
     protected $features;
@@ -158,31 +156,31 @@ class ToggleObjectFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommand(Model $object): \Generator
+    protected function getCommands(Traversable $objects): Traversable
     {
         foreach ($this->features as $feature => $spec) {
             if ($this->getElement($feature) instanceof CheckboxElement) {
-                $featureState = $this->getElement($feature)->isChecked();
+                $state = $this->getElement($feature)->isChecked();
             } else {
-                $featureState = $this->getElement($feature)->getValue();
+                $state = $this->getElement($feature)->getValue();
             }
 
-            if (
-                ! $this->isGrantedOn($spec['permission'], $object)
-                || $featureState === self::LEAVE_UNCHANGED
-                || (int) $featureState === (int) $this->featureStatus[$feature]
-            ) {
+            if ($state === self::LEAVE_UNCHANGED || (int) $state === (int) $this->featureStatus[$feature]) {
                 continue;
             }
 
-            $command = new ToggleObjectFeatureCommand();
-            $command->setObject($object);
-            $command->setFeature($feature);
-            $command->setEnabled((int) $featureState);
+            $granted = $this->filterGrantedOn($spec['permission'], $objects);
 
-            $this->submittedFeatures[] = $command;
+            if ($granted->valid()) {
+                $command = new ToggleObjectFeatureCommand();
+                $command->setObjects($granted);
+                $command->setFeature($feature);
+                $command->setEnabled((int) $state);
 
-            yield $command;
+                $this->submittedFeatures[] = $command;
+
+                yield $command;
+            }
         }
     }
 }

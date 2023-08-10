@@ -4,17 +4,16 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\DeleteCommentCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class DeleteCommentForm extends CommandForm
 {
-    use Auth;
     use RedirectOption;
 
     protected $defaultAttributes = ['class' => 'inline'];
@@ -55,19 +54,22 @@ class DeleteCommentForm extends CommandForm
         );
     }
 
-    /**
-     * @return ?DeleteCommentCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
-            return null;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if ($this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
+                    yield $object;
+                }
+            }
+        })();
+
+        if ($granted->valid()) {
+            $command = new DeleteCommentCommand();
+            $command->setObjects($granted);
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+
+            yield $command;
         }
-
-        $command = new DeleteCommentCommand();
-        $command->setCommentName($object->name);
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-
-        return $command;
     }
 }

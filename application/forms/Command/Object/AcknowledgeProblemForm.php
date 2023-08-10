@@ -8,22 +8,19 @@ use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\AcknowledgeProblemCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class AcknowledgeProblemForm extends CommandForm
 {
-    use Auth;
-
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
@@ -187,28 +184,25 @@ class AcknowledgeProblemForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?AcknowledgeProblemCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/acknowledge-problem', $object)) {
-            return null;
+        $granted = $this->filterGrantedOn('icingadb/command/acknowledge-problem', $objects);
+
+        if ($granted->valid()) {
+            $command = new AcknowledgeProblemCommand();
+            $command->setObjects($granted);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+            $command->setNotify($this->getElement('notify')->isChecked());
+            $command->setSticky($this->getElement('sticky')->isChecked());
+            $command->setPersistent($this->getElement('persistent')->isChecked());
+
+            if (($expireTime = $this->getValue('expire_time')) !== null) {
+                /** @var DateTime $expireTime */
+                $command->setExpireTime($expireTime->getTimestamp());
+            }
+
+            yield $command;
         }
-
-        $command = new AcknowledgeProblemCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-        $command->setNotify($this->getElement('notify')->isChecked());
-        $command->setSticky($this->getElement('sticky')->isChecked());
-        $command->setPersistent($this->getElement('persistent')->isChecked());
-
-        if (($expireTime = $this->getValue('expire_time')) !== null) {
-            /** @var DateTime $expireTime */
-            $command->setExpireTime($expireTime->getTimestamp());
-        }
-
-        return $command;
     }
 }

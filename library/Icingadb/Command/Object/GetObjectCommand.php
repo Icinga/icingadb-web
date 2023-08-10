@@ -4,46 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Command\Object;
 
-use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Model\Service;
-use LogicException;
-
-class GetObjectCommand extends ObjectCommand
+class GetObjectCommand extends ObjectsCommand
 {
     /** @var array */
     protected $attributes;
-
-    /**
-     * Get the object name used in the Icinga 2 API
-     *
-     * @return string
-     */
-    public function getObjectName(): string
-    {
-        switch (true) {
-            case $this->object instanceof Service:
-                return $this->object->host->name . '!' . $this->object->name;
-            default:
-                return $this->object->name;
-        }
-    }
-
-    /**
-     * Get the sub-route of the endpoint for this object
-     *
-     * @return string
-     */
-    public function getObjectPluralType(): string
-    {
-        switch (true) {
-            case $this->object instanceof Host:
-                return 'hosts';
-            case $this->object instanceof Service:
-                return 'services';
-            default:
-                throw new LogicException(sprintf('Invalid object type %s provided', get_class($this->object)));
-        }
-    }
 
     /**
      * Get the attributes to query

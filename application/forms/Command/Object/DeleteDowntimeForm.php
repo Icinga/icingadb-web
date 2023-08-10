@@ -4,17 +4,16 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class DeleteDowntimeForm extends CommandForm
 {
-    use Auth;
     use RedirectOption;
 
     protected $defaultAttributes = ['class' => 'inline'];
@@ -67,22 +66,25 @@ class DeleteDowntimeForm extends CommandForm
         );
     }
 
-    /**
-     * @return ?DeleteDowntimeCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})
-            || $object->scheduled_by !== null
-        ) {
-            return null;
+        $granted = (function () use ($objects): Generator {
+            foreach ($objects as $object) {
+                if (
+                    $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type})
+                    && $object->scheduled_by === null
+                ) {
+                    yield $object;
+                }
+            }
+        })();
+
+        if ($granted->valid()) {
+            $command = new DeleteDowntimeCommand();
+            $command->setObjects($granted);
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+
+            yield $command;
         }
-
-        $command = new DeleteDowntimeCommand();
-        $command->setDowntimeName($object->name);
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-
-        return $command;
     }
 }

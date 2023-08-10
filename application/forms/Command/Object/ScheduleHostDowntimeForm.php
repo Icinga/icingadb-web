@@ -10,8 +10,8 @@ use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Traversable;
 
 class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
 {
@@ -87,36 +87,33 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
         $decorator->decorate($this->getElement('child_options'));
     }
 
-    /**
-     * @return ?PropagateHostDowntimeCommand|ScheduleHostDowntimeCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
-            return null;
+        $granted = $this->filterGrantedOn('icingadb/command/downtime/schedule', $objects);
+
+        if ($granted->valid()) {
+            if (($childOptions = (int) $this->getValue('child_options'))) {
+                $command = new PropagateHostDowntimeCommand();
+                $command->setTriggered($childOptions === 1);
+            } else {
+                $command = new ScheduleHostDowntimeCommand();
+            }
+
+            $command->setObjects($granted);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+            $command->setStart($this->getValue('start')->getTimestamp());
+            $command->setEnd($this->getValue('end')->getTimestamp());
+            $command->setForAllServices($this->getElement('all_services')->isChecked());
+
+            if ($this->getElement('flexible')->isChecked()) {
+                $command->setFixed(false);
+                $command->setDuration(
+                    $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
+                );
+            }
+
+            yield $command;
         }
-
-        if (($childOptions = (int) $this->getValue('child_options'))) {
-            $command = new PropagateHostDowntimeCommand();
-            $command->setTriggered($childOptions === 1);
-        } else {
-            $command = new ScheduleHostDowntimeCommand();
-        }
-
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-        $command->setStart($this->getValue('start')->getTimestamp());
-        $command->setEnd($this->getValue('end')->getTimestamp());
-        $command->setForAllServices($this->getElement('all_services')->isChecked());
-
-        if ($this->getElement('flexible')->isChecked()) {
-            $command->setFixed(false);
-            $command->setDuration(
-                $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
-            );
-        }
-
-        return $command;
     }
 }

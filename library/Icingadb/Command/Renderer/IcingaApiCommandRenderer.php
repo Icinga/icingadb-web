@@ -24,6 +24,8 @@ use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use LogicException;
+use Traversable;
 
 /**
  * Icinga command renderer for the Icinga command file
@@ -64,19 +66,44 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
     /**
      * Apply filter to query data
      *
-     * @param   array   $data
+     * @param array              $data
+     * @param Traversable<Model> $objects
+     *
+     * @return ?Model Any of the objects (useful for further type-dependent handling)
+     */
+    protected function applyFilter(array &$data, Traversable $objects): ?Model
+    {
+        $object = null;
+
+        foreach ($objects as $object) {
+            if ($object instanceof Service) {
+                $data['services'][] = sprintf('%s!%s', $object->host->name, $object->name);
+            } else {
+                $data['hosts'][] = $object->name;
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * Get the sub-route of the endpoint for an object
+     *
      * @param   Model   $object
      *
-     * @return  void
+     * @return  string
      */
-    protected function applyFilter(array &$data, Model $object)
+    protected function getObjectPluralType(Model $object): string
     {
         if ($object instanceof Host) {
-            $data['host'] = $object->name;
-        } else {
-            /** @var Service $object */
-            $data['service'] = sprintf('%s!%s', $object->host->name, $object->name);
+            return 'hosts';
         }
+
+        if ($object instanceof Service) {
+            return 'services';
+        }
+
+        throw new LogicException(sprintf('Invalid object type %s provided', get_class($object)));
     }
 
     /**
@@ -100,16 +127,12 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderGetObject(GetObjectCommand $command): IcingaApiCommand
     {
-        $endpoint = sprintf(
-            'objects/%s/%s',
-            $command->getObjectPluralType(),
-            rawurlencode($command->getObjectName())
-        );
-
         $data = [
             'all_joins' => 1,
             'attrs'     => $command->getAttributes() ?: []
         ];
+
+        $endpoint = 'objects/' . $this->getObjectPluralType($this->applyFilter($data, $command->getObjects()));
 
         return IcingaApiCommand::create($endpoint, $data)->setMethod('GET');
     }
@@ -126,7 +149,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             $data['expiry'] = $command->getExpireTime();
         }
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -139,7 +162,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'force'     => $command->getForced()
         ];
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -152,7 +175,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'performance_data'  => $command->getPerformanceData()
         ];
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -164,7 +187,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'force'         => $command->getForced()
         ];
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -189,7 +212,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             $data['all_services'] = true;
         }
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -208,7 +231,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             $data['expiry'] = $command->getExpireTime();
         }
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 
@@ -235,13 +258,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         }
 
         $endpoint = 'objects/';
-        $object = $command->getObject();
-        if ($object instanceof Host) {
-            $endpoint .= 'hosts';
-        } else {
-            /** @var Service $object */
-            $endpoint .= 'services';
-        }
+        $objects = $command->getObjects();
 
         $data = [
             'attrs' => [
@@ -249,16 +266,24 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             ]
         ];
 
-        $this->applyFilter($data, $object);
+
+        $endpoint .= $this->getObjectPluralType($this->applyFilter($data, $objects));
+
         return IcingaApiCommand::create($endpoint, $data);
     }
 
     public function renderDeleteComment(DeleteCommentCommand $command): IcingaApiCommand
     {
+        $comments = [];
+
+        foreach ($command->getObjects() as $object) {
+            $comments[] = $object->name;
+        }
+
         $endpoint = 'actions/remove-comment';
         $data = [
             'author'    => $command->getAuthor(),
-            'comment'   => $command->getCommentName()
+            'comments'  => $comments
         ];
 
         return IcingaApiCommand::create($endpoint, $data);
@@ -266,10 +291,16 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command): IcingaApiCommand
     {
+        $downtimes = [];
+
+        foreach ($command->getObjects() as $object) {
+            $downtimes[] = $object->name;
+        }
+
         $endpoint = 'actions/remove-downtime';
         $data = [
             'author'    => $command->getAuthor(),
-            'downtime'  => $command->getDowntimeName()
+            'downtimes' => $downtimes
         ];
 
         return IcingaApiCommand::create($endpoint, $data);
@@ -280,7 +311,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         $endpoint = 'actions/remove-acknowledgement';
         $data = ['author' => $command->getAuthor()];
 
-        $this->applyFilter($data, $command->getObject());
+        $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }
 

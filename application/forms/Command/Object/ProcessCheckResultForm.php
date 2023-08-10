@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use Generator;
 use Icinga\Module\Icingadb\Command\Object\ProcessCheckResultCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
@@ -15,11 +15,10 @@ use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ProcessCheckResultForm extends CommandForm
 {
-    use Auth;
-
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
@@ -136,24 +135,24 @@ class ProcessCheckResultForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ProcessCheckResultCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (
-            ! $object->passive_checks_enabled
-            || ! $this->isGrantedOn('icingadb/command/process-check-result', $object)
-        ) {
-            return null;
+        $granted = (function () use ($objects): Generator {
+            foreach ($this->filterGrantedOn('icingadb/command/process-check-result', $objects) as $object) {
+                if ($object->passive_checks_enabled) {
+                    yield $object;
+                }
+            }
+        })();
+
+        if ($granted->valid()) {
+            $command = new ProcessCheckResultCommand();
+            $command->setObjects($granted);
+            $command->setStatus($this->getValue('status'));
+            $command->setOutput($this->getValue('output'));
+            $command->setPerformanceData($this->getValue('perfdata'));
+
+            yield $command;
         }
-
-        $command = new ProcessCheckResultCommand();
-        $command->setObject($object);
-        $command->setStatus($this->getValue('status'));
-        $command->setOutput($this->getValue('output'));
-        $command->setPerformanceData($this->getValue('perfdata'));
-
-        return $command;
     }
 }

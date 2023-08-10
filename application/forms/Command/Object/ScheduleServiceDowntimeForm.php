@@ -8,21 +8,18 @@ use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
-use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Traversable;
 
 class ScheduleServiceDowntimeForm extends CommandForm
 {
-    use Auth;
-
     /** @var DateTime downtime start */
     protected $start;
 
@@ -245,29 +242,26 @@ class ScheduleServiceDowntimeForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    /**
-     * @return ?ScheduleServiceDowntimeCommand
-     */
-    protected function getCommand(Model $object)
+    protected function getCommands(Traversable $objects): Traversable
     {
-        if (! $this->isGrantedOn('icingadb/command/downtime/schedule', $object)) {
-            return null;
+        $granted = $this->filterGrantedOn('icingadb/command/downtime/schedule', $objects);
+
+        if ($granted->valid()) {
+            $command = new ScheduleServiceDowntimeCommand();
+            $command->setObjects($granted);
+            $command->setComment($this->getValue('comment'));
+            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+            $command->setStart($this->getValue('start')->getTimestamp());
+            $command->setEnd($this->getValue('end')->getTimestamp());
+
+            if ($this->getElement('flexible')->isChecked()) {
+                $command->setFixed(false);
+                $command->setDuration(
+                    $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
+                );
+            }
+
+            yield $command;
         }
-
-        $command = new ScheduleServiceDowntimeCommand();
-        $command->setObject($object);
-        $command->setComment($this->getValue('comment'));
-        $command->setAuthor($this->getAuth()->getUser()->getUsername());
-        $command->setStart($this->getValue('start')->getTimestamp());
-        $command->setEnd($this->getValue('end')->getTimestamp());
-
-        if ($this->getElement('flexible')->isChecked()) {
-            $command->setFixed(false);
-            $command->setDuration(
-                $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
-            );
-        }
-
-        return $command;
     }
 }
