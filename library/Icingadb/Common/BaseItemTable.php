@@ -55,10 +55,22 @@ abstract class BaseItemTable extends BaseHtmlElement
     {
     }
 
+    /**
+     * Get the table layout to use
+     *
+     * @return string
+     */
+    protected function getLayout(): string
+    {
+        return 'table-layout';
+    }
+
     abstract protected function getItemClass(): string;
 
     protected function assemble()
     {
+        $this->addAttributes(['class' => $this->getLayout()]);
+
         $itemClass = $this->getItemClass();
 
         foreach ($this->data as $data) {

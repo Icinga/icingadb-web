@@ -19,14 +19,17 @@ class HostgroupTable extends BaseItemTable
         $this->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
     }
 
+    protected function getLayout(): string
+    {
+        return $this->getViewMode() === 'grid'
+            ? 'group-grid'
+            : parent::getLayout();
+    }
+
     protected function getItemClass(): string
     {
-        if ($this->getViewMode() === 'grid') {
-            $this->addAttributes(['class' => 'group-grid']);
-            return HostgroupGridCell::class;
-        }
-
-        $this->addAttributes(['class' => 'table-layout']);
-        return HostgroupTableRow::class;
+        return $this->getViewMode() === 'grid'
+            ? HostgroupGridCell::class
+            : HostgroupTableRow::class;
     }
 }
