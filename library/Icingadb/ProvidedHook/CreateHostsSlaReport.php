@@ -26,7 +26,11 @@ class CreateHostsSlaReport extends HostsDetailExtensionHook
                 ->addHTML(Html::tag('h2', $this->translate('Reporting')))
                 ->addHtml(new Link(
                     $this->translate('Create Host SLA Report'),
-                    Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'host'])
+                    Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'host']),
+                    [
+                        'data-icinga-modal'   => true,
+                        'data-no-icinga-ajax' => true
+                    ]
                 ));
         }
 
