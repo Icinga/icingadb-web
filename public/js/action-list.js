@@ -216,7 +216,11 @@
             let activeItems = _this.getActiveItems(list);
             let isMultiSelectableList = list.matches('[data-icinga-multiselect-url]');
 
-            if (isMultiSelectableList && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+                if (! isMultiSelectableList) {
+                    return;
+                }
+
                 event.preventDefault();
                 _this.selectAll(list);
                 return;
