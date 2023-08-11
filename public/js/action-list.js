@@ -709,11 +709,14 @@
                     }
                 }
 
-                _this.clearSelection(_this.getAllItems(list).filter(item => ! toActiveItems.includes(item)));
+                _this.clearSelection(_this.getAllItems(list).filter(item => !toActiveItems.includes(item)));
                 _this.setActive(toActiveItems);
+            }
 
-                if (isTopLevelContainer) {
-                    _this.addSelectionCountToFooter(list);
+            if (isTopLevelContainer) {
+                let footerList = list ?? container.querySelector('.action-list');
+                if (footerList) {
+                    _this.addSelectionCountToFooter(footerList);
                 }
             }
         }
