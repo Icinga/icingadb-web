@@ -417,8 +417,13 @@
                 if (activeItems.length > 1) {
                     url = this.createMultiSelectUrl(activeItems);
                 } else {
-                    url = activeItems[0].querySelector('[href]').getAttribute('href');
+                    let anchor = activeItems[0].querySelector('[href]');
+                    url = anchor ? anchor.href : null;
                 }
+            }
+
+            if (url === null) {
+                return;
             }
 
             this.isProcessingRequest = true;
