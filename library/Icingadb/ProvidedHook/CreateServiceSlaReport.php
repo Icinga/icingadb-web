@@ -29,7 +29,11 @@ class CreateServiceSlaReport extends ServiceActionsHook
         return [
             new Link(
                 $this->translate('Create Service SLA Report'),
-                Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'service'])
+                Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'service']),
+                [
+                    'data-icinga-modal'   => true,
+                    'data-no-icinga-ajax' => true
+                ]
             )
         ];
     }
