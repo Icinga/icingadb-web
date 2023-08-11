@@ -210,10 +210,6 @@
                 return;
             }
 
-            let allItems = _this.getAllItems(list);
-            let firstListItem = allItems[0];
-            let lastListItem = allItems[allItems.length -1];
-            let activeItems = _this.getActiveItems(list);
             let isMultiSelectableList = list.matches('[data-icinga-multiselect-url]');
 
             if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
@@ -230,6 +226,10 @@
 
             list.closest('#main > .container').dataset.suspendAutorefresh = '';
 
+            let allItems = _this.getAllItems(list);
+            let firstListItem = allItems[0];
+            let lastListItem = allItems[allItems.length -1];
+            let activeItems = _this.getActiveItems(list);
             let markAsLastActive = null; // initialized only if it is different from toActiveItem
             let toActiveItem = null;
             let wasAllSelected = activeItems.length === allItems.length;
