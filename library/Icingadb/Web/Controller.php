@@ -14,6 +14,7 @@ use Icinga\Application\Version;
 use Icinga\Data\ConfigObject;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\BaseItemTable;
@@ -72,12 +73,27 @@ class Controller extends CompatController
         return $this->filter;
     }
 
-    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher)
+    /**
+     * Create column control
+     *
+     * @param Query $query
+     * @param ViewModeSwitcher $viewModeSwitcher
+     *
+     * @return array provided columns
+     *
+     * @throws HttpBadRequestException
+     */
+    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher): array
     {
         // All of that is essentially what `ColumnControl::apply()` should do
+        $viewMode = $this->getRequest()->getUrl()->getParam($viewModeSwitcher->getViewModeParam());
         $columnsDef = $this->params->shift('columns');
         if (! $columnsDef) {
-            return null;
+            if ($viewMode === 'tabular') {
+                $this->httpBadRequest('Missing parameter "columns"');
+            }
+
+            return [];
         }
 
         $columns = [];
@@ -89,7 +105,7 @@ class Controller extends CompatController
 
         $query->withColumns($columns);
 
-        if (! $this->getRequest()->getUrl()->hasParam($viewModeSwitcher->getViewModeParam())) {
+        if (! $viewMode) {
             $viewModeSwitcher->setViewMode('tabular');
         }
 
