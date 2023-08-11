@@ -19,14 +19,17 @@ class ServicegroupTable extends BaseItemTable
         $this->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
     }
 
+    protected function getLayout(): string
+    {
+        return $this->getViewMode() === 'grid'
+            ? 'group-grid'
+            : parent::getLayout();
+    }
+
     protected function getItemClass(): string
     {
-        if ($this->getViewMode() === 'grid') {
-            $this->addAttributes(['class' => 'group-grid']);
-            return ServicegroupGridCell::class;
-        }
-
-        $this->addAttributes(['class' => 'table-layout']);
-        return ServicegroupTableRow::class;
+        return $this->getViewMode() === 'grid'
+            ? ServicegroupGridCell::class
+            : ServicegroupTableRow::class;
     }
 }
