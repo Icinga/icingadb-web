@@ -239,6 +239,7 @@ trait CommandActions
     public function toggleFeaturesAction()
     {
         $commandObjects = $this->getCommandTargets();
+        $form = null;
         if (count($commandObjects) > 1) {
             $this->isGrantedOnCommandTargets('i/am-only-used/to-establish/the-object-auth-cache');
             $form = new ToggleObjectFeaturesForm($this->getFeatureStatus());
