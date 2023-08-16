@@ -197,6 +197,8 @@ class ViewModeSwitcher extends Form
      */
     protected function getTitle(string $viewMode): string
     {
+        $active = null;
+        $inactive = null;
         switch ($viewMode) {
             case 'minimal':
                 $active = t('Minimal view active');
