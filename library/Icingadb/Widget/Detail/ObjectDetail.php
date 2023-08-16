@@ -547,6 +547,7 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
+        $userQuery = null;
         if ($this->isPermittedRoute('users')) {
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
