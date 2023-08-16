@@ -14,7 +14,10 @@ class CsvResultSet extends ResultSet
 {
     protected $isCacheDisabled = true;
 
-    public function current()
+    /**
+     * @return array<string, ?string>
+     */
+    public function current(): array
     {
         return $this->extractKeysAndValues(parent::current());
     }
