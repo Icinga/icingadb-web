@@ -114,6 +114,8 @@ class UrlMigrator
         if ($filter instanceof Filter\Condition) {
             $column = $filter->getColumn();
 
+            $modelPath = null;
+            $exprRule = null;
             if (isset($legacyColumns[$column])) {
                 if ($legacyColumns[$column] === self::DROP) {
                     return false;
