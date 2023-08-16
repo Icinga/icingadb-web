@@ -355,6 +355,7 @@ class RedisConfigForm extends ConfigForm
         ));
 
         $useTls = $this->getElement('redis_tls')->isChecked();
+        $pem = null;
         foreach (['ca', 'cert', 'key'] as $name) {
             $textarea = $this->getElement('redis_' . $name . '_pem');
             if ($useTls && $textarea !== null && ($pem = $textarea->getValue())) {
