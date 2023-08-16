@@ -88,11 +88,10 @@ class PerfDataTable extends Table
                 unset($keys[$key]);
                 continue;
             }
-            if (isset($col)) {
-                $headerRow->addHtml(new HtmlElement('th', Attributes::create([
-                    'class' => ($col == 'label' ? 'title' : null)
-                ]), Text::create($labels[$col])));
-            }
+
+            $headerRow->addHtml(new HtmlElement('th', Attributes::create([
+                'class' => ($col == 'label' ? 'title' : null)
+            ]), Text::create($labels[$col])));
         }
 
         $this->getHeader()->addHtml($headerRow);
