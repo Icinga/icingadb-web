@@ -46,6 +46,7 @@ class VolatileStateResults extends ResultSet
         return $this->redisUnavailable;
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if (! $this->redisUnavailable && ! $this->updatesApplied && ! $this->isCacheDisabled) {
