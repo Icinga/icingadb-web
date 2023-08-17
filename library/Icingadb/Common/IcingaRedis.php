@@ -183,7 +183,7 @@ class IcingaRedis
      *
      * @param Redis|null $redis
      *
-     * @return ?float|int
+     * @return float|int|null
      */
     public static function getLastIcingaHeartbeat(Redis $redis = null)
     {
