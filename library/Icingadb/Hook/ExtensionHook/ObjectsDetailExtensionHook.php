@@ -39,11 +39,9 @@ abstract class ObjectsDetailExtensionHook extends BaseExtensionHook
     {
         switch ($objectType) {
             case 'host':
-                /** @var HostsDetailExtensionHook $hook */
                 $hookName = 'Icingadb\\HostsDetailExtension';
                 break;
             case 'service':
-                /** @var ServicesDetailExtensionHook $hook */
                 $hookName = 'Icingadb\\ServicesDetailExtension';
                 break;
             default:
@@ -54,6 +52,7 @@ abstract class ObjectsDetailExtensionHook extends BaseExtensionHook
 
         $extensions = [];
         $lastUsedLocations = [];
+        /** @var HostsDetailExtensionHook|ServicesDetailExtensionHook $hook */
         foreach (Hook::all($hookName) as $hook) {
             $location = $hook->getLocation();
             if ($location < 0) {
