@@ -42,7 +42,7 @@ class Sni extends SniHook
             $queryHost->filter($filterCondition);
         }
 
-        $hosts = $this->getdb()->select($queryHost->assembleSelect());
+        $hosts = $this->getDb()->select($queryHost->assembleSelect());
 
         foreach ($hosts as $host) {
             if (! empty($host->host_address)) {
