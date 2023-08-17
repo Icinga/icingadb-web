@@ -118,7 +118,7 @@
             _this.setActive(toActiveItems);
             _this.addSelectionCountToFooter(list);
             _this.setLastActivatedItemUrl(lastActivatedUrl);
-            _this.loadDetailUrl(list, target.matches('a') ? target.href : null);
+            _this.loadDetailUrl(list, target.matches('a') ? target.getAttribute('href') : null);
         }
 
         /**
@@ -418,7 +418,7 @@
                     url = this.createMultiSelectUrl(activeItems);
                 } else {
                     let anchor = activeItems[0].querySelector('[href]');
-                    url = anchor ? anchor.href : null;
+                    url = anchor ? anchor.getAttribute('href') : null;
                 }
             }
 
@@ -577,7 +577,7 @@
                 anchor.innerText = label + dots;
             }, null, 250);
 
-            let url = anchor.href;
+            let url = anchor.getAttribute('href');
             let req = this.icinga.loader.loadUrl(
                 // Add showCompact, we don't want controls in paged results
                 this.icinga.utils.addUrlFlag(url, 'showCompact'),
