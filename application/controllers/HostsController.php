@@ -85,7 +85,7 @@ class HostsController extends Controller
         $hosts->peekAhead($compact);
 
         $this->filter($hosts, $filter);
-        if (isset($summary)) {
+        if (! $compact) {
             $this->filter($summary, $filter);
             yield $this->export($hosts, $summary);
         } else {
