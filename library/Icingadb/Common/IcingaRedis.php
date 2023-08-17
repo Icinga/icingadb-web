@@ -241,7 +241,7 @@ class IcingaRedis
             'port'      => $section->get('port', 6380),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
-        ] + static::getTlsParams($moduleConfig));
+        ] + self::getTlsParams($moduleConfig));
 
         $redis->ping();
 
@@ -278,7 +278,7 @@ class IcingaRedis
             'port'      => $section->get('port', 6380),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
-        ] + static::getTlsParams($moduleConfig));
+        ] + self::getTlsParams($moduleConfig));
 
         $redis->ping();
 
