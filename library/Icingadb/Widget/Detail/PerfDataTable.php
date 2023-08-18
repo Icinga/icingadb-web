@@ -64,6 +64,7 @@ class PerfDataTable extends Table
         foreach ($pieChartData as $perfdata) {
             if ($perfdata->isVisualizable()) {
                 $containsSparkline = true;
+                break;
             }
         }
 
