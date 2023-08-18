@@ -50,7 +50,6 @@ class PerfDataTable extends Table
     {
         $pieChartData = PerfDataSet::fromString($this->perfdataStr)->asArray();
         $keys = ['', 'label', 'value', 'min', 'max', 'warn', 'crit'];
-        $columns = [];
         $labels = array_combine(
             $keys,
             [
@@ -63,22 +62,10 @@ class PerfDataTable extends Table
                 t('Critical')
             ]
         );
+
         foreach ($pieChartData as $perfdata) {
             if ($perfdata->isVisualizable()) {
-                $columns[''] = '';
                 $this->containsSparkline = true;
-            }
-
-            foreach ($perfdata->toArray() as $column => $value) {
-                if (
-                    empty($value) ||
-                    $column === 'min' && floatval($value) === 0.0 ||
-                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100
-                ) {
-                    continue;
-                }
-
-                $columns[$column] = $labels[$column];
             }
         }
 
