@@ -70,20 +70,20 @@ class PerfDataTable extends Table
 
         $headerRow = new HtmlElement('tr');
         foreach ($keys as $key => $col) {
-            if (! $containsSparkline && $col == '') {
+            if (! $containsSparkline && $col === '') {
                 unset($keys[$key]);
                 continue;
             }
 
             $headerRow->addHtml(new HtmlElement('th', Attributes::create([
-                'class' => ($col == 'label' ? 'title' : null)
+                'class' => ($col === 'label' ? 'title' : null)
             ]), Text::create($labels[$col])));
         }
 
         $this->getHeader()->addHtml($headerRow);
 
         foreach ($pieChartData as $count => $perfdata) {
-            if ($this->limit != 0 && $count > $this->limit) {
+            if ($this->limit !== 0 && $count > $this->limit) {
                 break;
             }
 
