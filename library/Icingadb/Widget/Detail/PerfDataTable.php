@@ -33,8 +33,8 @@ class PerfDataTable extends Table
      * Display the given perfdata string to the user
      *
      * @param   string  $perfdataStr    The perfdata string
-     * @param   int       $limit              Max labels to show; 0 for no limit
-     * @param   string  $color             The color indicating the perfdata state
+     * @param   int     $limit          Max labels to show; 0 for no limit
+     * @param   string  $color          The color indicating the perfdata state
      */
     public function __construct(string $perfdataStr, int $limit = 0, string $color = PerfData::PERFDATA_OK)
     {
@@ -46,19 +46,15 @@ class PerfDataTable extends Table
     public function assemble()
     {
         $pieChartData = PerfDataSet::fromString($this->perfdataStr)->asArray();
-        $keys = ['', 'label', 'value', 'min', 'max', 'warn', 'crit'];
-        $labels = array_combine(
-            $keys,
-            [
-                '',
-                t('Label'),
-                t('Value'),
-                t('Min'),
-                t('Max'),
-                t('Warning'),
-                t('Critical')
-            ]
-        );
+        $keys = [
+            ''      => '',
+            'label' => t('Label'),
+            'value' => t('Value'),
+            'min'   => t('Min'),
+            'max'   => t('Max'),
+            'warn'  => t('Warning'),
+            'crit'  => t('Critical')
+        ];
 
         $containsSparkline = false;
         foreach ($pieChartData as $perfdata) {
@@ -70,14 +66,13 @@ class PerfDataTable extends Table
 
         $headerRow = new HtmlElement('tr');
         foreach ($keys as $key => $col) {
-            if (! $containsSparkline && $col === '') {
-                unset($keys[$key]);
+            if (! $containsSparkline && $key === '') {
                 continue;
             }
 
             $headerRow->addHtml(new HtmlElement('th', Attributes::create([
-                'class' => ($col === 'label' ? 'title' : null)
-            ]), Text::create($labels[$col])));
+                'class' => $key === 'label' ? 'title' : null
+            ]), Text::create($col)));
         }
 
         $this->getHeader()->addHtml($headerRow);
@@ -103,16 +98,14 @@ class PerfDataTable extends Table
                 $cols[] = Table::td(
                     new HtmlElement(
                         'span',
-                        Attributes::create([
-                            'class' => ($value ? '' : 'no-value')
-                        ]),
+                        Attributes::create(['class' => $value ? null : 'no-value']),
                         $value ? Text::create($value) : new EmptyState(t('None', 'value'))
                     ),
-                    ['class' => ($column === 'label' ? 'title' : null)]
+                    ['class' => $column === 'label' ? 'title' : null]
                 );
             }
 
-            $this->addHtml(Table::tr([$cols]));
+            $this->addHtml(Table::tr($cols));
         }
     }
 }
