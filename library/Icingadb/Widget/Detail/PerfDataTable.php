@@ -77,11 +77,13 @@ class PerfDataTable extends Table
 
         $this->getHeader()->addHtml($headerRow);
 
-        foreach ($pieChartData as $count => $perfdata) {
-            if ($this->limit !== 0 && $count > $this->limit) {
+        $count = 0;
+        foreach ($pieChartData as $perfdata) {
+            if ($this->limit > 0 && $count === $this->limit) {
                 break;
             }
 
+            $count++;
             $cols = [];
             if ($containsSparkline) {
                 if ($perfdata->isVisualizable()) {
