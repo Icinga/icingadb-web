@@ -5381,11 +5381,6 @@ parameters:
 			path: library/Icingadb/Redis/VolatileStateResults.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Redis\\\\VolatileStateResults\\:\\:applyRedisUpdates\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Redis/VolatileStateResults.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Redis\\\\VolatileStateResults\\:\\:parseDenylist\\(\\) should return ipl\\\\Stdlib\\\\Filter\\\\None but returns ipl\\\\Stdlib\\\\Filter\\\\Chain\\.$#"
 			count: 1
 			path: library/Icingadb/Redis/VolatileStateResults.php

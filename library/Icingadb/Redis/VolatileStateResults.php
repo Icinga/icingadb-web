@@ -56,6 +56,15 @@ class VolatileStateResults extends ResultSet
         return parent::current();
     }
 
+    public function next(): void
+    {
+        parent::next();
+
+        if (! $this->redisUnavailable && $this->isCacheDisabled && $this->valid()) {
+            $this->applyRedisUpdates([parent::current()]);
+        }
+    }
+
     public function key(): int
     {
         if (! $this->redisUnavailable && ! $this->updatesApplied && ! $this->isCacheDisabled) {
@@ -72,14 +81,21 @@ class VolatileStateResults extends ResultSet
             $this->advance();
 
             Benchmark::measure('Applying Redis updates');
-            $this->applyRedisUpdates();
+            $this->applyRedisUpdates($this);
             Benchmark::measure('Redis updates applied');
         }
 
         parent::rewind();
     }
 
-    protected function applyRedisUpdates()
+    /**
+     * Apply redis state details to the given results
+     *
+     * @param self|array<int, mixed> $rows
+     *
+     * @return void
+     */
+    protected function applyRedisUpdates($rows)
     {
         $type = null;
         $behaviors = null;
@@ -91,7 +107,7 @@ class VolatileStateResults extends ResultSet
 
         $states = [];
         $hostStates = [];
-        foreach ($this as $row) {
+        foreach ($rows as $row) {
             if ($type === null) {
                 $behaviors = $this->resolver->getBehaviors($row->state);
 
