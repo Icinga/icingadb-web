@@ -22,7 +22,7 @@ class CreateServicesSlaReport extends ServicesDetailExtensionHook
         if (Auth::getInstance()->hasPermission('reporting/reports')) {
             $filter = QueryString::render($this->getBaseFilter());
             return (new HtmlDocument())
-                ->addHTML(Html::tag('h2', $this->translate('Reporting')))
+                ->addHtml(Html::tag('h2', $this->translate('Reporting')))
                 ->addHtml(new Link(
                     $this->translate('Create Service SLA Report'),
                     Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'service']),
