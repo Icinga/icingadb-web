@@ -89,13 +89,12 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             'active'
         ];
 
-        $execCommand = new HtmlElement(
-            'pre',
-            null,
-            Text::create($command)
-        );
-
-        CopyToClipboard::attachTo($execCommand);
+        if ($command) {
+            $execCommand = new HtmlElement('pre', null, $command);
+            CopyToClipboard::attachTo($execCommand);
+        } else {
+            $execCommand = new EmptyState(t('n. a.'));
+        }
 
         return [
             new HtmlElement('h2', null, Text::create(t('Executed Command'))),
