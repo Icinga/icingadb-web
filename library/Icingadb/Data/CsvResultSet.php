@@ -6,11 +6,11 @@ namespace Icinga\Module\Icingadb\Data;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
-use ipl\Orm\ResultSet;
 
-class CsvResultSet extends ResultSet
+class CsvResultSet extends VolatileStateResults
 {
     protected $isCacheDisabled = true;
 
