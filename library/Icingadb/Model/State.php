@@ -17,6 +17,20 @@ use ipl\Web\Widget\Icon;
  */
 abstract class State extends Model
 {
+    /**
+     * Get the state as the textual representation
+     *
+     * @return string
+     */
+    abstract public function getStateText(): string;
+
+    /**
+     * Get the state as the translated textual representation
+     *
+     * @return string
+     */
+    abstract public function getStateTextTranslated(): string;
+
     public function getColumns()
     {
         return [
