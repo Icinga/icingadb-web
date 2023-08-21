@@ -290,10 +290,6 @@ class UrlMigrator
                     }
                 }
 
-                if (empty($columns)) {
-                    return false;
-                }
-
                 return Filter::equal('columns', implode(',', $columns));
             },
 
@@ -519,10 +515,6 @@ class UrlMigrator
                             $columns[] = $c->getColumn();
                         }
                     }
-                }
-
-                if (empty($columns)) {
-                    return false;
                 }
 
                 return Filter::equal('columns', implode(',', $columns));
