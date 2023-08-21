@@ -6,12 +6,12 @@ namespace Icinga\Module\Icingadb\Data;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Util\Json;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
-use ipl\Orm\ResultSet;
 
-class JsonResultSet extends ResultSet
+class JsonResultSet extends VolatileStateResults
 {
     protected $isCacheDisabled = true;
 
