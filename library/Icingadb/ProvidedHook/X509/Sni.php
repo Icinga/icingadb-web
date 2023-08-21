@@ -44,6 +44,7 @@ class Sni extends SniHook
 
         $hosts = $this->getDb()->select($queryHost->assembleSelect());
 
+        /** @var Host $host */
         foreach ($hosts as $host) {
             if (! empty($host->host_address)) {
                 yield $host->host_address => $host->host_name;
