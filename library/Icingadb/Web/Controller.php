@@ -429,7 +429,7 @@ class Controller extends CompatController
         $time = DateFormatter::formatDateTime(time());
 
         $doc = (new PrintableHtmlDocument())
-            ->setTitle($this->view->title)
+            ->setTitle($this->view->title ?? '')
             ->setHeader(Html::wantHtml([
                 Html::tag('span', ['class' => 'title']),
                 Html::tag('time', null, $time)
