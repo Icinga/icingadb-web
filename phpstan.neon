@@ -1,10 +1,12 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
-    level: 2
+    level: max
 
     checkFunctionNameCase: true
-    checkMissingIterableValueType: true
     checkInternalClassCaseSensitivity: true
-    checkDynamicProperties: true
+    treatPhpDocTypesAsCertain: false
 
     paths:
         - application
@@ -14,87 +16,11 @@ parameters:
         - vendor
 
     ignoreErrors:
-        - '#Unsafe usage of new static\(\)#'
-        - '#. but return statement is missing#'
-
         -
-            message: '#Call to an undefined method Predis\\Client::hGet\(\)#'
-            path: library/Icingadb/Common/ObjectInspectionDetail.php
-
-        -
-            message: '#Call to an undefined method ipl\\Html\\Contract\\FormElement::.*#'
-            paths:
-                - application/controllers/ServicesController.php
-                - application/forms/Command/Instance/ToggleInstanceFeaturesForm.php
-                - application/forms/Command/Object/AcknowledgeProblemForm.php
-                - application/forms/Command/Object/AddCommentForm.php
-                - application/forms/Command/Object/ScheduleCheckForm.php
-                - application/forms/Command/Object/ScheduleHostDowntimeForm.php
-                - application/forms/Command/Object/ScheduleServiceDowntimeForm.php
-                - application/forms/Command/Object/SendCustomNotificationForm.php
-                - application/forms/SetAsBackendForm.php
-                - library/Icingadb/Web/Control/ProblemToggle.php
-                - library/Icingadb/Widget/ItemTable/StateItemTable.php
-
-        -
-            message: '#Call to an undefined method ipl\\Stdlib\\Filter\\Rule::.*#'
-            path: library/Icingadb/Common/Auth.php
-
-        -
-            message: '#Call to an undefined method ipl\\Html\\Contract\\Wrappable::.*#'
-            paths:
-                - application/forms/Command/Object/ScheduleServiceDowntimeForm.php
-                - application/forms/Command/Object/ToggleObjectFeaturesForm.php
-                - library/Icingadb/Widget/Detail/CustomVarTable.php
-                - library/Icingadb/Common/SearchControls.php
-
-        -
-            message: '#PHPDoc tag @param references unknown parameter: .*#'
-            path: library/Icingadb/Common/SearchControls.php
-
-        -
-            message: '#Call to an undefined method ipl\\Html\\BaseHtmlElement::getDetailActionsDisabled\(\)#'
-            path: library/Icingadb/Common/DetailActions.php
-
-        -
-            message: '#Call to an undefined method Zend_Form_Element::isChecked\(\)#'
-            path: application/forms/RedisConfigForm.php
-
-        -
-            message: '#Access to an undefined property Zend_View_Interface.*#'
-            path: application/controllers/ErrorController.php
-
-        -
-            message: '#Call to an undefined method Zend_Controller_Action_Helper_Abstract.*#'
-            path: application/controllers/ServicesController.php
-
-        -
-            message: '#Call to an undefined method Zend_Form_Element::isChecked\(\)#'
-            path: library/Icingadb/Setup/RedisPage.php
-
-        -
-            message: '#Call to an undefined method Icinga\\Web\\Form::.*#'
-            path: library/Icingadb/Setup/IcingaDbWizard.php
-
-        -
-            message: '#Call to an undefined method Zend_Form_Element::setMultiOptions\(\)#'
-            path: library/Icingadb/Setup/DbResourcePage.php
-
-        -
-            message: '#Cannot call method setErrorHandlerModule\(\) on array\|Zend_Controller_Plugin_Abstract\|false#'
-            path: library/Icingadb/Web/Controller.php
-
-        -
-            message: '#Cannot access property \$flatname on array\<int\|string, mixed\>#'
-            path: library/Icingadb/Web/Control/SearchBar/ObjectSuggestions.php
-
-        -
-            message: '#Access to an undefined property object::.*#'
-            paths:
-                - library/Icingadb/Widget/ItemList/StateListItem.php
-                - library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-                - library/Icingadb/Widget/Detail/ObjectDetail.php
-                - library/Icingadb/Model/CustomvarFlat.php
+            messages:
+                - '#Unsafe usage of new static\(\)#'
+                - '#. but return statement is missing#'
+            reportUnmatched: false
 
     universalObjectCratesClasses:
         - ipl\Orm\Model
