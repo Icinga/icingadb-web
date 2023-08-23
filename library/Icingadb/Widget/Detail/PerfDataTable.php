@@ -12,9 +12,13 @@ use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
 use ipl\Html\Text;
+use ipl\I18n\Translation;
+use ipl\Web\Widget\Icon;
 
 class PerfDataTable extends Table
 {
+    use Translation;
+
     protected $defaultAttributes = [
         'class' => 'performance-data-table collapsible',
         'data-visible-rows' => 6
@@ -58,7 +62,7 @@ class PerfDataTable extends Table
 
         $containsSparkline = false;
         foreach ($pieChartData as $perfdata) {
-            if ($perfdata->isVisualizable()) {
+            if ($perfdata->isVisualizable()  || ! $perfdata->isValid()) {
                 $containsSparkline = true;
                 break;
             }
@@ -89,6 +93,19 @@ class PerfDataTable extends Table
                 if ($perfdata->isVisualizable()) {
                     $cols[] = Table::td(
                         HtmlString::create($perfdata->asInlinePie($this->color)->render()),
+                        ['class' => 'sparkline-col']
+                    );
+                } elseif (! $perfdata->isValid()) {
+                    $cols[] = Table::td(
+                        new Icon(
+                            'triangle-exclamation',
+                            [
+                                'title' => $this->translate(
+                                    'Evaluation failed. Performance data is invalid.'
+                                ),
+                                'class' => ['invalid-perfdata']
+                            ]
+                        ),
                         ['class' => 'sparkline-col']
                     );
                 } else {

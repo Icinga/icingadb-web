@@ -131,10 +131,9 @@ class PerfDataFormat
         return sprintf('%0.2f d', $value / 86400);
     }
 
-    protected static function formatForUnits($value, array &$units, int $base): string
+    protected static function formatForUnits(float $value, array &$units, int $base): string
     {
         $sign = '';
-        $value = (float) $value;
         if ($value < 0) {
             $value = abs($value);
             $sign = '-';
