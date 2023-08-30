@@ -32,7 +32,7 @@ class PerfdataTest extends TestCase
             'Perfdata::fromString does not properly parse performance data labels'
         );
         $this->assertSame(
-            '1234',
+            1234.0,
             $p->getValue(),
             'Perfdata::fromString does not properly parse performance data values'
         );
@@ -44,12 +44,12 @@ class PerfdataTest extends TestCase
     public function testWhetherGetValueReturnsValidValues()
     {
         $this->assertSame(
-            '1337',
+            1337.0,
             Perfdata::fromString('test=1337')->getValue(),
             'Perfdata::getValue does not return correct values'
         );
         $this->assertSame(
-            '1337',
+            1337.0,
             Perfdata::fromString('test=1337;;;;')->getValue(),
             'Perfdata::getValue does not return correct values'
         );
@@ -61,12 +61,12 @@ class PerfdataTest extends TestCase
     public function testWhetherDecimalValuesAreCorrectlyParsed()
     {
         $this->assertSame(
-            '1337.5',
+            1337.5,
             Perfdata::fromString('test=1337.5')->getValue(),
             'Perfdata objects do not parse decimal values correctly'
         );
         $this->assertSame(
-            '1337.5',
+            1337.5,
             Perfdata::fromString('test=1337.5B')->getValue(),
             'Perfdata objects do not parse decimal values correctly'
         );
@@ -250,12 +250,12 @@ class PerfdataTest extends TestCase
     public function testWhetherGetMinimumValueReturnsCorrectValues()
     {
         $this->assertSame(
-            '1337',
+            1337.0,
             Perfdata::fromString('test=1;;;1337')->getMinimumValue(),
             'Perfdata::getMinimumValue does not return correct values'
         );
         $this->assertSame(
-            '1337.5',
+            1337.5,
             Perfdata::fromString('test=1;;;1337.5')->getMinimumValue(),
             'Perfdata::getMinimumValue does not return correct values'
         );
@@ -267,12 +267,12 @@ class PerfdataTest extends TestCase
     public function testWhetherGetMaximumValueReturnsCorrectValues()
     {
         $this->assertSame(
-            '1337',
+            1337.0,
             Perfdata::fromString('test=1;;;;1337')->getMaximumValue(),
             'Perfdata::getMaximumValue does not return correct values'
         );
         $this->assertSame(
-            '1337.5',
+            1337.5,
             Perfdata::fromString('test=1;;;;1337.5')->getMaximumValue(),
             'Perfdata::getMaximumValue does not return correct values'
         );
@@ -373,7 +373,7 @@ class PerfdataTest extends TestCase
     public function testWhetherPercentagesAreHandledCorrectly()
     {
         $this->assertSame(
-            '66',
+            66.0,
             Perfdata::fromString('test=66%')->getPercentage(),
             'Perfdata objects do not correctly handle native percentages'
         );
@@ -397,6 +397,195 @@ class PerfdataTest extends TestCase
         $this->assertNull(
             Perfdata::fromString('test=25;;;0;0')->getPercentage(),
             'Perfdata objects do not ignore impossible min/max combinations when returning percentages'
+        );
+    }
+
+    public function testWhetherInvalidValueInPerfDataHandledCorrectly()
+    {
+        $p1 = Perfdata::fromString('test=2,0');
+        $this->assertFalse($p1->isValid());
+        $this->assertNull(
+            $p1->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            '2,0',
+            $p1->toArray()['value']
+        );
+
+        $p2 = Perfdata::fromString('test=i am not a value');
+        $this->assertFalse($p2->isValid());
+        $this->assertNull(
+            $p2->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            'i am not a value',
+            $p2->toArray()['value']
+        );
+
+        $p3 = Perfdata::fromString('test=');
+        $this->assertFalse($p3->isValid());
+        $this->assertNull(
+            $p3->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            '',
+            $p3->toArray()['value']
+        );
+
+        $p4 = Perfdata::fromString('test=-kW');
+        $this->assertFalse($p4->isValid());
+        $this->assertNull(
+            $p4->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            '-kW',
+            $p4->toArray()['value']
+        );
+
+        $p5 = Perfdata::fromString('test=kW');
+        $this->assertFalse($p5->isValid());
+        $this->assertNull(
+            $p5->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            'kW',
+            $p5->toArray()['value']
+        );
+
+        $p6 = Perfdata::fromString('test=-');
+        $this->assertFalse($p6->isValid());
+        $this->assertNull(
+            $p6->getValue(),
+            'Perfdata::getValue does not return null for invalid values'
+        );
+        $this->assertSame(
+            '-',
+            $p6->toArray()['value']
+        );
+    }
+
+    public function testWhetherInvalidMinInPerfDataHandledCorrectly()
+    {
+        $p1 = Perfdata::fromString('test=1;;;2,0');
+        $this->assertFalse($p1->isValid());
+        $this->assertNull(
+            $p1->getMinimumValue(),
+            'Perfdata::getMinimumValue does not return null for invalid min values'
+        );
+        $this->assertSame(
+            '2,0',
+            $p1->toArray()['min']
+        );
+
+        $p2 = Perfdata::fromString('test=1;;;foo');
+        $this->assertFalse($p2->isValid());
+        $this->assertNull(
+            $p2->getMinimumValue(),
+            'Perfdata::getMinimumValue does not return null for invalid min values'
+        );
+        $this->assertSame(
+            'foo',
+            $p2->toArray()['min']
+        );
+    }
+
+    public function testWhetherInvalidMaxInPerfDataHandledCorrectly()
+    {
+        $p1 = Perfdata::fromString('test=1;;;;2,0');
+        $this->assertFalse($p1->isValid());
+        $this->assertNull(
+            $p1->getMaximumValue(),
+            'Perfdata::getMaximumValue does not return null for invalid max values'
+        );
+        $this->assertSame(
+            '2,0',
+            $p1->toArray()['max']
+        );
+
+        $p2 = Perfdata::fromString('test=1;;;;foo');
+        $this->assertFalse($p2->isValid());
+        $this->assertNull(
+            $p2->getMaximumValue(),
+            'Perfdata::getMaximumValue does not return null for invalid max values'
+        );
+        $this->assertSame(
+            'foo',
+            $p2->toArray()['max']
+        );
+    }
+
+    public function testWhetherInvalidWarningThresholdInPerfDataHandledCorrectly()
+    {
+        $p1 = Perfdata::fromString('test=1;2,0:');
+        $this->assertFalse($p1->getWarningThreshold()->isValid());
+        $this->assertFalse($p1->isValid());
+        $this->assertSame(
+            '2,0:',
+            (string) $p1->getWarningThreshold()
+        );
+
+        $p2 = Perfdata::fromString('test=1;0:4,0');
+        $this->assertFalse($p2->getWarningThreshold()->isValid());
+        $this->assertFalse($p2->isValid());
+        $this->assertSame(
+            '0:4,0',
+            (string) $p2->getWarningThreshold()
+        );
+
+        $p3 = Perfdata::fromString('test=1;foo');
+        $this->assertFalse($p2->getWarningThreshold()->isValid());
+        $this->assertFalse($p3->isValid());
+        $this->assertSame(
+            'foo',
+            (string) $p3->getWarningThreshold()
+        );
+
+        $p4 = Perfdata::fromString('test=1;10@');
+        $this->assertFalse($p2->getWarningThreshold()->isValid());
+        $this->assertFalse($p4->isValid());
+        $this->assertSame(
+            '10@',
+            (string) $p4->getWarningThreshold()
+        );
+    }
+
+    public function testWhetherInvalidCriticalThresholdInPerfDataHandledCorrectly()
+    {
+        $p1 = Perfdata::fromString('test=1;;2,0:');
+        $this->assertFalse($p1->getCriticalThreshold()->isValid());
+        $this->assertFalse($p1->isValid());
+        $this->assertSame(
+            '2,0:',
+            (string) $p1->getCriticalThreshold()
+        );
+
+        $p2 = Perfdata::fromString('test=1;;0:4,0');
+        $this->assertFalse($p2->getCriticalThreshold()->isValid());
+        $this->assertFalse($p2->isValid());
+        $this->assertSame(
+            '0:4,0',
+            (string) $p2->getCriticalThreshold()
+        );
+
+        $p3 = Perfdata::fromString('test=1;;foo');
+        $this->assertFalse($p2->getCriticalThreshold()->isValid());
+        $this->assertFalse($p3->isValid());
+        $this->assertSame(
+            'foo',
+            (string) $p3->getCriticalThreshold()
+        );
+
+        $p4 = Perfdata::fromString('test=1;;10@');
+        $this->assertFalse($p2->getCriticalThreshold()->isValid());
+        $this->assertFalse($p4->isValid());
+        $this->assertSame(
+            '10@',
+            (string) $p4->getCriticalThreshold()
         );
     }
 }
