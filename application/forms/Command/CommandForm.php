@@ -7,7 +7,9 @@ namespace Icinga\Module\Icingadb\Forms\Command;
 use ArrayIterator;
 use Exception;
 use Generator;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Web;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Common\Auth;
@@ -87,8 +89,14 @@ abstract class CommandForm extends Form
     protected function assemble()
     {
         $this->assembleElements();
-        $this->assembleSubmitButton();
-        $this->addElement($this->createCsrfCounterMeasure(Session::getSession()->getId()));
+
+        /** @var Web $app */
+        $app = Icinga::app();
+        if ($app->getRequest()->isXmlHttpRequest() || ! $app->getRequest()->isApiRequest()) {
+            // TODO: Remove/adjust this condition once a real API exists and is stable (#162)
+            $this->assembleSubmitButton();
+            $this->addElement($this->createCsrfCounterMeasure(Session::getSession()->getId()));
+        }
     }
 
     protected function onSuccess()
