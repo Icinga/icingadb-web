@@ -98,9 +98,6 @@ class DowntimeCard extends BaseHtmlElement
                 ->addFor($markerFlexStart, ['left' => sprintf('%F%%', $flexStartLeft)])
                 ->addFor($markerFlexEnd, ['left' => sprintf('%F%%', $flexEndLeft)]);
 
-            $markerStart->getAttributes()->remove('class', 'highlighted'); // TODO: class was never set??
-            $markerEnd->getAttributes()->remove('class', 'highlighted');
-
             $scheduledEndBubble = new HtmlElement(
                 'li',
                 null,

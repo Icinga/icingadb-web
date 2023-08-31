@@ -16,7 +16,6 @@ use ipl\Html\Text;
 use ipl\Web\Common\Card;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Compat\StyleWithNonce;
-use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
 use ipl\Web\Widget\TimeUntil;
@@ -39,7 +38,6 @@ SVG;
           d="M12 0L12 14L-2 14L12 0ZM11 2.41421L11 13L0.414213 13L11 2.41421Z"/>
 </svg>
 SVG;
-
 
     protected $object;
 
