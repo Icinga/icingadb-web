@@ -60,7 +60,8 @@ class ApiTransportPage extends Form
         $this->addElement('password', 'password', [
             'required'          => true,
             'renderPassword'    => true,
-            'label'             => t('API Password')
+            'label'             => t('API Password'),
+            'autocomplete'      => 'new-password'
         ]);
     }
 
