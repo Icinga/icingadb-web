@@ -17,6 +17,8 @@ use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Traversable;
 
+use function ipl\Stdlib\iterable_value_first;
+
 class ProcessCheckResultForm extends CommandForm
 {
     public function __construct()
@@ -27,7 +29,7 @@ class ProcessCheckResultForm extends CommandForm
             }
 
             $countObjects = count($this->getObjects());
-            if (current($this->getObjects()) instanceof Host) {
+            if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(
                     'Submitted passive check result successfully',
                     'Submitted passive check result for %d hosts successfully',
@@ -64,12 +66,8 @@ class ProcessCheckResultForm extends CommandForm
 
         $decorator = new IcingaFormDecorator();
 
-        foreach ($this->getObjects() as $object) {
-            /** @var Model $object */
-            // Nasty, but as getObjects() returns everything but an object with a real
-            // iterator interface this is the only way to fetch just the first element
-            break;
-        }
+        /** @var Model $object */
+        $object = iterable_value_first($this->getObjects());
 
         $this->addElement(
             'select',

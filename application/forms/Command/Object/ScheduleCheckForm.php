@@ -18,6 +18,8 @@ use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Traversable;
 
+use function ipl\Stdlib\iterable_value_first;
+
 class ScheduleCheckForm extends CommandForm
 {
     public function __construct()
@@ -28,7 +30,7 @@ class ScheduleCheckForm extends CommandForm
             }
 
             $countObjects = count($this->getObjects());
-            if (current($this->getObjects()) instanceof Host) {
+            if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(
                     tp('Scheduled check successfully', 'Scheduled check for %d hosts successfully', $countObjects),
                     $countObjects
