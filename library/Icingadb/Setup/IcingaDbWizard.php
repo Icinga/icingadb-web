@@ -7,7 +7,6 @@ namespace Icinga\Module\Icingadb\Setup;
 use Icinga\Application\Icinga;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
-use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
 use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
 use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Setup;
@@ -51,11 +50,6 @@ class IcingaDbWizard extends Wizard implements SetupWizard
     {
         $set = new RequirementSet();
 
-        $set->add(new PhpVersionRequirement([
-            'condition'     => ['>=', '7.2'],
-            'description'   => sprintf(t('Icinga DB Web requires PHP version %s.'), '7.2')
-        ]));
-
         $requiredVersions = Icinga::app()->getModuleManager()->getModule('icingadb')->getRequiredLibraries();
 
         $set->add(new WebLibraryRequirement([
@@ -74,6 +68,12 @@ class IcingaDbWizard extends Wizard implements SetupWizard
             'condition'     => 'libxml',
             'alias'         => 'libxml',
             'description'   => t('For check plugins that output HTML the libxml extension is required')
+        ]));
+
+        $set->add(new PhpModuleRequirement([
+            'condition'     => 'dom',
+            'alias'         => 'dom',
+            'description'   => t('For check plugins that output HTML the dom extension is required')
         ]));
 
         $set->add(new PhpModuleRequirement([
