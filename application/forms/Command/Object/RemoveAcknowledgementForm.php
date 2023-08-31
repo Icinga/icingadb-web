@@ -11,6 +11,8 @@ use Icinga\Web\Notification;
 use ipl\Web\Widget\Icon;
 use Traversable;
 
+use function ipl\Stdlib\iterable_value_first;
+
 class RemoveAcknowledgementForm extends CommandForm
 {
     public function __construct()
@@ -21,7 +23,7 @@ class RemoveAcknowledgementForm extends CommandForm
             }
 
             $countObjects = count($this->getObjects());
-            if (current($this->getObjects()) instanceof Host) {
+            if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(
                     'Removed acknowledgment successfully',
                     'Removed acknowledgment from %d hosts successfully',

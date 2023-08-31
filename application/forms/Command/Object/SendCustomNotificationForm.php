@@ -16,6 +16,8 @@ use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Traversable;
 
+use function ipl\Stdlib\iterable_value_first;
+
 class SendCustomNotificationForm extends CommandForm
 {
     public function __construct()
@@ -26,7 +28,7 @@ class SendCustomNotificationForm extends CommandForm
             }
 
             $countObjects = count($this->getObjects());
-            if (current($this->getObjects()) instanceof Host) {
+            if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(
                     'Sent custom notification successfully',
                     'Sent custom notification for %d hosts successfully',

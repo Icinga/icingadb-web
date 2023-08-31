@@ -19,6 +19,8 @@ use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Traversable;
 
+use function ipl\Stdlib\iterable_value_first;
+
 class AddCommentForm extends CommandForm
 {
     public function __construct()
@@ -29,7 +31,7 @@ class AddCommentForm extends CommandForm
             }
 
             $countObjects = count($this->getObjects());
-            if (current($this->getObjects()) instanceof Host) {
+            if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(
                     tp('Added comment successfully', 'Added comment to %d hosts successfully', $countObjects),
                     $countObjects
