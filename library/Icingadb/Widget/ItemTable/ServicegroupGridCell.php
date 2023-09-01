@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use ipl\Stdlib\Filter;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBadge;
@@ -28,7 +27,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_critical_unhandled, 'critical'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -50,7 +49,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_critical_handled, 'critical', true),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -72,7 +71,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_warning_unhandled, 'warning'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -94,7 +93,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_warning_handled, 'warning', true),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -116,7 +115,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_unknown_unhandled, 'unknown'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -138,7 +137,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_unknown_handled, 'unknown', true),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -158,7 +157,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_pending, 'pending'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -176,7 +175,7 @@ class ServicegroupGridCell extends BaseServiceGroupItem
 
             return new Link(
                 new StateBadge($this->item->services_ok, 'ok'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(

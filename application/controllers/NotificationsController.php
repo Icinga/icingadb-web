@@ -90,8 +90,9 @@ class NotificationsController extends Controller
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $url = Url::fromRequest()->onlyWith($preserveParams);
-        $url->setQueryString(QueryString::render($filter) . '&' . $url->getParams()->toString());
+        $url = Url::fromRequest()
+            ->onlyWith($preserveParams)
+            ->setFilter($filter);
 
         $notificationList = (new NotificationList($notifications->execute()))
             ->setPageSize($limitControl->getLimit())

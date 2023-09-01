@@ -37,7 +37,7 @@ class HostStatistics extends ObjectStatistics
     {
         $url = Links::hosts();
         if ($this->hasBaseFilter()) {
-            $url->setQueryString(QueryString::render($this->getBaseFilter()));
+            $url->setFilter($this->getBaseFilter());
         }
 
         return new Link(

@@ -7,6 +7,7 @@ namespace Tests\Icinga\Modules\Icingadb\Common;
 use Icinga\Module\Icingadb\Common\StateBadges;
 use Icinga\Web\UrlParams;
 use ipl\Stdlib\Filter;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -38,9 +39,9 @@ class StateBadgesTest extends TestCase
                 'toArray' => []
             ])
         ]);
-        $urlMock->method('setQueryString')->willReturnCallback(
+        $urlMock->method('setFilter')->willReturnCallback(
             function ($qs) use ($urlMock, &$queryString) {
-                $queryString = $qs;
+                $queryString = QueryString::render($qs);
 
                 return $urlMock;
             }

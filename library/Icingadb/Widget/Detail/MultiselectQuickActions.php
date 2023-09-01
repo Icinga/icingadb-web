@@ -188,7 +188,7 @@ class MultiselectQuickActions extends BaseHtmlElement
     protected function getLink(string $action): string
     {
         return Url::fromPath("icingadb/{$this->type}s/$action")
-            ->setQueryString(QueryString::render($this->getBaseFilter()))
+            ->setFilter($this->getBaseFilter())
             ->getAbsoluteUrl();
     }
 }

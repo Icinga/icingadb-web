@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use ipl\Stdlib\Filter;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBadge;
@@ -28,7 +27,7 @@ class HostgroupGridCell extends BaseHostGroupItem
 
             return new Link(
                 new StateBadge($this->item->hosts_down_unhandled, 'down'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -50,7 +49,7 @@ class HostgroupGridCell extends BaseHostGroupItem
 
             return new Link(
                 new StateBadge($this->item->hosts_down_handled, 'down', true),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -68,7 +67,7 @@ class HostgroupGridCell extends BaseHostGroupItem
 
             return new Link(
                 new StateBadge($this->item->hosts_pending, 'pending'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(
@@ -86,7 +85,7 @@ class HostgroupGridCell extends BaseHostGroupItem
 
             return new Link(
                 new StateBadge($this->item->hosts_up, 'up'),
-                $url->setQueryString(QueryString::render($urlFilter)),
+                $url->setFilter($urlFilter),
                 [
                     'title' => sprintf(
                         $this->translatePlural(

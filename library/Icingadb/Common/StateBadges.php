@@ -122,9 +122,7 @@ abstract class StateBadges extends BaseHtmlElement
         }
 
         if (! $urlFilter->isEmpty()) {
-            $urlParams = $url->getParams()->toArray(false);
-            $url->setQueryString(QueryString::render($urlFilter))
-                ->addParams($urlParams);
+            $url->setFilter($urlFilter);
         }
 
         return new Link($content, $url);

@@ -288,10 +288,7 @@ class Controller extends CompatController
         $this->prepareSearchFilter($query, $q, $filter, $additionalColumns);
 
         $redirectUrl = Url::fromRequest();
-        $redirectUrl->setQueryString(QueryString::render($filter));
-        foreach ($this->params->toArray(false) as $name => $value) {
-            $redirectUrl->getParams()->addEncoded($name, $value);
-        }
+        $redirectUrl->setFilter($filter);
 
         $this->getResponse()->redirectAndExit($redirectUrl);
     }

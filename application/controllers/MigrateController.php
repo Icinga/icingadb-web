@@ -110,7 +110,7 @@ class MigrateController extends Controller
 
             $newFilter = $traverseFilter($filter);
             if ($newFilter !== null) {
-                $result[] = rawurldecode($url->setQueryString(QueryString::render($newFilter))->getAbsoluteUrl());
+                $result[] = rawurldecode($url->setFilter($newFilter)->getAbsoluteUrl());
             } else {
                 $result[] = $url->getAbsoluteUrl();
             }

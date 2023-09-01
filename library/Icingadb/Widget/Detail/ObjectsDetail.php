@@ -21,7 +21,6 @@ use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\ActionLink;
 
 class ObjectsDetail extends BaseHtmlElement
@@ -111,7 +110,7 @@ class ObjectsDetail extends BaseHtmlElement
                     tp('Show %d comment', 'Show %d comments', $this->summary->comments_total),
                     $this->summary->comments_total
                 ),
-                Links::comments()->setQueryString(QueryString::render($this->getBaseFilter()))
+                Links::comments()->setFilter($this->getBaseFilter())
             );
         } else {
             $content[] = new EmptyState(t('No comments created.'));
@@ -130,7 +129,7 @@ class ObjectsDetail extends BaseHtmlElement
                     tp('Show %d downtime', 'Show %d downtimes', $this->summary->downtimes_total),
                     $this->summary->downtimes_total
                 ),
-                Links::downtimes()->setQueryString(QueryString::render($this->getBaseFilter()))
+                Links::downtimes()->setFilter($this->getBaseFilter())
             );
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));
@@ -146,13 +145,13 @@ class ObjectsDetail extends BaseHtmlElement
         if ($this->type === 'host') {
             $form->setAction(
                 Links::toggleHostsFeatures()
-                    ->setQueryString(QueryString::render($this->getBaseFilter()))
+                    ->setFilter($this->getBaseFilter())
                     ->getAbsoluteUrl()
             );
         } else {
             $form->setAction(
                 Links::toggleServicesFeatures()
-                    ->setQueryString(QueryString::render($this->getBaseFilter()))
+                    ->setFilter($this->getBaseFilter())
                     ->getAbsoluteUrl()
             );
         }
