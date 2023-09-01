@@ -7121,11 +7121,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/HostStatistics.php
 
 		-
-			message: "#^Parameter \\#1 \\$rule of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:render\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/HostStatistics.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\HostStatistics\\:\\:\\$summary has no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/HostStatistics.php
@@ -7188,11 +7183,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$queryString of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\MultiselectQuickActions\\:\\:parseRestriction\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 3
-			path: library/Icingadb/Widget/Detail/MultiselectQuickActions.php
-
-		-
-			message: "#^Parameter \\#1 \\$rule of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:render\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
-			count: 1
 			path: library/Icingadb/Widget/Detail/MultiselectQuickActions.php
 
 		-
@@ -7456,11 +7446,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/ObjectsDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$rule of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:render\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
-			count: 4
-			path: library/Icingadb/Widget/Detail/ObjectsDetail.php
-
-		-
 			message: "#^Parameter \\#3 \\$baseFilter of static method Icinga\\\\Module\\\\Icingadb\\\\Hook\\\\ExtensionHook\\\\ObjectsDetailExtensionHook\\:\\:loadExtensions\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/ObjectsDetail.php
@@ -7602,11 +7587,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\ServiceStatistics\\:\\:__construct\\(\\) has parameter \\$summary with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/ServiceStatistics.php
-
-		-
-			message: "#^Parameter \\#1 \\$rule of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:render\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/ServiceStatistics.php
 

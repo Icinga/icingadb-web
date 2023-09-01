@@ -15,7 +15,6 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class CommentsController extends Controller
@@ -161,7 +160,7 @@ class CommentsController extends Controller
 
         $this->addControl(new ShowMore(
             $rs,
-            Links::comments()->setQueryString(QueryString::render($this->getFilter())),
+            Links::comments()->setFilter($this->getFilter()),
             sprintf(t('Show all %d comments'), $comments->count())
         ));
 
@@ -170,7 +169,7 @@ class CommentsController extends Controller
                 ->setObjects($comments)
                 ->setAction(
                     Links::commentsDelete()
-                        ->setQueryString(QueryString::render($this->getFilter()))
+                        ->setFilter($this->getFilter())
                         ->getAbsoluteUrl()
                 )
         );

@@ -16,7 +16,6 @@ use ipl\Html\Text;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\Card;
-use ipl\Web\Filter\QueryString;
 
 class ServiceSummaryDonut extends Card
 {
@@ -52,7 +51,7 @@ class ServiceSummaryDonut extends Card
             ->addSlice($this->summary->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
             ->addSlice($this->summary->services_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->services_critical_unhandled)
-            ->setLabelBigUrl(Links::services()->setQueryString(QueryString::render($labelBigUrlFilter))->addParams([
+            ->setLabelBigUrl(Links::services()->setFilter($labelBigUrlFilter)->addParams([
                 'sort' => 'service.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->services_critical_unhandled > 0)

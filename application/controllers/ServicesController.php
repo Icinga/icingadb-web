@@ -28,7 +28,6 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
@@ -188,7 +187,7 @@ class ServicesController extends Controller
         );
         $this->addControl(new ShowMore(
             $results,
-            Links::services()->setQueryString(QueryString::render($this->getFilter())),
+            Links::services()->setFilter($this->getFilter()),
             sprintf(t('Show all %d services'), $services->count())
         ));
         $this->addControl(
@@ -311,7 +310,7 @@ class ServicesController extends Controller
         $this->view->pivotHeader = $pivotHeader;
 
         /** Preserve filter and params in view links (the `BaseFilter` implementation for view scripts -.-) */
-        $this->view->baseUrl = $this->getRequest()->getUrl()
+        $this->view->baseUrl = Url::fromRequest()
             ->onlyWith([
                 LimitControl::DEFAULT_LIMIT_PARAM,
                 $sortControl->getSortParam(),
@@ -320,15 +319,7 @@ class ServicesController extends Controller
                 'problems'
             ]);
         $preservedParams = $this->view->baseUrl->getParams();
-        $this->view->baseUrl->setQueryString(QueryString::render($filter));
-        foreach ($preservedParams->toArray(false) as $name => $value) {
-            if (is_int($name)) {
-                $name = $value;
-                $value = true;
-            }
-
-            $this->view->baseUrl->getParams()->addEncoded($name, $value);
-        }
+        $this->view->baseUrl->setFilter($filter);
 
         $searchBar->setEditorUrl(Url::fromPath(
             "icingadb/services/grid-search-editor"
@@ -402,7 +393,7 @@ class ServicesController extends Controller
 
     protected function getCommandTargetsUrl(): Url
     {
-        return Links::servicesDetails()->setQueryString(QueryString::render($this->getFilter()));
+        return Links::servicesDetails()->setFilter($this->getFilter());
     }
 
     protected function getFeatureStatus()

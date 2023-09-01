@@ -48,7 +48,7 @@ class HostSummaryDonut extends Card
             ->addSlice($this->summary->hosts_down_unhandled, ['class' => 'slice-state-critical'])
             ->addSlice($this->summary->hosts_pending, ['class' => 'slice-state-pending'])
             ->setLabelBig($this->summary->hosts_down_unhandled)
-            ->setLabelBigUrl(Links::hosts()->setQueryString(QueryString::render($labelBigUrlFilter))->addParams([
+            ->setLabelBigUrl(Links::hosts()->setFilter($labelBigUrlFilter)->addParams([
                 'sort' => 'host.state.last_state_change'
             ]))
             ->setLabelBigEyeCatching($this->summary->hosts_down_unhandled > 0)

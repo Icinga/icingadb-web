@@ -15,7 +15,6 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class DowntimesController extends Controller
@@ -167,7 +166,7 @@ class DowntimesController extends Controller
 
         $this->addControl(new ShowMore(
             $rs,
-            Links::downtimes()->setQueryString(QueryString::render($this->getFilter())),
+            Links::downtimes()->setFilter($this->getFilter()),
             sprintf(t('Show all %d downtimes'), $downtimes->count())
         ));
 
@@ -176,7 +175,7 @@ class DowntimesController extends Controller
                 ->setObjects($downtimes)
                 ->setAction(
                     Links::downtimesDelete()
-                        ->setQueryString(QueryString::render($this->getFilter()))
+                        ->setFilter($this->getFilter())
                         ->getAbsoluteUrl()
                 )
         );

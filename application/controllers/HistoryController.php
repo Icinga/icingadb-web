@@ -13,7 +13,6 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -95,8 +94,9 @@ class HistoryController extends Controller
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $url = Url::fromRequest()->onlyWith($preserveParams);
-        $url->setQueryString(QueryString::render($filter) . '&' . $url->getParams()->toString());
+        $url = Url::fromRequest()
+            ->onlyWith($preserveParams)
+            ->setFilter($filter);
 
         $historyList = (new HistoryList($history->execute()))
             ->setPageSize($limitControl->getLimit())

@@ -10,7 +10,6 @@ use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
 use ipl\Html\ValidHtml;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\HtmlString;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Widget\Link;
 
 class ServiceStatistics extends ObjectStatistics
@@ -41,7 +40,7 @@ class ServiceStatistics extends ObjectStatistics
     {
         $url = Links::services();
         if ($this->hasBaseFilter()) {
-            $url->setQueryString(QueryString::render($this->getBaseFilter()));
+            $url->setFilter($this->getBaseFilter());
         }
 
         return new Link(

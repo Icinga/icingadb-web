@@ -24,7 +24,6 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class HostsController extends Controller
@@ -172,7 +171,7 @@ class HostsController extends Controller
         );
         $this->addControl(new ShowMore(
             $results,
-            Links::hosts()->setQueryString(QueryString::render($this->getFilter())),
+            Links::hosts()->setFilter($this->getFilter()),
             sprintf(t('Show all %d hosts'), $hosts->count())
         ));
         $this->addControl(
@@ -229,7 +228,7 @@ class HostsController extends Controller
 
     protected function getCommandTargetsUrl(): Url
     {
-        return Links::hostsDetails()->setQueryString(QueryString::render($this->getFilter()));
+        return Links::hostsDetails()->setFilter($this->getFilter());
     }
 
     protected function getFeatureStatus()
