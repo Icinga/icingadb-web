@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
@@ -14,6 +15,38 @@ use ipl\Web\Widget\Icon;
 
 /**
  * Base class for the {@link HostState} and {@link ServiceState} models providing common columns.
+ *
+ * @property string $environment_id The environment id
+ * @property string $state_type The state type (hard or soft)
+ * @property int $soft_state The current soft state code (0 = OK, 1 = WARNING, 2 = CRITICAL, 3 = UNKNOWN)
+ * @property int $hard_state The current hard state code (0 = OK, 1 = WARNING, 2 = CRITICAL, 3 = UNKNOWN)
+ * @property int $previous_soft_state The previous soft state code (0 = OK, 1 = WARNING, 2 = CRITICAL, 3 = UNKNOWN)
+ * @property int $previous_hard_state The previous hard state code (0 = OK, 1 = WARNING, 2 = CRITICAL, 3 = UNKNOWN)
+ * @property int $check_attempt The check attempt count
+ * @property int $severity The calculated severity
+ * @property ?string $output The check output
+ * @property ?string $long_output The long check output
+ * @property ?string $performance_data The performance data
+ * @property ?string $normalized_performance_data The normalized performance data (converted ms to s, GiB to byte etc.)
+ * @property ?string $check_commandline The executed check command
+ * @property bool $is_problem Whether in non-OK state
+ * @property bool $is_handled Whether the state is handled
+ * @property bool $is_reachable Whether the node is reachable
+ * @property bool $is_flapping Whether the state is flapping
+ * @property bool $is_overdue Whether the check is overdue
+ * @property bool|string $is_acknowledged Whether the state is acknowledged (bool), can also be `sticky` (string)
+ * @property ?string $acknowledgement_comment_id The id of acknowledgement comment
+ * @property ?string $last_comment_id The id of last comment
+ * @property bool $in_downtime Whether the node is in downtime
+ * @property ?int $execution_time The check execution time
+ * @property ?int $latency The check latency
+ * @property ?int $check_timeout The check timeout
+ * @property ?string $check_source The name of the node that executes the check
+ * @property ?string $scheduling_source The name of the node that schedules the check
+ * @property ?DateTime $last_update The time when the node was last updated
+ * @property ?DateTime $last_state_change The time when the node last got a status change
+ * @property ?DateTime $next_check The time when the node will execute the next check
+ * @property ?DateTime $next_update The time when the next check of the node is expected to end
  */
 abstract class State extends Model
 {

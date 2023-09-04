@@ -4126,11 +4126,6 @@ parameters:
 			path: library/Icingadb/Model/HostState.php
 
 		-
-			message: "#^Parameter \\#1 \\$state of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\HostStates\\:\\:text\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Model/HostState.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroup\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Hostgroup.php
@@ -4718,11 +4713,6 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceState\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: library/Icingadb/Model/ServiceState.php
-
-		-
-			message: "#^Parameter \\#1 \\$state of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\ServiceStates\\:\\:text\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 2
 			path: library/Icingadb/Model/ServiceState.php
 
 		-
@@ -9171,12 +9161,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 3
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Cannot cast mixed to int\\.$#"
+			message: "#^Cannot call method getTimestamp\\(\\) on DateTime\\|null\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 
