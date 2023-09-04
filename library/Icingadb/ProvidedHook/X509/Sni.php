@@ -22,6 +22,8 @@ class Sni extends SniHook
      */
     public function getHosts(Filter $filter = null): Generator
     {
+        $this->getDb()->ping();
+
         $queryHost = Host::on($this->getDb());
 
         $queryHost->getSelectBase();
