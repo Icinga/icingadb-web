@@ -38,6 +38,13 @@ class ThresholdRange
     protected $raw;
 
     /**
+     * Whether the threshold range is valid
+     *
+     * @var bool
+     */
+    protected $isValid = true;
+
+    /**
      * Create a new instance based on a threshold range conforming to <https://nagios-plugins.org/doc/guidelines.html>
      *
      * @param   string  $rawRange
@@ -61,6 +68,12 @@ class ThresholdRange
 
         if (strpos($rawRange, ':') === false) {
             $min = 0.0;
+            $max = trim($rawRange);
+            if (! is_numeric($max)) {
+                $range->isValid = false;
+                return $range;
+            }
+
             $max = floatval(trim($rawRange));
         } else {
             list($min, $max) = explode(':', $rawRange, 2);
@@ -75,7 +88,17 @@ class ThresholdRange
                     $min = null;
                     break;
                 default:
+                    if (! is_numeric($min)) {
+                        $range->isValid = false;
+                        return $range;
+                    }
+
                     $min = floatval($min);
+            }
+
+            if (! empty($max) && ! is_numeric($max)) {
+                $range->isValid = false;
+                return $range;
             }
 
             $max = empty($max) ? null : floatval($max);
@@ -166,6 +189,16 @@ class ThresholdRange
         return (bool) ($this->inverted ^ (
             ($this->min === null || $this->min <= $value) && ($this->max === null || $this->max >= $value)
         ));
+    }
+
+    /**
+     * Return whether the threshold range is valid
+     *
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->isValid;
     }
 
     /**

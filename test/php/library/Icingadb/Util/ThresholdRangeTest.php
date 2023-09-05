@@ -319,5 +319,25 @@ class ThresholdRangeTest extends TestCase
             'foo',
             (string) ThresholdRange::fromString('foo')
         );
+        $this->assertSame(
+            '4,4:2,2',
+            (string) ThresholdRange::fromString('4,4:2,2')
+        );
+    }
+
+    public function testInvalidThresholdNotationsConsideredInValid()
+    {
+        $this->assertFalse(
+            ThresholdRange::fromString('10@')->isValid(),
+            'Invalid threshold notation 10@ considered as valid'
+        );
+        $this->assertFalse(
+            ThresholdRange::fromString('foo')->isValid(),
+            'Invalid threshold notation foo considered as valid'
+        );
+        $this->assertFalse(
+            ThresholdRange::fromString('4,4:2,2')->isValid(),
+            'Invalid threshold notation 4,4:2,2 considered as valid'
+        );
     }
 }

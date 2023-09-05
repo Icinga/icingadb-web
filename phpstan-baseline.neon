@@ -5841,46 +5841,6 @@ parameters:
 			path: library/Icingadb/Util/PerfData.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$maxValue \\(float\\) does not accept string\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$maxValue \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$minValue \\(float\\) does not accept string\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$minValue \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 2
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$value \\(float\\) does not accept null\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$value \\(float\\) does not accept string\\.$#"
-			count: 2
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfData\\:\\:\\$value \\(float\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfData.php
-
-		-
-			message: "#^Result of && is always true\\.$#"
-			count: 2
-			path: library/Icingadb/Util/PerfData.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfDataFormat\\:\\:ampereSeconds\\(\\) has parameter \\$value with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PerfDataFormat.php
@@ -5902,11 +5862,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfDataFormat\\:\\:formatForUnits\\(\\) has parameter \\$units with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfDataFormat.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PerfDataFormat\\:\\:formatForUnits\\(\\) has parameter \\$value with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PerfDataFormat.php
 

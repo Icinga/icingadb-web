@@ -39,21 +39,21 @@ class PerfData
     /**
      * The value
      *
-     * @var float
+     * @var ?float
      */
     protected $value;
 
     /**
      * The minimum value
      *
-     * @var float
+     * @var ?float
      */
     protected $minValue;
 
     /**
      * The maximum value
      *
-     * @var float
+     * @var ?float
      */
     protected $maxValue;
 
@@ -70,6 +70,27 @@ class PerfData
      * @var ThresholdRange
      */
     protected $criticalThreshold;
+
+    /**
+     * The raw value
+     *
+     * @var ?string
+     */
+    protected $rawValue;
+
+    /**
+     * The raw minimum value
+     *
+     * @var ?string
+     */
+    protected $rawMinValue;
+
+    /**
+     * The raw maximum value
+     *
+     * @var ?string
+     */
+    protected $rawMaxValue;
 
     /**
      * Create a new PerfData object based on the given performance data label and value
@@ -312,7 +333,7 @@ class PerfData
      */
     public function isVisualizable(): bool
     {
-        return isset($this->minValue) && isset($this->maxValue) && isset($this->value);
+        return isset($this->minValue, $this->maxValue, $this->value) && $this->isValid();
     }
 
     /**
@@ -428,25 +449,39 @@ class PerfData
         $matches = array();
         if (preg_match('@^(U|-?(?:\d+)?(?:\.\d+)?)([a-zA-TV-Z%°]{1,3})$@u', $parts[0], $matches)) {
             $this->unit = $matches[2];
-            $this->value = $matches[1];
+            $value = $matches[1];
         } else {
-            $this->value = $parts[0];
+            $value = $parts[0];
         }
 
-        if (! is_numeric($this->value)) {
+        if (! is_numeric($value)) {
+            if ($value !== 'U') {
+                $this->rawValue = $parts[0];
+            }
+
             $this->value = null;
+        } else {
+            $this->value = floatval($value);
         }
 
         switch (count($parts)) {
             /* @noinspection PhpMissingBreakStatementInspection */
             case 5:
                 if ($parts[4] !== '') {
-                    $this->maxValue = $parts[4];
+                    if (is_numeric($parts[4])) {
+                        $this->maxValue = floatval($parts[4]);
+                    } else {
+                        $this->rawMaxValue = $parts[4];
+                    }
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 4:
                 if ($parts[3] !== '') {
-                    $this->minValue = $parts[3];
+                    if (is_numeric($parts[3])) {
+                        $this->minValue = floatval($parts[3]);
+                    } else {
+                        $this->rawMinValue = $parts[3];
+                    }
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 3:
@@ -509,6 +544,10 @@ class PerfData
         }
 
         if ($value instanceof ThresholdRange) {
+            if (! $value->isValid()) {
+                return (string) $value;
+            }
+
             if ($value->getMin()) {
                 return (string) $value;
             }
@@ -578,18 +617,22 @@ class PerfData
 
     public function toArray(): array
     {
-        return array(
+        return [
             'label' => $this->getLabel(),
-            'value' => $this->format($this->getValue()),
-            'min' => isset($this->minValue) && !$this->isPercentage()
-                ? $this->format($this->minValue)
-                : '',
-            'max' => isset($this->maxValue) && !$this->isPercentage()
-                ? $this->format($this->maxValue)
-                : '',
-            'warn' => $this->format($this->warningThreshold),
-            'crit' => $this->format($this->criticalThreshold)
-        );
+            'value' => isset($this->value) ? $this->format($this->value) : $this->rawValue,
+            'min'   => (string) (
+                ! $this->isPercentage()
+                ? (isset($this->minValue) ? $this->format($this->minValue) : $this->rawMinValue)
+                : null
+            ),
+            'max'   => (string) (
+                ! $this->isPercentage()
+                ? (isset($this->maxValue) ? $this->format($this->maxValue) : $this->rawMaxValue)
+                : null
+            ),
+            'warn'  => $this->format($this->warningThreshold),
+            'crit'  => $this->format($this->criticalThreshold)
+        ];
     }
 
     /**
@@ -642,5 +685,19 @@ class PerfData
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the performance data can be evaluated
+     *
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        return ! isset($this->rawValue)
+            && ! isset($this->rawMinValue)
+            && ! isset($this->rawMaxValue)
+            && $this->criticalThreshold->isValid()
+            && $this->warningThreshold->isValid();
     }
 }

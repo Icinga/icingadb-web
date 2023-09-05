@@ -93,7 +93,7 @@ class PerfdataSetTest extends TestCase
             'PerfdataSet does not correctly parse invalid quoted labels'
         );
         $this->assertSame(
-            '2',
+            2.0,
             $pset->perfdata[1]->getValue()
         );
     }
