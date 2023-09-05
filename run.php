@@ -2,7 +2,24 @@
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
+use Icinga\Module\Icingadb\Web\Controller\RegexRouter;
+
 /** @var $this \Icinga\Application\Modules\Module */
+
+$this->addRoute('api-v1-hosts', new RegexRouter(
+    'icingadb/api/v1/hosts/(?<action>.+)',
+    [
+        'controller' => 'api-v1-hosts',
+        'module' => 'icingadb'
+    ]
+));
+$this->addRoute('api-v1-services', new RegexRouter(
+    'icingadb/api/v1/services/(?<action>.+)',
+    [
+        'controller' => 'api-v1-services',
+        'module' => 'icingadb'
+    ]
+));
 
 $this->provideHook('ApplicationState');
 $this->provideHook('X509/Sni');
