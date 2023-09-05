@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Data;
 
 use Icinga\Application\Icinga;
+use Icinga\Application\Web;
 use ipl\Orm\Query;
 use ipl\Stdlib\Contract\Paginatable;
 use ipl\Stdlib\Filter;
@@ -209,9 +210,10 @@ class PivotTable
      */
     protected function getPaginationParameter(string $axis, string $param, int $default = null): int
     {
-        $request = Icinga::app()->getRequest();
+        /** @var Web $app */
+        $app = Icinga::app();
 
-        $value = $request->getParam($param, '');
+        $value = $app->getRequest()->getParam($param, '');
         if (strpos($value, ',') > 0) {
             $parts = explode(',', $value, 2);
             return intval($parts[$axis === 'x' ? 0 : 1]);

@@ -40,11 +40,9 @@ abstract class ObjectActionsHook
     {
         switch (true) {
             case $object instanceof Host:
-                /** @var HostActionsHook $hook */
                 $hookName = 'Icingadb\\HostActions';
                 break;
             case $object instanceof Service:
-                /** @var ServiceActionsHook $hook */
                 $hookName = 'Icingadb\\ServiceActions';
                 break;
             default:
@@ -54,6 +52,8 @@ abstract class ObjectActionsHook
         }
 
         $list = new HtmlElement('ul', Attributes::create(['class' => 'object-detail-actions']));
+
+        /** @var HostActionsHook|ServiceActionsHook $hook */
         foreach (Hook::all($hookName) as $hook) {
             try {
                 foreach ($hook->getActionsForObject($object) as $link) {

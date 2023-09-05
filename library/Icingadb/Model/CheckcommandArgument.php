@@ -70,6 +70,6 @@ class CheckcommandArgument extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('checkcommand', CheckCommand::class);
+        $relations->belongsTo('checkcommand', Checkcommand::class);
     }
 }

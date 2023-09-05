@@ -70,6 +70,9 @@ abstract class SlaReport extends ReportHook
         $filter = trim((string) $config['filter']) ?: '*';
         $filter = $filter !== '*' ? QueryString::parse($filter) : null;
 
+        $interval = null;
+        $boundary = null;
+        $format = null;
         if (isset($config['breakdown']) && $config['breakdown'] !== 'none') {
             switch ($config['breakdown']) {
                 case 'hour':

@@ -183,7 +183,7 @@ class IcingaRedis
      *
      * @param Redis|null $redis
      *
-     * @return ?float|int
+     * @return float|int|null
      */
     public static function getLastIcingaHeartbeat(Redis $redis = null)
     {
@@ -241,7 +241,7 @@ class IcingaRedis
             'port'      => $section->get('port', 6380),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
-        ] + static::getTlsParams($moduleConfig));
+        ] + self::getTlsParams($moduleConfig));
 
         $redis->ping();
 
@@ -278,7 +278,7 @@ class IcingaRedis
             'port'      => $section->get('port', 6380),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
-        ] + static::getTlsParams($moduleConfig));
+        ] + self::getTlsParams($moduleConfig));
 
         $redis->ping();
 

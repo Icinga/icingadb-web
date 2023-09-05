@@ -114,6 +114,8 @@ class UrlMigrator
         if ($filter instanceof Filter\Condition) {
             $column = $filter->getColumn();
 
+            $modelPath = null;
+            $exprRule = null;
             if (isset($legacyColumns[$column])) {
                 if ($legacyColumns[$column] === self::DROP) {
                     return false;
@@ -286,10 +288,6 @@ class UrlMigrator
                             $columns[] = $c->getColumn();
                         }
                     }
-                }
-
-                if (empty($columns)) {
-                    return false;
                 }
 
                 return Filter::equal('columns', implode(',', $columns));
@@ -517,10 +515,6 @@ class UrlMigrator
                             $columns[] = $c->getColumn();
                         }
                     }
-                }
-
-                if (empty($columns)) {
-                    return false;
                 }
 
                 return Filter::equal('columns', implode(',', $columns));

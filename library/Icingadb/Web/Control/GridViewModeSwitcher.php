@@ -20,6 +20,8 @@ class GridViewModeSwitcher extends ViewModeSwitcher
 
     protected function getTitle(string $viewMode): string
     {
+        $active = null;
+        $inactive = null;
         switch ($viewMode) {
             case 'list':
                 $active = t('List view active');

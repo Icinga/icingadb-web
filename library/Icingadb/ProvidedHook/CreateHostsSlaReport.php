@@ -23,7 +23,7 @@ class CreateHostsSlaReport extends HostsDetailExtensionHook
             $filter = QueryString::render($this->getBaseFilter());
 
             return (new HtmlDocument())
-                ->addHTML(Html::tag('h2', $this->translate('Reporting')))
+                ->addHtml(Html::tag('h2', $this->translate('Reporting')))
                 ->addHtml(new Link(
                     $this->translate('Create Host SLA Report'),
                     Url::fromPath('reporting/reports/new')->addParams(['filter' => $filter, 'report' => 'host']),

@@ -43,7 +43,7 @@ class CheckcommandCustomvar extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('checkcommand', CheckCommand::class);
+        $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('customvar', Customvar::class);
         $relations->belongsTo('customvar_flat', CustomvarFlat::class)
             ->setCandidateKey('customvar_id')

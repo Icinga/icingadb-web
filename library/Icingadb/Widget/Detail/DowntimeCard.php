@@ -23,6 +23,10 @@ class DowntimeCard extends BaseHtmlElement
 
     protected $tag = 'div';
 
+    protected $start;
+
+    protected $end;
+
     public function __construct(Downtime $downtime)
     {
         $this->downtime = $downtime;

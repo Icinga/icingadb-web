@@ -67,21 +67,13 @@ class HostState extends State
             ->setJoinType('LEFT');
     }
 
-    /**
-     * Get the host state as the textual representation
-     *
-     * @return string
-     */
+
     public function getStateText(): string
     {
         return HostStates::text($this->soft_state);
     }
 
-    /**
-     * Get the host state as the translated textual representation
-     *
-     * @return string
-     */
+
     public function getStateTextTranslated(): string
     {
         return HostStates::text($this->soft_state);

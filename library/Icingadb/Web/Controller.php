@@ -11,6 +11,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Version;
+use Icinga\Application\Web;
 use Icinga\Data\ConfigObject;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
@@ -428,7 +429,7 @@ class Controller extends CompatController
         $time = DateFormatter::formatDateTime(time());
 
         $doc = (new PrintableHtmlDocument())
-            ->setTitle($this->view->title)
+            ->setTitle($this->view->title ?? '')
             ->setHeader(Html::wantHtml([
                 Html::tag('span', ['class' => 'title']),
                 Html::tag('time', null, $time)
@@ -535,7 +536,9 @@ class Controller extends CompatController
 
     protected function moduleInit()
     {
-        Icinga::app()->getFrontController()
+        /** @var Web $app */
+        $app = Icinga::app();
+        $app->getFrontController()
             ->getPlugin('Zend_Controller_Plugin_ErrorHandler')
             ->setErrorHandlerModule('icingadb');
     }

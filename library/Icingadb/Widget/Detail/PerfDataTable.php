@@ -15,9 +15,6 @@ use ipl\Html\Text;
 
 class PerfDataTable extends Table
 {
-    /** @var bool Whether the table contains a sparkline column */
-    protected $containsSparkline = false;
-
     protected $defaultAttributes = [
         'class' => 'performance-data-table collapsible',
         'data-visible-rows' => 6
@@ -36,8 +33,8 @@ class PerfDataTable extends Table
      * Display the given perfdata string to the user
      *
      * @param   string  $perfdataStr    The perfdata string
-     * @param   int       $limit              Max labels to show; 0 for no limit
-     * @param   string  $color             The color indicating the perfdata state
+     * @param   int     $limit          Max labels to show; 0 for no limit
+     * @param   string  $color          The color indicating the perfdata state
      */
     public function __construct(string $perfdataStr, int $limit = 0, string $color = PerfData::PERFDATA_OK)
     {
@@ -49,85 +46,68 @@ class PerfDataTable extends Table
     public function assemble()
     {
         $pieChartData = PerfDataSet::fromString($this->perfdataStr)->asArray();
-        $keys = ['', 'label', 'value', 'min', 'max', 'warn', 'crit'];
-        $columns = [];
-        $labels = array_combine(
-            $keys,
-            [
-                '',
-                t('Label'),
-                t('Value'),
-                t('Min'),
-                t('Max'),
-                t('Warning'),
-                t('Critical')
-            ]
-        );
+        $keys = [
+            ''      => '',
+            'label' => t('Label'),
+            'value' => t('Value'),
+            'min'   => t('Min'),
+            'max'   => t('Max'),
+            'warn'  => t('Warning'),
+            'crit'  => t('Critical')
+        ];
+
+        $containsSparkline = false;
         foreach ($pieChartData as $perfdata) {
             if ($perfdata->isVisualizable()) {
-                $columns[''] = '';
-                $this->containsSparkline = true;
-            }
-
-            foreach ($perfdata->toArray() as $column => $value) {
-                if (
-                    empty($value) ||
-                    $column === 'min' && floatval($value) === 0.0 ||
-                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100
-                ) {
-                    continue;
-                }
-
-                $columns[$column] = $labels[$column];
+                $containsSparkline = true;
+                break;
             }
         }
 
         $headerRow = new HtmlElement('tr');
         foreach ($keys as $key => $col) {
-            if ((! $this->containsSparkline) && $col == '') {
-                unset($keys[$key]);
+            if (! $containsSparkline && $key === '') {
                 continue;
             }
-            if (isset($col)) {
-                $headerRow->addHtml(new HtmlElement('th', Attributes::create([
-                    'class' => ($col == 'label' ? 'title' : null)
-                ]), Text::create($labels[$col])));
-            }
+
+            $headerRow->addHtml(new HtmlElement('th', Attributes::create([
+                'class' => $key === 'label' ? 'title' : null
+            ]), Text::create($col)));
         }
 
         $this->getHeader()->addHtml($headerRow);
 
-        foreach ($pieChartData as $count => $perfdata) {
-            if ($this->limit != 0 && $count > $this->limit) {
+        $count = 0;
+        foreach ($pieChartData as $perfdata) {
+            if ($this->limit > 0 && $count === $this->limit) {
                 break;
-            } else {
-                $cols = [];
-                if ($this->containsSparkline) {
-                    if ($perfdata->isVisualizable()) {
-                        $cols[] = Table::td(
-                            HtmlString::create($perfdata->asInlinePie($this->color)->render()),
-                            [ 'class' => 'sparkline-col']
-                        );
-                    } else {
-                        $cols[] = Table::td('');
-                    }
-                }
-
-                foreach ($perfdata->toArray() as $column => $value) {
-                    $cols[] = Table::td(
-                        new HtmlElement(
-                            'span',
-                            Attributes::create([
-                                'class' => ($value ? '' : 'no-value')
-                            ]),
-                            $value ? Text::create($value) : new EmptyState(t('None', 'value'))
-                        ),
-                        [ 'class' => ($column === 'label' ? 'title' : null) ]
-                    );
-                }
-
-                $this->addHtml(Table::tr([$cols]));
             }
+
+            $count++;
+            $cols = [];
+            if ($containsSparkline) {
+                if ($perfdata->isVisualizable()) {
+                    $cols[] = Table::td(
+                        HtmlString::create($perfdata->asInlinePie($this->color)->render()),
+                        ['class' => 'sparkline-col']
+                    );
+                } else {
+                    $cols[] = Table::td('');
+                }
+            }
+
+            foreach ($perfdata->toArray() as $column => $value) {
+                $cols[] = Table::td(
+                    new HtmlElement(
+                        'span',
+                        Attributes::create(['class' => $value ? null : 'no-value']),
+                        $value ? Text::create($value) : new EmptyState(t('None', 'value'))
+                    ),
+                    ['class' => $column === 'label' ? 'title' : null]
+                );
+            }
+
+            $this->addHtml(Table::tr($cols));
         }
     }
 }

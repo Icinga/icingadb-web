@@ -1,0 +1,28 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+    level: max
+
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    treatPhpDocTypesAsCertain: false
+
+    paths:
+        - application
+        - library
+
+    scanDirectories:
+        - vendor
+
+    ignoreErrors:
+        -
+            messages:
+                - '#Unsafe usage of new static\(\)#'
+                - '#. but return statement is missing#'
+            reportUnmatched: false
+
+    universalObjectCratesClasses:
+        - ipl\Orm\Model
+        - Icinga\Web\View
+        - Icinga\Data\ConfigObject

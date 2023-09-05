@@ -132,7 +132,7 @@ trait CompatObject
             return $this;
         }
 
-        $this->customvars = (new CustomvarFlat())->unflattenVars($this->object->customvar_flat);
+        $this->customvars = (new CustomvarFlat())->unFlattenVars($this->object->customvar_flat);
 
         return $this;
     }

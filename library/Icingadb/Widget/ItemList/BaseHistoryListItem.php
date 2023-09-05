@@ -352,7 +352,7 @@ abstract class BaseHistoryListItem extends BaseListItem
 
                 break;
             case 'state_change':
-                $state = $this->item->state === 'hard'
+                $state = $this->item->state->state_type === 'hard'
                     ? $this->item->state->hard_state
                     : $this->item->state->soft_state;
                 if ($state === 0) {

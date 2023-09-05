@@ -10,6 +10,7 @@ use Icinga\Application\Hook;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Web;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
@@ -483,8 +484,10 @@ class ObjectDetail extends BaseHtmlElement
             }
 
             try {
+                /** @var Web $app */
+                $app = Icinga::app();
                 $renderedExtension = $extension
-                    ->setView(Icinga::app()->getViewRenderer()->view)
+                    ->setView($app->getViewRenderer()->view)
                     ->getHtmlForObject($this->compatObject());
 
                 $extensionHtml = new HtmlElement(
@@ -547,6 +550,7 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
+        $userQuery = null;
         if ($this->isPermittedRoute('users')) {
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
