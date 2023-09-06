@@ -387,7 +387,7 @@ class ObjectSuggestions extends Suggestions
             /** @var Relation $relation */
             if (
                 empty($path) || (
-                    $name === 'state'
+                    ($name === 'state' && $path[count($path) - 1] !== 'last_comment')
                     || $name === 'last_comment'
                     || $name === 'notificationcommand' && $path[0] === 'notification'
                 )

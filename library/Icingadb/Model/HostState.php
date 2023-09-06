@@ -61,7 +61,7 @@ class HostState extends State
     {
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class);
-        $relations->hasOne('last_comment', Comment::class)
+        $relations->hasOne('last_comment', LastHostComment::class)
             ->setCandidateKey('last_comment_id')
             ->setForeignKey('id')
             ->setJoinType('LEFT');

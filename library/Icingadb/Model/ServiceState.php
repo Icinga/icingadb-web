@@ -58,7 +58,7 @@ class ServiceState extends State
     {
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('service', Service::class);
-        $relations->hasOne('last_comment', Comment::class)
+        $relations->hasOne('last_comment', LastServiceComment::class)
             ->setCandidateKey('last_comment_id')
             ->setForeignKey('id')
             ->setJoinType('LEFT');
