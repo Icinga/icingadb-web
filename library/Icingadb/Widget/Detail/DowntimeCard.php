@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use Icinga\Module\Icingadb\Model\Downtime;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Web\Compat\StyleWithNonce;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeUntil;
 use ipl\Web\Widget\VerticalKeyValue;
@@ -43,6 +44,9 @@ class DowntimeCard extends BaseHtmlElement
 
     protected function assemble()
     {
+        $styleElement = (new StyleWithNonce())
+            ->setModule('icingadb');
+
         $timeline = Html::tag('div', ['class' => 'downtime-timeline timeline']);
         $hPadding = 10;
 
@@ -87,18 +91,12 @@ class DowntimeCard extends BaseHtmlElement
                 $evade = true;
             }
 
-            $markerFlexStart = new HtmlElement('div', Attributes::create([
-                'class' => ['highlighted', 'marker'],
-                'style' => sprintf('left: %F%%', $flexStartLeft)
-            ]));
+            $markerFlexStart = new HtmlElement('div', Attributes::create(['class' => ['highlighted', 'marker']]));
+            $markerFlexEnd = new HtmlElement('div', Attributes::create(['class' => ['highlighted', 'marker']]));
 
-            $markerFlexEnd = new HtmlElement('div', Attributes::create([
-                'class' => ['highlighted', 'marker'],
-                'style' => sprintf('left: %F%%', $flexEndLeft)
-            ]));
-
-            $markerStart->getAttributes()->remove('class', 'highlighted');
-            $markerEnd->getAttributes()->remove('class', 'highlighted');
+            $styleElement
+                ->addFor($markerFlexStart, ['left' => sprintf('%F%%', $flexStartLeft)])
+                ->addFor($markerFlexEnd, ['left' => sprintf('%F%%', $flexEndLeft)]);
 
             $scheduledEndBubble = new HtmlElement(
                 'li',
@@ -114,19 +112,26 @@ class DowntimeCard extends BaseHtmlElement
                 'class' => ['progress', 'downtime-elapsed'],
                 'data-animate-progress' => true,
                 'data-start-time' => ((float) $this->downtime->start_time->format('U.u')),
-                'data-end-time' => ((float) $this->downtime->end_time->format('U.u')),
-                'style' => sprintf('left: %F%%; width: %F%%;', $flexStartLeft, $flexEndLeft - $flexStartLeft)
+                'data-end-time' => ((float) $this->downtime->end_time->format('U.u'))
             ]), new HtmlElement(
                 'div',
                 Attributes::create(['class' => 'bar']),
                 new HtmlElement('div', Attributes::create(['class' => 'now']))
             ));
 
+            $styleElement->addFor($timelineProgress, [
+                'left'  => sprintf('%F%%', $flexStartLeft),
+                'width' => sprintf('%F%%', $flexEndLeft - $flexStartLeft)
+            ]);
+
             if (time() > $this->end) {
-                $markerEnd->getAttributes()
-                    ->set('style', sprintf('left: %F%%', $hPadding + $this->calcRelativeLeft($this->end)));
-                $scheduledEndBubble->getAttributes()
-                    ->set('style', sprintf('left: %F%%', $hPadding + $this->calcRelativeLeft($this->end)));
+                $styleElement
+                    ->addFor($markerEnd, [
+                        'left' => sprintf('%F%%', $hPadding + $this->calcRelativeLeft($this->end))
+                    ])
+                    ->addFor($scheduledEndBubble, [
+                        'left' => sprintf('%F%%', $hPadding + $this->calcRelativeLeft($this->end))
+                    ]);
             } else {
                 $scheduledEndBubble->getAttributes()
                     ->add('class', 'right');
@@ -145,32 +150,23 @@ class DowntimeCard extends BaseHtmlElement
                 $scheduledEndBubble
             ]);
 
-            $above->add([
-                Html::tag(
-                    'li',
-                    [
-                        'class' => 'positioned',
-                        'style' => sprintf('left: %F%%', $flexStartLeft)
-                    ],
-                    Html::tag(
-                        'div',
-                        ['class' => ['bubble', ($evade ? 'left-aligned' : null)]],
-                        new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->start_time->getTimestamp()))
-                    )
-                ),
-                Html::tag(
-                    'li',
-                    [
-                        'class' => 'positioned',
-                        'style' => sprintf('left: %F%%', $flexEndLeft)
-                    ],
-                    Html::tag(
-                        'div',
-                        ['class' => ['bubble', ($evade ? 'right-aligned' : null)]],
-                        new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->end_time->getTimestamp()))
-                    )
-                )
-            ]);
+            $aboveStart = Html::tag('li', ['class' => 'positioned'], Html::tag(
+                'div',
+                ['class' => ['bubble', ($evade ? 'left-aligned' : null)]],
+                new VerticalKeyValue(t('Start'), new TimeAgo($this->downtime->start_time->getTimestamp()))
+            ));
+
+            $aboveEnd = Html::tag('li', ['class' => 'positioned'], Html::tag(
+                'div',
+                ['class' => ['bubble', ($evade ? 'right-aligned' : null)]],
+                new VerticalKeyValue(t('End'), new TimeUntil($this->downtime->end_time->getTimestamp()))
+            ));
+
+            $styleElement
+                ->addFor($aboveStart, ['left' => sprintf('%F%%', $flexStartLeft)])
+                ->addFor($aboveEnd, ['left' => sprintf('%F%%', $flexEndLeft)]);
+
+            $above->add([$aboveStart, $aboveEnd, $styleElement]);
         } elseif ($this->downtime->is_flexible) {
             $this->addAttributes(['class' => 'flexible']);
 

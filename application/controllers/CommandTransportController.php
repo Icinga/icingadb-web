@@ -102,7 +102,6 @@ class CommandTransportController extends ConfigController
         $transportName = $this->params->getRequired('name');
 
         $form = new ConfirmRemovalForm();
-        $form->setAttrib('style', 'text-align:center;');
         $form->setOnSuccess(function () use ($transportName) {
             (new CommandTransportConfig())->delete(
                 'transport',
