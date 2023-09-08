@@ -113,16 +113,16 @@ abstract class StateListItem extends BaseListItem
 
     protected function createTimestamp(): ?BaseHtmlElement
     {
+        $since = null;
         if ($this->state->is_overdue) {
             $since = new TimeSince($this->state->next_update->getTimestamp());
             $since->prepend(t('Overdue') . ' ');
             $since->prependHtml(new Icon(Icons::WARNING));
-            return $since;
         } elseif ($this->state->last_state_change !== null && $this->state->last_state_change->getTimestamp() > 0) {
-            return new TimeSince($this->state->last_state_change->getTimestamp());
+            $since = new TimeSince($this->state->last_state_change->getTimestamp());
         }
 
-        return null;
+        return $since;
     }
 
     protected function assemble(): void
