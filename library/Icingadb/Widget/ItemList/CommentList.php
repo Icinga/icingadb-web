@@ -5,12 +5,13 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
-use Icinga\Module\Icingadb\Common\BaseItemList;
+use ipl\Web\Common\BaseItemList;
 use ipl\Web\Url;
 
 class CommentList extends BaseItemList
@@ -20,6 +21,7 @@ class CommentList extends BaseItemList
     use ObjectLinkDisabled;
     use ViewMode;
     use TicketLinks;
+    use DetailActions;
 
     protected $defaultAttributes = ['class' => 'comment-list'];
 
@@ -31,13 +33,16 @@ class CommentList extends BaseItemList
 
         if ($viewMode === 'minimal') {
             return CommentListItemMinimal::class;
+        } elseif ($viewMode === 'detailed') {
+            $this->removeAttribute('class', 'default-layout');
         }
 
         return CommentListItem::class;
     }
 
-    protected function init()
+    protected function init(): void
     {
+        $this->initializeDetailActions();
         $this->setMultiselectUrl(Links::commentsDetails());
         $this->setDetailUrl(Url::fromPath('icingadb/comment'));
     }

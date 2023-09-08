@@ -6,13 +6,13 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Util\PerfData;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Table;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 
 class PerfDataTable extends Table

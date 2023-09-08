@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Util\Format;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -15,6 +14,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Web\Common\Card;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;

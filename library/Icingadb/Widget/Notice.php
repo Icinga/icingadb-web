@@ -17,12 +17,17 @@ class Notice extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'notice'];
 
+    /**
+     * Create a html notice
+     *
+     * @param mixed $content
+     */
     public function __construct($content)
     {
         $this->content = $content;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->addHtml(new Icon('triangle-exclamation'));
         $this->addHtml((new HtmlElement('span'))->add($this->content));

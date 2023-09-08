@@ -9,14 +9,14 @@ use ipl\Html\HtmlDocument;
 
 trait TableRowLayout
 {
-    protected function assembleColumns(HtmlDocument $columns)
+    protected function assembleColumns(HtmlDocument $columns): void
     {
         foreach ($this->createStatistics() as $objectStatistic) {
             $columns->addHtml($objectStatistic);
         }
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(
             $this->createSubject(),

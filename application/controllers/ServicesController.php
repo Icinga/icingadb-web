@@ -20,8 +20,8 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemTable\ServiceItemTable;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
@@ -132,7 +132,9 @@ class ServicesController extends Controller
                     ))
             );
         } else {
-            $this->addFooter((new ServiceStatusBar($summary->first()))->setBaseFilter($filter));
+            /** @var ServicestateSummary $servicesSummary */
+            $servicesSummary = $summary->first();
+            $this->addFooter((new ServiceStatusBar($servicesSummary))->setBaseFilter($filter));
         }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {

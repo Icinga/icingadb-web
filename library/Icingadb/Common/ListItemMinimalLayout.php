@@ -10,7 +10,7 @@ trait ListItemMinimalLayout
 {
     use CaptionDisabled;
 
-    protected function assembleHeader(BaseHtmlElement $header)
+    protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->add($this->createTitle());
         if (! $this->isCaptionDisabled()) {
@@ -19,7 +19,7 @@ trait ListItemMinimalLayout
         $header->add($this->createTimestamp());
     }
 
-    protected function assembleMain(BaseHtmlElement $main)
+    protected function assembleMain(BaseHtmlElement $main): void
     {
         $main->add($this->createHeader());
     }

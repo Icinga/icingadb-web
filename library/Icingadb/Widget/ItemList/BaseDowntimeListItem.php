@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
@@ -22,6 +21,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\TemplateString;
 use ipl\Html\Text;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseListItem;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
@@ -54,7 +54,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
     /** @var int Downtime start time */
     protected $startTime;
 
-    protected function init()
+    protected function init(): void
     {
         if ($this->item->is_flexible && $this->item->is_in_effect) {
             $this->startTime = $this->item->start_time->getTimestamp();
@@ -102,7 +102,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         );
     }
 
-    protected function assembleCaption(BaseHtmlElement $caption)
+    protected function assembleCaption(BaseHtmlElement $caption): void
     {
         $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->comment));
         $caption->getAttributes()->add($markdownLine->getAttributes());
@@ -117,7 +117,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         )->addFrom($markdownLine);
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         if ($this->getObjectLinkDisabled()) {
             $link = null;
@@ -164,7 +164,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         $dateTime = DateFormatter::formatDateTime($this->endTime);
 
@@ -191,7 +191,7 @@ abstract class BaseDowntimeListItem extends BaseListItem
         }
     }
 
-    protected function createTimestamp()
+    protected function createTimestamp(): ?BaseHtmlElement
     {
         $dateTime = DateFormatter::formatDateTime($this->isActive ? $this->endTime : $this->startTime);
 

@@ -4,14 +4,18 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\BaseOrderedItemList;
+use Icinga\Module\Icingadb\Common\DetailActions;
+use ipl\Web\Common\BaseOrderedItemList;
 use ipl\Web\Url;
 
 class CommandTransportList extends BaseOrderedItemList
 {
-    protected function init()
+    use DetailActions;
+
+    protected function init(): void
     {
         $this->getAttributes()->add('class', 'command-transport-list');
+        $this->initializeDetailActions();
         $this->setDetailUrl(Url::fromPath('icingadb/command-transport/show'));
     }
 

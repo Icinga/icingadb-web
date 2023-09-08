@@ -17,12 +17,12 @@ trait GridCellLayout
      */
     abstract public function createGroupBadge(): Link;
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         $visual->add($this->createGroupBadge());
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(
             $this->createSubject(),
@@ -30,7 +30,7 @@ trait GridCellLayout
         );
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->add([
             $this->createTitle()

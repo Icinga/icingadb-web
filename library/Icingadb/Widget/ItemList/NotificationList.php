@@ -5,11 +5,12 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
-use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Orm\ResultSet;
+use ipl\Web\Common\BaseItemList;
 use ipl\Web\Url;
 
 class NotificationList extends BaseItemList
@@ -18,20 +19,16 @@ class NotificationList extends BaseItemList
     use NoSubjectLink;
     use ViewMode;
     use LoadMore;
+    use DetailActions;
 
     protected $defaultAttributes = ['class' => 'notification-list'];
 
-    /** @var ResultSet */
-    protected $data;
-
-    public function __construct(ResultSet $data)
+    protected function init(): void
     {
-        parent::__construct($data);
-    }
-
-    protected function init()
-    {
-        $this->data = $this->getIterator($this->data);
+        /** @var ResultSet $data */
+        $data = $this->data;
+        $this->data = $this->getIterator($data);
+        $this->initializeDetailActions();
         $this->setDetailUrl(Url::fromPath('icingadb/event'));
     }
 
@@ -41,13 +38,15 @@ class NotificationList extends BaseItemList
             case 'minimal':
                 return NotificationListItemMinimal::class;
             case 'detailed':
+                $this->removeAttribute('class', 'default-layout');
+
                 return NotificationListItemDetailed::class;
             default:
                 return NotificationListItem::class;
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->addAttributes(['class' => $this->getViewMode()]);
 

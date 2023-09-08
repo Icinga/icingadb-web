@@ -44,7 +44,7 @@ abstract class BaseServiceListItem extends StateListItem
         return [Html::sprintf(t('%s on %s', '<service> on <host>'), $service, $host)];
     }
 
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 

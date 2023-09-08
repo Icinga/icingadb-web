@@ -4,19 +4,48 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\BaseItemList;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Widget\Notice;
 use ipl\Html\HtmlDocument;
+use ipl\Web\Common\BaseItemList;
 
 abstract class StateList extends BaseItemList
 {
     use ViewMode;
     use NoSubjectLink;
+    use DetailActions;
 
-    protected function assemble()
+    /** @var bool Whether the list contains at least one item with an icon_image */
+    protected $hasIconImages = false;
+
+    /**
+     * Get whether the list contains at least one item with an icon_image
+     *
+     * @return bool
+     */
+    public function hasIconImages(): bool
+    {
+        return $this->hasIconImages;
+    }
+
+    /**
+     * Set whether the list contains at least one item with an icon_image
+     *
+     * @param bool $hasIconImages
+     *
+     * @return $this
+     */
+    public function setHasIconImages(bool $hasIconImages): self
+    {
+        $this->hasIconImages = $hasIconImages;
+
+        return $this;
+    }
+
+    protected function assemble(): void
     {
         $this->addAttributes(['class' => $this->getViewMode()]);
 

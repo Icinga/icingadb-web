@@ -4,14 +4,15 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\BaseListItem;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Module\Icingadb\Widget\IconImage;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
+use ipl\Html\HtmlElement;
+use ipl\Web\Common\BaseListItem;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -24,10 +25,13 @@ use ipl\Web\Widget\StateBall;
  */
 abstract class StateListItem extends BaseListItem
 {
+    /** @var StateList The list where the item is part of */
+    protected $list;
+
     /** @var State The state of the item */
     protected $state;
 
-    protected function init()
+    protected function init(): void
     {
         $this->state = $this->item->state;
 
@@ -40,7 +44,25 @@ abstract class StateListItem extends BaseListItem
 
     abstract protected function getStateBallSize(): string;
 
-    protected function assembleCaption(BaseHtmlElement $caption)
+    /**
+     * @return ?BaseHtmlElement
+     */
+    protected function createIconImage(): ?BaseHtmlElement
+    {
+        if (! $this->list->hasIconImages()) {
+            return null;
+        }
+
+        $iconImage = HtmlElement::create('div', [
+            'class' => 'icon-image',
+        ]);
+
+        $this->assembleIconImage($iconImage);
+
+        return $iconImage;
+    }
+
+    protected function assembleCaption(BaseHtmlElement $caption): void
     {
         if ($this->state->soft_state === null && $this->state->output === null) {
             $caption->addHtml(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
@@ -55,7 +77,7 @@ abstract class StateListItem extends BaseListItem
         }
     }
 
-    protected function assembleIconImage(BaseHtmlElement $iconImage)
+    protected function assembleIconImage(BaseHtmlElement $iconImage): void
     {
         if (isset($this->item->icon_image->icon_image)) {
             $iconImage->addHtml(new IconImage($this->item->icon_image->icon_image, $this->item->icon_image_alt));
@@ -64,7 +86,7 @@ abstract class StateListItem extends BaseListItem
         }
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(Html::sprintf(
             t('%s is %s', '<hostname> is <state-text>'),
@@ -73,7 +95,7 @@ abstract class StateListItem extends BaseListItem
         ));
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
         $stateBall->add($this->state->getIcon());
@@ -89,24 +111,30 @@ abstract class StateListItem extends BaseListItem
         }
     }
 
-    protected function createTimestamp()
+    protected function createTimestamp(): ?BaseHtmlElement
     {
+        $since = null;
         if ($this->state->is_overdue) {
             $since = new TimeSince($this->state->next_update->getTimestamp());
             $since->prepend(t('Overdue') . ' ');
             $since->prependHtml(new Icon(Icons::WARNING));
-            return $since;
         } elseif ($this->state->last_state_change !== null && $this->state->last_state_change->getTimestamp() > 0) {
-            return new TimeSince($this->state->last_state_change->getTimestamp());
+            $since = new TimeSince($this->state->last_state_change->getTimestamp());
         }
+
+        return $since;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         if ($this->state->is_overdue) {
             $this->addAttributes(['class' => 'overdue']);
         }
 
-        parent::assemble();
+        $this->add([
+            $this->createVisual(),
+            $this->createIconImage(),
+            $this->createMain()
+        ]);
     }
 }

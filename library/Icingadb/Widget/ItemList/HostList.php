@@ -20,6 +20,8 @@ class HostList extends StateList
             case 'minimal':
                 return HostListItemMinimal::class;
             case 'detailed':
+                $this->removeAttribute('class', 'default-layout');
+
                 return HostListItemDetailed::class;
             case 'objectHeader':
                 return HostDetailHeader::class;
@@ -28,8 +30,9 @@ class HostList extends StateList
         }
     }
 
-    protected function init()
+    protected function init(): void
     {
+        $this->initializeDetailActions();
         $this->setMultiselectUrl(Links::hostsDetails());
         $this->setDetailUrl(Url::fromPath('icingadb/host'));
     }

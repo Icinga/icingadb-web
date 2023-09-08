@@ -4,18 +4,18 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\NoSubjectLink;
+use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use ipl\Html\Html;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
-use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Model\Comment;
-use Icinga\Module\Icingadb\Common\BaseListItem;
 use ipl\Html\FormattedString;
+use ipl\Web\Common\BaseListItem;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -40,7 +40,7 @@ abstract class BaseCommentListItem extends BaseListItem
     use ObjectLinkDisabled;
     use TicketLinks;
 
-    protected function assembleCaption(BaseHtmlElement $caption)
+    protected function assembleCaption(BaseHtmlElement $caption): void
     {
         $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->text));
 
@@ -48,7 +48,7 @@ abstract class BaseCommentListItem extends BaseListItem
         $caption->addFrom($markdownLine);
     }
 
-    protected function assembleTitle(BaseHtmlElement $title)
+    protected function assembleTitle(BaseHtmlElement $title): void
     {
         $isAck = $this->item->entry_type === 'ack';
         $expires = $this->item->expire_time;
@@ -96,7 +96,7 @@ abstract class BaseCommentListItem extends BaseListItem
         $title->addHtml(...$headerParts);
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual)
+    protected function assembleVisual(BaseHtmlElement $visual): void
     {
         $visual->addHtml(new HtmlElement(
             'div',
@@ -105,7 +105,7 @@ abstract class BaseCommentListItem extends BaseListItem
         ));
     }
 
-    protected function createTimestamp()
+    protected function createTimestamp(): ?BaseHtmlElement
     {
         if ($this->item->expire_time) {
             return Html::tag(
@@ -120,7 +120,7 @@ abstract class BaseCommentListItem extends BaseListItem
         );
     }
 
-    protected function init()
+    protected function init(): void
     {
         $this->setTicketLinkEnabled($this->list->getTicketLinkEnabled());
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));

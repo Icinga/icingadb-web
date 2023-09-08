@@ -8,13 +8,13 @@ use ipl\Html\BaseHtmlElement;
 
 trait ListItemDetailedLayout
 {
-    protected function assembleHeader(BaseHtmlElement $header)
+    protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->add($this->createTitle());
         $header->add($this->createTimestamp());
     }
 
-    protected function assembleMain(BaseHtmlElement $main)
+    protected function assembleMain(BaseHtmlElement $main): void
     {
         $main->add($this->createHeader());
         $main->add($this->createCaption());

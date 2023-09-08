@@ -1,22 +1,5 @@
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
-.line-clamp(@numOfLines: 2) when (@numOfLines > 1) {
-  display: -webkit-box;
-  -webkit-line-clamp: @numOfLines;
-  -webkit-box-orient: vertical;
-}
-.line-clamp(@numOfLines: 2) when (@numOfLines = "reset") {
-  display: block; // Would have used "revert", but browser support is still poor and it's not final yet
-  -webkit-line-clamp: initial;
-  -webkit-box-orient: initial;
-}
-
-.text-ellipsis() {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .monospace() {
   font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
 }

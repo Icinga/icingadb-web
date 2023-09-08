@@ -10,7 +10,7 @@ class DowntimeListItemMinimal extends BaseDowntimeListItem
 {
     use ListItemMinimalLayout;
 
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 

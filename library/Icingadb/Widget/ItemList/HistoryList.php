@@ -5,12 +5,13 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\CaptionDisabled;
+use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
-use Icinga\Module\Icingadb\Common\BaseItemList;
 use ipl\Orm\ResultSet;
+use ipl\Web\Common\BaseItemList;
 use ipl\Web\Url;
 
 class HistoryList extends BaseItemList
@@ -20,20 +21,16 @@ class HistoryList extends BaseItemList
     use ViewMode;
     use LoadMore;
     use TicketLinks;
+    use DetailActions;
 
     protected $defaultAttributes = ['class' => 'history-list'];
 
-    /** @var ResultSet */
-    protected $data;
-
-    public function __construct(ResultSet $data)
+    protected function init(): void
     {
-        parent::__construct($data);
-    }
-
-    protected function init()
-    {
-        $this->data = $this->getIterator($this->data);
+        /** @var ResultSet $data */
+        $data = $this->data;
+        $this->data = $this->getIterator($data);
+        $this->initializeDetailActions();
         $this->setDetailUrl(Url::fromPath('icingadb/event'));
     }
 
@@ -43,13 +40,15 @@ class HistoryList extends BaseItemList
             case 'minimal':
                 return HistoryListItemMinimal::class;
             case 'detailed':
+                $this->removeAttribute('class', 'default-layout');
+
                 return HistoryListItemDetailed::class;
             default:
                 return HistoryListItem::class;
         }
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->addAttributes(['class' => $this->getViewMode()]);
 

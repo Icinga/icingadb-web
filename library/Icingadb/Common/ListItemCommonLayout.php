@@ -10,17 +10,17 @@ trait ListItemCommonLayout
 {
     use CaptionDisabled;
 
-    protected function assembleHeader(BaseHtmlElement $header)
+    protected function assembleHeader(BaseHtmlElement $header): void
     {
-        $header->add($this->createTitle());
+        $header->addHtml($this->createTitle());
         $header->add($this->createTimestamp());
     }
 
-    protected function assembleMain(BaseHtmlElement $main)
+    protected function assembleMain(BaseHtmlElement $main): void
     {
-        $main->add($this->createHeader());
-        if (! $this->isCaptionDisabled()) {
-            $main->add($this->createCaption());
+        $main->addHtml($this->createHeader());
+        if (!$this->isCaptionDisabled()) {
+            $main->addHtml($this->createCaption());
         }
     }
 }

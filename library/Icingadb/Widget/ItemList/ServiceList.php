@@ -17,6 +17,8 @@ class ServiceList extends StateList
             case 'minimal':
                 return ServiceListItemMinimal::class;
             case 'detailed':
+                $this->removeAttribute('class', 'default-layout');
+
                 return ServiceListItemDetailed::class;
             case 'objectHeader':
                 return ServiceDetailHeader::class;
@@ -25,8 +27,9 @@ class ServiceList extends StateList
         }
     }
 
-    protected function init()
+    protected function init(): void
     {
+        $this->initializeDetailActions();
         $this->setMultiselectUrl(Links::servicesDetails());
         $this->setDetailUrl(Url::fromPath('icingadb/service'));
     }
