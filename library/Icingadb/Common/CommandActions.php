@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\AcknowledgeProblemForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\AddCommentForm;
@@ -17,6 +16,7 @@ use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleServiceDowntimeForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\SendCustomNotificationForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Security\SecurityException;
+use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Web\Url;
@@ -138,11 +138,35 @@ trait CommandActions
      */
     protected function handleCommandForm($form)
     {
+        $isXhr = $this->getRequest()->isXmlHttpRequest();
+        if ($isXhr && $this->getRequest()->isApiRequest()) {
+            // Prevents the framework already, this is just a fail-safe
+            $this->httpBadRequest('Responding with JSON during a Web request is not supported');
+        }
+
         if (is_string($form)) {
-            /** @var \Icinga\Module\Icingadb\Forms\Command\CommandForm $form */
+            /** @var CommandForm $form */
             $form = new $form();
         }
 
+        $form->setObjects($this->getCommandTargets());
+
+        if ($isXhr) {
+            $this->handleWebRequest($form);
+        } else {
+            $this->handleApiRequest($form);
+        }
+    }
+
+    /**
+     * Handle a Web request for the given form
+     *
+     * @param CommandForm $form
+     *
+     * @return void
+     */
+    protected function handleWebRequest(CommandForm $form): void
+    {
         $actionUrl = $this->getRequest()->getUrl();
         if ($this->view->compact) {
             $actionUrl = clone $actionUrl;
@@ -153,7 +177,6 @@ trait CommandActions
         }
 
         $form->setAction($actionUrl->getAbsoluteUrl());
-        $form->setObjects($this->getCommandTargets());
         $form->on($form::ON_SUCCESS, function () {
             // This forces the column to reload nearly instantly after the redirect
             // and ensures the effect of the command is visible to the user asap
@@ -162,9 +185,39 @@ trait CommandActions
             $this->redirectNow($this->getCommandTargetsUrl());
         });
 
-        $form->handleRequest(ServerRequest::fromGlobals());
+        $form->handleRequest($this->getServerRequest());
 
         $this->addContent($form);
+    }
+
+    /**
+     * Handle an API request for the given form
+     *
+     * @param CommandForm $form
+     *
+     * @return never
+     */
+    protected function handleApiRequest(CommandForm $form)
+    {
+        $form->setIsApiTarget();
+        $form->on($form::ON_SUCCESS, function () {
+            $this->getResponse()
+                ->json()
+                ->setSuccessData(Notification::getInstance()->popMessages())
+                ->sendResponse();
+        });
+
+        $form->handleRequest($this->getServerRequest());
+
+        $errors = [];
+        foreach ($form->getElements() as $element) {
+            $errors[$element->getName()] = $element->getMessages();
+        }
+
+        $response = $this->getResponse()->json();
+        $response->setHttpResponseCode(422);
+        $response->setFailData($errors)
+            ->sendResponse();
     }
 
     public function acknowledgeAction()

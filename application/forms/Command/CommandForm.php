@@ -28,6 +28,9 @@ abstract class CommandForm extends Form
     /** @var mixed */
     protected $objects;
 
+    /** @var bool */
+    protected $isApiTarget = false;
+
     /**
      * Whether an error occurred while sending the command
      *
@@ -62,6 +65,30 @@ abstract class CommandForm extends Form
     }
 
     /**
+     * Set whether this form is an API target
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setIsApiTarget(bool $state = true): self
+    {
+        $this->isApiTarget = $state;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this form is an API target
+     *
+     * @return bool
+     */
+    public function isApiTarget(): bool
+    {
+        return $this->isApiTarget;
+    }
+
+    /**
      * Create and add form elements representing the command's options
      *
      * @return void
@@ -87,8 +114,11 @@ abstract class CommandForm extends Form
     protected function assemble()
     {
         $this->assembleElements();
-        $this->assembleSubmitButton();
-        $this->addElement($this->createCsrfCounterMeasure(Session::getSession()->getId()));
+
+        if (! $this->isApiTarget()) {
+            $this->assembleSubmitButton();
+            $this->addElement($this->createCsrfCounterMeasure(Session::getSession()->getId()));
+        }
     }
 
     protected function onSuccess()
