@@ -58,7 +58,7 @@ class ShowMore extends BaseHtmlElement
     protected function assemble(): void
     {
         if ($this->resultSet->hasMore()) {
-            $this->add(new ActionLink($this->getLabel(), $this->url));
+            $this->addHtml(new ActionLink($this->getLabel(), $this->url));
         }
     }
 }
