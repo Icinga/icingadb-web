@@ -18,10 +18,13 @@ class ShowMore extends BaseHtmlElement
 
     protected $tag = 'div';
 
+    /** @var ResultSet */
     protected $resultSet;
 
+    /** @var Url */
     protected $url;
 
+    /** @var ?string */
     protected $label;
 
     public function __construct(ResultSet $resultSet, Url $url, string $label = null)

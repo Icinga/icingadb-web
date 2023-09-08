@@ -4,14 +4,18 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Orm\Model;
 use ipl\Stdlib\BaseFilter;
 
 abstract class BaseStatusBar extends BaseHtmlElement
 {
     use BaseFilter;
 
+    /** @var ServicestateSummary|HoststateSummary */
     protected $summary;
 
     protected $tag = 'div';

@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 trait CaptionDisabled
 {
+    /** @var bool */
     protected $captionDisabled = false;
 
     /**
