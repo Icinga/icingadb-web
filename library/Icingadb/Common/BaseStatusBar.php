@@ -22,6 +22,11 @@ abstract class BaseStatusBar extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'status-bar'];
 
+    /**
+     * Create a host or service status bar
+     *
+     * @param ServicestateSummary|HoststateSummary $summary
+     */
     public function __construct($summary)
     {
         $this->summary = $summary;

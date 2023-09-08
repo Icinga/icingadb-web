@@ -17,6 +17,11 @@ class Notice extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'notice'];
 
+    /**
+     * Create a html notice
+     *
+     * @param mixed $content
+     */
     public function __construct($content)
     {
         $this->content = $content;
