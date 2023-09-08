@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Setup;
 
+use Icinga\Application\Icinga;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
-use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
 use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
 use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Setup;
@@ -50,19 +50,16 @@ class IcingaDbWizard extends Wizard implements SetupWizard
     {
         $set = new RequirementSet();
 
-        $set->add(new PhpVersionRequirement([
-            'condition'     => ['>=', '7.2'],
-            'description'   => sprintf(t('Icinga DB Web requires PHP version %s.'), '7.2')
-        ]));
+        $requiredVersions = Icinga::app()->getModuleManager()->getModule('icingadb')->getRequiredLibraries();
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-library', '>=', '0.9.0'],
+            'condition'     => ['icinga-php-library', '', $requiredVersions['icinga-php-library']],
             'alias'         => 'Icinga PHP library',
             'description'   => t('The Icinga PHP library (IPL) is required for Icinga DB Web')
         ]));
 
         $set->add(new WebLibraryRequirement([
-            'condition'     => ['icinga-php-thirdparty', '>=', '0.11.0'],
+            'condition'     => ['icinga-php-thirdparty', '',  $requiredVersions['icinga-php-thirdparty']],
             'alias'         => 'Icinga PHP Thirdparty',
             'description'   => t('The Icinga PHP Thirdparty library is required for Icinga DB Web')
         ]));
@@ -71,6 +68,12 @@ class IcingaDbWizard extends Wizard implements SetupWizard
             'condition'     => 'libxml',
             'alias'         => 'libxml',
             'description'   => t('For check plugins that output HTML the libxml extension is required')
+        ]));
+
+        $set->add(new PhpModuleRequirement([
+            'condition'     => 'dom',
+            'alias'         => 'dom',
+            'description'   => t('For check plugins that output HTML the dom extension is required')
         ]));
 
         $set->add(new PhpModuleRequirement([

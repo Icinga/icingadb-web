@@ -144,6 +144,7 @@ class RedisConfigForm extends ConfigForm
             'description'    => t('Redis Password'),
             'label'          => t('Redis Password'),
             'renderPassword' => true,
+            'autocomplete'   => 'new-password'
         ]);
 
         $this->addDisplayGroup(
@@ -182,6 +183,7 @@ class RedisConfigForm extends ConfigForm
             'description'    => t('Redis Password'),
             'label'          => t('Redis Password'),
             'renderPassword' => true,
+            'autocomplete'   => 'new-password'
         ]);
 
         $this->addDisplayGroup(
