@@ -22,7 +22,7 @@ class Notice extends BaseHtmlElement
         $this->content = $content;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->addHtml(new Icon('triangle-exclamation'));
         $this->addHtml((new HtmlElement('span'))->add($this->content));

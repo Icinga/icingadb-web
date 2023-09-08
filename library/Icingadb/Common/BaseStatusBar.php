@@ -27,7 +27,7 @@ abstract class BaseStatusBar extends BaseHtmlElement
         $this->summary = $summary;
     }
 
-    abstract protected function assembleTotal(BaseHtmlElement $total);
+    abstract protected function assembleTotal(BaseHtmlElement $total): void;
 
     abstract protected function createStateBadges(): BaseHtmlElement;
 
@@ -40,7 +40,7 @@ abstract class BaseStatusBar extends BaseHtmlElement
         return $total;
     }
 
-    protected function assemble()
+    protected function assemble(): void
     {
         $this->add([
             $this->createCount(),
