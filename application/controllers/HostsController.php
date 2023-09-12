@@ -168,6 +168,7 @@ class HostsController extends Controller
         $this->addControl(
             (new HostList($results))
                 ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
         );
         $this->addControl(new ShowMore(
             $results,
