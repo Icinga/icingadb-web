@@ -22,17 +22,14 @@ class Sni extends SniHook
      */
     public function getHosts(Filter $filter = null): Generator
     {
-        $queryHost = Host::on($this->getDb());
+        $this->getDb()->ping();
 
-        $queryHost->getSelectBase();
-
-        $hostStatusCols = [
-            'host_name'      => 'name',
-            'host_address'   => 'address',
-            'host_address6'  => 'address6'
-        ];
-
-        $queryHost = $queryHost->columns($hostStatusCols);
+        $queryHost = Host::on($this->getDb())
+            ->columns([
+                'host_name'     => 'name',
+                'host_address'  => 'address',
+                'host_address6' => 'address6'
+            ]);
 
         $this->applyRestrictions($queryHost);
 
