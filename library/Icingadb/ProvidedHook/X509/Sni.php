@@ -24,17 +24,12 @@ class Sni extends SniHook
     {
         $this->getDb()->ping();
 
-        $queryHost = Host::on($this->getDb());
-
-        $queryHost->getSelectBase();
-
-        $hostStatusCols = [
-            'host_name'      => 'name',
-            'host_address'   => 'address',
-            'host_address6'  => 'address6'
-        ];
-
-        $queryHost = $queryHost->columns($hostStatusCols);
+        $queryHost = Host::on($this->getDb())
+            ->columns([
+                'host_name'     => 'name',
+                'host_address'  => 'address',
+                'host_address6' => 'address6'
+            ]);
 
         $this->applyRestrictions($queryHost);
 
