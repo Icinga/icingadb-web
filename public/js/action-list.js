@@ -719,7 +719,7 @@
             }
 
             if (isTopLevelContainer) {
-                let footerList = list ?? container.querySelector('.action-list');
+                let footerList = list ?? container.querySelector('.content > .action-list');
                 if (footerList) {
                     _this.addSelectionCountToFooter(footerList);
                 }
