@@ -9,7 +9,7 @@ if (! $this->compact): ?>
 <div class="content" data-base-target="_next" id="<?= $this->protectId('content') ?>">
     <?php if (empty($pivotData)): ?>
     <div class="item-list">
-        <div class="empty-state"><?= $this->translate('No services found matching the filter.') ?></div>
+        <div class="empty-state-bar"><?= $this->translate('No services found matching the filter.') ?></div>
     </div>
 </div>
 <?php return; endif;

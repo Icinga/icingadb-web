@@ -13,7 +13,7 @@ use ipl\Html\HtmlString;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
 
 /** @todo Figure out what this might (should) have in common with the new BaseItemTable implementation */
@@ -187,7 +187,7 @@ abstract class StateItemTable extends BaseHtmlElement
                 new HtmlElement(
                     'td',
                     Attributes::create(['colspan' => count($this->columns)]),
-                    new EmptyState(t('No items found.'))
+                    new EmptyStateBar(t('No items found.'))
                 )
             ));
         }

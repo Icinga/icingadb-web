@@ -50,12 +50,6 @@
     }
   }
 
-  > .empty-state,
-  > tbody > tr:first-child .empty-state {
-    .rounded-corners();
-    background-color: @gray-lightest;
-  }
-
   .list-item:not(:last-child) > *:not(.visual),
   .row-item:not(:last-child) {
     border-bottom: 1px solid @gray-light;
@@ -148,11 +142,9 @@ table.state-item-table {
     padding: .5em 1em 0 0;
   }
 
-  > .empty-state,
-  > tbody > tr:first-child .empty-state {
+  > .empty-state-bar,
+  > tbody > tr:first-child .empty-state-bar {
     margin: 0 1em;
-    padding: 1em;
-    text-align: center;
   }
 }
 
