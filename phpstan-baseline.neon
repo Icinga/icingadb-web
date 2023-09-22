@@ -1916,7 +1916,7 @@ parameters:
 			path: library/Icingadb/Authentication/ObjectAuthorization.php
 
 		-
-			message: "#^Parameter \\#1 \\$column of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects string, array\\|string given\\.$#"
+			message: "#^Parameter \\#1 \\$column of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects string, array\\<string\\>\\|string given\\.$#"
 			count: 2
 			path: library/Icingadb/Authentication/ObjectAuthorization.php
 
@@ -3091,16 +3091,6 @@ parameters:
 			path: library/Icingadb/Model/AcknowledgementHistory.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\AcknowledgementHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/AcknowledgementHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\AcknowledgementHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/AcknowledgementHistory.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ActionUrl\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ActionUrl.php
@@ -3112,16 +3102,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ActionUrl\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ActionUrl.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ActionUrl\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ActionUrl.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ActionUrl\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ActionUrl.php
 
@@ -3296,16 +3276,6 @@ parameters:
 			path: library/Icingadb/Model/Checkcommand.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Checkcommand\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Checkcommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Checkcommand\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Checkcommand.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandArgument\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/CheckcommandArgument.php
@@ -3321,32 +3291,12 @@ parameters:
 			path: library/Icingadb/Model/CheckcommandArgument.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandArgument\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandArgument.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandArgument\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandArgument.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandCustomvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/CheckcommandCustomvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandCustomvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/CheckcommandCustomvar.php
 
@@ -3366,16 +3316,6 @@ parameters:
 			path: library/Icingadb/Model/CheckcommandEnvvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandEnvvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandEnvvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CheckcommandEnvvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CheckcommandEnvvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Comment\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Comment.php
@@ -3391,17 +3331,7 @@ parameters:
 			path: library/Icingadb/Model/Comment.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Comment\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Comment.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Comment\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Comment.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Comment\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Comment.php
 
@@ -3426,32 +3356,12 @@ parameters:
 			path: library/Icingadb/Model/CommentHistory.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CommentHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CommentHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CommentHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CommentHistory.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Customvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Customvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Customvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Customvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Customvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Customvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Customvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Customvar.php
 
@@ -3472,16 +3382,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CustomvarFlat\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CustomvarFlat.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CustomvarFlat\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CustomvarFlat.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CustomvarFlat\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/CustomvarFlat.php
 
@@ -3516,17 +3416,7 @@ parameters:
 			path: library/Icingadb/Model/Downtime.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Downtime\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Downtime.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Downtime\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Downtime.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Downtime\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Downtime.php
 
@@ -3551,16 +3441,6 @@ parameters:
 			path: library/Icingadb/Model/DowntimeHistory.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\DowntimeHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/DowntimeHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\DowntimeHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/DowntimeHistory.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Endpoint\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Endpoint.php
@@ -3572,16 +3452,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Endpoint\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Endpoint.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Endpoint\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Endpoint.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Endpoint\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Endpoint.php
 
@@ -3601,16 +3471,6 @@ parameters:
 			path: library/Icingadb/Model/Environment.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Environment\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Environment.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Environment\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Environment.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Eventcommand\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Eventcommand.php
@@ -3622,16 +3482,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Eventcommand\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Eventcommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Eventcommand\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Eventcommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Eventcommand\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Eventcommand.php
 
@@ -3651,32 +3501,12 @@ parameters:
 			path: library/Icingadb/Model/EventcommandArgument.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandArgument\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandArgument.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandArgument\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandArgument.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandCustomvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/EventcommandCustomvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandCustomvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/EventcommandCustomvar.php
 
@@ -3696,16 +3526,6 @@ parameters:
 			path: library/Icingadb/Model/EventcommandEnvvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandEnvvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandEnvvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\EventcommandEnvvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/EventcommandEnvvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\FlappingHistory\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/FlappingHistory.php
@@ -3717,16 +3537,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\FlappingHistory\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/FlappingHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\FlappingHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/FlappingHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\FlappingHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/FlappingHistory.php
 
@@ -3746,17 +3556,7 @@ parameters:
 			path: library/Icingadb/Model/History.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/History.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/History.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/History.php
 
@@ -3831,17 +3631,7 @@ parameters:
 			path: library/Icingadb/Model/Host.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Host.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Host.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Host.php
 
@@ -3901,27 +3691,12 @@ parameters:
 			path: library/Icingadb/Model/HostCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostState\\:\\:createRelations\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/HostState.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostState\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostState.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostState\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/HostState.php
 
@@ -3941,17 +3716,7 @@ parameters:
 			path: library/Icingadb/Model/Hostgroup.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroup\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Hostgroup.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroup\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Hostgroup.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroup\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Hostgroup.php
 
@@ -3971,32 +3736,12 @@ parameters:
 			path: library/Icingadb/Model/HostgroupCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostgroupCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostgroupCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupMember\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/HostgroupMember.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupMember\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostgroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupMember\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HostgroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HostgroupMember\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/HostgroupMember.php
 
@@ -4016,17 +3761,7 @@ parameters:
 			path: library/Icingadb/Model/Hostgroupsummary.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroupsummary\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Hostgroupsummary.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroupsummary\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Hostgroupsummary.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroupsummary\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Hostgroupsummary.php
 
@@ -4039,11 +3774,6 @@ parameters:
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroupsummary\\:\\:getUnions\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Hostgroupsummary.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HoststateSummary\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/HoststateSummary.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\HoststateSummary\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -4076,16 +3806,6 @@ parameters:
 			path: library/Icingadb/Model/IconImage.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\IconImage\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/IconImage.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\IconImage\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/IconImage.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Instance\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Instance.php
@@ -4096,17 +3816,7 @@ parameters:
 			path: library/Icingadb/Model/Instance.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Instance\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Instance.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Instance\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Instance.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Instance\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Instance.php
 
@@ -4126,16 +3836,6 @@ parameters:
 			path: library/Icingadb/Model/NotesUrl.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotesUrl\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotesUrl.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotesUrl\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotesUrl.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Notification\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Notification.php
@@ -4151,32 +3851,12 @@ parameters:
 			path: library/Icingadb/Model/Notification.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Notification\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Notification.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Notification\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Notification.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationCustomvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationCustomvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationCustomvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationCustomvar.php
 
@@ -4196,17 +3876,7 @@ parameters:
 			path: library/Icingadb/Model/NotificationHistory.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationHistory.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationHistory\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationHistory.php
 
@@ -4226,32 +3896,12 @@ parameters:
 			path: library/Icingadb/Model/NotificationUser.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUser\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationUser.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUser\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationUser.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUsergroup\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationUsergroup.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUsergroup\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationUsergroup.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUsergroup\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationUsergroup.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationUsergroup\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationUsergroup.php
 
@@ -4271,16 +3921,6 @@ parameters:
 			path: library/Icingadb/Model/Notificationcommand.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Notificationcommand\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Notificationcommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Notificationcommand\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Notificationcommand.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandArgument\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationcommandArgument.php
@@ -4296,32 +3936,12 @@ parameters:
 			path: library/Icingadb/Model/NotificationcommandArgument.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandArgument\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandArgument.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandArgument\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandArgument.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandCustomvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationcommandCustomvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandCustomvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationcommandCustomvar.php
 
@@ -4337,16 +3957,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandEnvvar\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandEnvvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandEnvvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/NotificationcommandEnvvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\NotificationcommandEnvvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/NotificationcommandEnvvar.php
 
@@ -4421,17 +4031,7 @@ parameters:
 			path: library/Icingadb/Model/Service.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Service.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Service.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Service.php
 
@@ -4491,27 +4091,12 @@ parameters:
 			path: library/Icingadb/Model/ServiceCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServiceCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServiceCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceState\\:\\:createRelations\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServiceState.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceState\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServiceState.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServiceState\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServiceState.php
 
@@ -4531,17 +4116,7 @@ parameters:
 			path: library/Icingadb/Model/Servicegroup.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Servicegroup\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Servicegroup.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Servicegroup\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Servicegroup.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Servicegroup\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Servicegroup.php
 
@@ -4561,32 +4136,12 @@ parameters:
 			path: library/Icingadb/Model/ServicegroupCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupMember\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServicegroupMember.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupMember\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupMember\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupMember\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServicegroupMember.php
 
@@ -4606,17 +4161,7 @@ parameters:
 			path: library/Icingadb/Model/ServicegroupSummary.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupSummary\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupSummary.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupSummary\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicegroupSummary.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupSummary\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServicegroupSummary.php
 
@@ -4629,11 +4174,6 @@ parameters:
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupSummary\\:\\:getUnions\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/ServicegroupSummary.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicestateSummary\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/ServicestateSummary.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicestateSummary\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -4661,11 +4201,6 @@ parameters:
 			path: library/Icingadb/Model/State.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\State\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/State.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\StateHistory\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/StateHistory.php
@@ -4677,16 +4212,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\StateHistory\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/StateHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\StateHistory\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/StateHistory.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\StateHistory\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/StateHistory.php
 
@@ -4706,32 +4231,12 @@ parameters:
 			path: library/Icingadb/Model/Timeperiod.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Timeperiod\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Timeperiod.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Timeperiod\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Timeperiod.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodCustomvar\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/TimeperiodCustomvar.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodCustomvar\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/TimeperiodCustomvar.php
 
@@ -4746,32 +4251,12 @@ parameters:
 			path: library/Icingadb/Model/TimeperiodOverrideExclude.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideExclude\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodOverrideExclude.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideExclude\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodOverrideExclude.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideInclude\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/TimeperiodOverrideInclude.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideInclude\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodOverrideInclude.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideInclude\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodOverrideInclude.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodOverrideInclude\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/TimeperiodOverrideInclude.php
 
@@ -4791,16 +4276,6 @@ parameters:
 			path: library/Icingadb/Model/TimeperiodRange.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodRange\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodRange.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\TimeperiodRange\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/TimeperiodRange.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\User\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/User.php
@@ -4816,17 +4291,7 @@ parameters:
 			path: library/Icingadb/Model/User.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\User\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/User.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\User\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/User.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\User\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/User.php
 
@@ -4846,16 +4311,6 @@ parameters:
 			path: library/Icingadb/Model/UserCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UserCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UserCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UserCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UserCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Usergroup\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Usergroup.php
@@ -4871,17 +4326,7 @@ parameters:
 			path: library/Icingadb/Model/Usergroup.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Usergroup\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Usergroup.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Usergroup\\:\\:getDefaultSort\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Usergroup.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Usergroup\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Usergroup.php
 
@@ -4901,32 +4346,12 @@ parameters:
 			path: library/Icingadb/Model/UsergroupCustomvar.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupCustomvar\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UsergroupCustomvar.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupCustomvar\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UsergroupCustomvar.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupMember\\:\\:createBehaviors\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Model/UsergroupMember.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupMember\\:\\:createRelations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UsergroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupMember\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/UsergroupMember.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\UsergroupMember\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/UsergroupMember.php
 
@@ -4947,16 +4372,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Zone\\:\\:getColumnDefinitions\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Zone.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Zone\\:\\:getColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Zone.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Zone\\:\\:getKeyName\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Zone.php
 
