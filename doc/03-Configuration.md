@@ -1,6 +1,10 @@
 # Configuration
 
-Icinga DB Web is configured via the web interface. Below you will find an overview of the necessary settings.
+If Icinga Web has been installed but not yet set up, please visit Icinga Web and follow the web-based setup wizard.
+For Icinga Web setups already running, log in to Icinga Web with a privileged user and follow the steps below to
+configure Icinga DB Web:
+
+If you have previously used the monitoring module, there is an option to [migrate](10-Migration.md) some settings.
 
 ## Database Configuration
 
