@@ -58,13 +58,15 @@
 
             let item = target.closest('[data-action-item]');
             let list = target.closest('.action-list');
+            const container = list.closest('#main > .container');
             let activeItems = _this.getActiveItems(list);
             let toActiveItems = [],
                 toDeactivateItems = [];
 
-            list.closest('#main > .container').dataset.suspendAutorefresh = '';
+            const isBeingMultiSelected = list.matches('[data-icinga-multiselect-url]')
+                && (event.ctrlKey || event.metaKey || event.shiftKey);
 
-            if (list.matches('[data-icinga-multiselect-url]') && (event.ctrlKey || event.metaKey || event.shiftKey)) {
+            if (isBeingMultiSelected) {
                 if (event.ctrlKey || event.metaKey) {
                     if (item.classList.contains('active')) {
                         toDeactivateItems.push(item);
@@ -112,6 +114,12 @@
                 lastActivatedUrl = activeItems[activeItems.length - 1] === item
                     ? activeItems[activeItems.length - 2].dataset.icingaDetailFilter
                     : activeItems[activeItems.length - 1].dataset.icingaDetailFilter;
+            }
+
+            if (isBeingMultiSelected && container.id === 'col1' && list.matches('.content > :scope')) {
+                // The restriction on col1 is currently only in place as it's not defined what should happen
+                // with primary lists in col2. (as a detail load then moves the list to col1)
+                container.dataset.suspendAutorefresh = '';
             }
 
             _this.clearSelection(toDeactivateItems);
@@ -224,8 +232,6 @@
 
             event.preventDefault();
 
-            list.closest('#main > .container').dataset.suspendAutorefresh = '';
-
             let allItems = _this.getAllItems(list);
             let firstListItem = allItems[0];
             let lastListItem = allItems[allItems.length -1];
@@ -293,6 +299,14 @@
 
             if (! toActiveItem) {
                 return;
+            }
+
+            const isBeingMultiSelected = isMultiSelectableList && (event.ctrlKey || event.metaKey || event.shiftKey);
+            const container = list.closest('#main > .container');
+            if (isBeingMultiSelected && container.id === 'col1' && list.matches('.content > :scope')) {
+                // The restriction on col1 is currently only in place as it's not defined what should happen
+                // with primary lists in col2. (as a detail load then moves the list to col1)
+                container.dataset.suspendAutorefresh = '';
             }
 
             _this.setActive(toActiveItem);
