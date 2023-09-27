@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
+use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
@@ -132,8 +133,10 @@ class ObjectDetail extends BaseHtmlElement
             $item->setObject($this->object);
         }
 
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
+        $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->action_url->first()->action_url ?? [] as $url) {
-            $url = $this->expandMacros($url, $this->object);
+            $url = $this->expandMacros($url, $obj);
             $navigation->addItem(
                 Html::wantHtml([
                     // Add warning to links that open in new tabs, as recommended by WCAG20 G201
@@ -320,8 +323,10 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
+        $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->notes_url->first()->notes_url ?? [] as $url) {
-            $url = $this->expandMacros($url, $this->object);
+            $url = $this->expandMacros($url, $obj);
             $navigation->addItem(
                 Html::wantHtml([
                     // Add warning to links that open in new tabs, as recommended by WCAG20 G201
