@@ -44,8 +44,12 @@ class IcingaRedis
     {
         $self = self::instance();
 
-        if ($self->redis === null) {
-            $self->getConnection();
+        if (! $self->redisUnavailable && $self->redis === null) {
+            try {
+                $self->getConnection();
+            } catch (Exception $_) {
+                // getConnection already logs the error
+            }
         }
 
         return $self->redisUnavailable;
