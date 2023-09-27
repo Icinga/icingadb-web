@@ -5,6 +5,8 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Application\Logger;
+use Icinga\Module\Icingadb\Compat\CompatHost;
+use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Model\Host;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -18,11 +20,11 @@ trait Macros
      * Get the given string with macros being resolved
      *
      * @param string $input  The string in which to look for macros
-     * @param Model  $object The host or service used to resolve the macros
+     * @param Model|CompatService|CompatHost $object The host or service used to resolve the macros
      *
      * @return string
      */
-    public function expandMacros(string $input, Model $object): string
+    public function expandMacros(string $input, $object): string
     {
         if (preg_match_all('@\$([^\$\s]+)\$@', $input, $matches)) {
             foreach ($matches[1] as $key => $value) {
@@ -40,11 +42,11 @@ trait Macros
      * Resolve a macro based on the given object
      *
      * @param string $macro  The macro to resolve
-     * @param Model  $object The host or service used to resolve the macros
+     * @param Model|CompatService|CompatHost  $object The host or service used to resolve the macros
      *
      * @return string
      */
-    public function resolveMacro(string $macro, Model $object): string
+    public function resolveMacro(string $macro, $object): string
     {
         if ($object instanceof Host) {
             $objectType = 'host';
