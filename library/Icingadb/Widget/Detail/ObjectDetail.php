@@ -567,7 +567,7 @@ class ObjectDetail extends BaseHtmlElement
             $usergroupQuery = Usergroup::on($this->getDb());
             $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);
-            if ($groupBy) {
+            if ($groupBy && $userQuery !== null) {
                 $userQuery->getSelectBase()->groupBy(['usergroup.id']);
             }
 
