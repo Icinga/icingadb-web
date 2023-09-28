@@ -6666,11 +6666,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/ObjectDetail.php
 
 		-
-			message: "#^Cannot call method getSelectBase\\(\\) on ipl\\\\Orm\\\\Query\\|null\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/ObjectDetail.php
-
-		-
 			message: "#^Cannot call method isUnrestricted\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 4
 			path: library/Icingadb/Widget/Detail/ObjectDetail.php
