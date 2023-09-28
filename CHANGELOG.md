@@ -3,6 +3,11 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.1.0 (2023-09-28)
+
+Included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/2?closed=1
+And a detailed description about the most important ones on our blog: https://icinga.com/blog/2023/09/28/releasing-icinga-db-web-v1-1/
+
 ## 1.0.2 (2022-11-04)
 
 You can find all issues related to this release on the respective [Milestone](https://github.com/Icinga/icingadb-web/milestone/4?closed=1).
