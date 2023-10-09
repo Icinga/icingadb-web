@@ -21,7 +21,7 @@
             this.on('close-column', '#main > #col2', this.onColumnClose, this);
             this.on('column-moved', this.onColumnMoved, this);
 
-            this.on('rendered', '#main > .container', this.onRendered, this);
+            this.on('rendered', '#main .container', this.onRendered, this);
             this.on('keydown', '#body', this.onKeyDown, this);
 
             this.on('click', '.load-more[data-no-icinga-ajax] a', this.onLoadMoreClick, this);
@@ -640,7 +640,7 @@
 
         onColumnClose(event) {
             let _this = event.data.self;
-            let list = _this.findDetailUrlActionList();
+            let list = _this.findDetailUrlActionList(document.getElementById('col1'));
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
                 _this.clearSelection(_this.getActiveItems(list));
                 _this.addSelectionCountToFooter(list);
@@ -650,29 +650,23 @@
         /**
          * Find the action list using the detail url
          *
+         * @param {Element} container
+         *
          * @return Element|null
          */
-        findDetailUrlActionList() {
+        findDetailUrlActionList(container) {
             let detailUrl = this.icinga.utils.parseUrl(
                 this.icinga.history.getCol2State().replace(/^#!/, '')
             );
 
-            let list = document.querySelector('#main > .container .action-list');
-
-            if (! list) {
-                return null;
-            }
-
-            let rootSelector = list.tagName.toLowerCase() === 'table' ? 'tbody tr' : 'li';
-
-            let detailItem = list.querySelector(
-                rootSelector + '[data-icinga-detail-filter="'
+            let detailItem = container.querySelector(
+                '[data-icinga-detail-filter="'
                 + detailUrl.query.replace('?', '') + '"],' +
-                rootSelector + '[data-icinga-multiselect-filter="'
+                '[data-icinga-multiselect-filter="'
                 + detailUrl.query.split('|', 1).toString().replace('?', '') + '"]'
             );
 
-            return detailItem ? detailItem.closest('.action-list') : null;
+            return detailItem ? detailItem.parentElement : null;
         }
 
         /**
@@ -694,14 +688,20 @@
             let container = event.target;
             let isTopLevelContainer = container.matches('#main > :scope');
 
+            let list;
             if (event.currentTarget !== container || _this.isProcessingRequest) {
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
-            } else if (isAutoRefresh && isTopLevelContainer && container.id !== 'col1') {
-                return;
-            }
+            } else if (isTopLevelContainer && container.id !== 'col1') {
+                if (isAutoRefresh) {
+                    return;
+                }
 
-            let list = _this.findDetailUrlActionList();
+                // only for browser back/forward navigation
+                list = _this.findDetailUrlActionList(document.getElementById('col1'));
+            } else {
+                list = _this.findDetailUrlActionList(container);
+            }
 
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
                 let detailUrl = _this.icinga.utils.parseUrl(
