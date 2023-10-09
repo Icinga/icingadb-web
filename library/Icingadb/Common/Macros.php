@@ -48,7 +48,7 @@ trait Macros
      */
     public function resolveMacro(string $macro, $object): string
     {
-        if ($object instanceof Host) {
+        if ($object instanceof Host || (property_exists($object, 'type') && $object->type === 'host')) {
             $objectType = 'host';
         } else {
             $objectType = 'service';
