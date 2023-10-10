@@ -107,6 +107,15 @@
                 return;
             }
 
+            let dashboard = list.closest('.dashboard');
+            if (dashboard) {
+                dashboard.querySelectorAll('.action-list').forEach(otherList => {
+                    if (otherList !== list) {
+                        toDeactivateItems.push(..._this.getAllItems(otherList));
+                    }
+                })
+            }
+
             let lastActivatedUrl = null;
             if (toActiveItems.includes(item)) {
                 lastActivatedUrl = item.dataset.icingaDetailFilter;
@@ -124,7 +133,11 @@
 
             _this.clearSelection(toDeactivateItems);
             _this.setActive(toActiveItems);
-            _this.addSelectionCountToFooter(list);
+
+            if (! dashboard) {
+                _this.addSelectionCountToFooter(list);
+            }
+
             _this.setLastActivatedItemUrl(lastActivatedUrl);
             _this.loadDetailUrl(list, target.matches('a') ? target.getAttribute('href') : null);
         }
