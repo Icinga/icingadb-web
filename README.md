@@ -1,8 +1,8 @@
 # Icinga DB Web
 
 [![PHP Support](https://img.shields.io/badge/php-%3E%3D%207.2-777BB4?logo=PHP)](https://php.net/)
-![Build Status](https://github.com/icinga/icingaweb2-module-icingadb/workflows/PHP%20Tests/badge.svg?branch=main)
-[![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2-module-icingadb.svg)](https://github.com/Icinga/icingaweb2-module-icingadb)
+![Build Status](https://github.com/Icinga/icingadb-web/actions/workflows/php.yml/badge.svg?branch=main)
+[![Github Tag](https://img.shields.io/github/tag/Icinga/icingadb-web.svg)](https://github.com/Icinga/icingadb-web/releases/latest)
 
 Icinga DB is a set of components for publishing, synchronizing and
 visualizing monitoring data in the Icinga ecosystem, consisting of:
