@@ -29,8 +29,8 @@
 
             this.lastActivatedItemUrl = null;
             this.lastTimeoutId = null;
-            this.isProcessingRequest = false;
             this.isProcessingLoadMore = false;
+            this.activeRequests = {};
         }
 
         /**
@@ -42,6 +42,29 @@
          */
         parseSelectionQuery(queryString) {
             return queryString.split('|');
+        }
+
+        /**
+         * Suspend auto refresh for the given item's container
+         *
+         * @param {Element} item
+         *
+         * @return {string} The container's id
+         */
+        suspendAutoRefresh(item) {
+            const container = item.closest('.container');
+            container.dataset.suspendAutorefresh = '';
+
+            return container.id;
+        }
+
+        /**
+         * Enable auto refresh on the given container
+         *
+         * @param {string} containerId
+         */
+        enableAutoRefresh(containerId) {
+            delete document.getElementById(containerId).dataset.suspendAutorefresh;
         }
 
         onClick(event) {
@@ -58,7 +81,6 @@
 
             let item = target.closest('[data-action-item]');
             let list = target.closest('.action-list');
-            const container = list.closest('#main > .container');
             let activeItems = _this.getActiveItems(list);
             let toActiveItems = [],
                 toDeactivateItems = [];
@@ -104,6 +126,7 @@
                 && _this.icinga.loader.getLinkTargetFor($(target)).attr('id') === 'col2'
             ) {
                 _this.icinga.ui.layout1col();
+                _this.enableAutoRefresh('col1');
                 return;
             }
 
@@ -123,12 +146,6 @@
                 lastActivatedUrl = activeItems[activeItems.length - 1] === item
                     ? activeItems[activeItems.length - 2].dataset.icingaDetailFilter
                     : activeItems[activeItems.length - 1].dataset.icingaDetailFilter;
-            }
-
-            if (isBeingMultiSelected && container.id === 'col1' && list.matches('.content > :scope')) {
-                // The restriction on col1 is currently only in place as it's not defined what should happen
-                // with primary lists in col2. (as a detail load then moves the list to col1)
-                container.dataset.suspendAutorefresh = '';
             }
 
             _this.clearSelection(toDeactivateItems);
@@ -314,14 +331,6 @@
                 return;
             }
 
-            const isBeingMultiSelected = isMultiSelectableList && (event.ctrlKey || event.metaKey || event.shiftKey);
-            const container = list.closest('#main > .container');
-            if (isBeingMultiSelected && container.id === 'col1' && list.matches('.content > :scope')) {
-                // The restriction on col1 is currently only in place as it's not defined what should happen
-                // with primary lists in col2. (as a detail load then moves the list to col1)
-                container.dataset.suspendAutorefresh = '';
-            }
-
             _this.setActive(toActiveItem);
             _this.setLastActivatedItemUrl(
                 markAsLastActive ? markAsLastActive.dataset.icingaDetailFilter : toActiveItem.dataset.icingaDetailFilter
@@ -453,21 +462,25 @@
                 return;
             }
 
-            this.isProcessingRequest = true;
+            const suspendedContainer = this.suspendAutoRefresh(list);
+
             clearTimeout(this.lastTimeoutId);
             this.lastTimeoutId = setTimeout(() => {
+                const requestNo = this.lastTimeoutId;
+                this.activeRequests[requestNo] = suspendedContainer;
+                this.lastTimeoutId = null;
+
                 let req = this.icinga.loader.loadUrl(
                     url,
                     this.icinga.loader.getLinkTargetFor($(activeItems[0]))
                 );
 
-                this.lastTimeoutId = null;
-                req.done(() => {
-                    this.isProcessingRequest = false;
-                    let container = list.closest('#main > .container');
-                    if (container) { // avoid call on null error
-                        delete container.dataset.suspendAutorefresh;
+                req.always((_, __, errorThrown) => {
+                    if (errorThrown !== 'abort') {
+                        this.enableAutoRefresh(this.activeRequests[requestNo]);
                     }
+
+                    delete this.activeRequests[requestNo];
                 });
             }, 250);
         }
@@ -693,6 +706,13 @@
 
             if (event.target.id === 'col2' && sourceId === 'col1') { // only for browser-back (col1 shifted to col2)
                 _this.clearSelection(event.target.querySelectorAll('.action-list .active'));
+            } else if (event.target.id === 'col1' && sourceId === 'col2') {
+                for (const requestNo of Object.keys(_this.activeRequests)) {
+                    if (_this.activeRequests[requestNo] === sourceId) {
+                        _this.enableAutoRefresh(_this.activeRequests[requestNo]);
+                        _this.activeRequests[requestNo] = _this.suspendAutoRefresh(event.target);
+                    }
+                }
             }
         }
 
@@ -702,7 +722,7 @@
             let isTopLevelContainer = container.matches('#main > :scope');
 
             let list;
-            if (event.currentTarget !== container || _this.isProcessingRequest) {
+            if (event.currentTarget !== container || Object.keys(_this.activeRequests).length) {
                 // Nested containers are not processed multiple times || still processing selection/navigation request
                 return;
             } else if (isTopLevelContainer && container.id !== 'col1') {
