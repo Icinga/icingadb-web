@@ -126,7 +126,7 @@ class CustomvarFlat extends Model
                 // Since empty custom vars of type dictionaries and arrays have null values in customvar_flat table,
                 // we won't be able to render them as such. Therefore, we have to use the value of the `customvar`
                 // table if it's not null, otherwise the current value, which is a "null" string.
-                $data[$step] = $source[$step] ?? $value;
+                $data[$step] = $value === null && ($source[$step] ?? null) === [] ? $source[$step] : $value;
             }
         };
 
