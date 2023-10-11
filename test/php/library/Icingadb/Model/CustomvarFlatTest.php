@@ -70,7 +70,7 @@ class CustomvarFlatTest extends TestCase
         "example.0.org" => "xyz",
         "ob" => [
             "je" => [
-                "ct" => "tcejbo"
+                "ct" => "***"
             ]
         ],
         "real_list" => [
