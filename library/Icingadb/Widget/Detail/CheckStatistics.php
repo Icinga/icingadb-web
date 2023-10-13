@@ -208,12 +208,7 @@ SVG;
         $intervalLine = new HtmlElement(
             'li',
             Attributes::create(['class' => 'interval-line']),
-            new VerticalKeyValue(
-                t('Interval'),
-                $checkInterval
-                    ? Format::seconds($checkInterval)
-                    : (new EmptyState(t('n. a.')))->setTag('span')
-            )
+            new VerticalKeyValue(t('Interval'), Format::seconds($checkInterval))
         );
 
         $styleElement->addFor($intervalLine, [
