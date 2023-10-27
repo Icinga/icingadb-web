@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Widget\Detail\CustomVarTable;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
+use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
 use ipl\Html\HtmlElement;
@@ -298,13 +299,18 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
 
     private function formatState(int $state)
     {
-        switch (true) {
-            case $this->object instanceof Host:
-                return HostStates::text($state);
-            case $this->object instanceof Service:
-                return ServiceStates::text($state);
-            default:
-                return $state;
+        try {
+            switch (true) {
+                case $this->object instanceof Host:
+                    return HostStates::text($state);
+                case $this->object instanceof Service:
+                    return ServiceStates::text($state);
+                default:
+                    return $state;
+            }
+        } catch (InvalidArgumentException $_) {
+            // The Icinga 2 API sometimes delivers strange details
+            return (string) $state;
         }
     }
 
