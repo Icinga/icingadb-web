@@ -23,41 +23,49 @@ The rules previously configured at `Configuration -> Modules -> monitoring -> Se
 roles configuration as a new restriction. This is called `icingadb/protect/variables` and accepts the same
 rules. Just copy them over.
 
-## Dashboards and Navigation
+## Navigation
 
-![Url Migration Preview](res/url-migration-preview.png)
+The monitoring module provides two custom navigation item types: `host-action` and `service-action`
+Icinga DB Web does the same, though uses different type names to achieve that: `icingadb-host-action`
+and `icingadb-service-action`
 
-The dashboard and menu item configuration does not change since these are related
-to Icinga Web 2. However, if you've used the monitoring module's urls and you want
-to update them, this might be straight forward if it's only the url path that needs
-to change. Complex filters though can be cumbersome to rewrite.
+With Icinga DB Web 1.1, its migrate command allows you to migrate these navigation items automatically:
 
-That is why we provided the migration widget shown above. It will show up for every
-monitoring module url for which there is a counterpart in Icinga DB Web. You can then
-switch to the respective view in Icinga DB Web with a single click and either use the
-new url from the address bar or add it the usual way to the dashboard and sidebar.
+`icingacli icingadb migrate navigation --user=<name> [--no-backup] [--override]`
 
-Host and service actions on the other hand are part of the monitoring module. For them
-Icinga DB Web provides their own counterparts. You don't need to migrate them manually
-though. The `migrate` command of Icinga Web 2 (>= v2.9.4) provides an action for that:
+By default, this only migrates navigation items of specific users and keeps the old ones. The `--user`
+switch expects a username, with optional wildcards (`*`) to match multiple users. `--user=*` matches
+all users. Pass `--no-backup` to fully remove the old monitoring navigation items.
 
-`icingacli migrate navigation [--user=<username>] [--delete]`
+A similar version of this command has already been available since Icinga Web 2.9.4. Due to this, the new
+command allows you to perform the migration from scratch again with the `--override` switch. (Provided you
+still have the old navigation items.) Otherwise, already migrated items are ignored. That's also a difference
+to the previous command, which duplicated items instead.
 
-By default this will migrate the configuration of all users and won't delete the old
-ones. It can be restricted to a single user and the removal of the old configuration
-can be enabled as well.
+## Dashboards
+
+The dashboard item configuration does not change since it is related to Icinga Web. However, items that
+reference views of the monitoring module should be changed in order to permanently reference views of
+Icinga DB Web.
+
+With Icinga DB Web 1.1, its migrate command allows you to migrate such dashboard items automatically:
+
+`icingacli icingadb migrate dashboard --user=<name> [--no-backup]`
+
+By default, this only migrates dashboards of specific users and creates backups. The `--user` switch
+expects a username, with optional wildcards (`*`) to match multiple users. `--user=*` matches all users.
+Pass `--no-backup` to disable backup creation. Please note, if you do so, that this makes resetting
+changes more difficult.
 
 ### Automation
 
-For those who have a plethora of custom dashboards or navigation items there is also
-a way to automate the migration of these urls. There is an API endpoint in Icinga DB
-Web that the very same widget from above utilizes:
+For those who integrate Icinga Web into e.g. custom dashboards, there is also a way to automate the
+migration of urls. An API endpoint in Icinga DB Web allows for this:
 
 `/icingaweb2/icingadb/migrate/monitoring-url`
 
-If you `POST` a JSON list there, you'll get a JSON list back with the transformed
-urls in it. The returned list is ordered the same and any not recognized url is left
-unchanged:
+If you `POST` a JSON list there, you'll get a JSON list back with the transformed urls in it.
+The returned list is ordered the same and any unrecognized url is left unchanged:
 
 **Input:**  
 ```json
@@ -90,11 +98,12 @@ If you pass this to the host and service list of Icinga DB Web, you'll get an en
 have full control over the information displayed. The parameter accepts a comma separated list of columns. This list
 also defines the order in which the columns are shown.
 
-As of now, there is no dedicated control in the UI to conveniently choose those columns. You can use all columns however,
-which are valid in the search bar as well. The migration widget mentioned earlier also assists you by providing an
-example set of columns conveying the same information shown in the monitoring module lists.
+As of now, there is no dedicated control in the UI to conveniently choose those columns. You can use all columns
+however, which are valid in the search bar as well. The migration widget, that's shown if you have access to
+monitoring and Icinga DB Web, also assists you by providing an example set of columns conveying the same information
+shown in the monitoring module lists.
 
-## Restrictions
+## Access Control
 
 ### `monitoring/filter/objects`
 
@@ -123,10 +132,29 @@ but with some features removed:
 
 Check the [security chapter](04-Security.md#variable-paths) for more details.
 
-## Permissions
+### Permissions
 
 The command permissions have not changed. It is only the module identifier that has changed of course:
-`monitoring.command.*` is now `icingadb.command.*`
+`monitoring/command/*` is now `icingadb/command/*`
 
 The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/denylist/routes`.
 Add `users,usergroups` to it to achieve the same effect.
+
+### Perform The Migration
+
+To apply the necessary changes automatically, Icinga DB Web 1.1 provides this command:
+
+`icingacli icingadb migrate role [--role=<name>] [--group=<name>] [--override] [--no-backup]`
+
+By default, this only migrates roles with matching names or matching groups, doesn't change roles that were
+already manually migrated and creates backups. Either `--role` or `--group` must be passed, but not both.
+Both accept wildcards and just `*` matches all roles. Pass `--override` to forcefully update roles that appear
+to be already migrated. Please note that this will reset changes made to Icinga DB Web's rules, which were not
+equally applied to their monitoring module counterparts. Pass `--no-backup` to disable backup creation. Please
+note, if you do so, that this makes resetting changes more difficult.
+
+With respect to permissions, the command will only migrate the command permissions. If a role grants full or
+general access to the monitoring module, this is not automatically migrated. You have to adjust this manually.
+It gives you the chance to review the performed changes, before letting them loose on your users. Please also
+take in mind, that Icinga DB Web handles permissions and restrictions differently. Our blog provides details
+on that: https://icinga.com/blog/2021/04/07/web-access-control-redefined/#icingadb-permission-linkage
