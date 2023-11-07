@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Compat;
 
+use Icinga\Web\UrlParams;
 use InvalidArgumentException;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
@@ -47,6 +48,11 @@ class UrlMigrator
         return isset($supportedPaths[ltrim($url->getPath(), '/')]);
     }
 
+    public static function hasParamTransformer(string $name): bool
+    {
+        return method_exists(new self(), $name . 'Parameters');
+    }
+
     public static function hasQueryTransformer(string $name): bool
     {
         return method_exists(new self(), $name . 'Columns');
@@ -58,20 +64,88 @@ class UrlMigrator
             throw new InvalidArgumentException(sprintf('Url path "%s" is not supported', $url->getPath()));
         }
 
-        list($queryTransformer, $dbRoute) = self::SUPPORTED_PATHS[ltrim($url->getPath(), '/')];
+        list($transformer, $dbRoute) = self::SUPPORTED_PATHS[ltrim($url->getPath(), '/')];
 
         $url = clone $url;
         $url->setPath($dbRoute);
 
         if (! $url->getParams()->isEmpty()) {
-            $filter = QueryString::parse((string) $url->getParams());
-            $filter = self::transformFilter($filter, $queryTransformer);
-            if ($filter) {
-                $url->setParams([])->setFilter($filter);
+            [$params, $filter] = self::transformParams($url, $transformer);
+            $url->setParams($params);
+
+            if (! $filter->isEmpty()) {
+                $filter = QueryString::parse((string) $filter);
+                $filter = self::transformFilter($filter, $transformer);
+                $url->setFilter($filter ?: null);
             }
         }
 
         return $url;
+    }
+
+    public static function transformParams(Url $url, string $transformerName = null): array
+    {
+        $transformer = new self();
+
+        $params = self::commonParameters();
+        $columns = self::commonColumns();
+
+        if ($transformerName !== null) {
+            if (! self::hasQueryTransformer($transformerName)) {
+                throw new InvalidArgumentException(sprintf('Transformer "%s" is not supported', $transformerName));
+            }
+
+            if (self::hasParamTransformer($transformerName)) {
+                $params = array_merge($params, $transformer->{$transformerName . 'Parameters'}());
+            }
+
+            $columns = array_merge($columns, $transformer->{$transformerName . 'Columns'}());
+        }
+
+        $columnRewriter = function ($column) use ($columns, $transformer) {
+            $rewritten = $transformer->rewrite(Filter::equal($column, 'bogus'), $columns);
+            if ($rewritten === false) {
+                return false;
+            } elseif ($rewritten instanceof Filter\Condition) {
+                return $rewritten->getColumn();
+            }
+
+            return $column;
+        };
+
+        $urlParams = $url->onlyWith(array_keys($params))->getParams();
+        $urlFilter = $url->without(array_keys($params))->getParams();
+
+        $newParams = new UrlParams();
+        foreach ($urlParams->toArray(false) as $name => $value) {
+            if (is_int($name)) {
+                $name = $value;
+                $value = true;
+            } else {
+                $value = rawurldecode($value);
+            }
+
+            $name = rawurldecode($name);
+
+            if (! isset($params[$name]) || $params[$name] === self::USE_EXPR) {
+                $newParams->add($name, $value);
+            } elseif ($params[$name] === self::DROP) {
+                // pass
+            } elseif (is_callable($params[$name])) {
+                $result = $params[$name]($value, $urlParams, $columnRewriter);
+                if ($result === false) {
+                    continue;
+                } elseif (is_array($result)) {
+                    [$name, $value] = $result;
+                } elseif ($result !== null) {
+                    $value = $result;
+                }
+
+                $newParams->add($name, $value);
+            }
+        }
+
+        return [$newParams, $urlFilter];
     }
 
     /**
@@ -100,15 +174,38 @@ class UrlMigrator
     }
 
     /**
+     * Transform given legacy wildcard filters
+     *
+     * @param $filter Filter\Rule
+     *
+     * @return Filter\Chain|Filter\Condition
+     */
+    public static function transformLegacyWildcardFilter(Filter\Rule $filter)
+    {
+        if ($filter instanceof Filter\Chain) {
+            foreach ($filter as $child) {
+                $newChild = self::transformLegacyWildcardFilter($child);
+                if ($newChild !== $child) {
+                    $filter->replace($child, $newChild);
+                }
+            }
+
+            return $filter;
+        } else {
+            /** @var Filter\Condition $filter */
+            return self::transformWildcardFilter($filter);
+        }
+    }
+
+    /**
      * Rewrite the given filter and legacy columns
      *
      * @param Filter\Rule $filter
      * @param array $legacyColumns
-     * @param Filter\Chain|null $parent
      *
      * @return ?mixed
      */
-    protected function rewrite(Filter\Rule $filter, array $legacyColumns, Filter\Chain $parent = null)
+    protected function rewrite(Filter\Rule $filter, array $legacyColumns)
     {
         $rewritten = null;
         if ($filter instanceof Filter\Condition) {
@@ -144,53 +241,17 @@ class UrlMigrator
                         $filter->setValue($exprRule);
                 }
 
-                $rewritten = $this->transformWildcardFilter($rewritten);
-            } elseif ($column === 'sort') {
-                $column = $filter->getValue();
-                if (isset($legacyColumns[$column])) {
-                    if ($legacyColumns[$column] === self::DROP) {
-                        return false;
-                    } elseif (! is_array($legacyColumns[$column])) {
-                        return $rewritten;
-                    }
-
-                    $column = key($legacyColumns[$column]);
-
-                    $rewritten = $filter->setValue($column);
-                }
-
-                if ($parent !== null) {
-                    foreach ($parent as $child) {
-                        if ($child instanceof Filter\Condition && $child->getColumn() === 'dir') {
-                            $dir = $child->getValue();
-
-                            $rewritten = $filter->setValue("{$column} {$dir}");
-
-                            $parent->remove($child);
-                        }
-                    }
-                }
-            } elseif ($column === 'dir') {
-                if ($parent !== null) {
-                    foreach ($parent as $child) {
-                        if ($child instanceof Filter\Condition && $child->getColumn() === 'sort') {
-                            return null;
-                        }
-                    }
-                }
-
-                return false;
-            } elseif (preg_match('/^_(host|service)_([\w.]+)/i', $column, $groups)) {
+                $rewritten = self::transformWildcardFilter($rewritten);
+            } elseif (preg_match('/^_(host|service)_(.+)/i', $column, $groups)) {
                 $rewritten = $filter->setColumn($groups[1] . '.vars.' . $groups[2]);
-                $rewritten = $this->transformWildcardFilter($rewritten);
+                $rewritten = self::transformWildcardFilter($rewritten);
             }
         } else {
             /** @var Filter\Chain $filter */
             foreach ($filter as $child) {
                 $retVal = $this->rewrite(
                     $child instanceof Filter\Condition ? clone $child : $child,
-                    $legacyColumns,
-                    $filter
+                    $legacyColumns
                 );
                 if ($retVal === false) {
                     $filter->remove($child);
@@ -203,7 +264,7 @@ class UrlMigrator
         return $rewritten;
     }
 
-    private function transformWildcardFilter(Filter\Condition $filter)
+    private static function transformWildcardFilter(Filter\Condition $filter)
     {
         if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
             if ($filter instanceof Filter\Equal) {
@@ -214,6 +275,31 @@ class UrlMigrator
         }
 
         return $filter;
+    }
+
+    protected static function commonParameters(): array
+    {
+        return [
+            'sort' => function ($value, $params, $rewriter) {
+                $value = $rewriter($value);
+                if ($params->has('dir')) {
+                    return "{$value} {$params->get('dir')}";
+                }
+
+                return $value;
+            },
+            'dir' => self::DROP,
+            'limit' => self::USE_EXPR,
+            'showCompact' => self::USE_EXPR,
+            'showFullscreen' => self::USE_EXPR,
+            'view' => function ($value) {
+                if ($value === 'compact') {
+                    return ['showCompact', true];
+                }
+
+                return $value;
+            }
+        ];
     }
 
     protected static function commonColumns(): array
@@ -264,14 +350,11 @@ class UrlMigrator
         ];
     }
 
-    protected static function hostsColumns(): array
+    protected static function hostsParameters(): array
     {
         return [
-
-            // Extraordinary columns
-            'addColumns' => function ($filter) {
-                /** @var Filter\Condition $filter */
-                $legacyColumns = array_filter(array_map('trim', explode(',', $filter->getValue())));
+            'addColumns' => function ($value, $params, $rewriter) {
+                $legacyColumns = array_filter(array_map('trim', explode(',', $value)));
 
                 $columns = [
                     'host.state.soft_state',
@@ -283,15 +366,20 @@ class UrlMigrator
                     'host.state.is_problem'
                 ];
                 foreach ($legacyColumns as $column) {
-                    if (($c = self::transformFilter(Filter::equal($column, 'bogus'), 'hosts')) !== false) {
-                        if ($c instanceof Filter\Condition) {
-                            $columns[] = $c->getColumn();
-                        }
+                    $column = $rewriter($column);
+                    if ($column !== false) {
+                        $columns[] = $column;
                     }
                 }
 
-                return Filter::equal('columns', implode(',', $columns));
-            },
+                return ['columns', implode(',', $columns)];
+            }
+        ];
+    }
+
+    protected static function hostsColumns(): array
+    {
+        return [
 
             // Query columns
             'host_acknowledged' => [
@@ -490,14 +578,11 @@ class UrlMigrator
         ];
     }
 
-    protected static function servicesColumns(): array
+    protected static function servicesParameters(): array
     {
         return [
-
-            // Extraordinary columns
-            'addColumns' => function ($filter) {
-                /** @var Filter\Condition $filter */
-                $legacyColumns = array_filter(array_map('trim', explode(',', $filter->getValue())));
+            'addColumns' => function ($value, $params, $rewriter) {
+                $legacyColumns = array_filter(array_map('trim', explode(',', $value)));
 
                 $columns = [
                     'service.state.soft_state',
@@ -510,16 +595,20 @@ class UrlMigrator
                     'service.state.is_problem'
                 ];
                 foreach ($legacyColumns as $column) {
-                    if (($c = self::transformFilter(Filter::equal($column, 'bogus'), 'services')) !== false) {
-                        if ($c instanceof Filter\Condition) {
-                            $columns[] = $c->getColumn();
-                        }
+                    $column = $rewriter($column);
+                    if ($column !== false) {
+                        $columns[] = $column;
                     }
                 }
 
-                return Filter::equal('columns', implode(',', $columns));
-            },
+                return ['columns', implode(',', $columns)];
+            }
+        ];
+    }
 
+    protected static function servicesColumns(): array
+    {
+        return [
             // Query columns
             'host_acknowledged' => [
                 'host.state.is_acknowledged' => self::NO_YES
