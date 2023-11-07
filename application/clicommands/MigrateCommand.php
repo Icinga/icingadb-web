@@ -593,7 +593,7 @@ class MigrateCommand extends Command
                     $url = Url::fromPath($urlString, [], new Request());
 
                     try {
-                        $urlString = UrlMigrator::transformUrl($url)->getAbsoluteUrl();
+                        $urlString = UrlMigrator::transformUrl($url)->getRelativeUrl();
                         $configObject->url = $urlString;
                     } catch (\InvalidArgumentException $err) {
                         // Do nothing
