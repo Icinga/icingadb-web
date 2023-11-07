@@ -91,19 +91,26 @@ class MigrateCommand extends Command
                 );
             }
 
-            Logger::info('Migrating monitoring navigation items for user "%s" to the Icinga DB Web actions', $username);
+            if (! $this->skipMigration) {
+                Logger::info('Migrating monitoring navigation items for user "%s" to Icinga DB Web actions', $username);
 
-            if (! $hostActions->isEmpty()) {
-                $this->migrateNavigationItems($hostActions, false, $rc, $directory . '/icingadb-host-actions.ini');
-            }
+                if (! $hostActions->isEmpty()) {
+                    $this->migrateNavigationItems(
+                        $hostActions,
+                        false,
+                        $rc,
+                        $directory . '/icingadb-host-actions.ini'
+                    );
+                }
 
-            if (! $serviceActions->isEmpty()) {
-                $this->migrateNavigationItems(
-                    $serviceActions,
-                    false,
-                    $rc,
-                    $directory . '/icingadb-service-actions.ini'
-                );
+                if (! $serviceActions->isEmpty()) {
+                    $this->migrateNavigationItems(
+                        $serviceActions,
+                        false,
+                        $rc,
+                        $directory . '/icingadb-service-actions.ini'
+                    );
+                }
             }
         }
 
@@ -127,27 +134,43 @@ class MigrateCommand extends Command
             );
         }
 
-        Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
+        if (! $this->skipMigration) {
+            Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
 
-        if (! $hostActions->isEmpty()) {
-            $this->migrateNavigationItems($hostActions, true, $rc, $sharedNavigation . '/icingadb-host-actions.ini');
-        }
+            if (! $hostActions->isEmpty()) {
+                $this->migrateNavigationItems(
+                    $hostActions,
+                    true,
+                    $rc,
+                    $sharedNavigation . '/icingadb-host-actions.ini'
+                );
+            }
 
-        if (! $serviceActions->isEmpty()) {
-            $this->migrateNavigationItems(
-                $serviceActions,
-                true,
-                $rc,
-                $sharedNavigation . '/icingadb-service-actions.ini'
-            );
+            if (! $serviceActions->isEmpty()) {
+                $this->migrateNavigationItems(
+                    $serviceActions,
+                    true,
+                    $rc,
+                    $sharedNavigation . '/icingadb-service-actions.ini'
+                );
+            }
         }
 
         if ($rc > 0) {
-            Logger::error('Failed to migrate some monitoring navigation items');
+            if ($this->skipMigration) {
+                Logger::error('Failed to transform some icingadb navigation items');
+            } else {
+                Logger::error('Failed to migrate some monitoring navigation items');
+            }
+
             exit($rc);
         }
 
-        Logger::info('Successfully migrated all local user monitoring navigation items');
+        if ($this->skipMigration) {
+            Logger::info('Successfully transformed all icingadb navigation item filters');
+        } else {
+            Logger::info('Successfully migrated all monitoring navigation items');
+        }
     }
 
 
@@ -206,23 +229,23 @@ class MigrateCommand extends Command
             $role = iterator_to_array($role);
 
             if ($roleName === '*' || $groupName === '*') {
-                $updateRole = $this->shouldUpdateRole($role, $override);
+                $roleMatch = true;
             } elseif ($roleName !== null && fnmatch($roleName, $name)) {
-                $updateRole = $this->shouldUpdateRole($role, $override);
+                $roleMatch = true;
             } elseif ($groupName !== null && isset($role['groups'])) {
                 $roleGroups = array_map('trim', explode(',', $role['groups']));
-                $updateRole = false;
+                $roleMatch = false;
                 foreach ($roleGroups as $roleGroup) {
                     if (fnmatch($groupName, $roleGroup)) {
-                        $updateRole = $this->shouldUpdateRole($role, $override);
+                        $roleMatch = true;
                         break;
                     }
                 }
             } else {
-                $updateRole = false;
+                $roleMatch = false;
             }
 
-            if ($updateRole) {
+            if ($roleMatch && ! $this->skipMigration && $this->shouldUpdateRole($role, $override)) {
                 if (isset($role[$monitoringRestriction])) {
                     Logger::info(
                         'Migrating monitoring restriction filter for role "%s" to the Icinga DB Web restrictions',
@@ -312,23 +335,25 @@ class MigrateCommand extends Command
                 }
             }
 
-            foreach ($icingadbRestrictions as $object => $icingadbRestriction) {
-                if (isset($role[$icingadbRestriction]) && is_string($role[$icingadbRestriction])) {
-                    $filter = QueryString::parse($role[$icingadbRestriction]);
-                    $filter = $this->transformLegacyWildcardFilter($filter);
+            if ($roleMatch) {
+                foreach ($icingadbRestrictions as $object => $icingadbRestriction) {
+                    if (isset($role[$icingadbRestriction]) && is_string($role[$icingadbRestriction])) {
+                        $filter = QueryString::parse($role[$icingadbRestriction]);
+                        $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
 
-                    if ($filter) {
-                        $filter = rawurldecode(QueryString::render($filter));
-                        if ($filter !== $role[$icingadbRestriction]) {
-                            Logger::info(
-                                'Icinga Db Web restriction of role "%s" for %s changed from "%s" to "%s"',
-                                $name,
-                                $object,
-                                $role[$icingadbRestriction],
-                                $filter
-                            );
+                        if ($filter) {
+                            $filter = rawurldecode(QueryString::render($filter));
+                            if ($filter !== $role[$icingadbRestriction]) {
+                                Logger::info(
+                                    'Icinga Db Web restriction of role "%s" for %s changed from "%s" to "%s"',
+                                    $name,
+                                    $object,
+                                    $role[$icingadbRestriction],
+                                    $filter
+                                );
 
-                            $role[$icingadbRestriction] = $filter;
+                                $role[$icingadbRestriction] = $filter;
+                            }
                         }
                     }
                 }
@@ -341,33 +366,20 @@ class MigrateCommand extends Command
             $rolesConfig->saveIni();
         } catch (NotWritableError $error) {
             Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
-            Logger::error('Failed to migrate monitoring restrictions');
+            if ($this->skipMigration) {
+                Logger::error('Failed to transform icingadb restrictions');
+            } else {
+                Logger::error('Failed to migrate monitoring restrictions');
+            }
+
             exit(256);
         }
 
-        Logger::info('Successfully migrated monitoring restrictions and permissions in roles');
-    }
-
-    /**
-     * Checks if the given role should be updated
-     *
-     * @param string[] $role
-     * @param bool     $override
-     *
-     * @return bool
-     */
-    private function shouldUpdateRole(array $role, ?bool $override): bool
-    {
-        return ! (
-                isset($role['icingadb/filter/objects'])
-                || isset($role['icingadb/filter/hosts'])
-                || isset($role['icingadb/filter/services'])
-                || isset($role['icingadb/denylist/routes'])
-                || isset($role['icingadb/denylist/variables'])
-                || isset($role['icingadb/protect/variables'])
-                || (isset($role['permissions']) && str_contains($role['permissions'], 'icingadb'))
-            )
-            || $override;
+        if ($this->skipMigration) {
+            Logger::info('Successfully transformed all icingadb restrictions');
+        } else {
+            Logger::info('Successfully migrated monitoring restrictions and permissions in roles');
+        }
     }
 
     /**
@@ -423,7 +435,7 @@ class MigrateCommand extends Command
                 $dashboardUrlString = $dashboardConfig->get('url');
                 if ($dashboardUrlString !== null) {
                     $dashBoardUrl = Url::fromPath($dashboardUrlString, [], new Request());
-                    if (fnmatch('monitoring*', $dashboardUrlString)) {
+                    if (! $this->skipMigration && fnmatch('monitoring*', $dashboardUrlString)) {
                         $dashboardConfig->url = rawurldecode(
                             UrlMigrator::transformUrl($dashBoardUrl)->getRelativeUrl()
                         );
@@ -482,11 +494,39 @@ class MigrateCommand extends Command
         }
 
         if ($rc > 0) {
-            Logger::error('Failed to migrate some monitoring dashboards');
+            if ($this->skipMigration) {
+                Logger::error('Failed to transform some icingadb dashboards');
+            } else {
+                Logger::error('Failed to migrate some monitoring dashboards');
+            }
+
             exit($rc);
         }
 
-        Logger::info('Successfully migrated dashboards for all the matched users');
+        if ($this->skipMigration) {
+            Logger::info('Successfully transformed all icingadb dashboards');
+        } else {
+            Logger::info('Successfully migrated dashboards for all the matched users');
+        }
+    }
+
+    /**
+     * Migrate Icinga DB Web wildcard filters of navigation items, dashboards and roles
+     *
+     * USAGE
+     *
+     *  icingacli icingadb migrate filter
+     */
+    public function filterAction(): void
+    {
+        $this->skipMigration = true;
+
+        $this->params->set('user', '*');
+        $this->navigationAction();
+        $this->dashboardAction();
+
+        $this->params->set('role', '*');
+        $this->roleAction();
     }
 
     /**
@@ -650,31 +690,24 @@ class MigrateCommand extends Command
     }
 
     /**
-     * Transform given legacy wirldcard filters
+     * Checks if the given role should be updated
      *
-     * @param $filter Filter\Rule
+     * @param string[] $role
+     * @param bool     $override
      *
-     * @return Filter\Chain|Filter\Condition|null
+     * @return bool
      */
-    private function transformLegacyWildcardFilter(Filter\Rule $filter)
+    private function shouldUpdateRole(array $role, ?bool $override): bool
     {
-        if ($filter instanceof Filter\Chain) {
-            foreach ($filter as $child) {
-                $newChild = $this->transformLegacyWildcardFilter($child);
-                if ($newChild !== null) {
-                    $filter->replace($child, $newChild);
-                }
-            }
-
-            return $filter;
-        } elseif ($filter instanceof Filter\Equal) {
-            if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
-                return Filter::like($filter->getColumn(), $filter->getValue());
-            }
-        } elseif ($filter instanceof Filter\Unequal) {
-            if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
-                return Filter::unlike($filter->getColumn(), $filter->getValue());
-            }
-        }
+        return ! (
+                isset($role['icingadb/filter/objects'])
+                || isset($role['icingadb/filter/hosts'])
+                || isset($role['icingadb/filter/services'])
+                || isset($role['icingadb/denylist/routes'])
+                || isset($role['icingadb/denylist/variables'])
+                || isset($role['icingadb/protect/variables'])
+                || (isset($role['permissions']) && str_contains($role['permissions'], 'icingadb'))
+            )
+            || $override;
     }
 }
