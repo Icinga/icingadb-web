@@ -590,6 +590,12 @@ class MigrateCommand extends Command
                 /** @var ?string $urlString */
                 $urlString = $configObject->get('url');
                 if ($urlString !== null) {
+                    $urlString = $configObject->url = str_replace(
+                        ['$SERVICEDESC$', '$HOSTNAME$', '$HOSTADDRESS$', '$HOSTADDRESS6$'],
+                        ['$service.name$', '$host.name$', '$host.address$', '$host.address6$'],
+                        $urlString
+                    );
+
                     $url = Url::fromPath($urlString, [], new Request());
 
                     try {
