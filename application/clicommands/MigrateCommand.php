@@ -256,9 +256,7 @@ class MigrateCommand extends Command
                     );
 
                     if ($transformedFilter) {
-                        $role[$icingadbRestrictions['objects']] = rawurldecode(
-                            QueryString::render($transformedFilter)
-                        );
+                        $role[$icingadbRestrictions['objects']] = QueryString::render($transformedFilter);
                     }
                 }
 
@@ -342,7 +340,7 @@ class MigrateCommand extends Command
                         $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
 
                         if ($filter) {
-                            $filter = rawurldecode(QueryString::render($filter));
+                            $filter = QueryString::render($filter);
                             if ($filter !== $role[$icingadbRestriction]) {
                                 Logger::info(
                                     'Icinga Db Web restriction of role "%s" for %s changed from "%s" to "%s"',
@@ -436,10 +434,7 @@ class MigrateCommand extends Command
                 if ($dashboardUrlString !== null) {
                     $dashBoardUrl = Url::fromPath($dashboardUrlString, [], new Request());
                     if (! $this->skipMigration && fnmatch('monitoring*', $dashboardUrlString)) {
-                        $dashboardConfig->url = rawurldecode(
-                            UrlMigrator::transformUrl($dashBoardUrl)->getRelativeUrl()
-                        );
-
+                        $dashboardConfig->url = UrlMigrator::transformUrl($dashBoardUrl)->getRelativeUrl();
                         $changed = true;
                     }
 
@@ -448,19 +443,19 @@ class MigrateCommand extends Command
                         $filter = $this->transformLegacyWildcardFilter($filter);
                         if ($filter) {
                             $oldFilterString = $dashBoardUrl->getParams()->toString();
-                            $newFilterString = rawurldecode(QueryString::render($filter));
+                            $newFilterString = QueryString::render($filter);
 
                             if ($oldFilterString !== $newFilterString) {
                                 Logger::info(
                                     'Icinga Db Web filter of dashboard "%s" has changed from "%s" to "%s"',
                                     $name,
-                                    rawurldecode($dashBoardUrl->getParams()->toString()),
-                                    rawurldecode(QueryString::render($filter))
+                                    $dashBoardUrl->getParams()->toString(),
+                                    QueryString::render($filter)
                                 );
                                 $dashBoardUrl->setParams([]);
                                 $dashBoardUrl->setFilter($filter);
 
-                                $dashboardConfig->url = rawurldecode($dashBoardUrl->getRelativeUrl());
+                                $dashboardConfig->url = $finalUrl->getRelativeUrl();
                                 $changed = true;
                             }
                         }
@@ -557,7 +552,7 @@ class MigrateCommand extends Command
                     $filter = QueryString::parse($legacyFilter);
                     $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
                     if ($filter) {
-                        $filter = rawurldecode(QueryString::render($filter));
+                        $filter = QueryString::render($filter);
                         if ($legacyFilter !== $filter) {
                             $newConfigObject->filter = $filter;
                             $newConfig->setSection($section, $newConfigObject);
@@ -598,7 +593,7 @@ class MigrateCommand extends Command
 
                     try {
                         $urlString = UrlMigrator::transformUrl($url)->getAbsoluteUrl();
-                        $configObject->url = rawurldecode($urlString);
+                        $configObject->url = $urlString;
                     } catch (\InvalidArgumentException $err) {
                         // Do nothing
                     }
@@ -610,7 +605,7 @@ class MigrateCommand extends Command
                     $filter = QueryString::parse($legacyFilter);
                     $filter = UrlMigrator::transformFilter($filter);
                     if ($filter !== false) {
-                        $configObject->filter = rawurldecode(QueryString::render($filter));
+                        $configObject->filter = QueryString::render($filter);
                     } else {
                         unset($configObject->filter);
                     }
