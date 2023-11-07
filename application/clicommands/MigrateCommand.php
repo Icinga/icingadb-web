@@ -617,7 +617,7 @@ class MigrateCommand extends Command
                 if (! $newConfig->hasSection($section) || $override) {
                     /** @var string $type */
                     $type = $configObject->get('type');
-                    $oldPath = $shared
+                    $oldPath = ! $shared
                         ? sprintf(
                             '%s/%s/%ss.ini',
                             Config::resolvePath('preferences'),
