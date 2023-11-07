@@ -439,21 +439,22 @@ class MigrateCommand extends Command
                     }
 
                     if (fnmatch('icingadb*', ltrim($dashboardUrlString, '/'))) {
-                        $filter = QueryString::parse($dashBoardUrl->getParams()->toString());
-                        $filter = $this->transformLegacyWildcardFilter($filter);
+                        $finalUrl = $dashBoardUrl->onlyWith(['sort', 'limit', 'view', 'columns', 'page']);
+                        $params = $dashBoardUrl->without(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
+                        $filter = QueryString::parse($params->toString());
+                        $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
                         if ($filter) {
-                            $oldFilterString = $dashBoardUrl->getParams()->toString();
+                            $oldFilterString = $params->toString();
                             $newFilterString = QueryString::render($filter);
 
                             if ($oldFilterString !== $newFilterString) {
                                 Logger::info(
                                     'Icinga Db Web filter of dashboard "%s" has changed from "%s" to "%s"',
                                     $name,
-                                    $dashBoardUrl->getParams()->toString(),
+                                    $params->toString(),
                                     QueryString::render($filter)
                                 );
-                                $dashBoardUrl->setParams([]);
-                                $dashBoardUrl->setFilter($filter);
+                                $finalUrl->setFilter($filter);
 
                                 $dashboardConfig->url = $finalUrl->getRelativeUrl();
                                 $changed = true;
