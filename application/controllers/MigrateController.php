@@ -82,33 +82,16 @@ class MigrateController extends Controller
             $this->httpBadRequest('No JSON content');
         }
 
-        $traverseFilter = function ($filter) use (&$traverseFilter) {
-            if ($filter instanceof Filter\Chain) {
-                foreach ($filter as $child) {
-                    $newChild = $traverseFilter($child);
-                    if ($newChild !== null) {
-                        $filter->replace($child, $newChild);
-                    }
-                }
-            } elseif ($filter instanceof Filter\Equal) {
-                if (strpos($filter->getValue(), '*') !== false) {
-                    return Filter::like($filter->getColumn(), $filter->getValue());
-                }
-            } elseif ($filter instanceof Filter\Unequal) {
-                if (strpos($filter->getValue(), '*') !== false) {
-                    return Filter::unlike($filter->getColumn(), $filter->getValue());
-                }
-            }
-        };
-
         $urls = $this->getRequest()->getPost();
 
         $result = [];
         foreach ($urls as $urlString) {
             $url = Url::fromPath($urlString);
-            $filter = QueryString::parse($url->getQueryString());
-            $filter = $traverseFilter($filter) ?? $filter;
-            $result[] = rawurldecode($url->setParams([])->setFilter($filter)->getAbsoluteUrl());
+            $params = $url->onlyWith(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
+            $filter = $url->without(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
+            $filter = QueryString::parse((string) $filter);
+            $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
+            $result[] = rawurldecode($url->setParams($params)->setFilter($filter)->getAbsoluteUrl());
         }
 
         $response = $this->getResponse()->json();

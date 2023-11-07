@@ -736,11 +736,6 @@ parameters:
 			path: application/controllers/MigrateController.php
 
 		-
-			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, mixed given\\.$#"
-			count: 2
-			path: application/controllers/MigrateController.php
-
-		-
 			message: "#^Parameter \\#1 \\$url of static method Icinga\\\\Web\\\\Url\\:\\:fromPath\\(\\) expects string, mixed given\\.$#"
 			count: 2
 			path: application/controllers/MigrateController.php
@@ -748,16 +743,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
 			count: 3
-			path: application/controllers/MigrateController.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:like\\(\\) expects array\\<string\\>\\|string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:unlike\\(\\) expects array\\<string\\>\\|string, mixed given\\.$#"
-			count: 1
 			path: application/controllers/MigrateController.php
 
 		-
@@ -2736,6 +2721,11 @@ parameters:
 			path: library/Icingadb/Compat/UrlMigrator.php
 
 		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:commonParameters\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Compat/UrlMigrator.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:contactgroupsColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Compat/UrlMigrator.php
@@ -2767,6 +2757,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:hostsColumns\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Compat/UrlMigrator.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:hostsParameters\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Compat/UrlMigrator.php
 
@@ -2811,6 +2806,16 @@ parameters:
 			path: library/Icingadb/Compat/UrlMigrator.php
 
 		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:servicesParameters\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Compat/UrlMigrator.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:transformParams\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Compat/UrlMigrator.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\UrlMigrator\\:\\:transformWildcardFilter\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Compat/UrlMigrator.php
@@ -2823,21 +2828,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
 			count: 2
-			path: library/Icingadb/Compat/UrlMigrator.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Compat/UrlMigrator.php
-
-		-
-			message: "#^Part \\$column \\(mixed\\) of encapsed string cannot be cast to string\\.$#"
-			count: 1
-			path: library/Icingadb/Compat/UrlMigrator.php
-
-		-
-			message: "#^Part \\$dir \\(mixed\\) of encapsed string cannot be cast to string\\.$#"
-			count: 1
 			path: library/Icingadb/Compat/UrlMigrator.php
 
 		-
