@@ -49,6 +49,9 @@ class MigrateCommand extends Command
      */
     public function navigationAction(): void
     {
+        /** @var string $user */
+        $user = $this->params->getRequired('user');
+
         $preferencesPath = Config::resolvePath('preferences');
         $sharedNavigation = Config::resolvePath('navigation');
         if (! file_exists($preferencesPath) && ! file_exists($sharedNavigation)) {
@@ -57,8 +60,6 @@ class MigrateCommand extends Command
         }
 
         $rc = 0;
-        /** @var string $user */
-        $user = $this->params->getRequired('user');
         $directories = new DirectoryIterator($preferencesPath);
 
         foreach ($directories as $directory) {
@@ -388,15 +389,15 @@ class MigrateCommand extends Command
      */
     public function dashboardAction(): void
     {
+        /** @var string $user */
+        $user = $this->params->getRequired('user');
+        $noBackup = $this->params->get('no-backup');
+
         $dashboardsPath = Config::resolvePath('dashboards');
         if (! file_exists($dashboardsPath)) {
             Logger::info('There are no dashboards to migrate');
             return;
         }
-
-        /** @var string $user */
-        $user = $this->params->getRequired('user');
-        $noBackup = $this->params->get('no-backup');
 
         $rc = 0;
         $directories = new DirectoryIterator($dashboardsPath);
