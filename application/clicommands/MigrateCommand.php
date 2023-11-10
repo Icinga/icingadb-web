@@ -63,6 +63,8 @@ class MigrateCommand extends Command
         $rc = 0;
         $directories = file_exists($preferencesPath) ? new DirectoryIterator($preferencesPath) : [];
 
+        $anythingChanged = false;
+
         /** @var string $directory */
         foreach ($directories as $directory) {
             /** @var string $username */
@@ -87,14 +89,15 @@ class MigrateCommand extends Command
 
             if (! $menuItems->isEmpty()) {
                 $menuUpdated = $this->transformNavigationItems($menuItems, $username, $rc);
+                $anythingChanged |= $menuUpdated;
             }
 
             if (! $icingadbHostActions->isEmpty()) {
-                $this->transformNavigationItems($icingadbHostActions, $username, $rc);
+                $anythingChanged |= $this->transformNavigationItems($icingadbHostActions, $username, $rc);
             }
 
             if (! $icingadbServiceActions->isEmpty()) {
-                $this->transformNavigationItems(
+                $anythingChanged |= $this->transformNavigationItems(
                     $icingadbServiceActions,
                     $username,
                     $rc
@@ -106,10 +109,11 @@ class MigrateCommand extends Command
 
                 if (! $menuItems->isEmpty()) {
                     $menuUpdated = $this->migrateNavigationItems($menuItems, $username, $directory . '/menu.ini', $rc);
+                    $anythingChanged |= $menuUpdated;
                 }
 
                 if (! $hostActions->isEmpty()) {
-                    $this->migrateNavigationItems(
+                    $anythingChanged |= $this->migrateNavigationItems(
                         $hostActions,
                         $username,
                         $directory . '/icingadb-host-actions.ini',
@@ -118,7 +122,7 @@ class MigrateCommand extends Command
                 }
 
                 if (! $serviceActions->isEmpty()) {
-                    $this->migrateNavigationItems(
+                    $anythingChanged |= $this->migrateNavigationItems(
                         $serviceActions,
                         $username,
                         $directory . '/icingadb-service-actions.ini',
@@ -142,18 +146,19 @@ class MigrateCommand extends Command
         $menuUpdated = false;
         $originalMenuItems = $this->readFromIni($sharedNavigation . '/menu.ini', $rc);
 
-        Logger::info('Transforming legacy wildcard filters of existing shared Icinga DB Web');
+        Logger::info('Transforming legacy wildcard filters of existing shared Icinga DB Web navigation items');
 
         if (! $menuItems->isEmpty()) {
             $menuUpdated = $this->transformNavigationItems($menuItems, $user, $rc);
+            $anythingChanged |= $menuUpdated;
         }
 
         if (! $icingadbHostActions->isEmpty()) {
-            $this->transformNavigationItems($icingadbHostActions, $user, $rc);
+            $anythingChanged |= $this->transformNavigationItems($icingadbHostActions, $user, $rc);
         }
 
         if (! $icingadbServiceActions->isEmpty()) {
-            $this->transformNavigationItems(
+            $anythingChanged |= $this->transformNavigationItems(
                 $icingadbServiceActions,
                 $user,
                 $rc
@@ -161,14 +166,15 @@ class MigrateCommand extends Command
         }
 
         if (! $this->skipMigration) {
-            Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
+            Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web items');
 
             if (! $menuItems->isEmpty()) {
                 $menuUpdated = $this->migrateNavigationItems($menuItems, $user, $sharedNavigation . '/menu.ini', $rc);
+                $anythingChanged |= $menuUpdated;
             }
 
             if (! $hostActions->isEmpty()) {
-                $this->migrateNavigationItems(
+                $anythingChanged |= $this->migrateNavigationItems(
                     $hostActions,
                     $user,
                     $sharedNavigation . '/icingadb-host-actions.ini',
@@ -177,7 +183,7 @@ class MigrateCommand extends Command
             }
 
             if (! $serviceActions->isEmpty()) {
-                $this->migrateNavigationItems(
+                $anythingChanged |= $this->migrateNavigationItems(
                     $serviceActions,
                     $user,
                     $sharedNavigation . '/icingadb-service-actions.ini',
@@ -200,7 +206,9 @@ class MigrateCommand extends Command
             exit($rc);
         }
 
-        if ($this->skipMigration) {
+        if (! $anythingChanged) {
+            Logger::info('Nothing to do');
+        } elseif ($this->skipMigration) {
             Logger::info('Successfully transformed all icingadb navigation item filters');
         } else {
             Logger::info('Successfully migrated all monitoring navigation items');
@@ -446,6 +454,8 @@ class MigrateCommand extends Command
         $rc = 0;
         $directories = new DirectoryIterator($dashboardsPath);
 
+        $anythingChanged = false;
+
         /** @var string $directory */
         foreach ($directories as $directory) {
             /** @var string $userName */
@@ -505,6 +515,10 @@ class MigrateCommand extends Command
                 $this->createBackupIni("$directory/dashboard", $backupConfig);
             }
 
+            if ($changed) {
+                $anythingChanged = true;
+            }
+
             try {
                 $dashboardsConfig->saveIni();
             } catch (NotWritableError $error) {
@@ -523,7 +537,9 @@ class MigrateCommand extends Command
             exit($rc);
         }
 
-        if ($this->skipMigration) {
+        if (! $anythingChanged) {
+            Logger::info('Nothing to do');
+        } elseif ($this->skipMigration) {
             Logger::info('Successfully transformed all icingadb dashboards');
         } else {
             Logger::info('Successfully migrated dashboards for all the matched users');
