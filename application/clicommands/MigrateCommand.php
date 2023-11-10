@@ -13,7 +13,7 @@ use Icinga\Exception\NotWritableError;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Web\Request;
-use ipl\Stdlib\Filter;
+use ipl\Stdlib\Str;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -295,11 +295,11 @@ class MigrateCommand extends Command
                     }
 
                     foreach (explode(',', $role['permissions']) as $permission) {
-                        if (str_contains($permission, 'icingadb')) {
+                        if (Str::startsWith($permission, 'icingadb/') || $permission === 'module/icingadb') {
                             continue;
-                        } elseif (fnmatch('monitoring/command*', $permission)) {
+                        } elseif (Str::startsWith($permission, 'monitoring/command/')) {
                             $updatedPermissions[] = $permission;
-                            $updatedPermissions[] = str_replace('monitoring', 'icingadb', $permission);
+                            $updatedPermissions[] = str_replace('monitoring/', 'icingadb/', $permission);
                         } elseif ($permission === 'no-monitoring/contacts') {
                             $updatedPermissions[] = $permission;
                             $role['icingadb/denylist/routes'] = 'users,usergroups';
@@ -319,11 +319,11 @@ class MigrateCommand extends Command
                     );
 
                     foreach (explode(',', $role['refusals']) as $refusal) {
-                        if (str_contains($refusal, 'icingadb')) {
+                        if (Str::startsWith($refusal, 'icingadb/') || $refusal === 'module/icingadb') {
                             continue;
-                        } elseif (fnmatch('monitoring/command*', $refusal)) {
+                        } elseif (Str::startsWith($refusal, 'monitoring/command/')) {
                             $updatedRefusals[] = $refusal;
-                            $updatedRefusals[] = str_replace('monitoring', 'icingadb', $refusal);
+                            $updatedRefusals[] = str_replace('monitoring/', 'icingadb/', $refusal);
                         } else {
                             $updatedRefusals[] = $refusal;
                         }
@@ -433,12 +433,12 @@ class MigrateCommand extends Command
                 $dashboardUrlString = $dashboardConfig->get('url');
                 if ($dashboardUrlString !== null) {
                     $dashBoardUrl = Url::fromPath($dashboardUrlString, [], new Request());
-                    if (! $this->skipMigration && fnmatch('monitoring*', $dashboardUrlString)) {
+                    if (! $this->skipMigration && Str::startsWith(ltrim($dashboardUrlString, '/'), 'monitoring/')) {
                         $dashboardConfig->url = UrlMigrator::transformUrl($dashBoardUrl)->getRelativeUrl();
                         $changed = true;
                     }
 
-                    if (fnmatch('icingadb*', ltrim($dashboardUrlString, '/'))) {
+                    if (Str::startsWith(ltrim($dashboardUrlString, '/'), 'icingadb/')) {
                         $finalUrl = $dashBoardUrl->onlyWith(['sort', 'limit', 'view', 'columns', 'page']);
                         $params = $dashBoardUrl->without(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
                         $filter = QueryString::parse($params->toString());
