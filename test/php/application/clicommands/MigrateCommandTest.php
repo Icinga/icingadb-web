@@ -160,6 +160,60 @@ class MigrateCommandTest extends TestCase
                 ]
             ]
         ],
+        'shared-menu-items' => [
+            'initial' => [
+                'foreign-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'example.com?q=foo',
+                    'owner'     => 'test'
+                ],
+                'monitoring-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'monitoring/list/hosts?host_problem=1',
+                    'owner'     => 'test'
+                ],
+                'icingadb-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'icingadb/hosts?host.name=%2Afoo%2A',
+                    'owner'     => 'test'
+                ],
+                'other-monitoring-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'monitoring/list/hosts?host_problem=1',
+                    'owner'     => 'not-test'
+                ]
+            ],
+            'expected' => [
+                'foreign-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'example.com?q=foo',
+                    'owner'     => 'test'
+                ],
+                'monitoring-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'icingadb/hosts?host.state.is_problem=y',
+                    'owner'     => 'test'
+                ],
+                'icingadb-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'icingadb/hosts?host.name~%2Afoo%2A',
+                    'owner'     => 'test'
+                ],
+                'other-monitoring-url' => [
+                    'type'      => 'menu-item',
+                    'target'    => '_blank',
+                    'url'       => 'monitoring/list/hosts?host_problem=1',
+                    'owner'     => 'not-test'
+                ]
+            ]
+        ],
         'host-actions' => [
             'initial' => [
                 'hosts' => [
@@ -222,7 +276,7 @@ class MigrateCommandTest extends TestCase
                     'filter'    => 'service.vars.foo=bar&service.vars.bar~%2Afoo%2A'
                 ],
                 'services_encoded_params' => [
-                    'type'      => 'icingadb-service-action',
+                    'type'      => 'icingadb-host-action',
                     'url'       => 'icingadb/services?host.name=%28foo%29&sort=host.vars.%28foo%29',
                     'filter'    => 'host.vars.%28foo%29=bar'
                 ]
@@ -717,25 +771,45 @@ class MigrateCommandTest extends TestCase
     /**
      * Checks the following:
      * - Whether only a single user is handled
-     * - Whether shared host actions are migrated, depending on the owner
-     * - Whether old configs are kept
-     * - Whether a second run changes nothing
+     * - Whether shared items are migrated, depending on the owner
+     * - Whether old configs are kept/or backups are created
+     * - Whether a second run changes nothing, if nothing changed
+     * - Whether a second run keeps the backup, if nothing changed
+     * - Whether a new backup isn't created, if nothing changed
      */
     public function testNavigationMigrationBehavesAsExpectedByDefault()
     {
+        [$initialMenuConfig, $expectedMenu] = $this->getConfig('menu-items');
         [$initialHostConfig, $expectedHosts] = $this->getConfig('host-actions');
         [$initialServiceConfig, $expectedServices] = $this->getConfig('service-actions');
 
+        $this->createConfig('preferences/test/menu.ini', $initialMenuConfig);
         $this->createConfig('preferences/test/host-actions.ini', $initialHostConfig);
         $this->createConfig('preferences/test/service-actions.ini', $initialServiceConfig);
+        $this->createConfig('preferences/test2/menu.ini', $initialMenuConfig);
         $this->createConfig('preferences/test2/host-actions.ini', $initialHostConfig);
         $this->createConfig('preferences/test2/service-actions.ini', $initialServiceConfig);
+
+        [$initialSharedMenuConfig, $expectedSharedMenu] = $this->getConfig('shared-menu-items');
+        $this->createConfig('navigation/menu.ini', $initialSharedMenuConfig);
 
         [$initialSharedConfig, $expectedShared] = $this->getConfig('shared-host-actions');
         $this->createConfig('navigation/host-actions.ini', $initialSharedConfig);
 
         $command = $this->createCommandInstance('--user', 'test');
         $command->navigationAction();
+
+        $menuConfig = $this->loadConfig('preferences/test/menu.ini');
+        $this->assertSame($expectedMenu, $menuConfig);
+
+        $sharedMenuConfig = $this->loadConfig('navigation/menu.ini');
+        $this->assertSame($expectedSharedMenu, $sharedMenuConfig);
+
+        $menuConfig2 = $this->loadConfig('preferences/test2/menu.ini');
+        $this->assertSame($initialMenuConfig, $menuConfig2);
+
+        $menuBackup = $this->loadConfig('preferences/test/menu.backup.ini');
+        $this->assertSame($initialMenuConfig, $menuBackup);
 
         $hosts = $this->loadConfig('preferences/test/icingadb-host-actions.ini');
         $services = $this->loadConfig('preferences/test/icingadb-service-actions.ini');
@@ -758,10 +832,103 @@ class MigrateCommandTest extends TestCase
         $command = $this->createCommandInstance('--user', 'test');
         $command->navigationAction();
 
+        $menuConfigAfterSecondRun = $this->loadConfig('preferences/test/menu.ini');
+        $this->assertSame($menuConfig, $menuConfigAfterSecondRun);
+
+        $menuBackupAfterSecondRun = $this->loadConfig('preferences/test/menu.backup.ini');
+        $this->assertSame($menuBackup, $menuBackupAfterSecondRun);
+
+        $menuBackup1AfterSecondRun = $this->loadConfig('preferences/test/menu.backup1.ini');
+        $this->assertEmpty($menuBackup1AfterSecondRun);
+
         $hostsAfterSecondRun = $this->loadConfig('preferences/test/icingadb-host-actions.ini');
         $servicesAfterSecondRun = $this->loadConfig('preferences/test/icingadb-service-actions.ini');
         $this->assertSame($hosts, $hostsAfterSecondRun);
         $this->assertSame($services, $servicesAfterSecondRun);
+    }
+
+    /**
+     * Checks the following:
+     * - Whether a second run creates a new backup, if something changed
+     *
+     * @depends testNavigationMigrationBehavesAsExpectedByDefault
+     */
+    public function testNavigationMigrationCreatesMultipleBackups()
+    {
+        $initialOldConfig = [
+            'hosts' => [
+                'title' => 'Host Problems',
+                'url'   => 'monitoring/list/hosts?host_problem=1'
+            ]
+        ];
+        $initialNewConfig = [
+            'hosts' => [
+                'title' => 'Host Problems',
+                'url'   => 'icingadb/hosts?host.state.is_problem=y'
+            ],
+            'group_members' => [
+                'title' => 'Group Members',
+                'url'   => 'monitoring/list/hosts?hostgroup_name=group1|hostgroup_name=group2'
+            ]
+        ];
+        $expectedNewConfig = [
+            'hosts' => [
+                'title' => 'Host Problems',
+                'url'   => 'icingadb/hosts?host.state.is_problem=y'
+            ]
+        ];
+        $expectedFinalConfig = [
+            'hosts' => [
+                'title' => 'Host Problems',
+                'url'   => 'icingadb/hosts?host.state.is_problem=y'
+            ],
+            'group_members' => [
+                'title' => 'Group Members',
+                'url'   => 'icingadb/hosts?hostgroup.name=group1|hostgroup.name=group2'
+            ]
+        ];
+
+        $this->createConfig('preferences/test/menu.ini', $initialOldConfig);
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->navigationAction();
+
+        $newConfig = $this->loadConfig('preferences/test/menu.ini');
+        $this->assertSame($expectedNewConfig, $newConfig);
+        $oldBackup = $this->loadConfig('preferences/test/menu.backup.ini');
+        $this->assertSame($initialOldConfig, $oldBackup);
+
+        $this->createConfig('preferences/test/menu.ini', $initialNewConfig);
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->navigationAction();
+
+        $finalConfig = $this->loadConfig('preferences/test/menu.ini');
+        $this->assertSame($expectedFinalConfig, $finalConfig);
+        $newBackup = $this->loadConfig('preferences/test/menu.backup1.ini');
+        $this->assertSame($initialNewConfig, $newBackup);
+    }
+
+    /**
+     * Checks the following:
+     * - Whether backups are skipped
+     *
+     * @depends testNavigationMigrationBehavesAsExpectedByDefault
+     */
+    public function testNavigationMigrationSkipsBackupIfRequested()
+    {
+        [$initialConfig, $expected] = $this->getConfig('menu-items');
+
+        $this->createConfig('preferences/test/menu.ini', $initialConfig);
+
+        $command = $this->createCommandInstance('--user', 'test', '--no-backup');
+        $command->navigationAction();
+
+        $config = $this->loadConfig('preferences/test/menu.ini');
+        $this->assertSame($expected, $config);
+
+        $backup = $this->loadConfig('preferences/test/menu.backup.ini');
+        $this->assertEmpty($backup);
     }
 
     /**
@@ -826,7 +993,7 @@ class MigrateCommandTest extends TestCase
         $this->createConfig('preferences/test/host-actions.ini', $initialHostConfig);
         $this->createConfig('preferences/test/service-actions.ini', $initialServiceConfig);
 
-        $command = $this->createCommandInstance('--user', 'test', '--delete');
+        $command = $this->createCommandInstance('--user', 'test', '--no-backup');
         $command->navigationAction();
 
         $hosts = $this->loadConfig('preferences/test/icingadb-host-actions.ini');

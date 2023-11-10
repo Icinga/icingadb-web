@@ -44,13 +44,14 @@ class MigrateCommand extends Command
      *
      *  --override         Override the existing Icinga DB navigation items
      *
-     *  --delete           Remove the legacy files after successfully
+     *  --no-backup        Remove the legacy files after successfully
      *                     migrated the navigation items.
      */
     public function navigationAction(): void
     {
         /** @var string $user */
         $user = $this->params->getRequired('user');
+        $noBackup = $this->params->get('no-backup');
 
         $preferencesPath = Config::resolvePath('preferences');
         $sharedNavigation = Config::resolvePath('navigation');
@@ -62,6 +63,7 @@ class MigrateCommand extends Command
         $rc = 0;
         $directories = new DirectoryIterator($preferencesPath);
 
+        /** @var string $directory */
         foreach ($directories as $directory) {
             /** @var string $username */
             $username = $directories->key() === false ? '' : $directories->key();
@@ -69,67 +71,91 @@ class MigrateCommand extends Command
                 continue;
             }
 
+            $menuItems = $this->readFromIni($directory . '/menu.ini', $rc);
             $hostActions = $this->readFromIni($directory . '/host-actions.ini', $rc);
             $serviceActions = $this->readFromIni($directory . '/service-actions.ini', $rc);
             $icingadbHostActions = $this->readFromIni($directory . '/icingadb-host-actions.ini', $rc);
             $icingadbServiceActions = $this->readFromIni($directory . '/icingadb-service-actions.ini', $rc);
 
+            $menuUpdated = false;
+            $originalMenuItems = $this->readFromIni($directory . '/menu.ini', $rc);
+
             Logger::info(
-                'Transforming legacy wildcard filters of existing Icinga DB Web actions for user "%s"',
+                'Transforming legacy wildcard filters of existing Icinga DB Web items for user "%s"',
                 $username
             );
 
+            if (! $menuItems->isEmpty()) {
+                $menuUpdated = $this->transformNavigationItems($menuItems, $username, $rc);
+            }
+
             if (! $icingadbHostActions->isEmpty()) {
-                $this->migrateNavigationItems($icingadbHostActions, false, $rc);
+                $this->transformNavigationItems($icingadbHostActions, $username, $rc);
             }
 
             if (! $icingadbServiceActions->isEmpty()) {
-                $this->migrateNavigationItems(
+                $this->transformNavigationItems(
                     $icingadbServiceActions,
-                    false,
+                    $username,
                     $rc
                 );
             }
 
             if (! $this->skipMigration) {
-                Logger::info('Migrating monitoring navigation items for user "%s" to Icinga DB Web actions', $username);
+                Logger::info('Migrating monitoring navigation items for user "%s" to Icinga DB Web', $username);
+
+                if (! $menuItems->isEmpty()) {
+                    $menuUpdated = $this->migrateNavigationItems($menuItems, $username, $directory . '/menu.ini', $rc);
+                }
 
                 if (! $hostActions->isEmpty()) {
                     $this->migrateNavigationItems(
                         $hostActions,
-                        false,
-                        $rc,
-                        $directory . '/icingadb-host-actions.ini'
+                        $username,
+                        $directory . '/icingadb-host-actions.ini',
+                        $rc
                     );
                 }
 
                 if (! $serviceActions->isEmpty()) {
                     $this->migrateNavigationItems(
                         $serviceActions,
-                        false,
-                        $rc,
-                        $directory . '/icingadb-service-actions.ini'
+                        $username,
+                        $directory . '/icingadb-service-actions.ini',
+                        $rc
                     );
                 }
+            }
+
+            if ($menuUpdated && ! $noBackup) {
+                $this->createBackupIni("$directory/menu", $originalMenuItems);
             }
         }
 
         // Start migrating shared navigation items
+        $menuItems = $this->readFromIni($sharedNavigation . '/menu.ini', $rc);
         $hostActions = $this->readFromIni($sharedNavigation . '/host-actions.ini', $rc);
         $serviceActions = $this->readFromIni($sharedNavigation . '/service-actions.ini', $rc);
         $icingadbHostActions = $this->readFromIni($sharedNavigation . '/icingadb-host-actions.ini', $rc);
         $icingadbServiceActions = $this->readFromIni($sharedNavigation . '/icingadb-service-actions.ini', $rc);
 
-        Logger::info('Transforming legacy wildcard filters of existing shared Icinga DB Web actions');
+        $menuUpdated = false;
+        $originalMenuItems = $this->readFromIni($sharedNavigation . '/menu.ini', $rc);
+
+        Logger::info('Transforming legacy wildcard filters of existing shared Icinga DB Web');
+
+        if (! $menuItems->isEmpty()) {
+            $menuUpdated = $this->transformNavigationItems($menuItems, $user, $rc);
+        }
 
         if (! $icingadbHostActions->isEmpty()) {
-            $this->migrateNavigationItems($icingadbHostActions, true, $rc);
+            $this->transformNavigationItems($icingadbHostActions, $user, $rc);
         }
 
         if (! $icingadbServiceActions->isEmpty()) {
-            $this->migrateNavigationItems(
+            $this->transformNavigationItems(
                 $icingadbServiceActions,
-                true,
+                $user,
                 $rc
             );
         }
@@ -137,23 +163,31 @@ class MigrateCommand extends Command
         if (! $this->skipMigration) {
             Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
 
+            if (! $menuItems->isEmpty()) {
+                $menuUpdated = $this->migrateNavigationItems($menuItems, $user, $sharedNavigation . '/menu.ini', $rc);
+            }
+
             if (! $hostActions->isEmpty()) {
                 $this->migrateNavigationItems(
                     $hostActions,
-                    true,
-                    $rc,
-                    $sharedNavigation . '/icingadb-host-actions.ini'
+                    $user,
+                    $sharedNavigation . '/icingadb-host-actions.ini',
+                    $rc
                 );
             }
 
             if (! $serviceActions->isEmpty()) {
                 $this->migrateNavigationItems(
                     $serviceActions,
-                    true,
-                    $rc,
-                    $sharedNavigation . '/icingadb-service-actions.ini'
+                    $user,
+                    $sharedNavigation . '/icingadb-service-actions.ini',
+                    $rc
                 );
             }
+        }
+
+        if ($menuUpdated && ! $noBackup) {
+            $this->createBackupIni("$sharedNavigation/menu", $originalMenuItems);
         }
 
         if ($rc > 0) {
@@ -411,6 +445,8 @@ class MigrateCommand extends Command
 
         $rc = 0;
         $directories = new DirectoryIterator($dashboardsPath);
+
+        /** @var string $directory */
         foreach ($directories as $directory) {
             /** @var string $userName */
             $userName = $directories->key() === false ? '' : $directories->key();
@@ -466,19 +502,7 @@ class MigrateCommand extends Command
 
 
             if ($changed && $noBackup === null) {
-                $counter = 0;
-                while (true) {
-                    $filepath = $counter > 0
-                        ? $directory . "/dashboard.backup$counter.ini"
-                        : $directory . '/dashboard.backup.ini';
-
-                    if (! file_exists($filepath)) {
-                        $backupConfig->saveIni($filepath);
-                        break;
-                    } else {
-                        $counter++;
-                    }
-                }
+                $this->createBackupIni("$directory/dashboard", $backupConfig);
             }
 
             try {
@@ -525,28 +549,21 @@ class MigrateCommand extends Command
         $this->roleAction();
     }
 
-    /**
-     * Migrate the given config to the given new config path
-     *
-     * @param Config $config
-     * @param ?string $path
-     * @param bool   $shared
-     * @param int    $rc
-     */
-    private function migrateNavigationItems($config, $shared, &$rc, $path = null): void
+    private function transformNavigationItems(Config $config, string $owner, int &$rc): bool
     {
-        /** @var string $owner */
-        $owner = $this->params->getRequired('user');
-        if ($path === null) {
-            $newConfig = $config;
-            /** @var ConfigObject $newConfigObject */
-            foreach ($newConfig->getConfigObject() as $section => $newConfigObject) {
-                /** @var string $configOwner */
-                $configOwner = $newConfigObject->get('owner') ?? '';
-                if ($shared && ! fnmatch($owner, $configOwner)) {
-                    continue;
-                }
+        $updated = false;
+        /** @var ConfigObject $newConfigObject */
+        foreach ($config->getConfigObject() as $section => $newConfigObject) {
+            /** @var string $configOwner */
+            $configOwner = $newConfigObject->get('owner') ?? '';
+            if ($configOwner && $configOwner !== $owner) {
+                continue;
+            }
 
+            if (
+                $newConfigObject->get('type') === 'icingadb-host-action'
+                || $newConfigObject->get('type') === 'icingadb-service-action'
+            ) {
                 /** @var ?string $legacyFilter */
                 $legacyFilter = $newConfigObject->get('filter');
                 if ($legacyFilter !== null) {
@@ -556,7 +573,7 @@ class MigrateCommand extends Command
                         $filter = QueryString::render($filter);
                         if ($legacyFilter !== $filter) {
                             $newConfigObject->filter = $filter;
-                            $newConfig->setSection($section, $newConfigObject);
+                            $updated = true;
                             Logger::info(
                                 'Icinga DB Web filter of action "%s" is changed from %s to "%s"',
                                 $section,
@@ -567,102 +584,144 @@ class MigrateCommand extends Command
                     }
                 }
             }
-        } else {
-            $deleteLegacyFiles = $this->params->get('delete');
-            $override = $this->params->get('override');
-            $newConfig = $this->readFromIni($path, $rc);
 
-            /** @var ConfigObject $configObject */
-            foreach ($config->getConfigObject() as $configObject) {
-                // Change the config type from "host-action" to icingadb's new action
-                /** @var string $configOwner */
-                $configOwner = $configObject->get('owner') ?? '';
-                if ($shared && ! fnmatch($owner, $configOwner)) {
-                    continue;
-                }
+            /** @var string $url */
+            $url = $newConfigObject->get('url');
+            if ($url && Str::startsWith(ltrim($url, '/'), 'icingadb/')) {
+                $url = Url::fromPath($url, [], new Request());
+                $finalUrl = $url->onlyWith(['sort', 'limit', 'view', 'columns', 'page']);
+                $params = $url->without(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
+                $filter = QueryString::parse($params->toString());
+                $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
+                if ($filter) {
+                    $oldFilterString = $params->toString();
+                    $newFilterString = QueryString::render($filter);
 
-                if (strpos($path, 'icingadb-host-actions') !== false) {
-                    $configObject->type = 'icingadb-host-action';
-                } else {
-                    $configObject->type = 'icingadb-service-action';
-                }
-
-                /** @var ?string $urlString */
-                $urlString = $configObject->get('url');
-                if ($urlString !== null) {
-                    $urlString = $configObject->url = str_replace(
-                        ['$SERVICEDESC$', '$HOSTNAME$', '$HOSTADDRESS$', '$HOSTADDRESS6$'],
-                        ['$service.name$', '$host.name$', '$host.address$', '$host.address6$'],
-                        $urlString
-                    );
-
-                    $url = Url::fromPath($urlString, [], new Request());
-
-                    try {
-                        $urlString = UrlMigrator::transformUrl($url)->getRelativeUrl();
-                        $configObject->url = $urlString;
-                    } catch (\InvalidArgumentException $err) {
-                        // Do nothing
-                    }
-                }
-
-                /** @var ?string $legacyFilter */
-                $legacyFilter = $configObject->get('filter');
-                if ($legacyFilter !== null) {
-                    $filter = QueryString::parse($legacyFilter);
-                    $filter = UrlMigrator::transformFilter($filter);
-                    if ($filter !== false) {
-                        $configObject->filter = QueryString::render($filter);
-                    } else {
-                        unset($configObject->filter);
-                    }
-                }
-
-                $section = $config->key();
-
-                if (! $newConfig->hasSection($section) || $override) {
-                    /** @var string $type */
-                    $type = $configObject->get('type');
-                    $oldPath = ! $shared
-                        ? sprintf(
-                            '%s/%s/%ss.ini',
-                            Config::resolvePath('preferences'),
-                            $configOwner,
-                            $type
-                        )
-                        : sprintf(
-                            '%s/%ss.ini',
-                            Config::resolvePath('navigation'),
-                            $type
+                    if ($oldFilterString !== $newFilterString) {
+                        Logger::info(
+                            'Icinga Db Web filter of navigation item "%s" has changed from "%s" to "%s"',
+                            $section,
+                            $oldFilterString,
+                            $newFilterString
                         );
 
-                    $oldConfig = $this->readFromIni($oldPath, $rc);
-
-                    if ($override && $oldConfig->hasSection($section)) {
-                        $oldConfig->removeSection($section);
-                        $oldConfig->saveIni();
-                    }
-
-                    if (! $oldConfig->hasSection($section)) {
-                        $newConfig->setSection($section, $configObject);
+                        $newConfigObject->url = $finalUrl->setFilter($filter)->getRelativeUrl();
+                        $updated = true;
                     }
                 }
             }
         }
 
-        try {
-            if (! $newConfig->isEmpty()) {
+        if ($updated) {
+            try {
+                $config->saveIni();
+            } catch (NotWritableError $error) {
+                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                $rc = 256;
+
+                return false;
+            }
+        }
+
+        return $updated;
+    }
+
+    /**
+     * Migrate the given config to the given new config path
+     *
+     * @param Config $config
+     * @param string $owner
+     * @param string $path
+     * @param int $rc
+     *
+     * @return bool
+     */
+    private function migrateNavigationItems(Config $config, string $owner, string $path, int &$rc): bool
+    {
+        $deleteLegacyFiles = $this->params->get('no-backup');
+        $override = $this->params->get('override');
+        $newConfig = $config->getConfigFile() === $path ? $config : $this->readFromIni($path, $rc);
+
+        $updated = false;
+        /** @var ConfigObject $configObject */
+        foreach ($config->getConfigObject() as $configObject) {
+            /** @var string $configOwner */
+            $configOwner = $configObject->get('owner') ?? '';
+            if ($configOwner && $configOwner !== $owner) {
+                continue;
+            }
+
+            $migrateFilter = false;
+            if ($configObject->type === 'host-action') {
+                $updated = true;
+                $migrateFilter = true;
+                $configObject->type = 'icingadb-host-action';
+            } elseif ($configObject->type === 'service-action') {
+                $updated = true;
+                $migrateFilter = true;
+                $configObject->type = 'icingadb-service-action';
+            }
+
+            /** @var ?string $urlString */
+            $urlString = $configObject->get('url');
+            if ($urlString !== null) {
+                $urlString = str_replace(
+                    ['$SERVICEDESC$', '$HOSTNAME$', '$HOSTADDRESS$', '$HOSTADDRESS6$'],
+                    ['$service.name$', '$host.name$', '$host.address$', '$host.address6$'],
+                    $urlString
+                );
+                if ($urlString !== $configObject->url) {
+                    $configObject->url = $urlString;
+                    $updated = true;
+                }
+
+                $url = Url::fromPath($urlString, [], new Request());
+
+                try {
+                    $urlString = UrlMigrator::transformUrl($url)->getRelativeUrl();
+                    $configObject->url = $urlString;
+                    $updated = true;
+                } catch (\InvalidArgumentException $err) {
+                    // Do nothing
+                }
+            }
+
+            /** @var ?string $legacyFilter */
+            $legacyFilter = $configObject->get('filter');
+            if ($migrateFilter && $legacyFilter) {
+                $updated = true;
+                $filter = QueryString::parse($legacyFilter);
+                $filter = UrlMigrator::transformFilter($filter);
+                if ($filter !== false) {
+                    $configObject->filter = QueryString::render($filter);
+                } else {
+                    unset($configObject->filter);
+                }
+            }
+
+            $section = $config->key();
+            if (! $newConfig->hasSection($section) || $newConfig === $config || $override) {
+                $newConfig->setSection($section, $configObject);
+            }
+        }
+
+        if ($updated) {
+            try {
                 $newConfig->saveIni();
 
                 // Remove the legacy file only if explicitly requested
-                if ($path !== null && $deleteLegacyFiles) {
+                if ($deleteLegacyFiles && $newConfig !== $config) {
                     unlink($config->getConfigFile());
                 }
+            } catch (NotWritableError $error) {
+                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                $rc = 256;
+
+                return false;
             }
-        } catch (NotWritableError $error) {
-            Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
-            $rc = 256;
         }
+
+        return $updated;
     }
 
     /**
@@ -689,6 +748,28 @@ class MigrateCommand extends Command
         }
 
         return $config;
+    }
+
+    private function createBackupIni(string $path, Config $config = null): void
+    {
+        $counter = 0;
+        while (true) {
+            $filepath = $counter > 0
+                ? "$path.backup$counter.ini"
+                : "$path.backup.ini";
+
+            if (! file_exists($filepath)) {
+                if ($config) {
+                    $config->saveIni($filepath);
+                } else {
+                    copy("$path.ini", $filepath);
+                }
+
+                break;
+            } else {
+                $counter++;
+            }
+        }
     }
 
     /**
