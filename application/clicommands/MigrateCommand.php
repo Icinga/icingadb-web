@@ -397,7 +397,7 @@ class MigrateCommand extends Command
         try {
             $rolesConfig->saveIni();
         } catch (NotWritableError $error) {
-            Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+            Logger::error($error);
             if ($this->skipMigration) {
                 Logger::error('Failed to transform icingadb restrictions');
             } else {
@@ -508,7 +508,7 @@ class MigrateCommand extends Command
             try {
                 $dashboardsConfig->saveIni();
             } catch (NotWritableError $error) {
-                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                Logger::error($error);
                 $rc = 256;
             }
         }
@@ -616,7 +616,7 @@ class MigrateCommand extends Command
             try {
                 $config->saveIni();
             } catch (NotWritableError $error) {
-                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                Logger::error($error);
                 $rc = 256;
 
                 return false;
@@ -714,7 +714,7 @@ class MigrateCommand extends Command
                     unlink($config->getConfigFile());
                 }
             } catch (NotWritableError $error) {
-                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                Logger::error($error);
                 $rc = 256;
 
                 return false;
@@ -737,11 +737,7 @@ class MigrateCommand extends Command
         try {
             $config = Config::fromIni($path);
         } catch (NotReadableError $error) {
-            if ($error->getPrevious() !== null) {
-                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
-            } else {
-                Logger::error($error->getMessage());
-            }
+            Logger::error($error);
 
             $config = new Config();
             $rc = 128;
