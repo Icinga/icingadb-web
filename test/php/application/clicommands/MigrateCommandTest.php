@@ -1429,4 +1429,32 @@ class MigrateCommandTest extends TestCase
         $this->assertSame($expectedDashboardConfig, $dashboardConfig);
         $this->assertSame($expectedRoleConfig, $roleConfig);
     }
+
+    public function testNavigationMigrationWorksEvenIfOnlySharedItemsExist()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $this->createConfig('navigation/menu.ini', []);
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->navigationAction();
+    }
+
+    public function testNavigationMigrationWorksEvenIfOnlyUserItemsExist()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $this->createConfig('preferences/test/menu.ini', []);
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->navigationAction();
+    }
+
+    public function testDashboardMigrationWorksEvenIfNoDashboardsExist()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->dashboardAction();
+    }
 }

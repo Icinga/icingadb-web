@@ -61,7 +61,7 @@ class MigrateCommand extends Command
         }
 
         $rc = 0;
-        $directories = new DirectoryIterator($preferencesPath);
+        $directories = file_exists($preferencesPath) ? new DirectoryIterator($preferencesPath) : [];
 
         /** @var string $directory */
         foreach ($directories as $directory) {
