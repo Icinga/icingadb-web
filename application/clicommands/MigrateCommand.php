@@ -575,6 +575,10 @@ class MigrateCommand extends Command
      * USAGE
      *
      *  icingacli icingadb migrate filter
+     *
+     * OPTIONS:
+     *
+     *  --no-backup   Don't back up menu items, dashboards and roles
      */
     public function filterAction(): void
     {

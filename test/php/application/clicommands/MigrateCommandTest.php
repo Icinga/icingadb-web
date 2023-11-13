@@ -1388,6 +1388,41 @@ class MigrateCommandTest extends TestCase
             ]
         ];
 
+        $initialMenuConfig = [
+            'foreign-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'example.com?q=foo'
+            ],
+            'monitoring-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'icingadb/hosts?host.name=%2Afoo%2A'
+            ]
+        ];
+        $expectedMenuConfig = [
+            'foreign-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'example.com?q=foo'
+            ],
+            'monitoring-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'icingadb/hosts?host.name~%2Afoo%2A'
+            ]
+        ];
+
         $initialDashboardConfig = [
             'hosts' => [
                 'title' => 'Hosts'
@@ -1451,6 +1486,7 @@ class MigrateCommandTest extends TestCase
         $this->createConfig('preferences/test/icingadb-host-actions.ini', $initialIcingadbHostActionConfig);
         $this->createConfig('preferences/test/icingadb-service-actions.ini', $initialIcingadbServiceActionConfig);
         $this->createConfig('dashboards/test/dashboard.ini', $initialDashboardConfig);
+        $this->createConfig('preferences/test/menu.ini', $initialMenuConfig);
         $this->createConfig('roles.ini', $initialRoleConfig);
 
         $command = $this->createCommandInstance();
@@ -1460,14 +1496,204 @@ class MigrateCommandTest extends TestCase
         $serviceActionConfig = $this->loadConfig('preferences/test/service-actions.ini');
         $icingadbHostActionConfig = $this->loadConfig('preferences/test/icingadb-host-actions.ini');
         $icingadbServiceActionConfig = $this->loadConfig('preferences/test/icingadb-service-actions.ini');
+        $dashboardBackup = $this->loadConfig('dashboards/test/dashboard.backup.ini');
         $dashboardConfig = $this->loadConfig('dashboards/test/dashboard.ini');
+        $menuBackup = $this->loadConfig('preferences/test/menu.backup.ini');
+        $menuConfig = $this->loadConfig('preferences/test/menu.ini');
+        $roleBackup = $this->loadConfig('roles.backup.ini');
         $roleConfig = $this->loadConfig('roles.ini');
 
         $this->assertSame($expectedHostActionConfig, $hostActionConfig);
         $this->assertSame($expectedServiceActionConfig, $serviceActionConfig);
+        $this->assertSame($initialDashboardConfig, $dashboardBackup);
+        $this->assertSame($initialMenuConfig, $menuBackup);
+        $this->assertSame($initialRoleConfig, $roleBackup);
+
         $this->assertSame($expectedIcingadbHostActionConfig, $icingadbHostActionConfig);
         $this->assertSame($expectedIcingadbServiceActionConfig, $icingadbServiceActionConfig);
         $this->assertSame($expectedDashboardConfig, $dashboardConfig);
+        $this->assertSame($expectedMenuConfig, $menuConfig);
+        $this->assertSame($expectedRoleConfig, $roleConfig);
+    }
+
+    /**
+     * @depends testFilterMigrationWorksAsExpected
+     */
+    public function testFilterMigrationSkipsBackupsIfRequested()
+    {
+        $initialHostActionConfig = [
+            'hosts' => [
+                'type'      => 'host-action',
+                'url'       => 'example.com/search?q=$host.name$',
+                'filter'    => 'host_name=%2Afoo%2A'
+            ]
+        ];
+        $expectedHostActionConfig = $initialHostActionConfig;
+
+        $initialIcingadbHostActionConfig = [
+            'hosts' => [
+                'type'      => 'icingadb-host-action',
+                'url'       => 'example.com/search?q=$host.name$',
+                'filter'    => 'host.name=%2Afoo%2A'
+            ]
+        ];
+        $expectedIcingadbHostActionConfig = [
+            'hosts' => [
+                'type'      => 'icingadb-host-action',
+                'url'       => 'example.com/search?q=$host.name$',
+                'filter'    => 'host.name~%2Afoo%2A'
+            ]
+        ];
+
+        $initialServiceActionConfig = [
+            'services' => [
+                'type'      => 'service-action',
+                'url'       => 'example.com/search?q=$service.name$,$host.name$,$host.address$,$host.address6$',
+                'filter'    => '_service_foo=bar&_service_bar=%2Afoo%2A'
+            ]
+        ];
+        $expectedServiceActionConfig = $initialServiceActionConfig;
+
+        $initialIcingadbServiceActionConfig = [
+            'services' => [
+                'type'      => 'icingadb-service-action',
+                'url'       => 'example.com/search?q=$service.name$,$host.name$,$host.address$,$host.address6$',
+                'filter'    => 'service.vars.foo=bar&service.vars.bar=%2Afoo%2A'
+            ]
+        ];
+        $expectedIcingadbServiceActionConfig = [
+            'services' => [
+                'type'      => 'icingadb-service-action',
+                'url'       => 'example.com/search?q=$service.name$,$host.name$,$host.address$,$host.address6$',
+                'filter'    => 'service.vars.foo=bar&service.vars.bar~%2Afoo%2A'
+            ]
+        ];
+
+        $initialMenuConfig = [
+            'foreign-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'example.com?q=foo'
+            ],
+            'monitoring-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'icingadb/hosts?host.name=%2Afoo%2A'
+            ]
+        ];
+        $expectedMenuConfig = [
+            'foreign-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'example.com?q=foo'
+            ],
+            'monitoring-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb-url' => [
+                'type'      => 'menu-item',
+                'target'    => '_blank',
+                'url'       => 'icingadb/hosts?host.name~%2Afoo%2A'
+            ]
+        ];
+
+        $initialDashboardConfig = [
+            'hosts' => [
+                'title' => 'Hosts'
+            ],
+            'hosts.problems' => [
+                'title' => 'Host Problems',
+                'url'   => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb' => [
+                'title' => 'Icinga DB'
+            ],
+            'icingadb.wildcards' => [
+                'title' => 'Wildcards',
+                'url'   => 'icingadb/hosts?host.state.is_problem=y&hostgroup.name=%2Alinux%2A'
+            ]
+        ];
+        $expectedDashboardConfig = [
+            'hosts' => [
+                'title' => 'Hosts'
+            ],
+            'hosts.problems' => [
+                'title' => 'Host Problems',
+                'url'   => 'monitoring/list/hosts?host_problem=1'
+            ],
+            'icingadb' => [
+                'title' => 'Icinga DB'
+            ],
+            'icingadb.wildcards' => [
+                'title' => 'Wildcards',
+                'url'   => 'icingadb/hosts?host.state.is_problem=y&hostgroup.name~%2Alinux%2A'
+            ]
+        ];
+
+        $initialRoleConfig = [
+            'one' => [
+                'groups'                    => 'support,helpdesk',
+                'monitoring/filter/objects' => 'host_name=foo|hostgroup_name=foo'
+            ],
+            'two' => [
+                'monitoring/filter/objects' => 'host_name=foo|hostgroup_name=foo'
+            ],
+            'three' => [
+                'icingadb/filter/objects'   => 'host.name=%2Afoo%2A'
+            ]
+        ];
+        $expectedRoleConfig = [
+            'one' => [
+                'groups'                    => 'support,helpdesk',
+                'monitoring/filter/objects' => 'host_name=foo|hostgroup_name=foo'
+            ],
+            'two' => [
+                'monitoring/filter/objects' => 'host_name=foo|hostgroup_name=foo'
+            ],
+            'three' => [
+                'icingadb/filter/objects'   => 'host.name~%2Afoo%2A'
+            ]
+        ];
+
+        $this->createConfig('preferences/test/host-actions.ini', $initialHostActionConfig);
+        $this->createConfig('preferences/test/service-actions.ini', $initialServiceActionConfig);
+        $this->createConfig('preferences/test/icingadb-host-actions.ini', $initialIcingadbHostActionConfig);
+        $this->createConfig('preferences/test/icingadb-service-actions.ini', $initialIcingadbServiceActionConfig);
+        $this->createConfig('dashboards/test/dashboard.ini', $initialDashboardConfig);
+        $this->createConfig('preferences/test/menu.ini', $initialMenuConfig);
+        $this->createConfig('roles.ini', $initialRoleConfig);
+
+        $command = $this->createCommandInstance('--no-backup');
+        $command->filterAction();
+
+        $hostActionConfig = $this->loadConfig('preferences/test/host-actions.ini');
+        $serviceActionConfig = $this->loadConfig('preferences/test/service-actions.ini');
+        $icingadbHostActionConfig = $this->loadConfig('preferences/test/icingadb-host-actions.ini');
+        $icingadbServiceActionConfig = $this->loadConfig('preferences/test/icingadb-service-actions.ini');
+        $dashboardBackup = $this->loadConfig('dashboards/test/dashboard.backup.ini');
+        $dashboardConfig = $this->loadConfig('dashboards/test/dashboard.ini');
+        $menuBackup = $this->loadConfig('preferences/test/menu.backup.ini');
+        $menuConfig = $this->loadConfig('preferences/test/menu.ini');
+        $roleBackup = $this->loadConfig('roles.backup.ini');
+        $roleConfig = $this->loadConfig('roles.ini');
+
+        $this->assertSame($expectedHostActionConfig, $hostActionConfig);
+        $this->assertSame($expectedServiceActionConfig, $serviceActionConfig);
+        $this->assertEmpty($dashboardBackup);
+        $this->assertEmpty($menuBackup);
+        $this->assertEmpty($roleBackup);
+
+        $this->assertSame($expectedIcingadbHostActionConfig, $icingadbHostActionConfig);
+        $this->assertSame($expectedIcingadbServiceActionConfig, $icingadbServiceActionConfig);
+        $this->assertSame($expectedDashboardConfig, $dashboardConfig);
+        $this->assertSame($expectedMenuConfig, $menuConfig);
         $this->assertSame($expectedRoleConfig, $roleConfig);
     }
 
