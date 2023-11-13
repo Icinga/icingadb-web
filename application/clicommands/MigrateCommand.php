@@ -239,11 +239,14 @@ class MigrateCommand extends Command
      * OPTIONS:
      *
      *  --override     Reset any existing Icinga DB Web rules
+     *
+     *  --no-backup    Don't back up roles
      */
     public function roleAction(): void
     {
         /** @var ?bool $override */
         $override = $this->params->get('override');
+        $noBackup = $this->params->get('no-backup');
 
         /** @var ?string $groupName */
         $groupName = $this->params->get('group');
@@ -257,6 +260,8 @@ class MigrateCommand extends Command
         }
 
         $rc = 0;
+        $changed = false;
+
         $restrictions = Config::$configDir . '/roles.ini';
         $rolesConfig = $this->readFromIni($restrictions, $rc);
         $monitoringRestriction = 'monitoring/filter/objects';
@@ -301,6 +306,7 @@ class MigrateCommand extends Command
 
                     if ($transformedFilter) {
                         $role[$icingadbRestrictions['objects']] = QueryString::render($transformedFilter);
+                        $changed = true;
                     }
                 }
 
@@ -320,6 +326,8 @@ class MigrateCommand extends Command
                         '*',
                         implode(',', array_unique($icingadbProperties))
                     );
+
+                    $changed = true;
                 }
 
                 if (isset($role['permissions'])) {
@@ -335,6 +343,7 @@ class MigrateCommand extends Command
 
                         if ($monitoringProtection !== null) {
                             $role['icingadb/protect/variables'] = $monitoringProtection;
+                            $changed = true;
                         }
                     }
 
@@ -342,9 +351,11 @@ class MigrateCommand extends Command
                         if (Str::startsWith($permission, 'icingadb/') || $permission === 'module/icingadb') {
                             continue;
                         } elseif (Str::startsWith($permission, 'monitoring/command/')) {
+                            $changed = true;
                             $updatedPermissions[] = $permission;
                             $updatedPermissions[] = str_replace('monitoring/', 'icingadb/', $permission);
                         } elseif ($permission === 'no-monitoring/contacts') {
+                            $changed = true;
                             $updatedPermissions[] = $permission;
                             $role['icingadb/denylist/routes'] = 'users,usergroups';
                         } else {
@@ -366,6 +377,7 @@ class MigrateCommand extends Command
                         if (Str::startsWith($refusal, 'icingadb/') || $refusal === 'module/icingadb') {
                             continue;
                         } elseif (Str::startsWith($refusal, 'monitoring/command/')) {
+                            $changed = true;
                             $updatedRefusals[] = $refusal;
                             $updatedRefusals[] = str_replace('monitoring/', 'icingadb/', $refusal);
                         } else {
@@ -395,6 +407,7 @@ class MigrateCommand extends Command
                                 );
 
                                 $role[$icingadbRestriction] = $filter;
+                                $changed = true;
                             }
                         }
                     }
@@ -404,23 +417,31 @@ class MigrateCommand extends Command
             $rolesConfig->setSection($name, $role);
         }
 
-        try {
-            $rolesConfig->saveIni();
-        } catch (NotWritableError $error) {
-            Logger::error($error);
-            if ($this->skipMigration) {
-                Logger::error('Failed to transform icingadb restrictions');
-            } else {
-                Logger::error('Failed to migrate monitoring restrictions');
+        if ($changed) {
+            if (! $noBackup) {
+                $this->createBackupIni(Config::$configDir . '/roles');
             }
 
-            exit(256);
-        }
+            try {
+                $rolesConfig->saveIni();
+            } catch (NotWritableError $error) {
+                Logger::error($error);
+                if ($this->skipMigration) {
+                    Logger::error('Failed to transform icingadb restrictions');
+                } else {
+                    Logger::error('Failed to migrate monitoring restrictions');
+                }
 
-        if ($this->skipMigration) {
-            Logger::info('Successfully transformed all icingadb restrictions');
+                exit(256);
+            }
+
+            if ($this->skipMigration) {
+                Logger::info('Successfully transformed all icingadb restrictions');
+            } else {
+                Logger::info('Successfully migrated monitoring restrictions and permissions in roles');
+            }
         } else {
-            Logger::info('Successfully migrated monitoring restrictions and permissions in roles');
+            Logger::info('Nothing to do');
         }
     }
 

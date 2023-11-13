@@ -1135,6 +1135,10 @@ class MigrateCommandTest extends TestCase
      * - Whether refusals are properly migrated
      * - Whether restrictions are properly migrated
      * - Whether blacklists are properly migrated
+     * - Whether backups are created
+     * - Whether a second run changes nothing, if nothing changed
+     * - Whether a second run keeps the backup, if nothing changed
+     * - Whether a new backup isn't created, if nothing changed
      */
     public function testRoleMigrationMigratesAllRoles()
     {
@@ -1147,6 +1151,43 @@ class MigrateCommandTest extends TestCase
 
         $config = $this->loadConfig('roles.ini');
         $this->assertSame($expected, $config);
+
+        $backup = $this->loadConfig('roles.backup.ini');
+        $this->assertSame($initialConfig, $backup);
+
+        $command = $this->createCommandInstance('--role', '*');
+        $command->roleAction();
+
+        $configAfterSecondRun = $this->loadConfig('roles.ini');
+        $this->assertSame($config, $configAfterSecondRun);
+
+        $backupAfterSecondRun = $this->loadConfig('roles.backup.ini');
+        $this->assertSame($backup, $backupAfterSecondRun);
+
+        $backup2 = $this->loadConfig('roles.backup1.ini');
+        $this->assertEmpty($backup2);
+    }
+
+    /**
+     * Checks the following:
+     * - Whether backups are skipped
+     *
+     * @depends testRoleMigrationMigratesAllRoles
+     */
+    public function testRoleMigrationSkipsBackupIfRequested()
+    {
+        [$initialConfig, $expected] = $this->getConfig('all-roles');
+
+        $this->createConfig('roles.ini', $initialConfig);
+
+        $command = $this->createCommandInstance('--role', '*', '--no-backup');
+        $command->roleAction();
+
+        $config = $this->loadConfig('roles.ini');
+        $this->assertSame($expected, $config);
+
+        $backup = $this->loadConfig('roles.backup.ini');
+        $this->assertEmpty($backup);
     }
 
     /**
