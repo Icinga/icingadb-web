@@ -28,7 +28,7 @@ class MigrateCommand extends Command
     }
 
     /**
-     * Migrate monitoring navigation items to the Icinga DB Web actions
+     * Migrate monitoring navigation items to Icinga DB Web
      *
      * USAGE
      *
@@ -36,16 +36,16 @@ class MigrateCommand extends Command
      *
      * REQUIRED OPTIONS:
      *
-     *  --user=<username>  Migrate monitoring navigation items only for
-     *                     the given user or all similar users if a
-     *                     wildcard is used. (* matches all users)
+     *  --user=<name> Migrate navigation items whose owner matches the given
+     *                name or owners matching the given pattern. Wildcard
+     *                matching by `*` possible.
      *
      * OPTIONS:
      *
-     *  --override         Override the existing Icinga DB navigation items
+     *  --override    Replace existing or already migrated items
+     *                (Attention: Actions are not backed up)
      *
-     *  --no-backup        Remove the legacy files after successfully
-     *                     migrated the navigation items.
+     *  --no-backup   Remove monitoring actions and don't back up menu items
      */
     public function navigationAction(): void
     {
@@ -217,26 +217,28 @@ class MigrateCommand extends Command
 
 
     /**
-     * Migrate monitoring restrictions and permissions in a role to Icinga DB Web restrictions and permissions
+     * Migrate monitoring restrictions and permissions to Icinga DB Web
+     *
+     * Migrated roles do not grant general or full access to users afterward.
+     * It is recommended to review any changes made by this command, before
+     * manually granting access.
      *
      * USAGE
      *
      *  icingacli icingadb migrate role [options]
      *
+     * REQUIRED OPTIONS: (Use either, not both)
+     *
+     *  --group=<name> Update roles that are assigned to the given group or to
+     *                 groups matching the pattern. Wildcard matching by `*`
+     *                 possible.
+     *
+     *  --role=<name>  Update role with the given name or roles whose names
+     *                 match the pattern. Wildcard matching by `*` possible.
+     *
      * OPTIONS:
      *
-     *  --group=<groupname>  Migrate monitoring restrictions and permissions for all roles,
-     *                       the given group or the groups matching the given
-     *                       group belongs to.
-     *                       (wildcard * migrates monitoring restrictions and permissions
-     *                       for all roles)
-     *
-     *  --role=<rolename>    Migrate monitoring restrictions and permissions for the
-     *                       given role or all the matching roles.
-     *                       (wildcard * migrates monitoring restrictions and permissions
-     *                       for all roles)
-     *
-     *  --override          Override the existing Icinga DB restrictions and permissions
+     *  --override     Reset any existing Icinga DB Web rules
      */
     public function roleAction(): void
     {
@@ -423,21 +425,21 @@ class MigrateCommand extends Command
     }
 
     /**
-     * Migrate the monitoring dashboards to Icinga DB Web dashboards for all the matched users
+     * Migrate monitoring dashboards to Icinga DB Web
      *
      * USAGE
      *
-     *  icingacli icingadb migrate dasboard [options]
+     *  icingacli icingadb migrate dashboard [options]
      *
      * REQUIRED OPTIONS:
      *
-     *  --user=<username>  Migrate monitoring dashboards for all the
-     *                     users that are matched. (* all users)
+     *  --user=<name> Migrate dashboards whose owner matches the given
+     *                name or owners matching the given pattern. Wildcard
+     *                matching by `*` possible.
      *
      * OPTIONS:
      *
-     *  --no-backup        Migrate without creating a backup. (By Default
-     *                     a backup for monitoring dashboards is created)
+     *  --no-backup   Don't back up dashboards
      */
     public function dashboardAction(): void
     {
