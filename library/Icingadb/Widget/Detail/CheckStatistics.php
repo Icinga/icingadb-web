@@ -68,7 +68,7 @@ SVG;
         $now = time();
         $executionTime = ($this->object->state->execution_time / 1000) + ($this->object->state->latency / 1000);
 
-        $nextCheckTime = $this->object->state->next_check !== null
+        $nextCheckTime = $this->object->state->next_check !== null && ! $this->isChecksDisabled()
             ? $this->object->state->next_check->getTimestamp()
             : null;
         if ($this->object->state->is_overdue) {
