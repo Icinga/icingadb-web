@@ -66,6 +66,11 @@ abstract class Links
         return Url::fromPath('icingadb/host/source', ['name' => $host->name]);
     }
 
+    public static function hostDetails($host): Url
+    {
+        return Url::fromPath('icingadb/host', ['name' => $host->name]);
+    }
+
     public static function hostsDetails(): Url
     {
         return Url::fromPath('icingadb/hosts/details');
