@@ -139,7 +139,8 @@ trait CommandActions
     protected function handleCommandForm($form)
     {
         $isXhr = $this->getRequest()->isXmlHttpRequest();
-        if ($isXhr && $this->getRequest()->isApiRequest()) {
+        $isApi = $this->getRequest()->isApiRequest();
+        if ($isXhr && $isApi) {
             // Prevents the framework already, this is just a fail-safe
             $this->httpBadRequest('Responding with JSON during a Web request is not supported');
         }
@@ -151,7 +152,7 @@ trait CommandActions
 
         $form->setObjects($this->getCommandTargets());
 
-        if ($isXhr) {
+        if (! $isApi || $isXhr) {
             $this->handleWebRequest($form);
         } else {
             $this->handleApiRequest($form);
