@@ -77,7 +77,15 @@ class HistoryController extends Controller
             $history->limit($page * $limitControl->getLimit());
         }
 
-        $history->filter(Filter::lessThanOrEqual('event_time', $before));
+        $eventTimeQuery = History::on($db)
+            ->columns(['id'])
+            ->filter(Filter::lessThanOrEqual('event_time', $before))
+            ->assembleSelect()
+            ->resetOrderBy();
+
+        $history->getSelectBase()
+            ->where(['history.id IN (?)' => $eventTimeQuery]);
+
         $this->filter($history, $filter);
 
         $history->getWith()['history.host']->setJoinType('LEFT');
