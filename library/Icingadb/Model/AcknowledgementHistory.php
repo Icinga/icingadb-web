@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -16,6 +17,21 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this, the query
  * needs a `acknowledgement_history.service_id IS NULL OR acknowledgement_history_service.id IS NOT NULL` where.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property DateTime $set_time
+ * @property ?DateTime $clear_time
+ * @property ?string $author
+ * @property ?string $cleared_by
+ * @property ?int $comment
+ * @property ?DateTime $expire_time
+ * @property ?bool $is_sticky
+ * @property ?bool $is_persistent
  */
 class AcknowledgementHistory extends Model
 {

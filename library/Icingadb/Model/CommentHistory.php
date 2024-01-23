@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -16,6 +17,23 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this,
  * the query needs a `comment_history.service_id IS NULL OR comment_history_service.id IS NOT NULL` where.
+ *
+ * @property string $comment_id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property DateTime $entry_time
+ * @property string $author
+ * @property ?string $removed_by
+ * @property string $comment
+ * @property string $entry_type
+ * @property bool $is_persistent
+ * @property bool $is_sticky
+ * @property ?DateTime $expire_time
+ * @property ?DateTime $remove_time
+ * @property bool $has_been_removed
  */
 class CommentHistory extends Model
 {

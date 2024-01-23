@@ -9,6 +9,11 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $customvar_id
+ * @property string $environment_id
+ */
 class UserCustomvar extends Model
 {
     public function getTableName()

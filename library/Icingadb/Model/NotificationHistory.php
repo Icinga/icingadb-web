@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -16,6 +17,21 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this, the
  * query needs a `notification_history.service_id IS NULL OR notification_history_service.id IS NOT NULL` where.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property string $notification_id
+ * @property string $type
+ * @property DateTime $send_time
+ * @property int $state
+ * @property int $previous_hard_state
+ * @property string $author
+ * @property string $text
+ * @property int $users_notified
  */
 class NotificationHistory extends Model
 {

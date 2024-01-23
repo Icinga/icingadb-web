@@ -13,6 +13,21 @@ use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
+/**
+ * @property string $id
+ * @property string $display_name
+ * @property string $name
+ * @property int $services_critical_handled
+ * @property int $services_critical_unhandled
+ * @property int $services_ok
+ * @property int $services_pending
+ * @property int $services_total
+ * @property int $services_unknown_handled
+ * @property int $services_unknown_unhandled
+ * @property int $services_warning_handled
+ * @property int $services_warning_unhandled
+ * @property int $services_severity
+ */
 class ServicegroupSummary extends UnionModel
 {
     public static function on(Connection $db)

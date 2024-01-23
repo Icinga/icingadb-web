@@ -9,6 +9,8 @@ use ipl\Orm\Relations;
 
 /**
  * Host state model.
+ *
+ * @property string $id
  */
 class HostState extends State
 {

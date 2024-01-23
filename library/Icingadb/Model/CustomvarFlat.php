@@ -11,6 +11,14 @@ use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use Traversable;
 
+/**
+ * @property string $id
+ * @property string $environment_id
+ * @property string $customvar_id
+ * @property string $flatname_checksum
+ * @property string $flatname
+ * @property string $flatvalue
+ */
 class CustomvarFlat extends Model
 {
     public function getTableName()

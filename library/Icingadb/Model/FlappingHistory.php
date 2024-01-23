@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
@@ -15,6 +16,19 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this,
  * the query needs a `flapping_history.service_id IS NULL OR flapping_history_service.id IS NOT NULL` where.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property DateTime $start_time
+ * @property ?DateTime $end_time
+ * @property ?float $percent_state_change_start
+ * @property ?float $percent_state_change_end
+ * @property float $flapping_threshold_low
+ * @property float $flapping_threshold_high
  */
 class FlappingHistory extends Model
 {

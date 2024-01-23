@@ -9,6 +9,14 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $eventcommand_id
+ * @property string $envvar_key
+ * @property string $environment_id
+ * @property string $properties_checksum
+ * @property string $envvar_value
+ */
 class EventcommandEnvvar extends Model
 {
     public function getTableName()

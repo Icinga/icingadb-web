@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
@@ -15,6 +16,25 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this,
  * the query needs a `state_history.service_id IS NULL OR state_history_service.id IS NOT NULL` where.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property DateTime $event_time
+ * @property string $state_type
+ * @property int $soft_state
+ * @property int $hard_state
+ * @property int $check_attempt
+ * @property int $previous_soft_state
+ * @property int $previous_hard_state
+ * @property ?string $output
+ * @property ?string $long_output
+ * @property int $max_check_attempts
+ * @property ?string $check_source
+ * @property ?string $scheduling_source
  */
 class StateHistory extends Model
 {

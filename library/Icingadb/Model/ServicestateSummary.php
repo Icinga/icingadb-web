@@ -7,6 +7,24 @@ namespace Icinga\Module\Icingadb\Model;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 
+/**
+ * @property int $services_acknowledged
+ * @property int $services_active_checks_enabled
+ * @property int $services_passive_checks_enabled
+ * @property int $services_critical_handled
+ * @property int $services_critical_unhandled
+ * @property int $services_event_handler_enabled
+ * @property int $services_flapping_enabled
+ * @property int $services_notifications_enabled
+ * @property int $services_ok
+ * @property int $services_pending
+ * @property int $services_problems_unacknowledged
+ * @property int $services_total
+ * @property int $services_unknown_handled
+ * @property int $services_unknown_unhandled
+ * @property int $services_warning_handled
+ * @property int $services_warning_unhandled
+ */
 class ServicestateSummary extends Service
 {
     public function getSummaryColumns()

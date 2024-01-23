@@ -9,6 +9,21 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $eventcommand_id
+ * @property string $argument_key
+ * @property string $environment_id
+ * @property string $properties_checksum
+ * @property ?string $argument_value
+ * @property ?string $argument_order
+ * @property ?string $description
+ * @property ?string $argument_key_override
+ * @property string $repeat_key
+ * @property string $required
+ * @property ?string $set_if
+ * @property string $skip_key
+ */
 class EventcommandArgument extends Model
 {
     public function getTableName()

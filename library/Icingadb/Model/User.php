@@ -11,6 +11,22 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $environment_id
+ * @property string $name_checksum
+ * @property string $properties_checksum
+ * @property string $name
+ * @property string $name_ci
+ * @property string $display_name
+ * @property string $email
+ * @property string $pager
+ * @property string $notifications_enabled
+ * @property ?string $timeperiod_id
+ * @property array $states
+ * @property array $types
+ * @property ?string $zone_id
+ */
 class User extends Model
 {
     public function getTableName()

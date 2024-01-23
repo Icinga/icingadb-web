@@ -16,6 +16,46 @@ use ipl\Orm\ResultSet;
 
 /**
  * Host model.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property string $name_checksum
+ * @property string $properties_checksum
+ * @property string $name
+ * @property string $name_ci
+ * @property string $display_name
+ * @property string $address
+ * @property string $address6
+ * @property ?string $address_bin
+ * @property ?string $address6_bin
+ * @property string $checkcommand_name
+ * @property string $checkcommand_id
+ * @property int $max_check_attempts
+ * @property string $check_timeperiod_name
+ * @property ?string $check_timeperiod_id
+ * @property ?int $check_timeout
+ * @property int $check_interval
+ * @property int $check_retry_interval
+ * @property bool $active_checks_enabled
+ * @property bool $passive_checks_enabled
+ * @property bool $event_handler_enabled
+ * @property bool $notifications_enabled
+ * @property bool $flapping_enabled
+ * @property float $flapping_threshold_low
+ * @property float $flapping_threshold_high
+ * @property bool $perfdata_enabled
+ * @property string $eventcommand_name
+ * @property ?string $eventcommand_id
+ * @property bool $is_volatile
+ * @property ?string $action_url_id
+ * @property ?string $notes_url_id
+ * @property string $notes
+ * @property ?string $icon_image_id
+ * @property string $icon_image_alt
+ * @property string $zone_name
+ * @property ?string $zone_id
+ * @property string $command_endpoint_name
+ * @property ?string $command_endpoint_id
  */
 class Host extends Model
 {
