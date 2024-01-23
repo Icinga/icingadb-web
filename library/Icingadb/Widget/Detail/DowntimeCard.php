@@ -35,7 +35,7 @@ class DowntimeCard extends BaseHtmlElement
         $this->start = $this->downtime->scheduled_start_time->getTimestamp();
         $this->end = $this->downtime->scheduled_end_time->getTimestamp();
 
-        if ($this->downtime->end_time > $this->downtime->scheduled_end_time) {
+        if ($this->downtime->end_time && $this->downtime->end_time > $this->downtime->scheduled_end_time) {
             $this->duration = $this->downtime->end_time->getTimestamp() - $this->start;
         } else {
             $this->duration = $this->end - $this->start;
