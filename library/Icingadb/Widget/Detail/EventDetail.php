@@ -567,7 +567,7 @@ class EventDetail extends BaseHtmlElement
             if ($acknowledgement->cleared_by) {
                 $eventInfo[] = new HorizontalKeyValue(
                     t('Cleared by'),
-                    [new Icon('user', $acknowledgement->cleared_by)]
+                    [new Icon('user'), $acknowledgement->cleared_by]
                 );
             } else {
                 $expired = false;
