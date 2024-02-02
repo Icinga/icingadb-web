@@ -126,6 +126,7 @@
                 && _this.icinga.loader.getLinkTargetFor($(target)).attr('id') === 'col2'
             ) {
                 _this.icinga.ui.layout1col();
+                _this.icinga.history.pushCurrentState();
                 _this.enableAutoRefresh('col1');
                 return;
             }
