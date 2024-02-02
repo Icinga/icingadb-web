@@ -90,8 +90,16 @@ class MigrateController extends Controller
             $params = $url->onlyWith(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
             $filter = $url->without(['sort', 'limit', 'view', 'columns', 'page'])->getParams();
             $filter = QueryString::parse((string) $filter);
+            $nonStrictOriginalFilter = QueryString::render($filter);
             $filter = UrlMigrator::transformLegacyWildcardFilter($filter);
-            $result[] = rawurldecode($url->setParams($params)->setFilter($filter)->getAbsoluteUrl());
+            $nonStrictUpdatedFilter = QueryString::render($filter);
+            if ($nonStrictUpdatedFilter !== $nonStrictOriginalFilter) {
+                // The original filter might be formatted loosely, so if we render it again,
+                // it might look different although nothing changed
+                $result[] = rawurldecode($url->setParams($params)->setFilter($filter)->getAbsoluteUrl());
+            } else {
+                $result[] = $urlString;
+            }
         }
 
         $response = $this->getResponse()->json();
