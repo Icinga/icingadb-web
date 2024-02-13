@@ -158,3 +158,16 @@ general access to the monitoring module, this is not automatically migrated. You
 It gives you the chance to review the performed changes, before letting them loose on your users. Please also
 take in mind, that Icinga DB Web handles permissions and restrictions differently. Our blog provides details
 on that: https://icinga.com/blog/2021/04/07/web-access-control-redefined/#icingadb-permission-linkage
+
+## General configuration via config.ini
+
+If some of the default options of the monitoring module (for example setting
+acknowledgements to expire by default) were adjusted via the `config.ini` file,
+migrating those options is done by simple copying the configuration file to the icingadb module.
+In most cases this would be a
+
+```
+cp /etc/icingaweb2/modules/monitoring/config.ini /etc/icingaweb2/modules/icingadb/config.ini
+```
+
+The behaviour of those options remains the same.
