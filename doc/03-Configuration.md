@@ -63,7 +63,12 @@ For this you need an `ApiUser` object with at least the following permissions on
 
 ## General Configuration
 
-Navigate into `Modules` -> `icingadb`.
+There are module options, which change the default behaviour of the dialogs one gets
+when triggering an action (for example the "Acknowledge now" button).
+These options can not be set from the web interface directly but have to be set in the
+configuration file.
+
+The relevant file `config.ini` will in most case recide in `/etc/icingaweb2/modules/icingadb`
 
 ### Available Settings and defaults
 
@@ -87,15 +92,17 @@ servicedowntime_end_fixed         | Sets default value for "End Time" in Schedul
 servicedowntime_end_flexible      | Set default value for "End Time" in Schedule Service Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
 servicedowntime_flexible_duration | Set default value for "Flexible Duration" in Schedule Service Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
 
-Example for having acknowledgements with 2 hours expire time by default.
+
+### Example
+
+Setting acknowledgements with 2 hours expire time by default.
+In the `config.ini` file (likely `/etc/icingaweb2/modules/icingadb/config.ini`) the following
+text is entered:
 
 ```
-# vim /etc/icingaweb2/modules/icingadb/config.ini
-
 [settings]
 acknowledge_expire = 1
 acknowledge_expire_time = PT2H
-
 ```
 
 ## Security
