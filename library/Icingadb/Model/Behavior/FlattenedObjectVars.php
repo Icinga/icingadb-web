@@ -11,6 +11,7 @@ use ipl\Orm\ColumnDefinition;
 use ipl\Orm\Contract\QueryAwareBehavior;
 use ipl\Orm\Contract\RewriteColumnBehavior;
 use ipl\Orm\Query;
+use ipl\Stdlib\Data;
 use ipl\Stdlib\Filter;
 
 class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
@@ -32,11 +33,39 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
         $column = $condition->metaData()->get('columnName');
         if ($column !== null) {
             $relation = substr($relation, 0, -5) . 'customvar_flat.';
-            $nameFilter = Filter::like($relation . 'flatname', $column);
-            $class = get_class($condition);
-            $valueFilter = new $class($relation . 'flatvalue', $condition->getValue());
+            $condition->metaData()
+                ->set('requiresTransformation', true)
+                ->set('columnPath', $relation . $column)
+                ->set('relationPath', substr($relation, 0, -1));
 
-            return Filter::all($nameFilter, $valueFilter);
+            // The ORM's FilterProcessor only optimizes filter conditions that are in the same level (chain).
+            // Previously, this behavior transformed a single condition to an ALL chain and hence the semantics
+            // of the level changed, since the FilterProcessor interpreted the conditions separately from there on.
+            // To not change the semantics of the condition it is required to delay the transformation of the condition
+            // until the subquery is created. Though, since the FilterProcessor only applies behaviors once, this
+            // hack is required. (The entire filter, metadata and optimization is total garbage.)
+            $oldMetaData = $condition->metaData();
+            $metaDataProperty = (new \ReflectionClass($condition))->getProperty('metaData');
+            $metaDataProperty->setAccessible(true);
+            $metaDataProperty->setValue($condition, new class () extends Data {
+                public function set($name, $value)
+                {
+                    if ($name === 'behaviorsApplied') {
+                        return $this;
+                    }
+
+                    return parent::set($name, $value);
+                }
+            });
+            $condition->metaData()->merge($oldMetaData);
+
+            // But to make it even worse: If we do that, (not transforming the condition) the FilterProcessor sees
+            // multiple conditions as targeting different columns, as it doesn't know that the *columns* are in fact
+            // custom variables. It then attempts to combine the conditions with an AND, which is not possible, since
+            // they refer to the same columns (flatname and flatvalue) after being transformed. So we have to make
+            // the condition refer to a different column, which is totally irrelevant, but since it's always the same
+            // column, the FilterProcessor won't attempt to combine the conditions. The literal icing on the cake.
+            $condition->setColumn('always_the_same_but_totally_irrelevant');
         }
     }
 

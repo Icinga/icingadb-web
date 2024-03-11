@@ -3056,11 +3056,6 @@ parameters:
 			path: library/Icingadb/Model/Behavior/FlattenedObjectVars.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:like\\(\\) expects array\\<string\\>\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Behavior/FlattenedObjectVars.php
-
-		-
 			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, string\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Behavior/FlattenedObjectVars.php
