@@ -6,9 +6,12 @@ namespace Icinga\Module\Icingadb\Model;
 
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Contract\RewriteFilterBehavior;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Stdlib\Filter;
+use ipl\Stdlib\Filter\Condition;
 use Traversable;
 
 /**
@@ -50,6 +53,20 @@ class CustomvarFlat extends Model
             'customvar_id',
             'flatname_checksum'
         ]));
+        $behaviors->add(new class implements RewriteFilterBehavior {
+            public function rewriteCondition(Condition $condition, $relation = null)
+            {
+                if ($condition->metaData()->has('requiresTransformation')) {
+                    /** @var string $columnName */
+                    $columnName = $condition->metaData()->get('columnName');
+                    $nameFilter = Filter::like($relation . 'flatname', $columnName);
+                    $class = get_class($condition);
+                    $valueFilter = new $class($relation . 'flatvalue', $condition->getValue());
+
+                    return Filter::all($nameFilter, $valueFilter);
+                }
+            }
+        });
     }
 
     public function createRelations(Relations $relations)
