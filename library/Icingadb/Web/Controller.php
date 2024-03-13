@@ -307,10 +307,11 @@ class Controller extends CompatController
     {
         $columns = array_merge($query->getModel()->getSearchColumns(), $additionalColumns);
         foreach ($columns as $column) {
-            $filter->add(Filter::like(
-                $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName()),
-                "*$search*"
-            ));
+            if (strpos($column, '.') === false) {
+                $column = $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName());
+            }
+
+            $filter->add(Filter::like($column, "*$search*"));
         }
     }
 

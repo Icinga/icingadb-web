@@ -121,8 +121,12 @@ class ObjectSuggestions extends Suggestions
 
         $quickFilter = Filter::any();
         foreach ($model->getSearchColumns() as $column) {
-            $where = Filter::like($resolver->qualifyColumn($column, $model->getTableName()), $searchTerm);
-            $where->metaData()->set('columnLabel', $resolver->getColumnDefinition($where->getColumn())->getLabel());
+            if (strpos($column, '.') === false) {
+                $column = $resolver->qualifyColumn($column, $model->getTableName());
+            }
+
+            $where = Filter::like($column, $searchTerm);
+            $where->metaData()->set('columnLabel', $resolver->getColumnDefinition($column)->getLabel());
             $quickFilter->add($where);
         }
 
