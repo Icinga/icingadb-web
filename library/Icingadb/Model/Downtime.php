@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -12,6 +13,32 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $triggered_by_id
+ * @property ?string $parent_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property string $name_checksum
+ * @property string $properties_checksum
+ * @property string $name
+ * @property string $author
+ * @property string $comment
+ * @property DateTime $entry_time
+ * @property DateTime $scheduled_start_time
+ * @property DateTime $scheduled_end_time
+ * @property int $scheduled_duration
+ * @property bool $is_flexible
+ * @property int $flexible_duration
+ * @property bool $is_in_effect
+ * @property ?DateTime $start_time
+ * @property ?DateTime $end_time
+ * @property int $duration
+ * @property ?string $scheduled_by
+ * @property ?string $zone_id
+ */
 class Downtime extends Model
 {
     public function getTableName()

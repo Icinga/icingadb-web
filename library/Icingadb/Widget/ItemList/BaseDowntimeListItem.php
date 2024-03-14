@@ -56,7 +56,11 @@ abstract class BaseDowntimeListItem extends BaseListItem
 
     protected function init(): void
     {
-        if ($this->item->is_flexible && $this->item->is_in_effect) {
+        if (
+            isset($this->item->start_time, $this->item->end_time)
+            && $this->item->is_flexible
+            && $this->item->is_in_effect
+        ) {
             $this->startTime = $this->item->start_time->getTimestamp();
             $this->endTime = $this->item->end_time->getTimestamp();
         } else {

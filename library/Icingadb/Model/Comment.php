@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -12,6 +13,24 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $environment_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property string $name_checksum
+ * @property string $properties_checksum
+ * @property string $name
+ * @property string $author
+ * @property string $text
+ * @property string $entry_type
+ * @property DateTime $entry_time
+ * @property bool $is_persistent
+ * @property bool $is_sticky
+ * @property ?DateTime $expire_time
+ * @property ?string $zone_id
+ */
 class Comment extends Model
 {
     public function getTableName()

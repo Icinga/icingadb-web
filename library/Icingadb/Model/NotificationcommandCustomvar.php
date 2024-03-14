@@ -9,6 +9,12 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $notificationcommand_id
+ * @property string $customvar_id
+ * @property string $environment_id
+ */
 class NotificationcommandCustomvar extends Model
 {
     public function getTableName()

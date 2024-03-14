@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -16,6 +17,29 @@ use ipl\Orm\Relations;
  *
  * Please note that using this model will fetch history entries for decommissioned services. To avoid this,
  * the query needs a `downtime_history.service_id IS NULL OR downtime_history_service.id IS NOT NULL` where.
+ *
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property ?string $triggered_by_id
+ * @property ?string $parent_id
+ * @property string $object_type
+ * @property string $host_id
+ * @property ?string $service_id
+ * @property DateTime $entry_time
+ * @property string $author
+ * @property ?string $cancelled_by
+ * @property string $comment
+ * @property bool $is_flexible
+ * @property int $flexible_duration
+ * @property DateTime $scheduled_start_time
+ * @property DateTime $scheduled_end_time
+ * @property DateTime $start_time
+ * @property DateTime $end_time
+ * @property ?string $scheduled_by
+ * @property bool $has_been_cancelled
+ * @property DateTime $trigger_time
+ * @property ?DateTime $cancel_time
  */
 class DowntimeHistory extends Model
 {
@@ -49,6 +73,7 @@ class DowntimeHistory extends Model
             'scheduled_end_time',
             'start_time',
             'end_time',
+            'scheduled_by',
             'has_been_cancelled',
             'trigger_time',
             'cancel_time'

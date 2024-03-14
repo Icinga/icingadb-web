@@ -361,13 +361,14 @@ trait CompatObject
      */
     private function getBoolType($value)
     {
-        switch ($value) {
-            case false:
-                return 0;
-            case true:
-                return 1;
-            case 'sticky':
-                return 2;
+        if ($value === 'sticky') {
+            return 2;
         }
+
+        if (is_string($value)) {
+            return null;
+        }
+
+        return (int) $value;
     }
 }

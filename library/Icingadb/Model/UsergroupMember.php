@@ -9,6 +9,12 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $usergroup_id
+ * @property string $user_id
+ * @property string $environment_id
+ */
 class UsergroupMember extends Model
 {
     public function getTableName()

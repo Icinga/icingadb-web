@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -11,6 +12,21 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $environment_id
+ * @property ?string $endpoint_id
+ * @property DateTime $heartbeat
+ * @property bool $responsible
+ * @property bool $icinga2_active_host_checks_enabled
+ * @property bool $icinga2_active_service_checks_enabled
+ * @property bool $icinga2_event_handlers_enabled
+ * @property bool $icinga2_flap_detection_enabled
+ * @property bool $icinga2_notifications_enabled
+ * @property bool $icinga2_performance_data_enabled
+ * @property DateTime $icinga2_start_time
+ * @property string $icinga2_version
+ */
 class Instance extends Model
 {
     public function getTableName()

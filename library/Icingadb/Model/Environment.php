@@ -9,6 +9,10 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string $name
+ */
 class Environment extends Model
 {
     public function getTableName()

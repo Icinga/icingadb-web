@@ -13,6 +13,26 @@ use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
+/**
+ * @property string $id
+ * @property string $display_name
+ * @property string $name
+ * @property int $hosts_down_handled
+ * @property int $hosts_down_unhandled
+ * @property int $hosts_pending
+ * @property int $hosts_total
+ * @property int $hosts_up
+ * @property int $hosts_severity
+ * @property int $services_critical_handled
+ * @property int $services_critical_unhandled
+ * @property int $services_ok
+ * @property int $services_pending
+ * @property int $services_total
+ * @property int $services_unknown_handled
+ * @property int $services_unknown_unhandled
+ * @property int $services_warning_handled
+ * @property int $services_warning_unhandled
+ */
 class Hostgroupsummary extends UnionModel
 {
     public static function on(Connection $db)

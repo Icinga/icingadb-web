@@ -10,6 +10,11 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
+/**
+ * @property string $id
+ * @property string[] $notes_url
+ * @property string $environment_id
+ */
 class NotesUrl extends Model
 {
     public function getTableName()

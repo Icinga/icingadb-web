@@ -50,7 +50,7 @@ class ServiceSummaryDonut extends Card
             ->addSlice($this->summary->services_unknown_handled, ['class' => 'slice-state-unknown-handled'])
             ->addSlice($this->summary->services_unknown_unhandled, ['class' => 'slice-state-unknown'])
             ->addSlice($this->summary->services_pending, ['class' => 'slice-state-pending'])
-            ->setLabelBig($this->summary->services_critical_unhandled)
+            ->setLabelBig((string) $this->summary->services_critical_unhandled)
             ->setLabelBigUrl(Links::services()->setFilter($labelBigUrlFilter)->addParams([
                 'sort' => 'service.state.last_state_change'
             ]))

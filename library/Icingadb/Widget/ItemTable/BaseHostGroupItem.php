@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Model\Hostgroup;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -18,7 +18,7 @@ use ipl\Web\Widget\Link;
 /**
  * Hostgroup item of a hostgroup list. Represents one database row.
  *
- * @property Hostgroup $item
+ * @property Hostgroupsummary $item
  * @property HostgroupTable $table
  */
 abstract class BaseHostGroupItem extends BaseTableRowItem

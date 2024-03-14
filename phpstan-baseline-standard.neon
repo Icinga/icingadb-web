@@ -331,11 +331,6 @@ parameters:
 			path: application/controllers/EventController.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function hex2bin expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/EventController.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\EventController\\:\\:\\$event \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\) does not accept ipl\\\\Orm\\\\Model\\|null\\.$#"
 			count: 1
 			path: application/controllers/EventController.php
@@ -496,11 +491,6 @@ parameters:
 			path: application/controllers/HostController.php
 
 		-
-			message: "#^Parameter \\#1 \\$title of method ipl\\\\Web\\\\Compat\\\\CompatController\\:\\:setTitle\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/HostController.php
-
-		-
 			message: "#^Parameter \\#2 \\$apiResult of class Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\HostInspectionDetail constructor expects array, mixed given\\.$#"
 			count: 1
 			path: application/controllers/HostController.php
@@ -522,7 +512,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 4
+			count: 1
 			path: application/controllers/HostController.php
 
 		-
@@ -557,7 +547,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
+			count: 1
 			path: application/controllers/HostgroupController.php
 
 		-
@@ -917,7 +907,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 4
+			count: 2
 			path: application/controllers/ServiceController.php
 
 		-
@@ -952,7 +942,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
+			count: 1
 			path: application/controllers/ServicegroupController.php
 
 		-
@@ -1366,11 +1356,6 @@ parameters:
 			path: application/forms/Command/Object/AcknowledgeProblemForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/AcknowledgeProblemForm.php
-
-		-
 			message: "#^Call to an undefined method ipl\\\\Html\\\\Contract\\\\FormElement\\:\\:isChecked\\(\\)\\.$#"
 			count: 1
 			path: application/forms/Command/Object/AddCommentForm.php
@@ -1396,23 +1381,8 @@ parameters:
 			path: application/forms/Command/Object/AddCommentForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/AddCommentForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/CheckNowForm.php
-
-		-
 			message: "#^Cannot call method getUsername\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 1
-			path: application/forms/Command/Object/DeleteCommentForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
 			path: application/forms/Command/Object/DeleteCommentForm.php
 
 		-
@@ -1428,11 +1398,6 @@ parameters:
 		-
 			message: "#^Cannot call method getUsername\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 1
-			path: application/forms/Command/Object/DeleteDowntimeForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
 			path: application/forms/Command/Object/DeleteDowntimeForm.php
 
 		-
@@ -1466,11 +1431,6 @@ parameters:
 			path: application/forms/Command/Object/ProcessCheckResultForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ProcessCheckResultForm.php
-
-		-
 			message: "#^Cannot call method getUsername\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 1
 			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
@@ -1478,11 +1438,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
 			count: 1
-			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
 			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
 
 		-
@@ -1498,11 +1453,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
 			count: 1
-			path: application/forms/Command/Object/ScheduleCheckForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
 			path: application/forms/Command/Object/ScheduleCheckForm.php
 
 		-
@@ -1536,11 +1486,6 @@ parameters:
 			path: application/forms/Command/Object/ScheduleHostDowntimeForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/ScheduleHostDowntimeForm.php
-
-		-
 			message: "#^Call to an undefined method ipl\\\\Html\\\\Contract\\\\FormElement\\:\\:isChecked\\(\\)\\.$#"
 			count: 1
 			path: application/forms/Command/Object/ScheduleServiceDowntimeForm.php
@@ -1571,11 +1516,6 @@ parameters:
 			path: application/forms/Command/Object/ScheduleServiceDowntimeForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ScheduleServiceDowntimeForm.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\Object\\\\ScheduleServiceDowntimeForm\\:\\:\\$flexibleEnd has no type specified\\.$#"
 			count: 1
 			path: application/forms/Command/Object/ScheduleServiceDowntimeForm.php
@@ -1598,11 +1538,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
 			count: 1
-			path: application/forms/Command/Object/SendCustomNotificationForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
 			path: application/forms/Command/Object/SendCustomNotificationForm.php
 
 		-
@@ -1836,11 +1771,6 @@ parameters:
 			path: application/forms/RedisConfigForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function md5 expects string, mixed given\\.$#"
-			count: 1
-			path: application/forms/RedisConfigForm.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: application/forms/RedisConfigForm.php
@@ -2006,11 +1936,6 @@ parameters:
 			path: library/Icingadb/Command/Renderer/IcingaApiCommandRenderer.php
 
 		-
-			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Command/Renderer/IcingaApiCommandRenderer.php
-
-		-
 			message: "#^Cannot access offset 'code' on mixed\\.$#"
 			count: 1
 			path: library/Icingadb/Command/Transport/ApiCommandTransport.php
@@ -2039,16 +1964,6 @@ parameters:
 			message: "#^Cannot access offset 0 on mixed\\.$#"
 			count: 1
 			path: library/Icingadb/Command/Transport/ApiCommandTransport.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_pop expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Command/Transport/ApiCommandTransport.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Command/Transport/CommandTransport.php
 
 		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Command\\\\Transport\\\\CommandTransportConfig\\:\\:\\$configs type has no value type specified in iterable type array\\.$#"
@@ -2116,22 +2031,12 @@ parameters:
 			path: library/Icingadb/Common/IcingaRedis.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Common/IcingaRedis.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\Links\\:\\:hostgroup\\(\\) has parameter \\$hostgroup with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Common/Links.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\Links\\:\\:servicegroup\\(\\) has parameter \\$servicegroup with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Common/Links.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function bin2hex expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Common/Links.php
 
@@ -2216,17 +2121,7 @@ parameters:
 			path: library/Icingadb/Common/ObjectInspectionDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_diff_key expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Common/ObjectInspectionDetail.php
-
-		-
 			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Table\\:\\:td\\(\\) expects array\\|ipl\\\\Html\\\\Html\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Common/ObjectInspectionDetail.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function bin2hex expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Common/ObjectInspectionDetail.php
 
@@ -2377,11 +2272,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\CompatHost\\:\\:fromModel\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Compat/CompatHost.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\CompatHost\\:\\:getBoolType\\(\\) never returns null so it can be removed from the return type\\.$#"
 			count: 1
 			path: library/Icingadb/Compat/CompatHost.php
 
@@ -2611,11 +2501,6 @@ parameters:
 			path: library/Icingadb/Compat/CompatService.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\CompatService\\:\\:getBoolType\\(\\) never returns null so it can be removed from the return type\\.$#"
-			count: 1
-			path: library/Icingadb/Compat/CompatService.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\CompatService\\:\\:getHost\\(\\) should return Icinga\\\\Module\\\\Icingadb\\\\Compat\\\\CompatHost but returns Icinga\\\\Module\\\\Monitoring\\\\Object\\\\Host\\.$#"
 			count: 1
 			path: library/Icingadb/Compat/CompatService.php
@@ -2826,27 +2711,12 @@ parameters:
 			path: library/Icingadb/Compat/UrlMigrator.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Compat/UrlMigrator.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\CsvResultSet\\:\\:extractKeysAndValues\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icingadb/Data/CsvResultSet.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\CsvResultSet\\:\\:formatValue\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Data/CsvResultSet.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Data/CsvResultSet.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_values expects array, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Data/CsvResultSet.php
 
@@ -2897,11 +2767,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Data/PivotTable.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Data/PivotTable.php
 
@@ -3097,11 +2962,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Model/Behavior/ActionAndNoteUrl.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Behavior/ActionAndNoteUrl.php
 
@@ -3382,11 +3242,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Model\\\\CustomvarFlat\\:\\:unFlattenVars\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icingadb/Model/CustomvarFlat.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icingadb/Model/CustomvarFlat.php
 
@@ -4386,22 +4241,12 @@ parameters:
 			path: library/Icingadb/ProvidedHook/ApplicationState.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/ProvidedHook/CreateHostSlaReport.php
-
-		-
 			message: "#^Parameter \\#1 \\$rule of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:render\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/ProvidedHook/CreateHostsSlaReport.php
 
 		-
 			message: "#^Cannot access property \\$name on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/ProvidedHook/CreateServiceSlaReport.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/ProvidedHook/CreateServiceSlaReport.php
 
@@ -4418,11 +4263,6 @@ parameters:
 		-
 			message: "#^Cannot access property \\$name on mixed\\.$#"
 			count: 1
-			path: library/Icingadb/ProvidedHook/IcingaHealth.php
-
-		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 3
 			path: library/Icingadb/ProvidedHook/IcingaHealth.php
 
 		-
@@ -4592,11 +4432,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$start of class Icinga\\\\Module\\\\Reporting\\\\Timerange constructor expects DateTime, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/ProvidedHook/Reporting/SlaReport.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, Icinga\\\\Module\\\\Reporting\\\\ReportData\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/ProvidedHook/Reporting/SlaReport.php
 
@@ -4803,11 +4638,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$queryString of method Icinga\\\\Module\\\\Icingadb\\\\Redis\\\\VolatileStateResults\\:\\:parseRestriction\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 3
-			path: library/Icingadb/Redis/VolatileStateResults.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function bin2hex expects string, mixed given\\.$#"
-			count: 1
 			path: library/Icingadb/Redis/VolatileStateResults.php
 
 		-
@@ -5031,11 +4861,6 @@ parameters:
 			path: library/Icingadb/Util/PerfData.php
 
 		-
-			message: "#^Parameter \\#1 \\$num of function number_format expects float, float\\|int\\|string given\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PerfData.php
-
-		-
 			message: "#^Parameter \\#1 \\$value of method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\ThresholdRange\\:\\:contains\\(\\) expects float, float\\|null given\\.$#"
 			count: 2
 			path: library/Icingadb/Util/PerfData.php
@@ -5231,11 +5056,6 @@ parameters:
 			path: library/Icingadb/Util/PluginOutput.php
 
 		-
-			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:setCommandName\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PluginOutput.php
@@ -5248,11 +5068,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|null given\\.$#"
 			count: 2
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
-			count: 1
 			path: library/Icingadb/Util/PluginOutput.php
 
 		-
@@ -5616,17 +5431,7 @@ parameters:
 			path: library/Icingadb/Web/Controller.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Web/Controller.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of function join expects array\\<string\\>, array\\<int, \\(Closure\\)\\|string\\> given\\.$#"
-			count: 1
-			path: library/Icingadb/Web/Controller.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Web/Controller.php
 
@@ -6091,11 +5896,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/CustomVarTable.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 3
-			path: library/Icingadb/Widget/Detail/DowntimeCard.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\DowntimeCard\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/DowntimeCard.php
@@ -6186,11 +5986,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 5
-			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
-
-		-
 			message: "#^Cannot call method isUnrestricted\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 4
 			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
@@ -6231,11 +6026,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$text of class Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\MarkdownText constructor expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of function join expects array\\<string\\>, array\\<int, \\(Closure\\)\\|string\\> given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
@@ -6248,11 +6038,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$tableName of method ipl\\\\Orm\\\\Resolver\\:\\:qualifyColumn\\(\\) expects string, int\\|string given\\.$#"
 			count: 2
-			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 5
 			path: library/Icingadb/Widget/Detail/DowntimeDetail.php
 
 		-
@@ -6318,11 +6103,6 @@ parameters:
 		-
 			message: "#^Cannot call method getStateText\\(\\) on mixed\\.$#"
 			count: 3
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 21
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
@@ -6401,11 +6181,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$content of class Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput constructor expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
 			message: "#^Parameter \\#1 \\$denylist of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\EventDetail\\:\\:parseDenylist\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 2
 			path: library/Icingadb/Widget/Detail/EventDetail.php
@@ -6431,37 +6206,12 @@ parameters:
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$state of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\HostStates\\:\\:text\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 6
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#1 \\$state of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\ServiceStates\\:\\:text\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 6
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
 			message: "#^Parameter \\#1 \\$stateChange of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\EventDetail\\:\\:assembleStateChangeEvent\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\StateHistory, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function bin2hex expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#1 \\$subject of static method ipl\\\\Stdlib\\\\Str\\:\\:camel\\(\\) expects string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of function join expects array\\<string\\>, array\\<int, \\(Closure\\)\\|string\\> given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#2 \\$attributes of class ipl\\\\Web\\\\Widget\\\\Icon constructor expects array\\|ipl\\\\Html\\\\Attributes\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
@@ -6473,21 +6223,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$tableName of method ipl\\\\Orm\\\\Resolver\\:\\:qualifyColumn\\(\\) expects string, int\\|string given\\.$#"
 			count: 2
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 5
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#3 \\$number of function tp expects int\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/EventDetail.php
-
-		-
-			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 3
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
@@ -6961,11 +6696,6 @@ parameters:
 			path: library/Icingadb/Widget/Detail/QuickActions.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/QuickActions.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\ServiceDetail\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/ServiceDetail.php
@@ -7108,16 +6838,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$queryString of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\UserDetail\\:\\:parseRestriction\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 3
-			path: library/Icingadb/Widget/Detail/UserDetail.php
-
-		-
-			message: "#^Parameter \\#1 \\$states of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\UserDetail\\:\\:separateStates\\(\\) expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/Detail/UserDetail.php
-
-		-
-			message: "#^Parameter \\#1 \\$types of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\UserDetail\\:\\:localizeTypes\\(\\) expects array, mixed given\\.$#"
-			count: 1
 			path: library/Icingadb/Widget/Detail/UserDetail.php
 
 		-
@@ -7266,11 +6986,6 @@ parameters:
 			path: library/Icingadb/Widget/HostStatusBar.php
 
 		-
-			message: "#^Cannot cast mixed to int\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/HostSummaryDonut.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\HostSummaryDonut\\:\\:assembleBody\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/HostSummaryDonut.php
@@ -7286,16 +7001,6 @@ parameters:
 			path: library/Icingadb/Widget/HostSummaryDonut.php
 
 		-
-			message: "#^Parameter \\#1 \\$data of method Icinga\\\\Chart\\\\Donut\\:\\:addSlice\\(\\) expects int, mixed given\\.$#"
-			count: 4
-			path: library/Icingadb/Widget/HostSummaryDonut.php
-
-		-
-			message: "#^Parameter \\#1 \\$labelBig of method Icinga\\\\Chart\\\\Donut\\:\\:setLabelBig\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/HostSummaryDonut.php
-
-		-
 			message: "#^Parameter \\#1 \\$rule of method ipl\\\\Stdlib\\\\Filter\\\\Chain\\:\\:add\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/HostSummaryDonut.php
@@ -7304,11 +7009,6 @@ parameters:
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\IconImage\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/IconImage.php
-
-		-
-			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
 		-
 			message: "#^Cannot access property \\$host on mixed\\.$#"
@@ -7321,17 +7021,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseCommentListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
@@ -7346,16 +7036,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseCommentListItem.php
-
-		-
 			message: "#^Cannot access property \\$host on mixed\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
@@ -7366,17 +7046,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 5
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
 
@@ -7388,11 +7058,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$service of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseDowntimeListItem\\:\\:createServiceLink\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service, mixed given\\.$#"
 			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
 			path: library/Icingadb/Widget/ItemList/BaseDowntimeListItem.php
 
 		-
@@ -7551,11 +7216,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:createTicketLinks\\(\\) has parameter \\$text with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
@@ -7571,29 +7231,9 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function bin2hex expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function ucfirst expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
 			message: "#^Parameter \\#2 \\$host of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\BaseHistoryListItem\\:\\:createServiceLink\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host, object given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHostListItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemList/BaseHostListItem.php
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$author\\.$#"
@@ -7676,11 +7316,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
 
 		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
-
-		-
 			message: "#^Parameter \\#1 \\$host of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\Links\\:\\:host\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
@@ -7688,11 +7323,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$host of static method Icinga\\\\Module\\\\Icingadb\\\\Common\\\\Links\\:\\:service\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host, mixed given\\.$#"
 			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
 			path: library/Icingadb/Widget/ItemList/BaseServiceListItem.php
 
 		-
@@ -7751,11 +7381,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/HostListItemDetailed.php
-
-		-
 			message: "#^Parameter \\#2 \\$value of method Icinga\\\\Web\\\\Url\\:\\:setParam\\(\\) expects array\\|bool\\|string, int given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/NotificationList.php
@@ -7796,11 +7421,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/ServiceListItemDetailed.php
-
-		-
 			message: "#^Access to an undefined property object\\:\\:\\$icon_image_alt\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
@@ -7816,11 +7436,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 
 		-
-			message: "#^Cannot call method getTimestamp\\(\\) on DateTime\\|null\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemList\\\\StateListItem\\:\\:createSubject\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
@@ -7829,36 +7444,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$object of static method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:fromObject\\(\\) expects Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Host\\|Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Service, object given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/BaseHostGroupItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseHostGroupItem.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseHostGroupItem.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/BaseServiceGroupItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseServiceGroupItem.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/BaseServiceGroupItem.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\BaseStateRowItem\\:\\:assemble\\(\\) has no return type specified\\.$#"
@@ -7921,37 +7506,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/HostRowItem.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/HostRowItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 5
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
-			message: "#^Parameter \\#3 \\$number of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\BaseHostGroupItem\\:\\:translatePlural\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 4
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
-			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 4
-			path: library/Icingadb/Widget/ItemTable/HostgroupGridCell.php
-
-		-
 			message: "#^Parameter \\#1 \\.\\.\\.\\$rules of static method ipl\\\\Stdlib\\\\Filter\\:\\:all\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 2
 			path: library/Icingadb/Widget/ItemTable/HostgroupTableRow.php
 
@@ -8001,37 +7556,7 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/ServiceRowItem.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 2
-			path: library/Icingadb/Widget/ItemTable/ServiceRowItem.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 9
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Parameter \\#3 \\$number of method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ItemTable\\\\BaseServiceGroupItem\\:\\:translatePlural\\(\\) expects int\\|null, mixed given\\.$#"
-			count: 8
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
-			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 8
-			path: library/Icingadb/Widget/ItemTable/ServicegroupGridCell.php
-
-		-
 			message: "#^Parameter \\#1 \\.\\.\\.\\$rules of static method ipl\\\\Stdlib\\\\Filter\\:\\:all\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/ServicegroupTableRow.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/ServicegroupTableRow.php
 
@@ -8211,36 +7736,6 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
-			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 3
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UserTableRow.php
-
-		-
-			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of static method ipl\\\\Html\\\\Text\\:\\:create\\(\\) expects string, mixed given\\.$#"
-			count: 3
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemTable/UsergroupTableRow.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ServiceStateBadges\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ServiceStateBadges.php
@@ -8256,11 +7751,6 @@ parameters:
 			path: library/Icingadb/Widget/ServiceStatusBar.php
 
 		-
-			message: "#^Cannot cast mixed to int\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ServiceSummaryDonut.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ServiceSummaryDonut\\:\\:assembleBody\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ServiceSummaryDonut.php
@@ -8272,16 +7762,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\ServiceSummaryDonut\\:\\:assembleHeader\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ServiceSummaryDonut.php
-
-		-
-			message: "#^Parameter \\#1 \\$data of method Icinga\\\\Chart\\\\Donut\\:\\:addSlice\\(\\) expects int, mixed given\\.$#"
-			count: 8
-			path: library/Icingadb/Widget/ServiceSummaryDonut.php
-
-		-
-			message: "#^Parameter \\#1 \\$labelBig of method Icinga\\\\Chart\\\\Donut\\:\\:setLabelBig\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ServiceSummaryDonut.php
 

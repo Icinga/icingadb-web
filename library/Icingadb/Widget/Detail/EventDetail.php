@@ -366,7 +366,7 @@ class EventDetail extends BaseHtmlElement
         }
 
         $cancelInfo = [];
-        if ($downtime->has_been_cancelled) {
+        if ($downtime->has_been_cancelled && $downtime->cancel_time) {
             $cancelInfo = [
                 new HtmlElement('h2', null, Text::create(t('This downtime has been cancelled'))),
                 new HorizontalKeyValue(
@@ -430,7 +430,7 @@ class EventDetail extends BaseHtmlElement
         }
 
         $removedInfo = [];
-        if ($comment->has_been_removed) {
+        if ($comment->has_been_removed && $comment->remove_time) {
             $removedInfo[] = new HtmlElement('h2', null, Text::create(t('This comment has been removed')));
             if ($comment->removed_by) {
                 $removedInfo[] = new HorizontalKeyValue(
@@ -487,7 +487,7 @@ class EventDetail extends BaseHtmlElement
                 $flapping->percent_state_change_start,
                 $flapping->flapping_threshold_high
             ));
-        } else {
+        } elseif ($flapping->end_time !== null) {
             $eventInfo[] = new HorizontalKeyValue(
                 t('Ended on'),
                 DateFormatter::formatDateTime($flapping->end_time->getTimestamp())
@@ -567,7 +567,7 @@ class EventDetail extends BaseHtmlElement
             if ($acknowledgement->cleared_by) {
                 $eventInfo[] = new HorizontalKeyValue(
                     t('Cleared by'),
-                    [new Icon('user', $acknowledgement->cleared_by)]
+                    [new Icon('user'), $acknowledgement->cleared_by]
                 );
             } else {
                 $expired = false;

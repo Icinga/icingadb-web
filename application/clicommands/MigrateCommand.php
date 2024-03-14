@@ -496,9 +496,8 @@ class MigrateCommand extends Command
             );
 
             $changed = false;
-            /** @var ConfigObject $dashboardConfig */
+            /** @var ConfigObject<string> $dashboardConfig */
             foreach ($dashboardsConfig->getConfigObject() as $name => $dashboardConfig) {
-                /** @var ?string $dashboardUrlString */
                 $dashboardUrlString = $dashboardConfig->get('url');
                 if ($dashboardUrlString !== null) {
                     $dashBoardUrl = Url::fromPath($dashboardUrlString, [], new Request());
@@ -595,9 +594,8 @@ class MigrateCommand extends Command
     private function transformNavigationItems(Config $config, string $owner, int &$rc): bool
     {
         $updated = false;
-        /** @var ConfigObject $newConfigObject */
+        /** @var ConfigObject<string> $newConfigObject */
         foreach ($config->getConfigObject() as $section => $newConfigObject) {
-            /** @var string $configOwner */
             $configOwner = $newConfigObject->get('owner') ?? '';
             if ($configOwner && $configOwner !== $owner) {
                 continue;
@@ -686,9 +684,8 @@ class MigrateCommand extends Command
         $newConfig = $config->getConfigFile() === $path ? $config : $this->readFromIni($path, $rc);
 
         $updated = false;
-        /** @var ConfigObject $configObject */
+        /** @var ConfigObject<string> $configObject */
         foreach ($config->getConfigObject() as $configObject) {
-            /** @var string $configOwner */
             $configOwner = $configObject->get('owner') ?? '';
             if ($configOwner && $configOwner !== $owner) {
                 continue;

@@ -7,6 +7,20 @@ namespace Icinga\Module\Icingadb\Model;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 
+/**
+ * @property int $hosts_acknowledged
+ * @property int $hosts_active_checks_enabled
+ * @property int $hosts_passive_checks_enabled
+ * @property int $hosts_down_handled
+ * @property int $hosts_down_unhandled
+ * @property int $hosts_event_handler_enabled
+ * @property int $hosts_flapping_enabled
+ * @property int $hosts_notifications_enabled
+ * @property int $hosts_pending
+ * @property int $hosts_problems_unacknowledged
+ * @property int $hosts_total
+ * @property int $hosts_up
+ */
 class HoststateSummary extends Host
 {
     public function getSummaryColumns()

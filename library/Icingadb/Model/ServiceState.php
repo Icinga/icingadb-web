@@ -7,6 +7,11 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use ipl\Orm\Relations;
 
+/**
+ * Service state model.
+ *
+ * @property string $service_id
+ */
 class ServiceState extends State
 {
     public function getTableName()
