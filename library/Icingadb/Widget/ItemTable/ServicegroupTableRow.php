@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Model\Servicegroup;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
 use ipl\Stdlib\Filter;
@@ -12,7 +12,7 @@ use ipl\Stdlib\Filter;
 /**
  * Servicegroup item of a servicegroup list. Represents one database row.
  *
- * @property Servicegroup $item
+ * @property ServicegroupSummary $item
  * @property ServicegroupTable $table
  */
 class ServicegroupTableRow extends BaseServiceGroupItem

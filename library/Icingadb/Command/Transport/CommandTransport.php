@@ -50,7 +50,7 @@ class CommandTransport implements CommandTransportInterface
     /**
      * Create a transport from config
      *
-     * @param   ConfigObject  $config
+     * @param   ConfigObject<string>  $config
      *
      * @return  ApiCommandTransport
      *
@@ -59,7 +59,7 @@ class CommandTransport implements CommandTransportInterface
     public static function createTransport(ConfigObject $config): ApiCommandTransport
     {
         $config = clone $config;
-        switch (strtolower($config->transport)) {
+        switch (strtolower($config->transport ?? '')) {
             case ApiCommandTransport::TRANSPORT:
                 $transport = new ApiCommandTransport();
                 break;

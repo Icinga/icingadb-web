@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
-use Icinga\Module\Icingadb\Model\Hostgroup;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Widget\Detail\HostStatistics;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceStatistics;
 use ipl\Html\BaseHtmlElement;
@@ -13,7 +13,7 @@ use ipl\Stdlib\Filter;
 /**
  * Hostgroup table row of a hostgroup table. Represents one database row.
  *
- * @property Hostgroup $item
+ * @property Hostgroupsummary $item
  * @property HostgroupTable $table
  */
 class HostgroupTableRow extends BaseHostGroupItem

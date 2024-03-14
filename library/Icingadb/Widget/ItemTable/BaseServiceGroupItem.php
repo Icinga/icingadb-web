@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Model\Servicegroup;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -18,7 +18,7 @@ use ipl\Web\Widget\Link;
 /**
  * Servicegroup item of a servicegroup list. Represents one database row.
  *
- * @property Servicegroup $item
+ * @property ServicegroupSummary $item
  * @property ServicegroupTable $table
  */
 abstract class BaseServiceGroupItem extends BaseTableRowItem
