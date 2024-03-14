@@ -511,6 +511,11 @@ parameters:
 			path: application/controllers/HostController.php
 
 		-
+			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/HostController.php
+
+		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:lessThanOrEqual\\(\\) expects float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/HostController.php
@@ -537,6 +542,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$title of method ipl\\\\Web\\\\Compat\\\\CompatController\\:\\:setTitle\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/HostgroupController.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/HostgroupController.php
 
@@ -896,6 +906,11 @@ parameters:
 			path: application/controllers/ServiceController.php
 
 		-
+			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
+			count: 2
+			path: application/controllers/ServiceController.php
+
+		-
 			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:lessThanOrEqual\\(\\) expects float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/ServiceController.php
@@ -922,6 +937,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$title of method ipl\\\\Web\\\\Compat\\\\CompatController\\:\\:setTitle\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/ServicegroupController.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/ServicegroupController.php
 
@@ -7412,11 +7432,6 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$state\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/StateListItem.php
-
-		-
-			message: "#^Cannot call method getTimestamp\\(\\) on DateTime\\|null\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/StateListItem.php
 

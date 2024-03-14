@@ -71,11 +71,6 @@ parameters:
 			path: library/Icingadb/Command/Transport/ApiCommandTransport.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icingadb/Command/Transport/CommandTransport.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function array_merge expects array, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Common/IcingaRedis.php
