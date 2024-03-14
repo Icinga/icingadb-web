@@ -18,7 +18,7 @@ use ipl\Orm\Relations;
  * @property string $name_ci
  * @property string $is_global
  * @property ?string $parent_id
- * @property string $depth
+ * @property int $depth
  */
 class Zone extends Model
 {

@@ -16,12 +16,13 @@ use ipl\Orm\Relations;
  * @property string $environment_id
  * @property string $properties_checksum
  * @property ?string $argument_value
- * @property ?string $argument_order
+ * @property ?int $argument_order
  * @property ?string $description
  * @property ?string $argument_key_override
  * @property string $repeat_key
  * @property string $required
  * @property ?string $set_if
+ * @property ?string $separator
  * @property string $skip_key
  */
 class NotificationcommandArgument extends Model
@@ -50,6 +51,7 @@ class NotificationcommandArgument extends Model
             'repeat_key',
             'required',
             'set_if',
+            'separator',
             'skip_key'
         ];
     }

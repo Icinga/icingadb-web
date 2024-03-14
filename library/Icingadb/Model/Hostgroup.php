@@ -18,7 +18,7 @@ use ipl\Orm\Relations;
  * @property string $name
  * @property string $name_ci
  * @property string $display_name
- * @property string $zone_id
+ * @property ?string $zone_id
  */
 class Hostgroup extends Model
 {

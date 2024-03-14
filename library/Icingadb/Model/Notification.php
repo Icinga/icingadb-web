@@ -23,10 +23,10 @@ use ipl\Orm\Relations;
  * @property string $notificationcommand_id
  * @property ?int $times_begin
  * @property ?int $times_end
- * @property string $notification_interval
+ * @property int $notification_interval
  * @property ?string $timeperiod_id
- * @property array $states
- * @property array $types
+ * @property string[] $states
+ * @property string[] $types
  * @property ?string $zone_id
  */
 class Notification extends Model

@@ -19,7 +19,7 @@ use ipl\Orm\Relations;
  * @property string $name
  * @property string $name_ci
  * @property string $command
- * @property string $timeout
+ * @property int $timeout
  */
 class Eventcommand extends Model
 {

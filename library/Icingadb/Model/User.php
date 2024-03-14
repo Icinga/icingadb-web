@@ -23,8 +23,8 @@ use ipl\Orm\Relations;
  * @property string $pager
  * @property string $notifications_enabled
  * @property ?string $timeperiod_id
- * @property array $states
- * @property array $types
+ * @property string[] $states
+ * @property string[] $types
  * @property ?string $zone_id
  */
 class User extends Model

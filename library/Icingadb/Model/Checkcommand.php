@@ -12,7 +12,7 @@ use ipl\Orm\Relations;
 
 /**
  * @property string $id
- * @property string $zone_id
+ * @property ?string $zone_id
  * @property string $environment_id
  * @property string $name_checksum
  * @property string $properties_checksum

@@ -36,7 +36,8 @@ use ipl\Orm\Relations;
  * @property DateTime $scheduled_end_time
  * @property DateTime $start_time
  * @property DateTime $end_time
- * @property string $has_been_cancelled
+ * @property ?string $scheduled_by
+ * @property bool $has_been_cancelled
  * @property DateTime $trigger_time
  * @property ?DateTime $cancel_time
  */
@@ -72,6 +73,7 @@ class DowntimeHistory extends Model
             'scheduled_end_time',
             'start_time',
             'end_time',
+            'scheduled_by',
             'has_been_cancelled',
             'trigger_time',
             'cancel_time'

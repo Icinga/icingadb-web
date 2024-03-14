@@ -28,7 +28,7 @@ use ipl\Orm\Relations;
  * @property ?DateTime $clear_time
  * @property ?string $author
  * @property ?string $cleared_by
- * @property ?int $comment
+ * @property ?string $comment
  * @property ?DateTime $expire_time
  * @property ?bool $is_sticky
  * @property ?bool $is_persistent

@@ -16,6 +16,7 @@ use ipl\Web\Widget\Icon;
 /**
  * Base class for the {@link HostState} and {@link ServiceState} models providing common columns.
  *
+ * @property string $id
  * @property string $environment_id The environment id
  * @property string $state_type The state type (hard or soft)
  * @property int $soft_state The current soft state code (0 = OK, 1 = WARNING, 2 = CRITICAL, 3 = UNKNOWN)
@@ -44,9 +45,9 @@ use ipl\Web\Widget\Icon;
  * @property ?string $check_source The name of the node that executes the check
  * @property ?string $scheduling_source The name of the node that schedules the check
  * @property ?DateTime $last_update The time when the node was last updated
- * @property ?DateTime $last_state_change The time when the node last got a status change
- * @property ?DateTime $next_check The time when the node will execute the next check
- * @property ?DateTime $next_update The time when the next check of the node is expected to end
+ * @property DateTime $last_state_change The time when the node last got a status change
+ * @property DateTime $next_check The time when the node will execute the next check
+ * @property DateTime $next_update The time when the next check of the node is expected to end
  */
 abstract class State extends Model
 {

@@ -22,6 +22,7 @@ use ipl\Orm\Relations;
  * @property string $repeat_key
  * @property string $required
  * @property ?string $set_if
+ * @property ?string $separator
  * @property string $skip_key
  */
 class CheckcommandArgument extends Model
@@ -50,6 +51,7 @@ class CheckcommandArgument extends Model
             'repeat_key',
             'required',
             'set_if',
+            'separator',
             'skip_key'
         ];
     }

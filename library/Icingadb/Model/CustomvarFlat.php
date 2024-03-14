@@ -17,7 +17,7 @@ use Traversable;
  * @property string $customvar_id
  * @property string $flatname_checksum
  * @property string $flatname
- * @property string $flatvalue
+ * @property ?string $flatvalue
  */
 class CustomvarFlat extends Model
 {
