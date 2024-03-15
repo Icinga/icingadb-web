@@ -65,9 +65,7 @@ For this you need an `ApiUser` object with at least the following permissions on
 
 You can adjust the default values of options users have while interacting with particular dialogs in the UI. (e.g. While acknowledging a problem)
 These options can not be set from the web interface directly but have to be set in the
-configuration file.
-
-The relevant file `config.ini` will in most case recide in `/etc/icingaweb2/modules/icingadb`
+configuration file `/etc/icingaweb2/modules/icingadb/config.ini`.
 
 ### Available Settings and defaults
 
