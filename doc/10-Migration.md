@@ -161,10 +161,9 @@ on that: https://icinga.com/blog/2021/04/07/web-access-control-redefined/#icinga
 
 ## General configuration via config.ini
 
-If some of the default options of the monitoring module (for example setting
-acknowledgements to expire by default) were adjusted via the `config.ini` file,
-migrating those options is done by simply copying the configuration file to the Icinga DB Web module.
-In most cases this would be a
+Icinga DB Web still uses the same configuration format for command transports. This means that the file
+`/etc/icingaweb2/modules/monitoring/config.ini` can simply be copied over to
+`/etc/icingaweb2/modules/icingadb/config.ini`:
 
 ```
 cp /etc/icingaweb2/modules/monitoring/config.ini /etc/icingaweb2/modules/icingadb/config.ini
