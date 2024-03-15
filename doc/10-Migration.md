@@ -163,7 +163,7 @@ on that: https://icinga.com/blog/2021/04/07/web-access-control-redefined/#icinga
 
 If some of the default options of the monitoring module (for example setting
 acknowledgements to expire by default) were adjusted via the `config.ini` file,
-migrating those options is done by simple copying the configuration file to the icingadb module.
+migrating those options is done by simply copying the configuration file to the Icinga DB Web module.
 In most cases this would be a
 
 ```
