@@ -9,8 +9,8 @@ The same applies to routes, objects and variables. To these, users can be restri
 
 > **Restricted Command Permissions:**
 >
-> If a role [limits users](#filters) to a specific set of results, the command
-> permissions or refusals of the very same role only apply to these results.
+> If a role [limits users](#filters) to a specific set of results, the granted command permissions of the very same
+> role only apply to these results. The [`icingadb/scope/commands`](#scopes) restriction has the same effect.
 
 | Name                                           | Allow...                                                                         |
 |------------------------------------------------|----------------------------------------------------------------------------------|
@@ -59,6 +59,17 @@ not just hosts or services. It should be one or more [filter expressions](#filte
 unrestricted. It should be one or more [filter expressions](#filter-expressions).
 
 `icingadb/filter/services` will only allow users to access matching services. Other objects remain unrestricted.
+It should be one or more [filter expressions](#filter-expressions).
+
+### Scopes
+
+Scopes don't limit users in what they can see, just in what they can do where.
+
+| Name                    | Description                                                                |
+|-------------------------|----------------------------------------------------------------------------|
+| icingadb/scope/commands | Restrict to which objects the command permissions a role grants will apply |
+
+`icingadb/scope/commands` will limit where the granted command permissions of a role will apply.
 It should be one or more [filter expressions](#filter-expressions).
 
 ### Denylists
