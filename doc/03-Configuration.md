@@ -63,8 +63,7 @@ For this you need an `ApiUser` object with at least the following permissions on
 
 ## General Configuration
 
-There are module options, which change the default behaviour of the dialogs one gets
-when triggering an action (for example the "Acknowledge now" button).
+You can adjust the default values of options users have while interacting with particular dialogs in the UI. (e.g. While acknowledging a problem)
 These options can not be set from the web interface directly but have to be set in the
 configuration file.
 
