@@ -93,8 +93,6 @@ servicedowntime_flexible_duration | Set default value for "Flexible Duration" in
 ### Example
 
 Setting acknowledgements with 2 hours expire time by default.
-In the `config.ini` file (likely `/etc/icingaweb2/modules/icingadb/config.ini`) the following
-text is entered:
 
 ```
 [settings]
