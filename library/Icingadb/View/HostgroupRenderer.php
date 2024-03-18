@@ -88,8 +88,13 @@ class HostgroupRenderer implements ItemTableRenderer
         [$hostStats, $serviceStats] = $this->createStatistics($item);
 
         if ($this->hasBaseFilter()) {
-            $hostStats->setBaseFilter(Filter::all($hostStats->getBaseFilter(), $this->getBaseFilter()));
-            $serviceStats->setBaseFilter(Filter::all($serviceStats->getBaseFilter(), $this->getBaseFilter()));
+            if (! $hostStats->getBaseFilter()->sameAs($this->getBaseFilter())) {
+                $hostStats->setBaseFilter(Filter::all($hostStats->getBaseFilter(), $this->getBaseFilter()));
+            }
+
+            if (! $serviceStats->getBaseFilter()->sameAs($this->getBaseFilter())) {
+                $serviceStats->setBaseFilter(Filter::all($serviceStats->getBaseFilter(), $this->getBaseFilter()));
+            }
         }
 
         $columns->addHtml($hostStats, $serviceStats);
