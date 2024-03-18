@@ -61,6 +61,45 @@ For this you need an `ApiUser` object with at least the following permissions on
     also configure the secondary master's API command transport.
     Icinga DB Web then uses this transport if the primary one is not available.
 
+## General Configuration
+
+You can adjust some default values of options users have while interacting with particular dialogs in the UI. (e.g. While acknowledging a problem)
+These options can not be adjusted in the UI directly, but have to be set in the
+configuration file `/etc/icingaweb2/modules/icingadb/config.ini`.
+
+### Available Settings and defaults
+
+Option                            | Description                      | Default
+----------------------------------|-----------------------------------|------------
+acknowledge_expire                | Sets "Use Expire Time" in Acknowledgement dialog. | **0 (false)**
+acknowledge_expire_time           | Sets the value for "Expire Time" in Acknowledgement dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
+acknowledge_notify                | Sets "Send Notification" in Acknowledgement dialog. | **1 (true)**
+acknowledge_persistent            | Sets "Persistent Comment" in Acknowledgement dialog. | **0 (false)**
+acknowledge_sticky                | Sets "Sticky Acknowledgement" in Acknowledgement dialog. | **0 (false)**
+comment_expire                    | Sets "Use Expire Time" in Comment dialog. | **0 (false)**
+hostdowntime_comment_text         | Sets default text for "Comment" in Host Downtime dialog | ""
+servicedowntime_comment_text      | Sets default text for "Comment" in Service Downtime dialog. | ""
+comment_expire_time               | Sets default value for "Expire Time" in Comment dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**
+custom_notification_forced        | Sets "Forced" in Custom Notification dialog. | **0 (false)**
+hostdowntime_all_services         | Sets "All Services" in Schedule Host Downtime dialog. | **0 (false)**
+hostdowntime_end_fixed            | Sets default value for "End Time" in Schedule Host Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
+hostdowntime_end_flexible         | Sets default value for "End Time" in Schedule Host Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hours (PT2H)**.
+hostdowntime_flexible_duration    | Sets default value for "Flexible Duration" in Schedule Host Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
+servicedowntime_end_fixed         | Sets default value for "End Time" in Schedule Service Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
+servicedowntime_end_flexible      | Set default value for "End Time" in Schedule Service Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
+servicedowntime_flexible_duration | Set default value for "Flexible Duration" in Schedule Service Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
+
+
+### Example
+
+Setting acknowledgements with 2 hours expire time by default.
+
+```
+[settings]
+acknowledge_expire = 1
+acknowledge_expire_time = PT2H
+```
+
 ## Security
 
 To grant users permissions to run commands and restrict them to specific views,

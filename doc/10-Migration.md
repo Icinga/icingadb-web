@@ -8,6 +8,18 @@ If that is the case, this chapter has you covered.
 
 ## Configuration
 
+### General configuration via config.ini
+
+Icinga DB Web still uses the same configuration format as the monitoring module. This means that the file
+`/etc/icingaweb2/modules/monitoring/config.ini` can simply be copied over to
+`/etc/icingaweb2/modules/icingadb/config.ini`:
+
+```
+cp /etc/icingaweb2/modules/monitoring/config.ini /etc/icingaweb2/modules/icingadb/config.ini
+```
+
+The behaviour of those options remains the same.
+
 ### Command Transports
 
 Icinga DB Web still uses the same configuration format for command transports. This means that the file
@@ -158,3 +170,4 @@ general access to the monitoring module, this is not automatically migrated. You
 It gives you the chance to review the performed changes, before letting them loose on your users. Please also
 take in mind, that Icinga DB Web handles permissions and restrictions differently. Our blog provides details
 on that: https://icinga.com/blog/2021/04/07/web-access-control-redefined/#icingadb-permission-linkage
+
