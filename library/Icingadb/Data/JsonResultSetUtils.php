@@ -6,6 +6,8 @@ namespace Icinga\Module\Icingadb\Data;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Util\Json;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -59,7 +61,11 @@ trait JsonResultSetUtils
 
     public static function stream(Query $query): void
     {
-        $query->setResultSetClass(__CLASS__);
+        if ($query->getModel() instanceof Host || $query->getModel() instanceof Service) {
+            $query->setResultSetClass(VolatileJsonResults::class);
+        } else {
+            $query->setResultSetClass(__CLASS__);
+        }
 
         echo '[';
         foreach ($query->execute()->disableCache() as $i => $object) {

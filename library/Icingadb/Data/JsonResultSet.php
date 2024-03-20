@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Data;
 
-use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use ipl\Orm\ResultSet;
 
-class JsonResultSet extends VolatileStateResults
+class JsonResultSet extends ResultSet
 {
     use JsonResultSetUtils;
 }

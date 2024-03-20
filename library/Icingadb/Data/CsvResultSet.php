@@ -4,9 +4,9 @@
 
 namespace Icinga\Module\Icingadb\Data;
 
-use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use ipl\Orm\ResultSet;
 
-class CsvResultSet extends VolatileStateResults
+class CsvResultSet extends ResultSet
 {
     use CsvResultSetUtils;
 }
