@@ -67,17 +67,66 @@ trait JsonResultSetUtils
             $query->setResultSetClass(__CLASS__);
         }
 
+        if ($query->hasLimit()) {
+            // Custom limits should still apply
+            $query->peekAhead(false);
+            $offset = $query->getOffset();
+        } else {
+            $query->limit(1000);
+            $query->peekAhead();
+            $offset = 0;
+        }
+
         echo '[';
-        foreach ($query->execute()->disableCache() as $i => $object) {
-            if ($i > 0) {
-                echo ",\n";
+
+        do {
+            $query->offset($offset);
+            $result = $query->execute()->disableCache();
+            foreach ($result as $i => $object) {
+                if ($i > 0 || $offset !== 0) {
+                    echo ",\n";
+                }
+
+                echo Json::sanitize($object);
+
+                self::giveMeMoreTime();
             }
 
-            echo Json::sanitize($object);
-        }
+            $offset += 1000;
+        } while ($result->hasMore());
 
         echo ']';
 
         exit;
+    }
+
+    /**
+     * Grant the caller more time to work with
+     *
+     * This resets the execution time before it runs out. The advantage of this, compared with no execution time
+     * limit at all, is that only the caller can bypass the limit. Any other (faulty) code will still be stopped.
+     *
+     * @internal Don't use outside of {@see JsonResultSet::stream()} or {@see CsvResultSet::stream()}
+     *
+     * @return void
+     */
+    public static function giveMeMoreTime()
+    {
+        $spent = getrusage();
+        if ($spent !== false) {
+            $maxExecutionTime = ini_get('max_execution_time');
+            if (! $maxExecutionTime || ! is_numeric($maxExecutionTime)) {
+                $maxExecutionTime = 30;
+            } else {
+                $maxExecutionTime = (int) $maxExecutionTime;
+            }
+
+            if ($maxExecutionTime > 0) {
+                $timeRemaining = $maxExecutionTime - $spent['ru_utime.tv_sec'] % $maxExecutionTime;
+                if ($timeRemaining <= 5) {
+                    set_time_limit($maxExecutionTime);
+                }
+            }
+        }
     }
 }
