@@ -73,15 +73,33 @@ trait CsvResultSetUtils
             $query->setResultSetClass(__CLASS__);
         }
 
-        foreach ($query->execute()->disableCache() as $i => $keysAndValues) {
-            if ($i === 0) {
-                echo implode(',', array_keys($keysAndValues));
+        if ($query->hasLimit()) {
+            // Custom limits should still apply
+            $query->peekAhead(false);
+            $offset = $query->getOffset();
+        } else {
+            $query->limit(1000);
+            $query->peekAhead();
+            $offset = 0;
+        }
+
+        do {
+            $query->offset($offset);
+            $result = $query->execute()->disableCache();
+            foreach ($result as $i => $keysAndValues) {
+                if ($i === 0) {
+                    echo implode(',', array_keys($keysAndValues));
+                }
+
+                echo "\r\n";
+
+                echo implode(',', array_values($keysAndValues));
+
+                JsonResultSet::giveMeMoreTime();
             }
 
-            echo "\r\n";
-
-            echo implode(',', array_values($keysAndValues));
-        }
+            $offset += 1000;
+        } while ($result->hasMore());
 
         exit;
     }
