@@ -16,6 +16,7 @@ use ipl\Sql\Select;
 /**
  * @property string $id
  * @property string $display_name
+ * @property string $name_ci
  * @property string $name
  * @property int $services_critical_handled
  * @property int $services_critical_unhandled
@@ -70,8 +71,9 @@ class ServicegroupSummary extends UnionModel
     public function getColumns()
     {
         return [
-            'display_name'                => 'servicegroup_display_name',
             'name'                        => 'servicegroup_name',
+            'name_ci'                     => 'servicegroup_name_ci',
+            'display_name'                => 'servicegroup_display_name',
             'services_critical_handled'   => new Expression(
                 'SUM(CASE WHEN service_state = 2'
                 . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
@@ -131,6 +133,7 @@ class ServicegroupSummary extends UnionModel
                 [
                     'servicegroup_id'           => 'servicegroup.id',
                     'servicegroup_name'         => 'servicegroup.name',
+                    'servicegroup_name_ci'      => 'servicegroup.name_ci',
                     'servicegroup_display_name' => 'servicegroup.display_name',
                     'service_id'                => 'service.id',
                     'service_state'             => 'state.soft_state',
@@ -145,6 +148,7 @@ class ServicegroupSummary extends UnionModel
                 [
                     'servicegroup_id'           => 'servicegroup.id',
                     'servicegroup_name'         => 'servicegroup.name',
+                    'servicegroup_name_ci'      => 'servicegroup.name_ci',
                     'servicegroup_display_name' => 'servicegroup.display_name',
                     'service_id'                => new Expression('NULL'),
                     'service_state'             => new Expression('NULL'),
