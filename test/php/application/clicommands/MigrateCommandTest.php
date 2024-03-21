@@ -306,7 +306,7 @@ class MigrateCommandTest extends TestCase
                     'filter'    => 'host_name=%2Afoo%2A',
                     'owner'     => 'test'
                 ],
-                'hosts_encoded_params' => [
+                'shared-hosts_encoded_params' => [
                     'type'      => 'host-action',
                     'url'       => 'monitoring/list/hosts?host_name=%28foo%29&sort=_host_%28foo%29',
                     'filter'    => '_host_%28foo%29=bar',
@@ -326,7 +326,7 @@ class MigrateCommandTest extends TestCase
                     'filter'    => 'host.name~%2Afoo%2A',
                     'owner'     => 'test'
                 ],
-                'hosts_encoded_params' => [
+                'shared-hosts_encoded_params' => [
                     'type'      => 'icingadb-host-action',
                     'url'       => 'icingadb/hosts?host.name=%28foo%29&sort=host.vars.%28foo%29',
                     'filter'    => 'host.vars.%28foo%29=bar',
@@ -958,6 +958,29 @@ class MigrateCommandTest extends TestCase
         $servicesAfterSecondRun = $this->loadConfig('preferences/test/icingadb-service-actions.ini');
         $this->assertSame($hosts, $hostsAfterSecondRun);
         $this->assertSame($services, $servicesAfterSecondRun);
+    }
+
+    /**
+     * Checks the following:
+     * - Whether existing Icinga DB Actions are transformed regarding wildcard filters
+     */
+    public function testTest()
+    {
+        [$legacyHostActions, $expectedMigrated] = $this->getConfig('host-actions');
+
+        $this->createConfig('navigation/host-actions.ini', $legacyHostActions);
+        $this->createConfig('preferences/test/icingadb-host-actions.ini', $expectedMigrated);
+
+        $command = $this->createCommandInstance('--user', 'test');
+        $command->navigationAction();
+
+        $legacyConfig = $this->loadConfig('navigation/host-actions.ini');
+        $shouldBeEmpty = $this->loadConfig('navigation/icingadb-host-actions.ini');
+        $expectedConfig = $this->loadConfig('preferences/test/icingadb-host-actions.ini');
+
+        $this->assertSame($legacyHostActions, $legacyConfig);
+        $this->assertSame($expectedMigrated, $expectedConfig);
+        $this->assertEmpty($shouldBeEmpty);
     }
 
     /**
