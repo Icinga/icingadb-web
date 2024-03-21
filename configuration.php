@@ -136,6 +136,14 @@ namespace Icinga\Module\Icingadb {
     );
 
     if (! $this::exists('monitoring') || ($authenticated && ! $auth->getUser()->can('module/monitoring'))) {
+        $routeDenylist = [];
+        if ($authenticated && ! $auth->getUser()->isUnrestricted()) {
+            // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
+            $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
+                return StringHelper::trimSplit($restriction);
+            }, $auth->getRestrictions('icingadb/denylist/routes'))));
+        }
+
         /*
         * Available navigation items
         */
@@ -165,16 +173,22 @@ namespace Icinga\Module\Icingadb {
             'icingadb/services?sort=service.state.severity&limit=10',
             97
         );
-        $this->provideSearchUrl(
-            $this->translate('Hostgroups'),
-            'icingadb/hostgroups?limit=10',
-            96
-        );
-        $this->provideSearchUrl(
-            $this->translate('Servicegroups'),
-            'icingadb/servicegroups?limit=10',
-            95
-        );
+
+        if (! array_key_exists('hostgroups', $routeDenylist)) {
+            $this->provideSearchUrl(
+                $this->translate('Hostgroups'),
+                'icingadb/hostgroups?limit=10',
+                96
+            );
+        }
+
+        if (! array_key_exists('servicegroups', $routeDenylist)) {
+            $this->provideSearchUrl(
+                $this->translate('Servicegroups'),
+                'icingadb/servicegroups?limit=10',
+                95
+            );
+        }
 
         /**
          * Current Incidents
@@ -340,13 +354,6 @@ namespace Icinga\Module\Icingadb {
             'url'         => 'icingadb/services',
             'icon'        => 'cog'
         ]);
-        $routeDenylist = [];
-        if ($authenticated && ! $auth->getUser()->isUnrestricted()) {
-            // The empty array is for PHP pre 7.4, older versions require at least a single param for array_merge
-            $routeDenylist = array_flip(array_merge([], ...array_map(function ($restriction) {
-                return StringHelper::trimSplit($restriction);
-            }, $auth->getRestrictions('icingadb/denylist/routes'))));
-        }
 
         if (! array_key_exists('hostgroups', $routeDenylist)) {
             $overviewSection->add(N_('Host Groups'), [
