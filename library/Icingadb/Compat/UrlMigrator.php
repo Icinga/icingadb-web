@@ -234,9 +234,14 @@ class UrlMigrator
                     case $exprRule === self::LOWER_EXPR:
                         $filter->setValue(strtolower($filter->getValue()));
                         break;
-                    case is_array($exprRule) && isset($exprRule[$filter->getValue()]):
-                        $filter->setValue($exprRule[$filter->getValue()]);
-                        break;
+                    case is_array($exprRule):
+                        if (isset($exprRule[$filter->getValue()])) {
+                            $filter->setValue($exprRule[$filter->getValue()]);
+
+                            break;
+                        }
+
+                        return false;
                     default:
                         $filter->setValue($exprRule);
                 }
