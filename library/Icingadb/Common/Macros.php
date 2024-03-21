@@ -8,7 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Model\Host;
-use ipl\Orm\Model;
+use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Query;
 use ipl\Orm\ResultSet;
 
@@ -20,7 +20,7 @@ trait Macros
      * Get the given string with macros being resolved
      *
      * @param string $input  The string in which to look for macros
-     * @param Model|CompatService|CompatHost $object The host or service used to resolve the macros
+     * @param Host|Service|CompatService|CompatHost $object The host or service used to resolve the macros
      *
      * @return string
      */
@@ -42,7 +42,7 @@ trait Macros
      * Resolve a macro based on the given object
      *
      * @param string $macro  The macro to resolve
-     * @param Model|CompatService|CompatHost  $object The host or service used to resolve the macros
+     * @param Host|Service|CompatService|CompatHost  $object The host or service used to resolve the macros
      *
      * @return string
      */
@@ -102,8 +102,13 @@ trait Macros
                 $value = $object->$macro;
             }
         } catch (\Exception $e) {
+            $objectName = $object->name;
+            if ($objectType === 'service' && isset($object->host)) {
+                $objectName = $object->host->name . '!' . $objectName;
+            }
+
             $value = null;
-            Logger::debug('Unable to resolve macro "%s". An error occurred: %s', $macro, $e);
+            Logger::debug('Unable to resolve macro "%s" on object "%s". An error occured: %s', $macro, $objectName, $e);
         }
 
         if ($value instanceof Query || $value instanceof ResultSet || is_array($value)) {
