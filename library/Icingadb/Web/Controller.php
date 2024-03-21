@@ -513,7 +513,12 @@ class Controller extends CompatController
     {
         parent::preDispatch();
 
-        $this->format = $this->params->shift('format');
+        $this->format = $this->params->shift(
+            'format',
+            $this->getRequest()->isApiRequest()
+                ? 'json'
+                : null
+        );
     }
 
     public function postDispatch()
