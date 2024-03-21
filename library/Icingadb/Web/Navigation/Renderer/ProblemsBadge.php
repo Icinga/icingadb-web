@@ -52,7 +52,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
                 return $this->count;
             }
 
-            $this->count = $this->round($count);
+            $this->count = $count;
 
             $this->setState(static::STATE_CRITICAL);
         }
@@ -146,7 +146,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         $count = $this->getProblemsCount();
 
         if ($count) {
-            return (new StateBadge($count, $this->getState()))
+            return (new StateBadge($this->round($count), $this->getState()))
                     ->addAttributes(['class' => 'badge', 'title' => $this->getTitle()]);
         }
 
