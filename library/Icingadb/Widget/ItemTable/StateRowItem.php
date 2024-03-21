@@ -33,7 +33,7 @@ abstract class StateRowItem extends BaseStateRowItem
         $stateBall = new StateBall($this->item->state->getStateText(), StateBall::SIZE_LARGE);
         $stateBall->add($this->item->state->getIcon());
 
-        if ($this->item->state->is_handled) {
+        if ($this->item->state->is_problem && ($this->item->state->is_handled || ! $this->item->state->is_reachable)) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
