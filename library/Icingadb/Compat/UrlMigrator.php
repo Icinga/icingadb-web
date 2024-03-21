@@ -295,6 +295,8 @@ class UrlMigrator
             },
             'dir' => self::DROP,
             'limit' => self::USE_EXPR,
+            'addFilter' => self::DROP,
+            'modifyFilter' => self::DROP,
             'showCompact' => self::USE_EXPR,
             'showFullscreen' => self::USE_EXPR,
             'view' => function ($value) {
