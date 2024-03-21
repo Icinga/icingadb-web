@@ -29,3 +29,4 @@ parameters:
         - ipl\Orm\Model
         - Icinga\Web\View
         - Icinga\Data\ConfigObject
+        - Icinga\Module\Monitoring\Object\MonitoredObject
