@@ -7067,21 +7067,16 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$author\\.$#"
-			count: 3
+			count: 4
+			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$comment\\.$#"
+			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$text\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Access to an undefined property object\\|object\\:\\:\\$author\\.$#"
-			count: 1
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Access to an undefined property object\\|object\\:\\:\\$comment\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
