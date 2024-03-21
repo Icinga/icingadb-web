@@ -16,6 +16,7 @@ use ipl\Sql\Select;
 /**
  * @property string $id
  * @property string $display_name
+ * @property string $name_ci
  * @property string $name
  * @property int $hosts_down_handled
  * @property int $hosts_down_unhandled
@@ -75,6 +76,8 @@ class Hostgroupsummary extends UnionModel
     public function getColumns()
     {
         return [
+            'name'                        => 'hostgroup_name',
+            'name_ci'                     => 'hostgroup_name_ci',
             'display_name'                => 'hostgroup_display_name',
             'hosts_down_handled'          => new Expression(
                 'SUM(CASE WHEN host_state = 1'
@@ -94,7 +97,6 @@ class Hostgroupsummary extends UnionModel
                 'SUM(CASE WHEN host_state = 0 THEN 1 ELSE 0 END)'
             ),
             'hosts_severity'              => new Expression('MAX(host_severity)'),
-            'name'                        => 'hostgroup_name',
             'services_critical_handled'   => new Expression(
                 'SUM(CASE WHEN service_state = 2'
                 . ' AND (service_handled = \'y\' OR service_reachable = \'n\') THEN 1 ELSE 0 END)'
@@ -153,6 +155,7 @@ class Hostgroupsummary extends UnionModel
                 [
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_name_ci'      => 'hostgroup.name_ci',
                     'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => 'host.id',
                     'host_state'             => 'state.soft_state',
@@ -174,6 +177,7 @@ class Hostgroupsummary extends UnionModel
                 [
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_name_ci'      => 'hostgroup.name_ci',
                     'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
@@ -192,6 +196,7 @@ class Hostgroupsummary extends UnionModel
                 [
                     'hostgroup_id'           => 'hostgroup.id',
                     'hostgroup_name'         => 'hostgroup.name',
+                    'hostgroup_name_ci'      => 'hostgroup.name_ci',
                     'hostgroup_display_name' => 'hostgroup.display_name',
                     'host_id'                => new Expression('NULL'),
                     'host_state'             => new Expression('NULL'),
