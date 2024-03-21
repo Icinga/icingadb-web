@@ -7636,6 +7636,16 @@ parameters:
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
+			message: "#^Cannot access property \\$is_problem on mixed\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
+
+		-
+			message: "#^Cannot access property \\$is_reachable on mixed\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
+
+		-
 			message: "#^Cannot access property \\$last_state_change on mixed\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
