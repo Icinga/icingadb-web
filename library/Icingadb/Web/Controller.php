@@ -368,7 +368,10 @@ class Controller extends CompatController
 
         // No matter the format, a limit should only apply if set
         if ($this->format !== null) {
-            $query->limit(Url::fromRequest()->getParam('limit'));
+            if (! Url::fromRequest()->hasParam('limit')) {
+                $query->limit(null)
+                    ->offset(null);
+            }
         }
 
         if ($this->format === 'json' || $this->format === 'csv') {

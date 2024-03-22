@@ -2736,6 +2736,11 @@ parameters:
 			path: library/Icingadb/Data/JsonResultSet.php
 
 		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\JsonResultSet\\:\\:formatValue\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icingadb/Data/JsonResultSet.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\JsonResultSet\\:\\:formatValue\\(\\) has parameter \\$value with no type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Data/JsonResultSet.php
@@ -2789,6 +2794,51 @@ parameters:
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Data\\\\PivotTable\\:\\:\\$yAxisFilter \\(ipl\\\\Stdlib\\\\Filter\\\\Rule\\) does not accept ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null\\.$#"
 			count: 1
 			path: library/Icingadb/Data/PivotTable.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileCsvResults\\:\\:extractKeysAndValues\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileCsvResults\\:\\:formatValue\\(\\) has parameter \\$value with no type specified\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileCsvResults\\:\\:formatValue\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
+			message: "#^Parameter \\#1 \\$model of method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileCsvResults\\:\\:extractKeysAndValues\\(\\) expects ipl\\\\Orm\\\\Model, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileJsonResults\\:\\:createObject\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileJsonResults.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileJsonResults\\:\\:formatValue\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileJsonResults.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileJsonResults\\:\\:formatValue\\(\\) has parameter \\$value with no type specified\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileJsonResults.php
+
+		-
+			message: "#^Parameter \\#1 \\$key of method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileJsonResults\\:\\:formatValue\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileJsonResults.php
+
+		-
+			message: "#^Parameter \\#1 \\$model of method Icinga\\\\Module\\\\Icingadb\\\\Data\\\\VolatileJsonResults\\:\\:createObject\\(\\) expects ipl\\\\Orm\\\\Model, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileJsonResults.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Hook\\\\ActionsHook\\\\ObjectActionsHook\\:\\:init\\(\\) has no return type specified\\.$#"
@@ -5402,11 +5452,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$json of static method Icinga\\\\Util\\\\Json\\:\\:decode\\(\\) expects string, array\\|null given\\.$#"
-			count: 1
-			path: library/Icingadb/Web/Controller.php
-
-		-
-			message: "#^Parameter \\#1 \\$limit of method ipl\\\\Orm\\\\Query\\:\\:limit\\(\\) expects int\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Web/Controller.php
 
