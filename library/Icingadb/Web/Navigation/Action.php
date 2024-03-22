@@ -113,7 +113,7 @@ class Action extends NavigationItem
     public function getUrl(): ?\Icinga\Web\Url
     {
         $url = parent::getUrl();
-        if (! $this->resolved && $url === null && $this->rawUrl !== null) {
+        if (! $this->resolved && $url === null && $this->rawUrl !== null && $this->object !== null) {
             $this->setUrl(Url::fromPath($this->expandMacros($this->rawUrl, $this->getObject())));
             $this->resolved = true;
             return parent::getUrl();
