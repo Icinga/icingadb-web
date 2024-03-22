@@ -5041,11 +5041,6 @@ parameters:
 			path: library/Icingadb/Util/PluginOutput.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:render\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
 			message: "#^Parameter \\#1 \\$html of method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:processHtml\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PluginOutput.php
@@ -5067,16 +5062,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|null given\\.$#"
-			count: 2
+			count: 3
 			path: library/Icingadb/Util/PluginOutput.php
 
 		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|null given\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:\\$renderedOutput \\(string\\) does not accept string\\|null\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PluginOutput.php
 

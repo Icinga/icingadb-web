@@ -64,6 +64,9 @@ class PluginOutput extends HtmlString
     /** @var bool Whether the output contains HTML */
     protected $isHtml;
 
+    /** @var int The maximum amount of characters to process */
+    protected $characterLimit = 1000;
+
     /** @var bool Whether output will be enriched */
     protected $enrichOutput = true;
 
@@ -91,6 +94,20 @@ class PluginOutput extends HtmlString
         }
 
         return $this->isHtml;
+    }
+
+    /**
+     * Set the maximum amount of characters to process
+     *
+     * @param int $limit
+     *
+     * @return $this
+     */
+    public function setCharacterLimit(int $limit): self
+    {
+        $this->characterLimit = $limit;
+
+        return $this;
     }
 
     /**
@@ -183,6 +200,10 @@ class PluginOutput extends HtmlString
 
         if ($this->enrichOutput && $this->isHtml) {
             $output = $this->processHtml($output);
+        }
+
+        if ($this->characterLimit) {
+            $output = substr($output, 0, $this->characterLimit);
         }
 
         $this->renderedOutput = $output;
