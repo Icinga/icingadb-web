@@ -423,7 +423,10 @@ class ObjectDetail extends BaseHtmlElement
         if (empty($this->object->state->output) && empty($this->object->state->long_output)) {
             $pluginOutput = new EmptyState(t('Output unavailable.'));
         } else {
-            $pluginOutput = new PluginOutputContainer(PluginOutput::fromObject($this->object));
+            $pluginOutput = new PluginOutputContainer(
+                PluginOutput::fromObject($this->object)
+                    ->setCharacterLimit(10000)
+            );
             CopyToClipboard::attachTo($pluginOutput);
         }
 
