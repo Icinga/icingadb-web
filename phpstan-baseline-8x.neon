@@ -106,6 +106,16 @@ parameters:
 			path: library/Icingadb/Data/PivotTable.php
 
 		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_values expects array, mixed given\\.$#"
+			count: 1
+			path: library/Icingadb/Data/VolatileCsvResults.php
+
+		-
 			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Model/Behavior/ActionAndNoteUrl.php
