@@ -11,7 +11,6 @@ use ipl\Orm\ColumnDefinition;
 use ipl\Orm\Contract\QueryAwareBehavior;
 use ipl\Orm\Contract\RewriteColumnBehavior;
 use ipl\Orm\Query;
-use ipl\Stdlib\Data;
 use ipl\Stdlib\Filter;
 
 class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
@@ -42,22 +41,11 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
             // Previously, this behavior transformed a single condition to an ALL chain and hence the semantics
             // of the level changed, since the FilterProcessor interpreted the conditions separately from there on.
             // To not change the semantics of the condition it is required to delay the transformation of the condition
-            // until the subquery is created. Though, since the FilterProcessor only applies behaviors once, this
-            // hack is required. (The entire filter, metadata and optimization is total garbage.)
-            $oldMetaData = $condition->metaData();
-            $metaDataProperty = (new \ReflectionClass($condition))->getProperty('metaData');
-            $metaDataProperty->setAccessible(true);
-            $metaDataProperty->setValue($condition, new class () extends Data {
-                public function set($name, $value)
-                {
-                    if ($name === 'behaviorsApplied') {
-                        return $this;
-                    }
-
-                    return parent::set($name, $value);
-                }
-            });
-            $condition->metaData()->merge($oldMetaData);
+            // until the subquery is created. Though, since this is about custom variables, and such can contain dots,
+            // the FilterProcessor then continues traversing the parts of the column's path, which then would include
+            // the dot-separated parts of the custom variable name. To prevent this, we have to signal that what we
+            // return a replacement here, that should be used as-is and not processed further.
+            $condition->metaData()->set('forceResolved', true);
 
             // But to make it even worse: If we do that, (not transforming the condition) the FilterProcessor sees
             // multiple conditions as targeting different columns, as it doesn't know that the *columns* are in fact
@@ -66,6 +54,8 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
             // the condition refer to a different column, which is totally irrelevant, but since it's always the same
             // column, the FilterProcessor won't attempt to combine the conditions. The literal icing on the cake.
             $condition->setColumn('always_the_same_but_totally_irrelevant');
+
+            return $condition;
         }
     }
 

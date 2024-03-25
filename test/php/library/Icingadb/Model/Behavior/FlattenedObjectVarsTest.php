@@ -109,9 +109,9 @@ SQL;
         $query = Host::on($this->connection)
             ->columns('host.id')
             ->orderBy('host.id')
-            ->filter(Filter::unequal('host.vars.invalid', 'foo'));
+            ->filter(Filter::unequal('host.vars.in.valid', 'foo'));
 
-        $this->assertSql(self::SINGLE_UNEQUAL_RESULT, $query->assembleSelect(), ['invalid', 'foo', 1]);
+        $this->assertSql(self::SINGLE_UNEQUAL_RESULT, $query->assembleSelect(), ['in.valid', 'foo', 1]);
     }
 
     public function testDoubleUnequalCondition()
@@ -119,13 +119,13 @@ SQL;
         $query = Host::on($this->connection)
             ->columns('host.id')
             ->orderBy('host.id')
-            ->filter(Filter::unequal('host.vars.invalid', 'foo'))
+            ->filter(Filter::unequal('host.vars.in.valid', 'foo'))
             ->filter(Filter::unequal('host.vars.missing', 'bar'));
 
         $this->assertSql(
             self::DOUBLE_UNEQUAL_RESULT,
             $query->assembleSelect(),
-            ['invalid', 'foo', 'missing', 'bar', 1]
+            ['in.valid', 'foo', 'missing', 'bar', 1]
         );
     }
 
@@ -134,13 +134,13 @@ SQL;
         $query = Host::on($this->connection)
             ->columns('host.id')
             ->orderBy('host.id')
-            ->filter(Filter::unequal('host.vars.invalid', 'bar'))
+            ->filter(Filter::unequal('host.vars.in.valid', 'bar'))
             ->filter(Filter::equal('host.vars.env', 'foo'));
 
         $this->assertSql(
             self::EQUAL_UNEQUAL_RESULT,
             $query->assembleSelect(),
-            ['invalid', 'bar', 1, 'env', 'foo', 1]
+            ['in.valid', 'bar', 1, 'env', 'foo', 1]
         );
     }
 
