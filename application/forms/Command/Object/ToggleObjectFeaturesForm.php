@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
+use ipl\Stdlib\CallbackFilterIterator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use Iterator;
 use Traversable;
@@ -170,7 +171,9 @@ class ToggleObjectFeaturesForm extends CommandForm
                 continue;
             }
 
-            $granted = $this->filterGrantedOn($spec['permission'], $objects);
+            $granted = new CallbackFilterIterator($objects, function (Model $object) use ($spec): bool {
+                return $this->isGrantedOn($spec['permission'], $object);
+            });
 
             if ($granted->valid()) {
                 $command = new ToggleObjectFeatureCommand();

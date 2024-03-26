@@ -166,21 +166,4 @@ abstract class CommandForm extends Form
     {
         (new CommandTransport())->send($command);
     }
-
-    /**
-     * Yield the $objects the currently logged in user has the permission $permission for
-     *
-     * @param string      $permission
-     * @param Traversable $objects
-     *
-     * @return Generator
-     */
-    protected function filterGrantedOn(string $permission, Traversable $objects): Generator
-    {
-        foreach ($objects as $object) {
-            if ($this->isGrantedOn($permission, $object)) {
-                yield $object;
-            }
-        }
-    }
 }

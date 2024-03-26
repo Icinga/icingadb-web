@@ -13,6 +13,8 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Orm\Model;
+use ipl\Stdlib\CallbackFilterIterator;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
@@ -245,7 +247,9 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = $this->filterGrantedOn('icingadb/command/downtime/schedule', $objects);
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/downtime/schedule', $object);
+        });
 
         if ($granted->valid()) {
             $command = new ScheduleServiceDowntimeCommand();

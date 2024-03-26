@@ -14,6 +14,8 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Orm\Model;
+use ipl\Stdlib\CallbackFilterIterator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
@@ -112,19 +114,13 @@ class ScheduleCheckForm extends CommandForm
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = (function () use ($objects): Generator {
-            foreach ($objects as $object) {
-                if (
-                    $this->isGrantedOn('icingadb/command/schedule-check', $object)
-                    || (
-                        $object->active_checks_enabled
-                        && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-                    )
-                ) {
-                    yield $object;
-                }
-            }
-        })();
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                || (
+                    $object->active_checks_enabled
+                    && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                );
+        });
 
         if ($granted->valid()) {
             $command = new ScheduleCheckCommand();
