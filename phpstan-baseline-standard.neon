@@ -121,16 +121,6 @@ parameters:
 			path: application/controllers/CommentController.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\CommentController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) does not accept array\\.$#"
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\CommentController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\CommentController\\:\\:\\$comment \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Comment\\) does not accept ipl\\\\Orm\\\\Model\\.$#"
 			count: 1
 			path: application/controllers/CommentController.php
@@ -257,16 +247,6 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\DowntimeController\\:\\:\\$commandTargetModel \\(ipl\\\\Orm\\\\Model\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\DowntimeController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) does not accept array\\.$#"
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\DowntimeController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: application/controllers/DowntimeController.php
 
@@ -526,16 +506,6 @@ parameters:
 			path: application/controllers/HostController.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) does not accept array\\.$#"
-			count: 1
-			path: application/controllers/HostController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/HostController.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostgroupController\\:\\:indexAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/controllers/HostgroupController.php
@@ -692,11 +662,6 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostsController\\:\\:\\$commandTargetModel \\(ipl\\\\Orm\\\\Model\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/HostsController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostsController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
 			path: application/controllers/HostsController.php
 
@@ -921,16 +886,6 @@ parameters:
 			path: application/controllers/ServiceController.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServiceController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) does not accept array\\.$#"
-			count: 1
-			path: application/controllers/ServiceController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServiceController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/ServiceController.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServicegroupController\\:\\:indexAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/controllers/ServicegroupController.php
@@ -1131,11 +1086,6 @@ parameters:
 			path: application/controllers/ServicesController.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServicesController\\:\\:\\$commandTargets \\(ipl\\\\Orm\\\\Query\\) in isset\\(\\) is not nullable\\.$#"
-			count: 1
-			path: application/controllers/ServicesController.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\TacticalController\\:\\:completeAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/controllers/TacticalController.php
@@ -1261,11 +1211,6 @@ parameters:
 			path: application/forms/Command/CommandForm.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\CommandForm\\:\\:filterGrantedOn\\(\\) has parameter \\$objects with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: application/forms/Command/CommandForm.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\CommandForm\\:\\:onSuccess\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/forms/Command/CommandForm.php
@@ -1283,11 +1228,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$denylist of method Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\CommandForm\\:\\:parseDenylist\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 2
-			path: application/forms/Command/CommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$objects of method Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\CommandForm\\:\\:getCommands\\(\\) expects Traversable\\<mixed, ipl\\\\Orm\\\\Model\\>, mixed given\\.$#"
-			count: 1
 			path: application/forms/Command/CommandForm.php
 
 		-
@@ -1351,11 +1291,6 @@ parameters:
 			path: application/forms/Command/Object/AcknowledgeProblemForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/AcknowledgeProblemForm.php
-
-		-
 			message: "#^Call to an undefined method ipl\\\\Html\\\\Contract\\\\FormElement\\:\\:isChecked\\(\\)\\.$#"
 			count: 1
 			path: application/forms/Command/Object/AddCommentForm.php
@@ -1376,44 +1311,14 @@ parameters:
 			path: application/forms/Command/Object/AddCommentForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/AddCommentForm.php
-
-		-
 			message: "#^Cannot call method getUsername\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 1
 			path: application/forms/Command/Object/DeleteCommentForm.php
 
 		-
-			message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: application/forms/Command/Object/DeleteDowntimeForm.php
-
-		-
-			message: "#^Cannot access property \\$scheduled_by on mixed\\.$#"
-			count: 1
-			path: application/forms/Command/Object/DeleteDowntimeForm.php
-
-		-
 			message: "#^Cannot call method getUsername\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 1
 			path: application/forms/Command/Object/DeleteDowntimeForm.php
-
-		-
-			message: "#^Cannot access property \\$passive_checks_enabled on mixed\\.$#"
-			count: 1
-			path: application/forms/Command/Object/ProcessCheckResultForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ProcessCheckResultForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$objects of method Icinga\\\\Module\\\\Icingadb\\\\Command\\\\Object\\\\ObjectsCommand\\:\\:setObjects\\(\\) expects Traversable\\<mixed, ipl\\\\Orm\\\\Model\\>, Generator\\<int, mixed, mixed, void\\> given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/ProcessCheckResultForm.php
 
 		-
 			message: "#^Parameter \\#1 \\$output of method Icinga\\\\Module\\\\Icingadb\\\\Command\\\\Object\\\\ProcessCheckResultCommand\\:\\:setOutput\\(\\) expects string, mixed given\\.$#"
@@ -1436,22 +1341,12 @@ parameters:
 			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
-
-		-
 			message: "#^Call to an undefined method ipl\\\\Html\\\\Contract\\\\FormElement\\:\\:isChecked\\(\\)\\.$#"
 			count: 1
 			path: application/forms/Command/Object/ScheduleCheckForm.php
 
 		-
 			message: "#^Cannot call method getTimestamp\\(\\) on mixed\\.$#"
-			count: 1
-			path: application/forms/Command/Object/ScheduleCheckForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
 			count: 1
 			path: application/forms/Command/Object/ScheduleCheckForm.php
 
@@ -1532,11 +1427,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$comment of method Icinga\\\\Module\\\\Icingadb\\\\Command\\\\Object\\\\WithCommentCommand\\:\\:setComment\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/SendCustomNotificationForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$iterable of function ipl\\\\Stdlib\\\\iterable_value_first expects iterable, mixed given\\.$#"
 			count: 1
 			path: application/forms/Command/Object/SendCustomNotificationForm.php
 
