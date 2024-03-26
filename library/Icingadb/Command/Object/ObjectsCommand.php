@@ -5,8 +5,11 @@
 namespace Icinga\Module\Icingadb\Command\Object;
 
 use ArrayIterator;
+use Generator;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
+use InvalidArgumentException;
 use ipl\Orm\Model;
+use LogicException;
 use Traversable;
 
 /**
@@ -24,12 +27,18 @@ abstract class ObjectsCommand extends IcingaCommand
     /**
      * Set the involved objects
      *
-     * @param Traversable<Model> $objects
+     * @param Traversable<Model> $objects Except generators
      *
      * @return $this
+     *
+     * @throws InvalidArgumentException If a generator is passed
      */
     public function setObjects(Traversable $objects): self
     {
+        if ($objects instanceof Generator) {
+            throw new InvalidArgumentException('Generators are not supported');
+        }
+
         $this->objects = $objects;
 
         return $this;
@@ -57,7 +66,7 @@ abstract class ObjectsCommand extends IcingaCommand
     public function getObjects(): Traversable
     {
         if ($this->objects === null) {
-            throw new \LogicException(
+            throw new LogicException(
                 'You are accessing an unset property. Please make sure to set it beforehand.'
             );
         }
