@@ -13,8 +13,10 @@ use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
+use ipl\Stdlib\CallbackFilterIterator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -133,15 +135,12 @@ class ProcessCheckResultForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = (function () use ($objects): Generator {
-            foreach ($this->filterGrantedOn('icingadb/command/process-check-result', $objects) as $object) {
-                if ($object->passive_checks_enabled) {
-                    yield $object;
-                }
-            }
-        })();
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $object->passive_checks_enabled
+                && $this->isGrantedOn('icingadb/command/process-check-result', $object);
+        });
 
         if ($granted->valid()) {
             $command = new ProcessCheckResultCommand();

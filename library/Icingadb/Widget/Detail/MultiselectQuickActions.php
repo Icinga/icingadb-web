@@ -67,6 +67,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         ) {
             $removeAckForm = (new RemoveAcknowledgementForm())
                 ->setAction($this->getLink('removeAcknowledgement'))
+                // TODO: This is a hack as for the button label the count of objects is used. setCount? setMultiple?
                 ->setObjects(array_fill(0, $this->summary->$acks, null));
 
             $this->add(Html::tag('li', $removeAckForm));

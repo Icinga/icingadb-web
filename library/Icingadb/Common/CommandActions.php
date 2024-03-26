@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\AcknowledgeProblemForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\AddCommentForm;
@@ -26,7 +27,7 @@ use ipl\Web\Url;
  */
 trait CommandActions
 {
-    /** @var Query $commandTargets */
+    /** @var null|Query|array<Model> $commandTargets */
     protected $commandTargets;
 
     /** @var Model $commandTargetModel */
@@ -51,14 +52,14 @@ trait CommandActions
     /**
      * Fetch command targets
      *
-     * @return Query|Model[]
+     * @return Query|array<Model>
      */
     abstract protected function fetchCommandTargets();
 
     /**
      * Get command targets
      *
-     * @return Query|Model[]
+     * @return Query|array<Model>
      */
     protected function getCommandTargets()
     {
@@ -73,14 +74,19 @@ trait CommandActions
      * Get the model of the command targets
      *
      * @return Model
+     * @throws HttpNotFoundException If no command targets were found
      */
     protected function getCommandTargetModel(): Model
     {
         if (! isset($this->commandTargetModel)) {
             $commandTargets = $this->getCommandTargets();
-            if (is_array($commandTargets) && !empty($commandTargets)) {
+            if (empty($commandTargets) || count($commandTargets) === 0) {
+                throw new HttpNotFoundException('No command targets found');
+            }
+
+            if (is_array($commandTargets)) {
                 $this->commandTargetModel = $commandTargets[0];
-            } else {
+            } elseif ($commandTargets->count() > 0) {
                 $this->commandTargetModel = $commandTargets->getModel();
             }
         }
