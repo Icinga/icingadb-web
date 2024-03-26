@@ -10,6 +10,7 @@ use Icinga\Web\Notification;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Iterator;
 use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
@@ -156,7 +157,7 @@ class ToggleObjectFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         foreach ($this->features as $feature => $spec) {
             if ($this->getElement($feature) instanceof CheckboxElement) {

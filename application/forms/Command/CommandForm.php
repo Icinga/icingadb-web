@@ -16,6 +16,7 @@ use Icinga\Web\Session;
 use ipl\Html\Form;
 use ipl\Orm\Model;
 use ipl\Web\Common\CsrfCounterMeasure;
+use Iterator;
 use IteratorIterator;
 use Traversable;
 
@@ -106,11 +107,11 @@ abstract class CommandForm extends Form
     /**
      * Get the commands to issue for the given objects
      *
-     * @param Traversable<Model> $objects
+     * @param Iterator<Model> $objects
      *
      * @return Traversable<IcingaCommand>
      */
-    abstract protected function getCommands(Traversable $objects): Traversable;
+    abstract protected function getCommands(Iterator $objects): Traversable;
 
     protected function assemble()
     {

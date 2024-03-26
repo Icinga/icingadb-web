@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 class DeleteDowntimeForm extends CommandForm
@@ -66,7 +67,7 @@ class DeleteDowntimeForm extends CommandForm
         );
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         $granted = (function () use ($objects): Generator {
             foreach ($objects as $object) {

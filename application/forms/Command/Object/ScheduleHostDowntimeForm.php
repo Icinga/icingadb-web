@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Web\Notification;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Iterator;
 use Traversable;
 
 class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
@@ -87,7 +88,7 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
         $decorator->decorate($this->getElement('child_options'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         $granted = $this->filterGrantedOn('icingadb/command/downtime/schedule', $objects);
 

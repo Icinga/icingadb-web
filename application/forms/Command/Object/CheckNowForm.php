@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 class CheckNowForm extends CommandForm
@@ -44,7 +45,7 @@ class CheckNowForm extends CommandForm
         );
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         $granted = (function () use ($objects): Generator {
             foreach ($objects as $object) {

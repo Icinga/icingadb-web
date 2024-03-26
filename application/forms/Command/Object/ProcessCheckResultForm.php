@@ -15,6 +15,7 @@ use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -133,7 +134,7 @@ class ProcessCheckResultForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         $granted = (function () use ($objects): Generator {
             foreach ($this->filterGrantedOn('icingadb/command/process-check-result', $objects) as $object) {

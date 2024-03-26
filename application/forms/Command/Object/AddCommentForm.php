@@ -17,6 +17,7 @@ use ipl\Html\Text;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -141,7 +142,7 @@ class AddCommentForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         $granted = $this->filterGrantedOn('icingadb/command/comment/add', $objects);
 
