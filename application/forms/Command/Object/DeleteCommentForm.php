@@ -4,10 +4,11 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
-use Generator;
+use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
+use ipl\Orm\Model;
 use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
 use Iterator;
@@ -57,14 +58,11 @@ class DeleteCommentForm extends CommandForm
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = (function () use ($objects): Generator {
-            foreach ($objects as $object) {
-                if ($this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type})) {
-                    yield $object;
-                }
-            }
-        })();
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/comment/delete', $object->{$object->object_type});
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new DeleteCommentCommand();
             $command->setObjects($granted);

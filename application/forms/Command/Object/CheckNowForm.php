@@ -4,10 +4,11 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
-use Generator;
+use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
+use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
 use Iterator;
 use Traversable;
@@ -47,20 +48,15 @@ class CheckNowForm extends CommandForm
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = (function () use ($objects): Generator {
-            foreach ($objects as $object) {
-                if (
-                    $this->isGrantedOn('icingadb/command/schedule-check', $object)
-                    || (
-                        $object->active_checks_enabled
-                        && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
-                    )
-                ) {
-                    yield $object;
-                }
-            }
-        })();
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/schedule-check', $object)
+                || (
+                    $object->active_checks_enabled
+                    && $this->isGrantedOn('icingadb/command/schedule-check/active-only', $object)
+                );
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new ScheduleCheckCommand();
             $command->setObjects($granted);

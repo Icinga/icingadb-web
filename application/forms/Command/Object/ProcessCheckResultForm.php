@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
-use Generator;
+use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\ProcessCheckResultCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
@@ -136,14 +136,12 @@ class ProcessCheckResultForm extends CommandForm
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = (function () use ($objects): Generator {
-            foreach ($this->filterGrantedOn('icingadb/command/process-check-result', $objects) as $object) {
-                if ($object->passive_checks_enabled) {
-                    yield $object;
-                }
-            }
-        })();
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $object->passive_checks_enabled
+                && $this->isGrantedOn('icingadb/command/process-check-result', $object);
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new ProcessCheckResultCommand();
             $command->setObjects($granted);
