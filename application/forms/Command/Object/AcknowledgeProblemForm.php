@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use CallbackFilterIterator;
 use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
@@ -14,9 +15,11 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Orm\Model;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -186,10 +189,13 @@ class AcknowledgeProblemForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = $this->filterGrantedOn('icingadb/command/acknowledge-problem', $objects);
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/acknowledge-problem', $object);
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new AcknowledgeProblemCommand();
             $command->setObjects($granted);

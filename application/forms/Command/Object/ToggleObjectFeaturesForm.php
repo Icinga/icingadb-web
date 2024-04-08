@@ -4,12 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
+use Iterator;
 use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
@@ -156,7 +158,7 @@ class ToggleObjectFeaturesForm extends CommandForm
     {
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
         foreach ($this->features as $feature => $spec) {
             if ($this->getElement($feature) instanceof CheckboxElement) {
@@ -169,8 +171,11 @@ class ToggleObjectFeaturesForm extends CommandForm
                 continue;
             }
 
-            $granted = $this->filterGrantedOn($spec['permission'], $objects);
+            $granted = new CallbackFilterIterator($objects, function (Model $object) use ($spec): bool {
+                return $this->isGrantedOn($spec['permission'], $object);
+            });
 
+            $granted->rewind(); // Forwards the pointer to the first element
             if ($granted->valid()) {
                 $command = new ToggleObjectFeatureCommand();
                 $command->setObjects($granted);

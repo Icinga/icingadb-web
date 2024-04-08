@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use CallbackFilterIterator;
 use Icinga\Application\Config;
 use Icinga\Module\Icingadb\Command\Object\SendCustomNotificationCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
@@ -12,8 +13,10 @@ use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -108,10 +111,13 @@ class SendCustomNotificationForm extends CommandForm
         (new IcingaFormDecorator())->decorate($this->getElement('btn_submit'));
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = $this->filterGrantedOn('icingadb/command/send-custom-notification', $objects);
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/send-custom-notification', $object);
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new SendCustomNotificationCommand();
             $command->setObjects($granted);

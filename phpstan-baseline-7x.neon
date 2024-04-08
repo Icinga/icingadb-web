@@ -6,61 +6,6 @@ parameters:
 			path: application/controllers/EventController.php
 
 		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/AcknowledgeProblemForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/AddCommentForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/CheckNowForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/DeleteCommentForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/DeleteDowntimeForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ProcessCheckResultForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/RemoveAcknowledgementForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ScheduleCheckForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 1
-			path: application/forms/Command/Object/ScheduleHostDowntimeForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/ScheduleServiceDowntimeForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, mixed given\\.$#"
-			count: 2
-			path: application/forms/Command/Object/SendCustomNotificationForm.php
-
-		-
 			message: "#^Parameter \\#1 \\$str of function md5 expects string, mixed given\\.$#"
 			count: 1
 			path: application/forms/RedisConfigForm.php
@@ -164,3 +109,8 @@ parameters:
 			message: "#^Parameter \\#2 \\$str of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icingadb/Web/Controller.php
+
+		-
+			message: "#^Parameter \\#1 \\$objects of method Icinga\\\\Module\\\\Icingadb\\\\Forms\\\\Command\\\\CommandForm\\:\\:setObjects\\(\\) expects array\\<ipl\\\\Orm\\\\Model\\>\\|\\(Countable&Traversable\\<mixed, ipl\\\\Orm\\\\Model\\>\\), array\\<int, null\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/Detail/MultiselectQuickActions.php

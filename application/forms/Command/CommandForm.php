@@ -5,8 +5,8 @@
 namespace Icinga\Module\Icingadb\Forms\Command;
 
 use ArrayIterator;
+use Countable;
 use Exception;
-use Generator;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
@@ -16,6 +16,8 @@ use Icinga\Web\Session;
 use ipl\Html\Form;
 use ipl\Orm\Model;
 use ipl\Web\Common\CsrfCounterMeasure;
+use Iterator;
+use IteratorIterator;
 use Traversable;
 
 abstract class CommandForm extends Form
@@ -25,7 +27,7 @@ abstract class CommandForm extends Form
 
     protected $defaultAttributes = ['class' => 'icinga-form icinga-controls'];
 
-    /** @var mixed */
+    /** @var (Traversable<Model>&Countable)|array<Model> */
     protected $objects;
 
     /** @var bool */
@@ -43,7 +45,7 @@ abstract class CommandForm extends Form
     /**
      * Set the objects to issue the command for
      *
-     * @param mixed $objects A traversable that is also countable
+     * @param (Traversable<Model>&Countable)|array<Model> $objects A traversable that is also countable
      *
      * @return $this
      */
@@ -57,7 +59,7 @@ abstract class CommandForm extends Form
     /**
      * Get the objects to issue the command for
      *
-     * @return mixed
+     * @return (Traversable<Model>&Countable)|array<Model>
      */
     public function getObjects()
     {
@@ -105,11 +107,11 @@ abstract class CommandForm extends Form
     /**
      * Get the commands to issue for the given objects
      *
-     * @param Traversable<Model> $objects
+     * @param Iterator<Model> $objects
      *
      * @return Traversable<IcingaCommand>
      */
-    abstract protected function getCommands(Traversable $objects): Traversable;
+    abstract protected function getCommands(Iterator $objects): Traversable;
 
     protected function assemble()
     {
@@ -123,10 +125,15 @@ abstract class CommandForm extends Form
 
     protected function onSuccess()
     {
-        $errors = [];
         $objects = $this->getObjects();
+        if (is_array($objects)) {
+            $objects = new ArrayIterator($objects);
+        } else {
+            $objects = new IteratorIterator($objects);
+        }
 
-        foreach ($this->getCommands(is_array($objects) ? new ArrayIterator($objects) : $objects) as $command) {
+        $errors = [];
+        foreach ($this->getCommands($objects) as $command) {
             try {
                 $this->sendCommand($command);
             } catch (Exception $e) {
@@ -158,22 +165,5 @@ abstract class CommandForm extends Form
     protected function sendCommand(IcingaCommand $command)
     {
         (new CommandTransport())->send($command);
-    }
-
-    /**
-     * Yield the $objects the currently logged in user has the permission $permission for
-     *
-     * @param string      $permission
-     * @param Traversable $objects
-     *
-     * @return Generator
-     */
-    protected function filterGrantedOn(string $permission, Traversable $objects): Generator
-    {
-        foreach ($objects as $object) {
-            if ($this->isGrantedOn($permission, $object)) {
-                yield $object;
-            }
-        }
     }
 }

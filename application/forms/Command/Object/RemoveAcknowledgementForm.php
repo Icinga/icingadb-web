@@ -4,11 +4,14 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
+use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\RemoveAcknowledgementCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Web\Notification;
+use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
+use Iterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -62,10 +65,13 @@ class RemoveAcknowledgementForm extends CommandForm
         );
     }
 
-    protected function getCommands(Traversable $objects): Traversable
+    protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = $this->filterGrantedOn('icingadb/command/remove-acknowledgement', $objects);
+        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
+            return $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object);
+        });
 
+        $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
             $command = new RemoveAcknowledgementCommand();
             $command->setObjects($granted);
