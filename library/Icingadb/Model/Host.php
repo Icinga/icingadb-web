@@ -271,4 +271,18 @@ class Host extends Model
         $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
     }
+
+    public function __get($key)
+    {
+        if (in_array($key, $this->getColumns())) {
+            return null;
+        }
+
+        return parent::__get($key);
+    }
+
+    public function __isset($key)
+    {
+        return false;
+    }
 }

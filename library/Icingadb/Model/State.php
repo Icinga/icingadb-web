@@ -175,4 +175,21 @@ abstract class State extends Model
 
         return $icon;
     }
+
+
+
+    public function __get($key)
+    {
+        // This shouldn't break anything, but it does since https://github.com/Icinga/icingadb-web/pull/753
+        if (in_array($key, $this->getColumns())) {
+            return null;
+        }
+
+        return parent::__get($key);
+    }
+
+    public function __isset($key)
+    {
+        return false;
+    }
 }
