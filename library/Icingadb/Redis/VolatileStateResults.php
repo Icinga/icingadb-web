@@ -131,7 +131,7 @@ class VolatileStateResults extends ResultSet
                 }
             }
 
-            if ($type === 'service' && $row->host instanceof Host) {
+            if ($type === 'service' && $row->host instanceof Host && isset($row->host->id)) {
                 $hostStates[bin2hex($row->host->id)] = $row->host->state;
                 if (empty($hostStateKeys)) {
                     $hostStateKeys = $row->host->state->getColumns();
