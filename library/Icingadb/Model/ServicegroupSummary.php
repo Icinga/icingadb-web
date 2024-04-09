@@ -113,7 +113,7 @@ class ServicegroupSummary extends UnionModel
 
     public function getSearchColumns()
     {
-        return ['display_name'];
+        return ['name_ci', 'display_name'];
     }
 
     public function getDefaultSort()
