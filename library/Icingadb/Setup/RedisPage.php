@@ -12,9 +12,9 @@ class RedisPage extends Form
     public function init()
     {
         $this->setName('setup_icingadb_redis');
-        $this->setTitle(t('Icinga DB Redis'));
+        $this->setTitle(t('Redis'));
         $this->addDescription(t(
-            'Please fill out the connection details to access the Icinga DB Redis.'
+            'Please fill out the connection details to access the Redis server.'
         ));
         $this->setValidatePartial(true);
     }
