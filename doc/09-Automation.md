@@ -209,14 +209,14 @@ None.
 
 #### Options
 
-| Option   | Required | Type        | Depends On |
-|----------|----------|-------------|------------|
-| comment  | y        | Text        | -          |
-| start    | y        | DateTime    | -          |
-| end      | y        | DateTime    | -          |
-| flexible | n        | BoolEnum    | -          |
-| hours    | y        | Number      | flexible   |
-| minutes  | y        | Number      | flexible   |
+| Option   | Required | Type     | Depends On |
+|----------|----------|----------|------------|
+| comment  | y        | Text     | -          |
+| start    | y        | DateTime | -          |
+| end      | y        | DateTime | -          |
+| flexible | n        | BoolEnum | -          |
+| hours    | y        | Number   | flexible   |
+| minutes  | y        | Number   | flexible   |
 
 ### Send Custom Notification
 

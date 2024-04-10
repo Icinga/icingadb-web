@@ -79,7 +79,8 @@ migration of urls. An API endpoint in Icinga DB Web allows for this:
 If you `POST` a JSON list there, you'll get a JSON list back with the transformed urls in it.
 The returned list is ordered the same and any unrecognized url is left unchanged:
 
-**Input:**  
+**Input:**
+
 ```json
 [
     "/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)",
@@ -87,7 +88,8 @@ The returned list is ordered the same and any unrecognized url is left unchanged
 ]
 ```
 
-**Output**:  
+**Output**:
+
 ```json
 [
     "/icingaweb2/icingadb/services?hostgroup.name=prod-hosts|(host.vars.env=prod&host.vars.stage!=testing)",
@@ -97,7 +99,6 @@ The returned list is ordered the same and any unrecognized url is left unchanged
 
 **cURL example:**  
 `curl -s -HContent-Type:application/json -HAccept:application/json -u icingaadmin:icinga http://localhost/icingaweb2/icingadb/migrate/monitoring-url -d '["/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)","/icingaweb2/businessprocess/process/show?config=production"]'`
-
 
 ## Views and Exports
 

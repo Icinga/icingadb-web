@@ -1,4 +1,5 @@
 <!-- {% if index %} -->
+
 # Installing Icinga DB Web
 
 The recommended way to install Icinga DB Web is to use prebuilt packages for
