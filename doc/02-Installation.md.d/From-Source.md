@@ -4,7 +4,7 @@ Please see the Icinga Web documentation on
 [how to install modules](https://icinga.com/docs/icinga-web-2/latest/doc/08-Modules/#installation) from source.
 Make sure you use `icingadb` as the module name. The following requirements must also be met.
 
-### Requirements
+## Requirements
 
 * PHP (≥7.2)
 * MySQL or PostgreSQL PDO PHP libraries
