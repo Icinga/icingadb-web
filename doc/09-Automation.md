@@ -86,7 +86,8 @@ To change this, log in as this user and change its preference setting.
 
 ### PerfData
 
-Please have a look at the [Monitoring Plugins Development Guidelines](https://www.monitoring-plugins.org/doc/guidelines.html#AEN201).
+Please have a look at the
+[Monitoring Plugins Development Guidelines](https://www.monitoring-plugins.org/doc/guidelines.html#AEN201).
 
 ### ChildOption
 

@@ -103,7 +103,8 @@ It is possible to use [match patterns](#match-patterns).
 
 #### Filter Expressions
 
-These consist of one or more [filter expressions](https://icinga.com/docs/icinga-web-2/latest/doc/06-Security/#filter-expressions).
+These consist of one or more
+[filter expressions](https://icinga.com/docs/icinga-web-2/latest/doc/06-Security/#filter-expressions).
 
 Allowed columns are:
 
