@@ -3,12 +3,13 @@
 Icinga DB is a set of components for publishing, synchronizing and
 visualizing monitoring data in the Icinga ecosystem, consisting of:
 
-* Icinga DB Web which connects to both a Redis server and a database to view and work with monitoring data
+* Icinga DB Web which connects to both a Redis®[\*](TRADEMARKS.md#redis) server and 
+  a database to view and work with monitoring data
 * Icinga 2 with its [Icinga DB feature](https://icinga.com/docs/icinga-2/latest/14-features/#icinga-db) enabled,
   responsible for publishing monitoring configuration, check results,
-  states changes and history items to the Redis server
+  states changes and history items to the Redis® server
 * And the [Icinga DB daemon](https://icinga.com/docs/icinga-db/latest/01-About/),
-  which synchronizes monitoring data between the Redis server and the database
+  which synchronizes monitoring data between the Redis® server and the database
 
 ![Icinga DB Architecture](res/icingadb-architecture.png)
 

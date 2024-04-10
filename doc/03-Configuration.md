@@ -15,17 +15,17 @@ Connection configuration for the database to which Icinga DB synchronizes monito
 2. Configure the resource you just created as the database connection for the Icinga DB Web module using the
    `Configuration → Modules → icingadb → Database` menu.
 
-## Redis Configuration
+## Redis® Configuration
 
-Connection configuration for the Redis server where Icinga 2 writes check results.
+Connection configuration for the Redis® server where Icinga 2 writes check results.
 This data is used to display the latest state information in Icinga DB Web.
 
-1. Configure the connection to the Redis server through the `Configuration → Modules → icingadb → Redis` menu.
+1. Configure the connection to the Redis® server through the `Configuration → Modules → icingadb → Redis` menu.
 
 !!! info
 
     If you are running a high-availability Icinga 2 setup,
-    also configure the secondary master's Redis connection details.
+    also configure the secondary master's Redis® connection details.
     Icinga DB Web then uses this connection if the primary one is not available.
 
 ## Command Transport Configuration
