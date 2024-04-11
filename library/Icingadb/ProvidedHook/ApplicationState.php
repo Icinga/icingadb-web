@@ -31,7 +31,7 @@ class ApplicationState extends ApplicationStateHook
             $this->addError(
                 'icingadb/redis-down',
                 $downSince,
-                sprintf(t("Can't connect to Icinga Redis: %s"), $e->getMessage())
+                sprintf(t("Can't connect to Redis: %s"), $e->getMessage())
             );
 
             return;
@@ -89,7 +89,7 @@ class ApplicationState extends ApplicationStateHook
                 $this->addError(
                     'icingadb/redis-outdated',
                     $lastIcingaHeartbeat,
-                    t('Icinga Redis is outdated. Make sure Icinga 2 is running and connected to Redis.')
+                    t('Redis is outdated. Make sure Icinga 2 is running and connected to Redis.')
                 );
 
                 break;

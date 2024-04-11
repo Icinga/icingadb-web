@@ -16,7 +16,7 @@ class RedisHealth extends HealthHook
 
     public function getName(): string
     {
-        return 'Icinga Redis';
+        return 'Redis';
     }
 
     public function checkHealth()
@@ -32,7 +32,7 @@ class RedisHealth extends HealthHook
             if ($instance === null) {
                 $this->setState(self::STATE_UNKNOWN);
                 $this->setMessage(t(
-                    'Can\'t check Icinga Redis: Icinga DB is not running or not writing into the database'
+                    'Can\'t check Redis: Icinga DB is not running or not writing into the database'
                     . ' (make sure the icinga feature "icingadb" is enabled)'
                 ));
 
@@ -42,14 +42,14 @@ class RedisHealth extends HealthHook
             $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
             if (! $outdatedDbHeartbeat || $instance->heartbeat->getTimestamp() <= $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_OK);
-                $this->setMessage(t('Icinga Redis available and up to date.'));
+                $this->setMessage(t('Redis available and up to date.'));
             } elseif ($instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_CRITICAL);
-                $this->setMessage(t('Icinga Redis outdated. Make sure Icinga 2 is running and connected to Redis.'));
+                $this->setMessage(t('Redis outdated. Make sure Icinga 2 is running and connected to Redis.'));
             }
         } catch (Exception $e) {
             $this->setState(self::STATE_CRITICAL);
-            $this->setMessage(sprintf(t("Can't connect to Icinga Redis: %s"), $e->getMessage()));
+            $this->setMessage(sprintf(t("Can't connect to Redis: %s"), $e->getMessage()));
         }
     }
 }

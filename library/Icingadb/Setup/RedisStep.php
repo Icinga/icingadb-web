@@ -107,7 +107,7 @@ class RedisStep extends Step
         $topic = new HtmlElement('div', Attributes::create(['class' => 'topic']));
         $topic->addHtml(new HtmlElement('p', null, Text::create(mt(
             'icingadb',
-            'The Icinga DB Redis will be accessed using the following connection details:'
+            'Redis will be accessed using the following connection details:'
         ))));
 
         $primaryOptions = new Table();
@@ -178,7 +178,7 @@ class RedisStep extends Step
 
         $summary = new HtmlDocument();
         $summary->addHtml(
-            new HtmlElement('h2', null, Text::create(mt('icingadb', 'Icinga DB Redis'))),
+            new HtmlElement('h2', null, Text::create(mt('icingadb', 'Redis'))),
             $topic
         );
 

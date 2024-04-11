@@ -53,7 +53,7 @@ abstract class StateList extends BaseItemList
 
         if ($this->data instanceof VolatileStateResults && $this->data->isRedisUnavailable()) {
             $this->prependWrapper((new HtmlDocument())->addHtml(new Notice(
-                t('Icinga Redis is currently unavailable. The shown information might be outdated.')
+                t('Redis is currently unavailable. The shown information might be outdated.')
             )));
         }
     }
