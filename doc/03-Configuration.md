@@ -88,6 +88,7 @@ hostdowntime_flexible_duration    | Sets default value for "Flexible Duration" i
 servicedowntime_end_fixed         | Sets default value for "End Time" in Schedule Service Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
 servicedowntime_end_flexible      | Set default value for "End Time" in Schedule Service Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
 servicedowntime_flexible_duration | Set default value for "Flexible Duration" in Schedule Service Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
+plugin_output_character_limit | Set maximal number of characters of the plugin output in a host or service which will be displayed. | **10000**
 
 
 ### Example
