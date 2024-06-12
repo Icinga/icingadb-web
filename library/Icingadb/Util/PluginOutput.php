@@ -79,7 +79,12 @@ class PluginOutput extends HtmlString
         parent::__construct($foo);
 
         $config = Config::module('icingadb');
-        $this->setCharacterLimit($config->get('settings', 'plugin_output_character_limit', 10000));
+
+        $charLimit = $config->get('settings', 'plugin_output_character_limit', $this->characterlimit);
+
+        if ($charLimit != $this->characterLimit) {
+            $this->setCharacterLimit($charLimit);
+        }
 
     }
 
