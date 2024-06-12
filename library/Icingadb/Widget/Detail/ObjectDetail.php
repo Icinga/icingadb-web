@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Exception;
 use Icinga\Application\ClassLoader;
-use Icinga\Application\Config;
 use Icinga\Application\Hook;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
@@ -421,13 +420,12 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createPluginOutput(): array
     {
-        $config = Config::module('icingadb');
         if (empty($this->object->state->output) && empty($this->object->state->long_output)) {
             $pluginOutput = new EmptyState(t('Output unavailable.'));
         } else {
             $pluginOutput = new PluginOutputContainer(
                 PluginOutput::fromObject($this->object)
-                    ->setCharacterLimit($config->get('settings', 'plugin_output_character_limit', 10000))
+                    ->setCharacterLimit(10000)
             );
             CopyToClipboard::attachTo($pluginOutput);
         }
