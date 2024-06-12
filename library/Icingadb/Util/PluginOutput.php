@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Web\Dom\DomNodeIterator;
 use Icinga\Web\Helper\HtmlPurifier;
+use Icinga\Application\Config;
 use InvalidArgumentException;
 use ipl\Html\HtmlString;
 use ipl\Orm\Model;
@@ -72,6 +73,15 @@ class PluginOutput extends HtmlString
 
     /** @var string The name of the command that produced the output */
     protected $commandName;
+
+    /** Custom constructor to set the character limit from the config value */
+    function __construct($foo) {
+        parent::__construct($foo);
+
+        $config = Config::module('icingadb');
+        $this->setCharacterLimit($config->get('settings', 'plugin_output_character_limit', 10000));
+
+    }
 
     /**
      * Get whether the output contains HTML
