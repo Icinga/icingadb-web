@@ -174,6 +174,8 @@ class PluginOutput extends HtmlString
             $output = PluginOutputHook::processOutput($output, $this->commandName, $this->enrichOutput);
         }
 
+        $output = substr($output, 0, $this->characterLimit);
+
         if (preg_match('~<\w+(?>\s\w+=[^>]*)?>~', $output)) {
             // HTML
             $output = HtmlPurifier::process(preg_replace(
@@ -200,10 +202,6 @@ class PluginOutput extends HtmlString
 
         if ($this->enrichOutput && $this->isHtml) {
             $output = $this->processHtml($output);
-        }
-
-        if ($this->characterLimit) {
-            $output = substr($output, 0, $this->characterLimit);
         }
 
         $this->renderedOutput = $output;
