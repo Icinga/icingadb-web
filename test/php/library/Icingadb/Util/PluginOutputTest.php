@@ -5,6 +5,7 @@
 namespace Tests\Icinga\Module\Icingadb\Util;
 
 use Icinga\Module\Icingadb\Util\PluginOutput;
+use Icinga\Web\Helper\HtmlPurifier;
 use PHPUnit\Framework\TestCase;
 
 class PluginOutputTest extends TestCase
@@ -31,7 +32,7 @@ INPUT;
 
         $expectedOutput = <<<'EXPECTED_OUTPUT'
 <span class="state-ball ball-size-m state-ok"></span> Dummy state
-    \_ <span class="state-ball ball-size-m state-ok"></span> Fake &quot;state&quot;
+    \_ <span class="state-ball ball-size-m state-ok"></span> Fake "state"
     \_ <span class="state-ball ball-size-m state-warning"></span> Fake state again
 EXPECTED_OUTPUT;
 
@@ -115,7 +116,7 @@ INPUT;
         $expectedOutput = <<<'EXPECTED_OUTPUT'
 Hello <h3>World</h3>, this "is" a <strong>test</strong>.
 <span class="state-ball ball-size-m state-ok"></span> Dummy state
-    special chars: !@#$%^&amp;*()_+{}|:"&lt;&gt;?`-=[]\;',&#x200B;./
+    special chars: !@#$%^&amp;*()_+{}|:"&lt;&gt;?`-=[]\;',&#8203;./
 text <span> ends </span> here
 EXPECTED_OUTPUT;
 
