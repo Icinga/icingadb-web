@@ -4,49 +4,61 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Exception\NotFoundError;
+use Generator;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use Icinga\Module\Icingadb\Widget\ItemTable\ServicegroupTableRow;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
 
 class ServicegroupController extends Controller
 {
-    /** @var ServicegroupSummary The service group object */
-    protected $servicegroup;
+    /** @var string */
+    protected $servicegroupName;
 
     public function init()
     {
         $this->assertRouteAccess('servicegroups');
+        $this->servicegroupName = $this->params->shiftRequired('name');
+    }
 
-        $this->addTitleTab(t('Service Group'));
-
-        $name = $this->params->getRequired('name');
-
+    /**
+     * Fetch the service group object
+     *
+     * @return ServicegroupSummary
+     */
+    protected function fetchServicegroup(): ServicegroupSummary
+    {
         $query = ServicegroupSummary::on($this->getDb());
 
         foreach ($query->getUnions() as $unionPart) {
-            $unionPart->filter(Filter::equal('servicegroup.name', $name));
+            $unionPart->filter(Filter::equal('servicegroup.name', $this->servicegroupName));
         }
 
         $this->applyRestrictions($query);
 
+        /** @var ServicegroupSummary $servicegroup */
         $servicegroup = $query->first();
         if ($servicegroup === null) {
-            throw new NotFoundError(t('Service group not found'));
+            $this->httpNotFound(t('Service group not found'));
         }
 
-        $this->servicegroup = $servicegroup;
-        $this->setTitle($servicegroup->display_name);
+        return $servicegroup;
     }
 
-    public function indexAction()
+    public function indexAction(): Generator
     {
         $db = $this->getDb();
+        $servicegroup = $this->fetchServicegroup();
 
         $services = Service::on($db)->with([
             'state',
@@ -57,33 +69,102 @@ class ServicegroupController extends Controller
         ]);
         $services
             ->setResultSetClass(VolatileStateResults::class)
-            ->filter(Filter::equal('servicegroup.id', $this->servicegroup->id));
+            ->filter(Filter::equal('servicegroup.id', $servicegroup->id));
 
         $this->applyRestrictions($services);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
+        $sortControl = $this->createSortControl(
+            $services,
+            [
+                'service.display_name'                                             => t('Name'),
+                'service.state.severity desc,service.state.last_state_change desc' => t('Severity'),
+                'service.state.soft_state'                                         => t('Current State'),
+                'service.state.last_state_change desc'                             => t('Last State Change'),
+                'host.display_name'                                                => t('Host')
+            ]
+        );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $searchBar = $this->createSearchBar($services, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ])->setSuggestionUrl(Url::fromPath(
+            'icingadb/servicegroup/complete',
+            [
+                'name' => $this->servicegroupName,
+                '_disableLayout' => true,
+                'showCompact' => true
+            ]
+        ));
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $services->filter($filter);
+
+        yield $this->export($services);
 
         $serviceList = (new ServiceList($services->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        yield $this->export($services);
-
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {
-            $this->addContent(new ServicegroupTableRow($this->servicegroup));
+            $this->addContent(new ServicegroupTableRow($servicegroup));
             $this->addContent(Html::tag('h2', null, t('Services')));
         } else {
-            $this->addControl(new ServicegroupTableRow($this->servicegroup));
+            $this->addControl(new ServicegroupTableRow($servicegroup));
         }
 
         $this->addControl($paginationControl);
-        $this->addControl($viewModeSwitcher);
+        $this->addControl($sortControl);
         $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
 
         $this->addContent($serviceList);
 
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate($continueWith);
+        }
+
+        $this->addTitleTab(t('Service Group'));
+        $this->setTitle($servicegroup->display_name);
         $this->setAutorefreshInterval(10);
+    }
+
+    public function completeAction(): void
+    {
+        $suggestions = new ObjectSuggestions();
+        $suggestions->setModel(Service::class);
+        $suggestions->setBaseFilter(Filter::equal('servicegroup.name', $this->servicegroupName));
+        $suggestions->forRequest($this->getServerRequest());
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction(): void
+    {
+        $editor = $this->createSearchEditor(Service::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle(t('Adjust Filter'));
     }
 }
