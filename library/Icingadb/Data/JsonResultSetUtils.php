@@ -70,7 +70,7 @@ trait JsonResultSetUtils
         if ($query->hasLimit()) {
             // Custom limits should still apply
             $query->peekAhead(false);
-            $offset = $query->getOffset();
+            $offset = $query->getOffset() ?? 0;
         } else {
             $query->limit(1000);
             $query->peekAhead();
