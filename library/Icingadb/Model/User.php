@@ -131,7 +131,7 @@ class User extends Model
     public function createRelations(Relations $relations)
     {
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('timeperiod', Timeperiod::class);
+        $relations->belongsTo('timeperiod', Timeperiod::class)->setJoinType('LEFT');
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
