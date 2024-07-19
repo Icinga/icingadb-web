@@ -37,6 +37,14 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
                 ->set('columnPath', $relation . $column)
                 ->set('relationPath', substr($relation, 0, -1));
 
+            if (isset($this->query->getWith()[substr($relation, 0, -1)])) {
+                // In case customvar_flat is being selected, the FilterProcessor will not try to optimize the condition.
+                // So we can prepare the condition here and still let CustomvarFlat's behavior do the rest.
+                $condition->metaData()->set('columnName', $relation . $column);
+
+                return $condition;
+            }
+
             // The ORM's FilterProcessor only optimizes filter conditions that are in the same level (chain).
             // Previously, this behavior transformed a single condition to an ALL chain and hence the semantics
             // of the level changed, since the FilterProcessor interpreted the conditions separately from there on.
