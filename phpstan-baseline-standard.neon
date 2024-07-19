@@ -171,7 +171,7 @@ parameters:
 			path: application/controllers/ConfigController.php
 
 		-
-			message: "#^Parameter \\#1 \\$name of method ipl\\\\Web\\\\Widget\\\\Tabs\\:\\:add\\(\\) expects string, mixed given\\.$#"
+			message: "#^Parameter \\#1 \\$name of method ipl\\\\Web\\\\Widget\\\\Tabs\\:\\:add\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: application/controllers/ConfigController.php
 
@@ -311,7 +311,7 @@ parameters:
 			path: application/controllers/EventController.php
 
 		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\EventController\\:\\:\\$event \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\) does not accept ipl\\\\Orm\\\\Model\\|null\\.$#"
+			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\EventController\\:\\:\\$event \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\History\\) does not accept ipl\\\\Orm\\\\Model\\.$#"
 			count: 1
 			path: application/controllers/EventController.php
 
@@ -506,22 +506,7 @@ parameters:
 			path: application/controllers/HostController.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostgroupController\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: application/controllers/HostgroupController.php
-
-		-
-			message: "#^Parameter \\#1 \\$title of method ipl\\\\Web\\\\Compat\\\\CompatController\\:\\:setTitle\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/HostgroupController.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/HostgroupController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostgroupController\\:\\:\\$hostgroup \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\Hostgroupsummary\\) does not accept ipl\\\\Orm\\\\Model\\.$#"
+			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\HostgroupController\\:\\:\\$hostgroupName \\(string\\) does not accept mixed\\.$#"
 			count: 1
 			path: application/controllers/HostgroupController.php
 
@@ -886,22 +871,7 @@ parameters:
 			path: application/controllers/ServiceController.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServicegroupController\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: application/controllers/ServicegroupController.php
-
-		-
-			message: "#^Parameter \\#1 \\$title of method ipl\\\\Web\\\\Compat\\\\CompatController\\:\\:setTitle\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/ServicegroupController.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of static method ipl\\\\Stdlib\\\\Filter\\:\\:equal\\(\\) expects array\\|bool\\|float\\|int\\|string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/ServicegroupController.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServicegroupController\\:\\:\\$servicegroup \\(Icinga\\\\Module\\\\Icingadb\\\\Model\\\\ServicegroupSummary\\) does not accept ipl\\\\Orm\\\\Model\\.$#"
+			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Controllers\\\\ServicegroupController\\:\\:\\$servicegroupName \\(string\\) does not accept mixed\\.$#"
 			count: 1
 			path: application/controllers/ServicegroupController.php
 
@@ -5128,6 +5098,11 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$denylist of method Icinga\\\\Module\\\\Icingadb\\\\Web\\\\Control\\\\SearchBar\\\\ObjectSuggestions\\:\\:parseDenylist\\(\\) expects string, array\\<string\\> given\\.$#"
 			count: 2
+			path: library/Icingadb/Web/Control/SearchBar/ObjectSuggestions.php
+
+		-
+			message: "#^Parameter \\#1 \\$filter of method ipl\\\\Orm\\\\Query\\:\\:filter\\(\\) expects ipl\\\\Stdlib\\\\Filter\\\\Rule, ipl\\\\Stdlib\\\\Filter\\\\Rule\\|null given\\.$#"
+			count: 1
 			path: library/Icingadb/Web/Control/SearchBar/ObjectSuggestions.php
 
 		-

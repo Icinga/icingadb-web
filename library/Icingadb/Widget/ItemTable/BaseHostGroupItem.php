@@ -34,8 +34,8 @@ abstract class BaseHostGroupItem extends BaseTableRowItem
 
     protected function createSubject(): BaseHtmlElement
     {
-        return isset($this->table)
-            ? new Link(
+        if (isset($this->table)) {
+            $link = new Link(
                 $this->item->display_name,
                 Links::hostgroup($this->item),
                 [
@@ -45,12 +45,19 @@ abstract class BaseHostGroupItem extends BaseTableRowItem
                         $this->item->display_name
                     )
                 ]
-            )
-            : new HtmlElement(
-                'span',
-                Attributes::create(['class' => 'subject']),
-                Text::create($this->item->display_name)
             );
+            if ($this->table->hasBaseFilter()) {
+                $link->getUrl()->setFilter($this->table->getBaseFilter());
+            }
+
+            return $link;
+        }
+
+        return new HtmlElement(
+            'span',
+            Attributes::create(['class' => 'subject']),
+            Text::create($this->item->display_name)
+        );
     }
 
     protected function createCaption(): BaseHtmlElement

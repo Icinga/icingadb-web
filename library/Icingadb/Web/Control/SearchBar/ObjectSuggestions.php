@@ -16,6 +16,7 @@ use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
+use ipl\Orm\Query;
 use ipl\Orm\Relation;
 use ipl\Orm\Relation\BelongsToMany;
 use ipl\Orm\Relation\HasOne;
@@ -23,6 +24,7 @@ use ipl\Orm\Resolver;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
+use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Seq;
 use ipl\Web\Control\SearchBar\SearchException;
@@ -32,6 +34,7 @@ use PDO;
 class ObjectSuggestions extends Suggestions
 {
     use Auth;
+    use BaseFilter;
     use Database;
 
     /** @var Model */
@@ -111,6 +114,15 @@ class ObjectSuggestions extends Suggestions
                 return $columnPath[0] !== $tableName;
             default:
                 return true;
+        }
+    }
+
+    private function applyBaseFilter(Query $query): void
+    {
+        $this->applyRestrictions($query);
+
+        if ($this->hasBaseFilter()) {
+            $query->filter($this->getBaseFilter());
         }
     }
 
@@ -194,7 +206,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $query->filter($searchFilter);
-        $this->applyRestrictions($query);
+        $this->applyBaseFilter($query);
 
         try {
             return (new ObjectSuggestionsCursor($query->getDb(), $query->assembleSelect()->distinct()))
@@ -279,7 +291,7 @@ class ObjectSuggestions extends Suggestions
                     $resolver->qualifyPath($name, $tableName)
                 );
 
-                $this->applyRestrictions($query);
+                $this->applyBaseFilter($query);
 
                 $aggregates[$name] = new Expression("MAX($name)");
                 $scalarQueries[$name] = $query->assembleSelect()
@@ -289,7 +301,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $customVars->columns('flatname');
-        $this->applyRestrictions($customVars);
+        $this->applyBaseFilter($customVars);
         $customVars->filter(Filter::like('flatname', $searchTerm));
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();

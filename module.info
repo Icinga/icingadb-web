@@ -1,6 +1,6 @@
 Module: icingadb
 Version: 1.1.2
 Requires:
-  Libraries: icinga-php-library (>=0.13.2), icinga-php-thirdparty (>=0.12.0)
+  Libraries: icinga-php-library (>=0.14.1), icinga-php-thirdparty (>=0.12.0)
 Description: Icinga DB Web
   UI for Icinga DB – Provides a graphical interface to your Icinga monitoring
