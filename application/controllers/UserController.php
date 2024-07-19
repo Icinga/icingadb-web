@@ -24,7 +24,7 @@ class UserController extends Controller
 
         $name = $this->params->getRequired('name');
 
-        $query = User::on($this->getDb());
+        $query = User::on($this->getDb())->with('timeperiod');
         $query->filter(Filter::equal('user.name', $name));
 
         $this->applyRestrictions($query);
