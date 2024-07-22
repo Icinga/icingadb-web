@@ -65,6 +65,11 @@ class UserDetail extends BaseHtmlElement
         return [
             new HtmlElement('h2', null, Text::create(t('Details'))),
             new HorizontalKeyValue(t('Name'), $this->user->name),
+            new HorizontalKeyValue(
+                t('Timeperiod'),
+                $this->user->timeperiod->display_name ?: new EmptyState(t('None', 'timeperiod'))
+            ),
+            new HorizontalKeyValue(t('Notifications Enabled'), $this->user->notifications_enabled ? t('Yes') : t('No')),
             new HorizontalKeyValue(t('E-Mail'), $this->user->email ?: new EmptyState(t('None', 'address'))),
             new HorizontalKeyValue(t('Pager'), $this->user->pager ?: new EmptyState(t('None', 'phone-number'))),
             new HorizontalKeyValue(t('Host States'), $hostStates ?: t('All')),
