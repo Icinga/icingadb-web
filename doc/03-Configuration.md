@@ -69,26 +69,25 @@ configuration file `/etc/icingaweb2/modules/icingadb/config.ini`.
 
 ### Available Settings and defaults
 
-Option                            | Description                      | Default
-----------------------------------|-----------------------------------|------------
-acknowledge_expire                | Sets "Use Expire Time" in Acknowledgement dialog. | **0 (false)**
-acknowledge_expire_time           | Sets the value for "Expire Time" in Acknowledgement dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
-acknowledge_notify                | Sets "Send Notification" in Acknowledgement dialog. | **1 (true)**
-acknowledge_persistent            | Sets "Persistent Comment" in Acknowledgement dialog. | **0 (false)**
-acknowledge_sticky                | Sets "Sticky Acknowledgement" in Acknowledgement dialog. | **0 (false)**
-comment_expire                    | Sets "Use Expire Time" in Comment dialog. | **0 (false)**
-hostdowntime_comment_text         | Sets default text for "Comment" in Host Downtime dialog | ""
-servicedowntime_comment_text      | Sets default text for "Comment" in Service Downtime dialog. | ""
-comment_expire_time               | Sets default value for "Expire Time" in Comment dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**
-custom_notification_forced        | Sets "Forced" in Custom Notification dialog. | **0 (false)**
-hostdowntime_all_services         | Sets "All Services" in Schedule Host Downtime dialog. | **0 (false)**
-hostdowntime_end_fixed            | Sets default value for "End Time" in Schedule Host Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
-hostdowntime_end_flexible         | Sets default value for "End Time" in Schedule Host Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hours (PT2H)**.
-hostdowntime_flexible_duration    | Sets default value for "Flexible Duration" in Schedule Host Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
-servicedowntime_end_fixed         | Sets default value for "End Time" in Schedule Service Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
-servicedowntime_end_flexible      | Set default value for "End Time" in Schedule Service Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.
-servicedowntime_flexible_duration | Set default value for "Flexible Duration" in Schedule Service Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **2 hour (PT2H)**.
-
+| Option                            | Description                                                                                                                                                                                                                         | Default             |
+|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| acknowledge_expire                | Toggles "Use Expire Time" in the Acknowledgement dialog.                                                                                                                                                                            | **0 (false)**       |
+| acknowledge_expire_time           | Sets the value for "Expire Time" in the Acknowledgement dialog. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).                                    | **1 hour (PT1H)**.  |
+| acknowledge_notify                | Toggles "Send Notification" in the Acknowledgement dialog.                                                                                                                                                                          | **1 (true)**        |
+| acknowledge_persistent            | Toggles "Persistent Comment" in the Acknowledgement dialog.                                                                                                                                                                         | **0 (false)**       |
+| acknowledge_sticky                | Toggles "Sticky Acknowledgement" in the Acknowledgement dialog.                                                                                                                                                                     | **0 (false)**       |
+| comment_expire                    | Toggles "Use Expire Time" in the Comment dialog.                                                                                                                                                                                    | **0 (false)**       |
+| hostdowntime_comment_text         | Sets the value for "Comment" in the Host Downtime dialog                                                                                                                                                                            | ""                  |
+| servicedowntime_comment_text      | Sets the value for "Comment" in the Service Downtime dialog.                                                                                                                                                                        | ""                  |
+| comment_expire_time               | Sets the value for "Expire Time" in the Comment dialog. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).                                            | **1 hour (PT1H)**   |
+| custom_notification_forced        | Toggles "Forced" in the Custom Notification dialog.                                                                                                                                                                                 | **0 (false)**       |
+| hostdowntime_all_services         | Toggles "All Services" in the Schedule Host Downtime dialog.                                                                                                                                                                        | **0 (false)**       |
+| hostdowntime_end_fixed            | Sets the value for "End Time" in the Schedule Host Downtime dialog for a **Fixed** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).       | **1 hour (PT1H)**.  |
+| hostdowntime_end_flexible         | Sets the value for "End Time" in the Schedule Host Downtime dialog for a **Flexible** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).    | **2 hours (PT2H)**. |
+| hostdowntime_flexible_duration    | Sets the value for "Flexible Duration" in the Schedule Host Downtime dialog for a **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).                                   | **2 hour (PT2H)**.  |
+| servicedowntime_end_fixed         | Sets the value for "End Time" in the Schedule Service Downtime dialog for a **Fixed** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).    | **1 hour (PT1H)**.  |
+| servicedowntime_end_flexible      | Sets the value for "End Time" in the Schedule Service Downtime dialog for a **Flexible** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.  |
+| servicedowntime_flexible_duration | Sets the value for "Flexible Duration" in the Schedule Service Downtime dialog for a **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).                                | **2 hour (PT2H)**.  |
 
 ### Example
 
