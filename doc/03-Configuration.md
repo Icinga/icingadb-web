@@ -88,6 +88,7 @@ configuration file `/etc/icingaweb2/modules/icingadb/config.ini`.
 | servicedowntime_end_fixed         | Sets the value for "End Time" in the Schedule Service Downtime dialog for a **Fixed** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).    | **1 hour (PT1H)**.  |
 | servicedowntime_end_flexible      | Sets the value for "End Time" in the Schedule Service Downtime dialog for a **Flexible** downtime. It is calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). | **1 hour (PT1H)**.  |
 | servicedowntime_flexible_duration | Sets the value for "Flexible Duration" in the Schedule Service Downtime dialog for a **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php).                                | **2 hour (PT2H)**.  |
+| plugin_output_character_limit     | Sets the maximum number of characters to display in plugin output.                                                                                                                                                                  | **10000**           |
 
 ### Example
 
