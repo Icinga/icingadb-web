@@ -77,12 +77,20 @@ abstract class StateRowItem extends BaseStateRowItem
             case $path === 'state.last_update':
             case $path === 'state.last_state_change':
                 $column = substr($path, 6);
-                $cell->addHtml(new TimeSince($this->item->state->$column->getTimestamp()));
+                $cell->addHtml(
+                    isset($this->item->state->$column)
+                        ? new TimeSince($this->item->state->$column->getTimestamp())
+                        : new EmptyState(t('n. a.'))
+                );
                 break;
             case $path === 'state.next_check':
             case $path === 'state.next_update':
                 $column = substr($path, 6);
-                $cell->addHtml(new TimeUntil($this->item->state->$column->getTimestamp()));
+                $cell->addHtml(
+                    isset($this->item->state->$column)
+                        ? new TimeUntil($this->item->state->$column->getTimestamp())
+                        : new EmptyState(t('n. a.'))
+                );
                 break;
             case $path === 'state.performance_data':
             case $path === 'state.normalized_performance_data':

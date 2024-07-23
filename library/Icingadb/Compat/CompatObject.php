@@ -61,7 +61,7 @@ trait CompatObject
      */
     public function getName(): string
     {
-        return $this->object->name;
+        return $this->object->name ?? '';
     }
 
     public function fetch(): bool

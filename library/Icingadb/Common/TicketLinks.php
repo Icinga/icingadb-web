@@ -51,6 +51,6 @@ trait TicketLinks
             return $tickets->createLinks($text);
         }
 
-        return $text;
+        return $text ?? '';
     }
 }
