@@ -16,7 +16,7 @@ use LogicException;
 class PluginOutput extends HtmlString
 {
     /** @var string[] Patterns to be replaced in plain text plugin output */
-    const TEXT_PATTERNS = [
+    protected const TEXT_PATTERNS = [
         '~\\\t~',
         '~\\\n~',
         '~(\[|\()OK(\]|\))~',
@@ -29,7 +29,7 @@ class PluginOutput extends HtmlString
     ];
 
     /** @var string[] Replacements for {@see PluginOutput::TEXT_PATTERNS} */
-    const TEXT_REPLACEMENTS = [
+    protected const TEXT_REPLACEMENTS = [
         "\t",
         "\n",
         '<span class="state-ball ball-size-m state-ok"></span>',
@@ -42,13 +42,13 @@ class PluginOutput extends HtmlString
     ];
 
     /** @var string[] Patterns to be replaced in html plugin output */
-    const HTML_PATTERNS = [
+    protected const HTML_PATTERNS = [
         '~\\\t~',
         '~\\\n~'
     ];
 
     /** @var string[] Replacements for {@see PluginOutput::HTML_PATTERNS} */
-    const HTML_REPLACEMENTS = [
+    protected const HTML_REPLACEMENTS = [
         "\t",
         "\n"
     ];
@@ -154,7 +154,7 @@ class PluginOutput extends HtmlString
             ->setCommandName($object->checkcommand_name);
     }
 
-    public function render()
+    public function render(): string
     {
         if ($this->renderedOutput !== null) {
             return $this->renderedOutput;
