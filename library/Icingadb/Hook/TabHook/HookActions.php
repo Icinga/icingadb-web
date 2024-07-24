@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Hook\TabHook;
 
-use Exception;
 use Generator;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
@@ -12,6 +11,7 @@ use Icinga\Module\Icingadb\Hook\TabHook;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Model;
 use ipl\Stdlib\Str;
+use Throwable;
 
 /**
  * Trait HookActions
@@ -78,7 +78,7 @@ trait HookActions
                 if ($hook->shouldBeShown($this->objectToLoadTabsFor)) {
                     $this->tabHooks[Str::camel($hook->getName())] = $hook;
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Failed to load tab hook: %s\n%s", $e, $e->getTraceAsString());
             }
         }
