@@ -81,17 +81,7 @@ parameters:
 			path: library/Icingadb/Util/PerfData.php
 
 		-
-			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:render\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
-			count: 1
-			path: library/Icingadb/Util/PluginOutput.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Icingadb\\\\Util\\\\PluginOutput\\:\\:\\$renderedOutput \\(string\\) does not accept string\\|null\\.$#"
 			count: 1
 			path: library/Icingadb/Util/PluginOutput.php
 
