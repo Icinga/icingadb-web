@@ -5,11 +5,11 @@
 namespace Icinga\Module\Icingadb\Hook;
 
 use Closure;
-use Exception;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Hook\Common\HookUtils;
 use ipl\Orm\Model;
+use Throwable;
 
 abstract class CustomVarRendererHook
 {
@@ -68,7 +68,7 @@ abstract class CustomVarRendererHook
                 if ($hook->prefetchForObject($object)) {
                     $hooks[] = $hook;
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error('Failed to load hook %s:', get_class($hook), $e);
             }
         }
@@ -84,7 +84,7 @@ abstract class CustomVarRendererHook
                     $renderedKey = $hook->renderCustomVarKey($key);
                     $renderedValue = $hook->renderCustomVarValue($key, $value);
                     $group = $hook->identifyCustomVarGroup($key);
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     Logger::error('Failed to use hook %s:', get_class($hook), $e);
                     continue;
                 }

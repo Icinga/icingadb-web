@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Exception;
 use Icinga\Application\ClassLoader;
 use Icinga\Application\Config;
 use Icinga\Application\Hook;
@@ -53,6 +52,7 @@ use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
+use Throwable;
 
 class ObjectDetail extends BaseHtmlElement
 {
@@ -172,7 +172,7 @@ class ObjectDetail extends BaseHtmlElement
                 if (! isset($nativeExtensionProviders[$moduleName])) {
                     try {
                         $navigation->merge($hook->getNavigation($this->compatObject()));
-                    } catch (Exception $e) {
+                    } catch (Throwable $e) {
                         Logger::error("Failed to load legacy action hook: %s\n%s", $e, $e->getTraceAsString());
                         $navigation->addItem($moduleName, ['label' => IcingaException::describe($e), 'url' => '#']);
                     }
@@ -475,7 +475,7 @@ class ObjectDetail extends BaseHtmlElement
 
             try {
                 $graph = HtmlString::create($grapher->getPreviewHtml($this->compatObject()));
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Failed to load legacy grapher: %s\n%s", $e, $e->getTraceAsString());
                 $graph = Text::create(IcingaException::describe($e));
             }
@@ -511,7 +511,7 @@ class ObjectDetail extends BaseHtmlElement
                     ]),
                     HtmlString::create($renderedExtension)
                 );
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Failed to load legacy detail extension: %s\n%s", $e, $e->getTraceAsString());
                 $extensionHtml = Text::create(IcingaException::describe($e));
             }

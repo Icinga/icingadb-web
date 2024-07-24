@@ -4,10 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Hook;
 
-use Exception;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Hook\Common\HookUtils;
+use Throwable;
 
 abstract class PluginOutputHook
 {
@@ -53,7 +53,7 @@ abstract class PluginOutputHook
                 if ($hook->isSupportedCommand($commandName)) {
                     $output = $hook->render($output, $commandName, $enrichOutput);
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Unable to process plugin output: %s\n%s", $e, $e->getTraceAsString());
             }
         }

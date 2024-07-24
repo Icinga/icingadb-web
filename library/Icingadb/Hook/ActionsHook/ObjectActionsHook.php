@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Hook\ActionsHook;
 
-use Exception;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
@@ -20,6 +19,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Link;
+use Throwable;
 
 use function ipl\Stdlib\get_php_type;
 
@@ -72,7 +72,7 @@ abstract class ObjectActionsHook
                         'data-icinga-module' => $moduleName
                     ]), HtmlString::create($renderedLink)));
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Failed to load object actions: %s\n%s", $e, $e->getTraceAsString());
                 $list->addHtml(new HtmlElement('li', null, Text::create(IcingaException::describe($e))));
             }

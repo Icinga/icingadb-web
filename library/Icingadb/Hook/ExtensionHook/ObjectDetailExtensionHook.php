@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Hook\ExtensionHook;
 
-use Exception;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
@@ -25,6 +24,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Model;
+use Throwable;
 
 use function ipl\Stdlib\get_php_type;
 
@@ -110,7 +110,7 @@ abstract class ObjectDetailExtensionHook extends BaseExtensionHook
                     ]),
                     HtmlString::create($extension)
                 );
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 Logger::error("Failed to load detail extension: %s\n%s", $e, $e->getTraceAsString());
                 $extensions[$location] = Text::create(IcingaException::describe($e));
             }
