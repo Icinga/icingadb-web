@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Application\Config;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -79,6 +80,10 @@ class EventDetail extends BaseHtmlElement
                         ->setCommandName($notification->object_type === 'host'
                             ? $this->event->host->checkcommand_name
                             : $this->event->service->checkcommand_name)
+                        ->setCharacterLimit(
+                            (int) Config::module('icingadb')
+                                ->get('settings', 'plugin_output_character_limit', 10000)
+                        )
                 );
 
                 CopyToClipboard::attachTo($notificationText);
@@ -191,6 +196,10 @@ class EventDetail extends BaseHtmlElement
                 $commandOutput = new PluginOutputContainer(
                     (new PluginOutput($stateChange->output . "\n" . $stateChange->long_output))
                         ->setCommandName($commandName)
+                        ->setCharacterLimit(
+                            (int) Config::module('icingadb')
+                                ->get('settings', 'plugin_output_character_limit', 10000)
+                        )
                 );
 
                 CopyToClipboard::attachTo($commandOutput);

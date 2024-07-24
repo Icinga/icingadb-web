@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Exception;
 use Icinga\Application\ClassLoader;
+use Icinga\Application\Config;
 use Icinga\Application\Hook;
 use Icinga\Application\Hook\GrapherHook;
 use Icinga\Application\Icinga;
@@ -425,7 +426,10 @@ class ObjectDetail extends BaseHtmlElement
         } else {
             $pluginOutput = new PluginOutputContainer(
                 PluginOutput::fromObject($this->object)
-                    ->setCharacterLimit(10000)
+                    ->setCharacterLimit(
+                        (int) Config::module('icingadb')
+                            ->get('settings', 'plugin_output_character_limit', 10000)
+                    )
             );
             CopyToClipboard::attachTo($pluginOutput);
         }
