@@ -5986,6 +5986,11 @@ parameters:
 			path: library/Icingadb/Widget/Detail/EventDetail.php
 
 		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 2
+			path: library/Icingadb/Widget/Detail/EventDetail.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Icingadb\\\\Widget\\\\Detail\\\\EventDetail\\:\\:assemble\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/Detail/EventDetail.php
@@ -6263,6 +6268,11 @@ parameters:
 		-
 			message: "#^Cannot call method isUnrestricted\\(\\) on Icinga\\\\User\\|null\\.$#"
 			count: 4
+			path: library/Icingadb/Widget/Detail/ObjectDetail.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 1
 			path: library/Icingadb/Widget/Detail/ObjectDetail.php
 
 		-
