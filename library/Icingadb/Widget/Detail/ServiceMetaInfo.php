@@ -6,6 +6,8 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\I18n\Translation;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -15,6 +17,8 @@ use ipl\Web\Widget\Icon;
 
 class ServiceMetaInfo extends BaseHtmlElement
 {
+    use Translation;
+
     protected $tag = 'div';
 
     protected $defaultAttributes = ['class' => 'object-meta-info'];
@@ -33,7 +37,9 @@ class ServiceMetaInfo extends BaseHtmlElement
             new VerticalKeyValue('service.name', $this->service->name),
             new VerticalKeyValue(
                 'last_state_change',
-                DateFormatter::formatDateTime($this->service->state->last_state_change->getTimestamp())
+                isset($this->service->state->last_state_change)
+                    ? DateFormatter::formatDateTime($this->service->state->last_state_change->getTimestamp())
+                    : (new EmptyState($this->translate('n. a.')))->setTag('span')
             )
         );
 

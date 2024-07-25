@@ -337,7 +337,7 @@ SVG;
             return $this->object->check_interval;
         }
 
-        $delay = ($this->object->state->execution_time + $this->object->state->latency) / 1000 + 5;
+        $delay = ($this->object->state->execution_time + $this->object->state->latency / 1000) + 5;
         $interval = $this->object->state->next_check->getTimestamp()
             - $this->object->state->last_update->getTimestamp();
 

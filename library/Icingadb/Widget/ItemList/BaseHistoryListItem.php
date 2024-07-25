@@ -94,10 +94,12 @@ abstract class BaseHistoryListItem extends BaseListItem
                         t('State Change Rate: %.2f%%; End Threshold: %.2f%%; Flapping for %s'),
                         $this->item->flapping->percent_state_change_end,
                         $this->item->flapping->flapping_threshold_low,
-                        DateFormatter::formatDuration(
-                            $this->item->flapping->end_time->getTimestamp()
-                            - $this->item->flapping->start_time->getTimestamp()
-                        )
+                        isset($this->item->flapping->end_time)
+                            ? DateFormatter::formatDuration(
+                                $this->item->flapping->end_time->getTimestamp()
+                                - $this->item->flapping->start_time->getTimestamp()
+                            )
+                            : t('n. a.')
                     ))
                     ->getAttributes()
                     ->add('class', 'plugin-output');
@@ -345,10 +347,10 @@ abstract class BaseHistoryListItem extends BaseListItem
 
                 break;
             case 'notification':
-                $subjectLabel = sprintf(
+                $subjectLabel = isset($this->item->notification->type) ? sprintf(
                     NotificationListItem::phraseForType($this->item->notification->type),
                     ucfirst($this->item->object_type)
-                );
+                ) : $this->item->event_type;
 
                 break;
             case 'state_change':

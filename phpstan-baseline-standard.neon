@@ -4487,7 +4487,7 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$host on mixed\\.$#"
-			count: 4
+			count: 2
 			path: library/Icingadb/Redis/VolatileStateResults.php
 
 		-
@@ -6961,6 +6961,11 @@ parameters:
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
+			message: "#^Access to an undefined property object\\:\\:\\$start_time\\.$#"
+			count: 1
+			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
+
+		-
 			message: "#^Access to an undefined property object\\:\\:\\$text\\.$#"
 			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
@@ -7068,11 +7073,6 @@ parameters:
 		-
 			message: "#^Cannot access property \\$soft_state on mixed\\.$#"
 			count: 3
-			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
-
-		-
-			message: "#^Cannot access property \\$start_time on mixed\\.$#"
-			count: 1
 			path: library/Icingadb/Widget/ItemList/BaseHistoryListItem.php
 
 		-
@@ -7542,22 +7542,22 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$last_state_change on mixed\\.$#"
-			count: 1
+			count: 2
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
 			message: "#^Cannot access property \\$last_update on mixed\\.$#"
-			count: 1
+			count: 2
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
 			message: "#^Cannot access property \\$next_check on mixed\\.$#"
-			count: 1
+			count: 2
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
 			message: "#^Cannot access property \\$next_update on mixed\\.$#"
-			count: 1
+			count: 2
 			path: library/Icingadb/Widget/ItemTable/StateRowItem.php
 
 		-
