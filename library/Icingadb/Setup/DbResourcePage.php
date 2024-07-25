@@ -58,8 +58,27 @@ class DbResourcePage extends Form
             ]
         );
 
+        $charsetElement = $this->getElement('charset');
         if (! isset($formData['db']) || $formData['db'] === 'mysql') {
-            $this->getElement('charset')->setValue('utf8mb4');
+            $charsetElement->setValue('utf8mb4')->addDecorator(
+                ['preserveDefault' => 'HtmlTag'],
+                [
+                    'tag'   => 'input',
+                    'type'  => 'hidden',
+                    'name'  => 'charset' . static::DEFAULT_SUFFIX,
+                    'value' => 'utf8mb4'
+                ]
+            );
+        } else {
+            $charsetElement->addDecorator(
+                ['preserveDefault' => 'HtmlTag'],
+                [
+                    'tag'   => 'input',
+                    'type'  => 'hidden',
+                    'name'  => 'charset' . static::DEFAULT_SUFFIX,
+                    'value' => ''
+                ]
+            );
         }
     }
 
