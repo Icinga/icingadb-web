@@ -432,8 +432,14 @@
          * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
          */
         scrollItemIntoView(item, pressedKey) {
-            item.scrollIntoView({block: "nearest"});
             let directionalNext = this.getDirectionalNext(item, pressedKey);
+
+            if ("isDisplayContents" in item.parentElement.dataset) {
+                item = item.firstChild;
+                directionalNext = directionalNext ? directionalNext.firstChild : null;
+            }
+            // required when ArrowUp is pressed in new list OR after selecting all items with ctrl+A
+            item.scrollIntoView({block: "nearest"});
 
             if (directionalNext) {
                 directionalNext.scrollIntoView({block: "nearest"});
@@ -735,6 +741,30 @@
                 list = _this.findDetailUrlActionList(document.getElementById('col1'));
             } else {
                 list = _this.findDetailUrlActionList(container);
+            }
+
+            if (! list || ! ("isDisplayContents" in list.dataset)) {
+                // no detail view || ignore when already set
+                let actionLists = null;
+                if (! list) {
+                    actionLists = document.querySelectorAll('.action-list');
+                } else {
+                    actionLists = [list];
+                }
+
+                for (let actionList of actionLists) {
+                    let firstSelectableItem = actionList.querySelector(':scope > [data-action-item]');
+                    if (
+                        firstSelectableItem
+                        && (
+                            ! firstSelectableItem.checkVisibility()
+                            && firstSelectableItem.firstChild
+                            && firstSelectableItem.firstChild.checkVisibility()
+                        )
+                    ) {
+                        actionList.dataset.isDisplayContents = "";
+                    }
+                }
             }
 
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
