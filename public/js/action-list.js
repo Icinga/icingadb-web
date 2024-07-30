@@ -133,11 +133,7 @@
 
             let dashboard = list.closest('.dashboard');
             if (dashboard) {
-                dashboard.querySelectorAll('.action-list').forEach(otherList => {
-                    if (otherList !== list) {
-                        toDeactivateItems.push(..._this.getAllItems(otherList));
-                    }
-                })
+                _this.clearDashboardSelections(dashboard, list);
             }
 
             let lastActivatedUrl = null;
@@ -151,11 +147,7 @@
 
             _this.clearSelection(toDeactivateItems);
             _this.setActive(toActiveItems);
-
-            if (! dashboard) {
-                _this.addSelectionCountToFooter(list);
-            }
-
+            _this.addSelectionCountToFooter(list);
             _this.setLastActivatedItemUrl(lastActivatedUrl);
             _this.loadDetailUrl(list, target.matches('a') ? target.getAttribute('href') : null);
         }
@@ -166,7 +158,7 @@
          * @param list
          */
         addSelectionCountToFooter(list) {
-            if (! list.matches('[data-icinga-multiselect-url]')) {
+            if (! list.matches('[data-icinga-multiselect-url]') || list.closest('.dashboard')) {
                 return;
             }
 
@@ -444,6 +436,14 @@
             if (directionalNext) {
                 directionalNext.scrollIntoView({block: "nearest"});
             }
+        }
+
+        clearDashboardSelections(dashboard, currentList) {
+            dashboard.querySelectorAll('.action-list').forEach(otherList => {
+                if (otherList !== currentList) {
+                    this.clearSelection(this.getActiveItems(otherList));
+                }
+            })
         }
 
         /**
@@ -790,6 +790,11 @@
                     if (item) {
                         toActiveItems.push(item);
                     }
+                }
+
+                let dashboard = list.closest('.dashboard');
+                if (dashboard) {
+                    _this.clearDashboardSelections(dashboard, list);
                 }
 
                 _this.clearSelection(_this.getAllItems(list).filter(item => !toActiveItems.includes(item)));
