@@ -133,11 +133,7 @@
 
             let dashboard = list.closest('.dashboard');
             if (dashboard) {
-                dashboard.querySelectorAll('.action-list').forEach(otherList => {
-                    if (otherList !== list) {
-                        toDeactivateItems.push(..._this.getAllItems(otherList));
-                    }
-                })
+                _this.clearDashboardSelections(dashboard, list);
             }
 
             let lastActivatedUrl = null;
@@ -151,11 +147,7 @@
 
             _this.clearSelection(toDeactivateItems);
             _this.setActive(toActiveItems);
-
-            if (! dashboard) {
-                _this.addSelectionCountToFooter(list);
-            }
-
+            _this.addSelectionCountToFooter(list);
             _this.setLastActivatedItemUrl(lastActivatedUrl);
             _this.loadDetailUrl(list, target.matches('a') ? target.getAttribute('href') : null);
         }
@@ -166,7 +158,7 @@
          * @param list
          */
         addSelectionCountToFooter(list) {
-            if (! list.matches('[data-icinga-multiselect-url]')) {
+            if (! list.matches('[data-icinga-multiselect-url]') || list.closest('.dashboard')) {
                 return;
             }
 
@@ -207,6 +199,8 @@
 
         /**
          * Key navigation for .action-list
+         *
+         * Only for primary lists (dashboard or lists in detail view are not taken into account)
          *
          * - `Shift + ArrowUp|ArrowDown` = Multiselect
          * - `ArrowUp|ArrowDown` = Select next/previous
@@ -432,12 +426,26 @@
          * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
          */
         scrollItemIntoView(item, pressedKey) {
-            item.scrollIntoView({block: "nearest"});
             let directionalNext = this.getDirectionalNext(item, pressedKey);
+
+            if ("isDisplayContents" in item.parentElement.dataset) {
+                item = item.firstChild;
+                directionalNext = directionalNext ? directionalNext.firstChild : null;
+            }
+            // required when ArrowUp is pressed in new list OR after selecting all items with ctrl+A
+            item.scrollIntoView({block: "nearest"});
 
             if (directionalNext) {
                 directionalNext.scrollIntoView({block: "nearest"});
             }
+        }
+
+        clearDashboardSelections(dashboard, currentList) {
+            dashboard.querySelectorAll('.action-list').forEach(otherList => {
+                if (otherList !== currentList) {
+                    this.clearSelection(this.getActiveItems(otherList));
+                }
+            })
         }
 
         /**
@@ -737,6 +745,30 @@
                 list = _this.findDetailUrlActionList(container);
             }
 
+            if (! list || ! ("isDisplayContents" in list.dataset)) {
+                // no detail view || ignore when already set
+                let actionLists = null;
+                if (! list) {
+                    actionLists = document.querySelectorAll('.action-list');
+                } else {
+                    actionLists = [list];
+                }
+
+                for (let actionList of actionLists) {
+                    let firstSelectableItem = actionList.querySelector(':scope > [data-action-item]');
+                    if (
+                        firstSelectableItem
+                        && (
+                            ! firstSelectableItem.checkVisibility()
+                            && firstSelectableItem.firstChild
+                            && firstSelectableItem.firstChild.checkVisibility()
+                        )
+                    ) {
+                        actionList.dataset.isDisplayContents = "";
+                    }
+                }
+            }
+
             if (list && list.matches('[data-icinga-multiselect-url], [data-icinga-detail-url]')) {
                 let detailUrl = _this.icinga.utils.parseUrl(
                     _this.icinga.history.getCol2State().replace(/^#!/, '')
@@ -760,6 +792,11 @@
                     if (item) {
                         toActiveItems.push(item);
                     }
+                }
+
+                let dashboard = list.closest('.dashboard');
+                if (dashboard) {
+                    _this.clearDashboardSelections(dashboard, list);
                 }
 
                 _this.clearSelection(_this.getAllItems(list).filter(item => !toActiveItems.includes(item)));
