@@ -200,6 +200,8 @@
         /**
          * Key navigation for .action-list
          *
+         * Only for primary lists (dashboard or lists in detail view are not taken into account)
+         *
          * - `Shift + ArrowUp|ArrowDown` = Multiselect
          * - `ArrowUp|ArrowDown` = Select next/previous
          * - `Ctrl|cmd + A` = Select all on currect page
