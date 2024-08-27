@@ -15,13 +15,6 @@ abstract class CustomVarEnricherHook
     use HookUtils;
 
     /**
-     * Return the grouped custom vars
-     *
-     * @return array
-     */
-    abstract public function getGroups(): array;
-
-    /**
      * Return enriched vars in the following format
      * [label => enriched custom var]
      *
@@ -39,8 +32,9 @@ abstract class CustomVarEnricherHook
         foreach (Hook::all('Icingadb/CustomVarEnricher') as $hook) {
             /** @var self $hook */
             try {
-                $enrichedVars[] = $hook->enrichCustomVars($vars, $object);
-                $groups[] = $hook->getGroups();
+                list($hookVars, $hookGroups) = $hook->enrichCustomVars($vars, $object);
+                $enrichedVars[] = $hookVars;
+                $groups[] = $hookGroups;
             } catch (Throwable $e) {
                 Logger::error('Failed to load hook %s:', get_class($hook), $e);
             }

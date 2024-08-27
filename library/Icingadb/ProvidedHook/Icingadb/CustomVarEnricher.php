@@ -58,7 +58,7 @@ class CustomVarEnricher extends CustomVarEnricherHook
             $newVars = array_merge([], ...$newVars);
         }
 
-        return $newVars;
+        return [$newVars, $this->groups];
     }
 
     /**
@@ -158,10 +158,5 @@ class CustomVarEnricher extends CustomVarEnricherHook
                 $this->datalistMaps[$field->get('varname')][$dataListEntry->entry_name] = $dataListEntry->entry_value;
             }
         }
-    }
-
-    public function getGroups(): array
-    {
-        return $this->groups;
     }
 }
