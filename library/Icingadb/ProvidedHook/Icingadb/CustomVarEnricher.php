@@ -47,7 +47,6 @@ class CustomVarEnricher extends CustomVarEnricherHook
             $varsToReplace = json_decode(json_encode($directorObject->getVars()), true)
                 + json_decode(json_encode($directorObject->getInheritedVars()), true);
 
-
             foreach ($varsToReplace as $varName => $customVar) {
                 if (isset($vars[$varName])) {
                     $newVars[] = $this->resolveCustomVarMapping($varName, $customVar, $connection);
@@ -72,7 +71,7 @@ class CustomVarEnricher extends CustomVarEnricherHook
      *
      * @return array
      */
-    protected function resolveCustomVarMapping(string $name, $val, DbConnection $conn, bool $grouping = true): array
+    protected function resolveCustomVarMapping(?string $name, $val, DbConnection $conn, bool $grouping = true): array
     {
         if (isset($this->fieldConfig[$name])) {
             /** @var DirectorDatafield $field */
@@ -83,24 +82,13 @@ class CustomVarEnricher extends CustomVarEnricherHook
                 $label = $field->get('caption');
                 $newVarValue = [];
                 foreach ($val as $nestedVarName => $nestedVarValue) {
-                    if (isset($this->fieldConfig[$nestedVarName]) && is_array($nestedVarValue)) {
-                        $childValues = [];
-                        foreach ($nestedVarValue as $childName => $childValue) {
-                            $childValues[] = $this->resolveCustomVarMapping($childName, $childValue, $conn, false);
-                        }
-
-                        $newVarValue[] = [$nestedVarName => array_merge([], ...$childValues)];
-                    } else {
-                        $newVarValue[] = $this->resolveCustomVarMapping(
-                            $nestedVarName,
-                            $nestedVarValue,
-                            $conn,
-                            false
-                        );
-                    }
+                    $newVarValue[$nestedVarName] = $this->buildDictionaryMap(
+                        $nestedVarValue,
+                        $conn
+                    );
                 }
 
-                return [$label => array_merge([], ...$newVarValue)];
+                return [$label => $newVarValue];
             } elseif ($dataType === get_class(new DataTypeDatalist())) {
                 if (isset($this->datalistMaps[$name])) {
                     $val = $this->datalistMaps[$name][$val];
@@ -130,6 +118,15 @@ class CustomVarEnricher extends CustomVarEnricherHook
         }
 
         return [$name => $val];
+    }
+
+    private function buildDictionaryMap($val, DbConnection $connection): array
+    {
+        foreach ($val as $childName => $childValue) {
+            $newValue[] = $this->resolveCustomVarMapping($childName, $childValue, $connection, false);
+        }
+
+        return array_merge([], ...$newValue);
     }
 
     private function buildDataListMap(DbConnection $db)
