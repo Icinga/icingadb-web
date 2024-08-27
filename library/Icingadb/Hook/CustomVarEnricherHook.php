@@ -22,19 +22,20 @@ abstract class CustomVarEnricherHook
     abstract public function getGroups(): array;
 
     /**
-     * Return a group name for the given variable name
+     * Return enriched vars in the following format
+     * [label => enriched custom var]
      *
      * @param array $vars
      *
      * @return array
      */
-    abstract public function enrichCustomVars(array $vars, Model $object): array;
+    abstract public function enrichCustomVars(array &$vars, Model $object): array;
 
     public static function prepareEnrichedCustomVars(array $vars, Model $object): array
     {
         $enrichedVars = [];
-
         $groups = [];
+
         foreach (Hook::all('Icingadb/CustomVarEnricher') as $hook) {
             /** @var self $hook */
             try {
@@ -45,26 +46,8 @@ abstract class CustomVarEnricherHook
             }
         }
 
-        $enrichedVars = array_merge([], ...$enrichedVars);
+        $vars = array_merge($vars, ...$enrichedVars);
         $groups = array_merge([], ...$groups);
-        foreach ($vars as $key => $var) {
-            if (array_key_exists($key, $enrichedVars)) {
-                $label = key($enrichedVars[$key]);
-                $vars[$label] = $enrichedVars[$key][$label];
-
-                unset($vars[$key]);
-
-                $key = $label;
-            }
-
-            foreach ($groups as $group) {
-                if (array_key_exists($key, $group)) {
-                    unset($vars[$key]);
-
-                    break;
-                }
-            }
-        }
 
         return [$vars, $groups];
     }

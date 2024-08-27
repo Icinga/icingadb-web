@@ -20,31 +20,11 @@ class CustomVarEnricher extends CustomVarEnricherHook
 {
     protected $fieldConfig;
 
-    protected $datalistMaps;
+    protected $datalistMaps = [];
 
     protected $groups = [];
 
-    public function prefetchForObject(Model $object): bool
-    {
-        return false;
-    }
-
-    public function renderCustomVarKey(string $key)
-    {
-        return $key;
-    }
-
-    public function renderCustomVarValue(string $key, $value)
-    {
-        return $value;
-    }
-
-    public function identifyCustomVarGroup(string $key): ?string
-    {
-        return null;
-    }
-
-    public function enrichCustomVars(array $vars, Model $object): array
+    public function enrichCustomVars(array &$vars, Model $object): array
     {
         $directorObject = null;
         $connection =  Db::fromResourceName(Config::module('director')->get('db', 'resource'));
@@ -62,12 +42,21 @@ class CustomVarEnricher extends CustomVarEnricherHook
         $this->fieldConfig = (new IcingaObjectFieldLoader($directorObject))->getFields();
 
         $this->buildDataListMap($connection);
+
         if ($directorObject) {
-            foreach ($vars as $varName => $customVar) {
-                $newVars[$varName] = $this->resolveCustomVarMapping($varName, $customVar, $connection);
+            $varsToReplace = json_decode(json_encode($directorObject->getVars()), true)
+                + json_decode(json_encode($directorObject->getInheritedVars()), true);
+
+
+            foreach ($varsToReplace as $varName => $customVar) {
+                if (isset($vars[$varName])) {
+                    $newVars[] = $this->resolveCustomVarMapping($varName, $customVar, $connection);
+
+                    unset($vars[$varName]);
+                }
             }
-        } else {
-            $newVars = $vars;
+
+            $newVars = array_merge([], ...$newVars);
         }
 
         return $newVars;
@@ -128,6 +117,8 @@ class CustomVarEnricher extends CustomVarEnricherHook
                 } else {
                     $this->groups[$field->getCategoryName()][$name] = $val;
                 }
+
+                return [];
             }
         } elseif (is_array($val)) {
             $newValue = [];
