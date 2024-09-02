@@ -98,5 +98,6 @@ class Timeperiod extends Model
         $relations->hasMany('service', Service::class)
             ->setForeignKey('check_timeperiod_id');
         $relations->hasMany('user', User::class);
+        $relations->hasMany('dependency', Dependency::class);
     }
 }
