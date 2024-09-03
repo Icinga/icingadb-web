@@ -236,15 +236,19 @@ class ApiCommandTransport implements CommandTransportInterface
             $headers['X-HTTP-Method-Override'] = $command->getMethod();
         }
 
+        $body = [
+            'auth'          => [$this->getUsername(), $this->getPassword()],
+            'headers'       => $headers,
+            'http_errors'   => false,
+            'verify'        => false
+        ];
+        if (! empty($data)) {
+            $body['json'] = $data;
+        }
+
         try {
             $response = (new Client())
-                ->post($this->getUriFor($command->getEndpoint()), [
-                    'auth'          => [$this->getUsername(), $this->getPassword()],
-                    'headers'       => $headers,
-                    'json'          => $command->getData(),
-                    'http_errors'   => false,
-                    'verify'        => false
-                ]);
+                ->post($this->getUriFor($command->getEndpoint()), $body);
         } catch (GuzzleException $e) {
             throw new CommandTransportException(
                 'Can\'t connect to the Icinga 2 API: %u %s',

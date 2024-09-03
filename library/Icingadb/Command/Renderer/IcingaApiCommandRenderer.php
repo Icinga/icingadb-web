@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Command\Renderer;
 
 use Icinga\Module\Icingadb\Command\IcingaApiCommand;
+use Icinga\Module\Icingadb\Command\Object\GetDependenciesCommand;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
@@ -135,6 +136,11 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         $endpoint = 'objects/' . $this->getObjectPluralType($this->applyFilter($data, $command->getObjects()));
 
         return IcingaApiCommand::create($endpoint, $data)->setMethod('GET');
+    }
+
+    public function renderGetDependencies(GetDependenciesCommand $command): IcingaApiCommand
+    {
+        return IcingaApiCommand::create('objects/dependencies', [])->setMethod('GET');
     }
 
     public function renderAddComment(AddCommentCommand $command): IcingaApiCommand
