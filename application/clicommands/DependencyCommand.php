@@ -219,13 +219,17 @@ class DependencyCommand extends Command
         $dependencies = Dependency::on($this->getDb())
             ->columns([
                 'id',
-                'host_name' => 'edge.to.host.name',
                 'host_reachable' => 'edge.to.host.state.is_reachable',
                 'host_problem' => 'edge.to.host.state.is_problem',
+                'service_reachable' => 'edge.to.service.state.is_reachable',
                 'service_problem' => 'edge.to.service.state.is_problem'
             ]);
         foreach ($dependencies as $dependency) {
-            $failed = $dependency->host_problem === 'y' || $dependency->service_problem === 'y';
+            $failed = $dependency->host_reachable === 'n'
+                || $dependency->host_problem === 'y'
+                || $dependency->service_reachable === 'n'
+                || $dependency->service_problem === 'y';
+
             try {
                 $this->getDb()->insert('dependency_state', [
                     'id' => $dependency->id,
@@ -244,13 +248,18 @@ class DependencyCommand extends Command
         $members = RedundancyGroup::on($this->getDb())
             ->columns([
                 'id',
+                'host_reachable' => 'dependency_node.parent.host.state.is_reachable',
                 'host_problem' => 'dependency_node.parent.host.state.is_problem',
+                'service_reachable' => 'dependency_node.parent.service.state.is_reachable',
                 'service_problem' => 'dependency_node.parent.service.state.is_problem'
             ]);
         $groupState = [];
         foreach ($members as $member) {
             if (! isset($groupState[$member->id]) || $groupState[$member->id]) {
-                $groupState[$member->id] = $member->host_problem === 'y' || $member->service_problem === 'y';
+                $groupState[$member->id] = $member->host_reachable === 'n'
+                    || $member->host_problem === 'y'
+                    || $member->service_reachable === 'n'
+                    || $member->service_problem === 'y';
             }
         }
 
