@@ -170,6 +170,8 @@ class Service extends Model
         ]));
 
         $behaviors->add(new ReRoute([
+            'child'         => 'dependency_node.child',
+            'parent'        => 'dependency_node.parent',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
         ]));
@@ -222,6 +224,8 @@ class Service extends Model
 
     public function createRelations(Relations $relations)
     {
+        $relations->belongsTo('dependency_node', DependencyNode::class)
+            ->setJoinType('LEFT');
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
