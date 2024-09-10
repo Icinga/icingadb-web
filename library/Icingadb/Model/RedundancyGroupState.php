@@ -4,8 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use DateTime;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\BoolCast;
+use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -17,6 +19,7 @@ use ipl\Orm\Relations;
  * @property string $id
  * @property string $redundancy_group_id
  * @property bool $failed
+ * @property DateTime $last_state_change
  *
  * @property RedundancyGroup|Query $redundancy_group
  */
@@ -36,7 +39,8 @@ class RedundancyGroupState extends Model
     {
         return [
             'redundancy_group_id',
-            'failed'
+            'failed',
+            'last_state_change'
         ];
     }
 
@@ -48,6 +52,9 @@ class RedundancyGroupState extends Model
         ]));
         $behaviors->add(new BoolCast([
             'failed'
+        ]));
+        $behaviors->add(new MillisecondTimestamp([
+            'last_state_change'
         ]));
     }
 
