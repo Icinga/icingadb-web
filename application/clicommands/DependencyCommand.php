@@ -187,8 +187,17 @@ class DependencyCommand extends Command
 
         foreach ($registry as $k => $data) {
             $id = $getNodeId($k, $data);
+            $seenIds = [];
             foreach ($data['children'] as [$childName, $dependencyName]) {
                 $childId = $getNodeId($childName, $registry[$childName]);
+                if (isset($seenIds[$childId])) {
+                    continue;
+                }
+
+                if (isset($registry[$childName]['redundancy_group_id'])) {
+                    $seenIds[$childId] = true;
+                }
+
                 $dependencyId = $dependencyName !== null
                     ? $getNodeId($dependencyName, $registry[$dependencyName])
                     : null;
