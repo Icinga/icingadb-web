@@ -24,13 +24,13 @@ class DependencyCommand extends Command
     public function init(): void
     {
         Logger::getInstance()->setLevel(Logger::DEBUG);
+
+        Environment::raiseExecutionTime(3600);
+        Environment::raiseMemoryLimit();
     }
 
     public function setupAction(): void
     {
-        Environment::raiseExecutionTime(3600);
-        Environment::raiseMemoryLimit();
-
         $dependencies = (new CommandTransport())->send(new GetDependenciesCommand());
 
         $hosts = [];
