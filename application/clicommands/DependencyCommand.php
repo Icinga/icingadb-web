@@ -277,7 +277,8 @@ class DependencyCommand extends Command
                 $this->getDb()->insert('redundancy_group_state', [
                     'id' => $groupId,
                     'redundancy_group_id' => $groupId,
-                    'failed' => $failed ? 'y' : 'n'
+                    'failed' => $failed ? 'y' : 'n',
+                    'last_state_change' => time() * 1000.0
                 ]);
             } catch (Throwable $e) {
                 $this->getDb()->update(
