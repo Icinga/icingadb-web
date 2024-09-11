@@ -233,7 +233,7 @@ class DependencyCommand extends Command
                 'service_reachable' => 'edge.to.service.state.is_reachable',
                 'service_problem' => 'edge.to.service.state.is_problem'
             ]);
-        foreach ($dependencies as $dependency) {
+        foreach ($this->getDb()->select($dependencies->assembleSelect()) as $dependency) {
             $failed = $dependency->host_reachable === 'n'
                 || $dependency->host_problem === 'y'
                 || $dependency->service_reachable === 'n'
@@ -263,7 +263,7 @@ class DependencyCommand extends Command
                 'service_problem' => 'dependency_node.parent.service.state.is_problem'
             ]);
         $groupState = [];
-        foreach ($members as $member) {
+        foreach ($this->getDb()->select($members->assembleSelect()) as $member) {
             if (! isset($groupState[$member->id]) || $groupState[$member->id]) {
                 $groupState[$member->id] = $member->host_reachable === 'n'
                     || $member->host_problem === 'y'
