@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
@@ -23,8 +24,6 @@ use ipl\Orm\Relations;
  * @property (?RedundancyGroup)|Query $redundancy_group
  * @property (?DependencyEdge)|Query $from
  * @property (?DependencyEdge)|Query $to
- * @property (?DependencyNode)|Query $child
- * @property (?DependencyNode)|Query $parent
  */
 class DependencyNode extends Model
 {
@@ -56,6 +55,10 @@ class DependencyNode extends Model
             'service_id',
             'redundancy_group_id'
         ]));
+        $behaviors->add(new ReRoute([
+            'child' => 'to.from',
+            'parent' => 'from.to'
+        ]));
     }
 
     public function createRelations(Relations $relations): void
@@ -74,15 +77,13 @@ class DependencyNode extends Model
             ->setForeignKey('to_node_id')
             ->setJoinType('LEFT');
 
-        $relations->belongsToMany('child', self::class)
-            ->through(DependencyEdge::class)
-            ->setForeignKey('to_node_id')
-            ->setTargetForeignKey('from_node_id')
-            ->setJoinType('LEFT');
-        $relations->belongsToMany('parent', self::class)
-            ->through(DependencyEdge::class)
-            ->setForeignKey('from_node_id')
-            ->setTargetForeignKey('to_node_id')
-            ->setJoinType('LEFT');
+        // TODO: This self join is only a work-around as when selecting nodes and filtering by child or parent,
+        //       the ORM wants to join the base table as usual in case a sub-query is used. Though, in this case
+        //       resolving e.g. child to "to.from" is reversed in a sub-query to "from.to" and the ORM does not
+        //       detect that "to" is already the link to the base table.
+        //       Given the path "dependency_node.to.from.host", the sub-query uses "host.from.to.dependency_node".
+        //       "to.dependency_node" is the crucial part, as "dependency_node" is said self-join.
+        $relations->hasOne('dependency_node', self::class)
+            ->setForeignKey('id');
     }
 }
