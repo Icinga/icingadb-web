@@ -21,6 +21,8 @@ use ipl\Orm\Relations;
  *
  * @property (?RedundancyGroupState)|Query $state
  * @property Dependency|Query $dependency
+ * @property DependencyEdge|Query $from
+ * @property DependencyEdge|Query $to
  */
 class RedundancyGroup extends Model
 {
@@ -48,20 +50,25 @@ class RedundancyGroup extends Model
             'id'
         ]));
         $behaviors->add(new ReRoute([
-            'child' => 'dependency_node.child',
-            'parent' => 'dependency_node.parent'
+            'child' => 'to.from',
+            'parent' => 'from.to'
         ]));
     }
 
     public function createRelations(Relations $relations): void
     {
-        $relations->belongsTo('dependency_node', DependencyNode::class)
-            ->setForeignKey('redundancy_group_id')
-            ->setCandidateKey('id');
-
         $relations->hasOne('state', RedundancyGroupState::class)
             ->setJoinType('LEFT');
 
         $relations->hasMany('dependency', Dependency::class);
+
+        $relations->belongsToMany('from', DependencyEdge::class)
+            ->setTargetCandidateKey('from_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
+        $relations->belongsToMany('to', DependencyEdge::class)
+            ->setTargetCandidateKey('to_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
     }
 }

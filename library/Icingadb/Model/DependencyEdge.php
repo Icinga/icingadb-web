@@ -17,8 +17,8 @@ use ipl\Orm\Relations;
  * @property string $from_node_id
  * @property ?string $dependency_id
  *
- * @property DependencyNode|Query $from
- * @property DependencyNode|Query $to
+ * @property DependencyNode|Query $child
+ * @property DependencyNode|Query $parent
  * @property (?Dependency)|Query $dependency
  */
 class DependencyEdge extends Model
@@ -53,11 +53,17 @@ class DependencyEdge extends Model
 
     public function createRelations(Relations $relations): void
     {
+        $relations->belongsTo('child', DependencyNode::class)
+            ->setCandidateKey('from_node_id');
+        $relations->belongsTo('parent', DependencyNode::class)
+            ->setCandidateKey('to_node_id');
+        $relations->belongsTo('dependency', Dependency::class)
+            ->setJoinType('LEFT');
+
+        // "from" and "to" are only necessary for sub-query filters.
         $relations->belongsTo('from', DependencyNode::class)
             ->setCandidateKey('from_node_id');
         $relations->belongsTo('to', DependencyNode::class)
             ->setCandidateKey('to_node_id');
-        $relations->belongsTo('dependency', Dependency::class)
-            ->setJoinType('LEFT');
     }
 }

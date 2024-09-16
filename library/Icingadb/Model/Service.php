@@ -170,8 +170,8 @@ class Service extends Model
         ]));
 
         $behaviors->add(new ReRoute([
-            'child'         => 'dependency_node.child',
-            'parent'        => 'dependency_node.parent',
+            'child'         => 'to.from',
+            'parent'        => 'from.to',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
         ]));
@@ -224,8 +224,6 @@ class Service extends Model
 
     public function createRelations(Relations $relations)
     {
-        $relations->belongsTo('dependency_node', DependencyNode::class)
-            ->setJoinType('LEFT');
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
@@ -263,5 +261,14 @@ class Service extends Model
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
+
+        $relations->belongsToMany('from', DependencyEdge::class)
+            ->setTargetCandidateKey('from_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
+        $relations->belongsToMany('to', DependencyEdge::class)
+            ->setTargetCandidateKey('to_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
     }
 }
