@@ -41,7 +41,8 @@ class HostDetail extends ObjectDetail
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
-            0   => $this->createPluginOutput(),
+            0   => $this->createRootProblems(),
+            1   => $this->createPluginOutput(),
             190 => $this->createServiceStatistics(),
             300 => $this->createActions(),
             301 => $this->createNotes(),
