@@ -20,9 +20,10 @@ use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
-use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
+use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
@@ -442,7 +443,7 @@ class ObjectDetail extends BaseHtmlElement
                 'div',
                 [
                     'id'    => 'check-output-' . $this->object->checkcommand_name,
-                    'class' => 'collapsible',
+                    'class' => ['collapsible', 'check-command-output'],
                     'data-visible-height' => 100
                 ],
                 $pluginOutput
@@ -601,5 +602,43 @@ class ObjectDetail extends BaseHtmlElement
             $customvarFlat->withColumns(['customvar.name', 'customvar.value']);
             $this->object->customvar_flat = $customvarFlat->execute();
         }
+    }
+
+    protected function createRootProblems(): ?array
+    {
+        if ($this->object->state->is_reachable) {
+            return null;
+        }
+
+        $rootProblems = UnreachableParent::on($this->getDb(), $this->object)
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])->orderBy([
+                'host.state.severity'                       => SORT_DESC,
+                'host.state.last_state_change'              => SORT_DESC,
+                'service.state.severity'                    => SORT_DESC,
+                'service.state.last_state_change'           => SORT_DESC,
+                'service.host.state.severity'               => SORT_DESC,
+                'service.host.state.last_state_change'      => SORT_DESC,
+                'redundancy_group.state.last_state_change'  => SORT_DESC
+            ]);
+
+        $this->applyRestrictions($rootProblems);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
+            new DependencyNodeList($rootProblems)
+        ];
     }
 }

@@ -197,7 +197,7 @@ div.show-more {
   margin-left: 1em / 1.333em; // 1em / h2 font size
 }
 
-.object-detail .plugin-output {
+.object-detail .check-command-output .plugin-output {
   .rounded-corners(.25em);
   background-color: @gray-lighter;
   padding: .5em;
@@ -410,4 +410,11 @@ form[name="form_confirm_removal"] {
   background-color: @state-critical;
   color: @text-color-inverted;
   padding: 0 0.25em;
+}
+
+.state-ball,
+.state-badge {
+  &.state-problem {
+    background-color: @color-critical;
+  }
 }
