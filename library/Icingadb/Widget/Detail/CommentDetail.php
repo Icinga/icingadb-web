@@ -114,7 +114,6 @@ class CommentDetail extends BaseHtmlElement
 
         return (new DeleteCommentForm())
             ->setObjects([$this->comment])
-            ->populate(['redirect' => '__BACK__'])
             ->setAction($action->getAbsoluteUrl());
     }
 

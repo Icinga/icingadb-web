@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Model\Comment;
@@ -13,12 +14,17 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Orm\Model;
+use ipl\Orm\Query;
+use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
 class CommentsController extends Controller
 {
+    use CommandActions;
+
     public function indexAction()
     {
         $this->addTitleTab(t('Comments'));
@@ -107,34 +113,9 @@ class CommentsController extends Controller
 
     public function deleteAction()
     {
+        $this->assertIsGrantedOnCommandTargets('icingadb/command/comment/delete');
         $this->setTitle(t('Remove Comments'));
-
-        $db = $this->getDb();
-
-        $comments = Comment::on($db)->with([
-            'host',
-            'host.state',
-            'service',
-            'service.host',
-            'service.host.state',
-            'service.state'
-        ]);
-
-        $this->filter($comments);
-
-        $form = (new DeleteCommentForm())
-            ->setObjects($comments)
-            ->setRedirectUrl(Links::comments()->getAbsoluteUrl())
-            ->on(DeleteCommentForm::ON_SUCCESS, function ($form) {
-                // This forces the column to reload nearly instantly after the redirect
-                // and ensures the effect of the command is visible to the user asap
-                $this->getResponse()->setAutoRefreshInterval(1);
-
-                $this->redirectNow($form->getRedirectUrl());
-            })
-            ->handleRequest(ServerRequest::fromGlobals());
-
-        $this->addContent($form);
+        $this->handleCommandForm(DeleteCommentForm::class);
     }
 
     public function detailsAction()
@@ -201,5 +182,37 @@ class CommentsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    protected function getCommandTargetsUrl(): Url
+    {
+        return Url::fromPath('__CLOSE__');
+    }
+
+    protected function fetchCommandTargets(): Query
+    {
+        $comments = Comment::on($this->getDb())->with([
+            'host',
+            'host.state',
+            'service',
+            'service.host',
+            'service.host.state',
+            'service.state'
+        ]);
+
+        $this->filter($comments);
+
+        return $comments;
+    }
+
+    public function isGrantedOn(string $permission, Model $object): bool
+    {
+        return parent::isGrantedOn($permission, $object->{$object->object_type});
+    }
+
+    public function isGrantedOnType(string $permission, string $type, Filter\Rule $filter, bool $cache = true): bool
+    {
+        return parent::isGrantedOnType($permission, 'host', $filter, $cache)
+            || parent::isGrantedOnType($permission, 'service', $filter, $cache);
     }
 }
