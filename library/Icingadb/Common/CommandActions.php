@@ -215,6 +215,7 @@ trait CommandActions
         });
 
         $form->handleRequest($this->getServerRequest());
+        $this->assertHttpMethod($form->getMethod());
 
         $errors = [];
         foreach ($form->getElements() as $element) {
