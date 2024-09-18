@@ -228,6 +228,16 @@ None.
 | hours    | y        | Number      | flexible   |
 | minutes  | y        | Number      | flexible   |
 
+### Delete Downtimes
+
+#### Routes
+
+* icingadb/downtimes/delete
+
+#### Options
+
+None.
+
 ### Send Custom Notification
 
 #### Routes
