@@ -5,19 +5,14 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
-use Icinga\Module\Icingadb\Common\CommandActions;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
 class DowntimeController extends Controller
 {
-    use CommandActions;
-
     /** @var Downtime */
     protected $downtime;
 
@@ -70,15 +65,5 @@ class DowntimeController extends Controller
         $this->addContent($detail);
 
         $this->setAutorefreshInterval(10);
-    }
-
-    protected function fetchCommandTargets(): array
-    {
-        return [$this->downtime];
-    }
-
-    protected function getCommandTargetsUrl(): Url
-    {
-        return Links::downtime($this->downtime);
     }
 }
