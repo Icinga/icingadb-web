@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use ipl\Html\HtmlElement;
 use ipl\Web\Common\BaseListItem;
 use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\StateBadge;
 use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -93,6 +94,23 @@ abstract class StateListItem extends BaseListItem
             $this->createSubject(),
             Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
         ));
+
+        if ($this->state->affects_children) {
+            $total = $this->item->affected_children;
+
+            if ((int) $total > 1000) {
+                $total = '1000+';
+            }
+
+            $icon = new Icon(Icons::UNREACHABLE);
+
+            $title->addHtml((new StateBadge([$icon, Text::create($total)], ''))
+                ->addAttributes([
+                    'class' => 'affected-objects',
+                    'title' => sprintf(t('Up to %s affected objects'), $total)
+                ])
+            );
+        }
     }
 
     protected function assembleVisual(BaseHtmlElement $visual): void
