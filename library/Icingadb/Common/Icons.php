@@ -10,6 +10,8 @@ class Icons
 
     const HOST_DOWN = 'sitemap';
 
+    const UNREACHABLE = 'sitemap';
+
     const IN_DOWNTIME = 'plug';
 
     const IS_ACKNOWLEDGED = 'check';

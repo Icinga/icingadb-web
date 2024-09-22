@@ -55,7 +55,8 @@ class ServiceState extends State
             'last_update'                   => t('Service Last Update'),
             'last_state_change'             => t('Service Last State Change'),
             'next_check'                    => t('Service Next Check'),
-            'next_update'                   => t('Service Next Update')
+            'next_update'                   => t('Service Next Update'),
+            'affects_children'              => t('Service Affects Children'),
         ];
     }
 

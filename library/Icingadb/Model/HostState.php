@@ -53,7 +53,8 @@ class HostState extends State
             'last_update'                   => t('Host Last Update'),
             'last_state_change'             => t('Host Last State Change'),
             'next_check'                    => t('Host Next Check'),
-            'next_update'                   => t('Host Next Update')
+            'next_update'                   => t('Host Next Update'),
+            'affects_children'              => t('Host Affects Children'),
         ];
     }
 
