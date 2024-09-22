@@ -48,6 +48,7 @@ use ipl\Web\Widget\Icon;
  * @property DateTime $last_state_change The time when the node last got a status change
  * @property DateTime $next_check The time when the node will execute the next check
  * @property DateTime $next_update The time when the next check of the node is expected to end
+ * @property bool $affects_children Whether any of the children is affected if there is a problem
  */
 abstract class State extends Model
 {
@@ -98,7 +99,8 @@ abstract class State extends Model
             'last_update',
             'last_state_change',
             'next_check',
-            'next_update'
+            'next_update',
+            'affects_children'
         ];
     }
 
@@ -111,7 +113,8 @@ abstract class State extends Model
             'is_flapping',
             'is_overdue',
             'is_acknowledged',
-            'in_downtime'
+            'in_downtime',
+            'affects_children'
         ]));
 
         $behaviors->add(new MillisecondTimestamp([

@@ -56,6 +56,7 @@ use ipl\Orm\ResultSet;
  * @property ?string $zone_id
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
+ * @property ?int $affected_children
  */
 class Host extends Model
 {
@@ -111,7 +112,8 @@ class Host extends Model
             'zone_name',
             'zone_id',
             'command_endpoint_name',
-            'command_endpoint_id'
+            'command_endpoint_id',
+            'affected_children'
         ];
     }
 
@@ -155,7 +157,8 @@ class Host extends Model
             'zone_name'                 => t('Zone Name'),
             'zone_id'                   => t('Zone Id'),
             'command_endpoint_name'     => t('Endpoint Name'),
-            'command_endpoint_id'       => t('Endpoint Id')
+            'command_endpoint_id'       => t('Endpoint Id'),
+            'affected_children'         => t('Affected Children'),
         ];
     }
 
