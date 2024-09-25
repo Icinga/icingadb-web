@@ -228,10 +228,10 @@ class DependencyCommand extends Command
         $dependencies = Dependency::on($this->getDb())
             ->columns([
                 'id',
-                'host_reachable' => 'edge.to.host.state.is_reachable',
-                'host_problem' => 'edge.to.host.state.is_problem',
-                'service_reachable' => 'edge.to.service.state.is_reachable',
-                'service_problem' => 'edge.to.service.state.is_problem'
+                'host_reachable' => 'edge.parent.host.state.is_reachable',
+                'host_problem' => 'edge.parent.host.state.is_problem',
+                'service_reachable' => 'edge.parent.service.state.is_reachable',
+                'service_problem' => 'edge.parent.service.state.is_problem'
             ]);
         foreach ($this->getDb()->select($dependencies->assembleSelect()) as $dependency) {
             $failed = $dependency->host_reachable === 'n'
@@ -257,10 +257,10 @@ class DependencyCommand extends Command
         $members = RedundancyGroup::on($this->getDb())
             ->columns([
                 'id',
-                'host_reachable' => 'dependency_node.parent.host.state.is_reachable',
-                'host_problem' => 'dependency_node.parent.host.state.is_problem',
-                'service_reachable' => 'dependency_node.parent.service.state.is_reachable',
-                'service_problem' => 'dependency_node.parent.service.state.is_problem'
+                'host_reachable' => 'from.to.host.state.is_reachable',
+                'host_problem' => 'from.to.host.state.is_problem',
+                'service_reachable' => 'from.to.service.state.is_reachable',
+                'service_problem' => 'from.to.service.state.is_problem'
             ]);
         $groupState = [];
         foreach ($this->getDb()->select($members->assembleSelect()) as $member) {
