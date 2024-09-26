@@ -62,4 +62,9 @@ class RedundancyGroupState extends Model
     {
         $relations->belongsTo('redundancy_group', RedundancyGroup::class);
     }
+
+    public function getStateText(): string
+    {
+        return $this->failed ? 'down' : 'up';
+    }
 }
