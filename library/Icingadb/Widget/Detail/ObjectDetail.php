@@ -21,6 +21,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
@@ -606,7 +607,10 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createRootProblems(): ?array
     {
-        if ($this->object->state->is_reachable) {
+        if (
+            $this->object->state->is_reachable
+            || ($this->object instanceof Service && ! $this->object->has_root_problem)
+        ) {
             return null;
         }
 
