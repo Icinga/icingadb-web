@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Chart\Donut;
 
+use Icinga\Module\Icingadb\Model\RedundancyGroupParentStateSummary;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectStatistics;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
@@ -16,6 +17,7 @@ use ipl\Html\HtmlString;
  */
 class ObjectsStatistics extends ObjectStatistics
 {
+    /** @var RedundancyGroupParentStateSummary Objects summary */
     protected $summary;
 
     public function __construct($summary)

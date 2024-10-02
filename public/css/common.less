@@ -412,8 +412,17 @@ form[name="form_confirm_removal"] {
   padding: 0 0.25em;
 }
 
-.state-ball,
-.state-badge {
+.state-ball {
+  &.state-unreachable {
+    background-color: @color-critical;
+  }
+
+  &.state-reachable {
+    background-color: @color-ok;
+  }
+}
+
+.state-badge  {
   &.state-problem {
     background-color: @color-critical;
   }

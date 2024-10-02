@@ -13,12 +13,11 @@ use ipl\Sql\Select;
 /**
  * Redundancy group's parent nodes summary
  *
- * @property int $objects_down_critical_handled
- * @property int $objects_down_critical_unhandled
+ * @property int $objects_problem_handled
+ * @property int $objects_problem_unhandled
  * @property int $objects_pending
- * @property int $objects_problems_unacknowledged
  * @property int $objects_total
- * @property int $objects_up_ok
+ * @property int $objects_ok
  * @property int $objects_unknown_handled
  * @property int $objects_unknown_unhandled
  * @property int $objects_warning_handled
@@ -48,12 +47,6 @@ class RedundancyGroupParentStateSummary extends RedundancyGroup
             'objects_pending' => new Expression(
                 'SUM(CASE WHEN redundancy_group_from_to_host_state.soft_state = 99 THEN 1 ELSE 0 END'
                 . ' + CASE WHEN redundancy_group_from_to_service_state.soft_state = 99 THEN 1 ELSE 0 END)'
-            ),
-            'objects_problems_unacknowledged' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_host_state.is_problem = \'y\''
-                . ' AND redundancy_group_from_to_host_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END'
-                . ' + CASE WHEN redundancy_group_from_to_service_state.is_problem = \'y\''
-                . ' AND redundancy_group_from_to_service_state.is_acknowledged = \'n\' THEN 1 ELSE 0 END)'
             ),
             'objects_total' => new Expression(
                 'SUM(CASE WHEN redundancy_group_from_to_host.id IS NOT NULL THEN 1 ELSE 0 END)'
