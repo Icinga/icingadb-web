@@ -21,6 +21,8 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\DependencyEdge;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
@@ -37,6 +39,8 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Sql\Expression;
+use ipl\Sql\Filter\Exists;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
@@ -653,6 +657,82 @@ class ObjectDetail extends BaseHtmlElement
         return [
             HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
             (new DependencyNodeList($rootProblems))->setEmptyStateMessage(
+                t('You are not authorized to view these objects.')
+            )
+        ];
+    }
+
+    /**
+     * Create a list of objects affected by the object that is a part of failed dependency
+     *
+     * @return ?BaseHtmlElement[]
+     */
+    protected function createAffectedObjects(): ?array
+    {
+        if (! $this->object->state->affects_children) {
+            return null;
+        }
+
+        $affectedObjects = DependencyNode::on($this->getDb())
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])
+            ->setResultSetClass(VolatileStateResults::class)
+            ->limit(5)
+            ->orderBy([
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.failed',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
+
+        $failedEdges = DependencyEdge::on($this->getDb())
+            ->utilize('child')
+            ->columns([new Expression('1')])
+            ->filter(Filter::equal('dependency.state.failed', 'y'));
+
+        if ($this->object instanceof Host) {
+            $failedEdges
+                ->filter(Filter::equal('parent.host.id', $this->object->id))
+                ->filter(Filter::unlike('parent.service.id', '*'));
+        } else {
+            $failedEdges->filter(Filter::equal('parent.service.id', $this->object->id));
+        }
+
+        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
+        $edgeResolver = $failedEdges->getResolver();
+
+        $childAlias = $edgeResolver->getAlias(
+            $edgeResolver->resolveRelation($failedEdges->getModel()->getTableName() . '.child')->getTarget()
+        );
+
+        $affectedObjects->filter(new Exists(
+            $failedEdges->assembleSelect()
+                ->where(
+                    "$childAlias.id = "
+                    . $affectedObjects->getResolver()
+                        ->qualifyColumn('id', $affectedObjects->getModel()->getTableName())
+                )
+        ));
+
+        $this->applyRestrictions($affectedObjects);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
+            (new DependencyNodeList($affectedObjects))->setEmptyStateMessage(
                 t('You are not authorized to view these objects.')
             )
         ];
