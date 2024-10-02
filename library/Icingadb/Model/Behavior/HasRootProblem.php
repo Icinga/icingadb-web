@@ -29,33 +29,35 @@ class HasRootProblem implements RewriteColumnBehavior, QueryAwareBehavior
         return $this;
     }
 
-    public function rewriteColumn($column, ?string $relation = null)
+    public function rewriteColumn($column, ?string $relation = null): ?AliasedExpression
     {
-        if ($this->isSelectableColumn($column)) {
-            $path = 'from.dependency_node';
-            $subQueryRelation = $relation !== null ? $relation . $path : $path;
-            $subQuery = $this->query->createSubQuery(new DependencyEdge(), $subQueryRelation)
-                ->limit(1)
-                ->columns([new Expression('1')]);
-
-            $subQuery->getSelectBase()->join(
-                ['root_dependency' => 'dependency'],
-                [$subQuery->getResolver()->getAlias($subQuery->getModel()) . '.dependency_id = root_dependency.id']
-            )->join(
-                ['root_dependency_state' => 'dependency_state'],
-                ['root_dependency.id = root_dependency_state.dependency_id']
-            )->where(new Expression("root_dependency_state.failed = 'y'"));
-
-            $column = $relation !== null ? str_replace('.', '_', $relation) . "_$column" : $column;
-
-            $alias = $this->query->getDb()->quoteIdentifier([$column]);
-
-            list($select, $values) = $this->query->getDb()
-                ->getQueryBuilder()
-                ->assembleSelect($subQuery->assembleSelect());
-
-            return new AliasedExpression($alias, "($select)", null, ...$values);
+        if (! $this->isSelectableColumn($column)) {
+            return null;
         }
+
+        $path = 'from.dependency_node';
+        $subQueryRelation = $relation !== null ? $relation . $path : $path;
+        $subQuery = $this->query->createSubQuery(new DependencyEdge(), $subQueryRelation)
+            ->limit(1)
+            ->columns([new Expression('1')]);
+
+        $subQuery->getSelectBase()->join(
+            ['root_dependency' => 'dependency'],
+            [$subQuery->getResolver()->getAlias($subQuery->getModel()) . '.dependency_id = root_dependency.id']
+        )->join(
+            ['root_dependency_state' => 'dependency_state'],
+            ['root_dependency.id = root_dependency_state.dependency_id']
+        )->where(new Expression("root_dependency_state.failed = 'y'"));
+
+        $column = $relation !== null ? str_replace('.', '_', $relation) . "_$column" : $column;
+
+        $alias = $this->query->getDb()->quoteIdentifier([$column]);
+
+        list($select, $values) = $this->query->getDb()
+            ->getQueryBuilder()
+            ->assembleSelect($subQuery->assembleSelect());
+
+        return new AliasedExpression($alias, "($select)", null, ...$values);
     }
 
     public function isSelectableColumn(string $name): bool
