@@ -9,11 +9,11 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\RedundancyGroupParentStateSummary;
+use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\ObjectsStatistics;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\StateBall;
@@ -34,6 +34,38 @@ class RedundancyGroupListItem extends StateListItem
     use Database;
 
     protected $baseAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
+
+    /** @var RedundancyGroupParentStateSummary Objects state summary */
+    protected $summary;
+
+    /** @var RedundancyGroupState */
+    protected $state;
+
+    /** @var bool Whether the redundancy group has been handled */
+    protected $isHandled = false;
+
+    protected function init(): void
+    {
+        parent::init();
+
+        $this->summary = RedundancyGroupParentStateSummary::on($this->getDb())
+            ->with([
+                'from',
+                'from.to.host',
+                'from.to.host.state',
+                'from.to.service',
+                'from.to.service.state'
+            ])
+            ->filter(Filter::equal('id', $this->item->id))
+            ->first();
+
+        $this->isHandled = $this->state->failed
+            && (
+                $this->summary->objects_problem_handled
+                || $this->summary->objects_unknown_handled
+                || $this->summary->objects_warning_handled
+            );
+    }
 
     protected function getStateBallSize(): string
     {
@@ -56,24 +88,16 @@ class RedundancyGroupListItem extends StateListItem
 
     protected function assembleVisual(BaseHtmlElement $visual): void
     {
-        $visual->addHtml(new StateBall($this->item->state->getStateText(), $this->getStateBallSize()));
+        $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
+        if ($this->isHandled) {
+            $stateBall->getAttributes()->add('class', 'handled');
+        }
+
+        $visual->addHtml($stateBall);
     }
 
     protected function assembleCaption(BaseHtmlElement $caption): void
     {
-        $filter = Filter::equal('id', $this->item->id);
-        $relations = [
-            'from',
-            'from.to.host',
-            'from.to.host.state',
-            'from.to.service',
-            'from.to.service.state'
-        ];
-
-        $summary = RedundancyGroupParentStateSummary::on($this->getDb())
-            ->with($relations)
-            ->filter($filter);
-
         $members = RedundancyGroup::on($this->getDb())
             ->columns([
                 'id' => 'id',
@@ -103,8 +127,14 @@ class RedundancyGroupListItem extends StateListItem
                     . ' ELSE redundancy_group_from_to_host_state.severity END'
                 )
             ])
-            ->with($relations)
-            ->filter($filter)
+            ->with([
+                'from',
+                'from.to.host',
+                'from.to.host.state',
+                'from.to.service',
+                'from.to.service.state'
+            ])
+            ->filter(Filter::equal('id', $this->item->id))
             ->orderBy([
                 'objects_severity',
                 'objects_last_state_change',
@@ -122,27 +152,17 @@ class RedundancyGroupListItem extends StateListItem
             ));
         }
 
-        $caption->addHtml(new ObjectsStatistics($summary->first()));
+        $caption->addHtml(new ObjectsStatistics($this->summary));
     }
 
     protected function assembleTitle(BaseHtmlElement $title): void
     {
-        $subject = $this->createSubject();
+        $title->addHtml($this->createSubject());
         if ($this->state->failed) {
-            $stateTextElement = Html::sprintf(
-                t('%s has %s', '<hostname> has <state-text>'),
-                $subject,
-                new HtmlElement('span', Attributes::create(['class' => 'state-text']), Text::create('FAILED'))
-            );
+            $title->addHtml(HtmlElement::create('span', null, Text::create(t('has no working objects'))));
         } else {
-            $stateTextElement = Html::sprintf(
-                t('%s is %s', '<hostname> is <state-text>'),
-                $subject,
-                new HtmlElement('span', Attributes::create(['class' => 'state-text']), Text::create('OK'))
-            );
+            $title->addHtml(HtmlElement::create('span', null, Text::create(t('has working objects'))));
         }
-
-        $title->addHtml($stateTextElement);
     }
 
     protected function assemble(): void
