@@ -65,6 +65,7 @@ class RedundancyGroupState extends Model
 
     public function getStateText(): string
     {
-        return $this->failed ? 'problem' : 'ok';
+        // The method should only be called to fake state balls and not to show the group's state
+        return $this->failed ? 'unreachable' : 'reachable';
     }
 }
