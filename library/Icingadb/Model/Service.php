@@ -14,6 +14,7 @@ use ipl\Orm\Defaults;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
+use ipl\Sql\Expression;
 
 /**
  * @property string $id
@@ -106,7 +107,7 @@ class Service extends Model
             'zone_id',
             'command_endpoint_name',
             'command_endpoint_id',
-            'affected_children'
+            'affected_children' => new Expression('10')
         ];
     }
 

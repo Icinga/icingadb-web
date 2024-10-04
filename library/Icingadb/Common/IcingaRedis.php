@@ -8,6 +8,7 @@ use Exception;
 use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use ipl\Sql\Expression;
 use Predis\Client as Redis;
 
 class IcingaRedis
@@ -163,7 +164,16 @@ class IcingaRedis
         foreach ($results as $i => $json) {
             if ($json !== null) {
                 $data = json_decode($json, true);
-                $keyMap = array_fill_keys($columns, null);
+                $keyMap = [];
+
+                foreach ($columns as $alias => $column) {
+                    if ($column instanceof Expression) {
+                        $keyMap[$alias] = $column->getStatement() ;
+                    } else {
+                        $keyMap[$alias] = null;
+                    }
+                }
+
                 unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
 
                 // TODO: Remove once https://github.com/Icinga/icinga2/issues/9427 is fixed
