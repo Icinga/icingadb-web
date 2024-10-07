@@ -21,6 +21,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
@@ -36,6 +37,7 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Sql\Select;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
@@ -643,6 +645,93 @@ class ObjectDetail extends BaseHtmlElement
         return [
             HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
             new DependencyNodeList($rootProblems)
+        ];
+    }
+
+    protected function createAffectedObjects()
+    {
+        if (! $this->object->state->affects_children) {
+            return null;
+        }
+
+        $affectedObjects = DependencyNode::on($this->getDb())
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])->orderBy([
+                'host.state.severity'                       => SORT_DESC,
+                'host.state.last_state_change'              => SORT_DESC,
+                'service.state.severity'                    => SORT_DESC,
+                'service.state.last_state_change'           => SORT_DESC,
+                'service.host.state.severity'               => SORT_DESC,
+                'service.host.state.last_state_change'      => SORT_DESC,
+                'redundancy_group.state.last_state_change'  => SORT_DESC
+            ]);
+
+        if ($this->object instanceof Host) {
+            $affectedObjects
+                ->filter(Filter::equal('parent.host.id', $this->object->id))
+                ->on($affectedObjects::ON_SELECT_ASSEMBLED, function (Select $select) {//TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031 is fixed
+                    $subQuery = $select->getWhere()[1][0][1][0][1]['dependency_node.id IN (?)'];
+                    $select->resetWhere();
+
+                    $joins = $subQuery->getJoin();
+                    $subQuery->resetJoin();
+
+                    foreach ($joins as $join) {
+                        $condition = $join[2];
+                        if ($condition[1][0] === 'sub_host_dependency_node.host_id = sub_host.id') {
+                            $condition[1][0] = sprintf(
+                                '%s AND sub_host_dependency_node.service_id IS NULL', $condition[1][0]
+                            );
+                        }
+
+                        $subQuery->join($join[1], $condition);
+                    }
+
+                    $select->where(['dependency_node.id IN (?)' => $subQuery]);
+                });
+        } else {
+            $affectedObjects
+                ->filter(Filter::equal('parent.service.id', $this->object->id))
+                ->on($affectedObjects::ON_SELECT_ASSEMBLED, function (Select $select) {//TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031 is fixed
+                    $subQuery = $select->getWhere()[1][0][1][0][1]['dependency_node.id IN (?)'];
+                    $select->resetWhere();
+
+                    $joins = $subQuery->getJoin();
+                    $subQuery->resetJoin();
+
+                    foreach ($joins as $join) {
+                        $condition = $join[2];
+                        if ($condition[1][0] === 'sub_service_dependency_node.service_id = sub_service.id') {
+                            $condition[1][0] = sprintf(
+                                '%s AND sub_service_dependency_node.host_id = sub_service.host_id',
+                                $condition[1][0]
+                            );
+                        }
+
+                        $subQuery->join($join[1], $condition);
+                    }
+
+                    $select->where(['dependency_node.id IN (?)' => $subQuery]);
+                });
+        }
+
+        $this->applyRestrictions($affectedObjects);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
+            new DependencyNodeList($affectedObjects)
         ];
     }
 }
