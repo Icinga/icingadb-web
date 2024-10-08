@@ -21,8 +21,8 @@ use ipl\Orm\Relations;
  *
  * @property (?RedundancyGroupState)|Query $state
  * @property Dependency|Query $dependency
- * @property DependencyEdge|Query $from
- * @property DependencyEdge|Query $to
+ * @property (?DependencyEdge)|Query $from
+ * @property (?DependencyEdge)|Query $to
  */
 class RedundancyGroup extends Model
 {
@@ -65,10 +65,13 @@ class RedundancyGroup extends Model
         $relations->belongsToMany('from', DependencyEdge::class)
             ->setTargetCandidateKey('from_node_id')
             ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
+            ->through(DependencyNode::class)
+            ->setJoinType('LEFT');
+
         $relations->belongsToMany('to', DependencyEdge::class)
             ->setTargetCandidateKey('to_node_id')
             ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
+            ->through(DependencyNode::class)
+            ->setJoinType('LEFT');
     }
 }
