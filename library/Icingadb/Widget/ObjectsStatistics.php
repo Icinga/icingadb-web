@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Chart\Donut;
-
 use Icinga\Module\Icingadb\Model\RedundancyGroupParentStateSummary;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectStatistics;
 use ipl\Html\Text;

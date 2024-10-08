@@ -145,9 +145,9 @@ class RedundancyGroupListItem extends StateListItem
         /** @var RedundancyGroup $data */
         $data = $members->first();
 
-        if($data) {
+        if ($data) {
             $caption->addHtml(new PluginOutputContainer(
-                (new PluginOutput($data->objects_output . "\n" .$data->objects_long_output))
+                (new PluginOutput($data->objects_output . "\n" . $data->objects_long_output))
                     ->setCommandName($data->objects_checkcommand_name)
             ));
         }

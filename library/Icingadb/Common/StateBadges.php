@@ -27,7 +27,7 @@ abstract class StateBadges extends BaseHtmlElement
     /** @var string Prefix */
     protected $prefix;
 
-    /** @var Url Badge link */
+    /** @var ?Url Badge link */
     protected $url;
 
     protected $tag = 'ul';
@@ -82,7 +82,7 @@ abstract class StateBadges extends BaseHtmlElement
      */
     protected function getStateInt(string $state): int
     {
-       throw new InvalidArgumentException('%s is not a valid state', $state);
+        throw new InvalidArgumentException('%s is not a valid state', $state);
     }
 
     /**
