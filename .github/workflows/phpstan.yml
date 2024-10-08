@@ -2,8 +2,6 @@ name: PHPStan
 
 on:
   pull_request:
-    branches:
-      - main
 
 jobs:
   phpstan:
