@@ -62,8 +62,11 @@ class DependencyEdge extends Model
 
         // "from" and "to" are only necessary for sub-query filters.
         $relations->belongsTo('from', DependencyNode::class)
-            ->setCandidateKey('from_node_id');
+            ->setCandidateKey('from_node_id')
+            ->setJoinType('LEFT');
+
         $relations->belongsTo('to', DependencyNode::class)
-            ->setCandidateKey('to_node_id');
+            ->setCandidateKey('to_node_id')
+            ->setJoinType('LEFT');
     }
 }
