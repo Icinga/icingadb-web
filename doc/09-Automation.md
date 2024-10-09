@@ -131,6 +131,16 @@ Please have a look at the [Monitoring Plugins Development Guidelines](https://ww
 | expire      | n        | BoolEnum | -          |
 | expire_time | y        | DateTime | expire     |
 
+### Delete Comments
+
+#### Routes
+
+* icingadb/comments/delete
+
+#### Options
+
+None.
+
 ### Check Now
 
 #### Routes
@@ -217,6 +227,16 @@ None.
 | flexible | n        | BoolEnum    | -          |
 | hours    | y        | Number      | flexible   |
 | minutes  | y        | Number      | flexible   |
+
+### Delete Downtimes
+
+#### Routes
+
+* icingadb/downtimes/delete
+
+#### Options
+
+None.
 
 ### Send Custom Notification
 
