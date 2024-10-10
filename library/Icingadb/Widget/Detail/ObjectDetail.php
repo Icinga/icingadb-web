@@ -444,7 +444,7 @@ class ObjectDetail extends BaseHtmlElement
                 'div',
                 [
                     'id'    => 'check-output-' . $this->object->checkcommand_name,
-                    'class' => ['collapsible', 'check-command-output'],
+                    'class' => 'collapsible',
                     'data-visible-height' => 100
                 ],
                 $pluginOutput
