@@ -108,8 +108,7 @@ abstract class StateListItem extends BaseListItem
                 ->addAttributes([
                     'class' => 'affected-objects',
                     'title' => sprintf(t('Up to %s affected objects'), $total)
-                ])
-            );
+                ]));
         }
     }
 
