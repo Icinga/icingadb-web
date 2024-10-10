@@ -13,7 +13,7 @@ use ipl\Web\Common\BaseListItem;
  */
 class DependencyNodeList extends StateList
 {
-    protected $defaultAttributes = ['class' => ['root-problem-list']];
+    protected $defaultAttributes = ['class' => ['dependency-node-list']];
 
     protected function init(): void
     {

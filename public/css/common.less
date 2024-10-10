@@ -197,7 +197,7 @@ div.show-more {
   margin-left: 1em / 1.333em; // 1em / h2 font size
 }
 
-.object-detail .check-command-output .plugin-output {
+.object-detail :not(.caption) > .plugin-output {
   .rounded-corners(.25em);
   background-color: @gray-lighter;
   padding: .5em;

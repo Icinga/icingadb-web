@@ -8,12 +8,13 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
-use Icinga\Module\Icingadb\Model\RedundancyGroupParentStateSummary;
+use Icinga\Module\Icingadb\Model\DependencyNodeSummary;
 use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
-use Icinga\Module\Icingadb\Widget\ObjectsStatistics;
+use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use ipl\Html\BaseHtmlElement;
+use ipl\I18n\Translation;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\StateBall;
@@ -32,10 +33,11 @@ class RedundancyGroupListItem extends StateListItem
     use ListItemCommonLayout;
     use Auth;
     use Database;
+    use Translation;
 
     protected $baseAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
 
-    /** @var RedundancyGroupParentStateSummary Objects state summary */
+    /** @var DependencyNodeSummary Objects state summary */
     protected $summary;
 
     /** @var RedundancyGroupState */
@@ -48,22 +50,15 @@ class RedundancyGroupListItem extends StateListItem
     {
         parent::init();
 
-        $this->summary = RedundancyGroupParentStateSummary::on($this->getDb())
-            ->with([
-                'from',
-                'from.to.host',
-                'from.to.host.state',
-                'from.to.service',
-                'from.to.service.state'
-            ])
+        $this->summary = DependencyNodeSummary::on($this->getDb())
             ->filter(Filter::equal('id', $this->item->id))
             ->first();
 
         $this->isHandled = $this->state->failed
             && (
-                $this->summary->objects_problem_handled
-                || $this->summary->objects_unknown_handled
-                || $this->summary->objects_warning_handled
+                $this->summary->nodes_problem_handled
+                || $this->summary->nodes_unknown_handled
+                || $this->summary->nodes_warning_handled
             );
     }
 
@@ -101,28 +96,28 @@ class RedundancyGroupListItem extends StateListItem
         $members = RedundancyGroup::on($this->getDb())
             ->columns([
                 'id' => 'id',
-                'objects_output' => new Expression(
-                    'CASE WHEN redundancy_group_from_to_host_state.output IS NULL'
+                'nodes_output' => new Expression(
+                    'CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
                     . ' THEN redundancy_group_from_to_service_state.output'
                     . ' ELSE redundancy_group_from_to_host_state.output END'
                 ),
-                'objects_long_output' => new Expression(
-                    'CASE WHEN redundancy_group_from_to_host_state.long_output IS NULL'
+                'nodes_long_output' => new Expression(
+                    'CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
                     . ' THEN redundancy_group_from_to_service_state.long_output'
                     . ' ELSE redundancy_group_from_to_host_state.long_output END'
                 ),
-                'objects_checkcommand_name' => new Expression(
-                    'CASE WHEN redundancy_group_from_to_host.checkcommand_name IS NULL'
+                'nodes_checkcommand_name' => new Expression(
+                    'CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
                     . ' THEN redundancy_group_from_to_service.checkcommand_name'
                     . ' ELSE redundancy_group_from_to_host.checkcommand_name END'
                 ),
-                'objects_last_state_change' => new Expression(
-                    'CASE WHEN redundancy_group_from_to_host_state.last_state_change IS NULL'
+                'nodes_last_state_change' => new Expression(
+                    'CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
                     . ' THEN redundancy_group_from_to_service_state.last_state_change'
                     . ' ELSE redundancy_group_from_to_host_state.last_state_change END'
                 ),
-                'objects_severity' => new Expression(
-                    'CASE WHEN redundancy_group_from_to_host_state.severity IS NULL'
+                'nodes_severity' => new Expression(
+                    'CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
                     . ' THEN redundancy_group_from_to_service_state.severity'
                     . ' ELSE redundancy_group_from_to_host_state.severity END'
                 )
@@ -136,8 +131,8 @@ class RedundancyGroupListItem extends StateListItem
             ])
             ->filter(Filter::equal('id', $this->item->id))
             ->orderBy([
-                'objects_severity',
-                'objects_last_state_change',
+                'nodes_severity',
+                'nodes_last_state_change',
             ], SORT_DESC);
 
         $this->applyRestrictions($members);
@@ -147,21 +142,25 @@ class RedundancyGroupListItem extends StateListItem
 
         if ($data) {
             $caption->addHtml(new PluginOutputContainer(
-                (new PluginOutput($data->objects_output . "\n" . $data->objects_long_output))
-                    ->setCommandName($data->objects_checkcommand_name)
+                (new PluginOutput($data->nodes_output . "\n" . $data->nodes_long_output))
+                    ->setCommandName($data->nodes_checkcommand_name)
             ));
         }
 
-        $caption->addHtml(new ObjectsStatistics($this->summary));
+        $caption->addHtml(new DependencyNodeStatistics($this->summary));
     }
 
     protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml($this->createSubject());
         if ($this->state->failed) {
-            $title->addHtml(HtmlElement::create('span', null, Text::create(t('has no working objects'))));
+            $title->addHtml(HtmlElement::create(
+                'span',
+                null,
+                Text::create($this->translate('has no working objects'))
+            ));
         } else {
-            $title->addHtml(HtmlElement::create('span', null, Text::create(t('has working objects'))));
+            $title->addHtml(HtmlElement::create('span', null, Text::create($this->translate('has working objects'))));
         }
     }
 

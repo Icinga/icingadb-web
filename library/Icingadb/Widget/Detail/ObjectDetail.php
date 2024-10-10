@@ -444,7 +444,7 @@ class ObjectDetail extends BaseHtmlElement
                 'div',
                 [
                     'id'    => 'check-output-' . $this->object->checkcommand_name,
-                    'class' => ['collapsible', 'check-command-output'],
+                    'class' => 'collapsible',
                     'data-visible-height' => 100
                 ],
                 $pluginOutput
@@ -607,6 +607,9 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createRootProblems(): ?array
     {
+        // If a dependency has failed, then the children are not reachable. Hence, the root problems should not be shown
+        // if the object is not reachable. And in case of a service, since, it may be also be unreachable because of its
+        // host being down, only show its root problems if they exist.
         if (
             $this->object->state->is_reachable
             || ($this->object instanceof Service && ! $this->object->has_root_problem)

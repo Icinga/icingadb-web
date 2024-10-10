@@ -7,23 +7,23 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\Common\StateBadges;
 
 /**
- * State badges for the objects
+ * State badges for the dependency nodes
  */
-class ObjectsStateBadges extends StateBadges
+class DependencyNodeStateBadges extends StateBadges
 {
     protected function getType(): string
     {
-        return 'objects';
+        return 'nodes';
     }
 
     protected function getPrefix(): string
     {
-        return 'objects';
+        return 'nodes';
     }
 
     protected function assemble(): void
     {
-        $this->addAttributes(['class' => 'objects-state-badges']);
+        $this->addAttributes(['class' => 'nodes-state-badges']);
 
         $this->add(array_filter([
             $this->createGroup('problem'),
