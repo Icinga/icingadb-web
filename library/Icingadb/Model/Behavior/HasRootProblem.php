@@ -35,19 +35,33 @@ class HasRootProblem implements RewriteColumnBehavior, QueryAwareBehavior
             return null;
         }
 
-        $path = 'from.dependency_node';
+        $path = 'from.';
         $subQueryRelation = $relation !== null ? $relation . $path : $path;
-        $subQuery = $this->query->createSubQuery(new DependencyEdge(), $subQueryRelation)
+        $subQuery = $this->query->createSubQuery(new DependencyEdge(), $subQueryRelation, null, false)
             ->limit(1)
             ->columns([new Expression('1')]);
 
-        $subQuery->getSelectBase()->join(
-            ['root_dependency' => 'dependency'],
-            [$subQuery->getResolver()->getAlias($subQuery->getModel()) . '.dependency_id = root_dependency.id']
-        )->join(
-            ['root_dependency_state' => 'dependency_state'],
-            ['root_dependency.id = root_dependency_state.dependency_id']
-        )->where(new Expression("root_dependency_state.failed = 'y'"));
+        $subQueryAlias = $subQuery->getResolver()->getAlias($subQuery->getModel());
+
+        $subQuery->getSelectBase()
+            ->join(
+                ['to_dependency_node' => 'dependency_node'],
+                ["to_dependency_node.id = $subQueryAlias.to_node_id"]
+            )->joinLeft(
+                ['root_dependency' => 'dependency'],
+                [ "$subQueryAlias.dependency_id = root_dependency.id"]
+            )->joinLeft(
+                ['root_dependency_state' => 'dependency_state'],
+                ['root_dependency.id = root_dependency_state.dependency_id']
+            )->joinLeft(
+                ['root_group' => 'redundancy_group'],
+                ['root_group.id = to_dependency_node.redundancy_group_id']
+            )->joinLeft(
+                ['root_group_state' => 'redundancy_group_state'],
+                ['root_group_state.redundancy_group_id = root_group.id']
+            )->where(
+                new Expression("root_dependency_state.failed = 'y' OR root_group_state.failed = 'y'")
+            )->where($subQueryAlias . '_from.service_id = service.id');
 
         $column = $relation !== null ? str_replace('.', '_', $relation) . "_$column" : $column;
 
