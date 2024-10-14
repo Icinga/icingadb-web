@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Widget\IconImage;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\I18n\Translation;
 use ipl\Web\Common\BaseListItem;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\TimeSince;
@@ -26,6 +27,8 @@ use ipl\Web\Widget\StateBall;
  */
 abstract class StateListItem extends BaseListItem
 {
+    use Translation;
+
     /** @var StateList The list where the item is part of */
     protected $list;
 
@@ -66,10 +69,10 @@ abstract class StateListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption): void
     {
         if ($this->state->soft_state === null && $this->state->output === null) {
-            $caption->addHtml(Text::create(t('Waiting for Icinga DB to synchronize the state.')));
+            $caption->addHtml(Text::create($this->translate('Waiting for Icinga DB to synchronize the state.')));
         } else {
             if (empty($this->state->output)) {
-                $pluginOutput = new EmptyState(t('Output unavailable.'));
+                $pluginOutput = new EmptyState($this->translate('Output unavailable.'));
             } else {
                 $pluginOutput = new PluginOutputContainer(PluginOutput::fromObject($this->item));
             }
@@ -90,7 +93,7 @@ abstract class StateListItem extends BaseListItem
     protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(Html::sprintf(
-            t('%s is %s', '<hostname> is <state-text>'),
+            $this->translate('%s is %s', '<hostname> is <state-text>'),
             $this->createSubject(),
             Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
         ));
@@ -100,9 +103,16 @@ abstract class StateListItem extends BaseListItem
 
             if ($total > 1000) {
                 $total = '1000+';
-                $tooltip = t('Up to 1000+ affected objects');
+                $tooltip = $this->translate('Up to 1000+ affected objects');
             } else {
-                $tooltip = sprintf(tp('%d affected object', 'Up to %d affected objects', $total), $total);
+                $tooltip = sprintf(
+                    $this->translatePlural(
+                        '%d affected object',
+                        'Up to %d affected objects',
+                        $total
+                    ),
+                    $total
+                );
             }
 
             $icon = new Icon(Icons::UNREACHABLE);
@@ -140,7 +150,7 @@ abstract class StateListItem extends BaseListItem
         $since = null;
         if ($this->state->is_overdue) {
             $since = new TimeSince($this->state->next_update->getTimestamp());
-            $since->prepend(t('Overdue') . ' ');
+            $since->prepend($this->translate('Overdue') . ' ');
             $since->prependHtml(new Icon(Icons::WARNING));
         } elseif ($this->state->last_state_change !== null && $this->state->last_state_change->getTimestamp() > 0) {
             $since = new TimeSince($this->state->last_state_change->getTimestamp());
