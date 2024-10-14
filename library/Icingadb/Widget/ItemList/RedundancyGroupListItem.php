@@ -14,7 +14,6 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use ipl\Html\BaseHtmlElement;
-use ipl\I18n\Translation;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\StateBall;
@@ -33,7 +32,6 @@ class RedundancyGroupListItem extends StateListItem
     use ListItemCommonLayout;
     use Auth;
     use Database;
-    use Translation;
 
     protected $defaultAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
 
