@@ -612,7 +612,7 @@ class ObjectDetail extends BaseHtmlElement
         // host being down, only show its root problems if they exist.
         if (
             $this->object->state->is_reachable
-            || ($this->object instanceof Service && ! $this->object->has_root_problem)
+            || ($this->object instanceof Service && ! $this->object->has_problematic_parent)
         ) {
             return null;
         }
