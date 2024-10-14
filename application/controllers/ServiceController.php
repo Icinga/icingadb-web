@@ -39,7 +39,7 @@ class ServiceController extends Controller
         $hostName = $this->params->getRequired('host.name');
 
         $query = Service::on($this->getDb())
-            ->withColumns(['has_root_problem'])
+            ->withColumns(['has_problematic_parent'])
             ->with([
                 'state',
                 'icon_image',

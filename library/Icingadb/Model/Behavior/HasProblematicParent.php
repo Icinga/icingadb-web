@@ -15,9 +15,9 @@ use ipl\Orm\Contract\RewriteColumnBehavior;
 use ipl\Orm\Contract\QueryAwareBehavior;
 
 /**
- * Behavior to check if the object has a root problem
+ * Behavior to check if the service has a problematic parent
  */
-class HasRootProblem implements RewriteColumnBehavior, QueryAwareBehavior
+class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
 {
     /** @var Query */
     protected $query;
@@ -76,7 +76,7 @@ class HasRootProblem implements RewriteColumnBehavior, QueryAwareBehavior
 
     public function isSelectableColumn(string $name): bool
     {
-        return $name === 'has_root_problem';
+        return $name === 'has_problematic_parent';
     }
 
     public function rewriteColumnDefinition(ColumnDefinition $def, string $relation): void
