@@ -96,10 +96,13 @@ abstract class StateListItem extends BaseListItem
         ));
 
         if ($this->state->affects_children) {
-            $total = $this->item->affected_children;
+            $total = (int) $this->item->affected_children;
 
-            if ((int) $total > 1000) {
+            if ($total > 1000) {
                 $total = '1000+';
+                $tooltip = t('Up to 1000+ affected objects');
+            } else {
+                $tooltip = sprintf(tp('%d affected object', 'Up to %d affected objects', $total), $total);
             }
 
             $icon = new Icon(Icons::UNREACHABLE);
@@ -108,7 +111,7 @@ abstract class StateListItem extends BaseListItem
                 'span',
                 Attributes::create([
                     'class' => 'affected-objects',
-                    'title' => sprintf(t('Up to %s affected objects'), $total)
+                    'title' => $tooltip
                 ]),
                 $icon,
                 Text::create($total)
