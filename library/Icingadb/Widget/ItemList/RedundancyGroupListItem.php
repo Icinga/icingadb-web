@@ -35,7 +35,7 @@ class RedundancyGroupListItem extends StateListItem
     use Database;
     use Translation;
 
-    protected $baseAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
+    protected $defaultAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
 
     /** @var DependencyNodeSummary Objects state summary */
     protected $summary;
@@ -67,7 +67,7 @@ class RedundancyGroupListItem extends StateListItem
         return StateBall::SIZE_LARGE;
     }
 
-    protected function createTimestamp(): ?BaseHtmlElement
+    protected function createTimestamp(): BaseHtmlElement
     {
         return new TimeSince($this->state->last_state_change->getTimestamp());
     }

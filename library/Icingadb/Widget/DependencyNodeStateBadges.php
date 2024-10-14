@@ -23,7 +23,7 @@ class DependencyNodeStateBadges extends StateBadges
 
     protected function assemble(): void
     {
-        $this->addAttributes(['class' => 'nodes-state-badges']);
+        $this->addAttributes(['class' => 'dependency-node-state-badges']);
 
         $this->add(array_filter([
             $this->createGroup('problem'),
