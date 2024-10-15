@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Chart\Donut;
-use Icinga\Module\Icingadb\Model\DependencyNodeSummary;
+use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectStatistics;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
@@ -16,7 +16,7 @@ use ipl\Html\HtmlString;
  */
 class DependencyNodeStatistics extends ObjectStatistics
 {
-    /** @var DependencyNodeSummary Dependency node summary */
+    /** @var RedundancyGroupSummary Dependency node summary */
     protected $summary;
 
     public function __construct($summary)
