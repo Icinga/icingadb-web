@@ -10,10 +10,10 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\IconImage;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
+use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Web\Common\BaseListItem;
 use ipl\Web\Widget\EmptyState;
-use ipl\Web\Widget\StateBadge;
 use ipl\Web\Widget\TimeSince;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -104,12 +104,15 @@ abstract class StateListItem extends BaseListItem
 
             $icon = new Icon(Icons::UNREACHABLE);
 
-            $title->addHtml((new StateBadge([$icon, Text::create($total)], ''))
-                ->addAttributes([
+            $title->addHtml(new HtmlElement(
+                'span',
+                Attributes::create([
                     'class' => 'affected-objects',
                     'title' => sprintf(t('Up to %s affected objects'), $total)
-                ])
-            );
+                ]),
+                $icon,
+                Text::create($total)
+            ));
         }
     }
 
