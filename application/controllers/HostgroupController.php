@@ -156,6 +156,10 @@ class HostgroupController extends Controller
             'name'
         ]);
 
+        if ($editor->getSuggestionUrl()) {
+            $editor->getSuggestionUrl()->addParams(['name' => $this->hostgroupName]);
+        }
+
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
     }
