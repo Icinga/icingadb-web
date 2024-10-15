@@ -8,7 +8,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
-use Icinga\Module\Icingadb\Model\DependencyNodeSummary;
+use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
 use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
@@ -35,7 +35,7 @@ class RedundancyGroupListItem extends StateListItem
 
     protected $defaultAttributes = ['class' => ['list-item', 'redundancy-group-list-item']];
 
-    /** @var DependencyNodeSummary Objects state summary */
+    /** @var RedundancyGroupSummary Objects state summary */
     protected $summary;
 
     /** @var RedundancyGroupState */
@@ -48,7 +48,7 @@ class RedundancyGroupListItem extends StateListItem
     {
         parent::init();
 
-        $this->summary = DependencyNodeSummary::on($this->getDb())
+        $this->summary = RedundancyGroupSummary::on($this->getDb())
             ->filter(Filter::equal('id', $this->item->id))
             ->first();
 

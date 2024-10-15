@@ -11,23 +11,30 @@ use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
 /**
- * Redundancy group's parent nodes summary
+ * Redundancy group's summary (The nodes could only host and service)
  *
+ * @property int $nodes_total
+ * @property int $nodes_ok
  * @property int $nodes_problem_handled
  * @property int $nodes_problem_unhandled
  * @property int $nodes_pending
- * @property int $nodes_total
- * @property int $nodes_ok
  * @property int $nodes_unknown_handled
  * @property int $nodes_unknown_unhandled
  * @property int $nodes_warning_handled
  * @property int $nodes_warning_unhandled
  */
-class DependencyNodeSummary extends RedundancyGroup
+class RedundancyGroupSummary extends RedundancyGroup
 {
     public function getSummaryColumns(): array
     {
         return [
+            'nodes_ok' => new Expression(
+                'SUM(CASE WHEN (redundancy_group_from_to_service.id IS NOT NULL'
+                . ' AND redundancy_group_from_to_service_state.soft_state = 0)'
+                . ' OR'
+                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
+                . ' AND redundancy_group_from_to_host_state.soft_state = 0) THEN 1 ELSE 0 END)'
+            ),
             'nodes_problem_handled' => new Expression(
                 'SUM(CASE WHEN'
                 . ' (redundancy_group_from_to_service.id IS NOT NULL'
@@ -64,13 +71,6 @@ class DependencyNodeSummary extends RedundancyGroup
                 . ' OR'
                 . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL)'
                 . ' THEN 1 ELSE 0 END)'
-            ),
-            'nodes_ok' => new Expression(
-                'SUM(CASE WHEN (redundancy_group_from_to_service.id IS NOT NULL'
-                . ' AND redundancy_group_from_to_service_state.soft_state = 0)'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
-                . ' AND redundancy_group_from_to_host_state.soft_state = 0) THEN 1 ELSE 0 END)'
             ),
             'nodes_unknown_handled' => new Expression(
                 'SUM(CASE WHEN redundancy_group_from_to_service_state.soft_state = 3'
