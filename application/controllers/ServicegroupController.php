@@ -18,7 +18,6 @@ use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Url;
 
 class ServicegroupController extends Controller
 {
@@ -92,14 +91,7 @@ class ServicegroupController extends Controller
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
             'name'
-        ])->setSuggestionUrl(Url::fromPath(
-            'icingadb/servicegroup/complete',
-            [
-                'name' => $this->servicegroupName,
-                '_disableLayout' => true,
-                'showCompact' => true
-            ]
-        ));
+        ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
