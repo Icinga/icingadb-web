@@ -8,6 +8,7 @@ use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Widget\Detail\DetailAssembler;
 use ipl\Html\HtmlElement;
 use ipl\I18n\Translation;
+use ipl\Orm\Model;
 use ipl\Web\Common\BaseListItem;
 use ipl\Html\BaseHtmlElement;
 
@@ -35,6 +36,11 @@ abstract class StateListItem extends BaseListItem
     }
 
     abstract protected function getStateBallSize(): string;
+
+    protected function getObject(): Model
+    {
+        return $this->item;
+    }
 
     /**
      * @return ?BaseHtmlElement
