@@ -47,6 +47,15 @@ class DependencyNode extends Model
         ];
     }
 
+    public function getSearchColumns(): array
+    {
+        return [
+            'host.name_ci',
+            'service.name_ci',
+            'redundancy_group.display_name'
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([

@@ -131,6 +131,32 @@ class RedundancyGroupSummary extends RedundancyGroup
                     'from.to.service.state.is_handled',
                     'from.to.service.state.is_reachable'
                 ]
+            ),
+            'nodes_acknowledged' => new Expression(
+                'SUM(CASE'
+                . " WHEN %s IS NOT NULL THEN (CASE WHEN %s = 'y' THEN 1 ELSE 0 END)"
+                . " WHEN %s = 'y' THEN 1"
+                . ' ELSE 0'
+                . ' END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.is_acknowledged',
+                    'from.to.host.state.is_acknowledged',
+                ]
+            ),
+            'nodes_problems_unacknowledged' => new Expression(
+                'SUM(CASE'
+                . " WHEN %s IS NOT NULL THEN (CASE WHEN %s = 'y' AND %s = 'n' THEN 1 ELSE 0 END)"
+                . " WHEN %s = 'y' AND %s = 'n' THEN 1"
+                . ' ELSE 0'
+                . ' END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.is_problem',
+                    'from.to.service.state.is_acknowledged',
+                    'from.to.host.state.is_problem',
+                    'from.to.host.state.is_acknowledged',
+                ]
             )
         ];
     }

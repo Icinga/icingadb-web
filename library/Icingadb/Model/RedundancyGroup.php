@@ -44,6 +44,13 @@ class RedundancyGroup extends Model
         ];
     }
 
+    public function getColumnDefinitions(): array
+    {
+        return [
+            'display_name' => t('Redundancy Group Display Name')
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
