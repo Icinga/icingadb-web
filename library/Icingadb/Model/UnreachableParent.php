@@ -96,10 +96,14 @@ class UnreachableParent extends Model
             self::selectNodes($db, $root),
             'unreachable_parent',
             true
-        )->where([
-            'unreachable_parent.level > ?' => 0,
-            'unreachable_parent.is_group_member = ?' => 0
-        ]);
+        );
+
+        $query->filter(Filter::all(
+            Filter::greaterThan('level', 0),
+            Filter::equal('is_group_member', 0),
+            Filter::unequal('host.state.is_reachable', 'n'),
+            Filter::unequal('service.state.is_reachable', 'n')
+        ));
 
         return $query;
     }
