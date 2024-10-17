@@ -28,69 +28,115 @@ class RedundancyGroupSummary extends RedundancyGroup
     public function getSummaryColumns(): array
     {
         return [
+            'nodes_total' => new Expression(
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN 1'
+                . ' WHEN %s IS NOT NULL THEN 1'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.host_id',
+                ]
+            ),
             'nodes_ok' => new Expression(
-                'SUM(CASE WHEN (redundancy_group_from_to_service.id IS NOT NULL'
-                . ' AND redundancy_group_from_to_service_state.soft_state = 0)'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
-                . ' AND redundancy_group_from_to_host_state.soft_state = 0) THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 0 THEN 1 ELSE 0 END)'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 0 THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service.id',
+                    'from.to.service.state.soft_state',
+                    'from.to.host_id',
+                    'from.to.host.state.soft_state',
+                ]
             ),
             'nodes_problem_handled' => new Expression(
-                'SUM(CASE WHEN'
-                . ' (redundancy_group_from_to_service.id IS NOT NULL'
-                . ' AND redundancy_group_from_to_service_state.soft_state = 2'
-                . ' AND (redundancy_group_from_to_service_state.is_handled = \'y\''
-                . ' OR redundancy_group_from_to_service_state.is_reachable = \'n\'))'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
-                . ' AND redundancy_group_from_to_host_state.soft_state = 1'
-                . ' AND (redundancy_group_from_to_host_state.is_handled = \'y\''
-                . ' OR redundancy_group_from_to_host_state.is_reachable = \'n\')) THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 2 AND (%s = \'y\' OR %s = \'n\') THEN 1 ELSE 0 END)'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 1 AND (%s = \'y\' OR %s = \'n\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable',
+                    'from.to.host_id',
+                    'from.to.host.state.soft_state',
+                    'from.to.host.state.is_handled',
+                    'from.to.host.state.is_reachable',
+                ]
             ),
             'nodes_problem_unhandled' => new Expression(
-                'SUM(CASE WHEN'
-                . ' (redundancy_group_from_to_service.id IS NOT NULL'
-                . ' AND redundancy_group_from_to_service_state.soft_state = 2'
-                . ' AND (redundancy_group_from_to_service_state.is_handled = \'n\''
-                . ' AND redundancy_group_from_to_service_state.is_reachable = \'y\'))'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
-                . ' AND redundancy_group_from_to_host_state.soft_state = 1'
-                . ' AND (redundancy_group_from_to_host_state.is_handled = \'n\''
-                . ' AND redundancy_group_from_to_host_state.is_reachable = \'y\')) THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 2 AND (%s = \'n\' AND %s = \'y\') THEN 1 ELSE 0 END)'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 1 AND (%s = \'n\' AND %s = \'y\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable',
+                    'from.to.host_id',
+                    'from.to.host.state.soft_state',
+                    'from.to.host.state.is_handled',
+                    'from.to.host.state.is_reachable',
+                ]
             ),
             'nodes_pending' => new Expression(
-                'SUM(CASE WHEN (redundancy_group_from_to_service.id IS NOT NULL'
-                . ' AND redundancy_group_from_to_service_state.soft_state = 99)'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL'
-                . ' AND redundancy_group_from_to_host_state.soft_state = 99) THEN 1 ELSE 0 END)'
-            ),
-            'nodes_total' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_service.id IS NOT NULL'
-                . ' OR'
-                . ' (redundancy_group_from_to_host.id IS NOT NULL AND redundancy_group_from_to_service.id IS NULL)'
-                . ' THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 99 THEN 1 ELSE 0 END)'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 99 THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service.id',
+                    'from.to.service.state.soft_state',
+                    'from.to.host_id',
+                    'from.to.host.state.soft_state',
+                ]
             ),
             'nodes_unknown_handled' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_service_state.soft_state = 3'
-                . ' AND (redundancy_group_from_to_service_state.is_handled = \'y\''
-                . ' OR redundancy_group_from_to_service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 3 AND (%s = \'y\' OR %s = \'n\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable'
+                ]
             ),
             'nodes_unknown_unhandled' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_service_state.soft_state = 3'
-                . ' AND redundancy_group_from_to_service_state.is_handled = \'n\''
-                . ' AND redundancy_group_from_to_service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 3 AND (%s = \'n\' AND %s = \'y\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable'
+                ]
             ),
             'nodes_warning_handled' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_service_state.soft_state = 1'
-                . ' AND (redundancy_group_from_to_service_state.is_handled = \'y\''
-                . ' OR redundancy_group_from_to_service_state.is_reachable = \'n\') THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 1 AND (%s = \'y\' OR %s = \'n\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable'
+                ]
             ),
             'nodes_warning_unhandled' => new Expression(
-                'SUM(CASE WHEN redundancy_group_from_to_service_state.soft_state = 1'
-                . ' AND redundancy_group_from_to_service_state.is_handled = \'n\''
-                . ' AND redundancy_group_from_to_service_state.is_reachable = \'y\' THEN 1 ELSE 0 END)'
+                'SUM(CASE'
+                . ' WHEN %s IS NOT NULL THEN (CASE WHEN %s = 1 AND (%s = \'n\' AND %s = \'y\') THEN 1 ELSE 0 END)'
+                . ' ELSE 0 END)',
+                [
+                    'from.to.service_id',
+                    'from.to.service.state.soft_state',
+                    'from.to.service.state.is_handled',
+                    'from.to.service.state.is_reachable'
+                ]
             )
         ];
     }
