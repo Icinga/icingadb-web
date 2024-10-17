@@ -47,13 +47,25 @@ trait DetailAssembler
             $state = $this->getObject()->state;
         }
 
-        if ($state->soft_state === null && $state->output === null) {
+        if (! $this->getObject() instanceof RedundancyGroup && $state->output === null && $state->soft_state === null) {
             $caption->addHtml(Text::create($this->translate('Waiting for Icinga DB to synchronize the state.')));
         } else {
             if (empty($state->output)) {
                 $pluginOutput = new EmptyState($this->translate('Output unavailable.'));
             } else {
-                $pluginOutput = new PluginOutputContainer(PluginOutput::fromObject($this->getObject()));
+                //TODO: in case of RedundancyGroup, the group must provide checkcommand_name column as the host/service
+                // The group->state must provide plugin output related information
+                // PluginOutput::fromObject must support RedundancyGroup as well.
+
+                // this way we can generalize the code in this trait
+
+
+                $output = $this->getObject() instanceof RedundancyGroup
+                    ? (new PluginOutput($state->output . "\n" . $state->long_output))
+                        ->setCommandName($state->checkcommand_name)
+                    : PluginOutput::fromObject($this->getObject());
+
+                $pluginOutput = new PluginOutputContainer($output);
             }
 
             $caption->addHtml($pluginOutput);
@@ -63,7 +75,7 @@ trait DetailAssembler
     protected function assembleTitle(BaseHtmlElement $title): void
     {
         $state = $this->getObject()->state;
-
+        //TODO: to generalize this, make some methods abstract, like getStateElement,...
         $title->addHtml(Html::sprintf(
             $this->translate('%s is %s', '<hostname> is <state-text>'),
             $this->createSubject(),
@@ -106,13 +118,18 @@ trait DetailAssembler
         $state = $this->getObject()->state;
 
         $stateBall = new StateBall($state->getStateText(), $this->getStateBallSize());
-        $stateBall->add($state->getIcon());
+
+        if (method_exists($state, 'getIcon')) {
+            $stateBall->add($state->getIcon());
+        }
+
+        //TODO: generalize this, missing redundancy group
         if ($state->is_problem && ($state->is_handled || ! $state->is_reachable)) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
 
         $visual->addHtml($stateBall);
-        if ($state->state_type === 'soft') {
+        if (! $this->getObject() instanceof RedundancyGroup && $state->state_type === 'soft') {
             $visual->addHtml(
                 new CheckAttempt((int) $state->check_attempt, (int) $this->item->max_check_attempts)
             );
@@ -123,7 +140,10 @@ trait DetailAssembler
     {
         $state = $this->getObject()->state;
         $since = null;
-        if ($state->is_overdue) {
+
+        if ($this->getObject() instanceof RedundancyGroup) {
+            $since = new TimeSince($state->last_state_change->getTimestamp());
+        } elseif ($state->is_overdue) {
             $since = new TimeSince($state->next_update->getTimestamp());
             $since->prepend($this->translate('Overdue') . ' ');
             $since->prependHtml(new Icon(Icons::WARNING));
@@ -136,8 +156,9 @@ trait DetailAssembler
 
     protected function assembleIconImage(BaseHtmlElement $iconImage): void
     {
-        if (isset($this->item->icon_image->icon_image)) {
-            $iconImage->addHtml(new IconImage($this->item->icon_image->icon_image, $this->item->icon_image_alt));
+        $object = $this->getObject();
+        if (isset($object->icon_image->icon_image)) {
+            $iconImage->addHtml(new IconImage($object->icon_image->icon_image, $object->icon_image_alt));
         } else {
             $iconImage->addAttributes(['class' => 'placeholder']);
         }

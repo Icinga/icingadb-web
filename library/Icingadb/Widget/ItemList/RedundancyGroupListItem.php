@@ -20,7 +20,6 @@ use ipl\Web\Widget\StateBall;
 use ipl\Html\HtmlElement;
 use ipl\Html\Attributes;
 use ipl\Html\Text;
-use ipl\Web\Widget\TimeSince;
 
 /**
  * Redundancy group list item of a root problem list. Represents one database row.
@@ -63,11 +62,6 @@ class RedundancyGroupListItem extends StateListItem
     protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
-    }
-
-    protected function createTimestamp(): BaseHtmlElement
-    {
-        return new TimeSince($this->state->last_state_change->getTimestamp());
     }
 
     protected function createSubject(): BaseHtmlElement
