@@ -10,6 +10,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Sql\Expression;
 
 /**
  * Dependency node model.
@@ -18,6 +19,10 @@ use ipl\Orm\Relations;
  * @property ?string $host_id
  * @property ?string $service_id
  * @property ?string $redundancy_group_id
+ * @property ?string $name
+ * @property ?int $severity
+ * @property ?int $state
+ * @property ?int $last_state_change
  *
  * @property (?Host)|Query $host
  * @property (?Service)|Query $service
@@ -43,8 +48,56 @@ class DependencyNode extends Model
             'id',
             'host_id',
             'service_id',
-            'redundancy_group_id'
+            'redundancy_group_id',
+            'name' => new Expression(
+                'CASE WHEN %s IS NOT NULL THEN %s WHEN %s IS NOT NULL THEN %s ELSE %s END',
+                ['service_id', 'service.display_name', 'host_id', 'host.display_name', 'redundancy_group.display_name']
+            ),
+            'severity' => new Expression(
+                'CASE WHEN %s IS NOT NULL THEN %s WHEN %s IS NOT NULL THEN %s ELSE %s END',
+                [
+                    'service_id',
+                    'service.state.severity',
+                    'host_id',
+                    'host.state.severity',
+                    'redundancy_group.state.failed'
+                ]
+            ),
+            'state' => new Expression(
+                'CASE WHEN %s IS NOT NULL THEN %s WHEN %s IS NOT NULL THEN %s ELSE %s END',
+                [
+                    'service_id',
+                    'service.state.soft_state',
+                    'host_id',
+                    'host.state.soft_state',
+                    'redundancy_group.state.failed'
+                ]
+            ),
+            'last_state_change' => new Expression(
+                'CASE WHEN %s IS NOT NULL THEN %s WHEN %s IS NOT NULL THEN %s ELSE %s END',
+                [
+                    'service_id',
+                    'service.state.last_state_change',
+                    'host_id',
+                    'host.state.last_state_change',
+                    'redundancy_group.state.last_state_change'
+                ]
+            )
         ];
+    }
+
+    public function getSearchColumns(): array
+    {
+        return [
+            'host.name_ci',
+            'service.name_ci',
+            'redundancy_group.display_name'
+        ];
+    }
+
+    public function getDefaultSort(): string
+    {//TODO: this breaks some host/service detail view, having problematic_parent
+        return 'severity desc, last_state_change desc';
     }
 
     public function createBehaviors(Behaviors $behaviors): void
