@@ -50,6 +50,7 @@ class HostDetail extends ObjectDetail
             401 => $this->createDowntimes(),
             500 => $this->createGroups(),
             501 => $this->createNotifications(),
+            510 => $this->createAffectedObjects(),
             600 => $this->createCheckStatistics(),
             601 => $this->createPerformanceData(),
             700 => $this->createCustomVars(),
