@@ -11,6 +11,7 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
+use ipl\Sql\Expression;
 use ipl\Web\Widget\Icon;
 
 /**
@@ -100,7 +101,7 @@ abstract class State extends Model
             'last_state_change',
             'next_check',
             'next_update',
-            'affects_children'
+            'affects_children' => new Expression("'y'")
         ];
     }
 

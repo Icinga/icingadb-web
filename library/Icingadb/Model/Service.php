@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\HasProblematicParent;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
@@ -13,6 +14,7 @@ use ipl\Orm\Defaults;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
+use ipl\Sql\Expression;
 
 /**
  * @property string $id
@@ -105,7 +107,7 @@ class Service extends Model
             'zone_id',
             'command_endpoint_name',
             'command_endpoint_id',
-            'affected_children'
+            'affected_children' => new Expression('10')
         ];
     }
 
@@ -194,6 +196,8 @@ class Service extends Model
             'zone_id',
             'command_endpoint_id'
         ]));
+
+        $behaviors->add(new HasProblematicParent());
     }
 
     public function createDefaults(Defaults $defaults)

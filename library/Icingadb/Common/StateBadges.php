@@ -4,11 +4,12 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBadge;
@@ -26,7 +27,7 @@ abstract class StateBadges extends BaseHtmlElement
     /** @var string Prefix */
     protected $prefix;
 
-    /** @var Url Badge link */
+    /** @var ?Url Badge link */
     protected $url;
 
     protected $tag = 'ul';
@@ -47,13 +48,6 @@ abstract class StateBadges extends BaseHtmlElement
     }
 
     /**
-     * Get the badge base URL
-     *
-     * @return Url
-     */
-    abstract protected function getBaseUrl(): Url;
-
-    /**
      * Get the type of the items
      *
      * @return string
@@ -68,13 +62,28 @@ abstract class StateBadges extends BaseHtmlElement
     abstract protected function getPrefix(): string;
 
     /**
+     * Get the badge base URL
+     *
+     * @return ?Url
+     */
+    protected function getBaseUrl(): ?Url
+    {
+        return null;
+    }
+
+    /**
      * Get the integer of the given state text
      *
      * @param string $state
      *
      * @return int
+     *
+     * @throws InvalidArgumentException if the given state is not valid
      */
-    abstract protected function getStateInt(string $state): int;
+    protected function getStateInt(string $state): int
+    {
+        throw new InvalidArgumentException('%s is not a valid state', $state);
+    }
 
     /**
      * Get the badge URL
@@ -135,15 +144,21 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return ?BaseHtmlElement
      */
-    protected function createBadge(string $state)
+    protected function createBadge(string $state): ?BaseHtmlElement
     {
         $key = $this->prefix . "_{$state}";
 
         if (isset($this->item->$key) && $this->item->$key) {
-            return Html::tag('li', $this->createLink(
-                new StateBadge($this->item->$key, $state),
-                Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state))
-            ));
+            $stateBadge = new StateBadge($this->item->$key, $state);
+
+            if ($this->url !== null) {
+                $this->createLink(
+                    $stateBadge,
+                    Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state))
+                );
+            }
+
+            return new HtmlElement('li', null, $stateBadge);
         }
 
         return null;
@@ -156,34 +171,46 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return ?BaseHtmlElement
      */
-    protected function createGroup(string $state)
+    protected function createGroup(string $state): ?BaseHtmlElement
     {
         $content = [];
         $handledKey = $this->prefix . "_{$state}_handled";
         $unhandledKey = $this->prefix . "_{$state}_unhandled";
 
         if (isset($this->item->$unhandledKey) && $this->item->$unhandledKey) {
-            $content[] = Html::tag('li', $this->createLink(
-                new StateBadge($this->item->$unhandledKey, $state),
-                Filter::all(
-                    Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
-                    Filter::equal($this->type . '.state.is_handled', 'n'),
-                    Filter::equal($this->type . '.state.is_reachable', 'y')
-                )
-            ));
+            $unhandledStateBadge = new StateBadge($this->item->$unhandledKey, $state);
+
+            if ($this->url !== null) {
+                $unhandledStateBadge = $this->createLink(
+                    $unhandledStateBadge,
+                    Filter::all(
+                        Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
+                        Filter::equal($this->type . '.state.is_handled', 'n'),
+                        Filter::equal($this->type . '.state.is_reachable', 'y')
+                    )
+                );
+            }
+
+            $content[] = new HtmlElement('li', null, $unhandledStateBadge);
         }
 
         if (isset($this->item->$handledKey) && $this->item->$handledKey) {
-            $content[] = Html::tag('li', $this->createLink(
-                new StateBadge($this->item->$handledKey, $state, true),
-                Filter::all(
-                    Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
-                    Filter::any(
-                        Filter::equal($this->type . '.state.is_handled', 'y'),
-                        Filter::equal($this->type . '.state.is_reachable', 'n')
+            $handledStateBadge = new StateBadge($this->item->$handledKey, $state, true);
+
+            if ($this->url !== null) {
+                $handledStateBadge = $this->createLink(
+                    $handledStateBadge,
+                    Filter::all(
+                        Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state)),
+                        Filter::any(
+                            Filter::equal($this->type . '.state.is_handled', 'y'),
+                            Filter::equal($this->type . '.state.is_reachable', 'n')
+                        )
                     )
-                )
-            ));
+                );
+            }
+
+            $content[] = new HtmlElement('li', null, $handledStateBadge);
         }
 
         if (empty($content)) {
