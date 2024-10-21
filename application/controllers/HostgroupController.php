@@ -18,7 +18,6 @@ use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Url;
 
 class HostgroupController extends Controller
 {
@@ -84,14 +83,7 @@ class HostgroupController extends Controller
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
             'name'
-        ])->setSuggestionUrl(Url::fromPath(
-            'icingadb/hostgroup/complete',
-            [
-                'name' => $this->hostgroupName,
-                '_disableLayout' => true,
-                'showCompact' => true
-            ]
-        ));
+        ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
