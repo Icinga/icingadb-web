@@ -35,43 +35,50 @@ class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
             return null;
         }
 
-        $path = 'from.';
-        $subQueryRelation = $relation !== null ? $relation . $path : $path;
-        $subQuery = $this->query->createSubQuery(new DependencyEdge(), $subQueryRelation, null, false)
-            ->limit(1)
-            ->columns([new Expression('1')]);
+        $resolver = $this->query->getResolver();
+        if ($relation !== null) {
+            $serviceTableAlias = str_replace('.', '_', $relation);
+            $column = $serviceTableAlias . "_$column";
+        } else {
+            $serviceTableAlias = $resolver->getAlias($this->query->getModel());
+        }
 
-        $subQueryAlias = $subQuery->getResolver()->getAlias($subQuery->getModel());
+        $subQueryModel = new DependencyEdge();
+        $subQuery = (new Query())
+            ->setDb($this->query->getDb())
+            ->setModel($subQueryModel)
+            ->columns([new Expression('1')])
+            ->with([
+                'from',
+                'to',
+                'dependency'
+            ])
+            ->limit(1)
+            ->filter(Filter::any(
+                Filter::equal('to.redundancy_group.state.failed', 'y'),
+                Filter::equal('dependency.state.failed', 'y')
+            ));
+
+        $subQueryResolver = $subQuery->getResolver();
+        $subQueryTarget = $subQueryResolver->resolveRelation($subQueryModel->getTableName() . '.from')->getTarget();
+        $targetForeignKey = $subQueryResolver->qualifyColumn(
+            'service_id',
+            $subQueryResolver->getAlias($subQueryTarget)
+        );
 
         $subQuery->getSelectBase()
-            ->join(
-                ['to_dependency_node' => 'dependency_node'],
-                ["to_dependency_node.id = $subQueryAlias.to_node_id"]
-            )->joinLeft(
-                ['root_dependency' => 'dependency'],
-                [ "$subQueryAlias.dependency_id = root_dependency.id"]
-            )->joinLeft(
-                ['root_dependency_state' => 'dependency_state'],
-                ['root_dependency.id = root_dependency_state.dependency_id']
-            )->joinLeft(
-                ['root_group' => 'redundancy_group'],
-                ['root_group.id = to_dependency_node.redundancy_group_id']
-            )->joinLeft(
-                ['root_group_state' => 'redundancy_group_state'],
-                ['root_group_state.redundancy_group_id = root_group.id']
-            )->where(
-                new Expression("root_dependency_state.failed = 'y' OR root_group_state.failed = 'y'")
-            )->where($subQueryAlias . '_from.service_id = service.id');
+            ->where("$targetForeignKey = {$resolver->qualifyColumn('id', $serviceTableAlias)}");
 
-        $column = $relation !== null ? str_replace('.', '_', $relation) . "_$column" : $column;
-
-        $alias = $this->query->getDb()->quoteIdentifier([$column]);
-
-        list($select, $values) = $this->query->getDb()
+        [$select, $values] = $this->query->getDb()
             ->getQueryBuilder()
             ->assembleSelect($subQuery->assembleSelect());
 
-        return new AliasedExpression($alias, "($select)", null, ...$values);
+        return new AliasedExpression(
+            $this->query->getDb()->quoteIdentifier([$column]),
+            "($select)",
+            null,
+            ...$values
+        );
     }
 
     public function isSelectableColumn(string $name): bool
