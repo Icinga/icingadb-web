@@ -11,7 +11,7 @@ use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
 /**
- * Redundancy group's summary (The nodes could only host and service)
+ * Redundancy group's summary
  *
  * @property int $nodes_total
  * @property int $nodes_ok
@@ -143,13 +143,7 @@ class RedundancyGroupSummary extends RedundancyGroup
 
     public static function on(Connection $db): Query
     {
-        $q = parent::on($db)->with([
-            'from',
-            'from.to.host',
-            'from.to.host.state',
-            'from.to.service',
-            'from.to.service.state'
-        ]);
+        $q = parent::on($db);
 
         /** @var static $m */
         $m = $q->getModel();
@@ -157,21 +151,7 @@ class RedundancyGroupSummary extends RedundancyGroup
 
         $q->on($q::ON_SELECT_ASSEMBLED, function (Select $select) use ($q) {
             $model = $q->getModel();
-
             $groupBy = $q->getResolver()->qualifyColumnsAndAliases((array) $model->getKeyName(), $model, false);
-
-            // For PostgreSQL, ALL non-aggregate SELECT columns must appear in the GROUP BY clause:
-            if ($q->getDb()->getAdapter() instanceof Pgsql) {
-                /**
-                 * Ignore Expressions, i.e. aggregate functions {@see getColumns()},
-                 * which do not need to be added to the GROUP BY.
-                 */
-                $candidates = array_filter($select->getColumns(), 'is_string');
-                // Remove already considered columns for the GROUP BY, i.e. the primary key.
-                $candidates = array_diff_assoc($candidates, $groupBy);
-                $groupBy = array_merge($groupBy, $candidates);
-            }
-
             $select->groupBy($groupBy);
         });
 

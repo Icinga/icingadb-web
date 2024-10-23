@@ -1,20 +1,19 @@
 .redundancy-group-list-item {
   .caption {
     display: flex;
-    justify-content: space-between;
+    align-items: baseline;
 
     .plugin-output {
+      // Allows the plugin output width to grow or shrink based on the width of object statistics
+      flex: 1 1 auto;
+      // Since caption is not -webkit-box anymore, its line-clamp rule will not be inherited
+      // and hence applied here directly
       .line-clamp(2);
     }
 
     .object-statistics {
-      ul {
-        display: flex;
-      }
-
-      .state-badges {
-        font-size: 0.75em;
-      }
+      // Prevents the wrapping effect caused by changing caption to a flexbox
+      flex: 0 0 auto;
     }
   }
 }

@@ -23,6 +23,7 @@ use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
@@ -375,7 +376,7 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createNotifications(): array
     {
-        list($users, $usergroups) = $this->getUsersAndUsergroups();
+        [$users, $usergroups] = $this->getUsersAndUsergroups();
 
         $userList = new TagList();
         $usergroupList = new TagList();
@@ -605,11 +606,16 @@ class ObjectDetail extends BaseHtmlElement
         }
     }
 
+    /**
+     * Create a list of root problems of the object that is unreachable because of dependency failure
+     *
+     * @return ?BaseHtmlElement[]
+     */
     protected function createRootProblems(): ?array
     {
         // If a dependency has failed, then the children are not reachable. Hence, the root problems should not be shown
-        // if the object is not reachable. And in case of a service, since, it may be also be unreachable because of its
-        // host being down, only show its root problems if they exist.
+        // if the object is reachable. And in case of a service, since, it may be also be unreachable because of its
+        // host being down, only show its root problems if it's really caused by a dependency failure.
         if (
             $this->object->state->is_reachable
             || ($this->object instanceof Service && ! $this->object->has_problematic_parent)
@@ -631,15 +637,15 @@ class ObjectDetail extends BaseHtmlElement
                 'service.state.last_comment',
                 'service.host',
                 'service.host.state'
-            ])->orderBy([
-                'host.state.severity'                       => SORT_DESC,
-                'host.state.last_state_change'              => SORT_DESC,
-                'service.state.severity'                    => SORT_DESC,
-                'service.state.last_state_change'           => SORT_DESC,
-                'service.host.state.severity'               => SORT_DESC,
-                'service.host.state.last_state_change'      => SORT_DESC,
-                'redundancy_group.state.last_state_change'  => SORT_DESC
-            ]);
+            ])
+            ->setResultSetClass(VolatileStateResults::class)
+            ->orderBy([
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
 
         $this->applyRestrictions($rootProblems);
 
