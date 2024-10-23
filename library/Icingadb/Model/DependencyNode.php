@@ -10,6 +10,8 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Sql\Connection;
+use ipl\Sql\Select;
 
 /**
  * Dependency node model.
@@ -27,6 +29,43 @@ use ipl\Orm\Relations;
  */
 class DependencyNode extends Model
 {
+    public static function on(Connection $db): Query
+    {
+        $query = parent::on($db);
+
+        //TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031
+        // is fixed
+        $query->on(Query::ON_SELECT_ASSEMBLED, function (Select $select) {
+            $where = $select->getWhere();
+            $filter = 'dependency_node.id IN (?)';
+            if (! isset($where[1][0][1][0][1][$filter])) {
+                return;
+            }
+
+            $subQuery = $where[1][0][1][0][1][$filter];
+            $select->resetWhere();
+
+            $joins = $subQuery->getJoin();
+            $subQuery->resetJoin();
+
+            foreach ($joins as $join) {
+                $condition = $join[2];
+                if ($condition[1][0] === 'sub_host_dependency_node.host_id = sub_host.id') {
+                    $condition[1][0] = sprintf(
+                        '%s AND sub_host_dependency_node.service_id IS NULL',
+                        $condition[1][0]
+                    );
+                }
+
+                $subQuery->join($join[1], $condition);
+            }
+
+            $select->where([$filter => $subQuery]);
+        });
+
+        return $query;
+    }
+
     public function getTableName(): string
     {
         return 'dependency_node';
