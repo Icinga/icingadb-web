@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
-use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
@@ -34,6 +33,8 @@ class DependencyNode extends Model
     {
         $query = parent::on($db);
 
+        //TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031
+        // is fixed
         $query->on(Query::ON_SELECT_ASSEMBLED, function (Select $select) {
             $where = $select->getWhere();
             $filter = 'dependency_node.id IN (?)';
