@@ -666,6 +666,7 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         $affectedObjects = DependencyNode::on($this->getDb())
+            ->limit(5)
             ->with([
                 'redundancy_group',
                 'redundancy_group.state',
@@ -680,67 +681,17 @@ class ObjectDetail extends BaseHtmlElement
                 'service.host',
                 'service.host.state'
             ])->orderBy([
-                'host.state.severity'                       => SORT_DESC,
-                'host.state.last_state_change'              => SORT_DESC,
-                'service.state.severity'                    => SORT_DESC,
-                'service.state.last_state_change'           => SORT_DESC,
-                'service.host.state.severity'               => SORT_DESC,
-                'service.host.state.last_state_change'      => SORT_DESC,
-                'redundancy_group.state.last_state_change'  => SORT_DESC
-            ]);
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
 
         if ($this->object instanceof Host) {
-            $affectedObjects
-                ->filter(Filter::equal('parent.host.id', $this->object->id))
-                //TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031
-                // is fixed
-                ->on($affectedObjects::ON_SELECT_ASSEMBLED, function (Select $select) {
-                    $subQuery = $select->getWhere()[1][0][1][0][1]['dependency_node.id IN (?)'];
-                    $select->resetWhere();
-
-                    $joins = $subQuery->getJoin();
-                    $subQuery->resetJoin();
-
-                    foreach ($joins as $join) {
-                        $condition = $join[2];
-                        if ($condition[1][0] === 'sub_host_dependency_node.host_id = sub_host.id') {
-                            $condition[1][0] = sprintf(
-                                '%s AND sub_host_dependency_node.service_id IS NULL',
-                                $condition[1][0]
-                            );
-                        }
-
-                        $subQuery->join($join[1], $condition);
-                    }
-
-                    $select->where(['dependency_node.id IN (?)' => $subQuery]);
-                });
+            $affectedObjects->filter(Filter::equal('parent.host.id', $this->object->id));
         } else {
-            $affectedObjects
-                ->filter(Filter::equal('parent.service.id', $this->object->id))
-                //TODO: only workaround, remove once https://github.com/Icinga/ipl-orm/issues/76#issuecomment-2370629031
-                // is fixed
-                ->on($affectedObjects::ON_SELECT_ASSEMBLED, function (Select $select) {
-                    $subQuery = $select->getWhere()[1][0][1][0][1]['dependency_node.id IN (?)'];
-                    $select->resetWhere();
-
-                    $joins = $subQuery->getJoin();
-                    $subQuery->resetJoin();
-
-                    foreach ($joins as $join) {
-                        $condition = $join[2];
-                        if ($condition[1][0] === 'sub_service_dependency_node.service_id = sub_service.id') {
-                            $condition[1][0] = sprintf(
-                                '%s AND sub_service_dependency_node.host_id = sub_service.host_id',
-                                $condition[1][0]
-                            );
-                        }
-
-                        $subQuery->join($join[1], $condition);
-                    }
-
-                    $select->where(['dependency_node.id IN (?)' => $subQuery]);
-                });
+            $affectedObjects->filter(Filter::equal('parent.service.id', $this->object->id));
         }
 
         $this->applyRestrictions($affectedObjects);
