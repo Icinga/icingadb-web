@@ -21,6 +21,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
@@ -653,6 +654,58 @@ class ObjectDetail extends BaseHtmlElement
             HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
             (new DependencyNodeList($rootProblems))->setEmptyStateMessage(
                 t('You are not authorized to view the root problematic objects causing this object to be unreachable.')
+            )
+        ];
+    }
+
+    /**
+     * Create a list of objects affected by the object that is a part of failed dependency
+     *
+     * @return ?BaseHtmlElement[]
+     */
+    protected function createAffectedObjects(): ?array
+    {
+        if (! $this->object->state->affects_children) {
+            return null;
+        }
+
+        $affectedObjects = DependencyNode::on($this->getDb())
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])
+            ->setResultSetClass(VolatileStateResults::class)
+            ->limit(5)
+            ->orderBy([
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
+
+        if ($this->object instanceof Host) {
+            $affectedObjects->filter(Filter::equal('parent.host.id', $this->object->id));
+        } else {
+            $affectedObjects->filter(Filter::equal('parent.service.id', $this->object->id));
+        }
+
+        $this->applyRestrictions($affectedObjects);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
+            (new DependencyNodeList($affectedObjects))->setEmptyStateMessage(
+                t("You are not authorized to view the affected dependent objects because of this object's state.")
             )
         ];
     }
