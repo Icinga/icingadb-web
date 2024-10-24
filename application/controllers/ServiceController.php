@@ -38,13 +38,15 @@ class ServiceController extends Controller
         $name = $this->params->getRequired('name');
         $hostName = $this->params->getRequired('host.name');
 
-        $query = Service::on($this->getDb())->with([
-            'state',
-            'icon_image',
-            'host',
-            'host.state',
-            'timeperiod'
-        ]);
+        $query = Service::on($this->getDb())
+            ->withColumns(['has_problematic_parent'])
+            ->with([
+                'state',
+                'icon_image',
+                'host',
+                'host.state',
+                'timeperiod'
+            ]);
         $query
             ->setResultSetClass(VolatileStateResults::class)
             ->filter(Filter::all(
