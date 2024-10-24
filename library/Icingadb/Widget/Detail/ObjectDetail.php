@@ -651,7 +651,9 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
-            new DependencyNodeList($rootProblems)
+            (new DependencyNodeList($rootProblems))->setEmptyStateMessage(
+                t('You are not authorized to view the root problematic objects causing this object to be unreachable.')
+            )
         ];
     }
 }
