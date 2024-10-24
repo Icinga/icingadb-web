@@ -704,7 +704,9 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
-            new DependencyNodeList($affectedObjects)
+            (new DependencyNodeList($affectedObjects))->setEmptyStateMessage(
+                t("You are not authorized to view the affected dependent objects because of this object's state.")
+            )
         ];
     }
 }
