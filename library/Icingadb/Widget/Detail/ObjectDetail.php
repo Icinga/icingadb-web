@@ -38,7 +38,6 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Sql\Select;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
@@ -659,14 +658,18 @@ class ObjectDetail extends BaseHtmlElement
         ];
     }
 
-    protected function createAffectedObjects()
+    /**
+     * Create a list of objects affected by the object that is a part of failed dependency
+     *
+     * @return ?BaseHtmlElement[]
+     */
+    protected function createAffectedObjects(): ?array
     {
         if (! $this->object->state->affects_children) {
             return null;
         }
 
         $affectedObjects = DependencyNode::on($this->getDb())
-            ->limit(5)
             ->with([
                 'redundancy_group',
                 'redundancy_group.state',
@@ -680,7 +683,10 @@ class ObjectDetail extends BaseHtmlElement
                 'service.state.last_comment',
                 'service.host',
                 'service.host.state'
-            ])->orderBy([
+            ])
+            ->setResultSetClass(VolatileStateResults::class)
+            ->limit(5)
+            ->orderBy([
                 'host.state.severity',
                 'host.state.last_state_change',
                 'service.state.severity',
