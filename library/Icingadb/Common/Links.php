@@ -8,7 +8,7 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
@@ -104,6 +104,11 @@ abstract class Links
     public static function services(): Url
     {
         return Url::fromPath('icingadb/services');
+    }
+
+    public static function redundancyGroup(RedundancyGroup $group): Url
+    {
+        return Url::fromPath('icingadb/redundancygroup', ['id' => bin2hex($group->id)]);
     }
 
     public static function toggleHostsFeatures(): Url
