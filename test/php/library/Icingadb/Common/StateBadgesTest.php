@@ -9,6 +9,7 @@ use Icinga\Web\UrlParams;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Web\Widget\Link;
 use PHPUnit\Framework\TestCase;
 
 class StateBadgesTest extends TestCase
@@ -21,7 +22,7 @@ class StateBadgesTest extends TestCase
                 Filter::equal('bar', 'foo')
             ));
 
-        $link = $stateBadges->createLink('test', Filter::equal('rab', 'oof'));
+        $link = $stateBadges->generateLink('test', Filter::equal('rab', 'oof'));
 
         $this->assertSame(
             'rab=oof&(foo=bar|bar=foo)',
@@ -80,6 +81,11 @@ class StateBadgesTest extends TestCase
             protected function getStateInt(string $state): int
             {
                 return 0;
+            }
+
+            public function generateLink($content, Filter\Rule $filter = null): Link
+            {
+                return parent::createLink($content, $filter);
             }
         };
     }
