@@ -32,7 +32,7 @@ use ipl\Stdlib\Filter;
  * @property (?RedundancyGroup)|Query $redundancy_group
  * @property (?Dependency)|Query $dependency
  */
-class UnreachableParent extends Model
+class UnreachableParent extends DependencyNode
 {
     public function getTableName(): string
     {

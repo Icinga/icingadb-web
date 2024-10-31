@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Redis;
 use Icinga\Application\Benchmark;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Query;
@@ -108,7 +109,19 @@ class VolatileStateResults extends ResultSet
         $states = [];
         $hostStates = [];
         foreach ($rows as $row) {
-            if ($type === null) {
+            if ($row instanceof DependencyNode) {
+                if ($row->redundancy_group_id !== null) {
+                    continue;
+                } elseif ($row->service_id !== null) {
+                    $type = 'service';
+                    $row = $row->service;
+                } else {
+                    $type = 'host';
+                    $row = $row->host;
+                }
+
+                $behaviors = $this->resolver->getBehaviors($row->state);
+            } elseif ($type === null) {
                 $behaviors = $this->resolver->getBehaviors($row->state);
 
                 switch (true) {
