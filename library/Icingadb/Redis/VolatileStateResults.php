@@ -110,7 +110,7 @@ class VolatileStateResults extends ResultSet
         $showSourceGranted = $this->getAuth()->hasPermission('icingadb/object/show-source');
 
         $getKeysAndBehaviors = function (State $state): array {
-            return [$state->getColumns(), $this->resolver->getBehaviors($state)];
+            return [$state->getColumns(), $this->resolver->getBehaviors($state), $state->getColumnDefinitions()];
         };
 
         $states = [];
@@ -141,7 +141,7 @@ class VolatileStateResults extends ResultSet
             $states[$type][bin2hex($row->id)] = $row->state;
 
             if (! isset($states[$type]['keys'])) {
-                [$keys, $behaviors] = $getKeysAndBehaviors($row->state);
+                [$keys, $behaviors, $definitions] = $getKeysAndBehaviors($row->state);
 
                 if (! $showSourceGranted) {
                     $keys = array_diff($keys, ['check_commandline']);
@@ -149,16 +149,18 @@ class VolatileStateResults extends ResultSet
 
                 $states[$type]['keys'] = $keys;
                 $states[$type]['behaviors'] = $behaviors;
+                $states[$type]['definitions'] = $definitions;
             }
 
             if ($type === self::TYPE_SERVICE && $row->host instanceof Host && isset($row->host->id)) {
                 $states[self::TYPE_HOST][bin2hex($row->host->id)] = $row->host->state;
 
                 if (! isset($states[self::TYPE_HOST]['keys'])) {
-                    [$keys, $behaviors] = $getKeysAndBehaviors($row->host->state);
+                    [$keys, $behaviors, $definitions] = $getKeysAndBehaviors($row->host->state);
 
                     $states[self::TYPE_HOST]['keys'] = $keys;
                     $states[self::TYPE_HOST]['behaviors'] = $behaviors;
+                    $states[self::TYPE_HOST]['definitions'] = $definitions;
                 }
             }
         }
@@ -184,8 +186,9 @@ class VolatileStateResults extends ResultSet
     {
         $keys = $states['keys'];
         $behaviors = $states['behaviors'];
+        $definitions = $states['definitions'];
 
-        unset($states['keys'], $states['behaviors']);
+        unset($states['keys'], $states['behaviors'], $states['definitions']);
 
         $results = $type === self::TYPE_SERVICE
             ? IcingaRedis::fetchServiceState(array_keys($states), $keys)
@@ -193,7 +196,11 @@ class VolatileStateResults extends ResultSet
 
         foreach ($results as $id => $data) {
             foreach ($data as $key => $value) {
-                $data[$key] = $behaviors->retrieveProperty($value, $key);
+                if ($value === null && ($definitions[$key]['nullable'] ?? true) === false) {
+                    unset($data[$key]);
+                } else {
+                    $data[$key] = $behaviors->retrieveProperty($value, $key);
+                }
             }
 
             $states[$id]->setProperties($data);
