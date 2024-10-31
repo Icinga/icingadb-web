@@ -25,40 +25,39 @@ class HostState extends State
 
     public function getColumnDefinitions()
     {
-        $columns = [
-            'environment_id'                => t('Environment Id'),
-            'state_type'                    => t('Host State Type'),
-            'soft_state'                    => t('Host Soft State'),
-            'hard_state'                    => t('Host Hard State'),
-            'previous_soft_state'           => t('Host Previous Soft State'),
-            'previous_hard_state'           => t('Host Previous Hard State'),
-            'check_attempt'                 => t('Host Check Attempt No.'),
-            'severity'                      => t('Host State Severity'),
-            'output'                        => t('Host Output'),
-            'long_output'                   => t('Host Long Output'),
-            'performance_data'              => t('Host Performance Data'),
-            'normalized_performance_data'   => t('Host Normalized Performance Data'),
-            'check_commandline'             => t('Host Check Commandline'),
-            'is_problem'                    => t('Host Has Problem'),
-            'is_handled'                    => t('Host Is Handled'),
-            'is_reachable'                  => t('Host Is Reachable'),
-            'is_flapping'                   => t('Host Is Flapping'),
-            'is_overdue'                    => t('Host Check Is Overdue'),
-            'is_acknowledged'               => t('Host Is Acknowledged'),
-            'acknowledgement_comment_id'    => t('Acknowledgement Comment Id'),
-            'in_downtime'                   => t('Host In Downtime'),
-            'execution_time'                => t('Host Check Execution Time'),
-            'latency'                       => t('Host Check Latency'),
-            'check_timeout'                 => t('Host Check Timeout'),
-            'check_source'                  => t('Host Check Source'),
-            'last_update'                   => t('Host Last Update'),
-            'last_state_change'             => t('Host Last State Change'),
-            'next_check'                    => t('Host Next Check'),
-            'next_update'                   => t('Host Next Update')
-        ];
+        $columns = array_merge_recursive(parent::getColumnDefinitions(), [
+            'state_type'                    => ['label' => t('Host State Type')],
+            'soft_state'                    => ['label' => t('Host Soft State')],
+            'hard_state'                    => ['label' => t('Host Hard State')],
+            'previous_soft_state'           => ['label' => t('Host Previous Soft State')],
+            'previous_hard_state'           => ['label' => t('Host Previous Hard State')],
+            'check_attempt'                 => ['label' => t('Host Check Attempt No.')],
+            'severity'                      => ['label' => t('Host State Severity')],
+            'output'                        => ['label' => t('Host Output')],
+            'long_output'                   => ['label' => t('Host Long Output')],
+            'performance_data'              => ['label' => t('Host Performance Data')],
+            'normalized_performance_data'   => ['label' => t('Host Normalized Performance Data')],
+            'check_commandline'             => ['label' => t('Host Check Commandline')],
+            'is_problem'                    => ['label' => t('Host Has Problem')],
+            'is_handled'                    => ['label' => t('Host Is Handled')],
+            'is_reachable'                  => ['label' => t('Host Is Reachable')],
+            'is_flapping'                   => ['label' => t('Host Is Flapping')],
+            'is_overdue'                    => ['label' => t('Host Check Is Overdue')],
+            'is_acknowledged'               => ['label' => t('Host Is Acknowledged')],
+            'in_downtime'                   => ['label' => t('Host In Downtime')],
+            'execution_time'                => ['label' => t('Host Check Execution Time')],
+            'latency'                       => ['label' => t('Host Check Latency')],
+            'check_timeout'                 => ['label' => t('Host Check Timeout')],
+            'check_source'                  => ['label' => t('Host Check Source')],
+            'scheduling_source'             => ['label' => t('Host Scheduling Source')],
+            'last_update'                   => ['label' => t('Host Last Update')],
+            'last_state_change'             => ['label' => t('Host Last State Change')],
+            'next_check'                    => ['label' => t('Host Next Check')],
+            'next_update'                   => ['label' => t('Host Next Update')]
+        ]);
 
         if (Backend::supportsDependencies()) {
-            $columns['affects_children'] = t('Host Affects Children');
+            $columns['affects_children'] = ['label' => t('Host Affects Children'), 'nullable' => false];
         }
 
         return $columns;

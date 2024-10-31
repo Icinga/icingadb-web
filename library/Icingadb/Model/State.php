@@ -110,6 +110,52 @@ abstract class State extends Model
         return $columns;
     }
 
+    public function getColumnDefinitions()
+    {
+        return [
+            'environment_id'                => [
+                'label'    => t('Environment Id'),
+                'nullable' => false
+            ],
+            'state_type'                    => ['nullable' => false],
+            'soft_state'                    => ['nullable' => false],
+            'hard_state'                    => ['nullable' => false],
+            'previous_soft_state'           => ['nullable' => false],
+            'previous_hard_state'           => ['nullable' => false],
+            'check_attempt'                 => ['nullable' => false],
+            'severity'                      => ['nullable' => false],
+            'output'                        => ['nullable' => true],
+            'long_output'                   => ['nullable' => true],
+            'performance_data'              => ['nullable' => true],
+            'normalized_performance_data'   => ['nullable' => true],
+            'check_commandline'             => ['nullable' => true],
+            'is_problem'                    => ['nullable' => false],
+            'is_handled'                    => ['nullable' => false],
+            'is_reachable'                  => ['nullable' => false],
+            'is_flapping'                   => ['nullable' => false],
+            'is_overdue'                    => ['nullable' => false],
+            'is_acknowledged'               => ['nullable' => false],
+            'acknowledgement_comment_id'    => [
+                'label'    => t('Acknowledgement Comment Id'),
+                'nullable' => true
+            ],
+            'last_comment_id'               => [
+                'label'    => t('Last Comment Id'),
+                'nullable' => true
+            ],
+            'in_downtime'                   => ['nullable' => false],
+            'execution_time'                => ['nullable' => true],
+            'latency'                       => ['nullable' => true],
+            'check_timeout'                 => ['nullable' => true],
+            'check_source'                  => ['nullable' => true],
+            'scheduling_source'             => ['nullable' => true],
+            'last_update'                   => ['nullable' => true],
+            'last_state_change'             => ['nullable' => false],
+            'next_check'                    => ['nullable' => false],
+            'next_update'                   => ['nullable' => false],
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new BoolCast([
