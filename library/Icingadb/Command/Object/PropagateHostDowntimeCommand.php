@@ -6,15 +6,12 @@ namespace Icinga\Module\Icingadb\Command\Object;
 
 /**
  * Schedule and propagate host downtime
+ *
+ * @deprecated Use {@see ScheduleDowntimeCommand} instead
  */
 class PropagateHostDowntimeCommand extends ScheduleHostDowntimeCommand
 {
-    /**
-     * Whether the downtime for child hosts are all set to be triggered by this' host downtime
-     *
-     * @var bool
-     */
-    protected $triggered = false;
+    protected $childOption = ScheduleDowntimeCommand::SCHEDULE_CHILDREN;
 
     /**
      * Set whether the downtime for child hosts are all set to be triggered by this' host downtime
@@ -25,9 +22,11 @@ class PropagateHostDowntimeCommand extends ScheduleHostDowntimeCommand
      */
     public function setTriggered(bool $triggered = true): self
     {
-        $this->triggered = $triggered;
-
-        return $this;
+        return $this->setChildOption(
+            $triggered
+            ? ScheduleDowntimeCommand::TRIGGER_CHILDREN
+            : ScheduleDowntimeCommand::SCHEDULE_CHILDREN
+        );
     }
 
     /**
@@ -37,6 +36,6 @@ class PropagateHostDowntimeCommand extends ScheduleHostDowntimeCommand
      */
     public function getTriggered(): bool
     {
-        return $this->triggered;
+        return $this->getChildOption() === ScheduleDowntimeCommand::TRIGGER_CHILDREN;
     }
 }
