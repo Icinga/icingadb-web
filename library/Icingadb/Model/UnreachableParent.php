@@ -126,8 +126,10 @@ class UnreachableParent extends DependencyNode
                 Filter::equal('host_id', $root->host_id),
                 Filter::equal('service_id', $root->id)
             ));
+        } elseif ($root instanceof RedundancyGroup) {
+            $rootQuery->filter(Filter::all(Filter::equal('redundancy_group_id', $root->id)));
         } else {
-            throw new InvalidArgumentException('Root node must be either a host or a service');
+            throw new InvalidArgumentException('Root node must be either a host, service or a redundancy group');
         }
 
         $nodeQuery = DependencyEdge::on($db)
