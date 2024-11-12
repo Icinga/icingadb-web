@@ -5,7 +5,9 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Data\DependencyNodes;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
@@ -13,6 +15,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
+use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
 use ipl\Html\HtmlElement;
@@ -21,10 +24,13 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
 
 class RedundancygroupController extends Controller
 {
+    use CommandActions;
+
     /** @var string */
     protected $groupId;
 
@@ -33,7 +39,13 @@ class RedundancygroupController extends Controller
 
     public function init(): void
     {
-        $this->groupId = $this->params->shiftRequired('id');
+        // in case of quick actions, param id is not given
+        $groupId = $this->params->shift('child.redundancy_group.id');
+        if ($groupId === null) {
+            $groupId = $this->params->shiftRequired('id');
+        }
+
+        $this->groupId = $groupId;
 
         $query = RedundancyGroup::on($this->getDb())
             ->with(['state'])
@@ -62,6 +74,20 @@ class RedundancygroupController extends Controller
 
     public function indexAction(): void
     {
+        $summary = RedundancyGroupSummary::on($this->getDb())
+            ->filter(Filter::equal('id', $this->groupId));
+
+        $this->filter($summary);
+
+        // The base filter is required to fetch the correct objects for MultiselectQuickActions::isGrantedOnType() check
+        $this->addControl(
+            (new MultiselectQuickActions('dependency_node', $summary->first()))
+                ->setBaseFilter(Filter::equal('child.redundancy_group.id', $this->groupId))
+                ->setAllowToProcessCheckResults(false)
+                ->setColumnPrefix('nodes')
+                ->setUrlPath('icingadb/redundancygroup')
+        );
+
         $this->addContent(new RedundancyGroupDetail($this->group));
     }
 
@@ -281,5 +307,38 @@ class RedundancygroupController extends Controller
                 'service.host.state'
             ])
             ->filter(Filter::equal($filterColumn, $this->groupId));
+    }
+
+    protected function fetchCommandTargets()
+    {
+        $filter = Filter::all(Filter::equal('child.redundancy_group.id', $this->groupId));
+
+        if ($this->getRequest()->getActionName() === 'acknowledge') {
+            $filter->add(
+                Filter::any(
+                    Filter::all(
+                        Filter::unlike('child.service.id', '*'),
+                        Filter::equal('host.state.is_problem', 'y'),
+                        Filter::equal('host.state.is_acknowledged', 'n')
+                    ),
+                    Filter::all(
+                        Filter::equal('service.state.is_problem', 'y'),
+                        Filter::equal('service.state.is_acknowledged', 'n')
+                    )
+                )
+            );
+        }
+
+        return new DependencyNodes($filter);
+    }
+
+    protected function getCommandTargetsUrl(): Url
+    {
+        return Links::redundancyGroup($this->group);
+    }
+
+    public function processCheckresultAction(): void
+    {
+        $this->httpBadRequest('Check result submission not implemented yet');
     }
 }
