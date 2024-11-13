@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\DependencyNodes;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -14,7 +13,6 @@ use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
@@ -46,7 +44,13 @@ class RedundancygroupController extends Controller
         }
 
         $this->groupId = $groupId;
+    }
 
+    /**
+     * Load the redundancy group
+     */
+    protected function loadGroup(): void
+    {
         $query = RedundancyGroup::on($this->getDb())
             ->with(['state'])
             ->filter(Filter::equal('id', $this->groupId));
@@ -56,24 +60,18 @@ class RedundancygroupController extends Controller
         $this->group = $query->first();
 
         if ($this->group === null) {
-            throw new NotFoundError(t('Redundancy Group not found'));
+            throw new NotFoundError($this->translate('Redundancy Group not found'));
         }
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($this->group->display_name);
 
         $this->addControl(new HtmlElement('div', null, Text::create($this->group->display_name)));
-        $this->addFooter(
-            new DependencyNodeStatistics(
-                RedundancyGroupSummary::on($this->getDb())
-                    ->filter(Filter::equal('id', $this->groupId))
-                    ->first()
-            )
-        );
     }
 
     public function indexAction(): void
     {
+        $this->loadGroup();
         $summary = RedundancyGroupSummary::on($this->getDb())
             ->filter(Filter::equal('id', $this->groupId));
 
@@ -91,8 +89,9 @@ class RedundancygroupController extends Controller
         $this->addContent(new RedundancyGroupDetail($this->group));
     }
 
-    public function membersAction(): \Generator
+    public function membersAction(): void
     {
+        $this->loadGroup();
         $nodesQuery = $this->fetchNodes(true);
 
         $limitControl = $this->createLimitControl();
@@ -100,16 +99,17 @@ class RedundancygroupController extends Controller
         $sortControl = $this->createSortControl(
             $nodesQuery,
             [
-                'name'                                  => t('Name'),
-                'severity desc, last_state_change desc' => t('Severity'),
-                'state'                                 => t('Current State'),
-                'last_state_change desc'                => t('Last State Change')
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $searchBar = $this->createSearchBar($nodesQuery,
-            Links::redundancyGroupMembers($this->group),
+        $searchBar = $this->createSearchBar(
+            $nodesQuery,
+            Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId]),
             [
                 $limitControl->getLimitParam(),
                 $sortControl->getSortParam(),
@@ -132,8 +132,6 @@ class RedundancygroupController extends Controller
 
         $nodesQuery->filter($filter);
 
-        yield $this->export($nodesQuery);
-
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -152,8 +150,9 @@ class RedundancygroupController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction()
+    public function childrenAction(): void
     {
+        $this->loadGroup();
         $nodesQuery = $this->fetchNodes();
 
         $limitControl = $this->createLimitControl();
@@ -161,17 +160,17 @@ class RedundancygroupController extends Controller
         $sortControl = $this->createSortControl(
             $nodesQuery,
             [
-                'name'                                  => t('Name'),
-                'severity desc, last_state_change desc' => t('Severity'),
-                'state'                                 => t('Current State'),
-                'last_state_change desc'                => t('Last State Change')
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
-            Links::redundancyGroupChildren($this->group),
+            Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId]),
             [
                 $limitControl->getLimitParam(),
                 $sortControl->getSortParam(),
@@ -196,8 +195,6 @@ class RedundancygroupController extends Controller
         }
 
         $nodesQuery->filter($filter);
-
-        yield $this->export($nodesQuery);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
@@ -234,10 +231,11 @@ class RedundancygroupController extends Controller
     {
         $isChildrenTab = $this->params->shift('isChildrenTab');
         $redirectUrl = $isChildrenTab
-            ? Links::redundancyGroupChildren($this->group)
-            : Links::redundancyGroupMembers($this->group);
+            ? Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId])
+            : Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId]);
 
-        $editor = $this->createSearchEditor(DependencyNode::on($this->getDb()),
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
             $redirectUrl,
             [
                 LimitControl::DEFAULT_LIMIT_PARAM,
@@ -252,23 +250,23 @@ class RedundancygroupController extends Controller
         }
 
         $this->getDocument()->add($editor);
-        $this->setTitle(t('Adjust Filter'));
+        $this->setTitle($this->translate('Adjust Filter'));
     }
 
     protected function createTabs(): Tabs
     {
         $tabs = $this->getTabs()
             ->add('index', [
-                'label'  => t('Redundancy Group'),
-                'url'    => Links::redundancyGroup($this->group)
+                'label' => $this->translate('Redundancy Group'),
+                'url' => Url::fromPath('icingadb/redundancygroup', ['id' => $this->groupId])
             ])
             ->add('members', [
-                'label'  => t('Members'),
-                'url'    => Links::redundancyGroupMembers($this->group)
+                'label' => $this->translate('Members'),
+                'url' => Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId])
             ])
             ->add('children', [
-                'label'  => t('Children'),
-                'url'    => Links::redundancyGroupChildren($this->group)
+                'label' => $this->translate('Children'),
+                'url' => Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId])
             ]);
 
         return $tabs;
@@ -334,7 +332,7 @@ class RedundancygroupController extends Controller
 
     protected function getCommandTargetsUrl(): Url
     {
-        return Links::redundancyGroup($this->group);
+        return Url::fromPath('icingadb/redundancygroup', ['id' => $this->groupId]);
     }
 
     public function processCheckresultAction(): void
