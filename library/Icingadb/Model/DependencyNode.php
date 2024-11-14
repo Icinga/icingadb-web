@@ -57,7 +57,9 @@ class DependencyNode extends Model
         ]));
         $behaviors->add(new ReRoute([
             'child' => 'to.from',
-            'parent' => 'from.to'
+            'parent' => 'from.to',
+            'hostgroup' => 'host.hostgroup',
+            'servicegroup' => 'service.servicegroup'
         ]));
     }
 

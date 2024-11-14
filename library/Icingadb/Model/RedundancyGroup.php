@@ -61,6 +61,7 @@ class RedundancyGroup extends Model
             ->setJoinType('LEFT');
 
         $relations->hasMany('dependency', Dependency::class);
+        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
 
         $relations->belongsToMany('from', DependencyEdge::class)
             ->setTargetCandidateKey('from_node_id')

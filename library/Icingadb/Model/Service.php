@@ -267,6 +267,7 @@ class Service extends Model
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
+        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
 
         $relations->belongsToMany('from', DependencyEdge::class)
             ->setTargetCandidateKey('from_node_id')
