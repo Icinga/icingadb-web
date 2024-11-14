@@ -1,0 +1,57 @@
+// Layout
+.object-header {
+  display: flex;
+
+  .visual {
+    display: flex;
+    padding: 0.5em 0;
+    align-items: center;
+  }
+
+  .main {
+    flex: 1 1 auto;
+    padding: 0.5em 0;
+    width: 0;
+    margin-left: .5em;
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title {
+        display: inline-flex;
+        align-items: baseline;
+        white-space: nowrap;
+        margin-right: 1em;
+
+        & > * {
+          margin: 0 .28125em; // 0 calculated &nbsp; width
+        }
+
+        .subject {
+          .text-ellipsis();
+        }
+      }
+
+      time {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.object-header {
+  color: @default-text-color-light;
+
+  .title {
+    .subject {
+      color: @default-text-color;
+    }
+  }
+
+  .object-statistics {
+    margin-left: auto;
+    margin-right: 1em;
+  }
+}
