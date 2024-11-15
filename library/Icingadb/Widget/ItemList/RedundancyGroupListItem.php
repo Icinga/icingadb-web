@@ -12,9 +12,10 @@ use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use ipl\Html\BaseHtmlElement;
 use ipl\Stdlib\Filter;
+use ipl\Web\Url;
+use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 use ipl\Html\HtmlElement;
-use ipl\Html\Attributes;
 use ipl\Html\Text;
 use ipl\Web\Widget\TimeSince;
 
@@ -33,6 +34,13 @@ class RedundancyGroupListItem extends StateListItem
     /** @var RedundancyGroupState */
     protected $state;
 
+    protected function init(): void
+    {
+        parent::init();
+
+        $this->addAttributes(['data-action-item' => true]);
+    }
+
     protected function getStateBallSize(): string
     {
         return StateBall::SIZE_LARGE;
@@ -43,12 +51,12 @@ class RedundancyGroupListItem extends StateListItem
         return new TimeSince($this->state->last_state_change->getTimestamp());
     }
 
-    protected function createSubject(): BaseHtmlElement
+    protected function createSubject(): Link
     {
-        return new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($this->item->display_name)
+        return new Link(
+            $this->item->display_name,
+            Url::fromPath('icingadb/redundancygroup', ['id' => bin2hex($this->item->id)]),
+            ['class' => 'subject']
         );
     }
 
