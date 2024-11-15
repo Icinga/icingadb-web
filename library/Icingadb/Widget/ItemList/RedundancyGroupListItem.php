@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -23,16 +24,15 @@ use ipl\Web\Widget\TimeSince;
  * Redundancy group list item. Represents one database row.
  *
  * @property RedundancyGroup $item
+ * @property RedundancyGroupState $state
  */
 class RedundancyGroupListItem extends StateListItem
 {
     use ListItemCommonLayout;
     use Database;
+    use Auth;
 
     protected $defaultAttributes = ['class' => ['redundancy-group-list-item']];
-
-    /** @var RedundancyGroupState */
-    protected $state;
 
     protected function init(): void
     {
@@ -67,11 +67,12 @@ class RedundancyGroupListItem extends StateListItem
 
     protected function assembleCaption(BaseHtmlElement $caption): void
     {
-        $caption->addHtml(new DependencyNodeStatistics(
-            RedundancyGroupSummary::on($this->getDb())
-                ->filter(Filter::equal('id', $this->item->id))
-                ->first()
-        ));
+        $summary = RedundancyGroupSummary::on($this->getDb())
+            ->filter(Filter::equal('id', $this->item->id));
+
+        $this->applyRestrictions($summary);
+
+        $caption->addHtml(new DependencyNodeStatistics($summary->first()));
     }
 
     protected function assembleTitle(BaseHtmlElement $title): void
