@@ -36,6 +36,9 @@ class RedundancygroupController extends Controller
     /** @var RedundancyGroup */
     protected $group;
 
+    /** @var RedundancyGroupSummary */
+    protected $groupSummary;
+
     public function init(): void
     {
         // in case of quick actions, param id is not given
@@ -61,7 +64,7 @@ class RedundancygroupController extends Controller
         $this->group = $query->first();
 
         if ($this->group === null) {
-            throw new NotFoundError($this->translate('Redundancy Group not found'));
+            $this->httpNotFound($this->translate('Redundancy Group not found'));
         }
 
         $this->setTitleTab($this->getRequest()->getActionName());
@@ -72,20 +75,18 @@ class RedundancygroupController extends Controller
 
         $this->applyRestrictions($summary);
 
-        $this->addControl(new RedundancyGroupHeader($this->group, $summary->first()));
+        $this->groupSummary = $summary->first();
+
+        $this->addControl(new RedundancyGroupHeader($this->group, $this->groupSummary));
     }
 
     public function indexAction(): void
     {
         $this->loadGroup();
-        $summary = RedundancyGroupSummary::on($this->getDb())
-            ->filter(Filter::equal('id', $this->groupId));
-
-        $this->filter($summary);
 
         // The base filter is required to fetch the correct objects for MultiselectQuickActions::isGrantedOnType() check
         $this->addControl(
-            (new MultiselectQuickActions('dependency_node', $summary->first()))
+            (new MultiselectQuickActions('dependency_node', $this->groupSummary))
                 ->setBaseFilter(Filter::equal('child.redundancy_group.id', $this->groupId))
                 ->setAllowToProcessCheckResults(false)
                 ->setColumnPrefix('nodes')
@@ -115,7 +116,6 @@ class RedundancygroupController extends Controller
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
-            Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId]),
             [
                 $limitControl->getLimitParam(),
                 $sortControl->getSortParam(),
@@ -145,7 +145,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery->execute()))
+            (new DependencyNodeList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -176,7 +176,6 @@ class RedundancygroupController extends Controller
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
-            Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId]),
             [
                 $limitControl->getLimitParam(),
                 $sortControl->getSortParam(),
@@ -209,7 +208,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery->execute()))
+            (new DependencyNodeList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -301,7 +300,7 @@ class RedundancygroupController extends Controller
             $fetchParents ? 'child' : 'parent'
         );
 
-        return DependencyNode::on($this->getDb())
+        $query = DependencyNode::on($this->getDb())
             ->with([
                 'host',
                 'host.state',
@@ -311,6 +310,10 @@ class RedundancygroupController extends Controller
                 'service.host.state'
             ])
             ->filter(Filter::equal($filterColumn, $this->groupId));
+
+        $this->applyRestrictions($query);
+
+        return $query;
     }
 
     protected function fetchCommandTargets()
