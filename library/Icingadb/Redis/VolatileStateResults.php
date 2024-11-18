@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\State;
 use ipl\Orm\Query;
 use ipl\Orm\Resolver;
 use ipl\Orm\ResultSet;
@@ -27,6 +28,12 @@ class VolatileStateResults extends ResultSet
 
     /** @var bool Whether Redis updates were applied */
     private $updatesApplied = false;
+
+    /** @var string Object type host */
+    protected const TYPE_HOST = 'host';
+
+    /** @var string Object type service */
+    protected const TYPE_SERVICE = 'service';
 
     public static function fromQuery(Query $query)
     {
@@ -99,68 +106,89 @@ class VolatileStateResults extends ResultSet
     protected function applyRedisUpdates($rows)
     {
         $type = null;
-        $behaviors = null;
-
-        $keys = [];
-        $hostStateKeys = [];
-
         $showSourceGranted = $this->getAuth()->hasPermission('icingadb/object/show-source');
 
+        $getKeysAndBehaviors = function (State $state): array {
+            return [$state->getColumns(), $this->resolver->getBehaviors($state)];
+        };
+
         $states = [];
-        $hostStates = [];
         foreach ($rows as $row) {
             if ($row instanceof DependencyNode) {
                 if ($row->redundancy_group_id !== null) {
                     continue;
                 } elseif ($row->service_id !== null) {
-                    $type = 'service';
+                    $type = self::TYPE_SERVICE;
                     $row = $row->service;
                 } else {
-                    $type = 'host';
+                    $type = self::TYPE_HOST;
                     $row = $row->host;
                 }
-
-                $behaviors = $this->resolver->getBehaviors($row->state);
             } elseif ($type === null) {
-                $behaviors = $this->resolver->getBehaviors($row->state);
-
                 switch (true) {
                     case $row instanceof Host:
-                        $type = 'host';
+                        $type = self::TYPE_HOST;
                         break;
                     case $row instanceof Service:
-                        $type = 'service';
+                        $type = self::TYPE_SERVICE;
                         break;
                     default:
                         throw new RuntimeException('Volatile states can only be fetched for hosts and services');
                 }
             }
 
-            $states[bin2hex($row->id)] = $row->state;
-            if (empty($keys)) {
-                $keys = $row->state->getColumns();
+            $states[$type][bin2hex($row->id)] = $row->state;
+
+            if (! isset($states[$type]['keys'])) {
+                [$keys, $behaviors] = $getKeysAndBehaviors($row->state);
+
                 if (! $showSourceGranted) {
                     $keys = array_diff($keys, ['check_commandline']);
                 }
+
+                $states[$type]['keys'] = $keys;
+                $states[$type]['behaviors'] = $behaviors;
             }
 
-            if ($type === 'service' && $row->host instanceof Host && isset($row->host->id)) {
-                $hostStates[bin2hex($row->host->id)] = $row->host->state;
-                if (empty($hostStateKeys)) {
-                    $hostStateKeys = $row->host->state->getColumns();
+            if ($type === self::TYPE_SERVICE && $row->host instanceof Host && isset($row->host->id)) {
+                $states[self::TYPE_HOST][bin2hex($row->host->id)] = $row->host->state;
+
+                if (! isset($states[self::TYPE_HOST]['keys'])) {
+                    [$keys, $behaviors] = $getKeysAndBehaviors($row->host->state);
+
+                    $states[self::TYPE_HOST]['keys'] = $keys;
+                    $states[self::TYPE_HOST]['behaviors'] = $behaviors;
                 }
             }
         }
 
-        if (empty($states)) {
-            return;
+        if (! empty($states[self::TYPE_SERVICE])) {
+            $this->apply($states[self::TYPE_SERVICE], self::TYPE_SERVICE);
         }
 
-        if ($type === 'service') {
-            $results = IcingaRedis::fetchServiceState(array_keys($states), $keys);
-        } else {
-            $results = IcingaRedis::fetchHostState(array_keys($states), $keys);
+        if (! empty($states[self::TYPE_HOST])) {
+            $this->apply($states[self::TYPE_HOST], self::TYPE_HOST);
         }
+    }
+
+    /**
+     * Apply the given states of given type to the results
+     *
+     * @param array $states
+     * @param string $type The object type ({@see self::TYPE_HOST} OR {@see self::TYPE_SERVICE})
+     *
+     * @return void
+     */
+    protected function apply(array $states, string $type): void
+    {
+        $keys = $states['keys'];
+        $behaviors = $states['behaviors'];
+
+        unset($states['keys'], $states['behaviors']);
+
+        $results = $type === self::TYPE_SERVICE
+            ? IcingaRedis::fetchServiceState(array_keys($states), $keys)
+            : IcingaRedis::fetchHostState(array_keys($states), $keys);
 
         foreach ($results as $id => $data) {
             foreach ($data as $key => $value) {
@@ -168,16 +196,6 @@ class VolatileStateResults extends ResultSet
             }
 
             $states[$id]->setProperties($data);
-        }
-
-        if ($type === 'service' && ! empty($hostStates)) {
-            foreach (IcingaRedis::fetchHostState(array_keys($hostStates), $hostStateKeys) as $id => $data) {
-                foreach ($data as $key => $value) {
-                    $data[$key] = $behaviors->retrieveProperty($value, $key);
-                }
-
-                $hostStates[$id]->setProperties($data);
-            }
         }
     }
 }
