@@ -10,6 +10,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Sql\Expression;
 
 /**
  * Dependency node model.
@@ -18,6 +19,10 @@ use ipl\Orm\Relations;
  * @property ?string $host_id
  * @property ?string $service_id
  * @property ?string $redundancy_group_id
+ * @property string $name
+ * @property string $severity
+ * @property string $state
+ * @property string $last_state_change
  *
  * @property (?Host)|Query $host
  * @property (?Service)|Query $service
@@ -43,7 +48,36 @@ class DependencyNode extends Model
             'id',
             'host_id',
             'service_id',
-            'redundancy_group_id'
+            'redundancy_group_id',
+            'name' => new Expression(
+                'COALESCE(%s, %s, %s)',
+                ['service.display_name', 'host.display_name', 'redundancy_group.display_name']
+            ),
+            'severity' => new Expression(
+                'COALESCE(%s, %s, %s)',
+                ['service.state.severity', 'host.state.severity', 'redundancy_group.state.failed']
+            ),
+            'state' => new Expression(
+                'COALESCE(%s, %s, %s)',
+                ['service.state.soft_state', 'host.state.soft_state', 'redundancy_group.state.failed']
+            ),
+            'last_state_change' => new Expression(
+                'COALESCE(%s, %s, %s)',
+                [
+                    'service.state.last_state_change',
+                    'host.state.last_state_change',
+                    'redundancy_group.state.last_state_change'
+                ]
+            ),
+        ];
+    }
+
+    public function getSearchColumns(): array
+    {
+        return [
+            'host.name_ci',
+            'service.name_ci',
+            'redundancy_group.display_name'
         ];
     }
 

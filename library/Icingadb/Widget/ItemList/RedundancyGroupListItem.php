@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\ListItemCommonLayout;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -12,9 +13,10 @@ use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use ipl\Html\BaseHtmlElement;
 use ipl\Stdlib\Filter;
+use ipl\Web\Url;
+use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 use ipl\Html\HtmlElement;
-use ipl\Html\Attributes;
 use ipl\Html\Text;
 use ipl\Web\Widget\TimeSince;
 
@@ -22,16 +24,22 @@ use ipl\Web\Widget\TimeSince;
  * Redundancy group list item. Represents one database row.
  *
  * @property RedundancyGroup $item
+ * @property RedundancyGroupState $state
  */
 class RedundancyGroupListItem extends StateListItem
 {
     use ListItemCommonLayout;
     use Database;
+    use Auth;
 
     protected $defaultAttributes = ['class' => ['redundancy-group-list-item']];
 
-    /** @var RedundancyGroupState */
-    protected $state;
+    protected function init(): void
+    {
+        parent::init();
+
+        $this->addAttributes(['data-action-item' => true]);
+    }
 
     protected function getStateBallSize(): string
     {
@@ -43,12 +51,12 @@ class RedundancyGroupListItem extends StateListItem
         return new TimeSince($this->state->last_state_change->getTimestamp());
     }
 
-    protected function createSubject(): BaseHtmlElement
+    protected function createSubject(): Link
     {
-        return new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($this->item->display_name)
+        return new Link(
+            $this->item->display_name,
+            Url::fromPath('icingadb/redundancygroup', ['id' => bin2hex($this->item->id)]),
+            ['class' => 'subject']
         );
     }
 
@@ -59,11 +67,12 @@ class RedundancyGroupListItem extends StateListItem
 
     protected function assembleCaption(BaseHtmlElement $caption): void
     {
-        $caption->addHtml(new DependencyNodeStatistics(
-            RedundancyGroupSummary::on($this->getDb())
-                ->filter(Filter::equal('id', $this->item->id))
-                ->first()
-        ));
+        $summary = RedundancyGroupSummary::on($this->getDb())
+            ->filter(Filter::equal('id', $this->item->id));
+
+        $this->applyRestrictions($summary);
+
+        $caption->addHtml(new DependencyNodeStatistics($summary->first()));
     }
 
     protected function assembleTitle(BaseHtmlElement $title): void

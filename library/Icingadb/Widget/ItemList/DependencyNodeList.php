@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Model\DependencyNode;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use ipl\Web\Common\BaseListItem;
 
@@ -30,10 +31,23 @@ class DependencyNodeList extends StateList
         /** @var UnreachableParent|DependencyNode $data */
         if ($data->redundancy_group_id !== null) {
             return new RedundancyGroupListItem($data->redundancy_group, $this);
-        } elseif ($data->service_id !== null) {
-            return new ServiceListItem($data->service, $this);
-        } else {
-            return new HostListItem($data->host, $this);
         }
+
+        $object = $data->service_id !== null ? $data->service : $data->host;
+
+        switch ($this->getViewMode()) {
+            case 'minimal':
+                $class = $object instanceof Host ? HostListItemMinimal::class : ServiceListItemMinimal::class;
+                break;
+            case 'detailed':
+                $this->removeAttribute('class', 'default-layout');
+
+                $class = $object instanceof Host ? HostListItemDetailed::class : ServiceListItemDetailed::class;
+                break;
+            default:
+                $class = $object instanceof Host ? HostListItem::class : ServiceListItem::class;
+        }
+
+        return new $class($object, $this);
     }
 }
