@@ -185,7 +185,8 @@ class RedundancygroupController extends Controller
         );
 
         $searchBar->getSuggestionUrl()->setParam('isChildrenTab');
-        $searchBar->getEditorUrl()->setParam('isChildrenTab');
+        $searchBar->getEditorUrl()
+            ->setParams((clone $searchBar->getEditorUrl()->getParams())->set('isChildrenTab', true));
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
