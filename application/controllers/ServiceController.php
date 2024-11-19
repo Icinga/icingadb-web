@@ -69,6 +69,11 @@ class ServiceController extends Controller
         $this->service = $service;
         $this->loadTabsForObject($service);
 
+        $this->addControl((new ServiceList([$service]))
+            ->setViewMode('objectHeader')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
+
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle(
             t('%s on %s', '<service> on <host>'),
@@ -83,10 +88,6 @@ class ServiceController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new ServiceList([$this->service]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl(new ServiceMetaInfo($this->service));
         $this->addControl(new QuickActions($this->service));
 
@@ -108,10 +109,6 @@ class ServiceController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new ServiceList([$this->service]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addContent(new ServiceInspectionDetail(
             $this->service,
             reset($apiResult)
@@ -170,10 +167,6 @@ class ServiceController extends Controller
 
         yield $this->export($history);
 
-        $this->addControl((new ServiceList([$this->service]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);

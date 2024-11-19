@@ -57,6 +57,11 @@ class HostController extends Controller
         $this->host = $host;
         $this->loadTabsForObject($host);
 
+        $this->addControl((new HostList([$host]))
+            ->setViewMode('objectHeader')
+            ->setDetailActionsDisabled()
+            ->setNoSubjectLink());
+
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($host->display_name);
     }
@@ -72,10 +77,6 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl(new HostMetaInfo($this->host));
         $this->addControl(new QuickActions($this->host));
 
@@ -97,10 +98,6 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addContent(new HostInspectionDetail(
             $this->host,
             reset($apiResult)
@@ -158,10 +155,6 @@ class HostController extends Controller
 
         yield $this->export($history);
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -221,10 +214,6 @@ class HostController extends Controller
         $serviceList = (new ServiceList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
