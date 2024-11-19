@@ -304,8 +304,10 @@ class RedundancygroupController extends Controller
             ->with([
                 'host',
                 'host.state',
+                'host.state.last_comment',
                 'service',
                 'service.state',
+                'service.state.last_comment',
                 'service.host',
                 'service.host.state'
             ])
