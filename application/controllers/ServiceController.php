@@ -13,17 +13,25 @@ use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
+use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use ipl\Orm\Query;
+use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
 class ServiceController extends Controller
@@ -92,6 +100,131 @@ class ServiceController extends Controller
         $this->addControl(new QuickActions($this->service));
 
         $this->addContent(new ServiceDetail($this->service));
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    public function parentsAction()
+    {
+        $nodesQuery = $this->fetchNodes(true);
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($nodesQuery);
+        $sortControl = $this->createSortControl(
+            $nodesQuery,
+            [
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
+            ]
+        );
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $searchBar = $this->createSearchBar(
+            $nodesQuery,
+            [
+                $limitControl->getLimitParam(),
+                $sortControl->getSortParam(),
+                $viewModeSwitcher->getViewModeParam(),
+                'name',
+                'host.name'
+            ]
+        );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $nodesQuery->filter($filter);
+
+        $this->addControl($paginationControl);
+        $this->addControl($sortControl);
+        $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+
+        $this->addContent(
+            (new DependencyNodeList($nodesQuery))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+        );
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    public function childrenAction()
+    {
+        $nodesQuery = $this->fetchNodes();
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($nodesQuery);
+        $sortControl = $this->createSortControl(
+            $nodesQuery,
+            [
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
+            ]
+        );
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $searchBar = $this->createSearchBar(
+            $nodesQuery,
+            [
+                $limitControl->getLimitParam(),
+                $sortControl->getSortParam(),
+                $viewModeSwitcher->getViewModeParam(),
+                'name',
+                'host.name'
+            ]
+        );
+
+        $searchBar->getSuggestionUrl()->setParam('isChildrenTab');
+        $searchBar->getEditorUrl()->setParam('isChildrenTab');
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $nodesQuery->filter($filter);
+
+        $this->addControl($paginationControl);
+        $this->addControl($sortControl);
+        $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+
+        $this->addContent(
+            (new DependencyNodeList($nodesQuery))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+        );
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
 
         $this->setAutorefreshInterval(10);
     }
@@ -187,8 +320,95 @@ class ServiceController extends Controller
         }
     }
 
+    public function completeAction(): void
+    {
+        $isChildrenTab = $this->params->shift('isChildrenTab');
+        $relation = $isChildrenTab ? 'parent' : 'child';
+
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(DependencyNode::class)
+            ->setBaseFilter(Filter::equal("$relation.service.id", $this->service->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction(): void
+    {
+        $isChildrenTab = $this->params->shift('isChildrenTab');
+        $redirectUrl = $isChildrenTab
+            ? Url::fromPath(
+                'icingadb/service/children',
+                ['name' => $this->service->name, 'host.name' => $this->service->host->name]
+            )
+            : Url::fromPath(
+                'icingadb/service/parents',
+                ['name' => $this->service->name, 'host.name' => $this->service->host->name]
+            );
+
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            $redirectUrl,
+            [
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+                'name',
+                'host.name'
+            ]
+        );
+
+        if ($isChildrenTab) {
+            $editor->getSuggestionUrl()->setParam('isChildrenTab');
+        }
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    /**
+     * Fetch the nodes for the current service
+     *
+     * @param bool $fetchParents Whether to fetch the parents or the children
+     *
+     * @return Query
+     */
+    protected function fetchNodes(bool $fetchParents = false): Query
+    {
+        $query = DependencyNode::on($this->getDb())
+            ->with([
+                'host',
+                'host.state',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state',
+                'redundancy_group',
+                'redundancy_group.state'
+            ])
+            ->filter(Filter::equal(
+                sprintf('%s.service.id', $fetchParents ? 'child' : 'parent'),
+                $this->service->id
+            ))
+            ->setResultSetClass(VolatileStateResults::class);
+
+        $this->applyRestrictions($query);
+
+        return $query;
+    }
+
     protected function createTabs()
     {
+        $hasDependecyNode = DependencyNode::on($this->getDb())
+                ->columns([new Expression('1')])
+                ->filter(Filter::all(
+                    Filter::equal('service_id', $this->service->id),
+                    Filter::equal('host_id', $this->service->host_id)
+                ))
+                ->first() !== null;
+
         $tabs = $this->getTabs()
             ->add('index', [
                 'label'  => t('Service'),
@@ -198,6 +418,22 @@ class ServiceController extends Controller
                 'label'  => t('History'),
                 'url'    => ServiceLinks::history($this->service, $this->service->host)
             ]);
+
+        if ($hasDependecyNode) {
+            $tabs->add('parents', [
+                'label'  => $this->translate('Parents'),
+                'url'    => Url::fromPath(
+                    'icingadb/service/parents',
+                    ['name' => $this->service->name, 'host.name' => $this->service->host->name]
+                )
+            ])->add('children', [
+                'label'  => $this->translate('Children'),
+                'url'    => Url::fromPath(
+                    'icingadb/service/children',
+                    ['name' => $this->service->name, 'host.name' => $this->service->host->name]
+                )
+            ]);
+        }
 
         if ($this->hasPermission('icingadb/object/show-source')) {
             $tabs->add('source', [
