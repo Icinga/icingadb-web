@@ -47,7 +47,7 @@ class HostController extends Controller
     /** @var Host The host object */
     protected $host;
 
-    public function init()
+    public function init(): void
     {
         $name = $this->params->shiftRequired('name');
 
@@ -76,7 +76,7 @@ class HostController extends Controller
         $this->setTitle($host->display_name);
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $serviceSummary = ServicestateSummary::on($this->getDb());
         $serviceSummary->filter(Filter::equal('service.host_id', $this->host->id));
@@ -95,7 +95,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function sourceAction()
+    public function sourceAction(): void
     {
         $this->assertPermission('icingadb/object/show-source');
 
@@ -114,7 +114,7 @@ class HostController extends Controller
         ));
     }
 
-    public function historyAction()
+    public function historyAction(): \Generator
     {
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
@@ -185,7 +185,7 @@ class HostController extends Controller
         }
     }
 
-    public function servicesAction()
+    public function servicesAction(): \Generator
     {
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
@@ -234,7 +234,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function parentsAction()
+    public function parentsAction(): void
     {
         $nodesQuery = $this->fetchNodes(true);
 
@@ -294,7 +294,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction()
+    public function childrenAction(): void
     {
         $nodesQuery = $this->fetchNodes();
 
@@ -475,7 +475,7 @@ class HostController extends Controller
         return $tabs;
     }
 
-    protected function setTitleTab(string $name)
+    protected function setTitleTab(string $name): void
     {
         $tab = $this->createTabs()->get($name);
 

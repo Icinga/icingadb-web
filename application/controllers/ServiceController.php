@@ -33,6 +33,7 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
+use ipl\Web\Widget\Tabs;
 
 class ServiceController extends Controller
 {
@@ -42,7 +43,7 @@ class ServiceController extends Controller
     /** @var Service The service object */
     protected $service;
 
-    public function init()
+    public function init(): void
     {
         $name = $this->params->shiftRequired('name');
         $hostName = $this->params->shiftRequired('host.name');
@@ -90,7 +91,7 @@ class ServiceController extends Controller
         );
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         if ($this->service->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
@@ -104,7 +105,7 @@ class ServiceController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function parentsAction()
+    public function parentsAction(): void
     {
         $nodesQuery = $this->fetchNodes(true);
 
@@ -165,7 +166,7 @@ class ServiceController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction()
+    public function childrenAction(): void
     {
         $nodesQuery = $this->fetchNodes();
 
@@ -229,7 +230,7 @@ class ServiceController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function sourceAction()
+    public function sourceAction(): void
     {
         $this->assertPermission('icingadb/object/show-source');
 
@@ -248,7 +249,7 @@ class ServiceController extends Controller
         ));
     }
 
-    public function historyAction()
+    public function historyAction(): \Generator
     {
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
@@ -399,7 +400,7 @@ class ServiceController extends Controller
         return $query;
     }
 
-    protected function createTabs()
+    protected function createTabs(): Tabs
     {
         $hasDependecyNode = DependencyNode::on($this->getDb())
                 ->columns([new Expression('1')])
@@ -452,7 +453,7 @@ class ServiceController extends Controller
         return $tabs;
     }
 
-    protected function setTitleTab(string $name)
+    protected function setTitleTab(string $name): void
     {
         $tab = $this->createTabs()->get($name);
 
