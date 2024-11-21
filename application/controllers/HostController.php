@@ -480,9 +480,7 @@ class HostController extends Controller
         $tab = $this->createTabs()->get($name);
 
         if ($tab !== null) {
-            $tab->setActive();
-
-            $this->setTitle($tab->getLabel());
+            $this->getTabs()->activate($name);
         }
     }
 
