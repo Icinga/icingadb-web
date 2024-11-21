@@ -49,7 +49,7 @@ class HostController extends Controller
 
     public function init()
     {
-        $name = $this->params->getRequired('name');
+        $name = $this->params->shiftRequired('name');
 
         $query = Host::on($this->getDb())->with(['state', 'icon_image', 'timeperiod']);
         $query
