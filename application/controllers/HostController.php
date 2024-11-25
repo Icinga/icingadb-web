@@ -38,6 +38,7 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
+use Generator;
 
 class HostController extends Controller
 {
@@ -114,7 +115,7 @@ class HostController extends Controller
         ));
     }
 
-    public function historyAction(): \Generator
+    public function historyAction(): Generator
     {
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
@@ -185,7 +186,7 @@ class HostController extends Controller
         }
     }
 
-    public function servicesAction(): \Generator
+    public function servicesAction(): Generator
     {
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
@@ -234,7 +235,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function parentsAction(): void
+    public function parentsAction(): Generator
     {
         $nodesQuery = $this->fetchNodes(true);
 
@@ -276,6 +277,8 @@ class HostController extends Controller
 
         $nodesQuery->filter($filter);
 
+        yield $this->export($nodesQuery);
+
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -294,7 +297,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction(): void
+    public function childrenAction(): Generator
     {
         $nodesQuery = $this->fetchNodes();
 
@@ -338,6 +341,8 @@ class HostController extends Controller
         }
 
         $nodesQuery->filter($filter);
+
+        yield $this->export($nodesQuery);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);

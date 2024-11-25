@@ -34,6 +34,7 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
+use Generator;
 
 class ServiceController extends Controller
 {
@@ -105,7 +106,7 @@ class ServiceController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function parentsAction(): void
+    public function parentsAction(): Generator
     {
         $nodesQuery = $this->fetchNodes(true);
 
@@ -148,6 +149,8 @@ class ServiceController extends Controller
 
         $nodesQuery->filter($filter);
 
+        yield $this->export($nodesQuery);
+
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -166,7 +169,7 @@ class ServiceController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction(): void
+    public function childrenAction(): Generator
     {
         $nodesQuery = $this->fetchNodes();
 
@@ -212,6 +215,8 @@ class ServiceController extends Controller
 
         $nodesQuery->filter($filter);
 
+        yield $this->export($nodesQuery);
+
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -249,7 +254,7 @@ class ServiceController extends Controller
         ));
     }
 
-    public function historyAction(): \Generator
+    public function historyAction(): Generator
     {
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
