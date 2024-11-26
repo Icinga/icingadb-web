@@ -419,4 +419,18 @@ class ObjectSuggestions extends Suggestions
             }
         }
     }
+
+    /**
+     * Reduce {@see $customVarSources} to only given relations to fetch variables from
+     *
+     * @param string[] $relations
+     *
+     * @return $this
+     */
+    public function onlyWithCustomVarSources(array $relations): self
+    {
+        $this->customVarSources = array_intersect_key($this->customVarSources, array_flip($relations));
+
+        return $this;
+    }
 }
