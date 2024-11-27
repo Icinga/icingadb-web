@@ -16,7 +16,7 @@ use ipl\Web\Widget\StateBall;
 /**
  * @property RedundancyGroup $object
  */
-class RedundancyGroupHeader extends ObjectHeader
+class RedundancyGroupHeader extends BaseObjectHeader
 {
     /** @var RedundancyGroupSummary */
     protected $summary;

@@ -13,7 +13,7 @@ use ipl\Orm\Model;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeSince;
 
-abstract class ObjectHeader extends BaseHtmlElement
+abstract class BaseObjectHeader extends BaseHtmlElement
 {
     use Translation;
 
