@@ -63,7 +63,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
      */
     protected function createRootProblems(): ?array
     {
-        if (! $this->group->state->failed) {
+        if ($this->group->state->is_reachable) {
             return null;
         }
 
