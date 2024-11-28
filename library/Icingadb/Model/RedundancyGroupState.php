@@ -19,6 +19,7 @@ use ipl\Orm\Relations;
  * @property string $id
  * @property string $redundancy_group_id
  * @property bool $failed
+ * @property bool $is_reachable
  * @property DateTime $last_state_change
  *
  * @property RedundancyGroup|Query $redundancy_group
@@ -40,6 +41,7 @@ class RedundancyGroupState extends Model
         return [
             'redundancy_group_id',
             'failed',
+            'is_reachable',
             'last_state_change'
         ];
     }
@@ -51,7 +53,8 @@ class RedundancyGroupState extends Model
             'redundancy_group_id'
         ]));
         $behaviors->add(new BoolCast([
-            'failed'
+            'failed',
+            'is_reachable'
         ]));
         $behaviors->add(new MillisecondTimestamp([
             'last_state_change'
