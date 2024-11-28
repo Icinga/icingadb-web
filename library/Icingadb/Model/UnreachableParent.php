@@ -92,10 +92,23 @@ class UnreachableParent extends DependencyNode
             self::selectNodes($db, $root),
             'unreachable_parent',
             true
-        )->where([
-            'unreachable_parent.level > ?' => 0,
-            'unreachable_parent.is_group_member = ?' => 0
-        ]);
+        );
+
+        $query->filter(Filter::all(
+            Filter::greaterThan('level', 0),
+            Filter::equal('is_group_member', 0),
+            Filter::any(
+                Filter::equal('service.state.affects_children', 'y'),
+                Filter::all(
+                    Filter::unlike('service_id', '*'),
+                    Filter::equal('host.state.affects_children', 'y')
+                ),
+                Filter::all(
+                    Filter::equal('redundancy_group.state.failed', 'y'),
+                    Filter::equal('redundancy_group.state.is_reachable', 'y')
+                )
+            )
+        ));
 
         return $query;
     }
