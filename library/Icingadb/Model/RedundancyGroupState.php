@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
+use Icinga\Module\Icingadb\Common\Icons;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\BoolCast;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -12,6 +13,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Web\Widget\Icon;
 
 /**
  * Redundancy group state model.
@@ -66,9 +68,29 @@ class RedundancyGroupState extends Model
         $relations->belongsTo('redundancy_group', RedundancyGroup::class);
     }
 
+    /**
+     * Get the state text for the redundancy group state
+     *
+     * Do not use this method to label the state of a redundancy group.
+     *
+     * @return string
+     */
     public function getStateText(): string
     {
-        // The method should only be called to fake state balls and not to show the group's state
-        return $this->failed ? 'unreachable' : 'reachable';
+        return $this->failed ? 'critical' : 'ok';
+    }
+
+    /**
+     * Get the state icon
+     *
+     * @return ?Icon
+     */
+    public function getIcon(): ?Icon
+    {
+        if (! $this->is_reachable) {
+            return new Icon(Icons::UNREACHABLE);
+        }
+
+        return null;
     }
 }
