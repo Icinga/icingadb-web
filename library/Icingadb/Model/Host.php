@@ -135,7 +135,7 @@ class Host extends Model
             'check_timeperiod_id'       => t('Check Timeperiod Id'),
             'check_timeout'             => t('Host Check Timeout'),
             'check_interval'            => t('Host Check Interval'),
-            'check_retry_interval'      => t('Host Check Retry Inverval'),
+            'check_retry_interval'      => t('Host Check Retry Interval'),
             'active_checks_enabled'     => t('Host Active Checks Enabled'),
             'passive_checks_enabled'    => t('Host Passive Checks Enabled'),
             'event_handler_enabled'     => t('Host Event Handler Enabled'),
