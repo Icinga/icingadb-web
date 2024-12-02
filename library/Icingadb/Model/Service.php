@@ -133,7 +133,7 @@ class Service extends Model
             'check_timeperiod_id'       => t('Check Timeperiod Id'),
             'check_timeout'             => t('Service Check Timeout'),
             'check_interval'            => t('Service Check Interval'),
-            'check_retry_interval'      => t('Service Check Retry Inverval'),
+            'check_retry_interval'      => t('Service Check Retry Interval'),
             'active_checks_enabled'     => t('Service Active Checks Enabled'),
             'passive_checks_enabled'    => t('Service Passive Checks Enabled'),
             'event_handler_enabled'     => t('Service Event Handler Enabled'),
