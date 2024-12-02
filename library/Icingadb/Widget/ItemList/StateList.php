@@ -5,7 +5,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\DetailActions;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Widget\Notice;
@@ -15,7 +14,6 @@ use ipl\Web\Common\BaseItemList;
 abstract class StateList extends BaseItemList
 {
     use ViewMode;
-    use NoSubjectLink;
     use DetailActions;
 
     /** @var bool Whether the list contains at least one item with an icon_image */

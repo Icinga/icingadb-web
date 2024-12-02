@@ -23,8 +23,6 @@ class HostList extends StateList
                 $this->removeAttribute('class', 'default-layout');
 
                 return HostListItemDetailed::class;
-            case 'objectHeader':
-                return HostDetailHeader::class;
             default:
                 return HostListItem::class;
         }

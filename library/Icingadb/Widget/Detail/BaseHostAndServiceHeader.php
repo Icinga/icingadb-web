@@ -4,42 +4,29 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use Icinga\Module\Icingadb\Model\RedundancyGroup;
-use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
+use Icinga\Module\Icingadb\Model\State;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
-use ipl\Web\Widget\StateBall;
+use ipl\Orm\Model;
 
-/**
- * @property RedundancyGroup $object
- */
-class RedundancyGroupHeader extends BaseObjectHeader
+class BaseHostAndServiceHeader extends BaseObjectHeader
 {
-    use RedundancyGroupHeaderUtils;
+    use HostAndServiceHeaderUtils;
 
-    protected $defaultAttributes = ['class' => 'redundancygroup-header'];
+    /** @var State */
+    protected $state;
 
-    /** @var RedundancyGroupSummary */
-    protected $summary;
-
-    public function __construct(RedundancyGroup $object, RedundancyGroupSummary $summary)
+    protected function init(): void
     {
-        $this->summary = $summary;
-
-        parent::__construct($object);
+        $this->state = $this->object->state;
     }
 
-    protected function getObject(): RedundancyGroup
+    protected function getObject(): Model
     {
         return $this->object;
-    }
-
-    protected function getSummary(): RedundancyGroupSummary
-    {
-        return $this->summary;
     }
 
     protected function createSubject(): ValidHtml
@@ -53,18 +40,36 @@ class RedundancyGroupHeader extends BaseObjectHeader
 
     protected function getStateBallSize(): string
     {
-        return StateBall::SIZE_BIG;
+        return ''; // not required because the parent class overrides the assembleVisual method
+    }
+
+    protected function wantIconImage(): bool
+    {
+        return isset($this->object->icon_image->icon_image);
     }
 
     protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->addHtml($this->createTitle());
         $header->addHtml($this->createCaption());
-        $header->addHtml($this->createTimestamp());
+        $header->add($this->createTimestamp());
     }
 
     protected function assembleMain(BaseHtmlElement $main): void
     {
         $main->addHtml($this->createHeader());
+    }
+
+    protected function assemble(): void
+    {
+        if ($this->state->is_overdue) {
+            $this->addAttributes(['class' => 'overdue']);
+        }
+
+        $this->add([
+            $this->createVisual(),
+            $this->createIconImage(),
+            $this->createMain()
+        ]);
     }
 }

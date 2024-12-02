@@ -5,12 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Host;
-use ipl\Html\Attributes;
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 
@@ -22,33 +18,19 @@ use ipl\Web\Widget\Link;
  */
 abstract class BaseHostListItem extends StateListItem
 {
-    use NoSubjectLink;
-
     /**
      * Create new subject link
      *
-     * @return BaseHtmlElement
+     * @return Link
      */
-    protected function createSubject()
+    protected function createSubject(): ValidHtml
     {
-        if ($this->getNoSubjectLink()) {
-            return new HtmlElement(
-                'span',
-                Attributes::create(['class' => 'subject']),
-                Text::create($this->item->display_name)
-            );
-        } else {
-            return new Link($this->item->display_name, Links::host($this->item), ['class' => 'subject']);
-        }
+        return new Link($this->item->display_name, Links::host($this->item), ['class' => 'subject']);
     }
 
     protected function init(): void
     {
         parent::init();
-
-        if ($this->list->getNoSubjectLink()) {
-            $this->setNoSubjectLink();
-        }
 
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name))
             ->addMultiselectFilterAttribute($this, Filter::equal('host.name', $this->item->name));

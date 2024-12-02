@@ -5,12 +5,9 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\Service;
-use ipl\Html\Attributes;
 use ipl\Html\Html;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\Stdlib\Filter;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
@@ -23,9 +20,7 @@ use ipl\Web\Widget\StateBall;
  */
 abstract class BaseServiceListItem extends StateListItem
 {
-    use NoSubjectLink;
-
-    protected function createSubject()
+    protected function createSubject(): ValidHtml
     {
         $service = $this->item->display_name;
         $host = [
@@ -35,22 +30,14 @@ abstract class BaseServiceListItem extends StateListItem
         ];
 
         $host = new Link($host, Links::host($this->item->host), ['class' => 'subject']);
-        if ($this->getNoSubjectLink()) {
-            $service = new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($service));
-        } else {
-            $service = new Link($service, Links::service($this->item, $this->item->host), ['class' => 'subject']);
-        }
+        $service = new Link($service, Links::service($this->item, $this->item->host), ['class' => 'subject']);
 
-        return [Html::sprintf(t('%s on %s', '<service> on <host>'), $service, $host)];
+        return Html::sprintf(t('%s on %s', '<service> on <host>'), $service, $host);
     }
 
     protected function init(): void
     {
         parent::init();
-
-        if ($this->list->getNoSubjectLink()) {
-            $this->setNoSubjectLink();
-        }
 
         $this->list->addMultiselectFilterAttribute(
             $this,

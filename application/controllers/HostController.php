@@ -24,11 +24,11 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
+use Icinga\Module\Icingadb\Widget\Detail\HostHeader;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
-use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Orm\Query;
@@ -69,10 +69,7 @@ class HostController extends Controller
         $this->host = $host;
         $this->loadTabsForObject($host);
 
-        $this->addControl((new HostList([$host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new HostHeader($this->host));
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($host->display_name);
@@ -537,7 +534,7 @@ class HostController extends Controller
 
     protected function getDefaultTabControls(): array
     {
-        return [(new HostList([$this->host]))->setDetailActionsDisabled()->setNoSubjectLink()];
+        return [(new HostHeader($this->host))];
     }
 
     /**

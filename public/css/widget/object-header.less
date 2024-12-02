@@ -2,31 +2,60 @@
 .object-header {
   display: flex;
 
-  .visual {
+  .visual { // form ipl-web/item-list.less
     display: flex;
-    padding: 0.5em 0;
     align-items: center;
+    flex-direction: column;
+  }
+
+  .visual,
+  .main { // from icingadb/common.less
+    padding-bottom: .25em;
+    padding-top: .25em;
+  }
+
+  .icon-image { // from icingadb/item-list.less with .minimal
+    height: 2em;
+    width: 2em;
+    line-height: 2;
+    text-align: center;
+    margin-left: .5em;
+    overflow: hidden;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      height: auto;
+      width: auto;
+    }
   }
 
   .main {
     flex: 1 1 auto;
-    padding: 0.5em 0;
     width: 0;
     margin-left: .5em;
 
-    header {
+    header { // from ipl-web/item-list.less
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
 
-      .title {
+      .title { // from ipl-web/item-list.less
         display: inline-flex;
         align-items: baseline;
         white-space: nowrap;
-        margin-right: 1em;
+        min-width: 0;
 
-        & > * {
+        > * {
           margin: 0 .28125em; // 0 calculated &nbsp; width
+
+          &:first-child {
+            margin-left: 0;
+          }
+
+          &:last-child {
+            margin-right: 0;
+          }
         }
 
         .subject {
@@ -34,19 +63,58 @@
         }
       }
 
-      time {
+      .caption {  // from icingadb/item-list.less
+        flex: 1 1 auto;
+        margin-right: 1em;
+        width: 0;
+
+        .text-ellipsis();
+
+        .plugin-output {
+          font-size: 11/12em;
+          line-height: 1.5*12/11em;
+          .text-ellipsis();
+        }
+      }
+
+      time { // from ipl-web/list-item.less
         white-space: nowrap;
+      }
+
+      &.overdue time { // from icingadb/list-item.less
+        margin-right: -.5em;
+        padding: 0 0.5em;
       }
     }
   }
+}
 
-  .visual,
-  .main {
-    padding-bottom: .25em;
-    padding-top: .25em;
+// style form icingadb/list-item.less
+.object-header {
+  &.overdue {
+    background-color: @gray-lighter;
+  }
+
+  &.overdue header > *:not(time),
+  &.overdue .caption {
+    opacity: 0.6;
+  }
+
+  &.overdue time {
+    .rounded-corners();
+    background-color: @color-critical;
+    color: @text-color-on-icinga-blue;
+  }
+
+  .title {
+    .state-text {
+      color: @text-color;
+      text-transform: uppercase;
+    }
   }
 }
 
+// style form ipl-web/list-item.less
 .object-header {
   color: @default-text-color-light;
 
@@ -54,12 +122,51 @@
     .subject {
       color: @default-text-color;
     }
+
+    a {
+      color: @default-text-color;
+      font-weight: bold;
+
+      &:hover {
+        color: @list-item-title-hover-color;
+        text-decoration: none;
+
+        .subject {
+          color: @list-item-title-hover-color;
+        }
+      }
+    }
+  }
+}
+
+// new layout changes
+.object-header {
+  .main > header {
+    .title {
+      margin-right: 1em;
+    }
+
+    .object-statistics {
+      justify-content: end;
+    }
+
+    > :last-child {
+      margin-right: 0;
+    }
+  }
+
+  .icon-image {
+    margin-left: 0;
+    margin-right: .5em;
+  }
+}
+
+.redundancygroup-header {
+  .main header .title > .subject {
+    margin-right: .28125em;
   }
 
   .object-statistics {
-    margin-left: auto;
-    margin-right: 1em;
-
     font-size: .75em;
   }
 }

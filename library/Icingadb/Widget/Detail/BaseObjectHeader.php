@@ -7,16 +7,10 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
-use ipl\Html\Text;
-use ipl\I18n\Translation;
 use ipl\Orm\Model;
-use ipl\Web\Widget\StateBall;
-use ipl\Web\Widget\TimeSince;
 
 abstract class BaseObjectHeader extends BaseHtmlElement
 {
-    use Translation;
-
     /** @var array<string, mixed> */
     protected $baseAttributes = ['class' => 'object-header'];
 
@@ -55,11 +49,6 @@ abstract class BaseObjectHeader extends BaseHtmlElement
     {
     }
 
-    protected function getStateBallSize(): string
-    {
-        return StateBall::SIZE_BIG;
-    }
-
     protected function createCaption(): BaseHtmlElement
     {
         $caption = new HtmlElement('section', Attributes::create(['class' => 'caption']));
@@ -89,17 +78,7 @@ abstract class BaseObjectHeader extends BaseHtmlElement
 
     protected function createTimestamp(): ?BaseHtmlElement
     {
-        //TODO: add support for host/service
-        return new TimeSince($this->object->state->last_state_change->getTimestamp());
-    }
-
-    protected function createSubject(): BaseHtmlElement
-    {
-        return new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($this->object->display_name)
-        );
+        return null;
     }
 
     protected function createTitle(): BaseHtmlElement

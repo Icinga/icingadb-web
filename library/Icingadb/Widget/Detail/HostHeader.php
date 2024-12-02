@@ -1,20 +1,23 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\HostStates;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\HostState;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Html\BaseHtmlElement;
 use ipl\Web\Widget\StateBall;
 
-class HostDetailHeader extends HostListItemMinimal
+/**
+ * @property Host $object
+ * @property HostState $state
+ */
+class HostHeader extends BaseHostAndServiceHeader
 {
-    protected function getStateBallSize(): string
-    {
-        return '';
-    }
+    protected $defaultAttributes = ['class' => 'host-header'];
 
     protected function assembleVisual(BaseHtmlElement $visual): void
     {
@@ -55,15 +58,5 @@ class HostDetailHeader extends HostListItemMinimal
         );
 
         $visual->addHtml($stateChange);
-    }
-
-    protected function assemble(): void
-    {
-        $attributes = $this->list->getAttributes();
-        if (! in_array('minimal', $attributes->get('class')->getValue())) {
-            $attributes->add('class', 'minimal');
-        }
-
-        parent::assemble();
     }
 }

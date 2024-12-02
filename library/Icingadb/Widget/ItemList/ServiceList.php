@@ -20,8 +20,6 @@ class ServiceList extends StateList
                 $this->removeAttribute('class', 'default-layout');
 
                 return ServiceListItemDetailed::class;
-            case 'objectHeader':
-                return ServiceDetailHeader::class;
             default:
                 return ServiceListItem::class;
         }

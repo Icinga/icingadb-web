@@ -1,21 +1,30 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
 
-namespace Icinga\Module\Icingadb\Widget\ItemList;
+namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceStates;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\ServiceState;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
+use ipl\Html\ValidHtml;
+use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 
-class ServiceDetailHeader extends ServiceListItemMinimal
+/**
+ * @property Service $object
+ * @property ServiceState $state
+ */
+class ServiceHeader extends BaseHostAndServiceHeader
 {
-    protected function getStateBallSize(): string
-    {
-        return '';
-    }
-
+    protected $defaultAttributes = ['class' => 'service-header'];
     protected function assembleVisual(BaseHtmlElement $visual): void
     {
         if ($this->state->state_type === 'soft') {
@@ -57,13 +66,18 @@ class ServiceDetailHeader extends ServiceListItemMinimal
         $visual->addHtml($stateChange);
     }
 
-    protected function assemble(): void
+    protected function createSubject(): ValidHtml
     {
-        $attributes = $this->list->getAttributes();
-        if (! in_array('minimal', $attributes->get('class')->getValue())) {
-            $attributes->add('class', 'minimal');
-        }
+        $service = $this->object->display_name;
+        $host = [
+            new StateBall($this->object->host->state->getStateText(), StateBall::SIZE_MEDIUM),
+            ' ',
+            $this->object->host->display_name
+        ];
 
-        parent::assemble();
+        $host = new Link($host, Links::host($this->object->host), ['class' => 'subject']);
+        $service = new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($service));
+
+        return Html::sprintf(t('%s on %s', '<service> on <host>'), $service, $host);
     }
 }
