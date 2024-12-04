@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\ItemTable;
 
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
-use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
@@ -27,37 +26,27 @@ abstract class BaseServiceGroupItem extends BaseTableRowItem
 
     protected function init(): void
     {
-        if (isset($this->table)) {
-            $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
-        }
+        $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
     protected function createSubject(): BaseHtmlElement
     {
-        if (isset($this->table)) {
-            $link = new Link(
-                $this->item->display_name,
-                Links::servicegroup($this->item),
-                [
-                    'class' => 'subject',
-                    'title' => sprintf(
-                        $this->translate('List all services in the group "%s"'),
-                        $this->item->display_name
-                    )
-                ]
-            );
-            if ($this->table->hasBaseFilter()) {
-                $link->getUrl()->setFilter($this->table->getBaseFilter());
-            }
-
-            return $link;
+        $link = new Link(
+            $this->item->display_name,
+            Links::servicegroup($this->item),
+            [
+                'class' => 'subject',
+                'title' => sprintf(
+                    $this->translate('List all services in the group "%s"'),
+                    $this->item->display_name
+                )
+            ]
+        );
+        if ($this->table->hasBaseFilter()) {
+            $link->getUrl()->setFilter($this->table->getBaseFilter());
         }
 
-        return new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($this->item->display_name)
-        );
+        return $link;
     }
 
     protected function createCaption(): BaseHtmlElement

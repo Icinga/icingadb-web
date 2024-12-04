@@ -32,7 +32,7 @@ class HostgroupTableRow extends BaseHostGroupItem
         $hostStats = new HostStatistics($this->item);
 
         $hostStats->setBaseFilter(Filter::equal('hostgroup.name', $this->item->name));
-        if (isset($this->table) && $this->table->hasBaseFilter()) {
+        if ($this->table->hasBaseFilter()) {
             $hostStats->setBaseFilter(
                 Filter::all($hostStats->getBaseFilter(), $this->table->getBaseFilter())
             );
@@ -41,7 +41,7 @@ class HostgroupTableRow extends BaseHostGroupItem
         $serviceStats = new ServiceStatistics($this->item);
 
         $serviceStats->setBaseFilter(Filter::equal('hostgroup.name', $this->item->name));
-        if (isset($this->table) && $this->table->hasBaseFilter()) {
+        if ($this->table->hasBaseFilter()) {
             $serviceStats->setBaseFilter(
                 Filter::all($serviceStats->getBaseFilter(), $this->table->getBaseFilter())
             );

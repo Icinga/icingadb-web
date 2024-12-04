@@ -6,6 +6,8 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
+    margin-right: .5em;
   }
 
   .visual,
@@ -33,7 +35,6 @@
   .main {
     flex: 1 1 auto;
     width: 0;
-    margin-left: .5em;
 
     header { // from ipl-web/item-list.less
       display: flex;
@@ -168,5 +169,44 @@
 
   .object-statistics {
     font-size: .75em;
+  }
+}
+
+.hostgroup-header,
+.servicegroup-header {
+  .main {
+    padding: 0; // reset
+  }
+
+  .main > header {
+    .title {
+      padding: .25em 0;
+
+      > * { // does not make big diff, can be removed
+        margin: 0; // unset
+        margin-right: 0.5em;
+      }
+    }
+
+    .caption {
+      display: flex;
+      flex: unset; // we have only .object-statistics here, so we don't need flex
+      width: fit-content;
+      gap: 1em; // hostgroup has two .object-statistics element
+    }
+
+    .vertical-key-value {
+      br {
+        display: none;
+      }
+
+      .key {
+        padding-left: .417em;
+      }
+
+      .value {
+        vertical-align: middle;
+      }
+    }
   }
 }

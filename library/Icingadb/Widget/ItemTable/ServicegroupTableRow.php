@@ -31,7 +31,7 @@ class ServicegroupTableRow extends BaseServiceGroupItem
         $serviceStats = new ServiceStatistics($this->item);
 
         $serviceStats->setBaseFilter(Filter::equal('servicegroup.name', $this->item->name));
-        if (isset($this->table) && $this->table->hasBaseFilter()) {
+        if ($this->table->hasBaseFilter()) {
             $serviceStats->setBaseFilter(
                 Filter::all($serviceStats->getBaseFilter(), $this->table->getBaseFilter())
             );
