@@ -172,6 +172,29 @@
   }
 }
 
+.user-header,
+.usergroup-header {
+  .visual {
+    padding: 0; // unset
+  }
+
+  .main > header {
+    .title {
+      > * { // does not make big diff, can be removed
+        margin: 0; // unset
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  .usergroup-ball,
+  .user-ball {
+    height: 2em;
+    width: 2em;
+    display: block;
+  }
+}
+
 .hostgroup-header,
 .servicegroup-header {
   .main {

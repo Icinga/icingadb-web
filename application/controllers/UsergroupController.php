@@ -8,7 +8,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\UsergroupDetail;
-use Icinga\Module\Icingadb\Widget\ItemTable\UsergroupTableRow;
+use Icinga\Module\Icingadb\Widget\Detail\UsergroupHeader;
 use ipl\Stdlib\Filter;
 
 class UsergroupController extends Controller
@@ -40,7 +40,7 @@ class UsergroupController extends Controller
 
     public function indexAction()
     {
-        $this->addControl(new UsergroupTableRow($this->usergroup));
+        $this->addControl(new UsergroupHeader($this->usergroup));
         $this->addContent(new UsergroupDetail($this->usergroup));
 
         $this->setAutorefreshInterval(10);

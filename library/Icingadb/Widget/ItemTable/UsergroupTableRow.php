@@ -27,9 +27,7 @@ class UsergroupTableRow extends BaseTableRowItem
 
     protected function init(): void
     {
-        if (isset($this->table)) {
-            $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
-        }
+        $this->table->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
     }
 
     protected function assembleVisual(BaseHtmlElement $visual): void
@@ -44,13 +42,7 @@ class UsergroupTableRow extends BaseTableRowItem
     protected function assembleTitle(BaseHtmlElement $title): void
     {
         $title->addHtml(
-            isset($this->table)
-                ? new Link($this->item->display_name, Links::usergroup($this->item), ['class' => 'subject'])
-                : new HtmlElement(
-                    'span',
-                    Attributes::create(['class' => 'subject']),
-                    Text::create($this->item->display_name)
-                ),
+            new Link($this->item->display_name, Links::usergroup($this->item), ['class' => 'subject']),
             new HtmlElement('span', null, Text::create($this->item->name))
         );
     }
