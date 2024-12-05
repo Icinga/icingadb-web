@@ -6,7 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\Detail\CommentHeader;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -33,11 +33,7 @@ class HostListItemDetailed extends BaseHostListItem
 
         if ($this->item->state->last_comment->host_id === $this->item->id) {
             $comment = $this->item->state->last_comment;
-            $comment->host = $this->item;
-            $comment = (new CommentList([$comment]))
-                ->setNoSubjectLink()
-                ->setObjectLinkDisabled()
-                ->setDetailActionsDisabled();
+            $comment = new CommentHeader($comment, false, true);
 
             $statusIcons->addHtml(
                 new HtmlElement(

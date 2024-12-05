@@ -4,27 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
-use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
-use Icinga\Module\Icingadb\Common\TicketLinks;
-use ipl\Html\Html;
-use Icinga\Module\Icingadb\Common\HostLink;
-use Icinga\Module\Icingadb\Common\Icons;
-use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Widget\MarkdownLine;
-use Icinga\Module\Icingadb\Common\ServiceLink;
+use Icinga\Module\Icingadb\Widget\Detail\CommentHeaderUtils;
 use Icinga\Module\Icingadb\Model\Comment;
-use ipl\Html\FormattedString;
 use ipl\Web\Common\BaseListItem;
-use ipl\Web\Widget\TimeAgo;
-use ipl\Html\Attributes;
-use ipl\Html\BaseHtmlElement;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
 use ipl\Stdlib\Filter;
-use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\Link;
-use ipl\Web\Widget\TimeUntil;
 
 /**
  * Comment item of a comment list. Represents one database row.
@@ -34,90 +17,21 @@ use ipl\Web\Widget\TimeUntil;
  */
 abstract class BaseCommentListItem extends BaseListItem
 {
-    use HostLink;
-    use ServiceLink;
-    use NoSubjectLink;
-    use ObjectLinkDisabled;
-    use TicketLinks;
+    use CommentHeaderUtils;
 
-    protected function assembleCaption(BaseHtmlElement $caption): void
+    protected function getObject(): Comment
     {
-        $markdownLine = new MarkdownLine($this->createTicketLinks($this->item->text));
-
-        $caption->getAttributes()->add($markdownLine->getAttributes());
-        $caption->addFrom($markdownLine);
+        return $this->item;
     }
 
-    protected function assembleTitle(BaseHtmlElement $title): void
+    protected function wantSubjectLink(): bool
     {
-        $isAck = $this->item->entry_type === 'ack';
-        $expires = $this->item->expire_time;
-
-        $subjectText = sprintf(
-            $isAck ? t('%s acknowledged', '<username>..') : t('%s commented', '<username>..'),
-            $this->item->author
-        );
-
-        $headerParts = [
-            new Icon(Icons::USER),
-            $this->getNoSubjectLink()
-                ? new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($subjectText))
-                : new Link($subjectText, Links::comment($this->item), ['class' => 'subject'])
-        ];
-
-        if ($isAck) {
-            $label = [Text::create('ack')];
-
-            if ($this->item->is_persistent) {
-                array_unshift($label, new Icon(Icons::IS_PERSISTENT));
-            }
-
-            $headerParts[] = Text::create(' ');
-            $headerParts[] = new HtmlElement('span', Attributes::create(['class' => 'ack-badge badge']), ...$label);
-        }
-
-        if ($expires !== null) {
-            $headerParts[] = Text::create(' ');
-            $headerParts[] = new HtmlElement(
-                'span',
-                Attributes::create(['class' => 'ack-badge badge']),
-                Text::create(t('EXPIRES'))
-            );
-        }
-
-        if ($this->getObjectLinkDisabled()) {
-            // pass
-        } elseif ($this->item->object_type === 'host') {
-            $headerParts[] = $this->createHostLink($this->item->host, true);
-        } else {
-            $headerParts[] = $this->createServiceLink($this->item->service, $this->item->service->host, true);
-        }
-
-        $title->addHtml(...$headerParts);
+        return ! $this->list->getNoSubjectLink();
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual): void
+    protected function wantObjectLink(): bool
     {
-        $visual->addHtml(new HtmlElement(
-            'div',
-            Attributes::create(['class' => 'user-ball']),
-            Text::create($this->item->author[0])
-        ));
-    }
-
-    protected function createTimestamp(): ?BaseHtmlElement
-    {
-        if ($this->item->expire_time) {
-            return Html::tag(
-                'span',
-                FormattedString::create(t("expires %s"), new TimeUntil($this->item->expire_time->getTimestamp()))
-            );
-        }
-
-        return Html::tag(
-            'span',
-            FormattedString::create(t("created %s"), new TimeAgo($this->item->entry_time->getTimestamp()))
-        );
+        return ! $this->list->getObjectLinkDisabled();
     }
 
     protected function init(): void
@@ -125,7 +39,5 @@ abstract class BaseCommentListItem extends BaseListItem
         $this->setTicketLinkEnabled($this->list->getTicketLinkEnabled());
         $this->list->addDetailFilterAttribute($this, Filter::equal('name', $this->item->name));
         $this->list->addMultiselectFilterAttribute($this, Filter::equal('name', $this->item->name));
-        $this->setObjectLinkDisabled($this->list->getObjectLinkDisabled());
-        $this->setNoSubjectLink($this->list->getNoSubjectLink());
     }
 }

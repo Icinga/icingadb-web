@@ -233,3 +233,51 @@
     }
   }
 }
+
+.comment-header {
+  .user-ball {
+    font-size: .857em;
+    height: 1.75em;
+    line-height: 1.5em;
+    width: 1.75em;
+  }
+
+  .title > i:first-child {
+    margin-right: 0;
+  }
+
+  .title > .subject + .badge,
+  .title > .badge + .subject,
+  .title > .badge:last-of-type {
+    margin-left: 0;
+  }
+
+  .title a {
+    &:not(.subject) {
+      .text-ellipsis();
+    }
+  }
+
+  .title .subject:not(:last-child) {
+    margin-left: 0;
+  }
+
+  .title .subject:nth-child(3):last-child {
+    margin-left: 0;
+  }
+}
+
+.comment-popup > .comment-header {
+  .visual {
+    margin-right: 0;
+  }
+
+  .user-ball { // ball is bigger in the popup
+    font-size: unset;
+  }
+
+  .visual,
+  .main {
+    padding: .5em 0;
+  }
+}

@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemDetailedLayout;
 use Icinga\Module\Icingadb\Util\PerfDataSet;
+use Icinga\Module\Icingadb\Widget\Detail\CommentHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -34,10 +35,7 @@ class ServiceListItemDetailed extends BaseServiceListItem
         if ($this->item->state->last_comment->service_id === $this->item->id) {
             $comment = $this->item->state->last_comment;
             $comment->service = $this->item;
-            $comment = (new CommentList([$comment]))
-                ->setNoSubjectLink()
-                ->setObjectLinkDisabled()
-                ->setDetailActionsDisabled();
+            $comment = new CommentHeader($comment, false, true);
 
             $statusIcons->addHtml(
                 new HtmlElement(

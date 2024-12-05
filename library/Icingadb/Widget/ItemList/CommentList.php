@@ -16,7 +16,6 @@ use ipl\Web\Url;
 
 class CommentList extends BaseItemList
 {
-    use CaptionDisabled;
     use NoSubjectLink;
     use ObjectLinkDisabled;
     use ViewMode;

@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\CommentDetail;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
+use Icinga\Module\Icingadb\Widget\Detail\CommentHeader;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
@@ -49,11 +49,7 @@ class CommentController extends Controller
 
     public function indexAction()
     {
-        $this->addControl((new CommentList([$this->comment]))
-            ->setViewMode('minimal')
-            ->setDetailActionsDisabled()
-            ->setCaptionDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new CommentHeader($this->comment));
 
         $this->addContent((new CommentDetail($this->comment))->setTicketLinkEnabled());
 
