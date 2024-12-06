@@ -281,3 +281,21 @@
     padding: .5em 0;
   }
 }
+
+.downtime-header {
+  .visual {
+    width: 8em;
+    background-color: @gray-lighter;
+    justify-content: center;
+    gap: 0.28125em; // 0 calculated &nbsp; width
+
+    margin-right: 1em; //TODO: to make bigger gap as before
+  }
+
+  &.in-effect {
+    .visual {
+      background-color: @color-ok;
+      color: @text-color-on-icinga-blue;
+    }
+  }
+}

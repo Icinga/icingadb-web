@@ -9,13 +9,4 @@ use Icinga\Module\Icingadb\Common\ListItemMinimalLayout;
 class DowntimeListItemMinimal extends BaseDowntimeListItem
 {
     use ListItemMinimalLayout;
-
-    protected function init(): void
-    {
-        parent::init();
-
-        if ($this->list->isCaptionDisabled()) {
-            $this->setCaptionDisabled();
-        }
-    }
 }
