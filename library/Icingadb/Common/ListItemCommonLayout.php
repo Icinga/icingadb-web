@@ -8,8 +8,6 @@ use ipl\Html\BaseHtmlElement;
 
 trait ListItemCommonLayout
 {
-    use CaptionDisabled;
-
     protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->addHtml($this->createTitle());
@@ -19,8 +17,6 @@ trait ListItemCommonLayout
     protected function assembleMain(BaseHtmlElement $main): void
     {
         $main->addHtml($this->createHeader());
-        if (!$this->isCaptionDisabled()) {
-            $main->addHtml($this->createCaption());
-        }
+        $main->addHtml($this->createCaption());
     }
 }

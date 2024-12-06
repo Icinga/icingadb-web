@@ -11,15 +11,6 @@ class HistoryListItemMinimal extends BaseHistoryListItem
 {
     use ListItemMinimalLayout;
 
-    protected function init(): void
-    {
-        parent::init();
-
-        if ($this->list->isCaptionDisabled()) {
-            $this->setCaptionDisabled();
-        }
-    }
-
     protected function getStateBallSize(): string
     {
         return StateBall::SIZE_BIG;

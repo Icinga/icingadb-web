@@ -8,14 +8,10 @@ use ipl\Html\BaseHtmlElement;
 
 trait ListItemMinimalLayout
 {
-    use CaptionDisabled;
-
     protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->add($this->createTitle());
-        if (! $this->isCaptionDisabled()) {
-            $header->add($this->createCaption());
-        }
+        $header->add($this->createCaption());
         $header->add($this->createTimestamp());
     }
 

@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
-use Icinga\Module\Icingadb\Common\CaptionDisabled;
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Common\NoSubjectLink;
@@ -15,7 +14,6 @@ use ipl\Web\Url;
 
 class NotificationList extends BaseItemList
 {
-    use CaptionDisabled;
     use NoSubjectLink;
     use ViewMode;
     use LoadMore;
