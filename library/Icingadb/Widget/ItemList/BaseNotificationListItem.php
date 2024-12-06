@@ -8,27 +8,25 @@ use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
-use ipl\Stdlib\Filter;
-use ipl\Web\Common\BaseListItem;
-use ipl\Web\Widget\EmptyState;
-use ipl\Web\Widget\TimeAgo;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Stdlib\Filter;
+use ipl\Web\Common\BaseListItem;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
+use ipl\Web\Widget\TimeAgo;
 
 abstract class BaseNotificationListItem extends BaseListItem
 {
     use HostLink;
-    use NoSubjectLink;
     use ServiceLink;
 
     /** @var NotificationList */
@@ -36,7 +34,6 @@ abstract class BaseNotificationListItem extends BaseListItem
 
     protected function init(): void
     {
-        $this->setNoSubjectLink($this->list->getNoSubjectLink());
         $this->list->addDetailFilterAttribute($this, Filter::equal('id', bin2hex($this->item->history->id)));
     }
 
@@ -159,19 +156,11 @@ abstract class BaseNotificationListItem extends BaseListItem
 
     protected function assembleTitle(BaseHtmlElement $title): void
     {
-        if ($this->getNoSubjectLink()) {
-            $title->addHtml(HtmlElement::create(
-                'span',
-                ['class' => 'subject'],
-                sprintf(self::phraseForType($this->item->type), ucfirst($this->item->object_type))
-            ));
-        } else {
-            $title->addHtml(new Link(
-                sprintf(self::phraseForType($this->item->type), ucfirst($this->item->object_type)),
-                Links::event($this->item->history),
-                ['class' => 'subject']
-            ));
-        }
+        $title->addHtml(new Link(
+            sprintf(self::phraseForType($this->item->type), ucfirst($this->item->object_type)),
+            Links::event($this->item->history),
+            ['class' => 'subject']
+        ));
 
         if ($this->item->object_type === 'host') {
             $link = $this->createHostLink($this->item->host, true);

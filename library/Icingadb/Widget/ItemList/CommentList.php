@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\Links;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ObjectLinkDisabled;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Common\ViewMode;
@@ -15,7 +14,6 @@ use ipl\Web\Url;
 
 class CommentList extends BaseItemList
 {
-    use NoSubjectLink;
     use ObjectLinkDisabled;
     use ViewMode;
     use TicketLinks;

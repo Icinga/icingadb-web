@@ -26,12 +26,12 @@ abstract class BaseCommentListItem extends BaseListItem
 
     protected function wantSubjectLink(): bool
     {
-        return ! $this->list->getNoSubjectLink();
+        return true;
     }
 
     protected function wantObjectLink(): bool
     {
-        return ! $this->list->getObjectLinkDisabled();
+        return true;
     }
 
     protected function init(): void

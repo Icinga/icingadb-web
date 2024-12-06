@@ -6,7 +6,6 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\LoadMore;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Common\ViewMode;
 use ipl\Orm\ResultSet;
 use ipl\Web\Common\BaseItemList;
@@ -14,7 +13,6 @@ use ipl\Web\Url;
 
 class NotificationList extends BaseItemList
 {
-    use NoSubjectLink;
     use ViewMode;
     use LoadMore;
     use DetailActions;

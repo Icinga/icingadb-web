@@ -32,6 +32,6 @@ abstract class BaseHistoryListItem extends BaseListItem
 
     protected function wantSubjectLink(): bool
     {
-        return ! $this->list->getNoSubjectLink();
+        return true;
     }
 }
