@@ -3,6 +3,15 @@
 Specific version upgrades are described below. Please note that version upgrades are incremental.
 If you are upgrading across multiple versions, make sure to follow the steps for each of them.
 
+## Upgrading to Icinga DB Web v1.2
+
+**Deprecations**
+
+The following classes have been deprecated and will be removed in a future release:
+* `\Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand`
+* `\Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand`
+* `\Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand`
+
 ## Upgrading to Icinga DB Web v1.1
 
 **Breaking Changes**

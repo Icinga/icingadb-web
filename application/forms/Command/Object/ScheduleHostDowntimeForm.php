@@ -4,14 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Forms\Command\Object;
 
-use CallbackFilterIterator;
 use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
-use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
-use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Web\Notification;
-use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use Iterator;
 use Traversable;
@@ -60,7 +56,7 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
 
         $decorator = new IcingaFormDecorator();
 
-        $this->addElement(
+        $allServices = $this->createElement(
             'checkbox',
             'all_services',
             [
@@ -72,54 +68,19 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
                 'value'         => $this->hostDowntimeAllServices
             ]
         );
-        $decorator->decorate($this->getElement('all_services'));
-
-        $this->addElement(
-            'select',
-            'child_options',
-            array(
-                'description'   => t('Schedule child downtimes.'),
-                'label'         => t('Child Options'),
-                'options'       => [
-                    0 => t('Do nothing with child hosts'),
-                    1 => t('Schedule triggered downtime for all child hosts'),
-                    2 => t('Schedule non-triggered downtime for all child hosts')
-                ]
-            )
-        );
-        $decorator->decorate($this->getElement('child_options'));
+        $this->insertBefore($allServices, $this->getElement('child_options'));
+        $this->registerElement($allServices);
+        $decorator->decorate($allServices);
     }
 
     protected function getCommands(Iterator $objects): Traversable
     {
-        $granted = new CallbackFilterIterator($objects, function (Model $object): bool {
-            return $this->isGrantedOn('icingadb/command/downtime/schedule', $object);
-        });
+        if (! $this->getElement('all_services')->isChecked()) {
+            yield from parent::getCommands($objects);
+        }
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            if (($childOptions = (int) $this->getValue('child_options'))) {
-                $command = new PropagateHostDowntimeCommand();
-                $command->setTriggered($childOptions === 1);
-            } else {
-                $command = new ScheduleHostDowntimeCommand();
-            }
-
-            $command->setObjects($granted);
-            $command->setComment($this->getValue('comment'));
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
-            $command->setStart($this->getValue('start')->getTimestamp());
-            $command->setEnd($this->getValue('end')->getTimestamp());
-            $command->setForAllServices($this->getElement('all_services')->isChecked());
-
-            if ($this->getElement('flexible')->isChecked()) {
-                $command->setFixed(false);
-                $command->setDuration(
-                    $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
-                );
-            }
-
-            yield $command;
+        foreach (parent::getCommands($objects) as $command) {
+            yield $command->setForAllServices();
         }
     }
 }
