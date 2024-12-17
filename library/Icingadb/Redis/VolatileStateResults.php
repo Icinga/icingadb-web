@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Redis;
 
 use Icinga\Application\Benchmark;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
@@ -39,7 +40,7 @@ class VolatileStateResults extends ResultSet
     {
         $self = parent::fromQuery($query);
         $self->resolver = $query->getResolver();
-        $self->redisUnavailable = IcingaRedis::isUnavailable();
+        $self->redisUnavailable = Backend::getRedis()->isUnavailable();
 
         return $self;
     }

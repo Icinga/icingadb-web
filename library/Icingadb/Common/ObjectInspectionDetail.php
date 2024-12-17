@@ -120,7 +120,7 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
         $title = new HtmlElement('h2', null, Text::create(t('Volatile State Details')));
 
         try {
-            $json = IcingaRedis::instance()->getConnection()
+            $json = Backend::getRedis()->getConnection()
                 ->hGet("icinga:{$this->object->getTableName()}:state", bin2hex($this->object->id));
         } catch (Exception $e) {
             return [$title, sprintf('Failed to load redis data: %s', $e->getMessage())];

@@ -12,6 +12,9 @@ The following classes have been deprecated and will be removed in a future relea
 * `\Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand`
 * `\Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand`
 
+The following methods have been deprecated and will be removed in a future release:
+* `\Icinga\Module\Icingadb\Common\IcingaRedis::instance()`: Use `\Icinga\Module\Icingadb\Common\Backend::getRedis()` instead.
+
 ## Upgrading to Icinga DB Web v1.1
 
 **Breaking Changes**
