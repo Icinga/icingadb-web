@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\HostStates;
 use ipl\Orm\Relations;
 
@@ -24,7 +25,7 @@ class HostState extends State
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'                => t('Environment Id'),
             'state_type'                    => t('Host State Type'),
             'soft_state'                    => t('Host Soft State'),
@@ -53,9 +54,14 @@ class HostState extends State
             'last_update'                   => t('Host Last Update'),
             'last_state_change'             => t('Host Last State Change'),
             'next_check'                    => t('Host Next Check'),
-            'next_update'                   => t('Host Next Update'),
-            'affects_children'              => t('Host Affects Children'),
+            'next_update'                   => t('Host Next Update')
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns['affects_children'] = t('Host Affects Children');
+        }
+
+        return $columns;
     }
 
     public function createRelations(Relations $relations)

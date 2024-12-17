@@ -98,7 +98,7 @@ abstract class StateListItem extends BaseListItem
             Html::tag('span', ['class' => 'state-text'], $this->state->getStateTextTranslated())
         ));
 
-        if ($this->state->affects_children) {
+        if (isset($this->state->affects_children) && $this->state->affects_children) {
             $total = (int) $this->item->affected_children;
 
             if ($total > 1000) {

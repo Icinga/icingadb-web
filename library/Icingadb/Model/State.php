@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
@@ -68,7 +69,7 @@ abstract class State extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'state_type',
             'soft_state',
@@ -99,9 +100,14 @@ abstract class State extends Model
             'last_update',
             'last_state_change',
             'next_check',
-            'next_update',
-            'affects_children'
+            'next_update'
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns[] = 'affects_children';
+        }
+
+        return $columns;
     }
 
     public function createBehaviors(Behaviors $behaviors)

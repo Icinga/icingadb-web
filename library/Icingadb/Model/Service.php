@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\HasProblematicParent;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
@@ -70,7 +71,7 @@ class Service extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'name_checksum',
             'properties_checksum',
@@ -105,14 +106,19 @@ class Service extends Model
             'zone_name',
             'zone_id',
             'command_endpoint_name',
-            'command_endpoint_id',
-            'affected_children'
+            'command_endpoint_id'
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns[] = 'affected_children';
+        }
+
+        return $columns;
     }
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Service Name Checksum'),
             'properties_checksum'       => t('Service Properties Checksum'),
@@ -148,8 +154,13 @@ class Service extends Model
             'zone_id'                   => t('Zone Id'),
             'command_endpoint_name'     => t('Endpoint Name'),
             'command_endpoint_id'       => t('Endpoint Id'),
-            'affected_children'         => t('Affected Children')
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns['affected_children'] = t('Affected Children');
+        }
+
+        return $columns;
     }
 
     public function getSearchColumns()
@@ -196,7 +207,9 @@ class Service extends Model
             'command_endpoint_id'
         ]));
 
-        $behaviors->add(new HasProblematicParent());
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $behaviors->add(new HasProblematicParent());
+        }
     }
 
     public function createDefaults(Defaults $defaults)

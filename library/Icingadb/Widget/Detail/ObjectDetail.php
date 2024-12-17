@@ -14,6 +14,7 @@ use Icinga\Application\Web;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -43,6 +44,7 @@ use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\HorizontalKeyValue;
 use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
@@ -617,6 +619,17 @@ class ObjectDetail extends BaseHtmlElement
      */
     protected function createRootProblems(): ?array
     {
+        if (Backend::getDbSchemaVersion() < 6) {
+            if ($this->object->state->is_reachable) {
+                return null;
+            }
+
+            return [
+                HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
+                new EmptyStateBar(t("You're missing out! Upgrade Icinga DB and see the actual root cause here!"))
+            ];
+        }
+
         // If a dependency has failed, then the children are not reachable. Hence, the root problems should not be shown
         // if the object is reachable. And in case of a service, since, it may be also be unreachable because of its
         // host being down, only show its root problems if it's really caused by a dependency failure.
@@ -669,7 +682,7 @@ class ObjectDetail extends BaseHtmlElement
      */
     protected function createAffectedObjects(): ?array
     {
-        if (! $this->object->state->affects_children) {
+        if (! isset($this->object->state->affects_children) || ! $this->object->state->affects_children) {
             return null;
         }
 

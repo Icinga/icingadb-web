@@ -8,6 +8,7 @@ use ArrayIterator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
@@ -39,7 +40,6 @@ class ServiceController extends Controller
         $hostName = $this->params->getRequired('host.name');
 
         $query = Service::on($this->getDb())
-            ->withColumns(['has_problematic_parent'])
             ->with([
                 'state',
                 'icon_image',
@@ -53,6 +53,10 @@ class ServiceController extends Controller
                 Filter::equal('service.name', $name),
                 Filter::equal('host.name', $hostName)
             ));
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $query->withColumns(['has_problematic_parent']);
+        }
 
         $this->applyRestrictions($query);
 

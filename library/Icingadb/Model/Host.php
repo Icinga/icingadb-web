@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -74,7 +75,7 @@ class Host extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'name_checksum',
             'properties_checksum',
@@ -112,14 +113,19 @@ class Host extends Model
             'zone_name',
             'zone_id',
             'command_endpoint_name',
-            'command_endpoint_id',
-            'affected_children'
+            'command_endpoint_id'
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns[] = 'affected_children';
+        }
+
+        return $columns;
     }
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Host Name Checksum'),
             'properties_checksum'       => t('Host Properties Checksum'),
@@ -157,9 +163,14 @@ class Host extends Model
             'zone_name'                 => t('Zone Name'),
             'zone_id'                   => t('Zone Id'),
             'command_endpoint_name'     => t('Endpoint Name'),
-            'command_endpoint_id'       => t('Endpoint Id'),
-            'affected_children'         => t('Affected Children'),
+            'command_endpoint_id'       => t('Endpoint Id')
         ];
+
+        if (Backend::getDbSchemaVersion() >= 6) {
+            $columns['affected_children'] = t('Affected Children');
+        }
+
+        return $columns;
     }
 
     public function getSearchColumns()
