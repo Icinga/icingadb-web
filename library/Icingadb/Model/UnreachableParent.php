@@ -21,6 +21,7 @@ use ipl\Stdlib\Filter;
  *
  * @property string $id
  * @property int $level
+ * @property string $child_id
  * @property ?string $host_id
  * @property ?string $service_id
  * @property ?string $redundancy_group_id
@@ -48,6 +49,7 @@ class UnreachableParent extends DependencyNode
     {
         return [
             'id',
+            'child_id',
             'level',
             'host_id',
             'service_id',
@@ -109,6 +111,7 @@ class UnreachableParent extends DependencyNode
         $rootQuery = DependencyNode::on($db)
             ->columns([
                 'id' => 'id',
+                'child_id' => 'id',
                 'level' => new Expression('0'),
                 'host_id' => 'host_id',
                 'service_id' => new Expression("COALESCE(%s, CAST('' as binary(20)))", ['service_id']),
@@ -135,6 +138,7 @@ class UnreachableParent extends DependencyNode
         $nodeQuery = DependencyEdge::on($db)
             ->columns([
                 'id' => 'to_node_id',
+                'child_id' => 'from_node_id',
                 'level' => new Expression('urn.level + 1'),
                 'host_id' => 'to.host_id',
                 'service_id' => 'to.service_id',
@@ -155,6 +159,7 @@ class UnreachableParent extends DependencyNode
         $columnsProperty->setValue($nodeSelect, array_merge(
             [
                 'id' => null,
+                'child_id' => null,
                 'level' => null,
                 'host_id' => null,
                 'service_id' => null,
