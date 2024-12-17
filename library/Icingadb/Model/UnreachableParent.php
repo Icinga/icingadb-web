@@ -24,13 +24,11 @@ use ipl\Stdlib\Filter;
  * @property ?string $host_id
  * @property ?string $service_id
  * @property ?string $redundancy_group_id
- * @property ?string $dependency_id
  * @property int $is_group_member
  *
  * @property (?Host)|Query $host
  * @property (?Service)|Query $service
  * @property (?RedundancyGroup)|Query $redundancy_group
- * @property (?Dependency)|Query $dependency
  */
 class UnreachableParent extends DependencyNode
 {
@@ -52,7 +50,6 @@ class UnreachableParent extends DependencyNode
             'host_id',
             'service_id',
             'redundancy_group_id',
-            'dependency_id',
             'is_group_member'
         ];
     }
@@ -65,8 +62,6 @@ class UnreachableParent extends DependencyNode
             ->setJoinType('LEFT');
         $relations->belongsTo('redundancy_group', RedundancyGroup::class)
             ->setJoinType('LEFT');
-        $relations->belongsTo('dependency', Dependency::class)
-            ->setJoinType('LEFT');
     }
 
     public function createBehaviors(Behaviors $behaviors): void
@@ -75,8 +70,7 @@ class UnreachableParent extends DependencyNode
             'id',
             'host_id',
             'service_id',
-            'redundancy_group_id',
-            'dependency_id'
+            'redundancy_group_id'
         ]));
 
         $behaviors->add(new ReRoute([
@@ -113,7 +107,6 @@ class UnreachableParent extends DependencyNode
                 'host_id' => 'host_id',
                 'service_id' => new Expression("COALESCE(%s, CAST('' as binary(20)))", ['service_id']),
                 'redundancy_group_id' => new Expression("CAST('' as binary(20))"),
-                'dependency_id' => new Expression("CAST('' as binary(20))"),
                 'is_group_member' => new Expression('0')
             ]);
         if ($root instanceof Host) {
@@ -139,11 +132,10 @@ class UnreachableParent extends DependencyNode
                 'host_id' => 'to.host_id',
                 'service_id' => 'to.service_id',
                 'redundancy_group_id' => 'to.redundancy_group_id',
-                'dependency_id' => 'dependency_id',
                 'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0')
             ]);
         $nodeQuery->filter(Filter::any(
-            Filter::equal('dependency.state.failed', 'y'),
+            Filter::equal('state.failed', 'y'),
             Filter::equal('to.redundancy_group.state.failed', 'y')
         ));
 
@@ -159,7 +151,6 @@ class UnreachableParent extends DependencyNode
                 'host_id' => null,
                 'service_id' => null,
                 'redundancy_group_id' => null,
-                'dependency_id' => null,
                 'is_group_member' => null
             ],
             $nodeSelect->getColumns()

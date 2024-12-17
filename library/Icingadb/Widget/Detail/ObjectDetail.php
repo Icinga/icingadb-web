@@ -702,7 +702,7 @@ class ObjectDetail extends BaseHtmlElement
         $failedEdges = DependencyEdge::on($this->getDb())
             ->utilize('child')
             ->columns([new Expression('1')])
-            ->filter(Filter::equal('dependency.state.failed', 'y'));
+            ->filter(Filter::equal('state.failed', 'y'));
 
         if ($this->object instanceof Host) {
             $failedEdges
