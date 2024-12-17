@@ -15,11 +15,12 @@ use ipl\Orm\Relations;
  *
  * @property string $to_node_id
  * @property string $from_node_id
- * @property ?string $dependency_id
+ * @property string $display_name
+ * @property string $dependency_edge_state_id
  *
  * @property DependencyNode|Query $child
  * @property DependencyNode|Query $parent
- * @property (?Dependency)|Query $dependency
+ * @property DependencyEdgeState|Query $state
  */
 class DependencyEdge extends Model
 {
@@ -38,7 +39,8 @@ class DependencyEdge extends Model
         return [
             'to_node_id',
             'from_node_id',
-            'dependency_id'
+            'display_name',
+            'dependency_edge_state_id'
         ];
     }
 
@@ -47,7 +49,7 @@ class DependencyEdge extends Model
         $behaviors->add(new Binary([
             'to_node_id',
             'from_node_id',
-            'dependency_id'
+            'dependency_edge_state_id'
         ]));
     }
 
@@ -57,8 +59,9 @@ class DependencyEdge extends Model
             ->setCandidateKey('from_node_id');
         $relations->belongsTo('parent', DependencyNode::class)
             ->setCandidateKey('to_node_id');
-        $relations->belongsTo('dependency', Dependency::class)
-            ->setJoinType('LEFT');
+        $relations->hasOne('state', DependencyEdgeState::class)
+            ->setCandidateKey('dependency_edge_state_id')
+            ->setForeignKey('id');
 
         // "from" and "to" are only necessary for sub-query filters.
         $relations->belongsTo('from', DependencyNode::class)

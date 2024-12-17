@@ -50,7 +50,7 @@ class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
             ->columns([new Expression('1')])
             ->utilize('from')
             ->limit(1)
-            ->filter(Filter::equal('dependency.state.failed', 'y'));
+            ->filter(Filter::equal('state.failed', 'y'));
 
         $subQueryResolver = $subQuery->getResolver()->setAliasPrefix('hpp_');
         $subQueryTarget = $subQueryResolver->resolveRelation($subQueryModel->getTableName() . '.from')->getTarget();

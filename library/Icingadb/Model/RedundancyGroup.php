@@ -16,11 +16,9 @@ use ipl\Orm\Relations;
  * Redundancy group model.
  *
  * @property string $id
- * @property string $name
  * @property string $display_name
  *
  * @property (?RedundancyGroupState)|Query $state
- * @property Dependency|Query $dependency
  * @property DependencyEdge|Query $from
  * @property DependencyEdge|Query $to
  */
@@ -39,7 +37,6 @@ class RedundancyGroup extends Model
     public function getColumns(): array
     {
         return [
-            'name',
             'display_name'
         ];
     }
@@ -67,7 +64,6 @@ class RedundancyGroup extends Model
         $relations->hasOne('state', RedundancyGroupState::class)
             ->setJoinType('LEFT');
 
-        $relations->hasMany('dependency', Dependency::class);
         $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
 
         $relations->belongsToMany('from', DependencyEdge::class)
