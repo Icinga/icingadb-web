@@ -12,9 +12,6 @@ use Predis\Client as Redis;
 
 class IcingaRedis
 {
-    /** @var static The singleton */
-    protected static $instance;
-
     /** @var Redis Connection to the Icinga Redis */
     private $redis;
 
@@ -24,15 +21,12 @@ class IcingaRedis
     /**
      * Get the singleton
      *
+     * @deprecated Use {@see Backend::getRedis()} instead
      * @return static
      */
     public static function instance(): self
     {
-        if (self::$instance === null) {
-            self::$instance = new static();
-        }
-
-        return self::$instance;
+        return Backend::getRedis();
     }
 
     /**
@@ -40,19 +34,17 @@ class IcingaRedis
      *
      * @return bool
      */
-    public static function isUnavailable(): bool
+    public function isUnavailable(): bool
     {
-        $self = self::instance();
-
-        if (! $self->redisUnavailable && $self->redis === null) {
+        if (! $this->redisUnavailable && $this->redis === null) {
             try {
-                $self->getConnection();
+                $this->getConnection();
             } catch (Exception $_) {
                 // getConnection already logs the error
             }
         }
 
-        return $self->redisUnavailable;
+        return $this->redisUnavailable;
     }
 
     /**
@@ -126,7 +118,7 @@ class IcingaRedis
      */
     public static function fetchHostState(array $ids, array $columns): Generator
     {
-        return self::fetchState('icinga:host:state', $ids, $columns);
+        return Backend::getRedis()->fetchState('icinga:host:state', $ids, $columns);
     }
 
     /**
@@ -139,7 +131,7 @@ class IcingaRedis
      */
     public static function fetchServiceState(array $ids, array $columns): Generator
     {
-        return self::fetchState('icinga:service:state', $ids, $columns);
+        return Backend::getRedis()->fetchState('icinga:service:state', $ids, $columns);
     }
 
     /**
@@ -151,10 +143,10 @@ class IcingaRedis
      *
      * @return Generator
      */
-    protected static function fetchState(string $key, array $ids, array $columns): Generator
+    protected function fetchState(string $key, array $ids, array $columns): Generator
     {
         try {
-            $results = self::instance()->getConnection()->hmget($key, $ids);
+            $results = $this->getConnection()->hmget($key, $ids);
         } catch (Exception $_) {
             // The error has already been logged elsewhere
             return;
@@ -192,7 +184,7 @@ class IcingaRedis
     public static function getLastIcingaHeartbeat(Redis $redis = null)
     {
         if ($redis === null) {
-            $redis = self::instance()->getConnection();
+            $redis = Backend::getRedis()->getConnection();
         }
 
         // Predis doesn't support streams (yet).
