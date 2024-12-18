@@ -16,6 +16,7 @@ use ipl\Orm\Relations;
  * Redundancy group model.
  *
  * @property string $id
+ * @property string $environment_id
  * @property string $display_name
  *
  * @property (?RedundancyGroupState)|Query $state
@@ -37,6 +38,7 @@ class RedundancyGroup extends Model
     public function getColumns(): array
     {
         return [
+            'environment_id',
             'display_name'
         ];
     }
@@ -51,7 +53,8 @@ class RedundancyGroup extends Model
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
-            'id'
+            'id',
+            'environment_id'
         ]));
         $behaviors->add(new ReRoute([
             'child' => 'to.from',

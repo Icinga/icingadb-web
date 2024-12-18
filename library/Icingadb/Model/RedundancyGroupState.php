@@ -17,6 +17,7 @@ use ipl\Orm\Relations;
  * Redundancy group state model.
  *
  * @property string $id
+ * @property string $environment_id
  * @property string $redundancy_group_id
  * @property bool $failed
  * @property DateTime $last_state_change
@@ -38,6 +39,7 @@ class RedundancyGroupState extends Model
     public function getColumns(): array
     {
         return [
+            'environment_id',
             'redundancy_group_id',
             'failed',
             'last_state_change'
@@ -48,6 +50,7 @@ class RedundancyGroupState extends Model
     {
         $behaviors->add(new Binary([
             'id',
+            'environment_id',
             'redundancy_group_id'
         ]));
         $behaviors->add(new BoolCast([
