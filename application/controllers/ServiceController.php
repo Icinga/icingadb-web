@@ -407,13 +407,17 @@ class ServiceController extends Controller
 
     protected function createTabs(): Tabs
     {
-        $hasDependecyNode = DependencyNode::on($this->getDb())
-                ->columns([new Expression('1')])
-                ->filter(Filter::all(
-                    Filter::equal('service_id', $this->service->id),
-                    Filter::equal('host_id', $this->service->host_id)
-                ))
-                ->first() !== null;
+        if (! Backend::supportsDependencies()) {
+            $hasDependencyNode = false;
+        } else {
+            $hasDependencyNode = DependencyNode::on($this->getDb())
+                    ->columns([new Expression('1')])
+                    ->filter(Filter::all(
+                        Filter::equal('service_id', $this->service->id),
+                        Filter::equal('host_id', $this->service->host_id)
+                    ))
+                    ->first() !== null;
+        }
 
         $tabs = $this->getTabs()
             ->add('index', [
@@ -425,7 +429,7 @@ class ServiceController extends Controller
                 'url'    => ServiceLinks::history($this->service, $this->service->host)
             ]);
 
-        if ($hasDependecyNode) {
+        if ($hasDependencyNode) {
             $tabs->add('parents', [
                 'label'  => $this->translate('Parents'),
                 'url'    => Url::fromPath(

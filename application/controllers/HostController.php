@@ -8,6 +8,7 @@ use ArrayIterator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
@@ -434,13 +435,17 @@ class HostController extends Controller
 
     protected function createTabs(): Tabs
     {
-        $hasDependencyNode = DependencyNode::on($this->getDb())
-                ->columns([new Expression('1')])
-                ->filter(Filter::all(
-                    Filter::equal('host_id', $this->host->id),
-                    Filter::unlike('service_id', '*')
-                ))
-                ->first() !== null;
+        if (! Backend::supportsDependencies()) {
+            $hasDependencyNode = false;
+        } else {
+            $hasDependencyNode = DependencyNode::on($this->getDb())
+                    ->columns([new Expression('1')])
+                    ->filter(Filter::all(
+                        Filter::equal('host_id', $this->host->id),
+                        Filter::unlike('service_id', '*')
+                    ))
+                    ->first() !== null;
+        }
 
         $tabs = $this->getTabs()
             ->add('index', [
