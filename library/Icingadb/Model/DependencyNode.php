@@ -16,6 +16,7 @@ use ipl\Sql\Expression;
  * Dependency node model.
  *
  * @property string $id
+ * @property string $environment_id
  * @property ?string $host_id
  * @property ?string $service_id
  * @property ?string $redundancy_group_id
@@ -46,6 +47,7 @@ class DependencyNode extends Model
     {
         return [
             'id',
+            'environment_id',
             'host_id',
             'service_id',
             'redundancy_group_id',
@@ -85,6 +87,7 @@ class DependencyNode extends Model
     {
         $behaviors->add(new Binary([
             'id',
+            'environment_id',
             'host_id',
             'service_id',
             'redundancy_group_id'

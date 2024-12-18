@@ -11,6 +11,7 @@ use ipl\Orm\Model;
  * Dependency edge state model.
  *
  * @property string $id
+ * @property string $environment_id
  * @property bool $failed
  */
 class DependencyEdgeState extends Model
@@ -28,6 +29,7 @@ class DependencyEdgeState extends Model
     public function getColumns(): array
     {
         return [
+            'environment_id',
             'failed'
         ];
     }
@@ -42,7 +44,8 @@ class DependencyEdgeState extends Model
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
-            'id'
+            'id',
+            'environment_id'
         ]));
         $behaviors->add(new BoolCast([
             'failed'
