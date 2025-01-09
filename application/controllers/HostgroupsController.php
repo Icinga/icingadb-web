@@ -43,7 +43,6 @@ class HostgroupsController extends Controller
         $paginationControl = $this->createPaginationControl($hostgroups);
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $defaultSort = null;
         if ($viewModeSwitcher->getViewMode() === 'grid') {
             $hostgroups->without([
                 'services_critical_handled',
@@ -56,8 +55,6 @@ class HostgroupsController extends Controller
                 'services_warning_handled',
                 'services_warning_unhandled',
             ]);
-
-            $defaultSort = ['hosts_severity DESC', 'display_name'];
         }
 
         $sortControl = $this->createSortControl(
@@ -67,7 +64,7 @@ class HostgroupsController extends Controller
                 'hosts_severity desc, display_name' => t('Severity'),
                 'hosts_total desc'                  => t('Total Hosts'),
             ],
-            $defaultSort
+            ['hosts_severity DESC', 'display_name']
         );
 
         $searchBar = $this->createSearchBar($hostgroups, [
