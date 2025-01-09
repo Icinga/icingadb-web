@@ -45,11 +45,6 @@ class ServicegroupsController extends Controller
         $paginationControl = $this->createPaginationControl($servicegroups);
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $defaultSort = null;
-        if ($viewModeSwitcher->getViewMode() === 'grid') {
-            $defaultSort = ['services_severity DESC', 'display_name'];
-        }
-
         $sortControl = $this->createSortControl(
             $servicegroups,
             [
@@ -57,7 +52,7 @@ class ServicegroupsController extends Controller
                 'services_severity desc, display_name' => t('Severity'),
                 'services_total desc'                  => t('Total Services')
             ],
-            $defaultSort
+            ['services_severity DESC', 'display_name']
         );
 
         $searchBar = $this->createSearchBar($servicegroups, [

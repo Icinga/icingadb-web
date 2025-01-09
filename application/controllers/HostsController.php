@@ -57,7 +57,8 @@ class HostsController extends Controller
                 'host.state.severity desc,host.state.last_state_change desc' => t('Severity'),
                 'host.state.soft_state'                                      => t('Current State'),
                 'host.state.last_state_change desc'                          => t('Last State Change')
-            ]
+            ],
+            ['host.state.severity DESC', 'host.state.last_state_change DESC']
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
         $columns = $this->createColumnControl($hosts, $viewModeSwitcher);

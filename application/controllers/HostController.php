@@ -215,7 +215,8 @@ class HostController extends Controller
                 'service.state.severity desc,service.state.last_state_change desc' => $this->translate('Severity'),
                 'service.state.soft_state' => $this->translate('Current State'),
                 'service.state.last_state_change desc' => $this->translate('Last State Change')
-            ]
+            ],
+            ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
 
         yield $this->export($services);
