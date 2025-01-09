@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Data\DependencyNodes;
 use Icinga\Module\Icingadb\Model\DependencyNode;
@@ -17,8 +16,7 @@ use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
+use Generator;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
@@ -96,7 +94,7 @@ class RedundancygroupController extends Controller
         $this->addContent(new RedundancyGroupDetail($this->group));
     }
 
-    public function membersAction(): void
+    public function membersAction(): Generator
     {
         $this->loadGroup();
         $nodesQuery = $this->fetchNodes(true);
@@ -138,6 +136,8 @@ class RedundancygroupController extends Controller
 
         $nodesQuery->filter($filter);
 
+        yield $this->export($nodesQuery);
+
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -156,7 +156,7 @@ class RedundancygroupController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function childrenAction(): void
+    public function childrenAction(): Generator
     {
         $this->loadGroup();
         $nodesQuery = $this->fetchNodes();
@@ -201,6 +201,8 @@ class RedundancygroupController extends Controller
         }
 
         $nodesQuery->filter($filter);
+
+        yield $this->export($nodesQuery);
 
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
