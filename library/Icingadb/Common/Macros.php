@@ -123,6 +123,8 @@ trait Macros
 
         if ($value instanceof DateTime) {
             $value = $value->getTimestamp();
+        } elseif (is_bool($value)) {
+            $value = $value ? 'y' : 'n';
         }
 
         return $value ?? $macro;
