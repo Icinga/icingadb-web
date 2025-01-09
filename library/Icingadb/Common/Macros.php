@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use DateTime;
 use Icinga\Application\Logger;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Compat\CompatService;
@@ -120,6 +121,10 @@ trait Macros
             $value = null;
         }
 
-        return $value !== null ? $value : $macro;
+        if ($value instanceof DateTime) {
+            $value = $value->format(DateTime::ATOM);
+        }
+
+        return $value ?? $macro;
     }
 }
