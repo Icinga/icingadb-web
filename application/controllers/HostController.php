@@ -63,7 +63,7 @@ class HostController extends Controller
         /** @var Host $host */
         $host = $query->first();
         if ($host === null) {
-            throw new NotFoundError(t('Host not found'));
+            throw new NotFoundError($this->translate('Host not found'));
         }
 
         $this->host = $host;
@@ -150,7 +150,7 @@ class HostController extends Controller
         $sortControl = $this->createSortControl(
             $history,
             [
-                'history.event_time desc, history.event_type desc' => t('Event Time')
+                'history.event_time desc, history.event_type desc' => $this->translate('Event Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
@@ -214,10 +214,10 @@ class HostController extends Controller
         $sortControl = $this->createSortControl(
             $services,
             [
-                'service.display_name' => t('Name'),
-                'service.state.severity desc,service.state.last_state_change desc' => t('Severity'),
-                'service.state.soft_state' => t('Current State'),
-                'service.state.last_state_change desc' => t('Last State Change')
+                'service.display_name' => $this->translate('Name'),
+                'service.state.severity desc,service.state.last_state_change desc' => $this->translate('Severity'),
+                'service.state.soft_state' => $this->translate('Current State'),
+                'service.state.last_state_change desc' => $this->translate('Last State Change')
             ]
         );
 
@@ -449,15 +449,15 @@ class HostController extends Controller
 
         $tabs = $this->getTabs()
             ->add('index', [
-                'label'  => t('Host'),
+                'label'  => $this->translate('Host'),
                 'url'    => Links::host($this->host)
             ])
             ->add('services', [
-                'label'  => t('Services'),
+                'label'  => $this->translate('Services'),
                 'url'    => HostLinks::services($this->host)
             ])
             ->add('history', [
-                'label' => t('History'),
+                'label' => $this->translate('History'),
                 'url' => HostLinks::history($this->host)
             ]);
 
@@ -473,7 +473,7 @@ class HostController extends Controller
 
         if ($this->hasPermission('icingadb/object/show-source')) {
             $tabs->add('source', [
-                'label' => t('Source'),
+                'label' => $this->translate('Source'),
                 'url' => Links::hostSource($this->host)
             ]);
         }

@@ -73,7 +73,7 @@ class ServiceController extends Controller
         /** @var Service $service */
         $service = $query->first();
         if ($service === null) {
-            throw new NotFoundError(t('Service not found'));
+            throw new NotFoundError($this->translate('Service not found'));
         }
 
         $this->service = $service;
@@ -86,7 +86,7 @@ class ServiceController extends Controller
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle(
-            t('%s on %s', '<service> on <host>'),
+            $this->translate('%s on %s', '<service> on <host>'),
             $service->display_name,
             $service->host->display_name
         );
@@ -289,7 +289,7 @@ class ServiceController extends Controller
         $sortControl = $this->createSortControl(
             $history,
             [
-                'history.event_time desc, history.event_type desc' => t('Event Time')
+                'history.event_time desc, history.event_type desc' => $this->translate('Event Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
@@ -421,11 +421,11 @@ class ServiceController extends Controller
 
         $tabs = $this->getTabs()
             ->add('index', [
-                'label'  => t('Service'),
+                'label'  => $this->translate('Service'),
                 'url'    => Links::service($this->service, $this->service->host)
             ])
             ->add('history', [
-                'label'  => t('History'),
+                'label'  => $this->translate('History'),
                 'url'    => ServiceLinks::history($this->service, $this->service->host)
             ]);
 
@@ -447,7 +447,7 @@ class ServiceController extends Controller
 
         if ($this->hasPermission('icingadb/object/show-source')) {
             $tabs->add('source', [
-                'label' => t('Source'),
+                'label' => $this->translate('Source'),
                 'url'   => Links::serviceSource($this->service, $this->service->host)
             ]);
         }
