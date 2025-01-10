@@ -121,6 +121,7 @@ class ServiceController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
+
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $searchBar = $this->createSearchBar(
@@ -184,6 +185,7 @@ class ServiceController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
+
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $searchBar = $this->createSearchBar(
@@ -416,6 +418,7 @@ class ServiceController extends Controller
                         Filter::equal('service_id', $this->service->id),
                         Filter::equal('host_id', $this->service->host_id)
                     ))
+                    ->disableDefaultSort()
                     ->first() !== null;
         }
 

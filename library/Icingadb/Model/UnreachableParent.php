@@ -137,7 +137,8 @@ class UnreachableParent extends DependencyNode
                 'service_id' => new Expression("COALESCE(%s, $binaryCast)", ['service_id']),
                 'redundancy_group_id' => new Expression($binaryCast),
                 'is_group_member' => new Expression($booleanCast)
-            ]);
+            ])
+            ->disableDefaultSort();
         if ($root instanceof Host) {
             $rootQuery->filter(Filter::all(
                 Filter::equal('host_id', $root->id),

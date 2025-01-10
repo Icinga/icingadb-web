@@ -83,6 +83,11 @@ class DependencyNode extends Model
         ];
     }
 
+    public function getDefaultSort(): array
+    {
+        return ['severity DESC', 'last_state_change DESC'];
+    }
+
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([

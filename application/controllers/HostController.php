@@ -251,6 +251,7 @@ class HostController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
+
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $searchBar = $this->createSearchBar(
@@ -313,6 +314,7 @@ class HostController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
+
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
         $searchBar = $this->createSearchBar(
@@ -444,6 +446,7 @@ class HostController extends Controller
                         Filter::equal('host_id', $this->host->id),
                         Filter::unlike('service_id', '*')
                     ))
+                    ->disableDefaultSort()
                     ->first() !== null;
         }
 
