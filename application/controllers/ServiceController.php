@@ -54,7 +54,7 @@ class ServiceController extends Controller
                 Filter::equal('host.name', $hostName)
             ));
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $query->withColumns(['has_problematic_parent']);
         }
 

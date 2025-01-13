@@ -109,7 +109,7 @@ class Service extends Model
             'command_endpoint_id'
         ];
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $columns[] = 'affected_children';
         }
 
@@ -156,7 +156,7 @@ class Service extends Model
             'command_endpoint_id'       => t('Endpoint Id'),
         ];
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $columns['affected_children'] = t('Affected Children');
         }
 
@@ -207,7 +207,7 @@ class Service extends Model
             'command_endpoint_id'
         ]));
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $behaviors->add(new HasProblematicParent());
         }
     }

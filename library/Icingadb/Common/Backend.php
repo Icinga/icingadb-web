@@ -29,6 +29,9 @@ final class Backend
     /** @var ?IcingaRedis */
     private static $redis;
 
+    /** @var ?bool Whether the current Icinga DB version supports dependencies */
+    private static $supportsDependencies;
+
     /**
      * Set the connection to the Icinga DB
      *
@@ -164,5 +167,23 @@ final class Backend
         }
 
         return self::$redis;
+    }
+
+    /**
+     * Whether the current Icinga DB version supports dependencies
+     *
+     * @return bool
+     */
+    public static function supportsDependencies(): bool
+    {
+        if (self::$supportsDependencies === null) {
+            if (self::getDb()->getAdapter() instanceof Pgsql) {
+                self::$supportsDependencies = self::getDbSchemaVersion() >= 5;
+            } else {
+                self::$supportsDependencies = self::getDbSchemaVersion() >= 7;
+            }
+        }
+
+        return self::$supportsDependencies;
     }
 }

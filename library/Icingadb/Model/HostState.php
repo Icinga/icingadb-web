@@ -57,7 +57,7 @@ class HostState extends State
             'next_update'                   => t('Host Next Update')
         ];
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $columns['affects_children'] = t('Host Affects Children');
         }
 
