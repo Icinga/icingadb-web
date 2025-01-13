@@ -59,7 +59,7 @@ class ServiceState extends State
             'next_update'                   => t('Service Next Update')
         ];
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $columns['affects_children'] = t('Service Affects Children');
         }
 

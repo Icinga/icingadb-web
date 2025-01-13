@@ -103,7 +103,7 @@ abstract class State extends Model
             'next_update'
         ];
 
-        if (Backend::getDbSchemaVersion() >= 6) {
+        if (Backend::supportsDependencies()) {
             $columns[] = 'affects_children';
         }
 

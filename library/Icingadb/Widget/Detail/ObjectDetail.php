@@ -619,7 +619,7 @@ class ObjectDetail extends BaseHtmlElement
      */
     protected function createRootProblems(): ?array
     {
-        if (Backend::getDbSchemaVersion() < 6) {
+        if (! Backend::supportsDependencies()) {
             if ($this->object->state->is_reachable) {
                 return null;
             }
