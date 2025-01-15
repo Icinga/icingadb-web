@@ -11,6 +11,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
@@ -115,15 +116,23 @@ class UnreachableParent extends DependencyNode
 
     private static function selectNodes(Connection $db, Model $root): Select
     {
+        if ($db->getAdapter() instanceof Pgsql) {
+            $binaryCast = "CAST('00000000000000000000' AS bytea20)";
+            $booleanCast = "CAST('0' AS boolean)";
+        } else {
+            $binaryCast = "CAST('' AS binary(20))";
+            $booleanCast = '0';
+        }
+
         $rootQuery = DependencyNode::on($db)
             ->columns([
                 'id' => 'id',
                 'child_id' => 'id',
                 'level' => new Expression('0'),
                 'host_id' => 'host_id',
-                'service_id' => new Expression("COALESCE(%s, CAST('' as binary(20)))", ['service_id']),
-                'redundancy_group_id' => new Expression("CAST('' as binary(20))"),
-                'is_group_member' => new Expression('0')
+                'service_id' => new Expression("COALESCE(%s, $binaryCast)", ['service_id']),
+                'redundancy_group_id' => new Expression($binaryCast),
+                'is_group_member' => new Expression($booleanCast)
             ]);
         if ($root instanceof Host) {
             $rootQuery->filter(Filter::all(
