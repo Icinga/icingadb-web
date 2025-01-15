@@ -164,10 +164,7 @@ class UnreachableParent extends DependencyNode
                 'redundancy_group_id' => 'to.redundancy_group_id',
                 'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0')
             ]);
-        $nodeQuery->filter(Filter::any(
-            Filter::equal('state.failed', 'y'),
-            Filter::equal('to.redundancy_group.state.failed', 'y')
-        ));
+        $nodeQuery->filter(Filter::equal('state.failed', 'y'));
 
         $nodeSelect = $nodeQuery->assembleSelect();
 
