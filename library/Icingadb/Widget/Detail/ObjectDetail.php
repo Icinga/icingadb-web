@@ -655,7 +655,6 @@ class ObjectDetail extends BaseHtmlElement
                 'service.host',
                 'service.host.state'
             ])
-            ->setResultSetClass(VolatileStateResults::class)
             ->orderBy([
                 'host.state.severity',
                 'host.state.last_state_change',

@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use Icinga\Module\Icingadb\Model\UnreachableParent\ResultSet;
 use InvalidArgumentException;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
@@ -111,6 +112,8 @@ class UnreachableParent extends DependencyNode
                 )
             )
         ));
+
+        $query->setResultSetClass(ResultSet::class);
 
         return $query;
     }
