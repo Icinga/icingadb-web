@@ -56,11 +56,11 @@ class DependencyNode extends Model
                 ['service.display_name', 'host.display_name', 'redundancy_group.display_name']
             ),
             'severity' => new Expression(
-                'COALESCE(%s, %s, %s)',
+                "COALESCE(%s, %s, CASE WHEN %s = 'y' THEN 1 ELSE 0 END)",
                 ['service.state.severity', 'host.state.severity', 'redundancy_group.state.failed']
             ),
             'state' => new Expression(
-                'COALESCE(%s, %s, %s)',
+                "COALESCE(%s, %s, CASE WHEN %s = 'y' THEN 1 ELSE 0 END)",
                 ['service.state.soft_state', 'host.state.soft_state', 'redundancy_group.state.failed']
             ),
             'last_state_change' => new Expression(
