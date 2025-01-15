@@ -13,6 +13,7 @@ use ipl\Orm\Relations;
 /**
  * Dependency edge model.
  *
+ * @property string $id
  * @property string $environment_id
  * @property string $to_node_id
  * @property string $from_node_id
@@ -30,9 +31,9 @@ class DependencyEdge extends Model
         return 'dependency_edge';
     }
 
-    public function getKeyName(): array
+    public function getKeyName(): string
     {
-        return ['to_node_id', 'from_node_id'];
+        return 'id';
     }
 
     public function getColumns(): array
@@ -49,6 +50,7 @@ class DependencyEdge extends Model
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
+            'id',
             'environment_id',
             'to_node_id',
             'from_node_id',
