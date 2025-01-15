@@ -29,7 +29,10 @@ class RedundancyGroupHeader extends ObjectHeader
 
     protected function assembleVisual(BaseHtmlElement $visual): void
     {
-        $visual->addHtml(new StateBall($this->object->state->getStateText(), $this->getStateBallSize()));
+        $stateBall = new StateBall($this->object->state->getStateText(), $this->getStateBallSize());
+        $stateBall->add($this->object->state->getIcon());
+
+        $visual->addHtml($stateBall);
     }
 
     protected function assembleTitle(BaseHtmlElement $title): void

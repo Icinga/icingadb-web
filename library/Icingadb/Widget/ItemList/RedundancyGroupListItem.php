@@ -62,7 +62,10 @@ class RedundancyGroupListItem extends StateListItem
 
     protected function assembleVisual(BaseHtmlElement $visual): void
     {
-        $visual->addHtml(new StateBall($this->state->getStateText(), $this->getStateBallSize()));
+        $stateBall = new StateBall($this->state->getStateText(), $this->getStateBallSize());
+        $stateBall->add($this->state->getIcon());
+
+        $visual->addHtml($stateBall);
     }
 
     protected function assembleCaption(BaseHtmlElement $caption): void
