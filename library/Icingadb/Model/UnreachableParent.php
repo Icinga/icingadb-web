@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
+use Icinga\Module\Icingadb\Model\UnreachableParent\ResultSet;
 use InvalidArgumentException;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
@@ -112,6 +113,8 @@ class UnreachableParent extends DependencyNode
             )
         ));
 
+        $query->setResultSetClass(ResultSet::class);
+
         return $query;
     }
 
@@ -161,10 +164,7 @@ class UnreachableParent extends DependencyNode
                 'redundancy_group_id' => 'to.redundancy_group_id',
                 'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0')
             ]);
-        $nodeQuery->filter(Filter::any(
-            Filter::equal('state.failed', 'y'),
-            Filter::equal('to.redundancy_group.state.failed', 'y')
-        ));
+        $nodeQuery->filter(Filter::equal('state.failed', 'y'));
 
         $nodeSelect = $nodeQuery->assembleSelect();
 
