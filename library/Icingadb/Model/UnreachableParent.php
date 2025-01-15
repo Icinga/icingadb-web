@@ -71,6 +71,7 @@ class UnreachableParent extends DependencyNode
     {
         $behaviors->add(new Binary([
             'id',
+            'child_id',
             'host_id',
             'service_id',
             'redundancy_group_id'
