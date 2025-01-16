@@ -301,7 +301,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $customVars->columns('flatname');
-        $this->applyBaseFilter($customVars);
+        $this->applyRestrictions($customVars);
         $customVars->filter(Filter::like('flatname', $searchTerm));
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
