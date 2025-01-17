@@ -238,7 +238,7 @@ class HostController extends Controller
 
     public function parentsAction(): Generator
     {
-        $nodesQuery = $this->fetchNodes(true);
+        $nodesQuery = $this->fetchDependencyNodes(true);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -301,7 +301,7 @@ class HostController extends Controller
 
     public function childrenAction(): Generator
     {
-        $nodesQuery = $this->fetchNodes();
+        $nodesQuery = $this->fetchDependencyNodes();
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -405,13 +405,13 @@ class HostController extends Controller
     }
 
     /**
-     * Fetch the nodes for the current host
+     * Fetch the dependency nodes of the current host
      *
-     * @param bool $fetchParents Whether to fetch the parents or the children
+     * @param bool $parents Whether to fetch the parents or the children
      *
      * @return Query
      */
-    protected function fetchNodes(bool $fetchParents = false): Query
+    protected function fetchDependencyNodes(bool $parents = false): Query
     {
         $query = DependencyNode::on($this->getDb())
             ->with([
@@ -428,7 +428,7 @@ class HostController extends Controller
             ])
             ->setResultSetClass(VolatileStateResults::class);
 
-        $this->joinFix($query, $this->host->id, $fetchParents);
+        $this->joinFix($query, $this->host->id, $parents);
 
         $this->applyRestrictions($query);
 
@@ -441,13 +441,13 @@ class HostController extends Controller
             $hasDependencyNode = false;
         } else {
             $hasDependencyNode = DependencyNode::on($this->getDb())
-                    ->columns([new Expression('1')])
-                    ->filter(Filter::all(
-                        Filter::equal('host_id', $this->host->id),
-                        Filter::unlike('service_id', '*')
-                    ))
-                    ->disableDefaultSort()
-                    ->first() !== null;
+                ->columns([new Expression('1')])
+                ->filter(Filter::all(
+                    Filter::equal('host_id', $this->host->id),
+                    Filter::unlike('service_id', '*')
+                ))
+                ->disableDefaultSort()
+                ->first() !== null;
         }
 
         $tabs = $this->getTabs()
