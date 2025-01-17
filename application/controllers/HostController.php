@@ -317,18 +317,22 @@ class HostController extends Controller
 
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $searchBar = $this->createSearchBar(
-            $nodesQuery,
-            [
-                $limitControl->getLimitParam(),
-                $sortControl->getSortParam(),
-                $viewModeSwitcher->getViewModeParam(),
-                'name'
-            ]
-        );
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ];
 
-        $searchBar->getSuggestionUrl()->setParam('isChildrenTab');
-        $searchBar->getEditorUrl()->setParam('isChildrenTab');
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($nodesQuery, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/children-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/children-complete')
+                    ->setParams(clone $requestParams)
+            );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -367,12 +371,19 @@ class HostController extends Controller
 
     public function completeAction(): void
     {
-        $isChildrenTab = $this->params->shift('isChildrenTab');
-        $relation = $isChildrenTab ? 'parent' : 'child';
-
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
-            ->setBaseFilter(Filter::equal("$relation.host.id", $this->host->id))
+            ->setBaseFilter(Filter::equal("child.host.id", $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function childrenCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(DependencyNode::class)
+            ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -380,14 +391,9 @@ class HostController extends Controller
 
     public function searchEditorAction(): void
     {
-        $isChildrenTab = $this->params->shift('isChildrenTab');
-        $redirectUrl = $isChildrenTab
-            ? Url::fromPath('icingadb/host/children', ['name' => $this->host->name])
-            : Url::fromPath('icingadb/host/parents', ['name' => $this->host->name]);
-
         $editor = $this->createSearchEditor(
             DependencyNode::on($this->getDb()),
-            $redirectUrl,
+            Url::fromPath('icingadb/host/parents', ['name' => $this->host->name]),
             [
                 LimitControl::DEFAULT_LIMIT_PARAM,
                 SortControl::DEFAULT_SORT_PARAM,
@@ -396,9 +402,29 @@ class HostController extends Controller
             ]
         );
 
-        if ($isChildrenTab) {
-            $editor->getSuggestionUrl()->setParam('isChildrenTab');
-        }
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function childrenSearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            Url::fromPath('icingadb/host/children', ['name' => $this->host->name]),
+            $preserveParams
+        );
+
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/children-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
 
         $this->getDocument()->add($editor);
         $this->setTitle($this->translate('Adjust Filter'));
