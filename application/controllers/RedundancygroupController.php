@@ -97,7 +97,7 @@ class RedundancygroupController extends Controller
     public function membersAction(): Generator
     {
         $this->loadGroup();
-        $nodesQuery = $this->fetchNodes(true);
+        $nodesQuery = $this->fetchDependencyNodes(true);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -159,7 +159,7 @@ class RedundancygroupController extends Controller
     public function childrenAction(): Generator
     {
         $this->loadGroup();
-        $nodesQuery = $this->fetchNodes();
+        $nodesQuery = $this->fetchDependencyNodes();
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -317,17 +317,17 @@ class RedundancygroupController extends Controller
     }
 
     /**
-     * Fetch the nodes for the current group
+     * Fetch the dependency nodes of the current group
      *
-     * @param bool $fetchParents Whether to fetch the parents or the children
+     * @param bool $parents Whether to fetch the parents or the children
      *
      * @return Query
      */
-    private function fetchNodes(bool $fetchParents = false): Query
+    private function fetchDependencyNodes(bool $parents = false): Query
     {
         $filterColumn = sprintf(
             '%s.redundancy_group.id',
-            $fetchParents ? 'child' : 'parent'
+            $parents ? 'child' : 'parent'
         );
 
         $query = DependencyNode::on($this->getDb())
