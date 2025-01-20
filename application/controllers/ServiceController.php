@@ -336,6 +336,7 @@ class ServiceController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
             ->setBaseFilter(Filter::equal("child.service.id", $this->service->id))
             ->forRequest($this->getServerRequest());
 
@@ -346,6 +347,7 @@ class ServiceController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
             ->setBaseFilter(Filter::equal("parent.service.id", $this->service->id))
             ->forRequest($this->getServerRequest());
 

@@ -373,6 +373,7 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
             ->setBaseFilter(Filter::equal("child.host.id", $this->host->id))
             ->forRequest($this->getServerRequest());
 
@@ -383,6 +384,7 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
             ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
             ->forRequest($this->getServerRequest());
 
