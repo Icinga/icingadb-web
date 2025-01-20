@@ -230,6 +230,7 @@ class RedundancygroupController extends Controller
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->setBaseFilter(Filter::equal("$column.redundancy_group.id", $this->groupId))
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
