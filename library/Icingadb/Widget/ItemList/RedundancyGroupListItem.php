@@ -87,7 +87,7 @@ class RedundancyGroupListItem extends StateListItem
             $text = $this->translate('has working objects');
         }
 
-        $title->addHtml(HtmlElement::create('span', null, Text::create($text)));
+        $title->addHtml(Text::create($text));
     }
 
     protected function assemble(): void
