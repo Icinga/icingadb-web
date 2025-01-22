@@ -97,7 +97,7 @@ class RedundancygroupController extends Controller
     public function membersAction(): Generator
     {
         $this->loadGroup();
-        $nodesQuery = $this->fetchNodes(true);
+        $nodesQuery = $this->fetchDependencyNodes(true);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -159,7 +159,7 @@ class RedundancygroupController extends Controller
     public function childrenAction(): Generator
     {
         $this->loadGroup();
-        $nodesQuery = $this->fetchNodes();
+        $nodesQuery = $this->fetchDependencyNodes();
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -174,19 +174,22 @@ class RedundancygroupController extends Controller
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
 
-        $searchBar = $this->createSearchBar(
-            $nodesQuery,
-            [
-                $limitControl->getLimitParam(),
-                $sortControl->getSortParam(),
-                $viewModeSwitcher->getViewModeParam(),
-                'id'
-            ]
-        );
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'id'
+        ];
 
-        $searchBar->getSuggestionUrl()->setParam('isChildrenTab');
-        $searchBar->getEditorUrl()
-            ->setParams((clone $searchBar->getEditorUrl()->getParams())->set('isChildrenTab', true));
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($nodesQuery, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/redundancygroup/children-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/redundancygroup/children-complete')
+                    ->setParams(clone $requestParams)
+            );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -224,13 +227,21 @@ class RedundancygroupController extends Controller
 
     public function completeAction(): void
     {
-        $isChildrenTab = $this->params->shift('isChildrenTab');
-        $column = $isChildrenTab ? 'parent' : 'child';
-
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
-            ->setBaseFilter(Filter::equal("$column.redundancy_group.id", $this->groupId))
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
+            ->setBaseFilter(Filter::equal("child.redundancy_group.id", $this->groupId))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function childrenCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
+            ->setBaseFilter(Filter::equal("parent.redundancy_group.id", $this->groupId))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -238,14 +249,9 @@ class RedundancygroupController extends Controller
 
     public function searchEditorAction(): void
     {
-        $isChildrenTab = $this->params->shift('isChildrenTab');
-        $redirectUrl = $isChildrenTab
-            ? Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId])
-            : Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId]);
-
         $editor = $this->createSearchEditor(
             DependencyNode::on($this->getDb()),
-            $redirectUrl,
+            Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->groupId]),
             [
                 LimitControl::DEFAULT_LIMIT_PARAM,
                 SortControl::DEFAULT_SORT_PARAM,
@@ -254,9 +260,29 @@ class RedundancygroupController extends Controller
             ]
         );
 
-        if ($isChildrenTab) {
-            $editor->getSuggestionUrl()->setParam('isChildrenTab');
-        }
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function childrenSearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'id'
+        ];
+
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            Url::fromPath('icingadb/redundancygroup/children', ['id' => $this->groupId]),
+            $preserveParams
+        );
+
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/redundancygroup/children-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
 
         $this->getDocument()->add($editor);
         $this->setTitle($this->translate('Adjust Filter'));
@@ -291,17 +317,17 @@ class RedundancygroupController extends Controller
     }
 
     /**
-     * Fetch the nodes for the current group
+     * Fetch the dependency nodes of the current group
      *
-     * @param bool $fetchParents Whether to fetch the parents or the children
+     * @param bool $parents Whether to fetch the parents or the children
      *
      * @return Query
      */
-    private function fetchNodes(bool $fetchParents = false): Query
+    private function fetchDependencyNodes(bool $parents = false): Query
     {
         $filterColumn = sprintf(
             '%s.redundancy_group.id',
-            $fetchParents ? 'child' : 'parent'
+            $parents ? 'child' : 'parent'
         );
 
         $query = DependencyNode::on($this->getDb())
