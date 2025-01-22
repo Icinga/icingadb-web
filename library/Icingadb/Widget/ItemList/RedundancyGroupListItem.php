@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
 use Icinga\Module\Icingadb\Model\RedundancyGroupState;
 use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
@@ -80,14 +81,18 @@ class RedundancyGroupListItem extends StateListItem
 
     protected function assembleTitle(BaseHtmlElement $title): void
     {
-        $title->addHtml($this->createSubject());
+        $subject = $this->createSubject();
         if ($this->state->failed) {
-            $text = $this->translate('has no working objects');
+            $title->addHtml(Html::sprintf(
+                $this->translate('%s has no working objects', '<groupname> has ...'),
+                $subject
+            ));
         } else {
-            $text = $this->translate('has working objects');
+            $title->addHtml(Html::sprintf(
+                $this->translate('%s has working objects', '<groupname> has ...'),
+                $subject
+            ));
         }
-
-        $title->addHtml(HtmlElement::create('span', null, Text::create($text)));
     }
 
     protected function assemble(): void

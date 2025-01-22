@@ -28,14 +28,23 @@ class DependencyNodeList extends StateList
 
     protected function createListItem(object $data): BaseListItem
     {
+        $viewMode = $this->getViewMode();
         /** @var UnreachableParent|DependencyNode $data */
         if ($data->redundancy_group_id !== null) {
+            if ($viewMode === 'minimal') {
+                return new RedundancyGroupListItemMinimal($data->redundancy_group, $this);
+            }
+
+            if ($viewMode === 'detailed') {
+                $this->removeAttribute('class', 'default-layout');
+            }
+
             return new RedundancyGroupListItem($data->redundancy_group, $this);
         }
 
         $object = $data->service_id !== null ? $data->service : $data->host;
 
-        switch ($this->getViewMode()) {
+        switch ($viewMode) {
             case 'minimal':
                 $class = $object instanceof Host ? HostListItemMinimal::class : ServiceListItemMinimal::class;
                 break;
