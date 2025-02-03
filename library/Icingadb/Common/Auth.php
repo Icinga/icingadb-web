@@ -168,8 +168,14 @@ trait Auth
                 }
 
                 if ($customVarRelationName === false || count($relations) > 1) {
-                    if (($restriction = $role->getRestrictions('icingadb/filter/objects'))) {
-                        $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/objects'));
+                    if ($restriction = $role->getRestrictions('icingadb/filter/objects')) {
+                        $roleFilter->add(Filter::any(
+                            Filter::all(
+                                Filter::unlike('host.id', '*'),
+                                Filter::unlike('service.id', '*')
+                            ),
+                            $this->parseRestriction($restriction, 'icingadb/filter/objects')
+                        ));
                     }
 
                     if ($applyHostRestriction && ($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
@@ -178,7 +184,7 @@ trait Auth
                             $this->forceQueryOptimization($hostFilter, 'hostgroup.name');
                         }
 
-                        $roleFilter->add($hostFilter);
+                        $roleFilter->add(Filter::any(Filter::unlike('host.id', '*'), $hostFilter));
                     }
 
                     if (
