@@ -5,9 +5,15 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use ipl\Html\BaseHtmlElement;
+use ipl\Web\Widget\StateBall;
 
 trait ListItemMinimalLayout
 {
+    protected function getStateBallSize(): string
+    {
+        return StateBall::SIZE_BIG;
+    }
+
     protected function assembleHeader(BaseHtmlElement $header): void
     {
         $header->add($this->createTitle());

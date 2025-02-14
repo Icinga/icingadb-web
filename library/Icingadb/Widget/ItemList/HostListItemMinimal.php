@@ -5,14 +5,8 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Module\Icingadb\Common\ListItemMinimalLayout;
-use ipl\Web\Widget\StateBall;
 
 class HostListItemMinimal extends BaseHostListItem
 {
     use ListItemMinimalLayout;
-
-    protected function getStateBallSize(): string
-    {
-        return StateBall::SIZE_BIG;
-    }
 }

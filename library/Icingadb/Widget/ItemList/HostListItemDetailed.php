@@ -13,7 +13,6 @@ use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\StateBall;
 
 class HostListItemDetailed extends BaseHostListItem
 {
@@ -21,11 +20,6 @@ class HostListItemDetailed extends BaseHostListItem
 
     /** @var int Max pie charts to be shown */
     const PIE_CHART_LIMIT = 5;
-
-    protected function getStateBallSize(): string
-    {
-        return StateBall::SIZE_LARGE;
-    }
 
     protected function assembleFooter(BaseHtmlElement $footer): void
     {
