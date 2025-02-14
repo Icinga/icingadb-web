@@ -23,17 +23,14 @@ use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeSince;
+use LogicException;
 
 trait HostAndServiceHeaderUtils
 {
     use Translation;
 
-    /**
-     * Get the object
-     *
-     * @return Host|Service
-     */
-    abstract protected function getObject(): Model;
+    /** @var Host|Service|null The object */
+    protected $currentObject;
 
     /**
      * Create the subject
@@ -43,18 +40,52 @@ trait HostAndServiceHeaderUtils
     abstract protected function createSubject(): ValidHtml;
 
     /**
-     * Get the state ball size
+     * Set the object
      *
-     * @return string
+     * @param Host|Service $object
+     *
+     * @return $this
      */
-    abstract protected function getStateBallSize(): string;
+    protected function setObject(Model $object): self
+    {
+        $this->currentObject = $object;
+
+        return $this;
+    }
+
+    /**
+     * Get the object
+     *
+     * @return Host|Service $object
+     */
+    protected function getObject(): Model
+    {
+        if ($this->currentObject === null) {
+            throw new LogicException('Object not set');
+        }
+
+        return $this->currentObject;
+    }
 
     /**
      * Whether to show the icon image/placeholder
      *
      * @return bool When false, no icon image or placeholder will be shown
      */
-    abstract protected function wantIconImage(): bool;
+    protected function wantIconImage(): bool
+    {
+        return isset($this->getObject()->icon_image->icon_image);
+    }
+
+    /**
+     * Get the state ball size
+     *
+     * @return string
+     */
+    protected function getStateBallSize(): string
+    {
+        return StateBall::SIZE_LARGE; // default value (common view)
+    }
 
     protected function assembleVisual(BaseHtmlElement $visual): void
     {

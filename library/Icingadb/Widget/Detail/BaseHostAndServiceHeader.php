@@ -21,12 +21,8 @@ class BaseHostAndServiceHeader extends BaseObjectHeader
 
     protected function init(): void
     {
+        $this->setObject($this->object);
         $this->state = $this->object->state;
-    }
-
-    protected function getObject(): Model
-    {
-        return $this->object;
     }
 
     protected function createSubject(): ValidHtml
@@ -36,16 +32,6 @@ class BaseHostAndServiceHeader extends BaseObjectHeader
             Attributes::create(['class' => 'subject']),
             Text::create($this->object->display_name)
         );
-    }
-
-    protected function getStateBallSize(): string
-    {
-        return ''; // not required because the parent class overrides the assembleVisual method
-    }
-
-    protected function wantIconImage(): bool
-    {
-        return isset($this->object->icon_image->icon_image);
     }
 
     protected function assembleHeader(BaseHtmlElement $header): void

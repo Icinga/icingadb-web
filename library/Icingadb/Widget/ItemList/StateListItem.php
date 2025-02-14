@@ -4,13 +4,16 @@
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\State;
 use Icinga\Module\Icingadb\Widget\Detail\HostAndServiceHeaderUtils;
-use ipl\Orm\Model;
 use ipl\Web\Common\BaseListItem;
 
 /**
  * Host or service item of a host or service list. Represents one database row.
+ *
+ * @property Host|Service $item
  */
 abstract class StateListItem extends BaseListItem
 {
@@ -24,16 +27,12 @@ abstract class StateListItem extends BaseListItem
 
     protected function init(): void
     {
+        $this->setObject($this->item);
         $this->state = $this->item->state;
 
         if (isset($this->item->icon_image->icon_image)) {
             $this->list->setHasIconImages(true);
         }
-    }
-
-    protected function getObject(): Model
-    {
-        return $this->item;
     }
 
     protected function wantIconImage(): bool
