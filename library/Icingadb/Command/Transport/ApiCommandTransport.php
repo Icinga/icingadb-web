@@ -237,7 +237,7 @@ class ApiCommandTransport implements CommandTransportInterface
         }
 
         try {
-            $response = (new Client())
+            $response = (new Client(['timeout' => 15]))
                 ->post($this->getUriFor($command->getEndpoint()), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
                     'headers'       => $headers,
