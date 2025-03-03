@@ -50,6 +50,15 @@ class RedundancyGroupState extends Model
         ];
     }
 
+    public function getColumnDefinitions()
+    {
+        return [
+            'failed' => t('Redundancy Group Failed'),
+            'is_reachable' => t('Redundancy Group Is Reachable'),
+            'last_state_change' => t('Redundancy Group Last State Change')
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
