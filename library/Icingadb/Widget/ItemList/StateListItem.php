@@ -99,7 +99,7 @@ abstract class StateListItem extends BaseListItem
         ));
 
         if (isset($this->state->affects_children) && $this->state->affects_children) {
-            $total = (int) $this->item->affected_children;
+            $total = (int) $this->item->total_children;
 
             if ($total > 1000) {
                 $total = '1000+';

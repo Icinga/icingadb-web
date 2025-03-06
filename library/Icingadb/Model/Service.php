@@ -53,7 +53,7 @@ use ipl\Orm\ResultSet;
  * @property ?string $zone_id
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
- * @property ?int $affected_children
+ * @property ?int $total_children
  */
 class Service extends Model
 {
@@ -110,7 +110,7 @@ class Service extends Model
         ];
 
         if (Backend::supportsDependencies()) {
-            $columns[] = 'affected_children';
+            $columns[] = 'total_children';
         }
 
         return $columns;
@@ -157,7 +157,7 @@ class Service extends Model
         ];
 
         if (Backend::supportsDependencies()) {
-            $columns['affected_children'] = t('Affected Children');
+            $columns['total_children'] = t('Total Children');
         }
 
         return $columns;
