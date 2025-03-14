@@ -117,7 +117,6 @@ div.show-more {
     }
 
     .list-item .visual {
-      width: auto;
       margin-top: 0;
     }
 
@@ -418,7 +417,8 @@ form[name="form_confirm_removal"] {
     margin-left: .28125em; // calculated &nbsp; width;
   }
 
-  &.default-layout .title .affected-objects {
+  &.default-layout .title .affected-objects, // TODO: Drop once the new list-item layout is used everywhere
+  .default-item-layout .title .affected-objects {
     margin-left: 0;
   }
 }

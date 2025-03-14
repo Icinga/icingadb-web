@@ -1,6 +1,6 @@
 // Style
 
-.list-item {
+.item-layout {
   &.overdue {
     background-color: @gray-lighter;
   }
@@ -36,7 +36,7 @@
 
 // Layout
 
-.list-item {
+.item-layout {
   &.overdue time {
     margin-right: -.5em;
     padding: 0 0.5em;
@@ -50,6 +50,11 @@
     &.plugin-output, .plugin-output {
       font-size: 11/12em;
       line-height: 1.5*12/11em;
+    }
+  }
+  &.minimal-item-layout .caption {
+    .plugin-output {
+      .text-ellipsis();
     }
   }
 
