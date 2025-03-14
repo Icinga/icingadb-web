@@ -4,13 +4,16 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
-use ipl\Orm\Behavior\BoolCast;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Defaults;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Stdlib\Filter;
 
 /**
  * Redundancy group model.
@@ -22,9 +25,13 @@ use ipl\Orm\Relations;
  * @property (?RedundancyGroupState)|Query $state
  * @property DependencyEdge|Query $from
  * @property DependencyEdge|Query $to
+ *
+ * @property RedundancyGroupSummary $summary
  */
 class RedundancyGroup extends Model
 {
+    use Auth;
+
     public function getTableName(): string
     {
         return 'redundancy_group';
@@ -77,5 +84,17 @@ class RedundancyGroup extends Model
             ->setTargetCandidateKey('to_node_id')
             ->setTargetForeignKey('id')
             ->through(DependencyNode::class);
+    }
+
+    public function createDefaults(Defaults $defaults)
+    {
+        $defaults->add('summary', function (RedundancyGroup $group) {
+            $summary = RedundancyGroupSummary::on(Backend::getDb())
+                ->filter(Filter::equal('id', $group->id));
+
+            $this->applyRestrictions($summary);
+
+            return $summary->first();
+        });
     }
 }
