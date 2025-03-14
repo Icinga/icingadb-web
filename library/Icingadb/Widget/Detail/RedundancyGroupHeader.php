@@ -5,67 +5,27 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
-use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
-use Icinga\Module\Icingadb\Widget\DependencyNodeStatistics;
+use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Html;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
-use ipl\Web\Widget\StateBall;
+use ipl\Web\Layout\HeaderItemLayout;
 
-/**
- * @property RedundancyGroup $object
- */
-class RedundancyGroupHeader extends ObjectHeader
+class RedundancyGroupHeader extends BaseHtmlElement
 {
-    /** @var RedundancyGroupSummary */
-    protected $summary;
+    /** @var RedundancyGroup */
+    protected $group;
 
-    public function __construct(RedundancyGroup $object, RedundancyGroupSummary $summary)
+    protected $tag = 'div';
+
+    public function __construct(RedundancyGroup $group)
     {
-        $this->summary = $summary;
-
-        parent::__construct($object);
+        $this->group = $group;
     }
 
-    protected function assembleVisual(BaseHtmlElement $visual): void
+    protected function assemble(): void
     {
-        $stateBall = new StateBall($this->object->state->getStateText(), $this->getStateBallSize());
-        $stateBall->add($this->object->state->getIcon());
+        $layout = new HeaderItemLayout($this->group, new RedundancyGroupRenderer());
 
-        $visual->addHtml($stateBall);
-    }
-
-    protected function assembleTitle(BaseHtmlElement $title): void
-    {
-        $subject = $this->createSubject();
-        if ($this->object->state->failed) {
-            $title->addHtml(Html::sprintf(
-                $this->translate('%s has no working objects', '<groupname> has ...'),
-                $subject
-            ));
-        } else {
-            $title->addHtml(Html::sprintf(
-                $this->translate('%s has working objects', '<groupname> has ...'),
-                $subject
-            ));
-        }
-    }
-
-    protected function createStatistics(): BaseHtmlElement
-    {
-        return new DependencyNodeStatistics($this->summary);
-    }
-
-    protected function assembleHeader(BaseHtmlElement $header): void
-    {
-        $header->add($this->createTitle());
-        $header->add($this->createStatistics());
-        $header->add($this->createTimestamp());
-    }
-
-    protected function assembleMain(BaseHtmlElement $main): void
-    {
-        $main->add($this->createHeader());
+        $this->addAttributes($layout->getAttributes());
+        $this->addHtml($layout);
     }
 }

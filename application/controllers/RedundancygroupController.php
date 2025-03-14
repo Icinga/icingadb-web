@@ -74,8 +74,9 @@ class RedundancygroupController extends Controller
         $this->applyRestrictions($summary);
 
         $this->groupSummary = $summary->first();
+        $this->group->summary = $this->groupSummary;
 
-        $this->addControl(new RedundancyGroupHeader($this->group, $this->groupSummary));
+        $this->addControl(new RedundancyGroupHeader($this->group));
     }
 
     public function indexAction(): void
