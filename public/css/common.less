@@ -9,7 +9,7 @@
   padding-right: 0;
 
   .list-item,
-  .table-layout .table-row {
+  .table-row {
     padding-left: 1em;
     padding-right: 1em;
   }
@@ -257,7 +257,7 @@ div.show-more {
   }
 }
 
-.footer {
+.content + .footer {
   display: flex;
   .box-shadow(0, -1px, 0, 0, @gray-lighter);
   color: @text-color-light;
@@ -316,6 +316,7 @@ div.show-more {
 }
 
 .item-table {
+  // TODO: Drop once the new item table layout is used everywhere
   &.table-layout {
     &.hostgroup-table {
       --columns: 2;
