@@ -68,13 +68,7 @@ class RedundancygroupController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($this->group->display_name);
 
-        $summary = RedundancyGroupSummary::on($this->getDb())
-            ->filter(Filter::equal('id', $this->groupId));
-
-        $this->applyRestrictions($summary);
-
-        $this->groupSummary = $summary->first();
-        $this->group->summary = $this->groupSummary;
+        $this->groupSummary = $this->group->summary;
 
         $this->addControl(new RedundancyGroupHeader($this->group));
     }
