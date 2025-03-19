@@ -12,7 +12,7 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\HostList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTableRow;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
@@ -109,8 +109,10 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
-        $hostList = (new HostList($hosts->execute()))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+        $hostList = (new ObjectList($hosts))
+            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setMultiselectUrl(Links::hostsDetails())
+            ->setDetailUrl(Url::fromPath('icingadb/host'));
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {

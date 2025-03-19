@@ -15,8 +15,8 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
-use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
@@ -104,8 +104,10 @@ class HostsController extends Controller
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
                 ->setSort($sortControl->getSort());
         } else {
-            $hostList = (new HostList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode());
+            $hostList = (new ObjectList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setMultiselectUrl(Links::hostsDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/host'));
         }
 
         $this->addContent($hostList);
@@ -166,9 +168,8 @@ class HostsController extends Controller
         $summary->comments_total = $comments->count();
 
         $this->addControl(
-            (new HostList($results))
+            (new ObjectList($results))
                 ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
         );
         $this->addControl(new ShowMore(
             $results,

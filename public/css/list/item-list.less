@@ -56,10 +56,6 @@
   > .empty-state {
     padding: .25em;
   }
-
-  .check-attempt {
-    display: none; // TODO: The new renderer shouldn't render it in the first place
-  }
 }
 
 .item-list.minimal {
@@ -143,7 +139,8 @@
 
 // TODO: Can be simplified (`.controls .list-item`) once the only list-items in controls are those in the multi select views
 .controls .item-list:not(.detailed):not(.minimal) .list-item {
-  .plugin-output {
+  .plugin-output { //TODO: why ?? multiselect items has bigger gap now
+                    //seems dead code, remove it when cleaning up
     line-height: 1.5
   }
 

@@ -12,7 +12,7 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\ServicegroupTableRow;
 use ipl\Html\Html;
 use ipl\Stdlib\Filter;
@@ -117,8 +117,10 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
-        $serviceList = (new ServiceList($services->execute()))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+        $serviceList = (new ObjectList($services))
+            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setMultiselectUrl(Links::servicesDetails())
+            ->setDetailUrl(Url::fromPath('icingadb/service'));
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {

@@ -20,13 +20,13 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
@@ -79,10 +79,7 @@ class ServiceController extends Controller
         $this->service = $service;
         $this->loadTabsForObject($service);
 
-        $this->addControl((new ServiceList([$service]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new ObjectHeader($service));
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle(
@@ -515,6 +512,6 @@ class ServiceController extends Controller
 
     protected function getDefaultTabControls(): array
     {
-        return [(new ServiceList([$this->service]))->setDetailActionsDisabled()->setNoSubjectLink()];
+        return [new ObjectHeader($this->service)];
     }
 }

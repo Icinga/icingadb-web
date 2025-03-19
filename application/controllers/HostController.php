@@ -26,11 +26,10 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
@@ -69,10 +68,7 @@ class HostController extends Controller
         $this->host = $host;
         $this->loadTabsForObject($host);
 
-        $this->addControl((new HostList([$host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new ObjectHeader($host));
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($host->display_name);
@@ -223,7 +219,7 @@ class HostController extends Controller
 
         yield $this->export($services);
 
-        $serviceList = (new ServiceList($services))
+        $serviceList = (new ObjectList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
         $this->addControl($paginationControl);
@@ -537,7 +533,7 @@ class HostController extends Controller
 
     protected function getDefaultTabControls(): array
     {
-        return [(new HostList([$this->host]))->setDetailActionsDisabled()->setNoSubjectLink()];
+        return [new ObjectHeader($this->host)];
     }
 
     /**

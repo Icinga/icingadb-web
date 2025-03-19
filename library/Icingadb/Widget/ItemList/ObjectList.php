@@ -9,13 +9,17 @@ use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
+use Icinga\Module\Icingadb\View\ServiceRenderer;
 use Icinga\Module\Icingadb\Widget\Notice;
 use InvalidArgumentException;
 use ipl\Html\HtmlDocument;
 use ipl\Orm\Model;
+use ipl\Stdlib\Filter;
 use ipl\Web\Layout\DetailedItemLayout;
 use ipl\Web\Layout\ItemLayout;
 use ipl\Web\Layout\MinimalItemLayout;
@@ -27,7 +31,7 @@ use ipl\Web\Widget\ListItem;
  *
  * Create a list of icingadb objects
  *
- * @extends ItemList<RedundancyGroup>
+ * @extends ItemList<RedundancyGroup> // TODO: fix type
  */
 class ObjectList extends ItemList
 {
@@ -41,6 +45,10 @@ class ObjectList extends ItemList
         parent::__construct($data, function (Model $item) {
             if ($item instanceof RedundancyGroup) {
                 return new RedundancyGroupRenderer();
+            } elseif ($item instanceof Service) {
+                return new ServiceRenderer();
+            } elseif ($item instanceof Host) {
+                return new HostRenderer();
             } else {
                 throw new NotImplementedError('Not implemented');
             }
@@ -115,32 +123,64 @@ class ObjectList extends ItemList
         return $layout;
     }
 
+    /**
+     * @param object<UnreachableParent|DependencyNode|RedundancyGroup|Service|Host> $data
+     *
+     * @return ListItem
+     */
     protected function createListItem(object $data)
     {
-        /** @var UnreachableParent|DependencyNode $data */
-        if ($data->redundancy_group_id !== null) {
-            return (new ListItem($data->redundancy_group, $this))
-                ->addAttributes(['data-action-item' => true]);
+        if ($data instanceof DependencyNode) {
+            if (isset($data->redundancy_group_id)) {
+                $object = $data->redundancy_group;
+            } else {
+                $object = isset($data->service_id) ? $data->service : $data->host;
+            }
+        } else {
+            $object = $data;
         }
 
-        // TODO: Adjust the remaining stuff once self::getItemLayout supports host and services
-
-        $object = $data->service_id !== null ? $data->service : $data->host;
-
-        switch (false) {
-            case MinimalItemLayout::class:
-                $class = $object instanceof Host ? HostListItemMinimal::class : ServiceListItemMinimal::class;
-                break;
-            case DetailedItemLayout::class:
-                $this->removeAttribute('class', 'default-layout');
-
-                $class = $object instanceof Host ? HostListItemDetailed::class : ServiceListItemDetailed::class;
-                break;
-            default:
-                $class = $object instanceof Host ? HostListItem::class : ServiceListItem::class;
+        if (isset($object->icon_image->icon_image)) {
+            $this->setHasIconImages(true);
         }
 
-        return new $class($object, $this);
+        $item = parent::createListItem($object);
+
+        if ($this->getDetailActionsDisabled()) {
+            return $item;
+        }
+
+        switch (true) {
+            case $object instanceof RedundancyGroup:
+                $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
+
+                break;
+            case $object instanceof Service:
+                $this->addDetailFilterAttribute(
+                    $item,
+                    Filter::all(
+                        Filter::equal('name', $object->name),
+                        Filter::equal('host.name', $object->host->name)
+                    )
+                );
+
+                $this->addMultiSelectFilterAttribute(
+                    $item,
+                    Filter::all(
+                        Filter::equal('service.name', $object->name),
+                        Filter::equal('host.name', $object->host->name)
+                    )
+                );
+
+                break;
+            case $object instanceof Host:
+                $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+                $this->addMultiSelectFilterAttribute($item, Filter::equal('host.name', $object->name));
+
+                break;
+        }
+
+        return $item;
     }
 
     protected function assemble(): void

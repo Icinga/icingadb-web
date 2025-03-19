@@ -17,7 +17,7 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\ServiceItemTable;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -115,8 +115,10 @@ class ServicesController extends Controller
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
                 ->setSort($sortControl->getSort());
         } else {
-            $serviceList = (new ServiceList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode());
+            $serviceList = (new ObjectList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setMultiselectUrl(Links::servicesDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/service'));
         }
 
         $this->addContent($serviceList);
@@ -182,9 +184,8 @@ class ServicesController extends Controller
         $summary->comments_total = $comments->count();
 
         $this->addControl(
-            (new ServiceList($results))
+            (new ObjectList($results))
                 ->setViewMode('minimal')
-                ->setDetailActionsDisabled()
         );
         $this->addControl(new ShowMore(
             $results,
