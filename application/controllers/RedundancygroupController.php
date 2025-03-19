@@ -14,7 +14,7 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
-use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupHeader;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Generator;
 use ipl\Orm\Query;
@@ -70,7 +70,7 @@ class RedundancygroupController extends Controller
 
         $this->groupSummary = $this->group->summary;
 
-        $this->addControl(new RedundancyGroupHeader($this->group));
+        $this->addControl(new ObjectHeader($this->group));
     }
 
     public function indexAction(): void
