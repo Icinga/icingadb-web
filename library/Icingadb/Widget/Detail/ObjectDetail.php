@@ -28,7 +28,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
@@ -668,7 +668,7 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
-            (new DependencyNodeList($rootProblems))->setEmptyStateMessage(
+            (new ObjectList($rootProblems))->setEmptyStateMessage(
                 t('You are not authorized to view these objects.')
             )
         ];
@@ -744,7 +744,7 @@ class ObjectDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
-            (new DependencyNodeList($affectedObjects))->setEmptyStateMessage(
+            (new ObjectList($affectedObjects))->setEmptyStateMessage(
                 t('You are not authorized to view these objects.')
             )
         ];

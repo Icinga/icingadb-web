@@ -24,7 +24,7 @@ use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
 use ipl\Orm\Query;
@@ -159,7 +159,7 @@ class ServiceController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -230,7 +230,7 @@ class ServiceController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 

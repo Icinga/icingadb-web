@@ -15,7 +15,7 @@ use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupHeader;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Generator;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
@@ -140,7 +140,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -209,7 +209,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 

@@ -1,12 +1,11 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
 
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
-use Icinga\Module\Icingadb\Common\NoSubjectLink;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -24,17 +23,15 @@ use ipl\Web\Widget\ItemList;
 use ipl\Web\Widget\ListItem;
 
 /**
- * Dependency node list
+ * ObjectList
  *
- * @todo This should be the new StateList class
+ * Create a list of icingadb objects
+ *
  * @extends ItemList<RedundancyGroup>
  */
-class DependencyNodeList extends ItemList
+class ObjectList extends ItemList
 {
     use DetailActions;
-    use NoSubjectLink; // TODO: Only for temporary compatibility
-
-    protected $defaultAttributes = ['class' => ['dependency-node-list']];
 
     /** @var bool Whether the list contains at least one item with an icon_image */
     protected $hasIconImages = false;

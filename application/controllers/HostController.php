@@ -27,7 +27,7 @@ use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\HostList;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
@@ -288,7 +288,7 @@ class HostController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -358,7 +358,7 @@ class HostController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 

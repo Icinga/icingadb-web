@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
@@ -96,7 +96,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create($this->translate('Root Problems'))),
-            (new DependencyNodeList($rootProblems))->setEmptyStateMessage(
+            (new ObjectList($rootProblems))->setEmptyStateMessage(
                 $this->translate('You are not authorized to view these objects.')
             )
         ];
@@ -129,7 +129,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
 
         return [
             HtmlElement::create('h2', null, Text::create($this->translate('Group Members'))),
-            (new DependencyNodeList($members))
+            (new ObjectList($members))
                 ->setEmptyStateMessage($this->translate('You are not authorized to view these objects.')),
             (new ShowMore($members, Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->group->id])))
                 ->setBaseTarget('_self')
