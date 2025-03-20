@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Common\ServiceStates;
@@ -27,10 +28,10 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
-use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
@@ -169,7 +170,8 @@ class EventDetail extends BaseHtmlElement
             $users = $users->execute();
             /** @var ResultSet $users */
 
-            $notifiedUsers[] = new UserTable($users);
+            $notifiedUsers[] = (new ObjectList($users))
+                ->setDetailUrl(Url::fromPath('icingadb/user'));
             $notifiedUsers[] = (new ShowMore(
                 $users,
                 Links::users()->addParams(['notification_history.id' => bin2hex($notification->id)]),

@@ -8,9 +8,13 @@ use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
 use Icinga\Module\Icingadb\View\ServiceRenderer;
+use Icinga\Module\Icingadb\View\UsergroupRenderer;
+use Icinga\Module\Icingadb\View\UserRenderer;
 use ipl\Html\BaseHtmlElement;
 use ipl\Orm\Model;
 use ipl\Web\Layout\HeaderItemLayout;
@@ -40,6 +44,14 @@ class ObjectHeader extends BaseHtmlElement
                 break;
             case $this->object instanceof Host:
                 $renderer = new HostRenderer();
+
+                break;
+            case $this->object instanceof Usergroup:
+                $renderer = new UsergroupRenderer();
+
+                break;
+            case $this->object instanceof User:
+                $renderer = new UserRenderer();
 
                 break;
             default:

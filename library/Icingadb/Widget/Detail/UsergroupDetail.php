@@ -9,12 +9,13 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Usergroup;
-use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Web\Url;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 
@@ -74,7 +75,7 @@ class UsergroupDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, Text::create(t('Users'))),
-            new UserTable($users),
+            (new ObjectList($users))->setDetailUrl(Url::fromPath('icingadb/user')),
             $showMoreLink
         ];
     }
