@@ -10,8 +10,8 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -81,7 +81,12 @@ class CommentsController extends Controller
 
         $results = $comments->execute();
 
-        $this->addContent((new CommentList($results))->setViewMode($viewModeSwitcher->getViewMode()));
+        $this->addContent(
+            (new ObjectList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setMultiselectUrl(Links::commentsDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/comment'))
+        );
 
         if ($compact) {
             $this->addContent(
@@ -156,7 +161,7 @@ class CommentsController extends Controller
 
         $rs = $comments->execute();
 
-        $this->addControl((new CommentList($rs))->setViewMode('minimal'));
+        $this->addControl((new ObjectList($rs))->setViewMode('minimal'));
 
         $this->addControl(new ShowMore(
             $rs,

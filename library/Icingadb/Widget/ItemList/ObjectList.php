@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
+use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -14,6 +15,7 @@ use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\View\CommentRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
 use Icinga\Module\Icingadb\View\ServiceRenderer;
@@ -57,9 +59,11 @@ class ObjectList extends ItemList
                 return new UsergroupRenderer();
             } elseif ($item instanceof User) {
                 return new UserRenderer();
-            } else {
-                throw new NotImplementedError('Not implemented');
+            } elseif ($item instanceof Comment) {
+                return new CommentRenderer();
             }
+
+            throw new NotImplementedError('Not implemented');
         });
     }
 
@@ -189,6 +193,11 @@ class ObjectList extends ItemList
 
             case $object instanceof Usergroup || $data instanceof User:
                 $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+
+                break;
+            case $object instanceof Comment:
+                $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+                $this->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;
         }

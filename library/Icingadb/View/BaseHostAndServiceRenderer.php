@@ -13,7 +13,6 @@ use Icinga\Module\Icingadb\Util\PerfDataSet;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\IconImage;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use ipl\Html\Attributes;
@@ -25,6 +24,7 @@ use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
 use ipl\Web\Common\ItemRenderer;
+use ipl\Web\Layout\ItemLayout;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
@@ -187,16 +187,15 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                 $comment->host = $item;
             }
 
-            $comment = (new CommentList([$comment]))
-                ->setNoSubjectLink()
-                ->setObjectLinkDisabled()
-                ->setDetailActionsDisabled();
-
             $statusIcons->addHtml(
                 new HtmlElement(
                     'div',
                     Attributes::create(['class' => 'comment-wrapper']),
-                    new HtmlElement('div', Attributes::create(['class' => 'comment-popup']), $comment),
+                    new HtmlElement(
+                        'div',
+                        Attributes::create(['class' => 'comment-popup']),
+                        new ItemLayout($comment, (new CommentRenderer())->setIsDetailView())
+                    ),
                     (new Icon('comments', ['class' => 'comment-icon']))
                 )
             );

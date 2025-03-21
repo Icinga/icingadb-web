@@ -29,6 +29,7 @@ use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\TicketLinkObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
@@ -42,11 +43,11 @@ use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
+use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\HorizontalKeyValue;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
@@ -231,7 +232,9 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
-            $content[] = (new CommentList($comments))->setObjectLinkDisabled()->setTicketLinkEnabled();
+            $content[] = (new TicketLinkObjectList($comments))
+                ->setMultiselectUrl(Links::commentsDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/comment'));
             $content[] = (new ShowMore($comments, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No comments created.'));

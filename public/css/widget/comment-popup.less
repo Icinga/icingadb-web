@@ -35,20 +35,24 @@
   }
 }
 
-ul.item-list li:last-child .comment-wrapper {
-  .comment-popup {
-    top: -7em;
-  }
+ul.item-list li:nth-last-child(2):not(:first-child),
+ul.item-list li:last-child:not(:first-child) {
+  .comment-wrapper {
+    .comment-popup {
+      top: -7em;
+    }
 
-  .comment-popup:before {
-    bottom: ~"calc(-0.75em - 1px)";
-    top: unset;
-    transform: rotate(225deg);
+    .comment-popup:before {
+      bottom: ~"calc(-0.75em - 1px)";
+      top: unset;
+      transform: rotate(225deg);
+    }
   }
 }
 
 .comment-wrapper:hover .comment-popup {
-  display: block
+  display: flex;
+  padding: 0 1em;
 }
 
 #layout {
@@ -71,4 +75,10 @@ ul.item-list li:last-child .comment-wrapper {
       width: 25em;
     }
   }
+}
+
+.comment-popup .main .caption {
+  // This is necessary to limit the visible comment lines
+  // because the popup is shown in detailed list mode only
+  height: 3em;
 }

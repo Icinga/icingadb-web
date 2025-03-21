@@ -5,11 +5,12 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Application\Hook;
+use Icinga\Application\Hook\TicketHook;
 
 trait TicketLinks
 {
     /** @var bool */
-    protected $ticketLinkEnabled = false;
+    protected $ticketLinkEnabled = false; // TODO: Remove once all usages are removed
 
     /**
      * Set whether list items should render host and service links
@@ -43,11 +44,9 @@ trait TicketLinks
     public function createTicketLinks($text): string
     {
         if (Hook::has('ticket')) {
+            /** @var TicketHook $tickets */
             $tickets = Hook::first('ticket');
-        }
 
-        if ($this->getTicketLinkEnabled() && isset($tickets)) {
-            /** @var \Icinga\Application\Hook\TicketHook $tickets */
             return $tickets->createLinks($text);
         }
 
