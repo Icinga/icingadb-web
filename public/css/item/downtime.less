@@ -1,15 +1,20 @@
 // Style
+.item-layout.downtime {
+  .visual {
+    background-color: @gray-lighter;
+  }
 
-.downtime-list .list-item,
-.downtime-detail .list-item {
+  &.in-effect .visual {
+    background-color: @color-ok;
+    color: @text-color-on-icinga-blue;
+  }
+}
+
+.list-item.downtime {
   .progress {
     > .bar {
       background-color: @color-ok;
     }
-  }
-
-  .visual {
-    background-color: @gray-lighter;
   }
 
   .main {
@@ -23,43 +28,13 @@
       border-top: 1px solid @gray-light;
     }
   }
-
-  &.in-effect {
-    .visual {
-      background-color: @color-ok;
-      color: @text-color-on-icinga-blue;
-    }
-
-    .main {
-      padding-top: 0; // If active the progress bar represents the padding top
-    }
-  }
 }
 
 // Layout
 
-.downtime-list .list-item {
+.item-layout.downtime {
   .caption > * {
     display: inline;
-  }
-}
-
-.downtime-list .list-item,
-.downtime-detail .list-item {
-  .progress {
-    height: 2px;
-    margin-bottom: ~"calc(.5em - 2px)";
-    min-width: 100%;
-    position: relative;
-
-    > .bar {
-      height: 100%;
-      max-width: 100%;
-    }
-  }
-
-  &:first-child .main .progress > .bar {
-    height: ~"calc(100% + 1px)"; // +1px due to the border added exclusively for the first item
   }
 
   .visual {
@@ -77,7 +52,29 @@
   }
 }
 
-.item-list.downtime-list.minimal .list-item {
+.list-item.downtime {
+  .progress {
+    height: 2px;
+    margin-bottom: ~"calc(.5em - 2px)";
+    min-width: 100%;
+    position: relative;
+
+    > .bar {
+      height: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &:first-child .main .progress > .bar {
+    height: ~"calc(100% + 1px)"; // +1px due to the border added exclusively for the first item
+  }
+
+  .main:has(.progress) {
+    padding-top: 0;
+  }
+}
+
+.minimal-item-layout.downtime {
   .visual {
     display: block;
     line-height: 1.5;

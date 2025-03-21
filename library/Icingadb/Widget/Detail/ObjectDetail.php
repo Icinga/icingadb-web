@@ -285,7 +285,9 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
-            $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled()->setTicketLinkEnabled();
+            $content[] = (new TicketLinkObjectList($downtimes))
+                ->setMultiselectUrl(Links::downtimesDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/downtime'));
             $content[] = (new ShowMore($downtimes, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));

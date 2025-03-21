@@ -10,8 +10,8 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -87,7 +87,12 @@ class DowntimesController extends Controller
 
         $results = $downtimes->execute();
 
-        $this->addContent((new DowntimeList($results))->setViewMode($viewModeSwitcher->getViewMode()));
+        $this->addContent(
+            (new ObjectList($results))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setMultiselectUrl(Links::downtimesDetails())
+                ->setDetailUrl(Url::fromPath('icingadb/downtime'))
+        );
 
         if ($compact) {
             $this->addContent(
@@ -162,7 +167,7 @@ class DowntimesController extends Controller
 
         $rs = $downtimes->execute();
 
-        $this->addControl((new DowntimeList($rs))->setViewMode('minimal'));
+        $this->addControl((new ObjectList($rs))->setViewMode('minimal'));
 
         $this->addControl(new ShowMore(
             $rs,

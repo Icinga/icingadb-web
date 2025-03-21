@@ -6,7 +6,9 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\View\CommentRenderer;
+use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use ipl\Orm\Model;
 use ipl\Web\Widget\ItemList;
 
@@ -24,6 +26,8 @@ class TicketLinkObjectList extends ObjectList
         ItemList::__construct($data, function (Model $item) {
             if ($item instanceof Comment) {
                 return (new CommentRenderer())->setIsDetailView();
+            } elseif ($item instanceof Downtime) {
+                return (new DowntimeRenderer())->setIsDetailView();
             }
 
             throw new NotImplementedError('Not implemented');

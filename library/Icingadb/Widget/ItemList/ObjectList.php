@@ -8,6 +8,7 @@ use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
+use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
@@ -16,6 +17,7 @@ use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\View\CommentRenderer;
+use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
 use Icinga\Module\Icingadb\View\ServiceRenderer;
@@ -61,6 +63,8 @@ class ObjectList extends ItemList
                 return new UserRenderer();
             } elseif ($item instanceof Comment) {
                 return new CommentRenderer();
+            } elseif ($item instanceof Downtime) {
+                return new DowntimeRenderer();
             }
 
             throw new NotImplementedError('Not implemented');
@@ -132,6 +136,10 @@ class ObjectList extends ItemList
             $layout->after(ItemLayout::VISUAL, 'icon-image');
         }
 
+        if ($item instanceof Downtime) {
+            $layout->before(ItemLayout::HEADER, 'progress');
+        }
+
         return $layout;
     }
 
@@ -195,7 +203,7 @@ class ObjectList extends ItemList
                 $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;
-            case $object instanceof Comment:
+            case $object instanceof Comment || $object instanceof Downtime:
                 $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
                 $this->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
 

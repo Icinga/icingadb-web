@@ -6,12 +6,14 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\View\CommentRenderer;
+use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
 use Icinga\Module\Icingadb\View\ServiceRenderer;
@@ -58,6 +60,10 @@ class ObjectHeader extends BaseHtmlElement
                 break;
             case $this->object instanceof Comment:
                 $renderer = new CommentRenderer();
+
+                break;
+            case $this->object instanceof Downtime:
+                $renderer = new DowntimeRenderer();
 
                 break;
             default:
