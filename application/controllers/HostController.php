@@ -140,6 +140,7 @@ class HostController extends Controller
 
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
+        $url->setParam('name', $this->host->name);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
