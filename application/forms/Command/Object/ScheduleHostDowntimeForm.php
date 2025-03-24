@@ -77,10 +77,10 @@ class ScheduleHostDowntimeForm extends ScheduleServiceDowntimeForm
     {
         if (! $this->getElement('all_services')->isChecked()) {
             yield from parent::getCommands($objects);
-        }
-
-        foreach (parent::getCommands($objects) as $command) {
-            yield $command->setForAllServices();
+        } else {
+            foreach (parent::getCommands($objects) as $command) {
+                yield $command->setForAllServices();
+            }
         }
     }
 }
