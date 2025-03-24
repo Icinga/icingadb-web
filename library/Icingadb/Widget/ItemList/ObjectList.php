@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
@@ -206,6 +207,10 @@ class ObjectList extends ItemList
             case $object instanceof Comment || $object instanceof Downtime:
                 $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
                 $this->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
+
+                break;
+            case $object instanceof NotificationHistory:
+                $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->history->id)));
 
                 break;
         }
