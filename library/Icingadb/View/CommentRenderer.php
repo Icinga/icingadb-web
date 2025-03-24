@@ -18,6 +18,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
 use ipl\Web\Common\ItemRenderer;
+use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\TimeAgo;
@@ -72,11 +73,11 @@ class CommentRenderer implements ItemRenderer
 
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void
     {
-        $visual->addHtml(new HtmlElement(
-            'div',
-            Attributes::create(['class' => 'user-ball']),
-            Text::create($item->author[0])
-        ));
+        $visual->addHtml(
+            (new Ball($layout === 'minimal' ? Ball::SIZE_BIG : Ball::SIZE_LARGE))
+                ->addAttributes(['class' => 'user-ball'])
+                ->addHtml(Text::create($item->author[0]))
+        );
     }
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void

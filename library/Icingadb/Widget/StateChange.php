@@ -91,11 +91,8 @@ class StateChange extends BaseHtmlElement
     protected function assemble()
     {
         $currentStateBall = (new StateBall($this->state, $this->currentStateBallSize))
+            ->setHandled($this->isHandled)
             ->add($this->icon);
-
-        if ($this->isHandled) {
-            $currentStateBall->getAttributes()->add('class', 'handled');
-        }
 
         $previousStateBall = new StateBall($this->previousState, $this->previousStateBallSize);
         if ($this->isRightBiggerThanLeft()) {

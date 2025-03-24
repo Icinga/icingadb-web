@@ -35,20 +35,16 @@ div.show-more {
 }
 
 .user-ball {
-  .ball();
-  .ball-size-xl();
   .ball-solid(@gray-semilight);
   font-weight: bold;
-  line-height: 1.75;
   text-transform: uppercase;
+  vertical-align: top; // Avoid the bottom margin of the ball to affect the line height
 }
 
 .usergroup-ball {
-  .ball();
   .ball-outline(@gray);
-  .ball-size-xl();
-  line-height: 1.75;
   text-transform: uppercase;
+  vertical-align: top; // Avoid the bottom margin of the ball to affect the line height
 }
 
 .ack-badge {
@@ -292,6 +288,12 @@ div.show-more {
   .visual.small-state-change .state-change {
     padding-top: .25em;
   }
+}
+
+// user, usergroup and comment balls
+.header-item-layout .visual:has(.ball.ball-size-xl) {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 form[name="form_confirm_removal"] {
