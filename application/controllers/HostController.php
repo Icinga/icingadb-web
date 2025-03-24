@@ -28,8 +28,8 @@ use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
@@ -167,7 +167,8 @@ class HostController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
 
-        $historyList = (new HistoryList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute()))
+            ->setDetailUrl(Url::fromPath('icingadb/event'))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before));

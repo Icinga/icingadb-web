@@ -6,7 +6,9 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\LoadMore;
+use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\View\HistoryRenderer;
 use Icinga\Module\Icingadb\View\NotificationRenderer;
 use ipl\Orm\Model;
 use ipl\Web\Widget\ItemList;
@@ -27,6 +29,8 @@ class LoadMoreObjectList extends ObjectList
         ItemList::__construct($data, function (Model $item) {
             if ($item instanceof NotificationHistory) {
                 return new NotificationRenderer();
+            } elseif ($item instanceof History) {
+                return new HistoryRenderer();
             }
 
             throw new NotImplementedError('Not implemented');

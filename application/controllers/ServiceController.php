@@ -25,8 +25,8 @@ use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
@@ -313,7 +313,8 @@ class ServiceController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
 
-        $historyList = (new HistoryList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute()))
+            ->setDetailUrl(Url::fromPath('icingadb/event'))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before));

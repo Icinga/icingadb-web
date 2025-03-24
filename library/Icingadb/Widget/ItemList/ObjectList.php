@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -211,6 +212,11 @@ class ObjectList extends ItemList
                 break;
             case $object instanceof NotificationHistory:
                 $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->history->id)));
+
+                break;
+
+            case $object instanceof History:
+                $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
 
                 break;
         }
