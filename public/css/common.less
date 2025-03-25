@@ -315,65 +315,6 @@ div.show-more {
   }
 }
 
-.item-table {
-  // TODO: Drop once the new item table layout is used everywhere
-  &.table-layout {
-    &.hostgroup-table {
-      --columns: 2;
-    }
-
-    &.servicegroup-table {
-      --columns: 1;
-    }
-  }
-}
-
-.hostgroup-table,
-.servicegroup-table {
-  .title .column-content > * {
-    display: block;
-    max-width: fit-content;
-  }
-
-  .object-statistics-total {
-    width: 3.75em;
-  }
-}
-
-.controls .hostgroup-table-row,
-.controls .servicegroup-table-row {
-  .title .column-content {
-    display: inline-flex;
-    align-items: center;
-
-    > :first-child {
-      flex: 0 1 auto;
-    }
-
-    > :last-child {
-      flex: 1 1 auto;
-    }
-
-    .subject {
-      margin-right: .5em;
-    }
-  }
-
-  .vertical-key-value {
-    br {
-      display: none;
-    }
-
-    .key {
-      padding-left: .417em;
-    }
-
-    .value {
-      vertical-align: middle;
-    }
-  }
-}
-
 .header-item-layout.host,
 .header-item-layout.service,
 .item-layout.history {

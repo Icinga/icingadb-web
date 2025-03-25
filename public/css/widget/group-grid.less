@@ -1,13 +1,13 @@
 // HostGroup- and -ServiceGroupGrid styles
 
-ul.item-table.group-grid {
+ul.item-list.group-grid {
+  display: grid;
   grid-template-columns: repeat(auto-fit, 15em);
   grid-gap: 1em 2em;
 
-  .table-row {
+  .list-item {
     margin: -.25em;
     padding: .25em;
-    border-radius: .5em;
   }
 
   li.group-grid-cell {
@@ -19,7 +19,11 @@ ul.item-table.group-grid {
       margin-right: 1em;
     }
 
-    .column-content {
+    .main {
+      border-top: none;
+    }
+
+    .title, .caption {
       line-height: 1;
 
       a {
@@ -37,6 +41,6 @@ ul.item-table.group-grid {
   }
 }
 
-.content.full-width ul.item-table.group-grid {
+.content.full-width ul.item-list.group-grid {
   margin: 0 1em;
 }

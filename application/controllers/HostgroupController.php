@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTableRow;
 use ipl\Html\Html;
@@ -116,10 +117,10 @@ class HostgroupController extends Controller
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {
-            $this->addContent(new HostgroupTableRow($hostgroup));
+            $this->addContent(new ObjectHeader($hostgroup));
             $this->addContent(Html::tag('h2', null, t('Hosts')));
         } else {
-            $this->addControl(new HostgroupTableRow($hostgroup));
+            $this->addControl(new ObjectHeader($hostgroup));
         }
 
         $this->addControl($paginationControl);

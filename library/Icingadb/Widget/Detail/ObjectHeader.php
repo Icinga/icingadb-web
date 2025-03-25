@@ -9,15 +9,19 @@ use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\View\CommentRenderer;
 use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use Icinga\Module\Icingadb\View\HistoryRenderer;
+use Icinga\Module\Icingadb\View\HostgroupRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
+use Icinga\Module\Icingadb\View\ServicegroupRenderer;
 use Icinga\Module\Icingadb\View\ServiceRenderer;
 use Icinga\Module\Icingadb\View\UsergroupRenderer;
 use Icinga\Module\Icingadb\View\UserRenderer;
@@ -70,6 +74,14 @@ class ObjectHeader extends BaseHtmlElement
                 break;
             case $this->object instanceof History:
                 $renderer = new HistoryRenderer();
+
+                break;
+            case $this->object instanceof Hostgroupsummary:
+                $renderer = new HostgroupRenderer();
+
+                break;
+            case $this->object instanceof ServicegroupSummary:
+                $renderer = new ServicegroupRenderer();
 
                 break;
             default:

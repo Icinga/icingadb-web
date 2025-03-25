@@ -7,14 +7,18 @@ namespace Icinga\Module\Icingadb\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\View\HostgroupGridRenderer;
+use Icinga\Module\Icingadb\View\HostgroupRenderer;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Html\Attributes;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
+use ipl\Web\Widget\ItemList;
+use ipl\Web\Widget\ItemTable;
 
 class HostgroupsController extends Controller
 {
@@ -99,11 +103,21 @@ class HostgroupsController extends Controller
 
         $results = $hostgroups->execute();
 
-        $this->addContent(
-            (new HostgroupTable($results))
-                ->setBaseFilter($filter)
-                ->setViewMode($viewModeSwitcher->getViewMode())
-        );
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $table = new ItemList(
+                $results,
+                (new HostgroupGridRenderer())->setBaseFilter($filter)
+            );
+
+            $table->addAttributes(new Attributes(['class' => 'group-grid']));
+        } else {
+            $table = new ItemTable(
+                $results,
+                (new HostgroupRenderer())->setBaseFilter($filter)
+            );
+        }
+
+        $this->addContent($table);
 
         if ($compact) {
             $this->addContent(

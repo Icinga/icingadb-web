@@ -52,9 +52,16 @@
       line-height: 1.5*12/11em;
     }
   }
-  &.minimal-item-layout .caption {
-    .plugin-output {
+
+  &.minimal-item-layout {
+    .caption .plugin-output {
       .text-ellipsis();
+    }
+
+    &.hostgroup .extended-info {
+      > :not(:last-child) {
+        margin-right: 1em;
+      }
     }
   }
 
