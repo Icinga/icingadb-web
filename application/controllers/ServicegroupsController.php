@@ -12,13 +12,14 @@ use Icinga\Module\Icingadb\View\ServicegroupRenderer;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use ipl\Web\Widget\ItemList;
-use ipl\Web\Widget\ItemTable;
 
 class ServicegroupsController extends Controller
 {
@@ -92,20 +93,14 @@ class ServicegroupsController extends Controller
         $results = $servicegroups->execute();
 
         if ($viewModeSwitcher->getViewMode() === 'grid') {
-            $table = new ItemList(
-                $results,
-                (new ServicegroupGridRenderer())->setBaseFilter($filter)
-            );
-
-            $table->addAttributes(new Attributes(['class' => 'group-grid']));
+            $content = new ObjectGrid($results, (new ServicegroupGridRenderer())->setBaseFilter($filter));
         } else {
-            $table = new ItemTable(
-                $results,
-                (new ServicegroupRenderer())->setBaseFilter($filter)
-            );
+            $content = new ObjectTable($results, (new ServicegroupRenderer())->setBaseFilter($filter));
         }
 
-        $this->addContent($table);
+        $content->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
+
+        $this->addContent($content);
 
         if ($compact) {
             $this->addContent(

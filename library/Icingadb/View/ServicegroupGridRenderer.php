@@ -26,7 +26,7 @@ class ServicegroupGridRenderer implements ItemRenderer
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
-        $attributes->get('class')->addValue(['group-grid-cell', 'servicegroup']);
+        $attributes->get('class')->addValue(['object-grid-cell', 'servicegroup']);
     }
 
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void

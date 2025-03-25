@@ -12,13 +12,12 @@ use Icinga\Module\Icingadb\View\HostgroupRenderer;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Html\Attributes;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
-use ipl\Web\Widget\ItemList;
-use ipl\Web\Widget\ItemTable;
 
 class HostgroupsController extends Controller
 {
@@ -104,20 +103,14 @@ class HostgroupsController extends Controller
         $results = $hostgroups->execute();
 
         if ($viewModeSwitcher->getViewMode() === 'grid') {
-            $table = new ItemList(
-                $results,
-                (new HostgroupGridRenderer())->setBaseFilter($filter)
-            );
-
-            $table->addAttributes(new Attributes(['class' => 'group-grid']));
+            $content = new ObjectGrid($results, (new HostgroupGridRenderer())->setBaseFilter($filter));
         } else {
-            $table = new ItemTable(
-                $results,
-                (new HostgroupRenderer())->setBaseFilter($filter)
-            );
+            $content = new ObjectTable($results, (new HostgroupRenderer())->setBaseFilter($filter));
         }
 
-        $this->addContent($table);
+        $content->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
+
+        $this->addContent($content);
 
         if ($compact) {
             $this->addContent(

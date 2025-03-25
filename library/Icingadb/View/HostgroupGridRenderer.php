@@ -26,7 +26,7 @@ class HostgroupGridRenderer implements ItemRenderer
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
-        $attributes->get('class')->addValue(['group-grid-cell', 'hostgroup']);
+        $attributes->get('class')->addValue(['object-grid-cell', 'hostgroup']);
     }
 
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void
