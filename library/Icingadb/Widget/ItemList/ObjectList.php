@@ -28,6 +28,7 @@ use Icinga\Module\Icingadb\View\UserRenderer;
 use Icinga\Module\Icingadb\Widget\Notice;
 use InvalidArgumentException;
 use ipl\Html\HtmlDocument;
+use ipl\I18n\Translation;
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter;
 use ipl\Web\Layout\DetailedItemLayout;
@@ -46,6 +47,7 @@ use ipl\Web\Widget\ListItem;
 class ObjectList extends ItemList
 {
     use DetailActions;
+    use Translation;
 
     /** @var bool Whether the list contains at least one item with an icon_image */
     protected $hasIconImages = false;
@@ -230,7 +232,7 @@ class ObjectList extends ItemList
 
         if ($this->data instanceof VolatileStateResults && $this->data->isRedisUnavailable()) {
             $this->prependWrapper((new HtmlDocument())->addHtml(new Notice(
-                t('Redis is currently unavailable. The shown information might be outdated.')
+                $this->translate('Redis is currently unavailable. The shown information might be outdated.')
             )));
         }
     }
