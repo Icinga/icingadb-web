@@ -53,65 +53,6 @@
   }
 }
 
-.item-list.minimal, // TODO: Remove this once the new list-item layout is used everywhere
-.item-list.minimal-item-layout {
-  > .empty-state {
-    padding: .25em;
-  }
-}
-
-.item-list.minimal {
-  // TODO: Can be entirely dropped once the new list-item layout is used everywhere
-  .list-item {
-    header {
-      max-width: 100%;
-    }
-
-    .title {
-      p {
-        display: inline;
-
-        & + p {
-          margin-left: .417em;
-        }
-      }
-    }
-
-    .caption {
-      flex: 1 1 auto;
-      height: 1.5em;
-      margin-right: 1em;
-      width: 0;
-
-      .line-clamp("reset");
-    }
-
-    .caption,
-    .caption .plugin-output {
-      .text-ellipsis();
-    }
-  }
-}
-
-.item-list.detailed .list-item {
-  // TODO: Can be entirely dropped once the new list-item layout is used everywhere
-  .title {
-    word-break: break-word;
-    -webkit-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-  }
-
-  .caption {
-    display: block;
-    height: auto;
-    max-height: 7.5em; /* 5 lines */
-    position: relative;
-
-    .line-clamp(4)
-  }
-}
-
 .item-list {
   .icon-image {
     width:  3em;
@@ -129,7 +70,6 @@
     }
   }
 
-  &.minimal, // TODO: Remove this once the new list-item layout is used everywhere
   &.minimal-item-layout {
     .icon-image {
       height: 2em;
@@ -139,19 +79,6 @@
   }
 }
 
-// TODO: Can be simplified (`.controls .list-item`) once the only list-items in controls are those in the multi select views
-.controls .item-list:not(.detailed):not(.minimal) .list-item {
-  .plugin-output { //TODO: why ?? multiselect items has bigger gap now
-                    //seems dead code, remove it when cleaning up
-    line-height: 1.5
-  }
-
-  .caption {
-    height: 2.5em;
-  }
-}
-
-.controls .item-list.minimal .icon-image, // TODO: Remove this once the new list-item layout is used everywhere
 .controls .minimal-item-layout .icon-image {
   margin-top: 0;
 }

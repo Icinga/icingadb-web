@@ -10,15 +10,12 @@ use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\I18n\Translation;
 use ipl\Web\Common\ItemRenderer;
 use ipl\Web\Widget\Link;
 
 /** @implements ItemRenderer<Usergroup> */
 class UsergroupRenderer implements ItemRenderer
 {
-    use Translation;
-
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
         $attributes->get('class')->addValue('user-group');

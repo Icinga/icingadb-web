@@ -34,7 +34,6 @@ class HostgroupGridRenderer implements ItemRenderer
         $url = Url::fromPath('icingadb/hosts');
         $urlFilter = Filter::all(Filter::equal('hostgroup.name', $item->name));
 
-
         if ($item->hosts_down_unhandled > 0) {
             $urlFilter->add(Filter::equal('host.state.soft_state', 1))
                 ->add(Filter::equal('host.state.is_handled', 'n'))

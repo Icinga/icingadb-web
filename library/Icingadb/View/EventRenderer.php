@@ -287,14 +287,10 @@ class EventRenderer implements ItemRenderer
             $title->addHtml(new Link($subjectLabel, Links::event($item), ['class' => 'subject']));
         }
 
-        if ($item->object_type === 'host') {
-            if (isset($item->host->id)) {
-                $link = $this->createHostLink($item->host, true);
-            }
-        } else {
-            if (isset($item->host->id, $item->service->id)) {
-                $link = $this->createServiceLink($item->service, $item->host, true);
-            }
+        if ($item->object_type === 'host' && isset($item->host->id)) {
+            $link = $this->createHostLink($item->host, true);
+        } elseif (isset($item->host->id, $item->service->id)) {
+            $link = $this->createServiceLink($item->service, $item->host, true);
         }
 
         $title->addHtml(Text::create(' '));
@@ -308,6 +304,7 @@ class EventRenderer implements ItemRenderer
         if ($item->event_type === 'notification') {
             $item->notification->host = $item->host;
             $item->notification->service = $item->service;
+
             $this->notificationRenderer->assembleCaption($item->notification, $caption, $layout);
 
             return;
