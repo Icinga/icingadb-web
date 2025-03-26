@@ -104,11 +104,11 @@ class NotificationRenderer implements ItemRenderer
             $title->addHtml(HtmlElement::create(
                 'span',
                 ['class' => 'subject'],
-                sprintf(self::phraseForType($item->type), ucfirst($item->object_type))
+                sprintf($this->phraseForType($item->type), ucfirst($item->object_type))
             ));
         } else {
             $title->addHtml(new Link(
-                sprintf(self::phraseForType($item->type), ucfirst($item->object_type)),
+                sprintf($this->phraseForType($item->type), ucfirst($item->object_type)),
                 Links::event($item->history),
                 ['class' => 'subject']
             ));
@@ -172,27 +172,27 @@ class NotificationRenderer implements ItemRenderer
      *
      * @return string
      */
-    public static function phraseForType(string $type): string
+    protected function phraseForType(string $type): string
     {
         switch ($type) {
             case 'acknowledgement':
-                return t('Problem acknowledged');
+                return $this->translate('Problem acknowledged');
             case 'custom':
-                return t('Custom Notification triggered');
+                return $this->translate('Custom Notification triggered');
             case 'downtime_end':
-                return t('Downtime ended');
+                return $this->translate('Downtime ended');
             case 'downtime_removed':
-                return t('Downtime removed');
+                return $this->translate('Downtime removed');
             case 'downtime_start':
-                return t('Downtime started');
+                return $this->translate('Downtime started');
             case 'flapping_end':
-                return t('Flapping stopped');
+                return $this->translate('Flapping stopped');
             case 'flapping_start':
-                return t('Flapping started');
+                return $this->translate('Flapping started');
             case 'problem':
-                return t('%s ran into a problem');
+                return $this->translate('%s ran into a problem');
             case 'recovery':
-                return t('%s recovered');
+                return $this->translate('%s recovered');
             default:
                 throw new InvalidArgumentException(sprintf('Type %s is not a valid notification type', $type));
         }

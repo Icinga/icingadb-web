@@ -17,7 +17,7 @@ use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\View\CommentRenderer;
 use Icinga\Module\Icingadb\View\DowntimeRenderer;
-use Icinga\Module\Icingadb\View\HistoryRenderer;
+use Icinga\Module\Icingadb\View\EventRenderer;
 use Icinga\Module\Icingadb\View\HostgroupRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
 use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
@@ -73,7 +73,7 @@ class ObjectHeader extends BaseHtmlElement
 
                 break;
             case $this->object instanceof History:
-                $renderer = new HistoryRenderer();
+                $renderer = new EventRenderer();
 
                 break;
             case $this->object instanceof Hostgroupsummary:

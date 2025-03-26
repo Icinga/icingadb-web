@@ -31,12 +31,20 @@ use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 
 /** @implements ItemRenderer<History> */
-class HistoryRenderer implements ItemRenderer
+class EventRenderer implements ItemRenderer
 {
     use Translation;
     use TicketLinks;
     use HostLink;
     use ServiceLink;
+
+    /** @var NotificationRenderer To render NotificationHistory event */
+    protected $notificationRenderer;
+
+    public function __construct()
+    {
+        $this->notificationRenderer = new NotificationRenderer();
+    }
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
@@ -166,6 +174,16 @@ class HistoryRenderer implements ItemRenderer
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void
     {
+        if ($item->event_type === 'notification' && isset($item->notification->id)) {
+            $item->notification->history = $item;
+            $item->notification->host = $item->host;
+            $item->notification->service = $item->service;
+
+            $this->notificationRenderer->assembleTitle($item->notification, $title, $layout);
+
+            return;
+        }
+
         switch ($item->event_type) {
             case 'comment_add':
                 $subjectLabel = $this->translate('Comment added');
@@ -238,13 +256,6 @@ class HistoryRenderer implements ItemRenderer
                 }
 
                 break;
-            case 'notification':
-                $subjectLabel = isset($item->notification->type) ? sprintf(
-                    NotificationRenderer::phraseForType($item->notification->type),
-                    ucfirst($item->object_type)
-                ) : $item->event_type;
-
-                break;
             case 'state_change':
                 $state = $item->state->state_type === 'hard'
                     ? $item->state->hard_state
@@ -294,6 +305,14 @@ class HistoryRenderer implements ItemRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
+        if ($item->event_type === 'notification') {
+            $item->notification->host = $item->host;
+            $item->notification->service = $item->service;
+            $this->notificationRenderer->assembleCaption($item->notification, $caption, $layout);
+
+            return;
+        }
+
         switch ($item->event_type) {
             case 'comment_add':
             case 'comment_remove':
@@ -365,37 +384,6 @@ class HistoryRenderer implements ItemRenderer
                         $item->acknowledgement->author,
                         ': '
                     ])->addFrom($markdownLine);
-                }
-
-                break;
-            case 'notification':
-                if (! empty($item->notification->author)) {
-                    $caption->add([
-                        new Icon(Icons::USER),
-                        $item->notification->author,
-                        ': ',
-                        $item->notification->text
-                    ]);
-                } else {
-                    $commandName = $item->object_type === 'host'
-                        ? $item->host->checkcommand_name
-                        : $item->service->checkcommand_name;
-                    if (isset($commandName)) {
-                        if (empty($item->notification->text)) {
-                            $caption->addHtml(new EmptyState(t('Output unavailable.')));
-                        } else {
-                            $caption->addHtml(
-                                new PluginOutputContainer(
-                                    (new PluginOutput($item->notification->text))
-                                        ->setCommandName($commandName)
-                                )
-                            );
-                        }
-                    } else {
-                        $caption->addHtml(
-                            new EmptyState($this->translate('Waiting for Icinga DB to synchronize the config.'))
-                        );
-                    }
                 }
 
                 break;
