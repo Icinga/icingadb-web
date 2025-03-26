@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\View;
 
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Model\Service;
 use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
@@ -13,6 +14,7 @@ use ipl\Html\ValidHtml;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 
+/** @extends BaseHostAndServiceRenderer<Service> */
 class ServiceRenderer extends BaseHostAndServiceRenderer
 {
     public function assembleAttributes($item, Attributes $attributes, string $layout): void

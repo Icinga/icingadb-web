@@ -30,11 +30,24 @@ use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeSince;
 
-/** @implements ItemRenderer<Host|Service> */
+/**
+ * @template Item of Host|Service
+ *
+ * @implements ItemRenderer<Item>
+ */
 abstract class BaseHostAndServiceRenderer implements ItemRenderer
 {
     use Translation;
 
+    /**
+     * Create subject for the given item
+     *
+     * @param Item $item The item to create subject for
+     *
+     * @param string $layout The name of the layout
+     *
+     * @return ValidHtml
+     */
     abstract protected function createSubject($item, string $layout): ValidHtml;
 
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void

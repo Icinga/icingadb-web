@@ -14,7 +14,6 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\Model\UnreachableParent;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
@@ -35,14 +34,16 @@ use ipl\Web\Layout\DetailedItemLayout;
 use ipl\Web\Layout\ItemLayout;
 use ipl\Web\Layout\MinimalItemLayout;
 use ipl\Web\Widget\ItemList;
-use ipl\Web\Widget\ListItem;
 
 /**
  * ObjectList
  *
  * Create a list of icingadb objects
  *
- * @extends ItemList<RedundancyGroup> // TODO: fix type
+ * @template Result of DependencyNode|Service|Host|Usergroup|User|Comment|Downtime
+ * @template Item of RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime = Result
+ *
+ * @extends ItemList<Result, Item>
  */
 class ObjectList extends ItemList
 {
@@ -147,11 +148,6 @@ class ObjectList extends ItemList
         return $layout;
     }
 
-    /**
-     * @param object<UnreachableParent|DependencyNode|RedundancyGroup|Service|Host> $data
-     *
-     * @return ListItem
-     */
     protected function createListItem(object $data)
     {
         if ($data instanceof DependencyNode) {

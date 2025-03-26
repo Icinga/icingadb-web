@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\View\EventRenderer;
 use Icinga\Module\Icingadb\View\NotificationRenderer;
 use ipl\Orm\Model;
+use ipl\Orm\ResultSet;
 use ipl\Web\Widget\ItemList;
 
 /**
@@ -18,13 +19,15 @@ use ipl\Web\Widget\ItemList;
  *
  * Create a list of icingadb objects with Load more link
  *
- * @extends ObjectList //TODO: define object type
+ * @template Item of NotificationHistory|History
+ *
+ * @extends ObjectList<Item>
  */
 class LoadMoreObjectList extends ObjectList
 {
     use LoadMore;
 
-    public function __construct($data)
+    public function __construct(ResultSet $data)
     {
         ItemList::__construct($data, function (Model $item) {
             if ($item instanceof NotificationHistory) {

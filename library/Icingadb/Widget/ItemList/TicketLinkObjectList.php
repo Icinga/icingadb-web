@@ -17,7 +17,9 @@ use ipl\Web\Widget\ItemList;
  *
  * Create a list of icingadb objects with ticket links
  *
- * @extends ObjectList //TODO: define object type
+ * @template Result of Comment|Downtime
+ *
+ * @extends ObjectList<Result>
  */
 class TicketLinkObjectList extends ObjectList
 {
