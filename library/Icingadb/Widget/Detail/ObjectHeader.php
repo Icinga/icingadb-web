@@ -65,11 +65,11 @@ class ObjectHeader extends BaseHtmlElement
 
                 break;
             case $this->object instanceof Comment:
-                $renderer = new CommentRenderer();
+                $renderer = (new CommentRenderer())->setTicketLinkDisabled();
 
                 break;
             case $this->object instanceof Downtime:
-                $renderer = new DowntimeRenderer();
+                $renderer = (new DowntimeRenderer())->setTicketLinkDisabled();
 
                 break;
             case $this->object instanceof History:

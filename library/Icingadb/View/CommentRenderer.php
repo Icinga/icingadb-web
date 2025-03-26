@@ -31,26 +31,36 @@ class CommentRenderer implements ItemRenderer
     use HostLink;
     use ServiceLink;
 
-    /**
-     * @var bool Whether the item is being rendered in the detail view of the associated object (host/service)
-     *
-     * When true:
-     *
-     * - Creation of the link of the associated object (host/service) is omitted from the title
-     * - The ticket link will be created
-     */
-    protected $isDetailView = false;
+    /** @var bool Whether the object link for th item should be omitted */
+    protected $noObjectLink = false;
+
+    /** @var bool Whether item's subject should be a link */
+    protected $noSubjectLink = false;
 
     /**
-     * Set whether the item is being rendered in the detail view of the associated object (host/service)
+     * Set whether the object link for th item should be omitted
      *
      * @param bool $state
      *
      * @return $this
      */
-    public function setIsDetailView(bool $state = true): self
+    public function setNoObjectLink(bool $state = true): self
     {
-        $this->isDetailView = $state;
+        $this->noObjectLink = $state;
+
+        return $this;
+    }
+
+    /**
+     * Set whether item's subject should be a link
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setNoSubjectLink(bool $state = true): self
+    {
+        $this->noSubjectLink = $state;
 
         return $this;
     }
@@ -83,7 +93,7 @@ class CommentRenderer implements ItemRenderer
 
         $headerParts = [
             new Icon(Icons::USER),
-            $layout === 'header'
+            $layout === 'header' || $this->noSubjectLink
                 ? new HtmlElement('span', Attributes::create(['class' => 'subject']), Text::create($subjectText))
                 : new Link($subjectText, Links::comment($item), ['class' => 'subject'])
         ];
@@ -108,7 +118,7 @@ class CommentRenderer implements ItemRenderer
             );
         }
 
-        if ($this->isDetailView) {
+        if ($this->noObjectLink) {
             // pass
         } elseif ($item->object_type === 'host') {
             $headerParts[] = $this->createHostLink($item->host, true);
@@ -121,7 +131,7 @@ class CommentRenderer implements ItemRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
-        $markdownLine = new MarkdownLine($this->isDetailView ? $this->createTicketLinks($item->text) : $item->text);
+        $markdownLine = new MarkdownLine($this->createTicketLinks($item->text));
 
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addFrom($markdownLine);

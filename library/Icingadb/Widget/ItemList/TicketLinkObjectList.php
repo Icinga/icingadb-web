@@ -25,9 +25,9 @@ class TicketLinkObjectList extends ObjectList
     {
         ItemList::__construct($data, function (Model $item) {
             if ($item instanceof Comment) {
-                return (new CommentRenderer())->setIsDetailView();
+                return (new CommentRenderer())->setNoObjectLink();
             } elseif ($item instanceof Downtime) {
-                return (new DowntimeRenderer())->setIsDetailView();
+                return (new DowntimeRenderer())->setNoObjectLink();
             }
 
             throw new NotImplementedError('Not implemented');

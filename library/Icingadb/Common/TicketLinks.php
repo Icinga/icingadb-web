@@ -9,31 +9,31 @@ use Icinga\Application\Hook\TicketHook;
 
 trait TicketLinks
 {
-    /** @var bool */
-    protected $ticketLinkEnabled = false; // TODO: Remove once all usages are removed
+    /** @var bool Whether the ticket link is disabled */
+    protected $ticketLinkDisabled = false;
 
     /**
-     * Set whether list items should render host and service links
+     * Set whether the ticket link is disabled
      *
      * @param bool $state
      *
      * @return $this
      */
-    public function setTicketLinkEnabled(bool $state = true): self
+    public function setTicketLinkDisabled(bool $state = true): self
     {
-        $this->ticketLinkEnabled = $state;
+        $this->ticketLinkDisabled = $state;
 
         return $this;
     }
 
     /**
-     * Get whether list items should render host and service links
+     * Get whether the ticket link is disabled
      *
      * @return bool
      */
-    public function getTicketLinkEnabled(): bool
+    public function isTicketLinkDisabled(): bool
     {
-        return $this->ticketLinkEnabled;
+        return $this->ticketLinkDisabled;
     }
 
     /**
@@ -43,13 +43,13 @@ trait TicketLinks
      */
     public function createTicketLinks($text): string
     {
-        if (Hook::has('ticket')) {
-            /** @var TicketHook $tickets */
-            $tickets = Hook::first('ticket');
-
-            return $tickets->createLinks($text);
+        if ($this->isTicketLinkDisabled() || ! Hook::has('ticket')) {
+            return $text ?? '';
         }
 
-        return $text ?? '';
+        /** @var TicketHook $tickets */
+        $tickets = Hook::first('ticket');
+
+        return $tickets->createLinks($text);
     }
 }

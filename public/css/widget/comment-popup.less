@@ -15,8 +15,8 @@
     top: 2.5em;
     left: -1.6em;
     z-index: 1;
-    display: none;
     width: 50em;
+    padding: 0 1em;
   }
 
   .comment-popup:before {
@@ -50,9 +50,8 @@ ul.item-list li:last-child:not(:first-child) {
   }
 }
 
-.comment-wrapper:hover .comment-popup {
-  display: flex;
-  padding: 0 1em;
+.comment-wrapper:not(:hover) .comment-popup {
+  display: none;
 }
 
 #layout {

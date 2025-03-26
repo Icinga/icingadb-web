@@ -187,14 +187,22 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                 $comment->host = $item;
             }
 
+            $commentItem = new ItemLayout(
+                $comment,
+                (new CommentRenderer())
+                    ->setTicketLinkDisabled()
+                    ->setNoObjectLink()
+                    ->setNoSubjectLink()
+            );
+
             $statusIcons->addHtml(
                 new HtmlElement(
                     'div',
                     Attributes::create(['class' => 'comment-wrapper']),
                     new HtmlElement(
                         'div',
-                        Attributes::create(['class' => 'comment-popup']),
-                        new ItemLayout($comment, (new CommentRenderer())->setIsDetailView())
+                        $commentItem->getAttributes()->add('class', 'comment-popup'),
+                        $commentItem
                     ),
                     (new Icon('comments', ['class' => 'comment-icon']))
                 )

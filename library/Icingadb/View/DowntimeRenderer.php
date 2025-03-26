@@ -49,26 +49,19 @@ class DowntimeRenderer implements ItemRenderer
     /** @var bool Whether the state has been loaded */
     protected $stateLoaded = false;
 
-    /**
-     * @var bool Whether the item is being rendered in the detail view of the associated object (host/service)
-     *
-     * When true:
-     *
-     * - Creation of the link of the associated object (host/service) is omitted from the title
-     * - The ticket link will be created
-     */
-    protected $isDetailView = false;
+    /** @var bool Whether the object link for th item should be omitted */
+    protected $noObjectLink = false;
 
     /**
-     * Set whether the item is being rendered in the detail view of the associated object (host/service)
+     * Set whether the object link for th item should be omitted
      *
      * @param bool $state
      *
      * @return $this
      */
-    public function setIsDetailView(bool $state = true): self
+    public function setNoObjectLink(bool $state = true): self
     {
-        $this->isDetailView = $state;
+        $this->noObjectLink = $state;
 
         return $this;
     }
@@ -147,7 +140,7 @@ class DowntimeRenderer implements ItemRenderer
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void
     {
-        if ($this->isDetailView) {
+        if ($this->noObjectLink) {
             $link = null;
         } elseif ($item->object_type === 'host') {
             $link = $this->createHostLink($item->host, true);
@@ -194,9 +187,7 @@ class DowntimeRenderer implements ItemRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
-        $markdownLine = new MarkdownLine(
-            $this->isDetailView ? $this->createTicketLinks($item->comment) : $item->comment
-        );
+        $markdownLine = new MarkdownLine($this->createTicketLinks($item->comment));
         $caption->getAttributes()->add($markdownLine->getAttributes());
         $caption->addHtml(
             new HtmlElement(
