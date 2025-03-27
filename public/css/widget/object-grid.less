@@ -1,26 +1,21 @@
 // HostGroup- and -ServiceGroupGrid styles
 
-ul.item-list.object-grid {
+ul.object-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, 15em);
   grid-gap: 1em 2em;
 
-  .list-item {
+  li.item-layout.object-grid-cell {
     margin: -.25em;
     padding: .25em;
-  }
-
-  li.object-grid-cell {
-    .title {
-      align-items: center;
-    }
+    border-radius: .5em;
 
     .visual {
-      margin-right: 1em;
+      padding: 0;
     }
 
-    .main {
-      border-top: none;
+    .caption {
+      height: auto;
     }
 
     .title, .caption {
@@ -41,6 +36,3 @@ ul.item-list.object-grid {
   }
 }
 
-.content.full-width ul.item-list.object-grid {
-  margin: 0 1em;
-}

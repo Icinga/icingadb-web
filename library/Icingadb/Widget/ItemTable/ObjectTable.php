@@ -8,12 +8,8 @@ use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
-use Icinga\Module\Icingadb\View\HostgroupRenderer;
-use Icinga\Module\Icingadb\View\ServicegroupRenderer;
 use ipl\Html\ValidHtml;
-use ipl\Orm\Model;
 use ipl\Stdlib\Filter;
-use ipl\Web\Common\ItemRenderer;
 use ipl\Web\Url;
 use ipl\Web\Widget\ItemTable;
 
@@ -22,25 +18,14 @@ use ipl\Web\Widget\ItemTable;
  *
  * @internal The only reason this class exists is due to the detail actions. In case those are part of the ipl
  * some time, this class is obsolete, and we must be able to safely drop it.
+ *
+ * @template Item of Hostgroupsummary|ServicegroupSummary
+ *
+ * @extends ItemTable<Item>
  */
 class ObjectTable extends ItemTable
 {
     use DetailActions;
-
-    public function __construct($data, ItemRenderer $renderer)
-    {
-        parent::__construct($data, function (Model $item) use ($renderer) {
-            if ($item instanceof Hostgroupsummary && $renderer instanceof HostgroupRenderer) {
-                return $renderer;
-            }
-
-            if ($item instanceof ServicegroupSummary && $renderer instanceof ServicegroupRenderer) {
-                return $renderer;
-            }
-
-            throw new NotImplementedError('Not implemented');
-        });
-    }
 
     protected function init(): void
     {
@@ -49,6 +34,13 @@ class ObjectTable extends ItemTable
         $this->initializeDetailActions();
     }
 
+    /**
+     * @param Item $data
+     *
+     * @return ValidHtml
+     *
+     * @throws NotImplementedError When the data is not of the expected type
+     */
     protected function createListItem(object $data): ValidHtml
     {
         $item = parent::createListItem($data);
@@ -66,6 +58,8 @@ class ObjectTable extends ItemTable
                 $this->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
 
                 break;
+            default:
+                throw new NotImplementedError('Not implemented');
         }
 
         $this->addDetailFilterAttribute($item, Filter::equal('name', $data->name));
