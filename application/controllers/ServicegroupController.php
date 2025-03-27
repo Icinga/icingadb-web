@@ -118,9 +118,7 @@ class ServicegroupController extends Controller
         yield $this->export($services);
 
         $serviceList = (new ObjectList($services))
-            ->setViewMode($viewModeSwitcher->getViewMode())
-            ->setMultiselectUrl(Links::servicesDetails())
-            ->setDetailUrl(Url::fromPath('icingadb/service'));
+            ->setViewMode($viewModeSwitcher->getViewMode());
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {

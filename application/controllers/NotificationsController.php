@@ -93,7 +93,6 @@ class NotificationsController extends Controller
             ->setFilter($filter);
 
         $notificationList = (new LoadMoreObjectList($notifications->execute()))
-            ->setDetailUrl(Url::fromPath('icingadb/event'))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));

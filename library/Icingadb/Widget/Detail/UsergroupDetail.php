@@ -75,7 +75,7 @@ class UsergroupDetail extends BaseHtmlElement
 
         return [
             new HtmlElement('h2', null, Text::create(t('Users'))),
-            (new ObjectList($users))->setDetailUrl(Url::fromPath('icingadb/user')),
+            new ObjectList($users),
             $showMoreLink
         ];
     }

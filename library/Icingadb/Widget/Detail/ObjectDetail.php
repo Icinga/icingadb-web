@@ -232,9 +232,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
-            $content[] = (new TicketLinkObjectList($comments))
-                ->setMultiselectUrl(Links::commentsDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/comment'));
+            $content[] = new TicketLinkObjectList($comments);
             $content[] = (new ShowMore($comments, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No comments created.'));
@@ -285,9 +283,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
-            $content[] = (new TicketLinkObjectList($downtimes))
-                ->setMultiselectUrl(Links::downtimesDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/downtime'));
+            $content[] = new TicketLinkObjectList($downtimes);
             $content[] = (new ShowMore($downtimes, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));

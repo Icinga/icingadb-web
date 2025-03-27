@@ -181,9 +181,7 @@ class DowntimeDetail extends BaseHtmlElement
         if ($children->hasResult()) {
             $this->addHtml(
                 new HtmlElement('h2', null, Text::create(t('Children'))),
-                (new ObjectList($children))
-                    ->setMultiselectUrl(Links::downtimesDetails())
-                    ->setDetailUrl(Url::fromPath('icingadb/downtime')),
+                new ObjectList($children),
                 (new ShowMore($children, Links::downtimes()->setQueryString(
                     QueryString::render(Filter::any(
                         Filter::equal('downtime.parent.name', $this->downtime->name),

@@ -314,7 +314,6 @@ class ServiceController extends Controller
         $this->addControl($viewModeSwitcher);
 
         $historyList = (new LoadMoreObjectList($history->execute()))
-            ->setDetailUrl(Url::fromPath('icingadb/event'))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before));

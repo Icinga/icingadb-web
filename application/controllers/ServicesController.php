@@ -116,9 +116,7 @@ class ServicesController extends Controller
                 ->setSort($sortControl->getSort());
         } else {
             $serviceList = (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode())
-                ->setMultiselectUrl(Links::servicesDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/service'));
+                ->setViewMode($viewModeSwitcher->getViewMode());
         }
 
         $this->addContent($serviceList);

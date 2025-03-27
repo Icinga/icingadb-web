@@ -170,8 +170,7 @@ class EventDetail extends BaseHtmlElement
             $users = $users->execute();
             /** @var ResultSet $users */
 
-            $notifiedUsers[] = (new ObjectList($users))
-                ->setDetailUrl(Url::fromPath('icingadb/user'));
+            $notifiedUsers[] = new ObjectList($users);
             $notifiedUsers[] = (new ShowMore(
                 $users,
                 Links::users()->addParams(['notification_history.id' => bin2hex($notification->id)]),

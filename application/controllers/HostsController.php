@@ -105,9 +105,7 @@ class HostsController extends Controller
                 ->setSort($sortControl->getSort());
         } else {
             $hostList = (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode())
-                ->setMultiselectUrl(Links::hostsDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/host'));
+                ->setViewMode($viewModeSwitcher->getViewMode());
         }
 
         $this->addContent($hostList);

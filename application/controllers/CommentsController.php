@@ -84,8 +84,6 @@ class CommentsController extends Controller
         $this->addContent(
             (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode())
-                ->setMultiselectUrl(Links::commentsDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/comment'))
         );
 
         if ($compact) {

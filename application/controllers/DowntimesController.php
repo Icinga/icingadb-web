@@ -90,8 +90,6 @@ class DowntimesController extends Controller
         $this->addContent(
             (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode())
-                ->setMultiselectUrl(Links::downtimesDetails())
-                ->setDetailUrl(Url::fromPath('icingadb/downtime'))
         );
 
         if ($compact) {

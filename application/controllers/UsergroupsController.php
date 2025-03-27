@@ -65,10 +65,7 @@ class UsergroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(
-            (new ObjectList($usergroups))
-                ->setDetailUrl(Url::fromPath('icingadb/usergroup'))
-        );
+        $this->addContent(new ObjectList($usergroups));
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();

@@ -14,6 +14,7 @@ use ipl\Html\ValidHtml;
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\ItemRenderer;
+use ipl\Web\Url;
 use ipl\Web\Widget\ItemTable;
 
 /**
@@ -52,9 +53,22 @@ class ObjectTable extends ItemTable
     {
         $item = parent::createListItem($data);
 
-        if (! $this->getDetailActionsDisabled()) {
-            $this->addDetailFilterAttribute($item, Filter::equal('name', $data->name));
+        if ($this->getDetailActionsDisabled()) {
+            return $item;
         }
+
+        switch (true) {
+            case $data instanceof Hostgroupsummary:
+                $this->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
+
+                break;
+            case $data instanceof ServicegroupSummary:
+                $this->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
+
+                break;
+        }
+
+        $this->addDetailFilterAttribute($item, Filter::equal('name', $data->name));
 
         return $item;
     }

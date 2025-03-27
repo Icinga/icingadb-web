@@ -99,7 +99,6 @@ class HistoryController extends Controller
             ->setFilter($filter);
 
         $historyList = (new LoadMoreObjectList($history->execute()))
-            ->setDetailUrl(Url::fromPath('icingadb/event'))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));

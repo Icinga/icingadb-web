@@ -108,8 +108,6 @@ class HostgroupsController extends Controller
             $content = new ObjectTable($results, (new HostgroupRenderer())->setBaseFilter($filter));
         }
 
-        $content->setDetailUrl(Url::fromPath('icingadb/hostgroup'));
-
         $this->addContent($content);
 
         if ($compact) {

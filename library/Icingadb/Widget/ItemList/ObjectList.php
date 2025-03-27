@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Downtime;
@@ -33,6 +34,7 @@ use ipl\Stdlib\Filter;
 use ipl\Web\Layout\DetailedItemLayout;
 use ipl\Web\Layout\ItemLayout;
 use ipl\Web\Layout\MinimalItemLayout;
+use ipl\Web\Url;
 use ipl\Web\Widget\ItemList;
 
 /**
@@ -176,7 +178,10 @@ class ObjectList extends ItemList
 
                 break;
             case $object instanceof Service:
-                $this->addDetailFilterAttribute(
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/service'))
+                    ->setMultiselectUrl(Links::servicesDetails())
+                    ->addDetailFilterAttribute(
                     $item,
                     Filter::all(
                         Filter::equal('name', $object->name),
@@ -194,27 +199,53 @@ class ObjectList extends ItemList
 
                 break;
             case $object instanceof Host:
-                $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
-                $this->addMultiSelectFilterAttribute($item, Filter::equal('host.name', $object->name));
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/host'))
+                    ->setMultiselectUrl(Links::hostsDetails())
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
+                    ->addMultiSelectFilterAttribute($item, Filter::equal('host.name', $object->name));
 
                 break;
 
-            case $object instanceof Usergroup || $data instanceof User:
-                $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+            case $data instanceof User:
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/user'))
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;
-            case $object instanceof Comment || $object instanceof Downtime:
-                $this->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
-                $this->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
+            case $object instanceof Usergroup:
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/usergroup'))
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+
+                break;
+            case $object instanceof Comment:
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/comment'))
+                    ->setMultiselectUrl(Links::commentsDetails())
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
+                    ->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
+
+                break;
+            case $object instanceof Downtime:
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/downtime'))
+                    ->setMultiselectUrl(Links::downtimesDetails())
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
+                    ->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;
             case $object instanceof NotificationHistory:
-                $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->history->id)));
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/event'))
+                    ->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->history->id)));
 
                 break;
 
             case $object instanceof History:
-                $this->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/event'))
+                    ->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
 
                 break;
         }

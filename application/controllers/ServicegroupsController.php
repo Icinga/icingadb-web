@@ -98,8 +98,6 @@ class ServicegroupsController extends Controller
             $content = new ObjectTable($results, (new ServicegroupRenderer())->setBaseFilter($filter));
         }
 
-        $content->setDetailUrl(Url::fromPath('icingadb/servicegroup'));
-
         $this->addContent($content);
 
         if ($compact) {

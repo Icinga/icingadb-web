@@ -67,10 +67,7 @@ class UsersController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(
-            (new ObjectList($users))
-                ->setDetailUrl(Url::fromPath('icingadb/user'))
-        );
+        $this->addContent(new ObjectList($users));
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
