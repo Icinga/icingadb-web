@@ -184,6 +184,7 @@ class ServicesController extends Controller
         $this->addControl(
             (new ObjectList($results))
                 ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
         );
         $this->addControl(new ShowMore(
             $results,

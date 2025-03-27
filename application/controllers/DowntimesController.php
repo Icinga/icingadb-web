@@ -165,7 +165,11 @@ class DowntimesController extends Controller
 
         $rs = $downtimes->execute();
 
-        $this->addControl((new ObjectList($rs))->setViewMode('minimal'));
+        $this->addControl(
+            (new ObjectList($rs))
+                ->setViewMode('minimal')
+                ->setDetailActionsDisabled()
+        );
 
         $this->addControl(new ShowMore(
             $rs,
