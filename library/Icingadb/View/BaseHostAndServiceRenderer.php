@@ -226,7 +226,8 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
             $title = $isService
                 ? sprintf(
                     $this->translate('Service "%s" on "%s" is in flapping state'),
-                    $item->display_name, $item->host->display_name
+                    $item->display_name,
+                    $item->host->display_name
                 )
                 : sprintf(
                     $this->translate('Host "%s" is in flapping state'),

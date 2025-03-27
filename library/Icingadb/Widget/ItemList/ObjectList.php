@@ -182,12 +182,12 @@ class ObjectList extends ItemList
                     ->setDetailUrl(Url::fromPath('icingadb/service'))
                     ->setMultiselectUrl(Links::servicesDetails())
                     ->addDetailFilterAttribute(
-                    $item,
-                    Filter::all(
-                        Filter::equal('name', $object->name),
-                        Filter::equal('host.name', $object->host->name)
-                    )
-                );
+                        $item,
+                        Filter::all(
+                            Filter::equal('name', $object->name),
+                            Filter::equal('host.name', $object->host->name)
+                        )
+                    );
 
                 $this->addMultiSelectFilterAttribute(
                     $item,
