@@ -37,8 +37,6 @@ use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Filter;
-use ipl\Web\Common\BaseItemList;
-use ipl\Web\Common\BaseItemTable;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
@@ -486,9 +484,7 @@ class Controller extends CompatController
 
     protected function addContent(ValidHtml $content)
     {
-        if ($content instanceof BaseItemList || $content instanceof BaseItemTable) {
-            $this->content->getAttributes()->add('class', 'full-width');
-        } elseif ($content instanceof StateItemTable) {
+        if ($content instanceof StateItemTable) {
             $this->content->getAttributes()->add('class', 'full-height');
         }
 
