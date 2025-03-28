@@ -11,6 +11,7 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Common\ItemRenderer;
+use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\Link;
 
 /** @implements ItemRenderer<User> */
@@ -23,11 +24,11 @@ class UserRenderer implements ItemRenderer
 
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void
     {
-        $visual->addHtml(new HtmlElement(
-            'div',
-            Attributes::create(['class' => 'user-ball']),
-            Text::create($item->display_name[0])
-        ));
+        $visual->addHtml(
+            (new Ball($layout === 'minimal' ? Ball::SIZE_BIG : Ball::SIZE_LARGE))
+                ->addAttributes(['class' => 'user-ball'])
+                ->addHtml(Text::create($item->display_name[0]))
+        );
     }
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void
