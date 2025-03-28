@@ -141,29 +141,20 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         if (isset($item->state->affects_children) && $item->state->affects_children) {
             $total = (int) $item->total_children;
 
-            if ($total > 1000) {
-                $total = '1000+';
-                $tooltip = $this->translate('Up to 1000+ affected objects');
-            } else {
-                $tooltip = sprintf(
-                    $this->translatePlural(
-                        '%d affected object',
-                        'Up to %d affected objects',
-                        $total
-                    ),
-                    $total
-                );
-            }
-
-            $icon = new Icon(Icons::UNREACHABLE);
-
             $title->addHtml(new HtmlElement(
                 'span',
                 Attributes::create([
                     'class' => 'affected-objects',
-                    'title' => $tooltip
+                    'title' => sprintf(
+                        $this->translatePlural(
+                            '%d affected object',
+                            'Up to %d affected objects',
+                            $total
+                        ),
+                        $total
+                    )
                 ]),
-                $icon,
+                new Icon(Icons::UNREACHABLE),
                 Text::create($total)
             ));
         }
