@@ -7,14 +7,19 @@ namespace Icinga\Module\Icingadb\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
+use Icinga\Module\Icingadb\View\ServicegroupGridRenderer;
+use Icinga\Module\Icingadb\View\ServicegroupRenderer;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\ServicegroupTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Html\Attributes;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
+use ipl\Web\Widget\ItemList;
 
 class ServicegroupsController extends Controller
 {
@@ -87,11 +92,13 @@ class ServicegroupsController extends Controller
 
         $results = $servicegroups->execute();
 
-        $this->addContent(
-            (new ServicegroupTable($results))
-                ->setBaseFilter($filter)
-                ->setViewMode($viewModeSwitcher->getViewMode())
-        );
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $content = new ObjectGrid($results, (new ServicegroupGridRenderer())->setBaseFilter($filter));
+        } else {
+            $content = new ObjectTable($results, (new ServicegroupRenderer())->setBaseFilter($filter));
+        }
+
+        $this->addContent($content);
 
         if ($compact) {
             $this->addContent(

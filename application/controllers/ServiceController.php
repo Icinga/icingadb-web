@@ -20,13 +20,13 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
-use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
@@ -79,10 +79,7 @@ class ServiceController extends Controller
         $this->service = $service;
         $this->loadTabsForObject($service);
 
-        $this->addControl((new ServiceList([$service]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new ObjectHeader($service));
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle(
@@ -159,7 +156,7 @@ class ServiceController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -230,7 +227,7 @@ class ServiceController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -316,7 +313,7 @@ class ServiceController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
 
-        $historyList = (new HistoryList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before));
@@ -515,6 +512,6 @@ class ServiceController extends Controller
 
     protected function getDefaultTabControls(): array
     {
-        return [(new ServiceList([$this->service]))->setDetailActionsDisabled()->setNoSubjectLink()];
+        return [new ObjectHeader($this->service)];
     }
 }

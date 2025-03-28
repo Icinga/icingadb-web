@@ -8,10 +8,11 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\UserTable;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
 
 class UsersController extends Controller
 {
@@ -66,7 +67,7 @@ class UsersController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(new UserTable($users));
+        $this->addContent(new ObjectList($users));
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();

@@ -43,112 +43,38 @@
 
 // Layout
 
-.item-list .list-item {
-  &.load-more a {
+.item-list .load-more {
+  display: flex;
+
+  a {
     flex: 1;
     margin: 1.5em 0;
     padding: .5em 0;
   }
 }
 
-.item-list.minimal {
-  > .empty-state {
-    padding: .25em;
+.item-list {
+  .detailed-item-layout footer {
+    .status-icons .icon, .performance-data {
+      font-size: .857em;
+      line-height: 1.5*.857em;
+    }
   }
 
-  .list-item {
-    header {
-      max-width: 100%;
+  // Not sure what this is for. Maybe user content? (Markdown) But why in the title??
+  .default-item-layout .title {
+    p {
+      margin: 0;
     }
+  }
 
-    .visual {
-      width: 2.2em;
-    }
+  .minimal-item-layout .title {
+    p {
+      display: inline;
 
-    .check-attempt {
-      display: none;
-    }
-
-    .title {
-      p {
-        display: inline;
-
-        & + p {
-          margin-left: .417em;
-        }
+      & + p {
+        margin-left: .417em;
       }
     }
-
-    .caption {
-      flex: 1 1 auto;
-      height: 1.5em;
-      margin-right: 1em;
-      width: 0;
-
-      .line-clamp("reset");
-    }
-
-    .caption,
-    .caption .plugin-output {
-      .text-ellipsis();
-    }
   }
-}
-
-.item-list.detailed .list-item {
-  .title {
-    word-break: break-word;
-    -webkit-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-  }
-
-  .caption {
-    display: block;
-    height: auto;
-    max-height: 7.5em; /* 5 lines */
-    position: relative;
-
-    .line-clamp(4)
-  }
-}
-
-.item-list {
-  .icon-image {
-    width:  3em;
-    height: 3em;
-    text-align: center;
-    margin-top: .5em;
-    margin-left: .5em;
-    overflow: hidden;
-
-    img {
-      max-height: 100%;
-      max-width: 100%;
-      height: auto;
-      width: auto;
-    }
-  }
-
-  &.minimal {
-    .icon-image {
-      height: 2em;
-      width: 2em;
-      line-height: 2;
-    }
-  }
-}
-
-.controls .item-list:not(.detailed):not(.minimal) .list-item {
-  .plugin-output {
-    line-height: 1.5
-  }
-
-  .caption {
-    height: 2.5em;
-  }
-}
-
-.controls .item-list.minimal .icon-image {
-  margin-top: 0;
 }

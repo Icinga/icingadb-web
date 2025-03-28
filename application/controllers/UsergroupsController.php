@@ -8,10 +8,11 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\UsergroupTable;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
 
 class UsergroupsController extends Controller
 {
@@ -64,7 +65,7 @@ class UsergroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(new UsergroupTable($usergroups));
+        $this->addContent(new ObjectList($usergroups));
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();

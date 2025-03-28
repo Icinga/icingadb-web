@@ -14,8 +14,8 @@ use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
-use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupHeader;
-use Icinga\Module\Icingadb\Widget\ItemList\DependencyNodeList;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Generator;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
@@ -68,14 +68,9 @@ class RedundancygroupController extends Controller
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($this->group->display_name);
 
-        $summary = RedundancyGroupSummary::on($this->getDb())
-            ->filter(Filter::equal('id', $this->groupId));
+        $this->groupSummary = $this->group->summary;
 
-        $this->applyRestrictions($summary);
-
-        $this->groupSummary = $summary->first();
-
-        $this->addControl(new RedundancyGroupHeader($this->group, $this->groupSummary));
+        $this->addControl(new ObjectHeader($this->group));
     }
 
     public function indexAction(): void
@@ -145,7 +140,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 
@@ -214,7 +209,7 @@ class RedundancygroupController extends Controller
         $this->addControl($searchBar);
 
         $this->addContent(
-            (new DependencyNodeList($nodesQuery))
+            (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
         );
 

@@ -15,8 +15,8 @@
     top: 2.5em;
     left: -1.6em;
     z-index: 1;
-    display: none;
     width: 50em;
+    padding: 0 1em;
   }
 
   .comment-popup:before {
@@ -35,20 +35,23 @@
   }
 }
 
-ul.item-list li:last-child .comment-wrapper {
-  .comment-popup {
-    top: -7em;
-  }
+ul.item-list li:nth-last-child(2):not(:first-child),
+ul.item-list li:last-child:not(:first-child) {
+  .comment-wrapper {
+    .comment-popup {
+      top: -7em;
+    }
 
-  .comment-popup:before {
-    bottom: ~"calc(-0.75em - 1px)";
-    top: unset;
-    transform: rotate(225deg);
+    .comment-popup:before {
+      bottom: ~"calc(-0.75em - 1px)";
+      top: unset;
+      transform: rotate(225deg);
+    }
   }
 }
 
-.comment-wrapper:hover .comment-popup {
-  display: block
+.comment-wrapper:not(:hover) .comment-popup {
+  display: none;
 }
 
 #layout {

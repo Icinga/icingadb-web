@@ -1,26 +1,48 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use ipl\Html\Attributes;
+use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\Model\RedundancyGroup;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\ServicegroupSummary;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Model\Usergroup;
+use Icinga\Module\Icingadb\View\CommentRenderer;
+use Icinga\Module\Icingadb\View\DowntimeRenderer;
+use Icinga\Module\Icingadb\View\EventRenderer;
+use Icinga\Module\Icingadb\View\HostgroupRenderer;
+use Icinga\Module\Icingadb\View\HostRenderer;
+use Icinga\Module\Icingadb\View\RedundancyGroupRenderer;
+use Icinga\Module\Icingadb\View\ServicegroupRenderer;
+use Icinga\Module\Icingadb\View\ServiceRenderer;
+use Icinga\Module\Icingadb\View\UsergroupRenderer;
+use Icinga\Module\Icingadb\View\UserRenderer;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\HtmlElement;
-use ipl\Html\Text;
-use ipl\I18n\Translation;
 use ipl\Orm\Model;
-use ipl\Web\Widget\StateBall;
-use ipl\Web\Widget\TimeSince;
+use ipl\Web\Layout\HeaderItemLayout;
+use ipl\Web\Layout\ItemLayout;
 
-abstract class ObjectHeader extends BaseHtmlElement
+/**
+ * ObjectHeader
+ *
+ * Create a header for icingadb object
+ *
+ * @phpstan-type _PART1 = RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime|History
+ * @phpstan-type _PART2 = Hostgroupsummary|ServicegroupSummary
+ *
+ * @template Item of _PART1|_PART2
+ */
+class ObjectHeader extends BaseHtmlElement
 {
-    use Translation;
-
-    /** @var array<string, mixed> */
-    protected $baseAttributes = ['class' => 'object-header'];
-
-    /** @var Model The associated object */
+    /** @var Item */
     protected $object;
 
     protected $tag = 'div';
@@ -28,118 +50,70 @@ abstract class ObjectHeader extends BaseHtmlElement
     /**
      * Create a new object header
      *
-     * @param Model $object
+     * @param Item $object
      */
     public function __construct(Model $object)
     {
         $this->object = $object;
-
-        $this->addAttributes($this->baseAttributes);
-
-        $this->init();
-    }
-
-    abstract protected function assembleHeader(BaseHtmlElement $header): void;
-
-    abstract protected function assembleMain(BaseHtmlElement $main): void;
-
-    protected function assembleCaption(BaseHtmlElement $caption): void
-    {
-    }
-
-    protected function assembleTitle(BaseHtmlElement $title): void
-    {
-    }
-
-    protected function assembleVisual(BaseHtmlElement $visual): void
-    {
-    }
-
-    protected function getStateBallSize(): string
-    {
-        return StateBall::SIZE_BIG;
-    }
-
-    protected function createCaption(): BaseHtmlElement
-    {
-        $caption = new HtmlElement('section', Attributes::create(['class' => 'caption']));
-
-        $this->assembleCaption($caption);
-
-        return $caption;
-    }
-
-    protected function createHeader(): BaseHtmlElement
-    {
-        $header = new HtmlElement('header');
-
-        $this->assembleHeader($header);
-
-        return $header;
-    }
-
-    protected function createMain(): BaseHtmlElement
-    {
-        $main = new HtmlElement('div', Attributes::create(['class' => 'main']));
-
-        $this->assembleMain($main);
-
-        return $main;
-    }
-
-    protected function createTimestamp(): ?BaseHtmlElement
-    {
-        //TODO: add support for host/service
-        return new TimeSince($this->object->state->last_state_change->getTimestamp());
-    }
-
-    protected function createSubject(): BaseHtmlElement
-    {
-        return new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($this->object->display_name)
-        );
-    }
-
-    protected function createTitle(): BaseHtmlElement
-    {
-        $title = new HtmlElement('div', Attributes::create(['class' => 'title']));
-
-        $this->assembleTitle($title);
-
-        return $title;
     }
 
     /**
-     * @return ?BaseHtmlElement
+     * @throws NotImplementedError When the object type is not supported
      */
-    protected function createVisual(): ?BaseHtmlElement
-    {
-        $visual = new HtmlElement('div', Attributes::create(['class' => 'visual']));
-
-        $this->assembleVisual($visual);
-        if ($visual->isEmpty()) {
-            return null;
-        }
-
-        return $visual;
-    }
-
-    /**
-     * Initialize the list item
-     *
-     * If you want to adjust the object header after construction, override this method.
-     */
-    protected function init(): void
-    {
-    }
-
     protected function assemble(): void
     {
-        $this->add([
-            $this->createVisual(),
-            $this->createMain()
-        ]);
+        switch (true) {
+            case $this->object instanceof RedundancyGroup:
+                $renderer = new RedundancyGroupRenderer();
+
+                break;
+            case $this->object instanceof Service:
+                $renderer = new ServiceRenderer();
+
+                break;
+            case $this->object instanceof Host:
+                $renderer = new HostRenderer();
+
+                break;
+            case $this->object instanceof Usergroup:
+                $renderer = new UsergroupRenderer();
+
+                break;
+            case $this->object instanceof User:
+                $renderer = new UserRenderer();
+
+                break;
+            case $this->object instanceof Comment:
+                $renderer = (new CommentRenderer())->setTicketLinkDisabled();
+
+                break;
+            case $this->object instanceof Downtime:
+                $renderer = (new DowntimeRenderer())->setTicketLinkDisabled();
+
+                break;
+            case $this->object instanceof History:
+                $renderer = new EventRenderer();
+
+                break;
+            case $this->object instanceof Hostgroupsummary:
+                $renderer = new HostgroupRenderer();
+
+                break;
+            case $this->object instanceof ServicegroupSummary:
+                $renderer = new ServicegroupRenderer();
+
+                break;
+            default:
+                throw new NotImplementedError('Not implemented');
+        }
+
+        $layout = new HeaderItemLayout($this->object, $renderer);
+
+        if (isset($this->object->icon_image->icon_image)) {
+            $layout->after(ItemLayout::VISUAL, 'icon-image');
+        }
+
+        $this->addAttributes($layout->getAttributes());
+        $this->addHtml($layout);
     }
 }

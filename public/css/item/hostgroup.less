@@ -1,0 +1,22 @@
+.hostgroup {
+  &.table-row.item-layout {
+    > .col:has(.object-statistics) {
+      align-content: center; // Actually, not sure why this works… .col is not a grid container
+    }
+
+    > .main > .caption {
+      height: auto;
+      .text-ellipsis();
+      .line-clamp("reset");
+    }
+  }
+
+  &.header-item-layout > .main {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    > header {
+      align-items: center;
+    }
+  }
+}

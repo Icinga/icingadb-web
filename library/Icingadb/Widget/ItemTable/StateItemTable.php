@@ -16,7 +16,7 @@ use ipl\Web\Control\SortControl;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
 
-/** @todo Figure out what this might (should) have in common with the new BaseItemTable implementation */
+/** @todo Figure out what this might (should) have in common with the new ItemTable implementation */
 abstract class StateItemTable extends BaseHtmlElement
 {
     protected $baseAttributes = [
