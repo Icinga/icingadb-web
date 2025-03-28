@@ -115,7 +115,7 @@ class HostgroupGridRenderer implements ItemRenderer
         } else {
             $link = new Link(
                 new StateBadge(0, 'none'),
-                $url,
+                Links::hostgroup($item),
                 [
                     'title' => sprintf(
                         $this->translate('There are no hosts in host group "%s"'),

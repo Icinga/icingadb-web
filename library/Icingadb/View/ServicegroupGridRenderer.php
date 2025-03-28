@@ -205,7 +205,7 @@ class ServicegroupGridRenderer implements ItemRenderer
         } else {
             $link = new Link(
                 new StateBadge(0, 'none'),
-                $url,
+                Links::servicegroup($item),
                 [
                     'title' => sprintf(
                         $this->translate('There are no services in service group "%s"'),
