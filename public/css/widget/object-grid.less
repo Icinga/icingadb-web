@@ -4,23 +4,20 @@ ul.object-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, 15em);
   grid-gap: 1em 2em;
+  margin: 0;
+  padding: 0;
 
   li.item-layout.object-grid-cell {
-    margin: -.25em;
     padding: .25em;
-    border-radius: .5em;
-
-    .visual {
-      padding: 0;
-    }
+    .rounded-corners();
 
     .caption {
-      height: auto;
+      height: 1.5em; // Single line
+      .text-ellipsis();
+      .line-clamp("reset");
     }
 
     .title, .caption {
-      line-height: 1;
-
       a {
         display: inline-block;
         max-width: 10em;

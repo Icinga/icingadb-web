@@ -54,31 +54,27 @@
 }
 
 .item-list {
-  .icon-image {
-    width:  3em;
-    height: 3em;
-    text-align: center;
-    margin-top: .5em;
-    margin-left: .5em;
-    overflow: hidden;
-
-    img {
-      max-height: 100%;
-      max-width: 100%;
-      height: auto;
-      width: auto;
+  .detailed-item-layout footer {
+    .status-icons .icon, .performance-data {
+      font-size: .857em;
+      line-height: 1.5*.857em;
     }
   }
 
-  &.minimal-item-layout {
-    .icon-image {
-      height: 2em;
-      width: 2em;
-      line-height: 2;
+  // Not sure what this is for. Maybe user content? (Markdown) But why in the title??
+  .default-item-layout .title {
+    p {
+      margin: 0;
     }
   }
-}
 
-.controls .minimal-item-layout .icon-image {
-  margin-top: 0;
+  .minimal-item-layout .title {
+    p {
+      display: inline;
+
+      & + p {
+        margin-left: .417em;
+      }
+    }
+  }
 }
