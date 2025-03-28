@@ -51,6 +51,7 @@ class HostState extends State
             'latency'                       => t('Host Check Latency'),
             'check_timeout'                 => t('Host Check Timeout'),
             'check_source'                  => t('Host Check Source'),
+            'scheduling_source'             => t('Host Scheduling Source'),
             'last_update'                   => t('Host Last Update'),
             'last_state_change'             => t('Host Last State Change'),
             'next_check'                    => t('Host Next Check'),
