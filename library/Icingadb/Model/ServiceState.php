@@ -52,6 +52,7 @@ class ServiceState extends State
             'latency'                       => t('Service Check Latency'),
             'check_timeout'                 => t('Service Check Timeout'),
             'check_source'                  => t('Service Check Source'),
+            'scheduling_source'             => t('Service Scheduling Source'),
             'last_update'                   => t('Service Last Update'),
             'last_state_change'             => t('Service Last State Change'),
             'next_check'                    => t('Service Next Check'),
