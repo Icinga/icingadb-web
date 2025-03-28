@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Widget;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\FormattedString;
+use ipl\Web\Widget\Ball;
 
 /**
  * Visually represents the check attempts taken out of max check attempts.
@@ -44,10 +45,10 @@ class CheckAttempt extends BaseHtmlElement
             $this->add(FormattedString::create('%d/%d', $this->attempt, $this->maxAttempts));
         } else {
             for ($i = 0; $i < $this->attempt; ++$i) {
-                $this->add(new AttemptBall(true));
+                $this->add(new Ball(Ball::SIZE_SMALL));
             }
             for ($i = $this->attempt; $i < $this->maxAttempts; ++$i) {
-                $this->add(new AttemptBall());
+                $this->add(new Ball(Ball::SIZE_TINY));
             }
         }
     }

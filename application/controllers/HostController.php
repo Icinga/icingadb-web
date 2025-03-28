@@ -8,26 +8,37 @@ use ArrayIterator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
+use Icinga\Module\Icingadb\Model\DependencyEdge;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
-use Icinga\Module\Icingadb\Widget\ItemList\HostList;
-use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
-use Icinga\Module\Icingadb\Widget\ItemList\ServiceList;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
+use ipl\Orm\Query;
+use ipl\Sql\Expression;
+use ipl\Sql\Filter\Exists;
 use ipl\Stdlib\Filter;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
+use Generator;
 
 class HostController extends Controller
 {
@@ -37,9 +48,9 @@ class HostController extends Controller
     /** @var Host The host object */
     protected $host;
 
-    public function init()
+    public function init(): void
     {
-        $name = $this->params->getRequired('name');
+        $name = $this->params->shiftRequired('name');
 
         $query = Host::on($this->getDb())->with(['state', 'icon_image', 'timeperiod']);
         $query
@@ -51,17 +62,19 @@ class HostController extends Controller
         /** @var Host $host */
         $host = $query->first();
         if ($host === null) {
-            throw new NotFoundError(t('Host not found'));
+            throw new NotFoundError($this->translate('Host not found'));
         }
 
         $this->host = $host;
         $this->loadTabsForObject($host);
 
+        $this->addControl(new ObjectHeader($host));
+
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle($host->display_name);
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $serviceSummary = ServicestateSummary::on($this->getDb());
         $serviceSummary->filter(Filter::equal('service.host_id', $this->host->id));
@@ -72,10 +85,6 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl(new HostMetaInfo($this->host));
         $this->addControl(new QuickActions($this->host));
 
@@ -84,7 +93,7 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
-    public function sourceAction()
+    public function sourceAction(): void
     {
         $this->assertPermission('icingadb/object/show-source');
 
@@ -97,17 +106,13 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addContent(new HostInspectionDetail(
             $this->host,
             reset($apiResult)
         ));
     }
 
-    public function historyAction()
+    public function historyAction(): Generator
     {
         $compact = $this->view->compact; // TODO: Find a less-legacy way..
 
@@ -135,13 +140,14 @@ class HostController extends Controller
 
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
+        $url->setParam('name', $this->host->name);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
             $history,
             [
-                'history.event_time desc, history.event_type desc' => t('Event Time')
+                'history.event_time desc, history.event_type desc' => $this->translate('Event Time')
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
@@ -158,15 +164,11 @@ class HostController extends Controller
 
         yield $this->export($history);
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
 
-        $historyList = (new HistoryList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before));
@@ -182,7 +184,7 @@ class HostController extends Controller
         }
     }
 
-    public function servicesAction()
+    public function servicesAction(): Generator
     {
         if ($this->host->state->is_overdue) {
             $this->controls->addAttributes(['class' => 'overdue']);
@@ -209,22 +211,18 @@ class HostController extends Controller
         $sortControl = $this->createSortControl(
             $services,
             [
-                'service.display_name' => t('Name'),
-                'service.state.severity desc,service.state.last_state_change desc' => t('Severity'),
-                'service.state.soft_state' => t('Current State'),
-                'service.state.last_state_change desc' => t('Last State Change')
+                'service.display_name' => $this->translate('Name'),
+                'service.state.severity desc,service.state.last_state_change desc' => $this->translate('Severity'),
+                'service.state.soft_state' => $this->translate('Current State'),
+                'service.state.last_state_change desc' => $this->translate('Last State Change')
             ]
         );
 
         yield $this->export($services);
 
-        $serviceList = (new ServiceList($services))
+        $serviceList = (new ObjectList($services))
             ->setViewMode($viewModeSwitcher->getViewMode());
 
-        $this->addControl((new HostList([$this->host]))
-            ->setViewMode('objectHeader')
-            ->setDetailActionsDisabled()
-            ->setNoSubjectLink());
         $this->addControl($paginationControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
@@ -235,25 +233,275 @@ class HostController extends Controller
         $this->setAutorefreshInterval(10);
     }
 
+    public function parentsAction(): Generator
+    {
+        $nodesQuery = $this->fetchDependencyNodes(true);
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($nodesQuery);
+        $sortControl = $this->createSortControl(
+            $nodesQuery,
+            [
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
+            ]
+        );
+
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $searchBar = $this->createSearchBar(
+            $nodesQuery,
+            [
+                $limitControl->getLimitParam(),
+                $sortControl->getSortParam(),
+                $viewModeSwitcher->getViewModeParam(),
+                'name'
+            ]
+        );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $nodesQuery->filter($filter);
+
+        yield $this->export($nodesQuery);
+
+        $this->addControl($paginationControl);
+        $this->addControl($sortControl);
+        $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+
+        $this->addContent(
+            (new ObjectList($nodesQuery))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+        );
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    public function childrenAction(): Generator
+    {
+        $nodesQuery = $this->fetchDependencyNodes();
+
+        $limitControl = $this->createLimitControl();
+        $paginationControl = $this->createPaginationControl($nodesQuery);
+        $sortControl = $this->createSortControl(
+            $nodesQuery,
+            [
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change')
+            ]
+        );
+
+        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($nodesQuery, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/children-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/children-complete')
+                    ->setParams(clone $requestParams)
+            );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $nodesQuery->filter($filter);
+
+        yield $this->export($nodesQuery);
+
+        $this->addControl($paginationControl);
+        $this->addControl($sortControl);
+        $this->addControl($limitControl);
+        $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+
+        $this->addContent(
+            (new ObjectList($nodesQuery))
+                ->setViewMode($viewModeSwitcher->getViewMode())
+        );
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
+        }
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    public function completeAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
+            ->setBaseFilter(Filter::equal("child.host.id", $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function childrenCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(DependencyNode::class)
+            ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
+            ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function searchEditorAction(): void
+    {
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            Url::fromPath('icingadb/host/parents', ['name' => $this->host->name]),
+            [
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+                'name'
+            ]
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function childrenSearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            Url::fromPath('icingadb/host/children', ['name' => $this->host->name]),
+            $preserveParams
+        );
+
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/children-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    /**
+     * Fetch the dependency nodes of the current host
+     *
+     * @param bool $parents Whether to fetch the parents or the children
+     *
+     * @return Query
+     */
+    protected function fetchDependencyNodes(bool $parents = false): Query
+    {
+        $query = DependencyNode::on($this->getDb())
+            ->with([
+                'host',
+                'host.state',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state',
+                'redundancy_group',
+                'redundancy_group.state'
+            ])
+            ->setResultSetClass(VolatileStateResults::class);
+
+        $this->joinFix($query, $this->host->id, $parents);
+
+        $this->applyRestrictions($query);
+
+        return $query;
+    }
+
     protected function createTabs(): Tabs
     {
+        if (! Backend::supportsDependencies()) {
+            $hasDependencyNode = false;
+        } else {
+            $hasDependencyNode = DependencyNode::on($this->getDb())
+                ->columns([new Expression('1')])
+                ->filter(Filter::all(
+                    Filter::equal('host_id', $this->host->id),
+                    Filter::unlike('service_id', '*')
+                ))
+                ->disableDefaultSort()
+                ->first() !== null;
+        }
+
         $tabs = $this->getTabs()
             ->add('index', [
-                'label'  => t('Host'),
+                'label'  => $this->translate('Host'),
                 'url'    => Links::host($this->host)
             ])
             ->add('services', [
-                'label'  => t('Services'),
+                'label'  => $this->translate('Services'),
                 'url'    => HostLinks::services($this->host)
             ])
             ->add('history', [
-                'label'  => t('History'),
-                'url'    => HostLinks::history($this->host)
+                'label' => $this->translate('History'),
+                'url' => HostLinks::history($this->host)
             ]);
+
+        if ($hasDependencyNode) {
+            $tabs->add('parents', [
+                'label' => $this->translate('Parents'),
+                'url'   => Url::fromPath('icingadb/host/parents', ['name' => $this->host->name])
+            ])->add('children', [
+                'label' => $this->translate('Children'),
+                'url'   => Url::fromPath('icingadb/host/children', ['name' => $this->host->name])
+            ]);
+        }
 
         if ($this->hasPermission('icingadb/object/show-source')) {
             $tabs->add('source', [
-                'label' => t('Source'),
+                'label' => $this->translate('Source'),
                 'url' => Links::hostSource($this->host)
             ]);
         }
@@ -265,14 +513,12 @@ class HostController extends Controller
         return $tabs;
     }
 
-    protected function setTitleTab(string $name)
+    protected function setTitleTab(string $name): void
     {
         $tab = $this->createTabs()->get($name);
 
         if ($tab !== null) {
-            $tab->setActive();
-
-            $this->setTitle($tab->getLabel());
+            $this->getTabs()->activate($name);
         }
     }
 
@@ -288,6 +534,44 @@ class HostController extends Controller
 
     protected function getDefaultTabControls(): array
     {
-        return [(new HostList([$this->host]))->setDetailActionsDisabled()->setNoSubjectLink()];
+        return [new ObjectHeader($this->host)];
+    }
+
+    /**
+     * Filter the query to only include (direct) parents or children of the given object.
+     *
+     * @todo This is a workaround, remove it once https://github.com/Icinga/ipl-orm/issues/76 is fixed
+     *
+     * @param Query $query
+     * @param string $objectId
+     * @param bool $fetchParents Fetch parents if true, children otherwise
+     */
+    protected function joinFix(Query $query, string $objectId, bool $fetchParents = false): void
+    {
+        $filterTable = $fetchParents ? 'child' : 'parent';
+        $utilizeType = $fetchParents ? 'parent' : 'child';
+
+        $edge = DependencyEdge::on($this->getDb())
+            ->utilize($utilizeType)
+            ->columns([new Expression('1')])
+            ->filter(Filter::equal("$filterTable.host.id", $objectId))
+            ->filter(Filter::unlike("$filterTable.service.id", '*'));
+
+        $edge->getFilter()->metaData()->set('forceOptimization', false);
+
+        $resolver = $edge->getResolver();
+
+        $edgeAlias = $resolver->getAlias(
+            $resolver->resolveRelation($resolver->qualifyPath($utilizeType, $edge->getModel()->getTableName()))
+                ->getTarget()
+        );
+
+        $query->filter(new Exists(
+            $edge->assembleSelect()
+                ->where(
+                    "$edgeAlias.id = "
+                    . $query->getResolver()->qualifyColumn('id', $query->getModel()->getTableName())
+                )
+        ));
     }
 }

@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\DowntimeDetail;
-use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
+use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
 
@@ -61,11 +61,7 @@ class DowntimeController extends Controller
     {
         $detail = new DowntimeDetail($this->downtime);
 
-        $this->addControl((new DowntimeList([$this->downtime]))
-            ->setViewMode('minimal')
-            ->setDetailActionsDisabled()
-            ->setCaptionDisabled()
-            ->setNoSubjectLink());
+        $this->addControl(new ObjectHeader($this->downtime));
 
         $this->addContent($detail);
 

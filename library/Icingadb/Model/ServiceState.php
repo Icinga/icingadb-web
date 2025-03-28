@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\ServiceStates;
 use ipl\Orm\Relations;
 
@@ -26,7 +27,7 @@ class ServiceState extends State
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'                => t('Environment Id'),
             'state_type'                    => t('Service State Type'),
             'soft_state'                    => t('Service Soft State'),
@@ -57,6 +58,12 @@ class ServiceState extends State
             'next_check'                    => t('Service Next Check'),
             'next_update'                   => t('Service Next Update')
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns['affects_children'] = t('Service Affects Children');
+        }
+
+        return $columns;
     }
 
     public function createRelations(Relations $relations)

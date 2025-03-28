@@ -6,37 +6,9 @@ namespace Icinga\Module\Icingadb\Command\Object;
 
 /**
  * Schedule a host downtime
+ *
+ * @deprecated Use {@see ScheduleDowntimeCommand} instead
  */
 class ScheduleHostDowntimeCommand extends ScheduleServiceDowntimeCommand
 {
-    /**
-     * Whether to schedule a downtime for all services associated with a particular host
-     *
-     * @var bool
-     */
-    protected $forAllServices = false;
-
-    /**
-     * Set whether to schedule a downtime for all services associated with a particular host
-     *
-     * @param   bool $forAllServices
-     *
-     * @return  $this
-     */
-    public function setForAllServices(bool $forAllServices = true): self
-    {
-        $this->forAllServices = $forAllServices;
-
-        return $this;
-    }
-
-    /**
-     * Get whether to schedule a downtime for all services associated with a particular host
-     *
-     * @return bool
-     */
-    public function getForAllServices(): bool
-    {
-        return $this->forAllServices;
-    }
 }

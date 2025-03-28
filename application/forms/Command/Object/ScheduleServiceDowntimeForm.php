@@ -8,7 +8,7 @@ use CallbackFilterIterator;
 use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
-use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
+use Icinga\Module\Icingadb\Command\Object\ScheduleDowntimeCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
@@ -229,6 +229,27 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
             $this->add($hoursInput);
         }
+
+        $this->addElement(
+            'select',
+            'child_options',
+            array(
+                'description'   => t('Schedule child downtimes.'),
+                'label'         => t('Child Options'),
+                'options'       => [
+                    ScheduleDowntimeCommand::IGNORE_CHILDREN => t(
+                        'Do nothing with children'
+                    ),
+                    ScheduleDowntimeCommand::TRIGGER_CHILDREN => t(
+                        'Schedule a downtime for all children and trigger them by this downtime'
+                    ),
+                    ScheduleDowntimeCommand::SCHEDULE_CHILDREN => t(
+                        'Schedule non-triggered downtime for all children'
+                    )
+                ]
+            )
+        );
+        $decorator->decorate($this->getElement('child_options'));
     }
 
     protected function assembleSubmitButton()
@@ -253,12 +274,13 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
         $granted->rewind(); // Forwards the pointer to the first element
         if ($granted->valid()) {
-            $command = new ScheduleServiceDowntimeCommand();
+            $command = new ScheduleDowntimeCommand();
             $command->setObjects($granted);
             $command->setComment($this->getValue('comment'));
             $command->setAuthor($this->getAuth()->getUser()->getUsername());
             $command->setStart($this->getValue('start')->getTimestamp());
             $command->setEnd($this->getValue('end')->getTimestamp());
+            $command->setChildOption((int) $this->getValue('child_options'));
 
             if ($this->getElement('flexible')->isChecked()) {
                 $command->setFixed(false);

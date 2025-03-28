@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Authentication;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use InvalidArgumentException;
@@ -85,6 +86,9 @@ class ObjectAuthorization
             case 'service':
                 $for = Service::class;
                 break;
+            case 'dependency_node':
+                $for = DependencyNode::class;
+                break;
             default:
                 throw new InvalidArgumentException(sprintf('Unknown type "%s"', $type));
         }
@@ -161,13 +165,16 @@ class ObjectAuthorization
                 $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/objects'));
             }
 
-            if ($tableName === 'host' || $tableName === 'service') {
+            if ($tableName === 'host' || $tableName === 'service' || $tableName === 'dependency_node') {
                 if (($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
                     $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/hosts'));
                 }
             }
 
-            if ($tableName === 'service' && ($restriction = $role->getRestrictions('icingadb/filter/services'))) {
+            if (
+                ($tableName === 'dependency_node' || $tableName === 'service')
+                && ($restriction = $role->getRestrictions('icingadb/filter/services'))
+            ) {
                 $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/services'));
             }
 

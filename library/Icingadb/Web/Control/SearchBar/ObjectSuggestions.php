@@ -301,7 +301,7 @@ class ObjectSuggestions extends Suggestions
         }
 
         $customVars->columns('flatname');
-        $this->applyBaseFilter($customVars);
+        $this->applyRestrictions($customVars);
         $customVars->filter(Filter::like('flatname', $searchTerm));
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
@@ -418,5 +418,19 @@ class ObjectSuggestions extends Suggestions
                 self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
             }
         }
+    }
+
+    /**
+     * Reduce {@see $customVarSources} to only given relations to fetch variables from
+     *
+     * @param string[] $relations
+     *
+     * @return $this
+     */
+    public function onlyWithCustomVarSources(array $relations): self
+    {
+        $this->customVarSources = array_intersect_key($this->customVarSources, array_flip($relations));
+
+        return $this;
     }
 }

@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Hook\UserDetailExtensionHook;
 use Icinga\Module\Icingadb\Hook\UsergroupDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
@@ -47,6 +48,9 @@ abstract class ObjectDetailExtensionHook extends BaseExtensionHook
                 break;
             case $object instanceof Service:
                 $hookName = 'Icingadb\\ServiceDetailExtension';
+                break;
+            case $object instanceof RedundancyGroup:
+                $hookName = 'Icingadb\\RedundancyGroupDetailExtension';
                 break;
             case $object instanceof User:
                 $hookName = 'Icingadb\\UserDetailExtension';

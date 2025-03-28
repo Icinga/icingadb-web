@@ -10,12 +10,13 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
 use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
-use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Web\Url;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Html\BaseHtmlElement;
@@ -180,7 +181,7 @@ class DowntimeDetail extends BaseHtmlElement
         if ($children->hasResult()) {
             $this->addHtml(
                 new HtmlElement('h2', null, Text::create(t('Children'))),
-                new DowntimeList($children),
+                new ObjectList($children),
                 (new ShowMore($children, Links::downtimes()->setQueryString(
                     QueryString::render(Filter::any(
                         Filter::equal('downtime.parent.name', $this->downtime->name),

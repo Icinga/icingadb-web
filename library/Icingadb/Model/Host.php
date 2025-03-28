@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -56,6 +57,7 @@ use ipl\Orm\ResultSet;
  * @property ?string $zone_id
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
+ * @property ?int $total_children
  */
 class Host extends Model
 {
@@ -73,7 +75,7 @@ class Host extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'name_checksum',
             'properties_checksum',
@@ -113,11 +115,17 @@ class Host extends Model
             'command_endpoint_name',
             'command_endpoint_id'
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns[] = 'total_children';
+        }
+
+        return $columns;
     }
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Host Name Checksum'),
             'properties_checksum'       => t('Host Properties Checksum'),
@@ -157,6 +165,12 @@ class Host extends Model
             'command_endpoint_name'     => t('Endpoint Name'),
             'command_endpoint_id'       => t('Endpoint Id')
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns['total_children'] = t('Total Children');
+        }
+
+        return $columns;
     }
 
     public function getSearchColumns()
@@ -181,6 +195,8 @@ class Host extends Model
         ]));
 
         $behaviors->add(new ReRoute([
+            'child'         => 'to.from',
+            'parent'        => 'from.to',
             'servicegroup'  => 'service.servicegroup',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
@@ -270,5 +286,15 @@ class Host extends Model
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
+        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
+
+        $relations->belongsToMany('from', DependencyEdge::class)
+            ->setTargetCandidateKey('from_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
+        $relations->belongsToMany('to', DependencyEdge::class)
+            ->setTargetCandidateKey('to_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
     }
 }

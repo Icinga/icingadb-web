@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Data;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Model;
@@ -67,7 +68,8 @@ trait CsvResultSetUtils
 
     public static function stream(Query $query): void
     {
-        if ($query->getModel() instanceof Host || $query->getModel() instanceof Service) {
+        $model = $query->getModel();
+        if ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode) {
             $query->setResultSetClass(VolatileCsvResults::class);
         } else {
             $query->setResultSetClass(__CLASS__);

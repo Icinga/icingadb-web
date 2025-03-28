@@ -4,6 +4,7 @@
 
 namespace Tests\Icinga\Modules\Icingadb\Model\Behavior;
 
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Host;
 use ipl\Sql\Connection;
 use ipl\Sql\Test\SqlAssertions;
@@ -101,6 +102,7 @@ SQL;
     public function setUp(): void
     {
         $this->connection = new TestConnection();
+        Backend::setDb($this->connection);
         $this->setUpSqlAssertions();
     }
 

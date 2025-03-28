@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
@@ -48,6 +49,7 @@ use ipl\Web\Widget\Icon;
  * @property DateTime $last_state_change The time when the node last got a status change
  * @property DateTime $next_check The time when the node will execute the next check
  * @property DateTime $next_update The time when the next check of the node is expected to end
+ * @property bool $affects_children Whether any of the children is affected if there is a problem
  */
 abstract class State extends Model
 {
@@ -67,7 +69,7 @@ abstract class State extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'state_type',
             'soft_state',
@@ -100,6 +102,12 @@ abstract class State extends Model
             'next_check',
             'next_update'
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns[] = 'affects_children';
+        }
+
+        return $columns;
     }
 
     public function createBehaviors(Behaviors $behaviors)
@@ -111,7 +119,8 @@ abstract class State extends Model
             'is_flapping',
             'is_overdue',
             'is_acknowledged',
-            'in_downtime'
+            'in_downtime',
+            'affects_children'
         ]));
 
         $behaviors->add(new MillisecondTimestamp([

@@ -4,17 +4,6 @@
   @iplWebAssets: "../lib/icinga/icinga-php-library";
 };
 
-& > .content.full-width {
-  padding-left: 0;
-  padding-right: 0;
-
-  .list-item,
-  .table-layout .table-row {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-}
-
 & > .content.full-height {
   padding-top: 0;
   padding-bottom: 0;
@@ -46,20 +35,16 @@ div.show-more {
 }
 
 .user-ball {
-  .ball();
-  .ball-size-xl();
   .ball-solid(@gray-semilight);
   font-weight: bold;
-  line-height: 1.75;
   text-transform: uppercase;
+  vertical-align: top; // Avoid the bottom margin of the ball to affect the line height
 }
 
 .usergroup-ball {
-  .ball();
   .ball-outline(@gray);
-  .ball-size-xl();
-  line-height: 1.75;
   text-transform: uppercase;
+  vertical-align: top; // Avoid the bottom margin of the ball to affect the line height
 }
 
 .ack-badge {
@@ -107,25 +92,6 @@ div.show-more {
   .toggle-switch {
     margin-top: 0;
     margin-bottom: 0;
-  }
-
-  .item-list {
-    width: 100%;
-
-    .list-item .main {
-      border-top: none;
-    }
-
-    .list-item .visual {
-      width: auto;
-      margin-top: 0;
-    }
-
-    .list-item .visual,
-    .list-item .main {
-      padding-bottom: .25em;
-      padding-top: .25em;
-    }
   }
 
   .search-controls .continue-with {
@@ -197,7 +163,7 @@ div.show-more {
   margin-left: 1em / 1.333em; // 1em / h2 font size
 }
 
-.object-detail .plugin-output {
+.object-detail :not(.caption) > .plugin-output {
   .rounded-corners(.25em);
   background-color: @gray-lighter;
   padding: .5em;
@@ -258,7 +224,7 @@ div.show-more {
   }
 }
 
-.footer {
+.content + .footer {
   display: flex;
   .box-shadow(0, -1px, 0, 0, @gray-lighter);
   color: @text-color-light;
@@ -316,90 +282,29 @@ div.show-more {
   }
 }
 
-.item-table {
-  &.table-layout {
-    &.hostgroup-table {
-      --columns: 2;
-    }
-
-    &.servicegroup-table {
-      --columns: 1;
-    }
-
-    &.user-table, // TODO: make them lists.....
-    &.usergroup-table {
-      --columns: 0;
-    }
-  }
-}
-
-.hostgroup-table,
-.servicegroup-table,
-.usergroup-table,
-.user-table {
-  .title .column-content > * {
-    display: block;
-    max-width: fit-content;
-  }
-
-  .object-statistics-total {
-    width: 3.75em;
-  }
-}
-
-.controls .hostgroup-table-row,
-.controls .servicegroup-table-row,
-.controls .usergroup-table-row,
-.controls .user-table-row {
-  .title .column-content {
-    display: inline-flex;
-    align-items: center;
-
-    > :first-child {
-      flex: 0 1 auto;
-    }
-
-    > :last-child {
-      flex: 1 1 auto;
-    }
-
-    .subject {
-      margin-right: .5em;
-    }
-  }
-
-  .vertical-key-value {
-    br {
-      display: none;
-    }
-
-    .key {
-      padding-left: .417em;
-    }
-
-    .value {
-      vertical-align: middle;
-    }
-  }
-}
-
-.history-list,
-.objectHeader {
+.header-item-layout.host,
+.header-item-layout.service,
+.item-layout.history {
   .visual.small-state-change .state-change {
     padding-top: .25em;
   }
 }
 
-.comment-popup {
-  .comment-list .main {
-    // This is necessary to limit the visible comment lines
-    // because the popup is shown in detailed list mode only
-    .caption {
-      height: 3em;
-    }
-  }
+// user, usergroup and comment balls
+.header-item-layout .visual:has(.ball.ball-size-xl) {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 form[name="form_confirm_removal"] {
   text-align: center;
+}
+
+.affected-objects {
+  display: inline-flex;
+  align-items: baseline;
+  background-color: @state-critical;
+  color: @text-color-inverted;
+  padding: 0 0.25em;
+  .rounded-corners();
 }

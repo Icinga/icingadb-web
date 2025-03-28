@@ -8,13 +8,11 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\NotificationList;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use ipl\Sql\Sql;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
 class NotificationsController extends Controller
@@ -94,7 +92,7 @@ class NotificationsController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $notificationList = (new NotificationList($notifications->execute()))
+        $notificationList = (new LoadMoreObjectList($notifications->execute()))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));

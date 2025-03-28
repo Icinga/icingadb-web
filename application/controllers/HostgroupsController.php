@@ -7,10 +7,13 @@ namespace Icinga\Module\Icingadb\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
+use Icinga\Module\Icingadb\View\HostgroupGridRenderer;
+use Icinga\Module\Icingadb\View\HostgroupRenderer;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\HostgroupTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
+use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -99,11 +102,13 @@ class HostgroupsController extends Controller
 
         $results = $hostgroups->execute();
 
-        $this->addContent(
-            (new HostgroupTable($results))
-                ->setBaseFilter($filter)
-                ->setViewMode($viewModeSwitcher->getViewMode())
-        );
+        if ($viewModeSwitcher->getViewMode() === 'grid') {
+            $content = new ObjectGrid($results, (new HostgroupGridRenderer())->setBaseFilter($filter));
+        } else {
+            $content = new ObjectTable($results, (new HostgroupRenderer())->setBaseFilter($filter));
+        }
+
+        $this->addContent($content);
 
         if ($compact) {
             $this->addContent(

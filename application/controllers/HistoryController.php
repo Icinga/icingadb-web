@@ -8,8 +8,8 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\HistoryList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -98,7 +98,7 @@ class HistoryController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $historyList = (new HistoryList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute()))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));

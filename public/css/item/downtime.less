@@ -1,0 +1,89 @@
+// Style
+.item-layout.downtime {
+  .visual {
+    background-color: @gray-lighter;
+  }
+
+  &.in-effect .visual {
+    background-color: @color-ok;
+    color: @text-color-on-icinga-blue;
+  }
+}
+
+.list-item.downtime {
+  .progress {
+    > .bar {
+      background-color: @color-ok;
+    }
+  }
+
+  .main {
+    border-top: 1px solid @gray-light;
+  }
+
+  &:first-child .main {
+    border-top: none;
+
+    .progress > .bar {
+      border-top: 1px solid @gray-light;
+    }
+  }
+}
+
+// Layout
+
+.item-layout.downtime {
+  .caption > * {
+    display: inline;
+  }
+
+  .visual {
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1em;
+    padding: .5em .25em;
+    text-align: center;
+    width: 6em;
+
+    strong {
+      font-size: 1.5em;
+      line-height: 1em;
+    }
+  }
+}
+
+.list-item.downtime {
+  .progress {
+    height: 2px;
+    margin-bottom: ~"calc(.5em - 2px)";
+    min-width: 100%;
+    position: relative;
+
+    > .bar {
+      height: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &:first-child .main .progress > .bar {
+    height: ~"calc(100% + 1px)"; // +1px due to the border added exclusively for the first item
+  }
+
+  .main:has(.progress) {
+    padding-top: 0;
+  }
+}
+
+.minimal-item-layout.downtime {
+  .visual {
+    display: block;
+    line-height: 1.5;
+    width: 8em;
+    white-space: nowrap;
+
+    strong {
+      display: inline-block;
+      font-size: 1em;
+    }
+  }
+}

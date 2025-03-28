@@ -14,15 +14,22 @@ use Icinga\Application\Web;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Icons;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
-use Icinga\Module\Icingadb\Compat\CompatService;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
+use Icinga\Module\Icingadb\Model\DependencyEdge;
+use Icinga\Module\Icingadb\Model\DependencyNode;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Model\UnreachableParent;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\TicketLinkObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
@@ -34,10 +41,13 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use ipl\Sql\Expression;
+use ipl\Sql\Filter\Exists;
+use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\HorizontalKeyValue;
-use Icinga\Module\Icingadb\Widget\ItemList\CommentList;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\TagList;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
@@ -222,7 +232,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Comments'))];
 
         if ($comments->hasResult()) {
-            $content[] = (new CommentList($comments))->setObjectLinkDisabled()->setTicketLinkEnabled();
+            $content[] = new TicketLinkObjectList($comments);
             $content[] = (new ShowMore($comments, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No comments created.'));
@@ -273,7 +283,7 @@ class ObjectDetail extends BaseHtmlElement
         $content = [Html::tag('h2', t('Downtimes'))];
 
         if ($downtimes->hasResult()) {
-            $content[] = (new DowntimeList($downtimes))->setObjectLinkDisabled()->setTicketLinkEnabled();
+            $content[] = new TicketLinkObjectList($downtimes);
             $content[] = (new ShowMore($downtimes, $link))->setBaseTarget('_next');
         } else {
             $content[] = new EmptyState(t('No downtimes scheduled.'));
@@ -373,7 +383,7 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createNotifications(): array
     {
-        list($users, $usergroups) = $this->getUsersAndUsergroups();
+        [$users, $usergroups] = $this->getUsersAndUsergroups();
 
         $userList = new TagList();
         $usergroupList = new TagList();
@@ -601,5 +611,143 @@ class ObjectDetail extends BaseHtmlElement
             $customvarFlat->withColumns(['customvar.name', 'customvar.value']);
             $this->object->customvar_flat = $customvarFlat->execute();
         }
+    }
+
+    /**
+     * Create a list of root problems of the object that is unreachable because of dependency failure
+     *
+     * @return ?BaseHtmlElement[]
+     */
+    protected function createRootProblems(): ?array
+    {
+        if (! Backend::supportsDependencies()) {
+            if ($this->object->state->is_reachable) {
+                return null;
+            }
+
+            return [
+                HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
+                new EmptyStateBar(t("You're missing out! Upgrade Icinga DB and see the actual root cause here!"))
+            ];
+        }
+
+        // If a dependency has failed, then the children are not reachable. Hence, the root problems should not be shown
+        // if the object is reachable. And in case of a service, since, it may be also be unreachable because of its
+        // host being down, only show its root problems if it's really caused by a dependency failure.
+        if (
+            $this->object->state->is_reachable
+            || ($this->object instanceof Service && ! $this->object->has_problematic_parent)
+        ) {
+            return null;
+        }
+
+        $rootProblems = UnreachableParent::on($this->getDb(), $this->object)
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])
+            ->orderBy([
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.failed',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
+
+        $this->applyRestrictions($rootProblems);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Root Problems'))),
+            (new ObjectList($rootProblems))->setEmptyStateMessage(
+                t('You are not authorized to view these objects.')
+            )
+        ];
+    }
+
+    /**
+     * Create a list of objects affected by the object that is a part of failed dependency
+     *
+     * @return ?BaseHtmlElement[]
+     */
+    protected function createAffectedObjects(): ?array
+    {
+        if (! isset($this->object->state->affects_children) || ! $this->object->state->affects_children) {
+            return null;
+        }
+
+        $affectedObjects = DependencyNode::on($this->getDb())
+            ->with([
+                'redundancy_group',
+                'redundancy_group.state',
+                'host',
+                'host.state',
+                'host.icon_image',
+                'host.state.last_comment',
+                'service',
+                'service.state',
+                'service.icon_image',
+                'service.state.last_comment',
+                'service.host',
+                'service.host.state'
+            ])
+            ->setResultSetClass(VolatileStateResults::class)
+            ->limit(5)
+            ->orderBy([
+                'host.state.severity',
+                'host.state.last_state_change',
+                'service.state.severity',
+                'service.state.last_state_change',
+                'redundancy_group.state.failed',
+                'redundancy_group.state.last_state_change'
+            ], SORT_DESC);
+
+        $failedEdges = DependencyEdge::on($this->getDb())
+            ->utilize('child')
+            ->columns([new Expression('1')])
+            ->filter(Filter::equal('state.failed', 'y'));
+
+        if ($this->object instanceof Host) {
+            $failedEdges
+                ->filter(Filter::equal('parent.host.id', $this->object->id))
+                ->filter(Filter::unlike('parent.service.id', '*'));
+        } else {
+            $failedEdges->filter(Filter::equal('parent.service.id', $this->object->id));
+        }
+
+        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
+        $edgeResolver = $failedEdges->getResolver();
+
+        $childAlias = $edgeResolver->getAlias(
+            $edgeResolver->resolveRelation($failedEdges->getModel()->getTableName() . '.child')->getTarget()
+        );
+
+        $affectedObjects->filter(new Exists(
+            $failedEdges->assembleSelect()
+                ->where(
+                    "$childAlias.id = "
+                    . $affectedObjects->getResolver()
+                        ->qualifyColumn('id', $affectedObjects->getModel()->getTableName())
+                )
+        ));
+
+        $this->applyRestrictions($affectedObjects);
+
+        return [
+            HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
+            (new ObjectList($affectedObjects))->setEmptyStateMessage(
+                t('You are not authorized to view these objects.')
+            )
+        ];
     }
 }

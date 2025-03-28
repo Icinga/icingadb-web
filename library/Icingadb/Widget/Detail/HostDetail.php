@@ -41,7 +41,8 @@ class HostDetail extends ObjectDetail
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
-            0   => $this->createPluginOutput(),
+            0   => $this->createRootProblems(),
+            1   => $this->createPluginOutput(),
             190 => $this->createServiceStatistics(),
             300 => $this->createActions(),
             301 => $this->createNotes(),
@@ -49,6 +50,7 @@ class HostDetail extends ObjectDetail
             401 => $this->createDowntimes(),
             500 => $this->createGroups(),
             501 => $this->createNotifications(),
+            510 => $this->createAffectedObjects(),
             600 => $this->createCheckStatistics(),
             601 => $this->createPerformanceData(),
             700 => $this->createCustomVars(),

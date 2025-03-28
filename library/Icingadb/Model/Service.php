@@ -5,7 +5,9 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\Behavior\HasProblematicParent;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
@@ -51,6 +53,7 @@ use ipl\Orm\ResultSet;
  * @property ?string $zone_id
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
+ * @property ?int $total_children
  */
 class Service extends Model
 {
@@ -68,7 +71,7 @@ class Service extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'name_checksum',
             'properties_checksum',
@@ -105,11 +108,17 @@ class Service extends Model
             'command_endpoint_name',
             'command_endpoint_id'
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns[] = 'total_children';
+        }
+
+        return $columns;
     }
 
     public function getColumnDefinitions()
     {
-        return [
+        $columns = [
             'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Service Name Checksum'),
             'properties_checksum'       => t('Service Properties Checksum'),
@@ -144,8 +153,14 @@ class Service extends Model
             'zone_name'                 => t('Zone Name'),
             'zone_id'                   => t('Zone Id'),
             'command_endpoint_name'     => t('Endpoint Name'),
-            'command_endpoint_id'       => t('Endpoint Id')
+            'command_endpoint_id'       => t('Endpoint Id'),
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns['total_children'] = t('Total Children');
+        }
+
+        return $columns;
     }
 
     public function getSearchColumns()
@@ -170,6 +185,8 @@ class Service extends Model
         ]));
 
         $behaviors->add(new ReRoute([
+            'child'         => 'to.from',
+            'parent'        => 'from.to',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
         ]));
@@ -189,6 +206,10 @@ class Service extends Model
             'zone_id',
             'command_endpoint_id'
         ]));
+
+        if (Backend::supportsDependencies()) {
+            $behaviors->add(new HasProblematicParent());
+        }
     }
 
     public function createDefaults(Defaults $defaults)
@@ -259,5 +280,15 @@ class Service extends Model
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
+        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
+
+        $relations->belongsToMany('from', DependencyEdge::class)
+            ->setTargetCandidateKey('from_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
+        $relations->belongsToMany('to', DependencyEdge::class)
+            ->setTargetCandidateKey('to_node_id')
+            ->setTargetForeignKey('id')
+            ->through(DependencyNode::class);
     }
 }

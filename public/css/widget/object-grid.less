@@ -1,0 +1,35 @@
+// HostGroup- and -ServiceGroupGrid styles
+
+ul.object-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 15em);
+  grid-gap: 1em 2em;
+  margin: 0;
+  padding: 0;
+
+  li.item-layout.object-grid-cell {
+    padding: .25em;
+    .rounded-corners();
+
+    .caption {
+      height: 1.5em; // Single line
+      .text-ellipsis();
+      .line-clamp("reset");
+    }
+
+    .title, .caption {
+      a {
+        display: inline-block;
+        max-width: 10em;
+        text-align: center;
+      }
+    }
+
+    .state-badge {
+      width: 2.5em;
+      height: 2.5em;
+      line-height: 2;
+    }
+  }
+}
+

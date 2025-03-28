@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\Command\Renderer;
 
 use Icinga\Module\Icingadb\Command\IcingaApiCommand;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
+use Icinga\Module\Icingadb\Command\Object\ScheduleDowntimeCommand;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Command\Instance\ToggleInstanceFeatureCommand;
@@ -14,11 +15,8 @@ use Icinga\Module\Icingadb\Command\Object\AddCommentCommand;
 use Icinga\Module\Icingadb\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ProcessCheckResultCommand;
-use Icinga\Module\Icingadb\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\RemoveAcknowledgementCommand;
-use Icinga\Module\Icingadb\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\ScheduleCheckCommand;
-use Icinga\Module\Icingadb\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Module\Icingadb\Command\Object\SendCustomNotificationCommand;
 use Icinga\Module\Icingadb\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
@@ -191,7 +189,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         return IcingaApiCommand::create($endpoint, $data);
     }
 
-    public function renderScheduleDowntime(ScheduleServiceDowntimeCommand $command): IcingaApiCommand
+    public function renderScheduleDowntime(ScheduleDowntimeCommand $command): IcingaApiCommand
     {
         $endpoint = 'actions/schedule-downtime';
         $data = [
@@ -201,14 +199,11 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'end_time'      => $command->getEnd(),
             'duration'      => $command->getDuration(),
             'fixed'         => $command->getFixed(),
-            'trigger_name'  => $command->getTriggerId()
+            'trigger_name'  => $command->getTriggerId(),
+            'child_options' => $command->getChildOption()
         ];
 
-        if ($command instanceof PropagateHostDowntimeCommand) {
-            $data['child_options'] = $command->getTriggered() ? 1 : 2;
-        }
-
-        if ($command instanceof ScheduleHostDowntimeCommand && $command->getForAllServices()) {
+        if ($command->getForAllServices()) {
             $data['all_services'] = true;
         }
 
