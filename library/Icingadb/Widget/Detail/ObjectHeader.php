@@ -28,19 +28,38 @@ use Icinga\Module\Icingadb\View\UserRenderer;
 use ipl\Html\BaseHtmlElement;
 use ipl\Orm\Model;
 use ipl\Web\Layout\HeaderItemLayout;
+use ipl\Web\Layout\ItemLayout;
 
+/**
+ * ObjectHeader
+ *
+ * Create a header for icingadb object
+ *
+ * @phpstan-type _PART1 = RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime|History
+ * @phpstan-type _PART2 = Hostgroupsummary|ServicegroupSummary
+ *
+ * @template Item of _PART1|_PART2
+ */
 class ObjectHeader extends BaseHtmlElement
 {
-    /** @var Model */ // TODO: add types
+    /** @var Item */
     protected $object;
 
     protected $tag = 'div';
 
+    /**
+     * Create a new object header
+     *
+     * @param Item $object
+     */
     public function __construct(Model $object)
     {
         $this->object = $object;
     }
 
+    /**
+     * @throws NotImplementedError When the object type is not supported
+     */
     protected function assemble(): void
     {
         switch (true) {
@@ -89,6 +108,10 @@ class ObjectHeader extends BaseHtmlElement
         }
 
         $layout = new HeaderItemLayout($this->object, $renderer);
+
+        if (isset($this->object->icon_image->icon_image)) {
+            $layout->after(ItemLayout::VISUAL, 'icon-image');
+        }
 
         $this->addAttributes($layout->getAttributes());
         $this->addHtml($layout);
