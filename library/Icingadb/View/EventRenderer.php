@@ -123,7 +123,7 @@ class EventRenderer implements ItemRenderer
 
                 break;
             case 'state_change':
-                if ($item->state->state_type === 'soft') {
+                if ($layout !== 'minimal' && $layout !== 'header' && $item->state->state_type === 'soft') {
                     $stateType = 'soft_state';
                     $previousStateType = 'previous_soft_state';
 
