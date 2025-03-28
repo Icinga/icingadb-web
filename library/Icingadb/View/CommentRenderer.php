@@ -140,23 +140,19 @@ class CommentRenderer implements ItemRenderer
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
         if ($item->expire_time) {
-            $info->addHtml(new HtmlElement(
-                'span',
-                null,
+            $info->addHtml(
                 FormattedString::create(
                     $this->translate("expires %s"),
                     new TimeUntil($item->expire_time->getTimestamp())
                 )
-            ));
+            );
         } else {
-            $info->addHtml(new HtmlElement(
-                'span',
-                null,
+            $info->addHtml(
                 FormattedString::create(
                     $this->translate("created %s"),
                     new TimeAgo($item->entry_time->getTimestamp())
                 )
-            ));
+            );
         }
     }
 

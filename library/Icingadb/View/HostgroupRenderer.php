@@ -64,7 +64,7 @@ class HostgroupRenderer implements ItemTableRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
-        $caption->addHtml(new HtmlElement('span', null, Text::create($item->name)));
+        $caption->addHtml(Text::create($item->name));
     }
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
