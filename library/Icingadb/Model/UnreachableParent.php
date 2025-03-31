@@ -54,7 +54,8 @@ class UnreachableParent extends DependencyNode
             'host_id',
             'service_id',
             'redundancy_group_id',
-            'is_group_member'
+            'is_group_member',
+            '_has_problematic_parent'
         ];
     }
 
@@ -101,7 +102,14 @@ class UnreachableParent extends DependencyNode
             Filter::greaterThan('level', 0),
             Filter::equal('is_group_member', 0),
             Filter::any(
-                Filter::equal('service.state.affects_children', 'y'),
+                Filter::any(
+                    Filter::equal('service.state.affects_children', 'y'),
+                    Filter::all(
+                        // TODO: Remove this once implicit dependencies are properly implemented
+                        Filter::equal('_has_problematic_parent', 0),
+                        Filter::equal('service.state.is_reachable', 'n')
+                    )
+                ),
                 Filter::all(
                     Filter::unlike('service_id', '*'),
                     Filter::equal('host.state.affects_children', 'y')
@@ -136,7 +144,8 @@ class UnreachableParent extends DependencyNode
                 'host_id' => 'host_id',
                 'service_id' => new Expression("COALESCE(%s, $binaryCast)", ['service_id']),
                 'redundancy_group_id' => new Expression($binaryCast),
-                'is_group_member' => new Expression($booleanCast)
+                'is_group_member' => new Expression($booleanCast),
+                '_has_problematic_parent' => new Expression($booleanCast)
             ])
             ->disableDefaultSort();
         if ($root instanceof Host) {
@@ -163,7 +172,14 @@ class UnreachableParent extends DependencyNode
                 'host_id' => 'to.host_id',
                 'service_id' => 'to.service_id',
                 'redundancy_group_id' => 'to.redundancy_group_id',
-                'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0')
+                'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0'),
+                '_has_problematic_parent' => new Expression(sprintf(
+                    'EXISTS(SELECT 1 FROM %s immediate_parents'
+                        . ' INNER JOIN %s state ON state.id = immediate_parents.dependency_edge_state_id'
+                        . ' WHERE immediate_parents.from_node_id = %%s AND state.failed = \'y\')',
+                    (new DependencyEdge())->getTableName(),
+                    (new DependencyEdgeState())->getTableName()
+                ), ['to_node_id'])
             ]);
         $nodeQuery->filter(Filter::equal('state.failed', 'y'));
 
@@ -180,7 +196,8 @@ class UnreachableParent extends DependencyNode
                 'host_id' => null,
                 'service_id' => null,
                 'redundancy_group_id' => null,
-                'is_group_member' => null
+                'is_group_member' => null,
+                '_has_problematic_parent' => null
             ],
             $nodeSelect->getColumns()
         ));
