@@ -55,7 +55,7 @@ class HostsController extends Controller
             [
                 'host.display_name'                                          => t('Name'),
                 'host.state.severity desc,host.state.last_state_change desc' => t('Severity'),
-                'host.state.soft_state'                                      => t('Current State'),
+                'host.state.soft_state,host.display_name'                    => t('Current State'),
                 'host.state.last_state_change desc'                          => t('Last State Change')
             ]
         );
