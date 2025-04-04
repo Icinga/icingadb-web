@@ -125,7 +125,11 @@ class ServicegroupController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
+        $continueWith = $this->createContinueWith(
+            Links::servicesDetails()
+                ->setFilter(Filter::equal('servicegroup.name', $servicegroup->name)),
+            $searchBar
+        );
 
         $this->addContent($serviceList);
 
