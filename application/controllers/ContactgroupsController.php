@@ -14,7 +14,7 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
-class UsergroupsController extends Controller
+class ContactgroupsController extends Controller
 {
     public function init()
     {
@@ -25,7 +25,7 @@ class UsergroupsController extends Controller
 
     public function indexAction()
     {
-        $this->addTitleTab(t('User Groups'));
+        $this->addTitleTab(t('Contact Groups'));
 
         $db = $this->getDb();
 

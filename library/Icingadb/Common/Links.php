@@ -133,7 +133,7 @@ abstract class Links
 
     public static function usergroups(): Url
     {
-        return Url::fromPath('icingadb/usergroups');
+        return Url::fromPath('icingadb/contactgroups');
     }
 
     public static function event(History $event): Url

@@ -406,10 +406,10 @@ class ObjectDetail extends BaseHtmlElement
                 $userList->hasContent() ? $userList : new EmptyState(t('No contacts configured.'))
             ),
             new HorizontalKeyValue(
-                t('User Groups'),
+                t('Contact Groups'),
                 $usergroupList->hasContent()
                     ? $usergroupList
-                    : new EmptyState(t('No user groups configured.'))
+                    : new EmptyState(t('No contact groups configured.'))
             )
         ];
     }
@@ -587,7 +587,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if ($this->isPermittedRoute('usergroups')) {
+        if ($this->isPermittedRoute('contactgroups')) {
             $usergroupQuery = Usergroup::on($this->getDb());
             $usergroupQuery->filter($objectFilter);
             $this->applyRestrictions($usergroupQuery);

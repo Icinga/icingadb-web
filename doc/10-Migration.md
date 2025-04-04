@@ -150,7 +150,7 @@ The command permissions have not changed. It is only the module identifier that 
 `monitoring/command/*` is now `icingadb/command/*`
 
 The `no-monitoring/contacts` permission (or *fake refusal*) is now a restriction: `icingadb/denylist/routes`.
-Add `contacts,usergroups` to it to achieve the same effect.
+Add `contacts,contactgroups` to it to achieve the same effect.
 
 ### Perform The Migration
 

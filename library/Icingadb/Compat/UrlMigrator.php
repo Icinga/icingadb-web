@@ -31,7 +31,7 @@ class UrlMigrator
         'monitoring/service/history' => ['service', 'icingadb/service/history'],
         'monitoring/list/hostgroups' => ['hostgroups', 'icingadb/hostgroups'],
         'monitoring/list/servicegroups' => ['servicegroups', 'icingadb/servicegroups'],
-        'monitoring/list/contactgroups' => ['contactgroups', 'icingadb/usergroups'],
+        'monitoring/list/contactgroups' => ['contactgroups', 'icingadb/contactgroups'],
         'monitoring/list/contacts' => ['contacts', 'icingadb/contacts'],
         'monitoring/list/comments' => ['comments', 'icingadb/comments'],
         'monitoring/list/downtimes' => ['downtimes', 'icingadb/downtimes'],
