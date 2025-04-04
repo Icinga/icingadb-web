@@ -118,7 +118,11 @@ class HostgroupController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar);
+        $continueWith = $this->createContinueWith(
+            Links::hostsDetails()
+                ->setFilter(Filter::equal('hostgroup.name', $hostgroup->name)),
+            $searchBar
+        );
 
         $this->addContent($hostList);
 
