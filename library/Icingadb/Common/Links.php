@@ -118,7 +118,7 @@ abstract class Links
 
     public static function user(User $user): Url
     {
-        return Url::fromPath('icingadb/user', ['name' => $user->name]);
+        return Url::fromPath('icingadb/contact', ['name' => $user->name]);
     }
 
     public static function usergroup(Usergroup $usergroup): Url
