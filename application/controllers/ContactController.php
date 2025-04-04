@@ -11,7 +11,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\UserDetail;
 use ipl\Stdlib\Filter;
 
-class UserController extends Controller
+class ContactController extends Controller
 {
     /** @var User The user object */
     protected $user;
@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $this->assertRouteAccess('contacts');
 
-        $this->addTitleTab(t('User'));
+        $this->addTitleTab(t('Contact'));
 
         $name = $this->params->getRequired('name');
 
@@ -31,7 +31,7 @@ class UserController extends Controller
 
         $user = $query->first();
         if ($user === null) {
-            throw new NotFoundError(t('User not found'));
+            throw new NotFoundError(t('Contact not found'));
         }
 
         $this->user = $user;

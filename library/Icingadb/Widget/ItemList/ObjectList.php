@@ -209,7 +209,7 @@ class ObjectList extends ItemList
 
             case $data instanceof User:
                 $this
-                    ->setDetailUrl(Url::fromPath('icingadb/user'))
+                    ->setDetailUrl(Url::fromPath('icingadb/contact'))
                     ->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;
