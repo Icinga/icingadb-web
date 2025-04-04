@@ -382,16 +382,17 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('users', $routeDenylist)) {
-            $overviewSection->add(N_('Users'), [
-                'description' => $this->translate('List users'),
-                'url'         => 'icingadb/users',
+        if (
+            ! array_key_exists('users', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contacts', $routeDenylist)
+        ) {
+            $overviewSection->add(N_('Contacts'), [
+                'description' => $this->translate('List contacts'),
+                'url'         => 'icingadb/contacts',
                 'priority'    => 100,
                 'icon'        => 'user-friends'
             ]);
         }
-
-
 
         $overviewSection->add(N_('Comments'), [
             'url'         => 'icingadb/comments',
@@ -510,11 +511,14 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('users', $routeDenylist)) {
-            $section->add(N_('Users'), [
-                'url'           => 'icingadb/users',
+        if (
+            ! array_key_exists('users', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contacts', $routeDenylist)
+        ) {
+            $section->add(N_('Contacts'), [
+                'url'           => 'icingadb/contacts',
                 'priority'      => 80,
-                'description'   => $this->translate('List users'),
+                'description'   => $this->translate('List contacts'),
                 'icon'          => 'user-friends'
             ]);
         }

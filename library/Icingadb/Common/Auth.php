@@ -41,7 +41,15 @@ trait Auth
             return StringHelper::trimSplit($restriction);
         }, $this->getAuth()->getRestrictions('icingadb/denylist/routes'))));
 
-        return ! array_key_exists($name, $routeDenylist);
+        if (! array_key_exists($name, $routeDenylist)) {
+            if ($name === 'contacts' && array_key_exists('users', $routeDenylist)) {
+                return false; // TODO: Remove with 1.3, compat only
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
