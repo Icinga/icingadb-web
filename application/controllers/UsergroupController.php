@@ -18,7 +18,7 @@ class UsergroupController extends Controller
 
     public function init()
     {
-        $this->assertRouteAccess('usergroups');
+        $this->assertRouteAccess('contactgroups');
 
         $this->addTitleTab(t('User Group'));
 

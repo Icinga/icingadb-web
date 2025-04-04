@@ -329,6 +329,8 @@ class Controller extends CompatController
         if (! $this->isPermittedRoute($name)) {
             if ($name === 'contacts' && $this->isPermittedRoute('users')) {
                 return; // TODO: Remove with 1.3, compat only
+            } elseif ($name === 'contactgroups' && $this->isPermittedRoute('usergroups')) {
+                return; // TODO: Remove with 1.3, compat only
             }
 
             throw new SecurityException('No permission to access this route');

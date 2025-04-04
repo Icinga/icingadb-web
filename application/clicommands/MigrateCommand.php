@@ -357,7 +357,7 @@ class MigrateCommand extends Command
                         } elseif ($permission === 'no-monitoring/contacts') {
                             $changed = true;
                             $updatedPermissions[] = $permission;
-                            $role['icingadb/denylist/routes'] = 'contacts,usergroups';
+                            $role['icingadb/denylist/routes'] = 'contacts,contactgroups';
                         } else {
                             $updatedPermissions[] = $permission;
                         }
