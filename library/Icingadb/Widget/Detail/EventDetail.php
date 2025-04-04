@@ -152,14 +152,14 @@ class EventDetail extends BaseHtmlElement
         $eventInfo[] = new HorizontalKeyValue($objectKey, $objectInfo);
 
 
-        $notifiedUsers = [new HtmlElement('h2', null, Text::create(t('Notified Users')))];
+        $notifiedUsers = [new HtmlElement('h2', null, Text::create(t('Notified Contacts')))];
 
         if ($notification->users_notified === 0) {
             $notifiedUsers[] = new EmptyState(t('None', 'notified users: none'));
-        } elseif (! $this->isPermittedRoute('users')) {
+        } elseif (! $this->isPermittedRoute('contacts')) {
             $notifiedUsers[] = Text::create(sprintf(tp(
-                'This notification was sent to a single user',
-                'This notification was sent to %d users',
+                'This notification was sent to a single contact',
+                'This notification was sent to %d contacts',
                 $notification->users_notified
             ), $notification->users_notified));
         } elseif ($notification->users_notified > 0) {
