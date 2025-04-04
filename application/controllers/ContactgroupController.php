@@ -11,7 +11,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\UsergroupDetail;
 use ipl\Stdlib\Filter;
 
-class UsergroupController extends Controller
+class ContactgroupController extends Controller
 {
     /** @var Usergroup The usergroup object */
     protected $usergroup;
@@ -20,7 +20,7 @@ class UsergroupController extends Controller
     {
         $this->assertRouteAccess('contactgroups');
 
-        $this->addTitleTab(t('User Group'));
+        $this->addTitleTab(t('Contact Group'));
 
         $name = $this->params->getRequired('name');
 
@@ -31,7 +31,7 @@ class UsergroupController extends Controller
 
         $usergroup = $query->first();
         if ($usergroup === null) {
-            throw new NotFoundError(t('User group not found'));
+            throw new NotFoundError(t('Contact group not found'));
         }
 
         $this->usergroup = $usergroup;

@@ -123,7 +123,7 @@ abstract class Links
 
     public static function usergroup(Usergroup $usergroup): Url
     {
-        return Url::fromPath('icingadb/usergroup', ['name' => $usergroup->name]);
+        return Url::fromPath('icingadb/contactgroup', ['name' => $usergroup->name]);
     }
 
     public static function users(): Url
