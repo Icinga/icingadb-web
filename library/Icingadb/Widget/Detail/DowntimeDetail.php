@@ -59,7 +59,6 @@ class DowntimeDetail extends BaseHtmlElement
 
         return (new DeleteDowntimeForm())
             ->setObjects([$this->downtime])
-            ->populate(['redirect' => '__BACK__'])
             ->setAction($action->getAbsoluteUrl());
     }
 

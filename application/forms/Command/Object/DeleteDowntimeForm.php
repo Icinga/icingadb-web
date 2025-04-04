@@ -9,15 +9,12 @@ use Icinga\Module\Icingadb\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use ipl\Orm\Model;
-use ipl\Web\Common\RedirectOption;
 use ipl\Web\Widget\Icon;
 use Iterator;
 use Traversable;
 
 class DeleteDowntimeForm extends CommandForm
 {
-    use RedirectOption;
-
     protected $defaultAttributes = ['class' => 'inline'];
 
     public function __construct()
@@ -38,7 +35,6 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function assembleElements()
     {
-        $this->addElement($this->createRedirectOption());
     }
 
     protected function assembleSubmitButton()
