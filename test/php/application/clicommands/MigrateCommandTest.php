@@ -499,7 +499,7 @@ class MigrateCommandTest extends TestCase
                 ],
                 'no-monitoring-contacts' => [
                     'permissions'               => 'module/monitoring,no-monitoring/contacts',
-                    'icingadb/denylist/routes'  => 'users,usergroups'
+                    'icingadb/denylist/routes'  => 'contacts,usergroups'
                 ],
                 'reporting-only' => [
                     'permissions'   => 'module/reporting'

@@ -402,8 +402,8 @@ class ObjectDetail extends BaseHtmlElement
         return [
             Html::tag('h2', t('Notifications')),
             new HorizontalKeyValue(
-                t('Users'),
-                $userList->hasContent() ? $userList : new EmptyState(t('No users configured.'))
+                t('Contacts'),
+                $userList->hasContent() ? $userList : new EmptyState(t('No contacts configured.'))
             ),
             new HorizontalKeyValue(
                 t('User Groups'),
@@ -574,7 +574,7 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         $userQuery = null;
-        if ($this->isPermittedRoute('users')) {
+        if ($this->isPermittedRoute('contacts')) {
             $userQuery = User::on($this->getDb());
             $userQuery->filter($objectFilter);
             $this->applyRestrictions($userQuery);

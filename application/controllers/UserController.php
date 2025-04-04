@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function init()
     {
-        $this->assertRouteAccess('users');
+        $this->assertRouteAccess('contacts');
 
         $this->addTitleTab(t('User'));
 

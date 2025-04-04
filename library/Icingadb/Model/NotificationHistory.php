@@ -80,7 +80,7 @@ class NotificationHistory extends Model
             'previous_hard_state'   => t('Previous Hard State'),
             'author'                => t('Notification Author'),
             'text'                  => t('Notification Text'),
-            'users_notified'        => t('Users Notified')
+            'users_notified'        => t('Contacts Notified')
         ];
     }
 

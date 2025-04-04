@@ -12,9 +12,8 @@ use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\Url;
 
-class UsersController extends Controller
+class ContactsController extends Controller
 {
     public function init()
     {
@@ -25,7 +24,7 @@ class UsersController extends Controller
 
     public function indexAction()
     {
-        $this->addTitleTab(t('Users'));
+        $this->addTitleTab(t('Contacts'));
 
         $db = $this->getDb();
 

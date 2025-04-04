@@ -128,7 +128,7 @@ abstract class Links
 
     public static function users(): Url
     {
-        return Url::fromPath('icingadb/users');
+        return Url::fromPath('icingadb/contacts');
     }
 
     public static function usergroups(): Url

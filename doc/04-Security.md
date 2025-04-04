@@ -77,7 +77,7 @@ icingadb/denylist/variables | Hide custom variables of Icinga objects that are p
 `icingadb/denylist/routes` will block users from accessing defined routes and from related information elsewhere.
 For example, if `hostgroups` are part of the list a user won't have access to the hostgroup overview nor to a host's
 groups shown in its detail area. This should be a comma separated list. Possible values are: hostgroups, servicegroups,
-users, usergroups
+contacts, usergroups
 
 `icingadb/denylist/variables` will block users from accessing certain custom variables. A user affected by this won't
 see that those variables even exist. This should be a comma separated list of [variable paths](#variable-paths). It is
