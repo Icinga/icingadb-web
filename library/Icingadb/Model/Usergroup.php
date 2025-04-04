@@ -49,11 +49,11 @@ class Usergroup extends Model
     {
         return [
             'environment_id'        => t('Environment Id'),
-            'name_checksum'         => t('Usergroup Name Checksum'),
-            'properties_checksum'   => t('Usergroup Properties Checksum'),
-            'name'                  => t('Usergroup Name'),
-            'name_ci'               => t('Usergroup Name (CI)'),
-            'display_name'          => t('Usergroup Display Name'),
+            'name_checksum'         => t('Contactgroup Name Checksum'),
+            'properties_checksum'   => t('Contactgroup Properties Checksum'),
+            'name'                  => t('Contactgroup Name'),
+            'name_ci'               => t('Contactgroup Name (CI)'),
+            'display_name'          => t('Contactgroup Display Name'),
             'zone_id'               => t('Zone Id')
         ];
     }

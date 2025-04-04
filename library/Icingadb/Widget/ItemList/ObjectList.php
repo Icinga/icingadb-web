@@ -215,7 +215,7 @@ class ObjectList extends ItemList
                 break;
             case $object instanceof Usergroup:
                 $this
-                    ->setDetailUrl(Url::fromPath('icingadb/usergroup'))
+                    ->setDetailUrl(Url::fromPath('icingadb/contactgroup'))
                     ->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
 
                 break;

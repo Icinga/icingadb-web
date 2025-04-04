@@ -56,7 +56,7 @@ class ObjectSuggestions extends Suggestions
             'servicegroup'          => t('Servicegroup %s', '..<customvar-name>'),
             'timeperiod'            => t('Timeperiod %s', '..<customvar-name>'),
             'user'                  => t('Contact %s', '..<customvar-name>'),
-            'usergroup'             => t('Usergroup %s', '..<customvar-name>')
+            'usergroup'             => t('Contactgroup %s', '..<customvar-name>')
         ];
     }
 
