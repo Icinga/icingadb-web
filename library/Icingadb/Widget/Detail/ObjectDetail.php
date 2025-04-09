@@ -123,7 +123,7 @@ class ObjectDetail extends BaseHtmlElement
         $info[] = new HorizontalKeyValue(
             t('Last State Change'),
             isset($this->object->state->last_state_change)
-                ? DateFormatter::formatDateTime($this->object->state->last_state_change)
+                ? DateFormatter::formatDateTime($this->object->state->last_state_change->getTimestamp())
                 : new EmptyState(t('n. a.'))
         );
 
