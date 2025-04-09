@@ -303,8 +303,9 @@ form[name="form_confirm_removal"] {
 .affected-objects {
   display: inline-flex;
   align-items: baseline;
-  background-color: @state-critical;
-  color: @text-color-inverted;
-  padding: 0 0.25em;
-  .rounded-corners();
+  color: @state-critical;
+
+  .icon {
+    opacity: .9;
+  }
 }
