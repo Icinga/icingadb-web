@@ -74,7 +74,7 @@ class UsergroupDetail extends BaseHtmlElement
         ))->setBaseTarget('_next');
 
         return [
-            new HtmlElement('h2', null, Text::create(t('Users'))),
+            new HtmlElement('h2', null, Text::create(t('Contacts'))),
             new ObjectList($users),
             $showMoreLink
         ];

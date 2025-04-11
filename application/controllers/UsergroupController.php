@@ -1,48 +1,28 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Exception\NotFoundError;
-use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
-use Icinga\Module\Icingadb\Widget\Detail\UsergroupDetail;
-use ipl\Stdlib\Filter;
 
+/**
+ * @deprecated Will be removed with 1.3, use ContactgroupController instead
+ */
 class UsergroupController extends Controller
 {
-    /** @var Usergroup The usergroup object */
-    protected $usergroup;
-
-    public function init()
+    public function preDispatch()
     {
-        $this->assertRouteAccess('usergroups');
+        $url = $this->getRequest()->getUrl();
+        $url->setPath(preg_replace(
+            '~^icingadb/usergroup(?=/|$)~',
+            'icingadb/contactgroup',
+            $url->getPath()
+        ));
 
-        $this->addTitleTab(t('User Group'));
-
-        $name = $this->params->getRequired('name');
-
-        $query = Usergroup::on($this->getDb());
-        $query->filter(Filter::equal('usergroup.name', $name));
-
-        $this->applyRestrictions($query);
-
-        $usergroup = $query->first();
-        if ($usergroup === null) {
-            throw new NotFoundError(t('User group not found'));
-        }
-
-        $this->usergroup = $usergroup;
-        $this->setTitle($usergroup->display_name);
-    }
-
-    public function indexAction()
-    {
-        $this->addControl(new ObjectHeader($this->usergroup));
-        $this->addContent(new UsergroupDetail($this->usergroup));
-
-        $this->setAutorefreshInterval(10);
+        $this->getResponse()
+            ->setHttpResponseCode(301)
+            ->setHeader('Location', $url->getAbsoluteUrl())
+            ->sendResponse();
     }
 }

@@ -1,48 +1,28 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Exception\NotFoundError;
-use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
-use Icinga\Module\Icingadb\Widget\Detail\UserDetail;
-use ipl\Stdlib\Filter;
 
+/**
+ * @deprecated Will be removed with 1.3, use ContactController instead
+ */
 class UserController extends Controller
 {
-    /** @var User The user object */
-    protected $user;
-
-    public function init()
+    public function preDispatch()
     {
-        $this->assertRouteAccess('users');
+        $url = $this->getRequest()->getUrl();
+        $url->setPath(preg_replace(
+            '~^icingadb/user(?=/|$)~',
+            'icingadb/contact',
+            $url->getPath()
+        ));
 
-        $this->addTitleTab(t('User'));
-
-        $name = $this->params->getRequired('name');
-
-        $query = User::on($this->getDb())->with('timeperiod');
-        $query->filter(Filter::equal('user.name', $name));
-
-        $this->applyRestrictions($query);
-
-        $user = $query->first();
-        if ($user === null) {
-            throw new NotFoundError(t('User not found'));
-        }
-
-        $this->user = $user;
-        $this->setTitle($user->display_name);
-    }
-
-    public function indexAction()
-    {
-        $this->addControl(new ObjectHeader($this->user));
-        $this->addContent(new UserDetail($this->user));
-
-        $this->setAutorefreshInterval(10);
+        $this->getResponse()
+            ->setHttpResponseCode(301)
+            ->setHeader('Location', $url->getAbsoluteUrl())
+            ->sendResponse();
     }
 }

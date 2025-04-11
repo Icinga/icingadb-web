@@ -373,25 +373,29 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('usergroups', $routeDenylist)) {
-            $overviewSection->add(N_('User Groups'), [
-                'description' => $this->translate('List user groups'),
-                'url'         => 'icingadb/usergroups',
+        if (
+            ! array_key_exists('usergroups', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contactgroups', $routeDenylist)
+        ) {
+            $overviewSection->add(N_('Contact Groups'), [
+                'description' => $this->translate('List contact groups'),
+                'url'         => 'icingadb/contactgroups',
                 'priority'    => 90,
                 'icon'        => 'users'
             ]);
         }
 
-        if (! array_key_exists('users', $routeDenylist)) {
-            $overviewSection->add(N_('Users'), [
-                'description' => $this->translate('List users'),
-                'url'         => 'icingadb/users',
+        if (
+            ! array_key_exists('users', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contacts', $routeDenylist)
+        ) {
+            $overviewSection->add(N_('Contacts'), [
+                'description' => $this->translate('List contacts'),
+                'url'         => 'icingadb/contacts',
                 'priority'    => 100,
                 'icon'        => 'user-friends'
             ]);
         }
-
-
 
         $overviewSection->add(N_('Comments'), [
             'url'         => 'icingadb/comments',
@@ -501,20 +505,26 @@ namespace Icinga\Module\Icingadb {
             ]);
         }
 
-        if (! array_key_exists('usergroups', $routeDenylist)) {
-            $section->add(N_('User Groups'), [
-                'url'           => 'icingadb/usergroups',
+        if (
+            ! array_key_exists('usergroups', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contactgroups', $routeDenylist)
+        ) {
+            $section->add(N_('Contact Groups'), [
+                'url'           => 'icingadb/contactgroups',
                 'priority'      => 70,
-                'description'   => $this->translate('List user groups'),
+                'description'   => $this->translate('List contact groups'),
                 'icon'          => 'users'
             ]);
         }
 
-        if (! array_key_exists('users', $routeDenylist)) {
-            $section->add(N_('Users'), [
-                'url'           => 'icingadb/users',
+        if (
+            ! array_key_exists('users', $routeDenylist) // TODO: Remove with 1.3, compat only
+            && ! array_key_exists('contacts', $routeDenylist)
+        ) {
+            $section->add(N_('Contacts'), [
+                'url'           => 'icingadb/contacts',
                 'priority'      => 80,
-                'description'   => $this->translate('List users'),
+                'description'   => $this->translate('List contacts'),
                 'icon'          => 'user-friends'
             ]);
         }
