@@ -71,7 +71,10 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->isGrantedOn('icingadb/command/send-custom-notification', $this->object)) {
+        if (
+            $this->isGrantedOn('icingadb/command/send-custom-notification', $this->object)
+            && $this->object->notifications_enabled //TODO: not sure, Model contains a forced switch
+        ) {
             $this->assembleAction(
                 'sendCustomNotification',
                 t('Notification'),
@@ -104,7 +107,10 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->isGrantedOn('icingadb/command/process-check-result', $this->object)) {
+        if (
+            $this->isGrantedOn('icingadb/command/process-check-result', $this->object)
+            && $this->object->passive_checks_enabled
+        ) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),
