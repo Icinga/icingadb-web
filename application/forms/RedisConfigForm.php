@@ -139,7 +139,17 @@ class RedisConfigForm extends ConfigForm
             'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
+        $this->addElement('number', 'redis1_database', [
+            'description' => t('Redis Database'),
+            'label'       => t('Redis Database'),
+            'placeholder' => 0
+        ]);
 
+        $this->addElement('text', 'redis1_username', [
+            'description'    => t('Redis Username'),
+            'label'          => t('Redis Username'),
+            'placeholder'    => "default"
+        ]);
         $this->addElement('password', 'redis1_password', [
             'description'    => t('Redis Password'),
             'label'          => t('Redis Password'),
@@ -148,7 +158,7 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addDisplayGroup(
-            ['redis1_host', 'redis1_port', 'redis1_password'],
+            ['redis1_host', 'redis1_port', 'redis1_database', 'redis1_username', 'redis1_password'],
             'redis1',
             [
                 'decorators'  => [
@@ -178,7 +188,17 @@ class RedisConfigForm extends ConfigForm
             'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
+        $this->addElement('number', 'redis2_database', [
+            'description' => t('Redis Database'),
+            'label'       => t('Redis Database'),
+            'placeholder' => 0
+        ]);
 
+        $this->addElement('text', 'redis2_username', [
+            'description'    => t('Redis Username'),
+            'label'          => t('Redis Username'),
+            'placeholder'    => "default"
+        ]);
         $this->addElement('password', 'redis2_password', [
             'description'    => t('Redis Password'),
             'label'          => t('Redis Password'),
@@ -187,7 +207,7 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addDisplayGroup(
-            ['redis2_host', 'redis2_port', 'redis2_password'],
+            ['redis2_host', 'redis2_port', 'redis2_database', 'redis2_username', 'redis2_password'],
             'redis2',
             [
                 'decorators'  => [
@@ -335,11 +355,15 @@ class RedisConfigForm extends ConfigForm
         $this->config->setSection('redis1', [
             'host'      => $connectionConfig->get('redis1', 'host'),
             'port'      => $connectionConfig->get('redis1', 'port'),
+            'database'  => $connectionConfig->get('redis1', 'database'),
+            'username'  => $connectionConfig->get('redis1', 'username'),
             'password'  => $connectionConfig->get('redis1', 'password')
         ]);
         $this->config->setSection('redis2', [
             'host'      => $connectionConfig->get('redis2', 'host'),
             'port'      => $connectionConfig->get('redis2', 'port'),
+            'database'  => $connectionConfig->get('redis2', 'database'),
+            'username'  => $connectionConfig->get('redis2', 'username'),
             'password'  => $connectionConfig->get('redis2', 'password')
         ]);
 
@@ -394,6 +418,8 @@ class RedisConfigForm extends ConfigForm
 
         $redis1Host = $this->getValue('redis1_host');
         $redis1Port = $this->getValue('redis1_port');
+        $redis1Database = $this->getValue('redis1_database');
+        $redis1Username = $this->getValue('redis1_username');
         $redis1Password = $this->getValue('redis1_password');
         $redis1Section = $connectionConfig->getSection('redis1');
         $redis1Section['host'] = $redis1Host;
@@ -404,6 +430,20 @@ class RedisConfigForm extends ConfigForm
             $this->getElement('redis1_port')->setValue(null);
         } else {
             $redis1Section['port'] = null;
+        }
+
+        if (! empty($redis1Database)) {
+            $redis1Section['database'] = $redis1Database;
+            $this->getElement('redis1_database')->setValue(null);
+        } else {
+            $redis1Section['database'] = 0;
+        }
+
+        if (! empty($redis1Username)) {
+            $redis1Section['username'] = $redis1Username;
+            $this->getElement('redis1_username')->setValue(null);
+        } else {
+            $redis1Section['username'] = null;
         }
 
         if (! empty($redis1Password)) {
@@ -419,6 +459,8 @@ class RedisConfigForm extends ConfigForm
 
         $redis2Host = $this->getValue('redis2_host');
         $redis2Port = $this->getValue('redis2_port');
+        $redis2Database = $this->getValue('redis2_database');
+        $redis2Username = $this->getValue('redis2_username');
         $redis2Password = $this->getValue('redis2_password');
         $redis2Section = $connectionConfig->getSection('redis2');
         if (! empty($redis2Host)) {
@@ -435,6 +477,20 @@ class RedisConfigForm extends ConfigForm
             $connectionConfig->setSection('redis2', $redis2Section);
         } else {
             $redis2Section['port'] = null;
+        }
+
+        if (! empty($redis2Database)) {
+            $redis2Section['database'] = $redis2Database;
+            $this->getElement('redis2_database')->setValue(null);
+        } else {
+            $redis2Section['database'] = 0;
+        }
+
+        if (! empty($redis2Username)) {
+            $redis2Section['username'] = $redis2Username;
+            $this->getElement('redis2_username')->setValue(null);
+        } else {
+            $redis2Section['username'] = null;
         }
 
         if (! empty($redis2Password)) {
