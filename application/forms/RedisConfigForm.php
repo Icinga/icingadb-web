@@ -314,7 +314,7 @@ class RedisConfigForm extends ConfigForm
         $redisConfig = $this->config->getSection('redis');
         if ($redisConfig->get('tls', false)) {
             foreach (['ca', 'cert', 'key'] as $name) {
-                $path = $redisConfig->get($name);
+                $path = $redisConfig->get($name, '');
                 if (file_exists($path)) {
                     try {
                         $redisConfig[$name . '_pem'] = file_get_contents($path);
