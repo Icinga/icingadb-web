@@ -100,7 +100,7 @@ class DowntimeCard extends BaseHtmlElement
 
             $scheduledEndBubble = new HtmlElement(
                 'li',
-                null,
+                new Attributes(['class' => 'right']),
                 new HtmlElement(
                     'div',
                     Attributes::create(['class' => ['bubble', 'upwards']]),
@@ -124,18 +124,16 @@ class DowntimeCard extends BaseHtmlElement
                 'width' => sprintf('%F%%', $flexEndLeft - $flexStartLeft)
             ]);
 
-            if (time() > $this->end) {
-                $styleElement
-                    ->addFor($markerEnd, [
-                        'left' => sprintf('%F%%', $hPadding + $this->calcRelativeLeft($this->end))
-                    ])
-                    ->addFor($scheduledEndBubble, [
-                        'left' => sprintf('%F%%', $hPadding + $this->calcRelativeLeft($this->end))
-                    ]);
-            } else {
-                $scheduledEndBubble->getAttributes()
-                    ->add('class', 'right');
-            }
+            $styleElement
+                ->addFor($markerEnd, [
+                    'left' => sprintf('%F%%', $hPadding + $this->calcRelativeLeft($this->end))
+                ])
+                ->addFor($scheduledEndBubble, [
+                    'right' => sprintf(
+                        '%F%%',
+                        100 - ($hPadding + $this->calcRelativeLeft($this->end))
+                    )
+                ]);
 
             $below->add([
                 Html::tag(
@@ -163,8 +161,8 @@ class DowntimeCard extends BaseHtmlElement
             ));
 
             $styleElement
-                ->addFor($aboveStart, ['left' => sprintf('%F%%', $flexStartLeft)])
-                ->addFor($aboveEnd, ['left' => sprintf('%F%%', $flexEndLeft)]);
+                ->addFor($aboveStart, ['right' => sprintf('%F%%', 100 - $flexStartLeft)])
+                ->addFor($aboveEnd, ['right' => sprintf('%F%%', 100 - $flexEndLeft)]);
 
             $above->add([$aboveStart, $aboveEnd, $styleElement]);
         } elseif ($this->downtime->is_flexible) {

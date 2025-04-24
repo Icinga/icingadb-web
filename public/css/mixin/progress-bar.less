@@ -14,15 +14,15 @@
     }
 
     .below {
-      > .left {
+      > .left { // positions with left property
         position: absolute;
         left: var(--hPadding);
         top: 0;
       }
 
-      > .right {
+      > .right { // positions with right property
         position: absolute;
-        left: ~"calc(var(--hPadding) + var(--duration-scale))";
+        right: ~"calc(100% - calc(var(--hPadding) + var(--duration-scale)))";
         top: 0;
       }
     }
@@ -43,7 +43,7 @@
       width: auto;
       // The wrapper of .bubble is dynamically moved to the left based on the value of the progress bar
       // This moves the center of the bubble to the beginning of the wrapper regardless of the size of the content.
-      transform: translate(-50%, 0);
+      transform: translate(50%, 0);
       z-index: 1;
 
       > * {
@@ -79,8 +79,8 @@
       }
 
       &.right-aligned {
-        // This is (.675em (:before placement) + .5em (half :before width)) + 1px (:before border)
-        transform: translate(~"calc(-1.175em - 1px)", 0);
+        // entire width (moves the left border in place of the right) - (.675em (:before placement) + .5em (half :before width)) - 1px (:before border)
+        transform: translate(~"calc(100% - 1.175em - 1px)", 0);
 
         &::before {
           top: auto;
@@ -90,8 +90,8 @@
       }
 
       &.left-aligned {
-        // entire width (moves the right border in place of the left) + (.675em (:before placement) + .5em (half :before width)) + 1px (:before border)
-        transform: translate(~"calc(-100% + 1.175em + 1px)", 0);
+        // This is (.675em (:before placement) + .5em (half :before width)) + 1px (:before border)
+        transform: translate(~"calc(1.175em + 1px)", 0);
 
         &::before {
           top: auto;
@@ -100,6 +100,10 @@
           bottom: -.5em;
         }
       }
+    }
+
+    .left .bubble {
+      transform: translate(-50%, 0);
     }
 
     .above .positioned {
