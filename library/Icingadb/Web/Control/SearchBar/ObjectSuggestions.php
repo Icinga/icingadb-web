@@ -221,14 +221,11 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        // Ordinary columns first
-        foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
-            yield $columnName => $columnMeta;
-        }
-
-        // Custom variables only after the columns are exhausted and there's actually a chance the user sees them
-        $titleAdded = false;
+        // Collect custom variables first and check for exact matches
         $parsedArrayVars = [];
+        $varSuggestions = [];
+        $exactVarMatches = [];
+        $halfLimit = (int) (static::DEFAULT_LIMIT / 2);
         foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
             $search = $name = $customVar->flatname;
             if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
@@ -243,17 +240,71 @@ class ObjectSuggestions extends Suggestions
 
             foreach ($this->customVarSources as $relation => $label) {
                 if (isset($customVar->$relation)) {
-                    if (! $titleAdded) {
-                        $titleAdded = true;
-                        $this->addHtml(HtmlElement::create(
-                            'li',
-                            ['class' => static::SUGGESTION_TITLE_CLASS],
-                            t('Custom Variables')
-                        ));
+                    $varRelation = $relation . '.vars.' . $search;
+                    $varLabel = sprintf($label, $name);
+                    if ($search === trim($searchTerm, '*')) {
+                        $exactVarMatches[$varRelation] = $varLabel;
+                    } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
+                        $varSuggestions[$varRelation] = $varLabel;
                     }
-
-                    yield $relation . '.vars.' . $search => sprintf($label, $name);
                 }
+            }
+        }
+
+        // Adjust the number of columns to be suggested based on custom variable count
+        $varCount = count($exactVarMatches) + count($varSuggestions);
+        $colLimit = $halfLimit;
+        if ($varCount < $halfLimit) {
+            $colLimit = $halfLimit + ($halfLimit - $varCount);
+        }
+
+        // Exact custom variable matches first
+        if (! empty($exactVarMatches)) {
+            $this->addHtml(HtmlElement::create(
+                'li',
+                ['class' => static::SUGGESTION_TITLE_CLASS],
+                t('Exact Custom Variable Matches')
+            ));
+
+            foreach ($exactVarMatches as $relation => $label) {
+                yield $relation => $label;
+            }
+        }
+
+        // Ordinary columns comes after exact matches,
+        // or if there ar no exact matches they come first
+        $ordinaryColumns = self::collectFilterColumns($model, $query->getResolver());
+        if (! empty($ordinaryColumns)) {
+            $this->addHtml(HtmlElement::create(
+                'li',
+                ['class' => static::SUGGESTION_TITLE_CLASS],
+                t('Columns')
+            ));
+
+            $colCount = 0;
+            foreach ($ordinaryColumns as $columnName => $columnMeta) {
+                if ($colCount > $colLimit) {
+                    break;
+                }
+
+                if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
+                    $colCount++;
+
+                    yield $columnName => $columnMeta;
+                }
+            }
+        }
+
+        // Finally, the other custom variable suggestions
+        if (! empty($varSuggestions)) {
+            $this->addHtml(HtmlElement::create(
+                'li',
+                ['class' => static::SUGGESTION_TITLE_CLASS],
+                t('Custom Variables')
+            ));
+
+            foreach ($varSuggestions as $relation => $label) {
+                yield $relation => $label;
             }
         }
     }
@@ -312,6 +363,12 @@ class ObjectSuggestions extends Suggestions
 
         // This outer query exists only because there's no way to combine aggregates and sub queries (yet)
         return (new Select())->columns($aggregates)->from(['results' => $customVars])->groupBy('flatname');
+    }
+
+    protected function filterColumnSuggestions($data, $searchTerm)
+    {
+        // Remove filtering here, as fetchColumnSuggestions already performs it
+        yield from $data;
     }
 
     /**
