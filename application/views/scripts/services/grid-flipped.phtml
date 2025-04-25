@@ -1,6 +1,5 @@
 <?php
 use Icinga\Data\Filter\Filter;
-use Icinga\Module\Icingadb\Common\ServiceStates;
 use Icinga\Web\Url;
 
 if (! $this->compact): ?>
@@ -78,7 +77,7 @@ foreach ($pivotData as $serviceDescription => $_) {
                 </span>
                 <?= $this->qlink(
                     '',
-                    'icingadb/services',
+                    'icingadb/service',
                     array(
                         'host.name'    => $hostName,
                         'name' => $serviceDescription
