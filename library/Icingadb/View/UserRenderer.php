@@ -27,7 +27,7 @@ class UserRenderer implements ItemRenderer
         $visual->addHtml(
             (new Ball($layout === 'minimal' ? Ball::SIZE_BIG : Ball::SIZE_LARGE))
                 ->addAttributes(['class' => 'user-ball'])
-                ->addHtml(Text::create($item->display_name[0]))
+                ->addHtml(Text::create(grapheme_substr($item->display_name, 0, 1)))
         );
     }
 
