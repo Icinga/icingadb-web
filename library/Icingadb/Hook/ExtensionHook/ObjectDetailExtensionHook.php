@@ -104,16 +104,22 @@ abstract class ObjectDetailExtensionHook extends BaseExtensionHook
                 // be caught here.
                 $extension = (string) $hook->getHtmlForObject(clone $object);
 
-                $moduleName = $hook->getModule()->getName();
+                if (! empty($extension)) {
+                    $moduleName = $hook->getModule()->getName();
 
-                $extensions[$location] = new HtmlElement(
-                    'div',
-                    Attributes::create([
-                        'class' => 'icinga-module module-' . $moduleName,
-                        'data-icinga-module' => $moduleName
-                    ]),
-                    HtmlString::create($extension)
-                );
+                    $extensions[$location] = new HtmlElement(
+                        'div',
+                        Attributes::create([
+                            'class' => 'icinga-module module-' . $moduleName,
+                            'data-icinga-module' => $moduleName
+                        ]),
+                        HtmlString::create($extension)
+                    );
+                } else {
+                    // There's no way for an extension to decide whether it should provide a result or not.
+                    // So, even if empty, the result must be used as it's perfectly valid.
+                    $extensions[$location] = HtmlString::create('');
+                }
             } catch (Throwable $e) {
                 Logger::error("Failed to load detail extension: %s\n%s", $e, $e->getTraceAsString());
                 $extensions[$location] = Text::create(IcingaException::describe($e));
