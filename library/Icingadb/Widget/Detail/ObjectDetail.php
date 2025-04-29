@@ -513,14 +513,18 @@ class ObjectDetail extends BaseHtmlElement
                     ->setView($app->getViewRenderer()->view)
                     ->getHtmlForObject($this->compatObject());
 
-                $extensionHtml = new HtmlElement(
-                    'div',
-                    Attributes::create([
-                        'class' => 'icinga-module module-' . $moduleName,
-                        'data-icinga-module' => $moduleName
-                    ]),
-                    HtmlString::create($renderedExtension)
-                );
+                if (! empty($renderedExtension)) {
+                    $extensionHtml = new HtmlElement(
+                        'div',
+                        Attributes::create([
+                            'class' => 'icinga-module module-' . $moduleName,
+                            'data-icinga-module' => $moduleName
+                        ]),
+                        HtmlString::create($renderedExtension)
+                    );
+                } else {
+                    $extensionHtml = HtmlString::create('');
+                }
             } catch (Throwable $e) {
                 Logger::error("Failed to load legacy detail extension: %s\n%s", $e, $e->getTraceAsString());
                 $extensionHtml = Text::create(IcingaException::describe($e));
