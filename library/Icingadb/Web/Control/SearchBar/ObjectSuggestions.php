@@ -245,7 +245,7 @@ class ObjectSuggestions extends Suggestions
                     if (isset($customVar->$relation)) {
                         $varRelation = $relation . '.vars.' . $search;
                         $varLabel = sprintf($label, $name);
-                        if ($search === $exactSearchTerm) {
+                        if ($name === $exactSearchTerm) {
                             $exactVarMatches[$varRelation] = $varLabel;
                         } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
                             $varSuggestions[$varRelation] = $varLabel;
@@ -277,27 +277,24 @@ class ObjectSuggestions extends Suggestions
 
         // Ordinary columns comes after exact matches,
         // or if there ar no exact matches they come first
-        $ordinaryColumns = self::collectFilterColumns($model, $query->getResolver());
-        if (! empty($ordinaryColumns)) {
-            $colCount = 0;
-            foreach ($ordinaryColumns as $columnName => $columnMeta) {
-                if ($colCount > $colLimit) {
-                    break;
+        $colCount = 0;
+        foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
+            if ($colCount > $colLimit) {
+                break;
+            }
+
+            if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
+                if ($colCount === 0) {
+                    $this->addHtml(HtmlElement::create(
+                        'li',
+                        ['class' => static::SUGGESTION_TITLE_CLASS],
+                        t('Columns')
+                    ));
                 }
 
-                if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
-                    if ($colCount === 0) {
-                        $this->addHtml(HtmlElement::create(
-                            'li',
-                            ['class' => static::SUGGESTION_TITLE_CLASS],
-                            t('Columns')
-                        ));
-                    }
+                $colCount++;
 
-                    $colCount++;
-
-                    yield $columnName => $columnMeta;
-                }
+                yield $columnName => $columnMeta;
             }
         }
 
