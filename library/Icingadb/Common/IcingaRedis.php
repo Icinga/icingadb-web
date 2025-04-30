@@ -187,25 +187,15 @@ class IcingaRedis
             $redis = Backend::getRedis()->getConnection();
         }
 
-        // Predis doesn't support streams (yet).
-        // https://github.com/predis/predis/issues/607#event-3640855190
-        $rs = $redis->executeRaw(['XREAD', 'COUNT', '1', 'STREAMS', 'icinga:stats', '0']);
+        $stream = 'icinga:stats';
 
-        if (! is_array($rs)) {
-            return null;
-        }
+        $rs = $redis->xread(1, null, [$stream], '0');
 
-        $key = null;
+        if (is_array($rs)) {
+            $timestampKeyPos = array_search('timestamp', $rs[$stream][0][1], true);
 
-        foreach ($rs[0][1][0][1] as $kv) {
-            if ($key === null) {
-                $key = $kv;
-            } else {
-                if ($key === 'timestamp') {
-                    return $kv / 1000;
-                }
-
-                $key = null;
+            if ($timestampKeyPos !== false && isset($rs[$stream][0][1][$timestampKeyPos + 1])) {
+                return $rs[$stream][0][1][$timestampKeyPos + 1] / 1000;
             }
         }
 
