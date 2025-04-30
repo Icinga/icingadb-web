@@ -226,26 +226,30 @@ class ObjectSuggestions extends Suggestions
         $varSuggestions = [];
         $exactVarMatches = [];
         $halfLimit = (int) (static::DEFAULT_LIMIT / 2);
-        foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
-            $search = $name = $customVar->flatname;
-            if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
-                $name = substr($search, 0, -(strlen($matches[1]) + 2));
-                if (isset($parsedArrayVars[$name])) {
-                    continue;
+
+        $exactSearchTerm = trim($searchTerm, ' *');
+        if ($exactSearchTerm !== '') {
+            foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
+                $search = $name = $customVar->flatname;
+                if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
+                    $name = substr($search, 0, -(strlen($matches[1]) + 2));
+                    if (isset($parsedArrayVars[$name])) {
+                        continue;
+                    }
+
+                    $parsedArrayVars[$name] = true;
+                    $search = $name . '[*]';
                 }
 
-                $parsedArrayVars[$name] = true;
-                $search = $name . '[*]';
-            }
-
-            foreach ($this->customVarSources as $relation => $label) {
-                if (isset($customVar->$relation)) {
-                    $varRelation = $relation . '.vars.' . $search;
-                    $varLabel = sprintf($label, $name);
-                    if ($search === trim($searchTerm, '*')) {
-                        $exactVarMatches[$varRelation] = $varLabel;
-                    } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
-                        $varSuggestions[$varRelation] = $varLabel;
+                foreach ($this->customVarSources as $relation => $label) {
+                    if (isset($customVar->$relation)) {
+                        $varRelation = $relation . '.vars.' . $search;
+                        $varLabel = sprintf($label, $name);
+                        if ($search === $exactSearchTerm) {
+                            $exactVarMatches[$varRelation] = $varLabel;
+                        } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
+                            $varSuggestions[$varRelation] = $varLabel;
+                        }
                     }
                 }
             }
@@ -263,7 +267,7 @@ class ObjectSuggestions extends Suggestions
             $this->addHtml(HtmlElement::create(
                 'li',
                 ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Exact Custom Variable Matches')
+                t('Best Suggestions')
             ));
 
             foreach ($exactVarMatches as $relation => $label) {
@@ -275,12 +279,6 @@ class ObjectSuggestions extends Suggestions
         // or if there ar no exact matches they come first
         $ordinaryColumns = self::collectFilterColumns($model, $query->getResolver());
         if (! empty($ordinaryColumns)) {
-            $this->addHtml(HtmlElement::create(
-                'li',
-                ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Columns')
-            ));
-
             $colCount = 0;
             foreach ($ordinaryColumns as $columnName => $columnMeta) {
                 if ($colCount > $colLimit) {
@@ -288,6 +286,14 @@ class ObjectSuggestions extends Suggestions
                 }
 
                 if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
+                    if ($colCount === 0) {
+                        $this->addHtml(HtmlElement::create(
+                            'li',
+                            ['class' => static::SUGGESTION_TITLE_CLASS],
+                            t('Columns')
+                        ));
+                    }
+
                     $colCount++;
 
                     yield $columnName => $columnMeta;
