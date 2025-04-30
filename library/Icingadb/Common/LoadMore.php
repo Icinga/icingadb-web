@@ -9,6 +9,8 @@ use Icinga\Module\Icingadb\Widget\ItemList\PageSeparatorItem;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\ResultSet;
 use ipl\Web\Url;
+use ipl\Web\Widget\ButtonLink;
+use ipl\Web\Widget\EmptyStateBar;
 
 trait LoadMore
 {
@@ -93,7 +95,11 @@ trait LoadMore
             yield $data;
         }
 
-        if ($count > 0 && $this->loadMoreUrl !== null) {
+        if ($this->loadMoreUrl === null) {
+            return;
+        }
+
+        if ($count > 0) {
             $showMore = (new ShowMore(
                 $result,
                 $this->loadMoreUrl->setParam('page', $pageNumber)
@@ -106,6 +112,17 @@ trait LoadMore
                 ]);
 
             $this->add($showMore->setTag('li')->addAttributes(['class' => 'list-item']));
+        } else {
+            $currentPage = $this->loadMoreUrl->getParam('page');
+            if ($currentPage > 1) {
+                $this->addHtml(
+                    (new EmptyStateBar(sprintf(t('Page %d is out of range'), $currentPage)))
+                        ->addHtml(new ButtonLink(
+                            t('Navigate to first page'),
+                            $this->loadMoreUrl->remove(['page', 'before'])
+                        ))
+                );
+            }
         }
     }
 }
