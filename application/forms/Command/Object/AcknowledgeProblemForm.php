@@ -82,7 +82,8 @@ class AcknowledgeProblemForm extends CommandForm
                     'If you work with other administrators, you may find it useful to share information about'
                     . ' the host or service that is having problems. Make sure you enter a brief description of'
                     . ' what you are doing.'
-                )
+                ),
+                'value'         => $config->get('settings', 'acknowledge_comment_text')
             ]
         );
         $decorator->decorate($this->getElement('comment'));
