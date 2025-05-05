@@ -47,7 +47,7 @@ class ScheduleServiceDowntimeForm extends CommandForm
 
         $config = Config::module('icingadb');
 
-        $this->commentText = $config->get('settings', 'hostdowntime_comment_text');
+        $this->commentText = $config->get('settings', 'servicedowntime_comment_text');
         $fixedEnd = clone $this->start;
         $fixed = $config->get('settings', 'servicedowntime_end_fixed', 'PT1H');
         $this->fixedEnd = $fixedEnd->add(new DateInterval($fixed));
