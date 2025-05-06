@@ -303,6 +303,7 @@ class ServiceController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $history->resetOffset();
             $history->limit($page * $limitControl->getLimit());
         }
 
