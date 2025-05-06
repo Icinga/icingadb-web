@@ -142,6 +142,7 @@ class RedundancygroupController extends Controller
         $this->addContent(
             (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
@@ -211,6 +212,7 @@ class RedundancygroupController extends Controller
         $this->addContent(
             (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {

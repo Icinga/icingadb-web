@@ -93,6 +93,8 @@ class ServicegroupsController extends Controller
             $content = new ObjectTable($results, (new ServicegroupRenderer())->setBaseFilter($filter));
         }
 
+        $content->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
+
         $this->addContent($content);
 
         if ($compact) {

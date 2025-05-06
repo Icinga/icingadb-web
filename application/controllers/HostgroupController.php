@@ -103,7 +103,8 @@ class HostgroupController extends Controller
         yield $this->export($hosts);
 
         $hostList = (new ObjectList($hosts))
-            ->setViewMode($viewModeSwitcher->getViewMode());
+            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...
         if ($this->getRequest()->getParam('format') === 'pdf') {
