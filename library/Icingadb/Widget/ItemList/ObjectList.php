@@ -28,7 +28,6 @@ use Icinga\Module\Icingadb\View\UserRenderer;
 use Icinga\Module\Icingadb\Widget\Notice;
 use InvalidArgumentException;
 use ipl\Html\HtmlDocument;
-use ipl\I18n\Translation;
 use ipl\Orm\Model;
 use ipl\Stdlib\Filter;
 use ipl\Web\Layout\DetailedItemLayout;
@@ -50,7 +49,6 @@ use ipl\Web\Widget\ItemList;
 class ObjectList extends ItemList
 {
     use DetailActions;
-    use Translation;
 
     /** @var bool Whether the list contains at least one item with an icon_image */
     protected $hasIconImages = false;

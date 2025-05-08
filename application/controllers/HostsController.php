@@ -109,6 +109,8 @@ class HostsController extends Controller
                 ->setViewMode($viewModeSwitcher->getViewMode());
         }
 
+        $hostList->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
+
         $this->addContent($hostList);
 
         if ($compact) {

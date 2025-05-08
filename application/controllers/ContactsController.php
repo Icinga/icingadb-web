@@ -66,7 +66,10 @@ class ContactsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(new ObjectList($users));
+        $this->addContent(
+            (new ObjectList($users))
+                ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
+        );
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();

@@ -105,6 +105,8 @@ class HostgroupsController extends Controller
             $content = new ObjectTable($results, (new HostgroupRenderer())->setBaseFilter($filter));
         }
 
+        $content->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
+
         $this->addContent($content);
 
         if ($compact) {

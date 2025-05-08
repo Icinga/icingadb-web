@@ -120,6 +120,8 @@ class ServicesController extends Controller
                 ->setViewMode($viewModeSwitcher->getViewMode());
         }
 
+        $serviceList->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
+
         $this->addContent($serviceList);
 
         if ($compact) {

@@ -65,7 +65,10 @@ class ContactgroupsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($searchBar);
 
-        $this->addContent(new ObjectList($usergroups));
+        $this->addContent(
+            (new ObjectList($usergroups))
+                ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
+        );
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();

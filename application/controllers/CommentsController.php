@@ -84,6 +84,7 @@ class CommentsController extends Controller
         $this->addContent(
             (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
         if ($compact) {
