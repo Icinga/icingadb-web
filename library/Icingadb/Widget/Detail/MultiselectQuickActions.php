@@ -120,6 +120,7 @@ class MultiselectQuickActions extends BaseHtmlElement
         $unacknowledged = "{$this->getColumnPrefix()}_problems_unacknowledged";
         $acks = "{$this->getColumnPrefix()}_acknowledged";
         $activeChecks = "{$this->getColumnPrefix()}_active_checks_enabled";
+        $passiveChecks = "{$this->getColumnPrefix()}_passive_checks_enabled";
 
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
@@ -233,6 +234,7 @@ class MultiselectQuickActions extends BaseHtmlElement
 
         if (
             $this->allowToProcessCheckResults
+            && $this->summary->$passiveChecks > 0
             && $this->isGrantedOnType(
                 'icingadb/command/process-check-result',
                 $this->type,

@@ -104,7 +104,10 @@ class QuickActions extends BaseHtmlElement
             );
         }
 
-        if ($this->isGrantedOn('icingadb/command/process-check-result', $this->object)) {
+        if (
+            $this->object->passive_checks_enabled
+            && $this->isGrantedOn('icingadb/command/process-check-result', $this->object)
+        ) {
             $this->assembleAction(
                 'processCheckresult',
                 t('Process check result'),
