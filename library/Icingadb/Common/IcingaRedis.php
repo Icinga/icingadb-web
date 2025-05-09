@@ -225,6 +225,8 @@ class IcingaRedis
         $redis = new Redis([
             'host'      => $section->get('host', 'localhost'),
             'port'      => $section->get('port', 6380),
+            'database'  => $section->get('database', 0),
+            'username'  => $section->get('username', null),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
         ] + self::getTlsParams($moduleConfig));
@@ -262,6 +264,8 @@ class IcingaRedis
         $redis = new Redis([
             'host'      => $host,
             'port'      => $section->get('port', 6380),
+            'database'  => $section->get('database', 0),
+            'username'  => $section->get('username', null),
             'password'  => $section->get('password', ''),
             'timeout'   => 0.5
         ] + self::getTlsParams($moduleConfig));
