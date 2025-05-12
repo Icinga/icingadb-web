@@ -186,7 +186,7 @@ abstract class StateItemTable extends BaseHtmlElement
                 null,
                 new HtmlElement(
                     'td',
-                    Attributes::create(['colspan' => count($this->columns)]),
+                    Attributes::create(['colspan' => count($this->columns) + 1]),
                     new EmptyStateBar(t('No items found.'))
                 )
             ));
