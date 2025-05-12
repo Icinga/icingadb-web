@@ -10,8 +10,11 @@ use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Html\ValidHtml;
+use ipl\I18n\Translation;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\ItemRenderer;
@@ -30,6 +33,7 @@ use ipl\Web\Widget\EmptyStateBar;
 class ObjectGrid extends BaseHtmlElement
 {
     use DetailActions;
+    use Translation;
 
     protected $defaultAttributes = [
         'class'             => 'object-grid',
@@ -43,6 +47,9 @@ class ObjectGrid extends BaseHtmlElement
 
     /** @var ResultSet|iterable<Item> */
     protected $data;
+
+    /** @var ?ValidHtml Message to show if the list is empty */
+    protected $emptyStateMessage;
 
     /**
      * Create a new object grid
@@ -60,6 +67,38 @@ class ObjectGrid extends BaseHtmlElement
         $this->itemRenderer = $renderer;
 
         $this->initializeDetailActions();
+    }
+
+    /**
+     * Get message to show if the list is empty
+     *
+     * @return ValidHtml
+     */
+    public function getEmptyStateMessage(): ValidHtml
+    {
+        if ($this->emptyStateMessage === null) {
+            return new Text($this->translate('No items found.'));
+        }
+
+        return $this->emptyStateMessage;
+    }
+
+    /**
+     * Set message to show if the list is empty
+     *
+     * @param mixed $message If empty, the default message is used
+     *
+     * @return $this
+     */
+    public function setEmptyStateMessage($message): self
+    {
+        if (empty($message)) {
+            $this->emptyStateMessage = null;
+        } else {
+            $this->emptyStateMessage = Html::wantHtml($message);
+        }
+
+        return $this;
     }
 
     /**
@@ -107,7 +146,7 @@ class ObjectGrid extends BaseHtmlElement
 
         if ($this->isEmpty()) {
             $this->setTag('div');
-            $this->addHtml(new EmptyStateBar(t('No items found.')));
+            $this->addHtml(new EmptyStateBar($this->getEmptyStateMessage()));
         }
     }
 }
