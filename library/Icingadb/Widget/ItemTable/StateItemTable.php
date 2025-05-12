@@ -10,6 +10,9 @@ use ipl\Html\Form;
 use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\Text;
+use ipl\Html\ValidHtml;
+use ipl\I18n\Translation;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
@@ -19,6 +22,8 @@ use ipl\Web\Widget\Icon;
 /** @todo Figure out what this might (should) have in common with the new ItemTable implementation */
 abstract class StateItemTable extends BaseHtmlElement
 {
+    use Translation;
+
     protected $baseAttributes = [
         'class' => 'state-item-table'
     ];
@@ -33,6 +38,9 @@ abstract class StateItemTable extends BaseHtmlElement
     protected $sort;
 
     protected $tag = 'table';
+
+    /** @var ?ValidHtml Message to show if the list is empty */
+    protected $emptyStateMessage;
 
     /**
      * Create a new item table
@@ -57,6 +65,38 @@ abstract class StateItemTable extends BaseHtmlElement
      */
     protected function init()
     {
+    }
+
+    /**
+     * Get message to show if the list is empty
+     *
+     * @return ValidHtml
+     */
+    public function getEmptyStateMessage(): ValidHtml
+    {
+        if ($this->emptyStateMessage === null) {
+            return new Text($this->translate('No items found.'));
+        }
+
+        return $this->emptyStateMessage;
+    }
+
+    /**
+     * Set message to show if the list is empty
+     *
+     * @param mixed $message If empty, the default message is used
+     *
+     * @return $this
+     */
+    public function setEmptyStateMessage($message): self
+    {
+        if (empty($message)) {
+            $this->emptyStateMessage = null;
+        } else {
+            $this->emptyStateMessage = Html::wantHtml($message);
+        }
+
+        return $this;
     }
 
     /**
@@ -89,7 +129,7 @@ abstract class StateItemTable extends BaseHtmlElement
 
     protected function getVisualLabel()
     {
-        return new Icon('heartbeat', ['title' => t('Severity')]);
+        return new Icon('heartbeat', ['title' => $this->translate('Severity')]);
     }
 
     protected function assembleColumnHeader(BaseHtmlElement $header, string $name, $label): void
@@ -187,7 +227,7 @@ abstract class StateItemTable extends BaseHtmlElement
                 new HtmlElement(
                     'td',
                     Attributes::create(['colspan' => count($this->columns) + 1]),
-                    new EmptyStateBar(t('No items found.'))
+                    new EmptyStateBar($this->getEmptyStateMessage())
                 )
             ));
         }
