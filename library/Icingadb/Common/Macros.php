@@ -127,6 +127,6 @@ trait Macros
             $value = $value ? 'y' : 'n';
         }
 
-        return $value ?? $macro;
+        return (string) ($value ?? $macro);
     }
 }
