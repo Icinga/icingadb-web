@@ -128,6 +128,23 @@ class RedisConfigForm extends ConfigForm
             static::addInsecureCheckboxIfTls($this);
         }
 
+        $redisPortDescription = t(
+            'Defaults to "6380" as the Redis® open source server provided by'
+            . ' the "icingadb-redis" package listens on that port.'
+        );
+        $redisDatabaseDescription = t(
+            'Numerical database identifier, defaults to `0`. This only needs to be changed'
+            . ' if Icinga 2 is configured to write to another database index.'
+        );
+        $redisUsernameDescription = t(
+            'Authentication username, requires a `password` being set as well. This field is necessary when'
+            . ' connection to a redis instance that requires authentication beyond the default user.'
+        );
+        $redisPasswordDescription = t(
+            'Authentication password. May be used alone when logging in as the'
+            . ' default user or together with a `username`.'
+        );
+
         $this->addElement('text', 'redis1_host', [
             'description' => t('Redis Host'),
             'label'       => t('Redis Host'),
@@ -135,23 +152,25 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addElement('number', 'redis1_port', [
-            'description' => t('Redis Port'),
+            'description' => $redisPortDescription,
             'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
+
         $this->addElement('number', 'redis1_database', [
-            'description' => t('Redis Database'),
+            'description' => $redisDatabaseDescription,
             'label'       => t('Redis Database'),
             'placeholder' => 0
         ]);
 
         $this->addElement('text', 'redis1_username', [
-            'description'    => t('Redis Username'),
+            'description'    => $redisUsernameDescription,
             'label'          => t('Redis Username'),
-            'placeholder'    => "default"
+            'placeholder'    => 'default'
         ]);
+
         $this->addElement('password', 'redis1_password', [
-            'description'    => t('Redis Password'),
+            'description'    => $redisPasswordDescription,
             'label'          => t('Redis Password'),
             'renderPassword' => true,
             'autocomplete'   => 'new-password'
@@ -184,23 +203,23 @@ class RedisConfigForm extends ConfigForm
         ]);
 
         $this->addElement('number', 'redis2_port', [
-            'description' => t('Redis Port'),
+            'description' => $redisPortDescription,
             'label'       => t('Redis Port'),
             'placeholder' => 6380
         ]);
         $this->addElement('number', 'redis2_database', [
-            'description' => t('Redis Database'),
+            'description' => $redisDatabaseDescription,
             'label'       => t('Redis Database'),
             'placeholder' => 0
         ]);
 
         $this->addElement('text', 'redis2_username', [
-            'description'    => t('Redis Username'),
+            'description'    => $redisUsernameDescription,
             'label'          => t('Redis Username'),
-            'placeholder'    => "default"
+            'placeholder'    => 'default'
         ]);
         $this->addElement('password', 'redis2_password', [
-            'description'    => t('Redis Password'),
+            'description'    => $redisPasswordDescription,
             'label'          => t('Redis Password'),
             'renderPassword' => true,
             'autocomplete'   => 'new-password'
