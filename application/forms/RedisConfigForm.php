@@ -128,21 +128,23 @@ class RedisConfigForm extends ConfigForm
             static::addInsecureCheckboxIfTls($this);
         }
 
-        $redisPortDescription = t(
-            'Defaults to "6380" as the Redis® open source server provided by'
-            . ' the "icingadb-redis" package listens on that port.'
-        );
-        $redisDatabaseDescription = t(
-            'Numerical database identifier, defaults to `0`. This only needs to be changed'
-            . ' if Icinga 2 is configured to write to another database index.'
-        );
+        $redisPortDescription = t(sprintf(
+            "Defaults to %d as the Redis® open source server provided by"
+            . ' the "icingadb-redis" package listens on that port.',
+            IcingaRedis::DEFAULT_PORT
+        ));
+        $redisDatabaseDescription = t(sprintf(
+            "Numerical database identifier, defaults to %d. This only needs to be changed"
+            . ' if Icinga 2 is configured to write to another database index.',
+            IcingaRedis::DEFAULT_DATABASE
+        ));
         $redisUsernameDescription = t(
-            'Authentication username, requires a `password` being set as well. This field is necessary when'
-            . ' connection to a redis instance that requires authentication beyond the default user.'
+            'Authentication username, requires a password being set as well. This field is necessary when'
+            . ' connecting to a redis instance that requires authentication beyond the default user.'
         );
         $redisPasswordDescription = t(
             'Authentication password. May be used alone when logging in as the'
-            . ' default user or together with a `username`.'
+            . ' default user or together with a username.'
         );
 
         $this->addElement('text', 'redis1_host', [
@@ -154,19 +156,18 @@ class RedisConfigForm extends ConfigForm
         $this->addElement('number', 'redis1_port', [
             'description' => $redisPortDescription,
             'label'       => t('Redis Port'),
-            'placeholder' => 6380
+            'placeholder' => IcingaRedis::DEFAULT_PORT
         ]);
 
         $this->addElement('number', 'redis1_database', [
             'description' => $redisDatabaseDescription,
             'label'       => t('Redis Database'),
-            'placeholder' => 0
+            'placeholder' => IcingaRedis::DEFAULT_DATABASE
         ]);
 
         $this->addElement('text', 'redis1_username', [
             'description'    => $redisUsernameDescription,
-            'label'          => t('Redis Username'),
-            'placeholder'    => 'default'
+            'label'          => t('Redis Username')
         ]);
 
         $this->addElement('password', 'redis1_password', [
@@ -205,19 +206,20 @@ class RedisConfigForm extends ConfigForm
         $this->addElement('number', 'redis2_port', [
             'description' => $redisPortDescription,
             'label'       => t('Redis Port'),
-            'placeholder' => 6380
+            'placeholder' => IcingaRedis::DEFAULT_PORT
         ]);
+
         $this->addElement('number', 'redis2_database', [
             'description' => $redisDatabaseDescription,
             'label'       => t('Redis Database'),
-            'placeholder' => 0
+            'placeholder' => IcingaRedis::DEFAULT_DATABASE
         ]);
 
         $this->addElement('text', 'redis2_username', [
             'description'    => $redisUsernameDescription,
-            'label'          => t('Redis Username'),
-            'placeholder'    => 'default'
+            'label'          => t('Redis Username')
         ]);
+
         $this->addElement('password', 'redis2_password', [
             'description'    => $redisPasswordDescription,
             'label'          => t('Redis Password'),
@@ -455,7 +457,7 @@ class RedisConfigForm extends ConfigForm
             $redis1Section['database'] = $redis1Database;
             $this->getElement('redis1_database')->setValue(null);
         } else {
-            $redis1Section['database'] = 0;
+            $redis1Section['database'] = null;
         }
 
         if (! empty($redis1Username)) {
@@ -502,7 +504,7 @@ class RedisConfigForm extends ConfigForm
             $redis2Section['database'] = $redis2Database;
             $this->getElement('redis2_database')->setValue(null);
         } else {
-            $redis2Section['database'] = 0;
+            $redis2Section['database'] = null;
         }
 
         if (! empty($redis2Username)) {
