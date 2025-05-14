@@ -12,6 +12,12 @@ use Predis\Client as Redis;
 
 class IcingaRedis
 {
+    public const DEFAULT_HOST = 'localhost';
+
+    public const DEFAULT_PORT = 6380;
+
+    public const DEFAULT_DATABASE = 0;
+
     /** @var Redis Connection to the Icinga Redis */
     private $redis;
 
@@ -223,9 +229,11 @@ class IcingaRedis
         $section = $redisConfig->getSection('redis1');
 
         $redis = new Redis([
-            'host'      => $section->get('host', 'localhost'),
-            'port'      => $section->get('port', 6380),
-            'password'  => $section->get('password', ''),
+            'host'      => $section->get('host', static::DEFAULT_HOST),
+            'port'      => $section->get('port', static::DEFAULT_PORT),
+            'database'  => $section->get('database', static::DEFAULT_DATABASE),
+            'username'  => $section->get('username'),
+            'password'  => $section->get('password'),
             'timeout'   => 0.5
         ] + self::getTlsParams($moduleConfig));
 
@@ -261,8 +269,10 @@ class IcingaRedis
 
         $redis = new Redis([
             'host'      => $host,
-            'port'      => $section->get('port', 6380),
-            'password'  => $section->get('password', ''),
+            'port'      => $section->get('port', static::DEFAULT_PORT),
+            'database'  => $section->get('database', static::DEFAULT_DATABASE),
+            'username'  => $section->get('username'),
+            'password'  => $section->get('password'),
             'timeout'   => 0.5
         ] + self::getTlsParams($moduleConfig));
 
