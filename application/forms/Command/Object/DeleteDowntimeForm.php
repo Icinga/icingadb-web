@@ -27,7 +27,7 @@ class DeleteDowntimeForm extends CommandForm
             $countObjects = count($this->getObjects());
 
             Notification::success(sprintf(
-                tp('Removed downtime successfully', 'Removed downtime from %d objects successfully', $countObjects),
+                tp('Removed downtime successfully', 'Removed %d downtimes successfully', $countObjects),
                 $countObjects
             ));
         });

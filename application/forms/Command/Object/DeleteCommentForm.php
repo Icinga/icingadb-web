@@ -27,7 +27,7 @@ class DeleteCommentForm extends CommandForm
             $countObjects = count($this->getObjects());
 
             Notification::success(sprintf(
-                tp('Removed comment successfully', 'Removed comment from %d objects successfully', $countObjects),
+                tp('Removed comment successfully', 'Removed %d comments successfully', $countObjects),
                 $countObjects
             ));
         });
