@@ -6,6 +6,7 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\BoolCast;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
+use ipl\Orm\Relations;
 
 /**
  * Dependency edge state model.
@@ -50,5 +51,10 @@ class DependencyEdgeState extends Model
         $behaviors->add(new BoolCast([
             'failed'
         ]));
+    }
+
+    public function createRelations(Relations $relations)
+    {
+        $relations->hasMany('edge', DependencyEdge::class);
     }
 }
