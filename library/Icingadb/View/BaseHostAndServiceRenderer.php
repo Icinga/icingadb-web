@@ -50,6 +50,13 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
      */
     abstract protected function createSubject($item, string $layout): ValidHtml;
 
+    public function assembleAttributes($item, Attributes $attributes, string $layout): void
+    {
+        if ($item->state->is_overdue) {
+            $attributes->get('class')->addValue('overdue');
+        }
+    }
+
     public function assembleVisual($item, HtmlDocument $visual, string $layout): void
     {
         if ($layout === 'header') {

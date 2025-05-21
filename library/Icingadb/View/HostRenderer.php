@@ -17,6 +17,8 @@ class HostRenderer extends BaseHostAndServiceRenderer
 {
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
+        parent::assembleAttributes($item, $attributes, $layout);
+
         $attributes->get('class')->addValue('host');
     }
 
