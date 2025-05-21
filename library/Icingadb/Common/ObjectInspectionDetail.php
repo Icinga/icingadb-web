@@ -169,7 +169,6 @@ abstract class ObjectInspectionDetail extends BaseHtmlElement
             'display_name',
             'last_check_result',
             'source_location',
-            'templates',
             'package',
             'version',
             'type',
