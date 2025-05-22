@@ -22,6 +22,7 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Hook\CustomVarsRetrieverHook;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
@@ -303,7 +304,9 @@ class Controller extends CompatController
      */
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
-        $columns = array_merge($query->getModel()->getSearchColumns(), $additionalColumns);
+        $model = $query->getModel();
+        $customVarColumns = CustomVarsRetrieverHook::getCustomVarColumns($model);
+        $columns = array_merge($model->getSearchColumns(), $additionalColumns, $customVarColumns);
         foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
                 $column = $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName());
