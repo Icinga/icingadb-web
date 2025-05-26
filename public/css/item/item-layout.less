@@ -53,10 +53,12 @@
     }
   }
 
-  &.minimal-item-layout {
+  &.minimal-item-layout,
+  &.default-item-layout {
     .caption .plugin-output {
       .text-ellipsis();
     }
+  }
 
     &.hostgroup .extended-info {
       > :not(:last-child) {
