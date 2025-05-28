@@ -127,7 +127,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
     {
         $data = [
             'all_joins' => 1,
-            'attrs'     => $command->getAttributes() ?: []
+            'attrs'     => $command->getAttributes()
         ];
 
         $endpoint = 'objects/' . $this->getObjectPluralType($this->applyFilter($data, $command->getObjects()));
