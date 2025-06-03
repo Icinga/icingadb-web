@@ -1,8 +1,11 @@
 name: L10n Update
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   update:
     uses: icinga/github-actions/.github/workflows/L10n-update.yml@main
+    secrets: inherit
