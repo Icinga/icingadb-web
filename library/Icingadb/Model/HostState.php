@@ -45,6 +45,7 @@ class HostState extends State
             'is_flapping'                   => t('Host Is Flapping'),
             'is_overdue'                    => t('Host Check Is Overdue'),
             'is_acknowledged'               => t('Host Is Acknowledged'),
+            'is_sticky_acknowledgement'     => t('Acknowledgement Is Sticky'),
             'acknowledgement_comment_id'    => t('Acknowledgement Comment Id'),
             'in_downtime'                   => t('Host In Downtime'),
             'execution_time'                => t('Host Check Execution Time'),

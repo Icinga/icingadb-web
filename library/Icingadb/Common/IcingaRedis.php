@@ -171,9 +171,14 @@ class IcingaRedis
                     $data['in_downtime'] = $data['in_downtime'] ? 'y' : 'n';
                 }
 
-                if (isset($data['is_acknowledged']) && is_int($data['is_acknowledged'])) {
+                if (isset($data['is_acknowledged']) && is_bool($data['is_acknowledged'])) {
                     $data['is_acknowledged'] = $data['is_acknowledged'] ? 'y' : 'n';
                 }
+
+                if (isset($data['is_sticky_acknowledgement']) && is_bool($data['is_sticky_acknowledgement'])) {
+                    $data['is_sticky_acknowledgement'] = $data['is_sticky_acknowledgement'] ? 'y' : 'n';
+                }
+
 
                 yield $ids[$i] => array_intersect_key(array_merge($keyMap, $data), $keyMap);
             }

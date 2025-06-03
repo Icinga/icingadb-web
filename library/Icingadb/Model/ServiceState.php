@@ -47,6 +47,7 @@ class ServiceState extends State
             'is_flapping'                   => t('Service Is Flapping'),
             'is_overdue'                    => t('Service Check Is Overdue'),
             'is_acknowledged'               => t('Service Is Acknowledged'),
+            'is_sticky_acknowledgement'     => t('Acknowledgement Is Sticky'),
             'acknowledgement_comment_id'    => t('Acknowledgement Comment Id'),
             'in_downtime'                   => t('Service In Downtime'),
             'execution_time'                => t('Service Check Execution Time'),
