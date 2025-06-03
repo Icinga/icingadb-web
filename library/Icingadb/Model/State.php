@@ -36,7 +36,8 @@ use ipl\Web\Widget\Icon;
  * @property bool $is_reachable Whether the node is reachable
  * @property bool $is_flapping Whether the state is flapping
  * @property bool $is_overdue Whether the check is overdue
- * @property bool|string $is_acknowledged Whether the state is acknowledged (bool), can also be `sticky` (string)
+ * @property bool $is_acknowledged Whether the state is acknowledged
+ * @property bool $is_sticky_acknowledgement Whether the acknowledgement is sticky
  * @property ?string $acknowledgement_comment_id The id of acknowledgement comment
  * @property ?string $last_comment_id The id of last comment
  * @property bool $in_downtime Whether the node is in downtime
@@ -105,6 +106,7 @@ abstract class State extends Model
 
         if (Backend::supportsDependencies()) {
             $columns[] = 'affects_children';
+            $columns[] = 'is_sticky_acknowledgement';
         }
 
         return $columns;
@@ -119,6 +121,7 @@ abstract class State extends Model
             'is_flapping',
             'is_overdue',
             'is_acknowledged',
+            'is_sticky_acknowledgement',
             'in_downtime',
             'affects_children'
         ]));

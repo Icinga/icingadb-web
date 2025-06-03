@@ -60,6 +60,7 @@ class HostState extends State
 
         if (Backend::supportsDependencies()) {
             $columns['affects_children'] = t('Host Affects Children');
+            $columns['is_sticky_acknowledgement'] = t('Acknowledgement Is Sticky');
         }
 
         return $columns;

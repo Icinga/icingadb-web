@@ -62,6 +62,7 @@ class ServiceState extends State
 
         if (Backend::supportsDependencies()) {
             $columns['affects_children'] = t('Service Affects Children');
+            $columns['is_sticky_acknowledgement'] = t('Acknowledgement Is Sticky');
         }
 
         return $columns;
