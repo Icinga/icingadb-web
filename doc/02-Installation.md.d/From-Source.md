@@ -6,7 +6,7 @@ Make sure you use `icingadb` as the module name. The following requirements must
 
 ### Requirements
 
-* PHP (≥7.2)
+* PHP (≥8.2)
 * MySQL or PostgreSQL PDO PHP libraries
 * The following PHP modules must be installed: `cURL`, `dom`, `json`, `libxml`
 * [Icinga DB](https://github.com/Icinga/icingadb)
