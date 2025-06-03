@@ -164,9 +164,6 @@ class IcingaRedis
                 $keyMap = array_fill_keys($columns, null);
                 unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
 
-                // TODO: Remove once https://github.com/Icinga/icinga2/issues/9427 is fixed
-                $data['state_type'] = $data['state_type'] === 0 ? 'soft' : 'hard';
-
                 if (isset($data['in_downtime']) && is_bool($data['in_downtime'])) {
                     $data['in_downtime'] = $data['in_downtime'] ? 'y' : 'n';
                 }
