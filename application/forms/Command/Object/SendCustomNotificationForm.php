@@ -106,7 +106,12 @@ class SendCustomNotificationForm extends CommandForm
             'btn_submit',
             [
                 'required'  => true,
-                'label'     => tp('Send custom notification', 'Send custom notifications', count($this->getObjects()))
+                'label'     => tp('Send custom notification', 'Send custom notifications', count($this->getObjects())),
+                'data-progress-label' => tp(
+                    'Sending custom notification',
+                    'Sending custom notifications',
+                    count($this->getObjects())
+                )
             ]
         );
 

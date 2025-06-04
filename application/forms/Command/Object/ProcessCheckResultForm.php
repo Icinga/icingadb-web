@@ -129,6 +129,11 @@ class ProcessCheckResultForm extends CommandForm
                     'Submit Passive Check Result',
                     'Submit Passive Check Results',
                     count($this->getObjects())
+                ),
+                'data-progress-label' => tp(
+                    'Submitting Passive Check Result',
+                    'Submitting Passive Check Results',
+                    count($this->getObjects())
                 )
             ]
         );
