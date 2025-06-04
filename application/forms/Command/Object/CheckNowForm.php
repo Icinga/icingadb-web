@@ -11,6 +11,8 @@ use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 class CheckNowForm extends CommandForm
@@ -56,14 +58,14 @@ class CheckNowForm extends CommandForm
                 );
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new ScheduleCheckCommand();
-            $command->setObjects($granted);
-            $command->setCheckTime(time());
-            $command->setForced();
+        $command = new ScheduleCheckCommand();
+        $command->setCheckTime(time());
+        $command->setForced();
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 1000));
         }
     }
 }

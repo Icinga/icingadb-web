@@ -18,6 +18,8 @@ use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -121,14 +123,14 @@ class ScheduleCheckForm extends CommandForm
                 );
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new ScheduleCheckCommand();
-            $command->setObjects($granted);
-            $command->setForced($this->getElement('force_check')->isChecked());
-            $command->setCheckTime($this->getValue('check_time')->getTimestamp());
+        $command = new ScheduleCheckCommand();
+        $command->setForced($this->getElement('force_check')->isChecked());
+        $command->setCheckTime($this->getValue('check_time')->getTimestamp());
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 1000));
         }
     }
 }

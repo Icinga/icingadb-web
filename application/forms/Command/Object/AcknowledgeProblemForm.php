@@ -20,6 +20,8 @@ use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -196,22 +198,22 @@ class AcknowledgeProblemForm extends CommandForm
             return $this->isGrantedOn('icingadb/command/acknowledge-problem', $object);
         });
 
+        $command = new AcknowledgeProblemCommand();
+        $command->setComment($this->getValue('comment'));
+        $command->setAuthor($this->getAuth()->getUser()->getUsername());
+        $command->setNotify($this->getElement('notify')->isChecked());
+        $command->setSticky($this->getElement('sticky')->isChecked());
+        $command->setPersistent($this->getElement('persistent')->isChecked());
+
+        if (($expireTime = $this->getValue('expire_time')) !== null) {
+            /** @var DateTime $expireTime */
+            $command->setExpireTime($expireTime->getTimestamp());
+        }
+
         $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new AcknowledgeProblemCommand();
-            $command->setObjects($granted);
-            $command->setComment($this->getValue('comment'));
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
-            $command->setNotify($this->getElement('notify')->isChecked());
-            $command->setSticky($this->getElement('sticky')->isChecked());
-            $command->setPersistent($this->getElement('persistent')->isChecked());
-
-            if (($expireTime = $this->getValue('expire_time')) !== null) {
-                /** @var DateTime $expireTime */
-                $command->setExpireTime($expireTime->getTimestamp());
-            }
-
-            yield $command;
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
         }
     }
 }

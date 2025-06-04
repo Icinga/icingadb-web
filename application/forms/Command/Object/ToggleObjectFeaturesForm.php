@@ -12,6 +12,8 @@ use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
@@ -25,7 +27,7 @@ class ToggleObjectFeaturesForm extends CommandForm
     /**
      * ToggleFeature(s) being used to submit this form
      *
-     * @var ToggleObjectFeatureCommand[]
+     * @var array<string, bool>
      */
     protected $submittedFeatures = [];
 
@@ -62,9 +64,8 @@ class ToggleObjectFeaturesForm extends CommandForm
                 return;
             }
 
-            foreach ($this->submittedFeatures as $feature) {
-                $enabled = $feature->getEnabled();
-                switch ($feature->getFeature()) {
+            foreach ($this->submittedFeatures as $feature => $enabled) {
+                switch ($feature) {
                     case ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS:
                         if ($enabled) {
                             $message = t('Enabled active checks successfully');
@@ -175,16 +176,16 @@ class ToggleObjectFeaturesForm extends CommandForm
                 return $this->isGrantedOn($spec['permission'], $object);
             });
 
+            $command = new ToggleObjectFeatureCommand();
+            $command->setFeature($feature);
+            $command->setEnabled((int) $state);
+
             $granted->rewind(); // Forwards the pointer to the first element
-            if ($granted->valid()) {
-                $command = new ToggleObjectFeatureCommand();
-                $command->setObjects($granted);
-                $command->setFeature($feature);
-                $command->setEnabled((int) $state);
+            while ($granted->valid()) {
+                $this->submittedFeatures[$command->getFeature()] ??= $command->getEnabled();
 
-                $this->submittedFeatures[] = $command;
-
-                yield $command;
+                // Chunk objects to avoid timeouts with large sets
+                yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 1000));
             }
         }
     }
