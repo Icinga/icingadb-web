@@ -12,6 +12,8 @@ use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -71,13 +73,13 @@ class RemoveAcknowledgementForm extends CommandForm
             return $this->isGrantedOn('icingadb/command/remove-acknowledgement', $object);
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new RemoveAcknowledgementCommand();
-            $command->setObjects($granted);
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+        $command = new RemoveAcknowledgementCommand();
+        $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
         }
     }
 }
