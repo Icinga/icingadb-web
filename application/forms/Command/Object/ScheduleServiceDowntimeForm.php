@@ -260,8 +260,9 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'submit',
             'btn_submit',
             [
-                'required'  => true,
-                'label'     => tp('Schedule downtime', 'Schedule downtimes', count($this->getObjects()))
+                'required'              => true,
+                'label'                 => tp('Schedule downtime', 'Schedule downtimes', count($this->getObjects())),
+                'data-progress-label'   => tp('Scheduling downtime', 'Scheduling downtimes', count($this->getObjects()))
             ]
         );
 

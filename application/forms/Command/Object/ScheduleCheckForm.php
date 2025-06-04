@@ -105,8 +105,9 @@ class ScheduleCheckForm extends CommandForm
             'submit',
             'btn_submit',
             [
-                'required'  => true,
-                'label'     => tp('Schedule check', 'Schedule checks', count($this->getObjects()))
+                'required'              => true,
+                'label'                 => tp('Schedule check', 'Schedule checks', count($this->getObjects())),
+                'data-progress-label'   => tp('Scheduling check', 'Scheduling checks', count($this->getObjects()))
             ]
         );
 

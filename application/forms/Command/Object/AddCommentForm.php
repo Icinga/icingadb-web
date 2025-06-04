@@ -138,8 +138,9 @@ class AddCommentForm extends CommandForm
             'submit',
             'btn_submit',
             [
-                'required'  => true,
-                'label'     => tp('Add comment', 'Add comments', count($this->getObjects()))
+                'required'              => true,
+                'label'                 => tp('Add comment', 'Add comments', count($this->getObjects())),
+                'data-progress-label'   => tp('Adding comment', 'Adding comments', count($this->getObjects()))
             ]
         );
 
