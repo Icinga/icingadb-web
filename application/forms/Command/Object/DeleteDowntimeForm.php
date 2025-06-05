@@ -11,6 +11,8 @@ use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 class DeleteDowntimeForm extends CommandForm
@@ -71,13 +73,13 @@ class DeleteDowntimeForm extends CommandForm
                 && $this->isGrantedOn('icingadb/command/downtime/delete', $object->{$object->object_type});
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new DeleteDowntimeCommand();
-            $command->setObjects($granted);
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+        $command = new DeleteDowntimeCommand();
+        $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
         }
     }
 }

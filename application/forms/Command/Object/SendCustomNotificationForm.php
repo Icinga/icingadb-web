@@ -17,6 +17,8 @@ use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -104,7 +106,12 @@ class SendCustomNotificationForm extends CommandForm
             'btn_submit',
             [
                 'required'  => true,
-                'label'     => tp('Send custom notification', 'Send custom notifications', count($this->getObjects()))
+                'label'     => tp('Send custom notification', 'Send custom notifications', count($this->getObjects())),
+                'data-progress-label' => tp(
+                    'Sending custom notification',
+                    'Sending custom notifications',
+                    count($this->getObjects())
+                )
             ]
         );
 
@@ -117,15 +124,15 @@ class SendCustomNotificationForm extends CommandForm
             return $this->isGrantedOn('icingadb/command/send-custom-notification', $object);
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new SendCustomNotificationCommand();
-            $command->setObjects($granted);
-            $command->setComment($this->getValue('comment'));
-            $command->setForced($this->getElement('forced')->isChecked());
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
+        $command = new SendCustomNotificationCommand();
+        $command->setComment($this->getValue('comment'));
+        $command->setForced($this->getElement('forced')->isChecked());
+        $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 500));
         }
     }
 }

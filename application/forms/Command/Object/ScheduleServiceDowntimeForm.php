@@ -19,6 +19,8 @@ use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 class ScheduleServiceDowntimeForm extends CommandForm
@@ -258,8 +260,9 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'submit',
             'btn_submit',
             [
-                'required'  => true,
-                'label'     => tp('Schedule downtime', 'Schedule downtimes', count($this->getObjects()))
+                'required'              => true,
+                'label'                 => tp('Schedule downtime', 'Schedule downtimes', count($this->getObjects())),
+                'data-progress-label'   => tp('Scheduling downtime', 'Scheduling downtimes', count($this->getObjects()))
             ]
         );
 
@@ -272,24 +275,24 @@ class ScheduleServiceDowntimeForm extends CommandForm
             return $this->isGrantedOn('icingadb/command/downtime/schedule', $object);
         });
 
+        $command = new ScheduleDowntimeCommand();
+        $command->setComment($this->getValue('comment'));
+        $command->setAuthor($this->getAuth()->getUser()->getUsername());
+        $command->setStart($this->getValue('start')->getTimestamp());
+        $command->setEnd($this->getValue('end')->getTimestamp());
+        $command->setChildOption((int) $this->getValue('child_options'));
+
+        if ($this->getElement('flexible')->isChecked()) {
+            $command->setFixed(false);
+            $command->setDuration(
+                $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
+            );
+        }
+
         $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new ScheduleDowntimeCommand();
-            $command->setObjects($granted);
-            $command->setComment($this->getValue('comment'));
-            $command->setAuthor($this->getAuth()->getUser()->getUsername());
-            $command->setStart($this->getValue('start')->getTimestamp());
-            $command->setEnd($this->getValue('end')->getTimestamp());
-            $command->setChildOption((int) $this->getValue('child_options'));
-
-            if ($this->getElement('flexible')->isChecked()) {
-                $command->setFixed(false);
-                $command->setDuration(
-                    $this->getValue('hours') * 3600 + $this->getValue('minutes') * 60
-                );
-            }
-
-            yield $command;
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
         }
     }
 }
