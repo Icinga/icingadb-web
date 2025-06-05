@@ -164,19 +164,6 @@ class IcingaRedis
                 $keyMap = array_fill_keys($columns, null);
                 unset($keyMap['is_overdue']); // Is calculated by Icinga DB, not Icinga 2, hence it's never in redis
 
-                if (isset($data['in_downtime']) && is_bool($data['in_downtime'])) {
-                    $data['in_downtime'] = $data['in_downtime'] ? 'y' : 'n';
-                }
-
-                if (isset($data['is_acknowledged']) && is_bool($data['is_acknowledged'])) {
-                    $data['is_acknowledged'] = $data['is_acknowledged'] ? 'y' : 'n';
-                }
-
-                if (isset($data['is_sticky_acknowledgement']) && is_bool($data['is_sticky_acknowledgement'])) {
-                    $data['is_sticky_acknowledgement'] = $data['is_sticky_acknowledgement'] ? 'y' : 'n';
-                }
-
-
                 yield $ids[$i] => array_intersect_key(array_merge($keyMap, $data), $keyMap);
             }
         }
