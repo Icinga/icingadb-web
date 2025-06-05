@@ -154,7 +154,7 @@ abstract class StateBadges extends BaseHtmlElement
         $stateBadge = new StateBadge($this->item->$key, $state);
 
         if ($this->url !== null) {
-            $this->createLink(
+            $stateBadge = $this->createLink(
                 $stateBadge,
                 Filter::equal($this->type . '.state.soft_state', $this->getStateInt($state))
             );
