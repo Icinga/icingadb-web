@@ -8,6 +8,9 @@ use Closure;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Exception\AlreadyExistsException;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotWritableError;
 use Icinga\File\Storage\LocalFileStorage;
 use Icinga\File\Storage\TemporaryLocalFileStorage;
@@ -16,6 +19,7 @@ use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Web\Form;
 use ipl\Validator\PrivateKeyValidator;
 use ipl\Validator\X509CertValidator;
+use Throwable;
 use Zend_Validate_Callback;
 
 class RedisConfigForm extends ConfigForm
@@ -413,6 +417,9 @@ class RedisConfigForm extends ConfigForm
                     } catch (NotWritableError $e) {
                         $textarea->addError($e->getMessage());
                         return false;
+                    } catch (AlreadyExistsException $e) {
+                        $textarea->addError($e->getMessage());
+                        return false;
                     }
                 }
 
@@ -525,7 +532,14 @@ class RedisConfigForm extends ConfigForm
             $connectionConfig->removeSection('redis2');
         }
 
-        $connectionConfig->saveIni();
+        try {
+            $connectionConfig->saveIni();
+        } catch (Throwable $e) {
+            $this->addError($e->getMessage());
+            Logger::error($e->getMessage());
+            Logger::debug(IcingaException::getConfidentialTraceAsString($e));
+            return false;
+        }
 
         return parent::onSuccess();
     }
