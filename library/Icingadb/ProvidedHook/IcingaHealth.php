@@ -45,7 +45,6 @@ class IcingaHealth extends HealthHook
             ));
         } else {
             $this->setState(self::STATE_OK);
-            $this->setMessage(t('Icinga DB is running and writing into the database'));
             $warningMessages = [];
 
             if (! $instance->icinga2_active_host_checks_enabled) {
@@ -63,8 +62,18 @@ class IcingaHealth extends HealthHook
                 $warningMessages[] = t('Notifications are disabled');
             }
 
+            if (! isset($instance->icingadb_version) || version_compare($instance->icingadb_version, '1.4.0', '<')) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Icinga DB is outdated, please upgrade to version 1.4 or later.');
+            }
+
             if ($this->getState() === self::STATE_WARNING) {
                 $this->setMessage(implode("; ", $warningMessages));
+            } else {
+                $this->setMessage(sprintf(
+                    t('Icinga DB is running and writing into the database. (Version: %s)'),
+                    $instance->icingadb_version
+                ));
             }
         }
 
