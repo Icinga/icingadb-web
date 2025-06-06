@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Icinga\Application\Hook\HealthHook;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Instance;
 use ipl\Web\Url;
@@ -79,6 +80,7 @@ class IcingaHealth extends HealthHook
                 'icinga2_performance_data_enabled' => $instance->icinga2_performance_data_enabled,
                 'icinga2_start_time' => $instance->icinga2_start_time->getTimestamp(),
                 'icinga2_version' => $instance->icinga2_version,
+                'icingadb_version' => $instance->icingadb_version ?? null,
                 'endpoint' => ['name' => $instance->endpoint->name]
             ]);
         }
@@ -92,7 +94,7 @@ class IcingaHealth extends HealthHook
     protected function getInstance()
     {
         if ($this->instance === null) {
-            $this->instance = Instance::on($this->getDb())
+            $query = Instance::on($this->getDb())
                 ->with('endpoint')
                 ->columns([
                     'heartbeat',
@@ -106,8 +108,12 @@ class IcingaHealth extends HealthHook
                     'icinga2_start_time',
                     'icinga2_version',
                     'endpoint.name'
-                ])
-                ->first();
+                ]);
+            if (Backend::supportsDependencies()) {
+                $query->withColumns('icingadb_version');
+            }
+
+            $this->instance = $query->first();
         }
 
         return $this->instance;
