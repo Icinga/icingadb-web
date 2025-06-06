@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Icinga\Application\Hook\HealthHook;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Instance;
 use ipl\Web\Url;
@@ -44,7 +45,6 @@ class IcingaHealth extends HealthHook
             ));
         } else {
             $this->setState(self::STATE_OK);
-            $this->setMessage(t('Icinga DB is running and writing into the database'));
             $warningMessages = [];
 
             if (! $instance->icinga2_active_host_checks_enabled) {
@@ -62,8 +62,18 @@ class IcingaHealth extends HealthHook
                 $warningMessages[] = t('Notifications are disabled');
             }
 
+            if (! isset($instance->icingadb_version) || version_compare($instance->icingadb_version, '1.4.0', '<')) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Icinga DB is outdated, please upgrade to version 1.4 or later.');
+            }
+
             if ($this->getState() === self::STATE_WARNING) {
                 $this->setMessage(implode("; ", $warningMessages));
+            } else {
+                $this->setMessage(sprintf(
+                    t('Icinga DB is running and writing into the database. (Version: %s)'),
+                    $instance->icingadb_version
+                ));
             }
         }
 
@@ -79,6 +89,7 @@ class IcingaHealth extends HealthHook
                 'icinga2_performance_data_enabled' => $instance->icinga2_performance_data_enabled,
                 'icinga2_start_time' => $instance->icinga2_start_time->getTimestamp(),
                 'icinga2_version' => $instance->icinga2_version,
+                'icingadb_version' => $instance->icingadb_version ?? null,
                 'endpoint' => ['name' => $instance->endpoint->name]
             ]);
         }
@@ -92,7 +103,7 @@ class IcingaHealth extends HealthHook
     protected function getInstance()
     {
         if ($this->instance === null) {
-            $this->instance = Instance::on($this->getDb())
+            $query = Instance::on($this->getDb())
                 ->with('endpoint')
                 ->columns([
                     'heartbeat',
@@ -106,8 +117,12 @@ class IcingaHealth extends HealthHook
                     'icinga2_start_time',
                     'icinga2_version',
                     'endpoint.name'
-                ])
-                ->first();
+                ]);
+            if (Backend::supportsDependencies()) {
+                $query->withColumns('icingadb_version');
+            }
+
+            $this->instance = $query->first();
         }
 
         return $this->instance;
