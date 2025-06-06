@@ -41,6 +41,8 @@ class RedisHealth extends HealthHook
                 return;
             }
 
+            $this->setMetrics($server);
+
             $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
             if (! $outdatedDbHeartbeat || $instance->heartbeat->getTimestamp() <= $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_OK);
