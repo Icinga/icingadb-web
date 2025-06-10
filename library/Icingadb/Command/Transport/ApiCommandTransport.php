@@ -246,6 +246,13 @@ class ApiCommandTransport implements CommandTransportInterface
                     'verify'        => false
                 ]);
         } catch (GuzzleException $e) {
+            if (str_starts_with(ltrim($e->getMessage()), 'cURL error 28:')) {
+                throw new ApiCommandException(t(
+                    'No response from the Icinga 2 API received after %d seconds.'
+                    . ' Please make sure the action has not been performed, before retrying'
+                ), 15, $e);
+            }
+
             throw new CommandTransportException(
                 'Can\'t connect to the Icinga 2 API: %u %s',
                 $e->getCode(),
