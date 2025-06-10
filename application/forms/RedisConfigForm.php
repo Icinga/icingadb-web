@@ -8,6 +8,9 @@ use Closure;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Exception\AlreadyExistsException;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotWritableError;
 use Icinga\File\Storage\LocalFileStorage;
 use Icinga\File\Storage\TemporaryLocalFileStorage;
@@ -16,6 +19,7 @@ use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Web\Form;
 use ipl\Validator\PrivateKeyValidator;
 use ipl\Validator\X509CertValidator;
+use Throwable;
 use Zend_Validate_Callback;
 
 class RedisConfigForm extends ConfigForm
@@ -412,6 +416,11 @@ class RedisConfigForm extends ConfigForm
                         $storage->create($pemFile, $pem);
                     } catch (NotWritableError $e) {
                         $textarea->addError($e->getMessage());
+
+                        return false;
+                    } catch (AlreadyExistsException $e) {
+                        $textarea->addError($e->getMessage());
+
                         return false;
                     }
                 }
@@ -427,6 +436,7 @@ class RedisConfigForm extends ConfigForm
                         $this->getElement('redis_' . $name)->setValue(null);
                     } catch (NotWritableError $e) {
                         $this->addError($e->getMessage());
+
                         return false;
                     }
                 }
@@ -525,7 +535,15 @@ class RedisConfigForm extends ConfigForm
             $connectionConfig->removeSection('redis2');
         }
 
-        $connectionConfig->saveIni();
+        try {
+            $connectionConfig->saveIni();
+        } catch (Throwable $e) {
+            $this->addError($e->getMessage());
+            Logger::error($e->getMessage());
+            Logger::debug(IcingaException::getConfidentialTraceAsString($e));
+
+            return false;
+        }
 
         return parent::onSuccess();
     }
@@ -611,11 +629,13 @@ class RedisConfigForm extends ConfigForm
                 t('Failed to connect to primary Redis: %s'),
                 $e->getMessage()
             ));
+
             return false;
         }
 
         if (IcingaRedis::getLastIcingaHeartbeat($redis1) === null) {
             $form->warning(t('Primary connection established but failed to verify Icinga is connected as well.'));
+
             return false;
         }
 
@@ -623,15 +643,18 @@ class RedisConfigForm extends ConfigForm
             $redis2 = IcingaRedis::getSecondaryRedis($moduleConfig, $redisConfig);
         } catch (Exception $e) {
             $form->warning(sprintf(t('Failed to connect to secondary Redis: %s'), $e->getMessage()));
+
             return false;
         }
 
         if ($redis2 !== null && IcingaRedis::getLastIcingaHeartbeat($redis2) === null) {
             $form->warning(t('Secondary connection established but failed to verify Icinga is connected as well.'));
+
             return false;
         }
 
         $form->info(t('The configuration has been successfully validated.'));
+
         return true;
     }
 
