@@ -16,6 +16,8 @@ use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
+use LimitIterator;
+use NoRewindIterator;
 use Traversable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -127,6 +129,11 @@ class ProcessCheckResultForm extends CommandForm
                     'Submit Passive Check Result',
                     'Submit Passive Check Results',
                     count($this->getObjects())
+                ),
+                'data-progress-label' => tp(
+                    'Submitting Passive Check Result',
+                    'Submitting Passive Check Results',
+                    count($this->getObjects())
                 )
             ]
         );
@@ -141,15 +148,15 @@ class ProcessCheckResultForm extends CommandForm
                 && $this->isGrantedOn('icingadb/command/process-check-result', $object);
         });
 
-        $granted->rewind(); // Forwards the pointer to the first element
-        if ($granted->valid()) {
-            $command = new ProcessCheckResultCommand();
-            $command->setObjects($granted);
-            $command->setStatus($this->getValue('status'));
-            $command->setOutput($this->getValue('output'));
-            $command->setPerformanceData($this->getValue('perfdata'));
+        $command = new ProcessCheckResultCommand();
+        $command->setStatus($this->getValue('status'));
+        $command->setOutput($this->getValue('output'));
+        $command->setPerformanceData($this->getValue('perfdata'));
 
-            yield $command;
+        $granted->rewind(); // Forwards the pointer to the first element
+        while ($granted->valid()) {
+            // Chunk objects to avoid timeouts with large sets
+            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
         }
     }
 }

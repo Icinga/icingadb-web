@@ -19,6 +19,9 @@ use Icinga\Util\Json;
  */
 class ApiCommandTransport implements CommandTransportInterface
 {
+    /** @var int Used timeout when sending a command */
+    protected const SEND_TIMEOUT = 15;
+
     /**
      * Transport identifier
      */
@@ -237,7 +240,7 @@ class ApiCommandTransport implements CommandTransportInterface
         }
 
         try {
-            $response = (new Client(['timeout' => 15]))
+            $response = (new Client(['timeout' => static::SEND_TIMEOUT]))
                 ->post($this->getUriFor($command->getEndpoint()), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
                     'headers'       => $headers,
@@ -246,6 +249,13 @@ class ApiCommandTransport implements CommandTransportInterface
                     'verify'        => false
                 ]);
         } catch (GuzzleException $e) {
+            if (str_starts_with(ltrim($e->getMessage()), 'cURL error 28:')) {
+                throw new ApiCommandException(t(
+                    'No response from the Icinga 2 API received after %d seconds.'
+                    . ' Please make sure the action has not been performed, before retrying'
+                ), static::SEND_TIMEOUT, $e);
+            }
+
             throw new CommandTransportException(
                 'Can\'t connect to the Icinga 2 API: %u %s',
                 $e->getCode(),
@@ -311,7 +321,7 @@ class ApiCommandTransport implements CommandTransportInterface
     public function probe()
     {
         try {
-            $response = (new Client(['timeout' => 15]))
+            $response = (new Client(['timeout' => static::SEND_TIMEOUT]))
                 ->get($this->getUriFor(''), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
                     'headers'       => ['Accept' => 'application/json'],

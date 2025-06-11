@@ -17,6 +17,7 @@ use Icinga\Module\Icingadb\Forms\Command\Object\ScheduleServiceDowntimeForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\SendCustomNotificationForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\ToggleObjectFeaturesForm;
 use Icinga\Security\SecurityException;
+use Icinga\Util\Environment;
 use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -150,6 +151,10 @@ trait CommandActions
             // Prevents the framework already, this is just a fail-safe
             $this->httpBadRequest('Responding with JSON during a Web request is not supported');
         }
+
+        // Bulk operations may require more memory and time
+        Environment::raiseMemoryLimit();
+        Environment::raiseExecutionTime();
 
         if (is_string($form)) {
             /** @var CommandForm $form */
