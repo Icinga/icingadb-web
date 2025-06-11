@@ -251,6 +251,9 @@ class Host extends Model
 
     public function createRelations(Relations $relations)
     {
+        $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
+        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
+
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('eventcommand', Eventcommand::class);
         $relations->belongsTo('checkcommand', Checkcommand::class);
@@ -279,14 +282,12 @@ class Host extends Model
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->through(HostgroupMember::class);
 
-        $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
         $relations->hasMany('comment', Comment::class)->setJoinType('LEFT');
         $relations->hasMany('downtime', Downtime::class)->setJoinType('LEFT');
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
-        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
 
         $relations->belongsToMany('from', DependencyEdge::class)
             ->setTargetCandidateKey('from_node_id')
