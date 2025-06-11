@@ -221,13 +221,11 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        // Collect custom variables first and check for exact matches
+        // Collect custom variables
         $parsedArrayVars = [];
         $varSuggestions = [];
-        $exactVarMatches = [];
-        $halfLimit = (int) (static::DEFAULT_LIMIT / 2);
-
         $exactSearchTerm = trim($searchTerm, ' *');
+        $titleAdded = false;
         if ($exactSearchTerm !== '') {
             foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
                 $search = $name = $customVar->flatname;
@@ -245,9 +243,20 @@ class ObjectSuggestions extends Suggestions
                     if (isset($customVar->$relation)) {
                         $varRelation = $relation . '.vars.' . $search;
                         $varLabel = sprintf($label, $name);
+                        // Suggest exact custom variable matches first
                         if ($name === $exactSearchTerm) {
-                            $exactVarMatches[$varRelation] = $varLabel;
-                        } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
+                            if ($titleAdded === false) {
+                                $this->addHtml(HtmlElement::create(
+                                    'li',
+                                    ['class' => static::SUGGESTION_TITLE_CLASS],
+                                    t('Best Suggestions')
+                                ));
+
+                                $titleAdded = true;
+                            }
+
+                            yield $varRelation => $varLabel;
+                        } else {
                             $varSuggestions[$varRelation] = $varLabel;
                         }
                     }
@@ -255,58 +264,39 @@ class ObjectSuggestions extends Suggestions
             }
         }
 
-        // Adjust the number of columns to be suggested based on custom variable count
-        $varCount = count($exactVarMatches) + count($varSuggestions);
-        $colLimit = $halfLimit;
-        if ($varCount < $halfLimit) {
-            $colLimit = $halfLimit + ($halfLimit - $varCount);
-        }
-
-        // Exact custom variable matches first
-        if (! empty($exactVarMatches)) {
-            $this->addHtml(HtmlElement::create(
-                'li',
-                ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Best Suggestions')
-            ));
-
-            foreach ($exactVarMatches as $relation => $label) {
-                yield $relation => $label;
-            }
-        }
-
         // Ordinary columns comes after exact matches,
         // or if there ar no exact matches they come first
-        $colCount = 0;
+        $titleAdded = false;
         foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
-            if ($colCount > $colLimit) {
-                break;
-            }
-
             if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
-                if ($colCount === 0) {
+                if ($titleAdded === false) {
                     $this->addHtml(HtmlElement::create(
                         'li',
                         ['class' => static::SUGGESTION_TITLE_CLASS],
                         t('Columns')
                     ));
-                }
 
-                $colCount++;
+                    $titleAdded = true;
+                }
 
                 yield $columnName => $columnMeta;
             }
         }
 
         // Finally, the other custom variable suggestions
-        if (! empty($varSuggestions)) {
-            $this->addHtml(HtmlElement::create(
-                'li',
-                ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Custom Variables')
-            ));
+        $titleAdded = false;
+        foreach ($varSuggestions as $relation => $label) {
+            if ($this->matchSuggestion($relation, $label, $searchTerm)) {
+                if ($titleAdded === false) {
+                    $this->addHtml(HtmlElement::create(
+                        'li',
+                        ['class' => static::SUGGESTION_TITLE_CLASS],
+                        t('Custom Variables')
+                    ));
 
-            foreach ($varSuggestions as $relation => $label) {
+                    $titleAdded = true;
+                }
+
                 yield $relation => $label;
             }
         }
