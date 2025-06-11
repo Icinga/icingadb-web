@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -26,6 +27,7 @@ use ipl\Orm\Relations;
  * @property bool $icinga2_performance_data_enabled
  * @property DateTime $icinga2_start_time
  * @property string $icinga2_version
+ * @property string $icingadb_version
  */
 class Instance extends Model
 {
@@ -41,7 +43,7 @@ class Instance extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'endpoint_id',
             'heartbeat',
@@ -55,6 +57,12 @@ class Instance extends Model
             'icinga2_start_time',
             'icinga2_version'
         ];
+
+        if (Backend::supportsDependencies()) {
+            $columns[] = 'icingadb_version';
+        }
+
+        return $columns;
     }
 
     public function getDefaultSort()

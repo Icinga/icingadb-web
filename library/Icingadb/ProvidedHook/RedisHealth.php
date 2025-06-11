@@ -6,6 +6,7 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Exception;
 use Icinga\Application\Hook\HealthHook;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
@@ -27,6 +28,7 @@ class RedisHealth extends HealthHook
                 $lastIcingaHeartbeat = time();
             }
 
+            $server = Backend::getRedis()->getConnection()->info('Server')['Server'];
             $instance = Instance::on($this->getDb())->columns('heartbeat')->first();
 
             if ($instance === null) {
@@ -39,10 +41,15 @@ class RedisHealth extends HealthHook
                 return;
             }
 
+            $this->setMetrics($server);
+
             $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
             if (! $outdatedDbHeartbeat || $instance->heartbeat->getTimestamp() <= $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_OK);
-                $this->setMessage(t('Redis available and up to date.'));
+                $this->setMessage(sprintf(
+                    t('Redis available and in sync with Icinga. (Version: %s)'),
+                    $server['redis_version'] ?? t('N/A')
+                ));
             } elseif ($instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat) {
                 $this->setState(self::STATE_CRITICAL);
                 $this->setMessage(t('Redis outdated. Make sure Icinga 2 is running and connected to Redis.'));

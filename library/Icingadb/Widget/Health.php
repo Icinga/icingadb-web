@@ -57,6 +57,10 @@ class Health extends BaseHtmlElement
                 $this->data->endpoint->name ?: t('N/A')
             ),
             new VerticalKeyValue(
+                t('Icinga DB Version'),
+                $this->data->icingadb_version ?? t('N/A')
+            ),
+            new VerticalKeyValue(
                 t('Active Icinga Web Endpoint'),
                 gethostname() ?: t('N/A')
             )
