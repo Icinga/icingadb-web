@@ -86,12 +86,13 @@ class Controller extends CompatController
     {
         // All of that is essentially what `ColumnControl::apply()` should do
         $viewMode = $this->getRequest()->getUrl()->getParam($viewModeSwitcher->getViewModeParam());
-        $columnsDef = $this->params->shift('columns');
-        if (! $columnsDef) {
-            if ($viewMode === 'tabular') {
-                $this->httpBadRequest('Missing parameter "columns"');
-            }
 
+        if ($viewMode === 'tabular' && ! $this->params->has('columns')) {
+            $this->httpBadRequest('Missing parameter "columns"');
+        }
+
+        $columnsDef = $this->params->shift('columns');
+        if (empty($columnsDef) || $columnsDef === '1') {
             return [];
         }
 
