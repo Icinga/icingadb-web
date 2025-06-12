@@ -123,7 +123,7 @@ class EventRenderer implements ItemRenderer
 
                 break;
             case 'state_change':
-                if ($layout !== 'minimal' && $layout !== 'header' && $item->state->state_type === 'soft') {
+                if ($item->state->state_type === 'soft') {
                     $stateType = 'soft_state';
                     $previousStateType = 'previous_soft_state';
 
@@ -131,12 +131,14 @@ class EventRenderer implements ItemRenderer
                         $previousStateType = 'hard_state';
                     }
 
-                    $visual->addHtml(
-                        new CheckAttempt(
-                            (int) $item->state->check_attempt,
-                            (int) $item->state->max_check_attempts
-                        )
-                    );
+                    if ($layout !== 'minimal' && $layout !== 'header') {
+                        $visual->addHtml(
+                            new CheckAttempt(
+                                (int) $item->state->check_attempt,
+                                (int) $item->state->max_check_attempts
+                            )
+                        );
+                    }
                 } else {
                     $stateType = 'hard_state';
                     $previousStateType = 'previous_hard_state';
