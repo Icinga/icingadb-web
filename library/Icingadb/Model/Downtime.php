@@ -5,7 +5,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
-use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
+use ipl\Orm\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;

@@ -392,9 +392,17 @@ class UrlMigrator
             'host_acknowledged' => [
                 'host.state.is_acknowledged' => self::NO_YES
             ],
-            'host_acknowledgement_type' => [
-                'host.state.is_acknowledged' => array_merge(self::NO_YES, ['sticky'])
-            ],
+            'host_acknowledgement_type' => function ($filter) {
+                $value = $filter->getValue();
+
+                if ($value == '2') {
+                    return Filter::equal('host.state.is_sticky_acknowledgement', 'y');
+                }
+
+                return isset(self::NO_YES[$value])
+                    ? Filter::equal('host.state.is_acknowledged', self::NO_YES[$value])
+                    : false;
+            },
             'host_action_url' => [
                 'host.action_url.action_url' => self::USE_EXPR
             ],
@@ -701,9 +709,17 @@ class UrlMigrator
             'service_acknowledged' => [
                 'service.state.is_acknowledged' => self::NO_YES
             ],
-            'service_acknowledgement_type' => [
-                'service.state.is_acknowledged' => array_merge(self::NO_YES, ['sticky'])
-            ],
+            'service_acknowledgement_type' => function ($filter) {
+                $value = $filter->getValue();
+
+                if ($value == '2') {
+                    return Filter::equal('service.state.is_sticky_acknowledgement', 'y');
+                }
+
+                return isset(self::NO_YES[$value])
+                    ? Filter::equal('service.state.is_acknowledged', self::NO_YES[$value])
+                    : false;
+            },
             'service_action_url' => [
                 'service.action_url.action_url' => self::USE_EXPR
             ],
