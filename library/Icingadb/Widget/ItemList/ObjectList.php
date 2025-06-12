@@ -150,7 +150,10 @@ class ObjectList extends ItemList
 
     protected function createListItem(object $data)
     {
+        $isDependencyNodeList = false;
         if ($data instanceof DependencyNode) {
+            $isDependencyNodeList = true;
+
             if (isset($data->redundancy_group_id)) {
                 $object = $data->redundancy_group;
             } else {
@@ -178,7 +181,6 @@ class ObjectList extends ItemList
             case $object instanceof Service:
                 $this
                     ->setDetailUrl(Url::fromPath('icingadb/service'))
-                    ->setMultiselectUrl(Links::servicesDetails())
                     ->addDetailFilterAttribute(
                         $item,
                         Filter::all(
@@ -187,21 +189,29 @@ class ObjectList extends ItemList
                         )
                     );
 
-                $this->addMultiSelectFilterAttribute(
-                    $item,
-                    Filter::all(
-                        Filter::equal('service.name', $object->name),
-                        Filter::equal('host.name', $object->host->name)
-                    )
-                );
+                if (! $isDependencyNodeList) {
+                    $this
+                        ->setMultiselectUrl(Links::servicesDetails())
+                        ->addMultiSelectFilterAttribute(
+                            $item,
+                            Filter::all(
+                                Filter::equal('service.name', $object->name),
+                                Filter::equal('host.name', $object->host->name)
+                            )
+                        );
+                }
 
                 break;
             case $object instanceof Host:
                 $this
                     ->setDetailUrl(Url::fromPath('icingadb/host'))
-                    ->setMultiselectUrl(Links::hostsDetails())
-                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
-                    ->addMultiSelectFilterAttribute($item, Filter::equal('host.name', $object->name));
+                    ->addDetailFilterAttribute($item, Filter::equal('name', $object->name));
+
+                if (! $isDependencyNodeList) {
+                    $this
+                        ->setMultiselectUrl(Links::hostsDetails())
+                        ->addMultiSelectFilterAttribute($item, Filter::equal('host.name', $object->name));
+                }
 
                 break;
 
