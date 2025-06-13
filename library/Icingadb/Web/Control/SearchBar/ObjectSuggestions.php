@@ -223,7 +223,7 @@ class ObjectSuggestions extends Suggestions
 
         $parsedArrayVars = [];
         $exactSearchTerm = trim($searchTerm, ' *');
-        $exactVarMatches = [];
+        $exactVarSearches = [];
         $titleAdded = false;
 
         // Suggest exact custom variable matches first
@@ -237,6 +237,7 @@ class ObjectSuggestions extends Suggestions
                 )) as $customVar
             ) {
                 $search = $name = $customVar->flatname;
+                $exactVarSearches[] = $search;
                 if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
                     $name = substr($search, 0, -(strlen($matches[1]) + 2));
                     if (isset($parsedArrayVars[$name])) {
@@ -249,7 +250,6 @@ class ObjectSuggestions extends Suggestions
 
                 foreach ($this->customVarSources as $relation => $label) {
                     if (isset($customVar->$relation)) {
-                        $varRelation = $relation . '.vars.' . $search;
                         if ($titleAdded === false) {
                             $this->addHtml(HtmlElement::create(
                                 'li',
@@ -260,9 +260,7 @@ class ObjectSuggestions extends Suggestions
                             $titleAdded = true;
                         }
 
-                        $exactVarMatches[] = $varRelation;
-
-                        yield $varRelation => sprintf($label, $name);
+                        yield $relation . '.vars.' . $search => sprintf($label, $name);
                     }
                 }
             }
@@ -289,9 +287,16 @@ class ObjectSuggestions extends Suggestions
 
         // Finally, the other custom variable suggestions
         $titleAdded = false;
-        foreach (
-            $this->getDb()->select($this->queryCustomvarConfig(Filter::like('flatname', $searchTerm))) as $customVar
-        ) {
+        if (! empty($exactVarSearches)) {
+            $varFilter = Filter::all(
+                Filter::like('flatname', $searchTerm),
+                Filter::unequal('flatname', $exactVarSearches)
+            );
+        } else {
+            $varFilter = Filter::like('flatname', $searchTerm);
+        }
+
+        foreach ($this->getDb()->select($this->queryCustomvarConfig($varFilter)) as $customVar) {
             $search = $name = $customVar->flatname;
             if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
                 $name = substr($search, 0, -(strlen($matches[1]) + 2));
@@ -305,25 +310,18 @@ class ObjectSuggestions extends Suggestions
 
             foreach ($this->customVarSources as $relation => $label) {
                 if (isset($customVar->$relation)) {
-                    $varRelation = $relation . '.vars.' . $search;
-                    $varLabel = sprintf($label, $name);
                     // Suggest exact custom variable matches first
-                    if (
-                        ! in_array($varRelation, $exactVarMatches)
-                        && $this->matchSuggestion($varRelation, $varLabel, $searchTerm)
-                    ) {
-                        if ($titleAdded === false) {
-                            $this->addHtml(HtmlElement::create(
-                                'li',
-                                ['class' => static::SUGGESTION_TITLE_CLASS],
-                                t('Custom Variables')
-                            ));
+                    if ($titleAdded === false) {
+                        $this->addHtml(HtmlElement::create(
+                            'li',
+                            ['class' => static::SUGGESTION_TITLE_CLASS],
+                            t('Custom Variables')
+                        ));
 
-                            $titleAdded = true;
-                        }
-
-                        yield $varRelation => $varLabel;
+                        $titleAdded = true;
                     }
+
+                    yield $relation . '.vars.' . $search => sprintf($label, $name);
                 }
             }
         }
