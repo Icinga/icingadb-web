@@ -221,16 +221,23 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        // Collect custom variables first and check for exact matches
         $parsedArrayVars = [];
-        $varSuggestions = [];
-        $exactVarMatches = [];
-        $halfLimit = (int) (static::DEFAULT_LIMIT / 2);
-
         $exactSearchTerm = trim($searchTerm, ' *');
+        $exactVarSearches = [];
+        $titleAdded = false;
+
+        // Suggest exact custom variable matches first
         if ($exactSearchTerm !== '') {
-            foreach ($this->getDb()->select($this->queryCustomvarConfig($searchTerm)) as $customVar) {
+            foreach (
+                $this->getDb()->select($this->queryCustomvarConfig(
+                    Filter::any(
+                        Filter::equal('flatname', $exactSearchTerm),
+                        Filter::like('flatname', $exactSearchTerm . '[*]') // Filter for array type custom variables
+                    )
+                )) as $customVar
+            ) {
                 $search = $name = $customVar->flatname;
+                $exactVarSearches[] = $search;
                 if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
                     $name = substr($search, 0, -(strlen($matches[1]) + 2));
                     if (isset($parsedArrayVars[$name])) {
@@ -243,71 +250,79 @@ class ObjectSuggestions extends Suggestions
 
                 foreach ($this->customVarSources as $relation => $label) {
                     if (isset($customVar->$relation)) {
-                        $varRelation = $relation . '.vars.' . $search;
-                        $varLabel = sprintf($label, $name);
-                        if ($name === $exactSearchTerm) {
-                            $exactVarMatches[$varRelation] = $varLabel;
-                        } elseif ($this->matchSuggestion($varRelation, $varLabel, $searchTerm)) {
-                            $varSuggestions[$varRelation] = $varLabel;
+                        if ($titleAdded === false) {
+                            $this->addHtml(HtmlElement::create(
+                                'li',
+                                ['class' => static::SUGGESTION_TITLE_CLASS],
+                                t('Best Suggestions')
+                            ));
+
+                            $titleAdded = true;
                         }
+
+                        yield $relation . '.vars.' . $search => sprintf($label, $name);
                     }
                 }
             }
         }
 
-        // Adjust the number of columns to be suggested based on custom variable count
-        $varCount = count($exactVarMatches) + count($varSuggestions);
-        $colLimit = $halfLimit;
-        if ($varCount < $halfLimit) {
-            $colLimit = $halfLimit + ($halfLimit - $varCount);
-        }
-
-        // Exact custom variable matches first
-        if (! empty($exactVarMatches)) {
-            $this->addHtml(HtmlElement::create(
-                'li',
-                ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Best Suggestions')
-            ));
-
-            foreach ($exactVarMatches as $relation => $label) {
-                yield $relation => $label;
-            }
-        }
-
         // Ordinary columns comes after exact matches,
         // or if there ar no exact matches they come first
-        $colCount = 0;
+        $titleAdded = false;
         foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
-            if ($colCount > $colLimit) {
-                break;
-            }
-
             if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
-                if ($colCount === 0) {
+                if ($titleAdded === false) {
                     $this->addHtml(HtmlElement::create(
                         'li',
                         ['class' => static::SUGGESTION_TITLE_CLASS],
                         t('Columns')
                     ));
-                }
 
-                $colCount++;
+                    $titleAdded = true;
+                }
 
                 yield $columnName => $columnMeta;
             }
         }
 
         // Finally, the other custom variable suggestions
-        if (! empty($varSuggestions)) {
-            $this->addHtml(HtmlElement::create(
-                'li',
-                ['class' => static::SUGGESTION_TITLE_CLASS],
-                t('Custom Variables')
-            ));
+        $titleAdded = false;
+        if (! empty($exactVarSearches)) {
+            $varFilter = Filter::all(
+                Filter::like('flatname', $searchTerm),
+                Filter::unequal('flatname', $exactVarSearches)
+            );
+        } else {
+            $varFilter = Filter::like('flatname', $searchTerm);
+        }
 
-            foreach ($varSuggestions as $relation => $label) {
-                yield $relation => $label;
+        foreach ($this->getDb()->select($this->queryCustomvarConfig($varFilter)) as $customVar) {
+            $search = $name = $customVar->flatname;
+            if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
+                $name = substr($search, 0, -(strlen($matches[1]) + 2));
+                if (isset($parsedArrayVars[$name])) {
+                    continue;
+                }
+
+                $parsedArrayVars[$name] = true;
+                $search = $name . '[*]';
+            }
+
+            foreach ($this->customVarSources as $relation => $label) {
+                if (isset($customVar->$relation)) {
+                    // Suggest exact custom variable matches first
+                    if ($titleAdded === false) {
+                        $this->addHtml(HtmlElement::create(
+                            'li',
+                            ['class' => static::SUGGESTION_TITLE_CLASS],
+                            t('Custom Variables')
+                        ));
+
+                        $titleAdded = true;
+                    }
+
+                    yield $relation . '.vars.' . $search => sprintf($label, $name);
+                }
             }
         }
     }
@@ -324,13 +339,13 @@ class ObjectSuggestions extends Suggestions
     }
 
     /**
-     * Create a query to fetch all available custom variables matching the given term
+     * Create a query to fetch all available custom variables matching the given filter
      *
-     * @param string $searchTerm
+     * @param Filter\Rule $filter
      *
      * @return Select
      */
-    protected function queryCustomvarConfig(string $searchTerm): Select
+    protected function queryCustomvarConfig(Filter\Rule $filter): Select
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
@@ -356,7 +371,8 @@ class ObjectSuggestions extends Suggestions
 
         $customVars->columns('flatname');
         $this->applyRestrictions($customVars);
-        $customVars->filter(Filter::like('flatname', $searchTerm));
+        $customVars->filter($filter);
+
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
 
