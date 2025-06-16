@@ -35,13 +35,6 @@ class DependencyEdgeState extends Model
         ];
     }
 
-    public function getColumnDefinitions(): array
-    {
-        return [
-            'failed' => t('Dependency Edge State Failed')
-        ];
-    }
-
     public function createBehaviors(Behaviors $behaviors): void
     {
         $behaviors->add(new Binary([
