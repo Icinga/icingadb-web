@@ -22,6 +22,8 @@ use ipl\Stdlib\Filter;
  * @property int $nodes_unknown_unhandled
  * @property int $nodes_warning_handled
  * @property int $nodes_warning_unhandled
+ * @property int $nodes_acknowledged
+ * @property int $nodes_problems_unacknowledged
  */
 class RedundancyGroupSummary extends DependencyNode
 {
