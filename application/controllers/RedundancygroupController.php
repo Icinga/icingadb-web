@@ -53,13 +53,13 @@ class RedundancygroupController extends Controller
      */
     protected function loadGroup(): void
     {
-        $query = RedundancyGroup::on($this->getDb())
-            ->with(['state'])
-            ->filter(Filter::equal('id', $this->groupId));
+        $query = DependencyNode::on($this->getDb())
+            ->with(['redundancy_group', 'redundancy_group.state'])
+            ->filter(Filter::equal('redundancy_group_id', $this->groupId));
 
         $this->applyRestrictions($query);
 
-        $this->group = $query->first();
+        $this->group = $query->first()?->redundancy_group;
 
         if ($this->group === null) {
             $this->httpNotFound($this->translate('Redundancy Group not found'));

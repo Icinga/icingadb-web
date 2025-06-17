@@ -13,7 +13,6 @@ use ipl\Orm\Defaults;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
-use ipl\Stdlib\Filter;
 
 /**
  * Redundancy group model.
@@ -86,11 +85,10 @@ class RedundancyGroup extends Model
             ->through(DependencyNode::class);
     }
 
-    public function createDefaults(Defaults $defaults)
+    public function createDefaults(Defaults $defaults): void
     {
         $defaults->add('summary', function (RedundancyGroup $group) {
-            $summary = RedundancyGroupSummary::on(Backend::getDb())
-                ->filter(Filter::equal('id', $group->id));
+            $summary = RedundancyGroupSummary::for($group->id, Backend::getDb());
 
             $this->applyRestrictions($summary);
 
