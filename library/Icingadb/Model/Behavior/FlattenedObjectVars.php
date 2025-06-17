@@ -17,6 +17,12 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
 {
     use Auth;
 
+    /** @var string[] The labels to rewrite for column definition */
+    private const LABEL_REWRITE = [
+        'user'      => 'contact',
+        'usergroup' => 'contactgroup'
+    ];
+
     /** @var Query */
     protected $query;
 
@@ -91,6 +97,10 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
         if (substr($name, -3) === '[*]') {
             // The suggestions also hide this from the label, so should this
             $name = substr($name, 0, -3);
+        }
+
+        if (array_key_exists($objectType, self::LABEL_REWRITE)) {
+            $objectType = self::LABEL_REWRITE[$objectType];
         }
 
         // Programmatically translated since the full definition is available in class ObjectSuggestions
