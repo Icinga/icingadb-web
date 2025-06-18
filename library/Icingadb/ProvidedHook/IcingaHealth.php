@@ -14,6 +14,8 @@ class IcingaHealth extends HealthHook
 {
     use Database;
 
+    public const REQUIRED_ICINGADB_VERSION = '1.4.0';
+
     /** @var Instance */
     protected $instance;
 
@@ -43,6 +45,15 @@ class IcingaHealth extends HealthHook
                 'Icinga DB is not running or not writing into the database'
                 . ' (make sure the icinga feature "icingadb" is enabled)'
             ));
+        } elseif (
+            ! isset($instance->icingadb_version)
+            || version_compare($instance->icingadb_version, self::REQUIRED_ICINGADB_VERSION, '<')
+        ) {
+            $this->setState(self::STATE_CRITICAL);
+            $this->setMessage(sprintf(
+                t('Icinga DB is outdated, please upgrade to version %s or later.'),
+                self::REQUIRED_ICINGADB_VERSION
+            ));
         } else {
             $this->setState(self::STATE_OK);
             $warningMessages = [];
@@ -60,11 +71,6 @@ class IcingaHealth extends HealthHook
             if (! $instance->icinga2_notifications_enabled) {
                 $this->setState(self::STATE_WARNING);
                 $warningMessages[] = t('Notifications are disabled');
-            }
-
-            if (! isset($instance->icingadb_version) || version_compare($instance->icingadb_version, '1.4.0', '<')) {
-                $this->setState(self::STATE_WARNING);
-                $warningMessages[] = t('Icinga DB is outdated, please upgrade to version 1.4 or later.');
             }
 
             if ($this->getState() === self::STATE_WARNING) {
