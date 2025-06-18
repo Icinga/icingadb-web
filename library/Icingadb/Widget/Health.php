@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\ProvidedHook\IcingaHealth;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\TimeAgo;
@@ -23,7 +24,17 @@ class Health extends BaseHtmlElement
 
     protected function assemble()
     {
-        if ($this->data->heartbeat->getTimestamp() > time() - 60) {
+        if (
+            ! isset($this->data->icingadb_version)
+            || version_compare($this->data->icingadb_version, IcingaHealth::REQUIRED_ICINGADB_VERSION, '<')
+        ) {
+            $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [
+                sprintf(
+                    t('Icinga DB is outdated, please upgrade to version %s or later.'),
+                    IcingaHealth::REQUIRED_ICINGADB_VERSION
+                )
+            ]));
+        } elseif ($this->data->heartbeat->getTimestamp() > time() - 60) {
             $this->add(Html::tag('div', ['class' => 'icinga-health up'], [
                 Html::sprintf(
                     t('Icinga 2 is up and running %s', '...since <timespan>'),
