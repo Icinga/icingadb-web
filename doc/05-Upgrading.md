@@ -5,6 +5,21 @@ If you are upgrading across multiple versions, make sure to follow the steps for
 
 ## Upgrading to Icinga DB Web v1.2
 
+**Requirements**
+
+This version is released alongside Icinga DB 1.4.0 and Icinga 2.15.0. A change to the internal communication API
+requires these updates to be applied together.
+
+**Terminology Changes**
+
+Due to user feedback, we changed the terminology of _users_ and _user groups_ configured in Icinga. Both are now called
+_contacts_ and _contact groups_ respectively.
+
+**Behavior Changes**
+
+Macros referencing properties of type datetime are now rendered in ATOM format by default instead of unix timestamps.
+(e.g. `$host.state.last_state_change$`)
+
 **Deprecations**
 
 The following classes have been deprecated and will be removed in a future release:
