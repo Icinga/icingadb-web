@@ -14,7 +14,7 @@ class IcingaHealth extends HealthHook
 {
     use Database;
 
-    public const REQUIRED_ICINGADB_VERSION = '1.4.0';
+    public const REQUIRED_ICINGADB_VERSION = 'v1.4.0';
 
     /** @var Instance */
     protected $instance;
