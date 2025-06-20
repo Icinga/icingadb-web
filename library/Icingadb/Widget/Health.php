@@ -26,7 +26,11 @@ class Health extends BaseHtmlElement
     {
         if (
             ! isset($this->data->icingadb_version)
-            || version_compare($this->data->icingadb_version, IcingaHealth::REQUIRED_ICINGADB_VERSION, '<')
+            || version_compare(
+                IcingaHealth::normalizeVersion($this->data->icingadb_version),
+                IcingaHealth::REQUIRED_ICINGADB_VERSION,
+                '<'
+            )
         ) {
             $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [
                 sprintf(

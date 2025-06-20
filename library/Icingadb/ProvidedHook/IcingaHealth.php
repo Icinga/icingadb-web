@@ -16,6 +16,24 @@ class IcingaHealth extends HealthHook
 
     public const REQUIRED_ICINGADB_VERSION = '1.4.0';
 
+    /**
+     * normalizeVersion extracts a version string from Icinga DB's reported
+     * version comparable with REQUIRED_ICINGADB_VERSION via version_compare.
+     *
+     * @param string $version Icinga DB version string to normalize.
+     *
+     * @return string Normalized Icinga DB version string.
+     */
+    public static function normalizeVersion(string $version): string
+    {
+        // Ignore leading "v" when the git tag is used, e.g., "v1.4.0".
+        $version = ltrim($version, 'v');
+        // Ignore everything after "-" used by git describe, e.g., "1.4.0-g...".
+        $version = explode('-', $version, 2)[0];
+
+        return $version;
+    }
+
     /** @var Instance */
     protected $instance;
 
@@ -47,7 +65,11 @@ class IcingaHealth extends HealthHook
             ));
         } elseif (
             ! isset($instance->icingadb_version)
-            || version_compare($instance->icingadb_version, self::REQUIRED_ICINGADB_VERSION, '<')
+            || version_compare(
+                self::normalizeVersion($instance->icingadb_version),
+                self::REQUIRED_ICINGADB_VERSION,
+                '<'
+            )
         ) {
             $this->setState(self::STATE_CRITICAL);
             $this->setMessage(sprintf(
