@@ -253,6 +253,7 @@ class Host extends Model
     {
         $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
         $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
+        $relations->hasOne('unreachable_parent', UnreachableParent::class)->setJoinType('LEFT');
 
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('eventcommand', Eventcommand::class);
