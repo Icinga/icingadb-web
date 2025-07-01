@@ -53,7 +53,6 @@ use ipl\Orm\ResultSet;
  * @property ?string $zone_id
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
- * @property ?int $total_children
  */
 class Service extends Model
 {
@@ -245,6 +244,7 @@ class Service extends Model
     {
         $relations->hasOne('state', ServiceState::class)->setJoinType('LEFT');
         $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
+        $relations->hasOne('unreachable_parent', UnreachableParent::class)->setJoinType('LEFT');
 
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('host', Host::class)->setJoinType('LEFT');
