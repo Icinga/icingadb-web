@@ -268,7 +268,8 @@ class Service extends Model
             ->setCandidateKey('command_endpoint_id');
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(ServiceCustomvar::class);
+            ->through(ServiceCustomvar::class)
+            ->setThroughAlias('t_service_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(ServiceCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)

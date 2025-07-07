@@ -83,7 +83,8 @@ class Timeperiod extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(TimeperiodCustomvar::class);
+            ->through(TimeperiodCustomvar::class)
+            ->setThroughAlias('t_timeperiod_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(TimeperiodCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)
