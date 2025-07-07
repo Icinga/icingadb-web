@@ -21,11 +21,11 @@ SELECT host.id
 FROM host
 WHERE (host.id NOT IN ((SELECT sub_customvar_flat_host.id AS sub_customvar_flat_host_id
                         FROM customvar_flat sub_customvar_flat
-                                 INNER JOIN host_customvar sub_customvar_flat_host_customvar
-                                            ON sub_customvar_flat_host_customvar.customvar_id =
+                                 INNER JOIN host_customvar sub_customvar_flat_t_host_customvar
+                                            ON sub_customvar_flat_t_host_customvar.customvar_id =
                                                sub_customvar_flat.customvar_id
                                  INNER JOIN host sub_customvar_flat_host
-                                            ON sub_customvar_flat_host.id = sub_customvar_flat_host_customvar.host_id
+                                            ON sub_customvar_flat_host.id = sub_customvar_flat_t_host_customvar.host_id
                         WHERE ((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?))
                           AND (sub_customvar_flat_host.id IS NOT NULL)
                         GROUP BY sub_customvar_flat_host.id
@@ -38,11 +38,11 @@ SELECT host.id
 FROM host
 WHERE (host.id NOT IN ((SELECT sub_customvar_flat_host.id AS sub_customvar_flat_host_id
                         FROM customvar_flat sub_customvar_flat
-                                 INNER JOIN host_customvar sub_customvar_flat_host_customvar
-                                            ON sub_customvar_flat_host_customvar.customvar_id =
+                                 INNER JOIN host_customvar sub_customvar_flat_t_host_customvar
+                                            ON sub_customvar_flat_t_host_customvar.customvar_id =
                                                sub_customvar_flat.customvar_id
                                  INNER JOIN host sub_customvar_flat_host
-                                            ON sub_customvar_flat_host.id = sub_customvar_flat_host_customvar.host_id
+                                            ON sub_customvar_flat_host.id = sub_customvar_flat_t_host_customvar.host_id
                         WHERE (((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?)) OR
                                ((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?)))
                           AND (sub_customvar_flat_host.id IS NOT NULL)
@@ -56,22 +56,22 @@ SELECT host.id
 FROM host
 WHERE ((host.id NOT IN ((SELECT sub_customvar_flat_host.id AS sub_customvar_flat_host_id
                          FROM customvar_flat sub_customvar_flat
-                                  INNER JOIN host_customvar sub_customvar_flat_host_customvar
-                                             ON sub_customvar_flat_host_customvar.customvar_id =
+                                  INNER JOIN host_customvar sub_customvar_flat_t_host_customvar
+                                             ON sub_customvar_flat_t_host_customvar.customvar_id =
                                                 sub_customvar_flat.customvar_id
                                   INNER JOIN host sub_customvar_flat_host
-                                             ON sub_customvar_flat_host.id = sub_customvar_flat_host_customvar.host_id
+                                             ON sub_customvar_flat_host.id = sub_customvar_flat_t_host_customvar.host_id
                          WHERE ((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?))
                            AND (sub_customvar_flat_host.id IS NOT NULL)
                          GROUP BY sub_customvar_flat_host.id
                          HAVING COUNT(DISTINCT sub_customvar_flat.id) >= ?)) OR host.id IS NULL))
   AND (host.id IN ((SELECT sub_customvar_flat_host.id AS sub_customvar_flat_host_id
                     FROM customvar_flat sub_customvar_flat
-                             INNER JOIN host_customvar sub_customvar_flat_host_customvar
-                                        ON sub_customvar_flat_host_customvar.customvar_id =
+                             INNER JOIN host_customvar sub_customvar_flat_t_host_customvar
+                                        ON sub_customvar_flat_t_host_customvar.customvar_id =
                                            sub_customvar_flat.customvar_id
                              INNER JOIN host sub_customvar_flat_host
-                                        ON sub_customvar_flat_host.id = sub_customvar_flat_host_customvar.host_id
+                                        ON sub_customvar_flat_host.id = sub_customvar_flat_t_host_customvar.host_id
                     WHERE (sub_customvar_flat.flatname = ?)
                       AND (sub_customvar_flat.flatvalue = ?)
                     GROUP BY sub_customvar_flat_host.id
@@ -84,11 +84,11 @@ SELECT host.id
 FROM host
 WHERE host.id IN ((SELECT sub_customvar_flat_host.id AS sub_customvar_flat_host_id
                    FROM customvar_flat sub_customvar_flat
-                            INNER JOIN host_customvar sub_customvar_flat_host_customvar
-                                       ON sub_customvar_flat_host_customvar.customvar_id =
+                            INNER JOIN host_customvar sub_customvar_flat_t_host_customvar
+                                       ON sub_customvar_flat_t_host_customvar.customvar_id =
                                           sub_customvar_flat.customvar_id
                             INNER JOIN host sub_customvar_flat_host
-                                       ON sub_customvar_flat_host.id = sub_customvar_flat_host_customvar.host_id
+                                       ON sub_customvar_flat_host.id = sub_customvar_flat_t_host_customvar.host_id
                    WHERE ((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?))
                       OR ((sub_customvar_flat.flatname = ?) AND (sub_customvar_flat.flatvalue = ?))
                    GROUP BY sub_customvar_flat_host.id
