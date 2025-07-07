@@ -135,7 +135,8 @@ class User extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(UserCustomvar::class);
+            ->through(UserCustomvar::class)
+            ->setThroughAlias('t_user_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(UserCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)

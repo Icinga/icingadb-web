@@ -92,7 +92,8 @@ class Servicegroup extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(ServicegroupCustomvar::class);
+            ->through(ServicegroupCustomvar::class)
+            ->setThroughAlias('t_servicegroup_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(ServicegroupCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)
