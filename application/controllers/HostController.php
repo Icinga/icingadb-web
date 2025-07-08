@@ -13,7 +13,6 @@ use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
-use Icinga\Module\Icingadb\Model\DependencyEdge;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
@@ -32,7 +31,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
-use ipl\Sql\Filter\Exists;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -443,7 +441,7 @@ class HostController extends Controller
      */
     protected function fetchDependencyNodes(bool $parents = false): Query
     {
-        $query = DependencyNode::on($this->getDb())
+        $query = DependencyNode::forHost($this->host->id, $this->getDb(), $parents)
             ->with([
                 'host',
                 'host.state',
@@ -457,8 +455,6 @@ class HostController extends Controller
                 'redundancy_group.state'
             ])
             ->setResultSetClass(VolatileStateResults::class);
-
-        $this->joinFix($query, $this->host->id, $parents);
 
         $this->applyRestrictions($query);
 
@@ -540,43 +536,5 @@ class HostController extends Controller
     protected function getDefaultTabControls(): array
     {
         return [new ObjectHeader($this->host)];
-    }
-
-    /**
-     * Filter the query to only include (direct) parents or children of the given object.
-     *
-     * @todo This is a workaround, remove it once https://github.com/Icinga/ipl-orm/issues/76 is fixed
-     *
-     * @param Query $query
-     * @param string $objectId
-     * @param bool $fetchParents Fetch parents if true, children otherwise
-     */
-    protected function joinFix(Query $query, string $objectId, bool $fetchParents = false): void
-    {
-        $filterTable = $fetchParents ? 'child' : 'parent';
-        $utilizeType = $fetchParents ? 'parent' : 'child';
-
-        $edge = DependencyEdge::on($this->getDb())
-            ->utilize($utilizeType)
-            ->columns([new Expression('1')])
-            ->filter(Filter::equal("$filterTable.host.id", $objectId))
-            ->filter(Filter::unlike("$filterTable.service.id", '*'));
-
-        $edge->getFilter()->metaData()->set('forceOptimization', false);
-
-        $resolver = $edge->getResolver();
-
-        $edgeAlias = $resolver->getAlias(
-            $resolver->resolveRelation($resolver->qualifyPath($utilizeType, $edge->getModel()->getTableName()))
-                ->getTarget()
-        );
-
-        $query->filter(new Exists(
-            $edge->assembleSelect()
-                ->where(
-                    "$edgeAlias.id = "
-                    . $query->getResolver()->qualifyColumn('id', $query->getModel()->getTableName())
-                )
-        ));
     }
 }

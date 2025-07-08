@@ -10,7 +10,10 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Sql\Connection;
 use ipl\Sql\Expression;
+use ipl\Sql\Filter\Exists;
+use ipl\Stdlib\Filter;
 
 /**
  * Dependency node model.
@@ -129,5 +132,54 @@ class DependencyNode extends Model
         //       "to.dependency_node" is the crucial part, as "dependency_node" is said self-join.
         $relations->hasOne('dependency_node', self::class)
             ->setForeignKey('id');
+    }
+
+    /**
+     * Get the query with only (direct) parents or children of the given host id.
+     *
+     * @internal Bug: This fix is required for host based queries. Otherwise, ipl-orm makes two subqueries
+     * from the filter, which leads to incorrect results.
+     *
+     * @todo This is a workaround, remove it once https://github.com/Icinga/ipl-orm/issues/119 is fixed
+     *
+     * @param string $hostId Host id to fetch parents or children for
+     * @param Connection $db The database connection
+     * @param bool $fetchParents Fetch parents if true, children otherwise
+     *
+     * @return Query
+     */
+    public static function forHost(string $hostId, Connection $db, bool $fetchParents = false): Query
+    {
+        $filterTable = $fetchParents ? 'child' : 'parent';
+        $utilizeType = $fetchParents ? 'parent' : 'child';
+
+        $edge = DependencyEdge::on($db)
+            ->utilize($utilizeType)
+            ->columns([new Expression('1')])
+            ->filter(Filter::all(
+                Filter::equal("$filterTable.host.id", $hostId),
+                Filter::unlike("$filterTable.service.id", '*')
+            ));
+
+        $edge->getFilter()->metaData()->set('forceOptimization', false);
+
+        $resolver = $edge->getResolver();
+
+        $edgeAlias = $resolver->getAlias(
+            $resolver->resolveRelation($resolver->qualifyPath($utilizeType, $edge->getModel()->getTableName()))
+                ->getTarget()
+        );
+
+        $query = self::on($db);
+
+        $query->filter(new Exists(
+            $edge->assembleSelect()
+                ->where(
+                    "$edgeAlias.id = "
+                    . $query->getResolver()->qualifyColumn('id', $query->getModel()->getTableName())
+                )
+        ));
+
+        return $query;
     }
 }
