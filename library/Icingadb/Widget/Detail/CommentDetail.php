@@ -110,7 +110,7 @@ class CommentDetail extends BaseHtmlElement
         }
 
         $action = Links::commentsDelete();
-        $action->setFilter(Filter::equal('name', $this->comment->name));
+        $action->setFilter(Filter::equal('comment.name', $this->comment->name));
 
         return (new DeleteCommentForm())
             ->setObjects([$this->comment])

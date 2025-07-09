@@ -55,7 +55,7 @@ class DowntimeDetail extends BaseHtmlElement
     protected function createCancelDowntimeForm()
     {
         $action = Links::downtimesDelete();
-        $action->setFilter(Filter::equal('name', $this->downtime->name));
+        $action->setFilter(Filter::equal('downtime.name', $this->downtime->name));
 
         return (new DeleteDowntimeForm())
             ->setObjects([$this->downtime])
