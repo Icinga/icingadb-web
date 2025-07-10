@@ -170,7 +170,7 @@ class DependencyNode extends Model
                 ->getTarget()
         );
 
-        $query = self::on($db);
+        $query = static::on($db);
 
         $query->filter(new Exists(
             $edge->assembleSelect()
