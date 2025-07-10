@@ -6,10 +6,11 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -80,6 +81,8 @@ class NotificationsController extends Controller
             Filter::unlike('service_id', '*'),
             Filter::like('history.service.id', '*')
         ));
+
+        OptimizerHints::disableOptimizerForHistoryQueries($notifications);
 
         yield $this->export($notifications);
 
