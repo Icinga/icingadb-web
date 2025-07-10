@@ -141,8 +141,8 @@ trait Auth
             }
 
             $customVarRelationName = array_search('customvar_flat', $relations, true);
-            $applyServiceRestriction = in_array('service', $relations, true);
-            $applyHostRestriction = in_array('host', $relations, true)
+            $applyServiceRestriction = $relations[0] === 'dependency_node' || in_array('service', $relations, true);
+            $applyHostRestriction = $relations[0] === 'dependency_node' || in_array('host', $relations, true)
                 // Hosts and services have a special relation as a service can't exist without its host.
                 // Hence why the hosts restriction is also applied if only services are queried.
                 || $applyServiceRestriction;
