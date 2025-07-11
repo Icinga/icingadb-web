@@ -91,7 +91,8 @@ class Hostgroup extends Model
         $relations->belongsTo('zone', Zone::class);
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(HostgroupCustomvar::class);
+            ->through(HostgroupCustomvar::class)
+            ->setThroughAlias('t_hostgroup_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(HostgroupCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)

@@ -275,7 +275,8 @@ class Host extends Model
             ->setCandidateKey('command_endpoint_id');
 
         $relations->belongsToMany('customvar', Customvar::class)
-            ->through(HostCustomvar::class);
+            ->through(HostCustomvar::class)
+            ->setThroughAlias('t_host_customvar');
         $relations->belongsToMany('customvar_flat', CustomvarFlat::class)
             ->through(HostCustomvar::class);
         $relations->belongsToMany('vars', Vars::class)
