@@ -11,4 +11,4 @@ on:
 jobs:
   php:
     name: PHP Testing
-    uses: icinga/github-actions/.github/workflows/php.yml@php-workflow
+    uses: icinga/github-actions/.github/workflows/php.yml@8224454836d2587e357c4012a5e302e47711cd28
