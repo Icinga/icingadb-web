@@ -651,7 +651,7 @@ class EventDetail extends BaseHtmlElement
     {
         switch ($this->event->event_type) {
             case 'notification':
-                $this->assembleNotificationEvent($this->event->notification);
+                $this->assembleNotificationEvent($this->event->notification_history);
 
                 break;
             case 'state_change':
