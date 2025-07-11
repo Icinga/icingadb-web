@@ -38,7 +38,7 @@ class HistoryController extends Controller
             'comment',
             'downtime',
             'flapping',
-            'notification',
+            'notification_history',
             'acknowledgement',
             'state'
         ]);

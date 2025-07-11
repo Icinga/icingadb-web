@@ -176,12 +176,12 @@ class EventRenderer implements ItemRenderer
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void
     {
-        if ($item->event_type === 'notification' && isset($item->notification->id)) {
-            $item->notification->history = $item;
-            $item->notification->host = $item->host;
-            $item->notification->service = $item->service;
+        if ($item->event_type === 'notification' && isset($item->notification_history->id)) {
+            $item->notification_history->history = $item;
+            $item->notification_history->host = $item->host;
+            $item->notification_history->service = $item->service;
 
-            $this->notificationRenderer->assembleTitle($item->notification, $title, $layout);
+            $this->notificationRenderer->assembleTitle($item->notification_history, $title, $layout);
 
             return;
         }
@@ -304,10 +304,10 @@ class EventRenderer implements ItemRenderer
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
         if ($item->event_type === 'notification') {
-            $item->notification->host = $item->host;
-            $item->notification->service = $item->service;
+            $item->notification_history->host = $item->host;
+            $item->notification_history->service = $item->service;
 
-            $this->notificationRenderer->assembleCaption($item->notification, $caption, $layout);
+            $this->notificationRenderer->assembleCaption($item->notification_history, $caption, $layout);
 
             return;
         }

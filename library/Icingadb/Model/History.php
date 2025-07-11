@@ -127,7 +127,7 @@ class History extends Model
             ->setCandidateKey('flapping_history_id')
             ->setForeignKey('id')
             ->setJoinType('LEFT');
-        $relations->hasOne('notification', NotificationHistory::class)
+        $relations->hasOne('notification_history', NotificationHistory::class)
             ->setCandidateKey('notification_history_id')
             ->setForeignKey('id')
             ->setJoinType('LEFT');

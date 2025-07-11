@@ -40,7 +40,7 @@ class EventController extends Controller
                'downtime.triggered_by.service',
                'downtime.triggered_by.service.state',
                'flapping',
-               'notification',
+               'notification_history',
                'acknowledgement',
                'state'
             ])
