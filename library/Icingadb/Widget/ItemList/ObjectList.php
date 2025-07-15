@@ -232,7 +232,7 @@ class ObjectList extends ItemList
                     ->setDetailUrl(Url::fromPath('icingadb/comment'))
                     ->setMultiselectUrl(Links::commentsDetails())
                     ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
-                    ->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
+                    ->addMultiSelectFilterAttribute($item, Filter::equal('comment.name', $object->name));
 
                 break;
             case $object instanceof Downtime:
@@ -240,7 +240,7 @@ class ObjectList extends ItemList
                     ->setDetailUrl(Url::fromPath('icingadb/downtime'))
                     ->setMultiselectUrl(Links::downtimesDetails())
                     ->addDetailFilterAttribute($item, Filter::equal('name', $object->name))
-                    ->addMultiSelectFilterAttribute($item, Filter::equal('name', $object->name));
+                    ->addMultiSelectFilterAttribute($item, Filter::equal('downtime.name', $object->name));
 
                 break;
             case $object instanceof NotificationHistory:
