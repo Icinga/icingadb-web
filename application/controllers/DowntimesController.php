@@ -195,7 +195,7 @@ class DowntimesController extends Controller
         return Url::fromPath('__CLOSE__');
     }
 
-    protected function fetchCommandTargets(): Query
+    protected function fetchCommandTargets(): array
     {
         $downtimes = Downtime::on($this->getDb())->with([
             'host',
@@ -208,7 +208,11 @@ class DowntimesController extends Controller
 
         $this->filter($downtimes);
 
-        return $downtimes;
+        // Return an array instead of a query to ensure individual permission checks
+        // This forces the system to use isGrantedOn() for each downtime individually
+        // rather than the bulk isGrantedOnType() check which doesn't work correctly
+        // for downtimes
+        return iterator_to_array($downtimes);
     }
 
     public function isGrantedOn(string $permission, Model $object): bool
