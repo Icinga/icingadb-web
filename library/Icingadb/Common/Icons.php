@@ -16,7 +16,7 @@ class Icons
 
     const IS_ACKNOWLEDGED = 'check';
 
-    const IS_FLAPPING = 'bolt';
+    const IS_FLAPPING = 'random';
 
     const IS_PERSISTENT = 'thumbtack';
 
