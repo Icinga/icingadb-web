@@ -151,31 +151,30 @@ abstract class State extends Model
         $icon = null;
         switch (true) {
             case $this->is_acknowledged:
-                $icon = new Icon(Icons::IS_ACKNOWLEDGED);
+                $icon = new Icon(Icons::IS_ACKNOWLEDGED, [
+                    'title' => sprintf('%s (%s)', strtoupper($this->getStateTextTranslated()), t('is acknowledged'))
+                ]);
 
                 break;
             case $this->in_downtime:
-                $icon = new Icon(
-                    Icons::IN_DOWNTIME,
-                    ['title' => sprintf(
+                $icon = new Icon(Icons::IN_DOWNTIME, [
+                    'title' => sprintf(
                         '%s (%s)',
                         strtoupper($this->getStateTextTranslated()),
                         $this->is_handled ? t('handled by Downtime') : t('in Downtime')
-                    )]
-                );
+                    )
+                ]);
 
                 break;
             case $this->is_flapping:
-                $icon = new Icon(Icons::IS_FLAPPING);
+                $icon = new Icon(Icons::IS_FLAPPING, [
+                    'title' => sprintf('%s (%s)', strtoupper($this->getStateTextTranslated()), t('is flapping'))
+                ]);
 
                 break;
             case ! $this->is_reachable:
                 $icon = new Icon(Icons::HOST_DOWN, [
-                    'title' => sprintf(
-                        '%s (%s)',
-                        strtoupper($this->getStateTextTranslated()),
-                        t('is unreachable')
-                    )
+                    'title' => sprintf('%s (%s)', strtoupper($this->getStateTextTranslated()), t('is unreachable'))
                 ]);
 
                 break;
