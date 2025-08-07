@@ -242,11 +242,14 @@ class ServicesController extends Controller
 
         $this->handleSearchRequest($query);
 
+        // Create problem toggle before shifting params. Otherwise, the toggle
+        // will redirect to the grid without the shifted params.
+        $problemToggle = $this->createProblemToggle();
+
         $this->params->shift('page'); // Handled by PivotTable internally
         $this->params->shift('limit'); // Handled by PivotTable internally
         $flipped = $this->params->shift('flipped', false);
 
-        $problemToggle = $this->createProblemToggle();
         $sortControl = $this->createSortControl($query, [
             'service.display_name' => t('Service Name'),
             'host.display_name' => t('Host Name'),
