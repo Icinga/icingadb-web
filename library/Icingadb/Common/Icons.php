@@ -22,6 +22,10 @@ class Icons
 
     const NOTIFICATION = 'bell';
 
+    const NOTIFICATIONS_DISABLED = 'bell-slash';
+
+    const ACTIVE_CHECKS_DISABLED = 'eye-slash';
+
     const REMOVE = 'trash';
 
     const USER = 'user';
