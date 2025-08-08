@@ -89,6 +89,20 @@ For this you need an `ApiUser` object with at least the following permissions on
 3. Then configure a command transport for Icinga DB Web
    using the credentials you just created via the `Configuration → Modules → icingadb → Command Transports` menu.
 
+But you can also do this manually by editing the configuration file
+`/etc/icingaweb2/modules/icingadb/command_transports.ini`. Every command transport is defined in a separate section
+with `[TRANSPORT_NAME]` as the section header.
+
+### Available settings
+
+| Option    | Description                                 |
+|-----------|---------------------------------------------|
+| transport | Type of command transport. Has to be `api`. |
+| host      | Hostname or IP address of the Icinga 2 API. |
+| port      | Port of the Icinga 2 API.                   |
+| username  | Username for the Icinga 2 API connection.   |
+| password  | Password for the Icinga 2 API connection.   |
+
 !!! info
 
     If you are running a high-availability Icinga 2 setup,
