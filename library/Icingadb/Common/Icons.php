@@ -24,6 +24,10 @@ class Icons
 
     public const REMOVE = 'trash';
 
+    public const NOTIFICATIONS_DISABLED = 'bell-slash';
+
+    public const ACTIVE_CHECKS_DISABLED = 'eye-slash';
+
     public const USER = 'user';
 
     public const USERGROUP = 'users';
