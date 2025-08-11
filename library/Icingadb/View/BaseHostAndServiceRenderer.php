@@ -96,7 +96,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                 }
             }
 
-            $stateChange->setIcon($item->state->getIcon());
+            $stateChange->setIcon($this->getStateBallIcon($item));
             $stateChange->setHandled(
                 $item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)
             );
@@ -109,7 +109,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         $ballSize = $layout === 'minimal' ? StateBall::SIZE_BIG : StateBall::SIZE_LARGE;
 
         $stateBall = new StateBall($item->state->getStateText(), $ballSize);
-        $stateBall->add($item->state->getIcon());
+        $stateBall->add($this->getStateBallIcon($item));
         if ($item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
@@ -274,13 +274,13 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
 
         if (! $item->notifications_enabled) {
             $statusIcons->addHtml(
-                new Icon('bell-slash', ['title' => $this->translate('Notifications disabled')])
+                new Icon(Icons::NO_NOTIFICATIONS, ['title' => $this->translate('Notifications disabled')])
             );
         }
 
         if (! $item->active_checks_enabled) {
             $statusIcons->addHtml(
-                new Icon('eye-slash', ['title' => $this->translate('Active checks disabled')])
+                new Icon(Icons::NO_ACTIVE_CHECKS, ['title' => $this->translate('Active checks disabled')])
             );
         }
 
@@ -335,5 +335,20 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         }
 
         return false;
+    }
+
+    protected function getStateBallIcon($item): ?Icon
+    {
+        $icon = $item->state->getIcon();
+
+        if ($icon === null) {
+            if (! $item->notifications_enabled) {
+                $icon = new Icon(Icons::NO_NOTIFICATIONS, ['title' => $this->translate('Notifications disabled')]);
+            } elseif (! $item->active_checks_enabled) {
+                $icon = new Icon(Icons::NO_ACTIVE_CHECKS, ['title' => $this->translate('Active checks disabled')]);
+            }
+        }
+
+        return $icon;
     }
 }
