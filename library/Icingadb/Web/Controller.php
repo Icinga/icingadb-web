@@ -13,7 +13,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Web;
 use Icinga\Data\ConfigObject;
-use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -349,7 +348,9 @@ class Controller extends CompatController
      */
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
-        $columns = array_merge($query->getModel()->getSearchColumns(), $additionalColumns);
+        $model = $query->getModel();
+        $customVarColumns = CustomVarsRetrieverHook::getCustomVarColumns($model);
+        $columns = array_merge($model->getSearchColumns(), $additionalColumns, $customVarColumns);
         foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
                 $column = $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName());
