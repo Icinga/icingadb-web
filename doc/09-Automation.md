@@ -7,7 +7,8 @@ curl. This is also used in the example below.
 
 The request is required to be an Icinga Web API request. For this it is necessary to transmit the `Accept` HTTP header
 and set it to `application/json`. In addition to this, the request must be authenticated using the `Basic` schema.
-The HTTP request method is `POST` if not documented otherwise and it might be necessary to manually configure this (e.g. `-X POST` for curl).
+The HTTP request method is `POST` if not documented otherwise and it might be necessary to manually configure this
+(e.g. `-X POST` for curl).
 
 All endpoints support filters. To issue commands only for specific items, define a filter in the request's query string.
 If this filter is omitted, all items are affected.
