@@ -95,7 +95,7 @@ The returned list is ordered the same and any unrecognized url is left unchanged
 ]
 ```
 
-**cURL example:**  
+**curl example:**
 `curl -s -HContent-Type:application/json -HAccept:application/json -u icingaadmin:icinga http://localhost/icingaweb2/icingadb/migrate/monitoring-url -d '["/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)","/icingaweb2/businessprocess/process/show?config=production"]'`
 
 

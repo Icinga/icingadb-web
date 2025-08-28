@@ -1,12 +1,14 @@
 # Automation
 
 It is possible to issue command actions without a browser. To do so, a form needs to be submitted by a tool such as
-cUrl. This is also used in the example below.
+curl. This is also used in the example below.
 
 ## Request Format
 
 The request is required to be an Icinga Web API request. For this it is necessary to transmit the `Accept` HTTP header
 and set it to `application/json`. In addition to this, the request must be authenticated using the `Basic` schema.
+The HTTP request method is `POST` if not documented otherwise and it might be necessary to manually configure this
+(e.g. `-X POST` for curl).
 
 All endpoints support filters. To issue commands only for specific items, define a filter in the request's query string.
 If this filter is omitted, all items are affected.
@@ -52,6 +54,14 @@ BASEURL="http://localhost/icingaweb2"
 FILTER="host.name=docker-master"
 curl -H "Accept: application/json" -u $USER:$PASSWORD "$BASEURL/icingadb/hosts/add-comment?$FILTER" \
   -F "comment=kaput" -F "expire_time=2023-10-05T20:00:00" -F "expire=y"
+```
+
+```shell
+USER="icingaadmin"
+PASSWORD="icinga"
+BASEURL="http://localhost/icingaweb2"
+FILTER="host.name=docker-master"
+curl -H "Accept: application/json" -u $USER:$PASSWORD -X POST "$BASEURL/icingadb/hosts/delete-comment?$FILTER"
 ```
 
 ## Option Types
