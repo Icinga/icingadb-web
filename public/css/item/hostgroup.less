@@ -4,10 +4,17 @@
       align-content: center; // Actually, not sure why this works… .col is not a grid container
     }
 
-    > .main > .caption {
-      height: auto;
-      .text-ellipsis();
-      .line-clamp("reset");
+    > .main {
+      > .caption {
+        height: auto;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      > header > .title > .subject {
+        white-space: normal;
+        word-break: break-word;
+      }
     }
   }
 
