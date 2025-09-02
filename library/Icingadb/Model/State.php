@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Model\Behavior\BoolCast;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
-use ipl\Orm\Model;
+use Icinga\Module\Icingadb\Common\Model;
 use ipl\Web\Widget\Icon;
 
 /**
