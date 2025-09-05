@@ -98,9 +98,7 @@
       color: @text-color-light;
     }
 
-    form ~ .monitoring-migration-hint,
-    .search-migration-suggestions:not(:empty) + .search-migration-hint,
-    .monitoring-migration-suggestions:not(:empty) + .monitoring-migration-hint {
+    .search-migration-suggestions:not(:empty) + .search-migration-hint {
       display: block;
     }
 
@@ -154,10 +152,6 @@
           content: '\e804';
         }
       }
-    }
-
-    .search-migration-suggestions:not(:empty) ~ .monitoring-migration-suggestions:not(:empty) {
-      margin-bottom: .5em;
     }
   }
 }
