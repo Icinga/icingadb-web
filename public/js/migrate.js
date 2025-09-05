@@ -12,7 +12,6 @@
         '           <button type="button" class="close">Don\'t show this again</button>\n' +
         '           <ul class="search-migration-suggestions"></ul>\n' +
         '           <p class="search-migration-hint">Miss some results? Try the link(s) below</p>\n' +
-        '           <ul class="monitoring-migration-suggestions"></ul>\n' +
         '       </div>\n' +
         '       <div class="minimizer"><i class="icon-"></i></div>\n' +
         '    </div>\n' +
@@ -35,7 +34,6 @@
             super(icinga);
 
             this.knownMigrations = {};
-            this.urlMigrationReadyState = null;
             this.searchMigrationReadyState = null;
             this.$popup = null;
 
@@ -44,9 +42,6 @@
             this.tempStorage = Icinga.Storage.BehaviorStorage('icingadb.migrate');
             this.tempStorage.setBackend(window.sessionStorage);
             this.previousMigrations = {};
-
-            // We don't want to ask the server to migrate non-monitoring urls
-            this.isMonitoringUrl = new RegExp('^' + icinga.config.baseUrl + '/monitoring/');
 
             this.on('rendered', this.onRendered, this);
             this.on('close-column', this.onColumnClose, this);
@@ -92,7 +87,6 @@
         }
 
         prepareMigration($target) {
-            let monitoringUrls = {};
             let searchUrls = {};
 
             $target.each((_, container) => {
@@ -107,21 +101,12 @@
                     ) {
                         delete this.previousMigrations[containerId];
                     } else {
-                        if (href.match(this.isMonitoringUrl)) {
-                            monitoringUrls[containerId] = href;
-                        } else if ($container.find('[data-enrichment-type="search-bar"]').length) {
+                        if ($container.find('[data-enrichment-type="search-bar"]').length) {
                             searchUrls[containerId] = href;
                         }
                     }
                 }
             });
-
-            if (Object.keys(monitoringUrls).length) {
-                this.setUrlMigrationReadyState(false);
-                this.migrateUrls(monitoringUrls, 'monitoring');
-            } else {
-                this.setUrlMigrationReadyState(null);
-            }
 
             if (Object.keys(searchUrls).length) {
                 this.setSearchMigrationReadyState(false);
@@ -130,10 +115,7 @@
                 this.setSearchMigrationReadyState(null);
             }
 
-            if (
-                this.urlMigrationReadyState === null
-                && this.searchMigrationReadyState === null
-            ) {
+            if (this.searchMigrationReadyState === null) {
                 this.cleanupPopup();
             }
         }
@@ -230,14 +212,8 @@
                 }
             });
 
-            let endpoint, changeCallback;
-            if (type === 'monitoring') {
-                endpoint = 'monitoring-url';
-                changeCallback = this.changeUrlMigrationReadyState.bind(this);
-            } else {
-                endpoint = 'search-url';
-                changeCallback = this.changeSearchMigrationReadyState.bind(this);
-            }
+            const endpoint = 'search-url';
+            const changeCallback = this.changeSearchMigrationReadyState.bind(this);
 
             if (containerUrls.length) {
                 var req = $.ajax({
@@ -284,12 +260,7 @@
         }
 
         addSuggestions(urls, type) {
-            var where;
-            if (type === 'monitoring') {
-                where = '.monitoring-migration-suggestions';
-            } else {
-                where = '.search-migration-suggestions';
-            }
+            const where = '.search-migration-suggestions';
 
             var _this = this,
                 hasSuggestions = false,
@@ -432,14 +403,6 @@
                 this.minimizePopup();
                 return true;
             }
-        }
-
-        setUrlMigrationReadyState(state) {
-            this.urlMigrationReadyState = state;
-        }
-
-        changeUrlMigrationReadyState(state) {
-            this.setUrlMigrationReadyState(state);
         }
 
         setSearchMigrationReadyState(state) {
