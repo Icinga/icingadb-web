@@ -3,6 +3,14 @@
 Specific version upgrades are described below. Please note that version upgrades are incremental.
 If you are upgrading across multiple versions, make sure to follow the steps for each of them.
 
+## Upgrading to Icinga DB Web v1.3
+
+**Removed Features**
+
+* The migration widget in the top right is not toggled anymore for monitoring views, nor does it allow choosing
+  the preferred backend type for modules with support for IDO and Icinga DB. The default backend type is now
+  always Icinga DB.
+
 ## Upgrading to Icinga DB Web v1.2
 
 **Requirements**
