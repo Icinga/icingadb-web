@@ -5,16 +5,9 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Exception;
-use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Application\Hook;
-use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Icingadb\Compat\UrlMigrator;
-use Icinga\Module\Icingadb\Forms\SetAsBackendForm;
-use Icinga\Module\Icingadb\Hook\IcingadbSupportHook;
 use Icinga\Module\Icingadb\Web\Controller;
-use ipl\Html\HtmlString;
-use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 
@@ -106,64 +99,5 @@ class MigrateController extends Controller
         $response->setSuccessData($result);
 
         $response->sendResponse();
-    }
-
-    public function checkboxStateAction()
-    {
-        $this->assertHttpMethod('get');
-
-        $form = new SetAsBackendForm();
-        $form->setAction(Url::fromPath('icingadb/migrate/checkbox-submit')->getAbsoluteUrl());
-
-        $this->getDocument()->addHtml($form);
-    }
-
-    public function checkboxSubmitAction()
-    {
-        $this->assertHttpMethod('post');
-        $this->addPart(HtmlString::create('"bogus"'), 'Behavior:Migrate');
-
-        (new SetAsBackendForm())->handleRequest(ServerRequest::fromGlobals());
-    }
-
-    public function backendSupportAction()
-    {
-        $this->assertHttpMethod('post');
-        if (! $this->getRequest()->isApiRequest()) {
-            $this->httpBadRequest('No API request');
-        }
-
-        if (
-            ! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
-            || $matches[1] !== 'application/json'
-        ) {
-            $this->httpBadRequest('No JSON content');
-        }
-
-        $moduleSupportStates = [];
-        if (
-            Icinga::app()->getModuleManager()->hasEnabled('monitoring')
-            && $this->Auth()->hasPermission('module/monitoring')
-        ) {
-            $supportList = [];
-            foreach (Hook::all('Icingadb/IcingadbSupport') as $hook) {
-                /** @var IcingadbSupportHook $hook */
-                $supportList[$hook->getModule()->getName()] = $hook->supportsIcingaDb();
-            }
-
-            $moduleSupportStates = [];
-            foreach ($this->getRequest()->getPost() as $moduleName) {
-                if (isset($supportList[$moduleName])) {
-                    $moduleSupportStates[] = $supportList[$moduleName];
-                } else {
-                    $moduleSupportStates[] = false;
-                }
-            }
-        }
-
-        $this->getResponse()
-            ->json()
-            ->setSuccessData($moduleSupportStates)
-            ->sendResponse();
     }
 }

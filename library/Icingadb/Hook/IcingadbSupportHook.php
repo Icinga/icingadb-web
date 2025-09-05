@@ -13,9 +13,6 @@ abstract class IcingadbSupportHook
 {
     use HookUtils;
 
-    /** @var string key name of preference */
-    const PREFERENCE_NAME = 'icingadb.as_backend';
-
     /**
      * Return whether your module supports IcingaDB or not
      *
@@ -33,9 +30,7 @@ abstract class IcingadbSupportHook
      */
     final public static function isIcingaDbSetAsPreferredBackend(): bool
     {
-        return (bool) Session::getSession()
-            ->getNamespace('icingadb')
-            ->get(self::PREFERENCE_NAME, false);
+        return true;
     }
 
     /**
