@@ -7,9 +7,11 @@ If you are upgrading across multiple versions, make sure to follow the steps for
 
 **Removed Features**
 
-* The migration widget in the top right is not toggled anymore for monitoring views, nor does it allow choosing
-  the preferred backend type for modules with support for IDO and Icinga DB. The default backend type is now
-  always Icinga DB.
+* The migration widget in the top right has been removed. If you have not adjusted your navigation items,
+  dashboards and bookmarks to support the new filter syntax, you will need to do so manually now (see [Upgrading to
+  Icinga DB Web v1.1](#upgrading-to-icinga-db-web-v11) for details).
+  * Modules with support for IDO and Icinga DB will now default to use Icinga DB.
+  * The accompanying endpoint `icingadb/migrate/monitoring-url` has been removed.
 
 ## Upgrading to Icinga DB Web v1.2
 
