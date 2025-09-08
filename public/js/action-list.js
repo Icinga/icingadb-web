@@ -643,6 +643,7 @@
 
                 // Set data-icinga-url to make it available for Icinga.History.getCurrentState()
                 req.$target.closest('.container').data('icingaUrl', url);
+                req.$target.next('.scroll-to-top').attr('href', url.split('#')[0] + '#page-1');
 
                 this.icinga.history.replaceCurrentState();
             });
