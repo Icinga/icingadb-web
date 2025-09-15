@@ -311,24 +311,13 @@ form[name="form_confirm_removal"] {
 }
 
 .scroll-to-top {
-  .rounded-corners(50%);
+  border-radius: .4em;
+  padding: .25em;
+  display: inline-flex;
+  align-items: baseline;
+}
 
-  position: absolute;
-  right: 1em;
-  bottom: 1em;
-  font-size: 2em;
-  line-height: .75em;
-  padding: .5em;
-
-  -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-  -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-  box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-
-  &:hover {
-    background: @gray-light;
-  }
-
-  i.icon::before {
-    margin-right: 0;
-  }
+.scroll-to-top:hover {
+  background: @control-hover-bg;
+  text-decoration: none;
 }
