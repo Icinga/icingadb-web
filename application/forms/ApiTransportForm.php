@@ -8,8 +8,11 @@ use Icinga\Data\ConfigObject;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransportException;
 use Icinga\Web\Session;
+use ipl\Validator\CallbackValidator;
+use ipl\Validator\X509CertValidator;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Compat\CompatForm;
+use Throwable;
 
 class ApiTransportForm extends CompatForm
 {
@@ -32,6 +35,41 @@ class ApiTransportForm extends CompatForm
             'id'            => 'api_transport_host',
             'label'         => t('Host'),
             'description'   => t('Hostname or address of the Icinga master')
+        ]);
+
+        $this->addElement('text', 'caPath', [
+            'required'      => false,
+            'label'         => t('Verify Peer'),
+            'description'   => t('Path to a certificate file to verify the Icinga master\'s api certificate'),
+            'placeholder'   => t('Leave empty to disable peer verification'),
+            'validators'    => [new CallbackValidator(function (?string $value, CallbackValidator $validator) {
+                if (empty($value)) {
+                    return true;
+                }
+
+                if (! file_exists($value) || ! is_readable($value)) {
+                    $validator->addMessage(t('The specified certificate file does not exist or is not readable'));
+
+                    return false;
+                }
+
+                try {
+                    $cert = file_get_contents($value);
+                } catch (Throwable $e) {
+                    $validator->addMessage(t('Failed to read certificate file: %s', $e->getMessage()));
+
+                    return false;
+                }
+
+                $x509Validator = new X509CertValidator();
+                if (! $x509Validator->isValid($cert)) {
+                    $validator->addMessages($x509Validator->getMessages());
+
+                    return false;
+                }
+
+                return true;
+            })]
         ]);
 
         // TODO: Don't rely only on browser validation
