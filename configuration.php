@@ -553,6 +553,12 @@ namespace Icinga\Module\Icingadb {
             'description'   => $this->translate('List history'),
             'icon'          => 'history'
         ]);
+        $section->add(N_('Time Periods'), [
+            'url'           => 'icingadb/timeperiods',
+            'priority'      => 130,
+            'description'   => $this->translate('List time periods'),
+            'icon'          => 'clock'
+        ]);
     }
 
     $this->provideConfigTab('database', [

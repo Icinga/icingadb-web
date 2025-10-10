@@ -1,27 +1,20 @@
-// Controller für alle Timeperiods zeigt Liste
-<!--/
-indexAction
-Liste; zeigt erst mal nur Display Name
-
-/-->
-
 <?php
 
 /* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Application\Icinga;
 use Icinga\Module\Icingadb\Model\Timeperiod;
+use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemTable\TimePeriodsTable;
-use Icinga\Web\Controller;
 use ipl\Web\Compat\CompatController;
 
-class TimeperiodsController extends CompatController
+class TimeperiodsController extends Controller
 {
     public function indexAction(): void
     {
         $this->addTitleTab('Time Periods');
+
 
         $db = $this->getDb();
 
@@ -30,6 +23,10 @@ class TimeperiodsController extends CompatController
         $this->addContent(new TimePeriodsTable($query));
 
 
-
     }
 }
+
+// Controller für alle Timeperiods zeigt Liste
+
+//indexAction
+//Liste; zeigt erst mal nur Display Name
