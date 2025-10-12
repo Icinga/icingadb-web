@@ -12,32 +12,32 @@ class ProcessCheckResultCommand extends ObjectsCommand
     /**
      * Host up
      */
-    const HOST_UP = 0;
+    public const HOST_UP = 0;
 
     /**
      * Host down
      */
-    const HOST_DOWN = 1;
+    public const HOST_DOWN = 1;
 
     /**
      * Service ok
      */
-    const SERVICE_OK = 0;
+    public const SERVICE_OK = 0;
 
     /**
      * Service warning
      */
-    const SERVICE_WARNING = 1;
+    public const SERVICE_WARNING = 1;
 
     /**
      * Service critical
      */
-    const SERVICE_CRITICAL = 2;
+    public const SERVICE_CRITICAL = 2;
 
     /**
      * Service unknown
      */
-    const SERVICE_UNKNOWN = 3;
+    public const SERVICE_UNKNOWN = 3;
 
     /**
      * Status code of the host or service check result

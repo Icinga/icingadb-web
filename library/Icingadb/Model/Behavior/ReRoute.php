@@ -17,7 +17,7 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
      *
      * @var string[]
      */
-    const MIXED_TYPE_RELATIONS = ['downtime', 'comment', 'history', 'notification_history'];
+    public const MIXED_TYPE_RELATIONS = ['downtime', 'comment', 'history', 'notification_history'];
 
     public function __construct(array $routes)
     {

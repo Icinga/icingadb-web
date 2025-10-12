@@ -11,9 +11,9 @@ use LogicException;
 
 class PerfData
 {
-    const PERFDATA_OK = 'ok';
-    const PERFDATA_WARNING = 'warning';
-    const PERFDATA_CRITICAL = 'critical';
+    public const PERFDATA_OK = 'ok';
+    public const PERFDATA_WARNING = 'warning';
+    public const PERFDATA_CRITICAL = 'critical';
 
     /**
      * The performance data value being parsed

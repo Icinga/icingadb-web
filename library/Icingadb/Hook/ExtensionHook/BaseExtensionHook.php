@@ -11,38 +11,38 @@ abstract class BaseExtensionHook
     use HookUtils;
 
     /** @var int Used as default return value for {@see BaseExtensionHook::getLocation()} */
-    const IDENTIFY_LOCATION_BY_SECTION = -1;
+    public const IDENTIFY_LOCATION_BY_SECTION = -1;
 
     /** @var string Output section, right at the top */
-    const OUTPUT_SECTION = 'output';
+    public const OUTPUT_SECTION = 'output';
 
     /** @var string Graph section, below output */
-    const GRAPH_SECTION = 'graph';
+    public const GRAPH_SECTION = 'graph';
 
     /** @var string Detail section, below graphs */
-    const DETAIL_SECTION = 'detail';
+    public const DETAIL_SECTION = 'detail';
 
     /** @var string Action section, below action and note urls */
-    const ACTION_SECTION = 'action';
+    public const ACTION_SECTION = 'action';
 
     /** @var string Problem section, below comments and downtimes */
-    const PROBLEM_SECTION = 'problem';
+    public const PROBLEM_SECTION = 'problem';
 
     /** @var string Related section, below groups and notification recipients */
-    const RELATED_SECTION = 'related';
+    public const RELATED_SECTION = 'related';
 
     /** @var string State section, below check statistics and performance data */
-    const STATE_SECTION = 'state';
+    public const STATE_SECTION = 'state';
 
     /** @var string Config section, below custom variables and feature toggles */
-    const CONFIG_SECTION = 'config';
+    public const CONFIG_SECTION = 'config';
 
     /**
      * Base locations for all known sections
      *
      * @var array<string, int>
      */
-    const BASE_LOCATIONS = [
+    public const BASE_LOCATIONS = [
         self::OUTPUT_SECTION    => 1000,
         self::GRAPH_SECTION     => 1100,
         self::DETAIL_SECTION    => 1200,
