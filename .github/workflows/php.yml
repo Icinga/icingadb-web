@@ -1,18 +1,18 @@
-name: PHP
+name: CI
 
 on:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  ci:
-    name: CI
+  php:
+    name: PHP
     uses: Icinga/github-actions/.github/workflows/php.yml@php-workflows
     with:
       php-extensions: ldap
       dependencies: |
         {
-          "/usr/share/icingaweb2-modules/x509"      : "https://github.com/Icinga/icingaweb2-module-x509.git",
-          "/usr/share/icingaweb2-modules/pdfexport" : "https://github.com/Icinga/icingaweb2-module-pdfexport.git",
-          "/usr/share/icingaweb2-modules/reporting" : "https://github.com/Icinga/icingaweb2-module-reporting.git"
+          "./vendor/icingaweb2-modules/x509"       : "https://github.com/Icinga/icingaweb2-module-x509.git",
+          "./vendor/icingaweb2-modules/pdfexport"  : "https://github.com/Icinga/icingaweb2-module-pdfexport.git",
+          "./vendor/icingaweb2-modules/reporting"  : "https://github.com/Icinga/icingaweb2-module-reporting.git"
         }
