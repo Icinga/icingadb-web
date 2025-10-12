@@ -351,7 +351,7 @@ class Controller extends CompatController
                     }
                 }
 
-                if (!empty($unused)) {
+                if (! empty($unused)) {
                     $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
                 }
 

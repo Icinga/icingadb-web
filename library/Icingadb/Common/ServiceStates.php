@@ -9,15 +9,15 @@ namespace Icinga\Module\Icingadb\Common;
  */
 class ServiceStates
 {
-    const OK = 0;
+    public const OK = 0;
 
-    const WARNING = 1;
+    public const WARNING = 1;
 
-    const CRITICAL = 2;
+    public const CRITICAL = 2;
 
-    const UNKNOWN = 3;
+    public const UNKNOWN = 3;
 
-    const PENDING = 99;
+    public const PENDING = 99;
 
     /**
      * Get the integer value of the given textual service state

@@ -22,10 +22,10 @@ class ViewModeSwitcher extends Form
     ];
 
     /** @var string Default view mode */
-    const DEFAULT_VIEW_MODE = 'common';
+    public const DEFAULT_VIEW_MODE = 'common';
 
     /** @var string Default view mode param */
-    const DEFAULT_VIEW_MODE_PARAM = 'view';
+    public const DEFAULT_VIEW_MODE_PARAM = 'view';
 
     /** @var array View mode-icon pairs */
     public static $viewModes = [

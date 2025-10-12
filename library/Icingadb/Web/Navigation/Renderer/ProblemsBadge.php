@@ -18,8 +18,8 @@ abstract class ProblemsBadge extends NavigationItemRenderer
 {
     use Database;
 
-    const STATE_CRITICAL = 'critical';
-    const STATE_UNKNOWN = 'unknown';
+    public const STATE_CRITICAL = 'critical';
+    public const STATE_UNKNOWN = 'unknown';
 
     /** @var int Count cache */
     protected $count;

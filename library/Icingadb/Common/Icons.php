@@ -6,27 +6,27 @@ namespace Icinga\Module\Icingadb\Common;
 
 class Icons
 {
-    const COMMENT = 'comment';
+    public const COMMENT = 'comment';
 
-    const HOST_DOWN = 'sitemap';
+    public const HOST_DOWN = 'sitemap';
 
-    const UNREACHABLE = 'sitemap';
+    public const UNREACHABLE = 'sitemap';
 
-    const IN_DOWNTIME = 'plug';
+    public const IN_DOWNTIME = 'plug';
 
-    const IS_ACKNOWLEDGED = 'check';
+    public const IS_ACKNOWLEDGED = 'check';
 
-    const IS_FLAPPING = 'bolt';
+    public const IS_FLAPPING = 'bolt';
 
-    const IS_PERSISTENT = 'thumbtack';
+    public const IS_PERSISTENT = 'thumbtack';
 
-    const NOTIFICATION = 'bell';
+    public const NOTIFICATION = 'bell';
 
-    const REMOVE = 'trash';
+    public const REMOVE = 'trash';
 
-    const USER = 'user';
+    public const USER = 'user';
 
-    const USERGROUP = 'users';
+    public const USERGROUP = 'users';
 
-    const WARNING = 'exclamation-triangle';
+    public const WARNING = 'exclamation-triangle';
 }
