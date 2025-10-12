@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class CustomvarFlatTest extends TestCase
 {
-    const EMPTY_TEST_SOURCE = [
+    public const EMPTY_TEST_SOURCE = [
         ["dict.not_empty.foo","bar","dict","{\"empty\":{},\"not_empty\":{\"foo\":\"bar\"}}"],
         ["dict.empty",null,"dict","{\"empty\":{},\"not_empty\":{\"foo\":\"bar\"}}"],
         ["list[1]",null,"list","[[\"foo\",\"bar\"],[]]"],
@@ -20,7 +20,7 @@ class CustomvarFlatTest extends TestCase
         ["null","null","null","null"]
     ];
 
-    const EMPTY_TEST_RESULT = [
+    public const EMPTY_TEST_RESULT = [
         "dict" => [
             "not_empty" => [
                 "foo" => "bar"
@@ -36,7 +36,7 @@ class CustomvarFlatTest extends TestCase
         "null" => "null"
     ];
 
-    const SPECIAL_CHAR_TEST_SOURCE = [
+    public const SPECIAL_CHAR_TEST_SOURCE = [
         [
             "vhosts.xxxxxxxxxxxxx.mgmt.xxxxxx.com.http_port",
             "443",
@@ -55,7 +55,7 @@ class CustomvarFlatTest extends TestCase
         ["[4]","four","[4]","\"four\""]
     ];
 
-    const SPECIAL_CHAR_TEST_RESULT = [
+    public const SPECIAL_CHAR_TEST_RESULT = [
         "vhosts" => [
             "xxxxxxxxxxxxx.mgmt.xxxxxx.com" => [
                 "http_port" => 443
