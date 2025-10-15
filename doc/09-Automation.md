@@ -108,6 +108,11 @@ Please have a look at the [Monitoring Plugins Development Guidelines](https://ww
 
 ## Endpoints
 
+!!! info
+
+    Some of the endpoints support configuration options. These are explained in
+    the [Configuration](03-Configuration.md#available-settings-and-defaults) section.
+
 ### Acknowledge Problem
 
 #### Routes
@@ -117,14 +122,14 @@ Please have a look at the [Monitoring Plugins Development Guidelines](https://ww
 
 #### Options
 
-| Option      | Required | Type     | Depends On |
-|-------------|----------|----------|------------|
-| comment     | y        | Text     | -          |
-| persistent  | n        | BoolEnum | -          |
-| notify      | n        | BoolEnum | -          |
-| sticky      | n        | BoolEnum | -          |
-| expire      | n        | BoolEnum | -          |
-| expire_time | y        | DateTime | expire     |
+| Option      | Required | Type     | Depends On | Default      | Configuration Option     |
+|-------------|----------|----------|------------|--------------|--------------------------|
+| comment     | y        | Text     | -          | -            | acknowledge_comment_text |
+| persistent  | n        | BoolEnum | -          | n            | acknowledge_persistent   |
+| notify      | n        | BoolEnum | -          | y            | acknowledge_notify       |
+| sticky      | n        | BoolEnum | -          | n            | acknowledge_sticky       |
+| expire      | n        | BoolEnum | -          | n            | acknowledge_expire       |
+| expire_time | y        | DateTime | expire     | now + 1 hour | acknowledge_expire_time  |
 
 ### Add Comment
 
@@ -135,11 +140,11 @@ Please have a look at the [Monitoring Plugins Development Guidelines](https://ww
 
 #### Options
 
-| Option      | Required | Type     | Depends On |
-|-------------|----------|----------|------------|
-| comment     | y        | Text     | -          |
-| expire      | n        | BoolEnum | -          |
-| expire_time | y        | DateTime | expire     |
+| Option      | Required | Type     | Depends On | Default      | Configuration Option |
+|-------------|----------|----------|------------|--------------|----------------------|
+| comment     | y        | Text     | -          | -            | -                    |
+| expire      | n        | BoolEnum | -          | n            | comment_expire       |
+| expire_time | y        | DateTime | expire     | now + 1 hour | comment_expire_time  |
 
 ### Delete Comments
 
@@ -197,10 +202,10 @@ None.
 
 #### Options
 
-| Option      | Required | Type     |
-|-------------|----------|----------|
-| check_time  | y        | DateTime |
-| force_check | n        | BoolEnum |
+| Option      | Required | Type     | Default      |
+|-------------|----------|----------|--------------|
+| check_time  | y        | DateTime | now + 1 hour |
+| force_check | n        | BoolEnum | -            |
 
 ### Schedule Host Downtime
 
@@ -210,16 +215,16 @@ None.
 
 #### Options
 
-| Option        | Required | Type        | Depends On |
-|---------------|----------|-------------|------------|
-| comment       | y        | Text        | -          |
-| start         | y        | DateTime    | -          |
-| end           | y        | DateTime    | -          |
-| flexible      | n        | BoolEnum    | -          |
-| hours         | y        | Number      | flexible   |
-| minutes       | y        | Number      | flexible   |
-| all_services  | n        | BoolEnum    | -          |
-| child_options | n        | ChildOption | -          |
+| Option        | Required | Type        | Depends On | Default                                        | Configuration Option                              |
+|---------------|----------|-------------|------------|------------------------------------------------|---------------------------------------------------|
+| comment       | y        | Text        | -          | -                                              | hostdowntime_comment_text                         |
+| start         | y        | DateTime    | -          | now                                            | -                                                 |
+| end           | y        | DateTime    | -          | now + 1 hour (fixed), now + 2 hours (flexible) | hostdowntime_end_fixed, hostdowntime_end_flexible |
+| flexible      | n        | BoolEnum    | -          | n                                              | -                                                 |
+| hours         | y        | Number      | flexible   | 2                                              | hostdowntime_flexible_duration                    |
+| minutes       | y        | Number      | flexible   | 0                                              | hostdowntime_flexible_duration                    |
+| all_services  | n        | BoolEnum    | -          | n                                              | hostdowntime_all_services                         |
+| child_options | n        | ChildOption | -          | -                                              | -                                                 |
 
 ### Schedule Service Downtime
 
@@ -229,14 +234,14 @@ None.
 
 #### Options
 
-| Option   | Required | Type        | Depends On |
-|----------|----------|-------------|------------|
-| comment  | y        | Text        | -          |
-| start    | y        | DateTime    | -          |
-| end      | y        | DateTime    | -          |
-| flexible | n        | BoolEnum    | -          |
-| hours    | y        | Number      | flexible   |
-| minutes  | y        | Number      | flexible   |
+| Option   | Required | Type        | Depends On | Default                                        | Configuration Option                                    |
+|----------|----------|-------------|------------|------------------------------------------------|---------------------------------------------------------|
+| comment  | y        | Text        | -          | -                                              | servicedowntime_comment_text                            |
+| start    | y        | DateTime    | -          | now                                            | -                                                       |
+| end      | y        | DateTime    | -          | now + 1 hour (fixed), now + 2 hours (flexible) | servicedowntime_end_fixed, servicedowntime_end_flexible |
+| flexible | n        | BoolEnum    | -          | n                                              | -                                                       |
+| hours    | y        | Number      | flexible   | 2                                              | servicedowntime_flexible_duration                       |
+| minutes  | y        | Number      | flexible   | 0                                              | servicedowntime_flexible_duration                       |
 
 ### Delete Downtimes
 
@@ -257,7 +262,7 @@ None.
 
 #### Options
 
-| Option  | Required | Type     |
-|---------|----------|----------|
-| comment | y        | Text     |
-| forced  | n        | BoolEnum |
+| Option  | Required | Type     | Default | Configuration Option       |
+|---------|----------|----------|---------|----------------------------|
+| comment | y        | Text     | -       | -                          |
+| forced  | n        | BoolEnum | n       | custom_notification_forced |
