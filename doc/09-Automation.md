@@ -225,7 +225,7 @@ None.
 
 #### Routes
 
-* icingadb/services/schedule-check
+* icingadb/services/schedule-downtime
 
 #### Options
 
