@@ -4,8 +4,10 @@
 
 namespace Icinga\Module\Icingadb\Model;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\UnionModel;
 use ipl\Sql\Adapter\Pgsql;
@@ -39,6 +41,17 @@ class Hostgroupsummary extends UnionModel
     public static function on(Connection $db)
     {
         $q = parent::on($db);
+
+        $q->on(
+            Query::ON_SELECT_ASSEMBLED,
+            function () use ($q) {
+                $auth = new class () {
+                    use Auth;
+                };
+
+                $auth->assertColumnRestrictions($q->getFilter());
+            }
+        );
 
         $q->on($q::ON_SELECT_ASSEMBLED, function (Select $select) use ($q) {
             $model = $q->getModel();
