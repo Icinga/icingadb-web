@@ -6,12 +6,12 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Backend;
+use Icinga\Module\Icingadb\Common\Model;
 use ipl\Orm\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
-use ipl\Orm\Model;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
 

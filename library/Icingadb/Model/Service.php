@@ -12,7 +12,7 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
-use ipl\Orm\Model;
+use Icinga\Module\Icingadb\Common\Model;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
 

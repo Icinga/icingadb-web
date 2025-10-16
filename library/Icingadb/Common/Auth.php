@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Common;
 use Icinga\Authentication\Auth as IcingaAuth;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Authentication\ObjectAuthorization;
+use Icinga\Security\SecurityException;
 use Icinga\Util\StringHelper;
 use ipl\Orm\Compat\FilterProcessor;
 use ipl\Orm\Model;
@@ -107,6 +108,75 @@ trait Auth
     public function isMatchedOn(string $queryString, Model $object): bool
     {
         return ObjectAuthorization::matchesOn($queryString, $object);
+    }
+
+    /**
+     * Assert that the given filter does not contain any column restrictions
+     *
+     * @param Filter\Rule $filter The filter to check
+     *
+     * @return void
+     *
+     * @throws SecurityException
+     */
+    public function assertColumnRestrictions(Filter\Rule $filter): void
+    {
+        if ($this->getAuth()->getUser() === null || $this->getAuth()->getUser()->isUnrestricted()) {
+            return;
+        }
+
+        $forbiddenVars = Filter::all();
+        $protectedVars = Filter::any();
+        $hiddenVars = Filter::any();
+        foreach ($this->getAuth()->getUser()->getRoles() as $role) {
+            if (($restriction = $role->getRestrictions('icingadb/denylist/variables'))) {
+                $denied = Filter::none();
+                $hiddenVars->add($denied);
+                foreach (explode(',', $restriction) as $value) {
+                    $denied->add(Filter::like('name', trim($value))->ignoreCase());
+                }
+            }
+
+            if (($restriction = $role->getRestrictions('icingadb/protect/variables'))) {
+                $protected = Filter::none();
+                $protectedVars->add($protected);
+                foreach (explode(',', $restriction) as $value) {
+                    $protected->add(Filter::like('name', trim($value))->ignoreCase());
+                }
+            }
+        }
+
+        if (! $hiddenVars->isEmpty()) {
+            $forbiddenVars->add($hiddenVars);
+        }
+
+        if (! $protectedVars->isEmpty()) {
+            $forbiddenVars->add($protectedVars);
+        }
+
+        if ($forbiddenVars->isEmpty()) {
+            return;
+        }
+
+        $checkVars = static function (Filter\Rule $filter) use ($forbiddenVars, &$checkVars) {
+            if ($filter instanceof Filter\Chain) {
+                foreach ($filter as $rule) {
+                    $checkVars($rule);
+                }
+            } elseif (
+                ! $filter->metaData()->get('_isRestriction', false)
+                && preg_match('/^(?:host|service)\.vars\.(.*)/i', $filter->getColumn(), $matches)
+            ) {
+                if (! Filter::match($forbiddenVars, ['name' => $matches[1]])) {
+                    throw new SecurityException(
+                        'The variable "%s" is not allowed to be queried.',
+                        $matches[1]
+                    );
+                }
+            }
+        };
+
+        $checkVars($filter);
     }
 
     /**
@@ -333,9 +403,13 @@ trait Auth
                     foreach ($allowedColumns as $column) {
                         if (is_callable($column)) {
                             if ($column($condition->getColumn())) {
+                                $condition->metaData()->set('_isRestriction', true);
+
                                 return;
                             }
                         } elseif ($column === $condition->getColumn()) {
+                            $condition->metaData()->set('_isRestriction', true);
+
                             return;
                         }
                     }

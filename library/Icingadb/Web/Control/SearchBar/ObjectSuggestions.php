@@ -373,6 +373,15 @@ class ObjectSuggestions extends Suggestions
         $this->applyRestrictions($customVars);
         $customVars->filter($filter);
 
+        // applyRestrictions() does not hide protected vars, but since querying them is not possible anymore,
+        // we have to. Otherwise, the user can choose a protected var and get an error.
+        $protectedVarFilter = Filter::any();
+        foreach ($this->getAuth()->getRestrictions('icingadb/protect/variables') as $restriction) {
+            $protectedVarFilter->add($this->parseDenylist($restriction, 'flatname'));
+        }
+
+        $customVars->filter($protectedVarFilter);
+
         $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
         $customVars = $customVars->assembleSelect();
 
