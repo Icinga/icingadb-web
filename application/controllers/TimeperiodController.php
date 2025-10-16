@@ -4,12 +4,13 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
-use Icinga\Module\Icingadb\Widget\Detail\TimePeriodDetailsTable;
+use Icinga\Exception\NotFoundError;
+use Icinga\Module\Icingadb\Model\TimeperiodRange;
+use Icinga\Module\Icingadb\Widget\Detail\TimePeriodDetail;
 use ipl\Stdlib\Filter;
 use Icinga\Module\Icingadb\Model\Timeperiod;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemTable\TimePeriodsTable;
-use ipl\Web\Compat\CompatController;
+
 
 class TimeperiodController extends Controller
 {
@@ -22,16 +23,11 @@ class TimeperiodController extends Controller
             ->filter(Filter::equal('id', $timePeriodId))
             ->first();
 
-//        $query = Timeperiod::on($db);
+        $ranges = TimeperiodRange::on($this->getDb())
+            ->filter(Filter::equal('timeperiod_id', $timePeriodId));
 
-        $this->addContent(new TimePeriodDetailsTable($timePeriod));
+
+            $this->addContent(new TimePeriodDetail($timePeriod, $ranges));
 
     }
 }
-
-
-// Controller für details zu einer Timeperiod
-
-//indexAction
-//
-//Detail; zeigt Display Name oben im Header, Name und Ranges im Content

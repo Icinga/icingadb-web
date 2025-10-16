@@ -15,18 +15,10 @@ class TimeperiodsController extends Controller
     {
         $this->addTitleTab('Time Periods');
 
-
         $db = $this->getDb();
 
         $query = Timeperiod::on($db);
 
         $this->addContent(new TimePeriodsTable($query));
-
-
     }
 }
-
-// Controller für alle Timeperiods zeigt Liste
-
-//indexAction
-//Liste; zeigt erst mal nur Display Name

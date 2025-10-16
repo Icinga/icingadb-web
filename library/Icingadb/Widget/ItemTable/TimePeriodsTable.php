@@ -10,6 +10,8 @@ use ipl\Html\Html;
 use ipl\Html\Table;
 use ipl\Orm\Query;
 use ipl\Web\Url;
+use ipl\Web\Widget\Ball;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\ItemTable;
 use ipl\Web\Widget\Link;
 
@@ -29,14 +31,19 @@ class TimePeriodsTable extends Table
         $tbody = $this->getBody();
 
         foreach ($this->timePeriods as $timePeriod) {
+
             $displayName = new Link($timePeriod->display_name, Url::fromPath('icingadb/timeperiod/index', ['id' =>$timePeriod->id]));
+            $icon = new Icon('clock');
+//            $icon = new Ball(Ball::SIZE_BIG);
 
             $displayName =  Html::tag('strong')->add($displayName->setBaseTarget('_next'));
-            $r = Table::row([
+
+            $displayNameRow = Table::row([
+                $icon,
                 $displayName
-//                hier muss noch rage rein!
             ]);
-             $tbody->addHtml($r);
+
+             $tbody->addHtml($displayNameRow);
 
         }
     }
