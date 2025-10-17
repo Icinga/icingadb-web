@@ -16,7 +16,7 @@ use ipl\Html\Text;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\Card;
-use ipl\Web\Filter\QueryString;
+use ipl\Web\Widget\ActionLink;
 
 class HostSummaryDonut extends Card
 {
@@ -66,12 +66,21 @@ class HostSummaryDonut extends Card
 
     protected function assembleHeader(BaseHtmlElement $header)
     {
+        $filter = Filter::all();
+
+        if ($this->hasBaseFilter()) {
+            $filter->add($this->getBaseFilter());
+        }
+
         $header->addHtml(
             new HtmlElement('h2', null, Text::create(t('Hosts'))),
             new HtmlElement('span', Attributes::create(['class' => 'meta']), TemplateString::create(
-                t('{{#total}}Total{{/total}} %d'),
-                ['total' => new HtmlElement('span')],
-                (int) $this->summary->hosts_total
+                t('{{#total}}Total{{/total}} {{#link}}%d{{/link}}'),
+                [
+                    'total' => new HtmlElement('span'),
+                    'link' => new ActionLink(null, Links::hosts()->setFilter($filter))
+                ],
+                $this->summary->hosts_total
             ))
         );
     }
