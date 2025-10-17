@@ -21,12 +21,26 @@ class TimePeriodDetail extends Table
     protected $defaultAttributes = ['class' => 'common-table'];
 
     protected Model $timePeriod;
-    protected Query $range;
+    protected Query $ranges;
 
     public function __construct(Model $timePeriod, Query $range)
     {
         $this->timePeriod = $timePeriod;
-        $this->range = $range;
+        $this->ranges = $range;
+    }
+
+    protected function sortDays(array $days): array
+    {
+        $dayMap = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        $flippedDayMap = array_flip($dayMap);
+
+        uasort($days, function ($a, $b) use ($flippedDayMap) {
+            $ia = $flippedDayMap[$a] ?? PHP_INT_MAX;
+            $ib = $flippedDayMap[$b] ?? PHP_INT_MAX;
+            return $ia <=> $ib;
+
+        });
+        return $days;
     }
 
     protected function assemble(): void
@@ -35,24 +49,38 @@ class TimePeriodDetail extends Table
 //            new Ball(Ball::SIZE_BIG),
             $this->timePeriod->display_name,
             $this->timePeriod->name,
-            ], null, 'th'));
+        ], null, 'th'));
         $tbody = $this->getBody();
 
-        $this->addHtml( new HtmlElement('h2', null, Text::create(t('Ranges'))));
+        $this->addHtml(new HtmlElement('h2', null, Text::create(t('Ranges'))));
 
-        foreach ($this->range as $r) {
-            $detail = [
-                new HorizontalKeyValue(t('Day'), $r->range_key),
-                new HorizontalKeyValue(t('Time'), $r->range_value),
-            ];
-
-            $tbody->addHtml(self::row([
-                $detail
-            ]));
+        foreach ($this->ranges as $range) {
+            $days[] = $range->range_key;
         }
-
-        if (empty($detail)) {
+        if (empty($days)) {
             $this->addHtml(new EmptyState('No ranges have been configured'));
+        } else {
+            $weekDays = $this->sortDays($days);
+
+            foreach ($this->ranges as $range) {
+                $timeRanges[] = $range->range_value;
+            }
+
+            $results = [];
+            foreach ($weekDays as $key => $day) {
+                $results[$day] = $timeRanges[$key];
+            }
+
+            foreach ($results as $day => $time) {
+                $rangeDayAndTime = [
+                    new HorizontalKeyValue(t('Day'), $day),
+                    new HorizontalKeyValue(t('Time'), $time),
+                ];
+
+                $tbody->addHtml(self::row([
+                    $rangeDayAndTime
+                ]));
+            }
         }
     }
 }
