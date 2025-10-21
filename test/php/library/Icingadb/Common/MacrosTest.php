@@ -17,7 +17,7 @@ class MacrosTest extends TestCase
 {
     use Macros;
 
-    const VARS = [
+    public const VARS = [
         'os'      => "Ubuntu",
         'days[0]' => 'mo',
         'days[1]' => 'tue',
