@@ -13,6 +13,10 @@ $this->provideHook('Reporting/Report', 'Reporting/TotalHostSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/ServiceSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/TotalServiceSlaReport');
 
+if ($this::exists('notifications')) {
+    $this->provideHook('Notifications/v1/Source');
+}
+
 if ($this::exists('reporting')) {
     $this->provideHook('Icingadb/HostActions', 'CreateHostSlaReport');
     $this->provideHook('Icingadb/ServiceActions', 'CreateServiceSlaReport');
