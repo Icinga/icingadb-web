@@ -43,6 +43,9 @@ class ObjectSuggestions extends Suggestions
     /** @var array */
     protected $customVarSources;
 
+    /** @var ?array<string, string> */
+    protected ?array $fixedColumns = null;
+
     public function __construct()
     {
         $this->customVarSources = [
@@ -154,7 +157,7 @@ class ObjectSuggestions extends Suggestions
         if (strpos($column, ' ') !== false) {
             // $column may be a label
             list($path, $_) = Seq::find(
-                self::collectFilterColumns($query->getModel(), $query->getResolver()),
+                $this->fixedColumns ?? self::collectFilterColumns($query->getModel(), $query->getResolver()),
                 $column,
                 false
             );
@@ -269,7 +272,8 @@ class ObjectSuggestions extends Suggestions
         // Ordinary columns comes after exact matches,
         // or if there ar no exact matches they come first
         $titleAdded = false;
-        foreach (self::collectFilterColumns($model, $query->getResolver()) as $columnName => $columnMeta) {
+        $columns = $this->fixedColumns ?? self::collectFilterColumns($query->getModel(), $query->getResolver());
+        foreach ($columns as $columnName => $columnMeta) {
             if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
                 if ($titleAdded === false) {
                     $this->addHtml(HtmlElement::create(
@@ -515,6 +519,20 @@ class ObjectSuggestions extends Suggestions
     public function onlyWithCustomVarSources(array $relations): self
     {
         $this->customVarSources = array_intersect_key($this->customVarSources, array_flip($relations));
+
+        return $this;
+    }
+
+    /**
+     * Provide suggestions based on a fixed set of columns
+     *
+     * @param array<string, string> $columns
+     *
+     * @return $this
+     */
+    public function withFixedColumns(array $columns): static
+    {
+        $this->fixedColumns = $columns;
 
         return $this;
     }
