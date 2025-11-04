@@ -584,4 +584,5 @@ namespace Icinga\Module\Icingadb {
     $this->provideJsFile('loadmore.js');
     $this->provideJsFile('migrate.js');
     $this->provideJsFile('progress-bar.js');
+    $this->provideJsFile('billboard.js');
 }
