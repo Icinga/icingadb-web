@@ -61,6 +61,10 @@ abstract class ObjectActionsHook
                         continue;
                     }
 
+                    if (! $link->hasAttribute('data-base-target') && ! $link->hasAttribute('target')) {
+                        $link->setAttribute('data-base-target', '_next');
+                    }
+
                     // It may be ValidHtml, but modules shouldn't be able to break our views.
                     // That's why it needs to be rendered instantly, as any error will then
                     // be caught here.
