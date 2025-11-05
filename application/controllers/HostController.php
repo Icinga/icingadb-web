@@ -149,6 +149,24 @@ class HostController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
+        $searchBar = $this->createSearchBar($history, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ]);
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
 
         $history->peekAhead();
 
@@ -160,12 +178,14 @@ class HostController extends Controller
         }
 
         $history->filter(Filter::lessThanOrEqual('event_time', $before));
+        $this->filter($history, $filter);
 
         yield $this->export($history);
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
 
         $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
@@ -180,6 +200,10 @@ class HostController extends Controller
             $this->document->addFrom($historyList);
         } else {
             $this->addContent($historyList);
+        }
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
         }
     }
 
