@@ -79,7 +79,7 @@ class ServiceController extends Controller
         $this->service = $service;
         $this->loadTabsForObject($service);
 
-        $this->addControl(new ObjectHeader($service));
+        $this->addControl((new ObjectHeader($service))->setAttributes(['data-base-target' => '_next']));
 
         $this->setTitleTab($this->getRequest()->getActionName());
         $this->setTitle(
