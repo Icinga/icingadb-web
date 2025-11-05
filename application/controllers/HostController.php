@@ -218,6 +218,27 @@ class HostController extends Controller
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
 
+        $searchBar = $this->createSearchBar($services, [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ]);
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $services->filter($filter);
+
         yield $this->export($services);
 
         $serviceList = (new ObjectList($services))
@@ -228,8 +249,17 @@ class HostController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+        $continueWith = $this->createContinueWith(
+            Links::servicesDetails()->setFilter(Filter::equal('host.name', $this->host->name)),
+            $searchBar
+        );
 
         $this->addContent($serviceList);
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate($continueWith);
+        }
 
         $this->setAutorefreshInterval(10);
     }
