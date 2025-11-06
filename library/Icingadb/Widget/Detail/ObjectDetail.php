@@ -305,7 +305,11 @@ class ObjectDetail extends BaseHtmlElement
 
             $hostgroupList = new TagList();
             foreach ($hostgroups as $hostgroup) {
-                $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
+                $hostgroupList->addLink(
+                    $hostgroup->display_name,
+                    Links::hostgroup($hostgroup),
+                    ['data-base-target' => '_next']
+                );
             }
 
             $groups[] = $hostgroupList->hasContent()
@@ -320,7 +324,11 @@ class ObjectDetail extends BaseHtmlElement
 
             $servicegroupList = new TagList();
             foreach ($servicegroups as $servicegroup) {
-                $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
+                $servicegroupList->addLink(
+                    $servicegroup->display_name,
+                    Links::servicegroup($servicegroup),
+                    ['data-base-target' => '_next']
+                );
             }
 
             $groups[] = $servicegroupList->hasContent()
@@ -389,13 +397,18 @@ class ObjectDetail extends BaseHtmlElement
         $usergroupList = new TagList();
 
         foreach ($users as $user) {
-            $userList->addLink([new Icon(Icons::USER), $user->display_name], Links::user($user));
+            $userList->addLink(
+                [new Icon(Icons::USER), $user->display_name],
+                Links::user($user),
+                ['data-base-target' => '_next']
+            );
         }
 
         foreach ($usergroups as $usergroup) {
             $usergroupList->addLink(
                 [new Icon(Icons::USERGROUP), $usergroup->display_name],
-                Links::usergroup($usergroup)
+                Links::usergroup($usergroup),
+                ['data-base-target' => '_next']
             );
         }
 

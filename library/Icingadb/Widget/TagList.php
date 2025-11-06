@@ -16,9 +16,9 @@ class TagList extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function addLink($content, $url): self
+    public function addLink($content, $url, $attributes = null): self
     {
-        $this->content[] = new Link($content, $url);
+        $this->content[] = new Link($content, $url, $attributes);
 
         return $this;
     }
