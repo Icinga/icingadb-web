@@ -69,36 +69,6 @@ expects a username, with optional wildcards (`*`) to match multiple users. `--us
 Pass `--no-backup` to disable backup creation. Please note, if you do so, that this makes resetting
 changes more difficult.
 
-### Automation
-
-For those who integrate Icinga Web into e.g. custom dashboards, there is also a way to automate the
-migration of urls. An API endpoint in Icinga DB Web allows for this:
-
-`/icingaweb2/icingadb/migrate/monitoring-url`
-
-If you `POST` a JSON list there, you'll get a JSON list back with the transformed urls in it.
-The returned list is ordered the same and any unrecognized url is left unchanged:
-
-**Input:**  
-```json
-[
-    "/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)",
-    "/icingaweb2/businessprocess/process/show?config=production"
-]
-```
-
-**Output**:  
-```json
-[
-    "/icingaweb2/icingadb/services?hostgroup.name=prod-hosts|(host.vars.env=prod&host.vars.stage!=testing)",
-    "/icingaweb2/businessprocess/process/show?config=production"
-]
-```
-
-**curl example:**
-`curl -s -HContent-Type:application/json -HAccept:application/json -u icingaadmin:icinga http://localhost/icingaweb2/icingadb/migrate/monitoring-url -d '["/icingaweb2/monitoring/list/services?hostgroup_name=prod-hosts|(_host_env=prod&_host_stage!=testing)","/icingaweb2/businessprocess/process/show?config=production"]'`
-
-
 ## Views and Exports
 
 ### Url Parameter `addColumns`

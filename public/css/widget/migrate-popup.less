@@ -98,9 +98,7 @@
       color: @text-color-light;
     }
 
-    form ~ .monitoring-migration-hint,
-    .search-migration-suggestions:not(:empty) + .search-migration-hint,
-    .monitoring-migration-suggestions:not(:empty) + .monitoring-migration-hint {
+    .search-migration-suggestions:not(:empty) + .search-migration-hint {
       display: block;
     }
 
@@ -154,28 +152,6 @@
           content: '\e804';
         }
       }
-    }
-
-    form {
-      width: 100%;
-
-      .control-group {
-        display: flex;
-        align-items: center;
-
-        .control-label-group {
-          margin-right: .5em;
-        }
-
-        label {
-          margin-left: auto;
-        }
-      }
-    }
-
-    .search-migration-suggestions:not(:empty) ~ form,
-    .search-migration-suggestions:not(:empty) ~ .monitoring-migration-suggestions:not(:empty) {
-      margin-bottom: .5em;
     }
   }
 }
