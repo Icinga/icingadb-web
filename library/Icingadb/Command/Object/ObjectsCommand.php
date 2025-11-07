@@ -9,6 +9,7 @@ use Generator;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use Iterator;
 use LogicException;
 use Traversable;
 
@@ -20,20 +21,20 @@ abstract class ObjectsCommand extends IcingaCommand
     /**
      * Involved objects
      *
-     * @var Traversable<Model>
+     * @var ?Iterator<Model>
      */
     protected $objects;
 
     /**
      * Set the involved objects
      *
-     * @param Traversable<Model> $objects Except generators
+     * @param Iterator<Model> $objects Except generators
      *
      * @return $this
      *
      * @throws InvalidArgumentException If a generator is passed
      */
-    public function setObjects(Traversable $objects): self
+    public function setObjects(Iterator $objects): self
     {
         if ($objects instanceof Generator) {
             throw new InvalidArgumentException('Generators are not supported');
@@ -61,9 +62,9 @@ abstract class ObjectsCommand extends IcingaCommand
     /**
      * Get the involved objects
      *
-     * @return Traversable
+     * @return Iterator
      */
-    public function getObjects(): Traversable
+    public function getObjects(): Iterator
     {
         if ($this->objects === null) {
             throw new LogicException(
