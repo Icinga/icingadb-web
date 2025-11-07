@@ -26,6 +26,13 @@ abstract class ObjectsCommand extends IcingaCommand
     protected $objects;
 
     /**
+     * How many objects to process at once
+     *
+     * @var ?int
+     */
+    protected ?int $chunkSize = null;
+
+    /**
      * Set the involved objects
      *
      * @param Iterator<Model> $objects Except generators
@@ -73,5 +80,29 @@ abstract class ObjectsCommand extends IcingaCommand
         }
 
         return $this->objects;
+    }
+
+    /**
+     * Set how many objects to process at once
+     *
+     * @param ?int $chunkSize
+     *
+     * @return $this
+     */
+    public function setChunkSize(?int $chunkSize): static
+    {
+        $this->chunkSize = $chunkSize;
+
+        return $this;
+    }
+
+    /**
+     * Get how many objects to process at once
+     *
+     * @return ?int
+     */
+    public function getChunkSize(): ?int
+    {
+        return $this->chunkSize;
     }
 }
