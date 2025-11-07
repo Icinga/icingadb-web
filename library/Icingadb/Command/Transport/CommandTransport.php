@@ -103,19 +103,37 @@ class CommandTransport implements CommandTransportInterface
     public function send(IcingaCommand $command, int $now = null)
     {
         $errors = [];
+        $retryCommand = null;
 
         foreach (static::getConfig() as $name => $transportConfig) {
             $transport = static::createTransport($transportConfig);
 
-            try {
-                $result = $transport->send($command, $now);
-            } catch (CommandTransportException $e) {
-                Logger::error($e);
-                $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
-                continue; // Try the next transport
-            }
+            if ($retryCommand !== null) {
+                try {
+                    $result = $transport->send($retryCommand, $now);
+                } catch (CommandTransportException) {
+                    // It failed prior, so no need to log it again
+                    continue;
+                }
 
-            return $result; // The command was successfully sent
+                return $result;
+            } else {
+                try {
+                    $result = $transport->send($command, $now);
+                } catch (CommandTransportException $e) {
+                    Logger::error($e);
+                    $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
+
+                    $retryCommand = $e->getCommand();
+                    if ($retryCommand !== null) {
+                        continue; // Try the next transport
+                    } else {
+                        break;
+                    }
+                }
+
+                return $result; // The command was successfully sent
+            }
         }
 
         if (! empty($errors)) {
