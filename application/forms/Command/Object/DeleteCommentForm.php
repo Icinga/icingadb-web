@@ -11,8 +11,6 @@ use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
 use Iterator;
-use LimitIterator;
-use NoRewindIterator;
 use Traversable;
 
 class DeleteCommentForm extends CommandForm
@@ -64,9 +62,9 @@ class DeleteCommentForm extends CommandForm
         $command->setAuthor($this->getAuth()->getUser()->getUsername());
 
         $granted->rewind(); // Forwards the pointer to the first element
-        while ($granted->valid()) {
+        if ($granted->valid()) {
             // Chunk objects to avoid timeouts with large sets
-            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 500));
+            yield $command->setObjects($granted)->setChunkSize(500);
         }
     }
 }
