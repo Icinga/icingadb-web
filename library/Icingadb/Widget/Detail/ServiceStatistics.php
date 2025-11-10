@@ -5,9 +5,11 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Chart\Donut;
+use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Widget\ServiceStateBadges;
 use ipl\Html\ValidHtml;
+use ipl\Web\Url;
 use ipl\Web\Widget\VerticalKeyValue;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Link;
@@ -15,10 +17,25 @@ use ipl\Web\Widget\Link;
 class ServiceStatistics extends ObjectStatistics
 {
     protected $summary;
+    private $url;
 
-    public function __construct($summary)
+    public function __construct($summary, $host = null)
     {
         $this->summary = $summary;
+
+        $this->setUrl($host !== null ? HostLinks::services($host) : Links::services());
+    }
+
+    protected function getUrl(): Url
+    {
+        return $this->url;
+    }
+
+    protected function setUrl($url): self
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
     protected function createDonut(): ValidHtml
@@ -38,7 +55,7 @@ class ServiceStatistics extends ObjectStatistics
 
     protected function createTotal(): ValidHtml
     {
-        $url = Links::services();
+        $url = $this->getUrl();
         if ($this->hasBaseFilter()) {
             $url->setFilter($this->getBaseFilter());
         }
@@ -59,6 +76,6 @@ class ServiceStatistics extends ObjectStatistics
             $badges->setBaseFilter($this->getBaseFilter());
         }
 
-        return $badges;
+        return $badges->setUrl($this->getUrl());
     }
 }

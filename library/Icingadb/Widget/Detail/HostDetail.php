@@ -25,7 +25,7 @@ class HostDetail extends ObjectDetail
     protected function createServiceStatistics(): array
     {
         if ($this->serviceSummary->services_total > 0) {
-            $services = new HostServiceStatistics($this->serviceSummary, $this->object);
+            $services = new ServiceStatistics($this->serviceSummary, $this->object);
         } else {
             $services = new EmptyState(t('This host has no services'));
         }
