@@ -303,7 +303,8 @@ class ServiceController extends Controller
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
-            'name'
+            'name',
+            'host.name'
         ]);
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
