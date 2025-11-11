@@ -299,13 +299,24 @@ class ServiceController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
-        $searchBar = $this->createSearchBar($history, [
+
+        $preserveParams = [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
             'name',
             'host.name'
-        ]);
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($history, $preserveParams)
+        ->setEditorUrl(
+            Url::fromPath('icingadb/service/history-search-editor')
+            ->setParams($requestParams)
+        )->setSuggestionUrl(
+            Url::fromPath('icingadb/service/history-complete')
+                ->setParams(clone $requestParams)
+        );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -380,6 +391,16 @@ class ServiceController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function historyCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(History::class)
+            ->setBaseFilter(Filter::equal("service.id", $this->service->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
     public function searchEditorAction(): void
     {
         $editor = $this->createSearchEditor(
@@ -422,6 +443,29 @@ class ServiceController extends Controller
 
         $editor->setSuggestionUrl(
             Url::fromPath('icingadb/service/children-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function historySearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name',
+            'host.name'
+        ];
+        $editor = $this->createSearchEditor(
+            History::on($this->getDb()),
+            Url::fromPath('icingadb/service/history', ['name' => $this->service->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/service/history-complete')
                 ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
         );
 

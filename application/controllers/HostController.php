@@ -149,12 +149,23 @@ class HostController extends Controller
             ]
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
-        $searchBar = $this->createSearchBar($history, [
+
+        $preserveParams = [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
             'name'
-        ]);
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($history, $preserveParams)
+        ->setEditorUrl(
+            Url::fromPath('icingadb/host/history-search-editor')
+            ->setParams($requestParams)
+        )->setSuggestionUrl(
+            Url::fromPath('icingadb/host/history-complete')
+                ->setParams(clone $requestParams)
+        );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -242,12 +253,22 @@ class HostController extends Controller
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
 
-        $searchBar = $this->createSearchBar($services, [
+        $preserveParams = [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
             'name'
-        ]);
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($services, $preserveParams)
+        ->setEditorUrl(
+            Url::fromPath('icingadb/host/services-search-editor')
+            ->setParams($requestParams)
+        )->setSuggestionUrl(
+            Url::fromPath('icingadb/host/services-complete')
+                ->setParams(clone $requestParams)
+        );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -445,6 +466,26 @@ class HostController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function historyCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(History::class)
+            ->setBaseFilter(Filter::equal("host.id", $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    public function servicesCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(Service::class)
+            ->setBaseFilter(Filter::equal("host.id", $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
     public function searchEditorAction(): void
     {
         $editor = $this->createSearchEditor(
@@ -479,6 +520,50 @@ class HostController extends Controller
 
         $editor->setSuggestionUrl(
             Url::fromPath('icingadb/host/children-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function historySearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+        $editor = $this->createSearchEditor(
+            History::on($this->getDb()),
+            Url::fromPath('icingadb/host/history', ['name' => $this->host->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/history-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function servicesSearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+        $editor = $this->createSearchEditor(
+            Service::on($this->getDb()),
+            Url::fromPath('icingadb/host/services', ['name' => $this->host->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/services-complete')
                 ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
         );
 
