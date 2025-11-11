@@ -12,13 +12,13 @@ class TagList extends BaseHtmlElement
 {
     protected $content = [];
 
-    protected $defaultAttributes = ['class' => 'tag-list'];
+    protected $defaultAttributes = ['class' => 'tag-list', 'data-base-target' => '_next'];
 
     protected $tag = 'div';
 
-    public function addLink($content, $url, $attributes = null): self
+    public function addLink($content, $url): self
     {
-        $this->content[] = new Link($content, $url, $attributes);
+        $this->content[] = new Link($content, $url);
 
         return $this;
     }

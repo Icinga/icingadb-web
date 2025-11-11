@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
@@ -25,7 +26,8 @@ class HostDetail extends ObjectDetail
     protected function createServiceStatistics(): array
     {
         if ($this->serviceSummary->services_total > 0) {
-            $services = new ServiceStatistics($this->serviceSummary, $this->object);
+            $services = (new ServiceStatistics($this->serviceSummary))
+                ->setUrl(HostLinks::services($this->object));
         } else {
             $services = new EmptyState(t('This host has no services'));
         }

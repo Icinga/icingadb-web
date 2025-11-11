@@ -17,21 +17,34 @@ use ipl\Web\Widget\Link;
 class ServiceStatistics extends ObjectStatistics
 {
     protected $summary;
-    private $url;
 
-    public function __construct($summary, $host = null)
+    /** @var Url */
+    protected $url;
+
+    public function __construct($summary)
     {
         $this->summary = $summary;
-
-        $this->setUrl($host !== null ? HostLinks::services($host) : Links::services());
     }
 
-    protected function getUrl(): Url
+    /**
+     * Returns the URL property.
+     * If not set, the URL of the services overview is returned as fallback.
+     *
+     * @return Url
+     */
+    public function getUrl(): Url
     {
-        return $this->url;
+        return $this->url ?? Links::services();
     }
 
-    protected function setUrl($url): self
+    /**
+     * Sets the URL property.
+     *
+     * @param string $url The URL to set.
+     *
+     * @return self Returns the current instance.
+     */
+    public function setUrl($url): self
     {
         $this->url = $url;
 

@@ -43,7 +43,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
-use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\EmptyStateBar;
@@ -305,11 +304,7 @@ class ObjectDetail extends BaseHtmlElement
 
             $hostgroupList = new TagList();
             foreach ($hostgroups as $hostgroup) {
-                $hostgroupList->addLink(
-                    $hostgroup->display_name,
-                    Links::hostgroup($hostgroup),
-                    ['data-base-target' => '_next']
-                );
+                $hostgroupList->addLink($hostgroup->display_name, Links::hostgroup($hostgroup));
             }
 
             $groups[] = $hostgroupList->hasContent()
@@ -324,11 +319,7 @@ class ObjectDetail extends BaseHtmlElement
 
             $servicegroupList = new TagList();
             foreach ($servicegroups as $servicegroup) {
-                $servicegroupList->addLink(
-                    $servicegroup->display_name,
-                    Links::servicegroup($servicegroup),
-                    ['data-base-target' => '_next']
-                );
+                $servicegroupList->addLink($servicegroup->display_name, Links::servicegroup($servicegroup));
             }
 
             $groups[] = $servicegroupList->hasContent()
@@ -397,18 +388,13 @@ class ObjectDetail extends BaseHtmlElement
         $usergroupList = new TagList();
 
         foreach ($users as $user) {
-            $userList->addLink(
-                [new Icon(Icons::USER), $user->display_name],
-                Links::user($user),
-                ['data-base-target' => '_next']
-            );
+            $userList->addLink([new Icon(Icons::USER), $user->display_name], Links::user($user));
         }
 
         foreach ($usergroups as $usergroup) {
             $usergroupList->addLink(
                 [new Icon(Icons::USERGROUP), $usergroup->display_name],
-                Links::usergroup($usergroup),
-                ['data-base-target' => '_next']
+                Links::usergroup($usergroup)
             );
         }
 
