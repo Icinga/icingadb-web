@@ -51,12 +51,13 @@ trait SearchControls
      *
      * @param Url $detailsUrl
      * @param SearchBar $searchBar
+     * @param bool $hasResults Whether the current query has results
      *
      * @return ContinueWith
      */
-    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar): ContinueWith
+    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar, bool $hasResults = true): ContinueWith
     {
-        $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
+        $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter'], $hasResults);
         $continueWith->setTitle(t('Show bulk processing actions for all filtered results'));
         $continueWith->setBaseTarget('_next');
         $continueWith->getAttributes()
