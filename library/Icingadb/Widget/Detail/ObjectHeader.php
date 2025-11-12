@@ -42,6 +42,8 @@ use ipl\Web\Layout\ItemLayout;
  */
 class ObjectHeader extends BaseHtmlElement
 {
+    protected $defaultAttributes = ['data-base-target' => '_next'];
+
     /** @var Item */
     protected $object;
 

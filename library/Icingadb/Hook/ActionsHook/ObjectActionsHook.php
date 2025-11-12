@@ -61,8 +61,8 @@ abstract class ObjectActionsHook
                         continue;
                     }
 
-                    if (! $link->hasAttribute('data-base-target') && ! $link->hasAttribute('target')) {
-                        $link->setAttribute('data-base-target', '_next');
+                    if ($link->getBaseTarget() === null && ! $link->hasAttribute('target')) {
+                        $link->setBaseTarget('_next');
                     }
 
                     // It may be ValidHtml, but modules shouldn't be able to break our views.

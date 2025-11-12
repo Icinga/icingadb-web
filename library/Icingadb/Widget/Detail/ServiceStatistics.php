@@ -18,8 +18,7 @@ class ServiceStatistics extends ObjectStatistics
 {
     protected $summary;
 
-    /** @var Url */
-    protected $url;
+    protected ?Url $url;
 
     public function __construct($summary)
     {
@@ -27,7 +26,8 @@ class ServiceStatistics extends ObjectStatistics
     }
 
     /**
-     * Returns the URL property.
+     * Returns the URL pointing to all matching services.
+     *
      * If not set, the URL of the services overview is returned as fallback.
      *
      * @return Url
@@ -38,13 +38,13 @@ class ServiceStatistics extends ObjectStatistics
     }
 
     /**
-     * Sets the URL property.
+     * Set the URL pointing to all matching services.
      *
-     * @param string $url The URL to set.
+     * @param Url $url The URL to set.
      *
-     * @return self Returns the current instance.
+     * @return $this
      */
-    public function setUrl($url): self
+    public function setUrl(Url $url): self
     {
         $this->url = $url;
 

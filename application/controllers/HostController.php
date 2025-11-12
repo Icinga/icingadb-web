@@ -473,7 +473,7 @@ class HostController extends Controller
             ->setBaseFilter(Filter::equal("host.id", $this->host->id))
             ->forRequest($this->getServerRequest());
 
-        $this->getDocument()->add($suggestions);
+        $this->getDocument()->addHtml($suggestions);
     }
 
     public function servicesCompleteAction(): void
@@ -483,7 +483,7 @@ class HostController extends Controller
             ->setBaseFilter(Filter::equal("host.id", $this->host->id))
             ->forRequest($this->getServerRequest());
 
-        $this->getDocument()->add($suggestions);
+        $this->getDocument()->addHtml($suggestions);
     }
 
     public function searchEditorAction(): void
@@ -545,7 +545,7 @@ class HostController extends Controller
                 ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
         );
 
-        $this->getDocument()->add($editor);
+        $this->getDocument()->addHtml($editor);
         $this->setTitle($this->translate('Adjust Filter'));
     }
 
@@ -567,7 +567,7 @@ class HostController extends Controller
                 ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
         );
 
-        $this->getDocument()->add($editor);
+        $this->getDocument()->addHtml($editor);
         $this->setTitle($this->translate('Adjust Filter'));
     }
 

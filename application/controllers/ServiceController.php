@@ -398,7 +398,7 @@ class ServiceController extends Controller
             ->setBaseFilter(Filter::equal("service.id", $this->service->id))
             ->forRequest($this->getServerRequest());
 
-        $this->getDocument()->add($suggestions);
+        $this->getDocument()->addHtml($suggestions);
     }
 
     public function searchEditorAction(): void
@@ -469,7 +469,7 @@ class ServiceController extends Controller
                 ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
         );
 
-        $this->getDocument()->add($editor);
+        $this->getDocument()->addHtml($editor);
         $this->setTitle($this->translate('Adjust Filter'));
     }
 
