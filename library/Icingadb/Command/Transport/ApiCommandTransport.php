@@ -256,11 +256,11 @@ class ApiCommandTransport implements CommandTransportInterface
                 ), static::SEND_TIMEOUT, $e);
             }
 
-            throw new CommandTransportException(
+            throw (new CommandTransportException(
                 'Can\'t connect to the Icinga 2 API: %u %s',
                 $e->getCode(),
                 $e->getMessage()
-            );
+            ))->setCommand($command);
         }
 
         try {
@@ -299,16 +299,20 @@ class ApiCommandTransport implements CommandTransportInterface
     /**
      * Send the Icinga command over the Icinga 2 API
      *
-     * @param   IcingaCommand   $command
-     * @param   int|null        $now
+     * @param IcingaCommand|IcingaApiCommand $command
+     * @param int|null $now
      *
-     * @throws  CommandTransportException
+     * @throws CommandTransportException
      *
-     * @return  mixed
+     * @return mixed
      */
-    public function send(IcingaCommand $command, int $now = null)
+    public function send(IcingaCommand|IcingaApiCommand $command, int $now = null)
     {
-        return $this->sendCommand($this->renderer->render($command));
+        if ($command instanceof IcingaCommand) {
+            $command = $this->renderer->render($command);
+        }
+
+        return $this->sendCommand($command);
     }
 
     /**

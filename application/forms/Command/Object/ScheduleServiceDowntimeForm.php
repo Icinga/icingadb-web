@@ -19,8 +19,6 @@ use ipl\Validator\CallbackValidator;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\Widget\Icon;
 use Iterator;
-use LimitIterator;
-use NoRewindIterator;
 use Traversable;
 
 class ScheduleServiceDowntimeForm extends CommandForm
@@ -290,9 +288,9 @@ class ScheduleServiceDowntimeForm extends CommandForm
         }
 
         $granted->rewind(); // Forwards the pointer to the first element
-        while ($granted->valid()) {
+        if ($granted->valid()) {
             // Chunk objects to avoid timeouts with large sets
-            yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 250));
+            yield $command->setObjects($granted)->setChunkSize(250);
         }
     }
 }
