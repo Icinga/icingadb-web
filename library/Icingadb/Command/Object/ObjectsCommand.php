@@ -9,6 +9,7 @@ use Generator;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
 use InvalidArgumentException;
 use ipl\Orm\Model;
+use Iterator;
 use LogicException;
 use Traversable;
 
@@ -20,20 +21,27 @@ abstract class ObjectsCommand extends IcingaCommand
     /**
      * Involved objects
      *
-     * @var Traversable<Model>
+     * @var ?Iterator<Model>
      */
     protected $objects;
 
     /**
+     * How many objects to process at once
+     *
+     * @var ?int
+     */
+    protected ?int $chunkSize = null;
+
+    /**
      * Set the involved objects
      *
-     * @param Traversable<Model> $objects Except generators
+     * @param Iterator<Model> $objects Except generators
      *
      * @return $this
      *
      * @throws InvalidArgumentException If a generator is passed
      */
-    public function setObjects(Traversable $objects): self
+    public function setObjects(Iterator $objects): self
     {
         if ($objects instanceof Generator) {
             throw new InvalidArgumentException('Generators are not supported');
@@ -61,9 +69,9 @@ abstract class ObjectsCommand extends IcingaCommand
     /**
      * Get the involved objects
      *
-     * @return Traversable
+     * @return Iterator
      */
-    public function getObjects(): Traversable
+    public function getObjects(): Iterator
     {
         if ($this->objects === null) {
             throw new LogicException(
@@ -72,5 +80,29 @@ abstract class ObjectsCommand extends IcingaCommand
         }
 
         return $this->objects;
+    }
+
+    /**
+     * Set how many objects to process at once
+     *
+     * @param ?int $chunkSize
+     *
+     * @return $this
+     */
+    public function setChunkSize(?int $chunkSize): static
+    {
+        $this->chunkSize = $chunkSize;
+
+        return $this;
+    }
+
+    /**
+     * Get how many objects to process at once
+     *
+     * @return ?int
+     */
+    public function getChunkSize(): ?int
+    {
+        return $this->chunkSize;
     }
 }

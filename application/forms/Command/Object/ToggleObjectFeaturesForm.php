@@ -12,8 +12,6 @@ use ipl\Html\FormElement\CheckboxElement;
 use ipl\Orm\Model;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use Iterator;
-use LimitIterator;
-use NoRewindIterator;
 use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
@@ -181,11 +179,11 @@ class ToggleObjectFeaturesForm extends CommandForm
             $command->setEnabled((int) $state);
 
             $granted->rewind(); // Forwards the pointer to the first element
-            while ($granted->valid()) {
+            if ($granted->valid()) {
                 $this->submittedFeatures[$command->getFeature()] ??= $command->getEnabled();
 
                 // Chunk objects to avoid timeouts with large sets
-                yield $command->setObjects(new LimitIterator(new NoRewindIterator($granted), 0, 1000));
+                yield $command->setObjects($granted)->setChunkSize(1000);
             }
         }
     }

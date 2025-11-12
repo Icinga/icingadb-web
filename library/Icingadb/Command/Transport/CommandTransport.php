@@ -4,12 +4,12 @@
 
 namespace Icinga\Module\Icingadb\Command\Transport;
 
-use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Command\IcingaCommand;
+use Icinga\Module\Icingadb\Command\Object\ObjectsCommand;
 
 /**
  * Command transport
@@ -103,19 +103,82 @@ class CommandTransport implements CommandTransportInterface
     public function send(IcingaCommand $command, int $now = null)
     {
         $errors = [];
+        $results = [];
+        $retryCommand = null;
 
         foreach (static::getConfig() as $name => $transportConfig) {
             $transport = static::createTransport($transportConfig);
 
-            try {
-                $result = $transport->send($command, $now);
-            } catch (CommandTransportException $e) {
-                Logger::error($e);
-                $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
-                continue; // Try the next transport
-            }
+            if ($command instanceof ObjectsCommand && $command->getChunkSize() > 0) {
+                $objects = $command->getObjects();
 
-            return $result; // The command was successfully sent
+                if ($retryCommand !== null) {
+                    try {
+                        $results[] = $transport->send($retryCommand, $now);
+                    } catch (CommandTransportException) {
+                        // It failed prior, so no need to log it again
+                        continue;
+                    }
+
+                    $retryCommand = null;
+                } else {
+                    if ($objects->key() === null) {
+                        // We traverse the iterator manually here, so we have to rewind it before the first iteration.
+                        // That should be the case if the current key is null. May fail if an iterator explicitly yields
+                        // null as the key, but I want to see a justified use case for that…
+                        $objects->rewind();
+                    }
+                }
+
+                while ($objects->valid()) {
+                    $batchCommand = clone $command;
+                    $batchCommand->setObjects(
+                        new \LimitIterator(new \NoRewindIterator($objects), 0, $command->getChunkSize())
+                    );
+
+                    try {
+                        $results[] = $transport->send($batchCommand, $now);
+                    } catch (CommandTransportException $e) {
+                        Logger::error($e);
+                        $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
+
+                        $retryCommand = $e->getCommand();
+                        if ($retryCommand !== null) {
+                            continue 2;
+                        } else {
+                            // Non-recoverable error, so stop trying to send further commands
+                            break 2;
+                        }
+                    }
+                }
+
+                return $results;
+            } elseif ($retryCommand !== null) {
+                try {
+                    $result = $transport->send($retryCommand, $now);
+                } catch (CommandTransportException) {
+                    // It failed prior, so no need to log it again
+                    continue;
+                }
+
+                return $result;
+            } else {
+                try {
+                    $result = $transport->send($command, $now);
+                } catch (CommandTransportException $e) {
+                    Logger::error($e);
+                    $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
+
+                    $retryCommand = $e->getCommand();
+                    if ($retryCommand !== null) {
+                        continue; // Try the next transport
+                    } else {
+                        break;
+                    }
+                }
+
+                return $result; // The command was successfully sent
+            }
         }
 
         if (! empty($errors)) {
