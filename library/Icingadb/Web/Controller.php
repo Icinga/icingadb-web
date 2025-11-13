@@ -58,6 +58,9 @@ class Controller extends CompatController
     /** @var bool */
     private $formatProcessed = false;
 
+    /** @var array|null Columns to be included in csv/json exports, when null all columns are included */
+    protected ?array $columns = null;
+
     /**
      * Get the filter created from query string parameters
      *
@@ -103,6 +106,7 @@ class Controller extends CompatController
         }
 
         $query->withColumns($columns);
+        $this->columns = $columns;
 
         if (! $viewMode) {
             $viewModeSwitcher->setViewMode('tabular');
@@ -365,6 +369,10 @@ class Controller extends CompatController
             if (! Url::fromRequest()->hasParam('limit')) {
                 $query->limit(null)
                     ->offset(null);
+            }
+
+            if ($this->columns !== null) {
+                $query->columns($this->columns);
             }
         }
 

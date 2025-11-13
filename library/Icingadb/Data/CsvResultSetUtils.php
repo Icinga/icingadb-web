@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
+use ipl\Orm\ResultSet;
 
 trait CsvResultSetUtils
 {
@@ -69,7 +70,10 @@ trait CsvResultSetUtils
     public static function stream(Query $query): void
     {
         $model = $query->getModel();
-        if ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode) {
+        if (
+            ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode)
+            && empty($query->getColumns())
+        ) {
             $query->setResultSetClass(VolatileCsvResults::class);
         } else {
             $query->setResultSetClass(__CLASS__);
