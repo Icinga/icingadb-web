@@ -11,7 +11,6 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
-use ipl\Orm\ResultSet;
 
 trait CsvResultSetUtils
 {
