@@ -159,13 +159,13 @@ class HostController extends Controller
 
         $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
         $searchBar = $this->createSearchBar($history, $preserveParams)
-        ->setEditorUrl(
-            Url::fromPath('icingadb/host/history-search-editor')
-            ->setParams($requestParams)
-        )->setSuggestionUrl(
-            Url::fromPath('icingadb/host/history-complete')
-                ->setParams(clone $requestParams)
-        );
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/history-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/history-complete')
+                    ->setParams(clone $requestParams)
+            );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -201,7 +201,7 @@ class HostController extends Controller
         $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
         if ($compact) {
             $historyList->setPageNumber($page);
@@ -262,13 +262,13 @@ class HostController extends Controller
 
         $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
         $searchBar = $this->createSearchBar($services, $preserveParams)
-        ->setEditorUrl(
-            Url::fromPath('icingadb/host/services-search-editor')
-            ->setParams($requestParams)
-        )->setSuggestionUrl(
-            Url::fromPath('icingadb/host/services-complete')
-                ->setParams(clone $requestParams)
-        );
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/services-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/services-complete')
+                    ->setParams(clone $requestParams)
+            );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -470,7 +470,7 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(History::class)
-            ->setBaseFilter(Filter::equal("host.id", $this->host->id))
+            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);
@@ -480,7 +480,7 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(Service::class)
-            ->setBaseFilter(Filter::equal("host.id", $this->host->id))
+            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);

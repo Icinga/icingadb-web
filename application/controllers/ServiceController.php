@@ -310,13 +310,13 @@ class ServiceController extends Controller
 
         $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
         $searchBar = $this->createSearchBar($history, $preserveParams)
-        ->setEditorUrl(
-            Url::fromPath('icingadb/service/history-search-editor')
-            ->setParams($requestParams)
-        )->setSuggestionUrl(
-            Url::fromPath('icingadb/service/history-complete')
-                ->setParams(clone $requestParams)
-        );
+            ->setEditorUrl(
+                Url::fromPath('icingadb/service/history-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/service/history-complete')
+                    ->setParams(clone $requestParams)
+            );
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -352,7 +352,7 @@ class ServiceController extends Controller
         $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
         if ($compact) {
             $historyList->setPageNumber($page);
@@ -395,7 +395,7 @@ class ServiceController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(History::class)
-            ->setBaseFilter(Filter::equal("service.id", $this->service->id))
+            ->setBaseFilter(Filter::equal('service.id', $this->service->id))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);

@@ -18,6 +18,7 @@ class ServiceStatistics extends ObjectStatistics
 {
     protected $summary;
 
+    /** @var ?Url */
     protected ?Url $url;
 
     public function __construct($summary)
@@ -26,7 +27,7 @@ class ServiceStatistics extends ObjectStatistics
     }
 
     /**
-     * Returns the URL pointing to all matching services.
+     * Return the URL pointing to all matching services.
      *
      * If not set, the URL of the services overview is returned as fallback.
      *
