@@ -119,33 +119,19 @@ trait Auth
             return;
         }
 
-        $forbiddenVars = Filter::all();
-        $protectedVars = Filter::any();
-        $hiddenVars = Filter::any();
+        $forbiddenVars = Filter::none();
         foreach ($this->getAuth()->getUser()->getRoles() as $role) {
             if (($restriction = $role->getRestrictions('icingadb/denylist/variables'))) {
-                $denied = Filter::none();
-                $hiddenVars->add($denied);
                 foreach (explode(',', $restriction) as $value) {
-                    $denied->add(Filter::like('name', trim($value))->ignoreCase());
+                    $forbiddenVars->add(Filter::like('name', trim($value))->ignoreCase());
                 }
             }
 
             if (($restriction = $role->getRestrictions('icingadb/protect/variables'))) {
-                $protected = Filter::none();
-                $protectedVars->add($protected);
                 foreach (explode(',', $restriction) as $value) {
-                    $protected->add(Filter::like('name', trim($value))->ignoreCase());
+                    $forbiddenVars->add(Filter::like('name', trim($value))->ignoreCase());
                 }
             }
-        }
-
-        if (! $hiddenVars->isEmpty()) {
-            $forbiddenVars->add($hiddenVars);
-        }
-
-        if (! $protectedVars->isEmpty()) {
-            $forbiddenVars->add($protectedVars);
         }
 
         if ($forbiddenVars->isEmpty()) {
@@ -217,13 +203,14 @@ trait Auth
             $resolver = $query->getResolver();
 
             $queryFilter = Filter::any();
-            $obfuscationRules = Filter::any();
+            $forbiddenVars = Filter::all();
+            $obfuscationRules = Filter::all();
             foreach ($this->getAuth()->getUser()->getRoles() as $role) {
                 $roleFilter = Filter::all();
 
                 if ($customVarRelationName !== false) {
                     if (($restriction = $role->getRestrictions('icingadb/denylist/variables'))) {
-                        $roleFilter->add($this->parseDenylist(
+                        $forbiddenVars->add($this->parseDenylist(
                             $restriction,
                             $customVarRelationName
                                 ? $resolver->qualifyColumn('flatname', $customVarRelationName)
@@ -358,7 +345,8 @@ trait Auth
                 }
             }
 
-            $query->filter($queryFilter);
+            $query->filter($queryFilter)
+                ->filter($forbiddenVars);
         }
     }
 
