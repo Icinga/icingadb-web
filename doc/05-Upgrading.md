@@ -12,6 +12,8 @@ If you are upgrading across multiple versions, make sure to follow the steps for
   Icinga DB Web v1.1](#upgrading-to-icinga-db-web-v11) for details).
   * Modules with support for IDO and Icinga DB will now default to use Icinga DB.
   * The accompanying endpoint `icingadb/migrate/monitoring-url` has been removed.
+* The class `Icinga\Module\Icingadb\Model\Behavior\BoolCast` has been removed.
+  * Use `\ipl\Orm\Behavior\BoolCast` instead.
 
 ## Upgrading to Icinga DB Web v1.2
 
