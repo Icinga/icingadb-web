@@ -43,12 +43,6 @@ trait Auth
         }, $this->getAuth()->getRestrictions('icingadb/denylist/routes'))));
 
         if (! array_key_exists($name, $routeDenylist)) {
-            if ($name === 'contacts' && array_key_exists('users', $routeDenylist)) {
-                return false; // TODO: Remove with 1.3, compat only
-            } elseif ($name === 'contactgroups' && array_key_exists('usergroups', $routeDenylist)) {
-                return false; // TODO: Remove with 1.3, compat only
-            }
-
             return true;
         }
 
