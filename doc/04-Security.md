@@ -69,18 +69,18 @@ Denylists prevent users from accessing information and in some cases will block 
 >
 > Denylists from multiple roles will further limit access.
 
-Name                         | Description
------------------------------|------------------------------------------------------------------
-icingadb/denylist/routes    | Prevent access to routes that are part of the list
-icingadb/denylist/variables | Hide custom variables of Icinga objects that are part of the list
+| Name                        | Description                                                       |
+|-----------------------------|-------------------------------------------------------------------|
+| icingadb/denylist/routes    | Prevent access to routes that are part of the list                |
+| icingadb/denylist/variables | Hide custom variables of Icinga objects that are part of the list |
 
 `icingadb/denylist/routes` will block users from accessing defined routes and from related information elsewhere.
 For example, if `hostgroups` are part of the list a user won't have access to the hostgroup overview nor to a host's
-groups shown in its detail area. This should be a comma separated list. Possible values are: hostgroups, servicegroups,
+groups shown in its detail area. This should be a comma-separated list. Possible values are: hostgroups, servicegroups,
 contacts, contactgroups
 
 `icingadb/denylist/variables` will block users from accessing certain custom variables. A user affected by this won't
-see that those variables even exist. This should be a comma separated list of [variable paths](#variable-paths). It is
+see that those variables even exist. This should be a comma-separated list of [variable paths](#variable-paths). It is
 possible to use [match patterns](#match-patterns).
 
 ### Protections
@@ -91,12 +91,12 @@ Protections prevent users from accessing actual data. They will know that there 
 >
 > Denylists from multiple roles will further limit access.
 
-Name                       | Description
----------------------------|-----------------------------------------------------------------------------
-icingadb/protect/variables | Obfuscate custom variable values of Icinga objects that are part of the list
+| Name                       | Description                                                                  |
+|----------------------------|------------------------------------------------------------------------------|
+| icingadb/protect/variables | Obfuscate custom variable values of Icinga objects that are part of the list |
 
 `icingadb/protect/variables` will replace certain custom variable values with `***`. A user affected by this will still
-be able to see the variable names though. This should be a comma separated list of [variable paths](#variable-paths).
+be able to see the variable names, though. This should be a comma-separated list of [variable paths](#variable-paths).
 It is possible to use [match patterns](#match-patterns).
 
 ### Formats
