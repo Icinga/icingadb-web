@@ -69,7 +69,10 @@ trait CsvResultSetUtils
     public static function stream(Query $query): void
     {
         $model = $query->getModel();
-        if ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode) {
+        if (
+            ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode)
+            && empty($query->getColumns())
+        ) {
             $query->setResultSetClass(VolatileCsvResults::class);
         } else {
             $query->setResultSetClass(__CLASS__);
