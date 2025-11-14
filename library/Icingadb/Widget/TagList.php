@@ -12,7 +12,7 @@ class TagList extends BaseHtmlElement
 {
     protected $content = [];
 
-    protected $defaultAttributes = ['class' => 'tag-list'];
+    protected $defaultAttributes = ['class' => 'tag-list', 'data-base-target' => '_next'];
 
     protected $tag = 'div';
 

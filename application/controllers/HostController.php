@@ -150,6 +150,35 @@ class HostController extends Controller
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
 
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($history, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/history-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/history-complete')
+                    ->setParams(clone $requestParams)
+            );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
         $history->peekAhead();
 
         $page = $paginationControl->getCurrentPageNumber();
@@ -160,17 +189,19 @@ class HostController extends Controller
         }
 
         $history->filter(Filter::lessThanOrEqual('event_time', $before));
+        $this->filter($history, $filter);
 
         yield $this->export($history);
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
 
         $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
         if ($compact) {
             $historyList->setPageNumber($page);
@@ -180,6 +211,10 @@ class HostController extends Controller
             $this->document->addFrom($historyList);
         } else {
             $this->addContent($historyList);
+        }
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
         }
     }
 
@@ -218,6 +253,37 @@ class HostController extends Controller
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
 
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name'
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($services, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/host/services-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/host/services-complete')
+                    ->setParams(clone $requestParams)
+            );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
+        $services->filter($filter);
+
         yield $this->export($services);
 
         $serviceList = (new ObjectList($services))
@@ -228,8 +294,17 @@ class HostController extends Controller
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
+        $continueWith = $this->createContinueWith(
+            Links::servicesDetails()->setFilter(Filter::equal('host.name', $this->host->name)),
+            $searchBar
+        );
 
         $this->addContent($serviceList);
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate($continueWith);
+        }
 
         $this->setAutorefreshInterval(10);
     }
@@ -391,6 +466,26 @@ class HostController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function historyCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(History::class)
+            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->addHtml($suggestions);
+    }
+
+    public function servicesCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(Service::class)
+            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->addHtml($suggestions);
+    }
+
     public function searchEditorAction(): void
     {
         $editor = $this->createSearchEditor(
@@ -429,6 +524,50 @@ class HostController extends Controller
         );
 
         $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function historySearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+        $editor = $this->createSearchEditor(
+            History::on($this->getDb()),
+            Url::fromPath('icingadb/host/history', ['name' => $this->host->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/history-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->addHtml($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function servicesSearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name'
+        ];
+        $editor = $this->createSearchEditor(
+            Service::on($this->getDb()),
+            Url::fromPath('icingadb/host/services', ['name' => $this->host->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/host/services-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->addHtml($editor);
         $this->setTitle($this->translate('Adjust Filter'));
     }
 

@@ -300,6 +300,36 @@ class ServiceController extends Controller
         );
         $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
 
+        $preserveParams = [
+            $limitControl->getLimitParam(),
+            $sortControl->getSortParam(),
+            $viewModeSwitcher->getViewModeParam(),
+            'name',
+            'host.name'
+        ];
+
+        $requestParams = Url::fromRequest()->onlyWith($preserveParams)->getParams();
+        $searchBar = $this->createSearchBar($history, $preserveParams)
+            ->setEditorUrl(
+                Url::fromPath('icingadb/service/history-search-editor')
+                    ->setParams($requestParams)
+            )->setSuggestionUrl(
+                Url::fromPath('icingadb/service/history-complete')
+                    ->setParams(clone $requestParams)
+            );
+
+        if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+            if ($searchBar->hasBeenSubmitted()) {
+                $filter = $this->getFilter();
+            } else {
+                $this->addControl($searchBar);
+                $this->sendMultipartUpdate();
+                return;
+            }
+        } else {
+            $filter = $searchBar->getFilter();
+        }
+
         $history->peekAhead();
 
         $page = $paginationControl->getCurrentPageNumber();
@@ -310,17 +340,19 @@ class ServiceController extends Controller
         }
 
         $history->filter(Filter::lessThanOrEqual('event_time', $before));
+        $this->filter($history, $filter);
 
         yield $this->export($history);
 
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
+        $this->addControl($searchBar);
 
         $historyList = (new LoadMoreObjectList($history->execute()))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
         if ($compact) {
             $historyList->setPageNumber($page);
@@ -330,6 +362,10 @@ class ServiceController extends Controller
             $this->document->addFrom($historyList);
         } else {
             $this->addContent($historyList);
+        }
+
+        if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+            $this->sendMultipartUpdate();
         }
     }
 
@@ -353,6 +389,16 @@ class ServiceController extends Controller
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
+    }
+
+    public function historyCompleteAction(): void
+    {
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(History::class)
+            ->setBaseFilter(Filter::equal('service.id', $this->service->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->addHtml($suggestions);
     }
 
     public function searchEditorAction(): void
@@ -401,6 +447,29 @@ class ServiceController extends Controller
         );
 
         $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    public function historySearchEditorAction(): void
+    {
+        $preserveParams = [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'name',
+            'host.name'
+        ];
+        $editor = $this->createSearchEditor(
+            History::on($this->getDb()),
+            Url::fromPath('icingadb/service/history', ['name' => $this->service->name]),
+            $preserveParams
+        );
+        $editor->setSuggestionUrl(
+            Url::fromPath('icingadb/service/history-complete')
+                ->setParams(Url::fromRequest()->onlyWith($preserveParams)->getParams())
+        );
+
+        $this->getDocument()->addHtml($editor);
         $this->setTitle($this->translate('Adjust Filter'));
     }
 

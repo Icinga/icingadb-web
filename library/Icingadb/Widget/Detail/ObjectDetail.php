@@ -43,7 +43,6 @@ use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
-use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\EmptyStateBar;
