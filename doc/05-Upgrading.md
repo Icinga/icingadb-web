@@ -5,6 +5,14 @@ If you are upgrading across multiple versions, make sure to follow the steps for
 
 ## Upgrading to Icinga DB Web v1.3
 
+**Breaking Changes**
+
+* The restrictions `icingadb/denylist/variables` and `icingadb/protect/variables` from different roles are now
+  merged into a single list, respectively. This means that variables denied in one role will not show up anymore
+  if another role denies access to different variables. The same applies to `icingadb/protect/variables`, in which
+  case variables protected in one role will now be protected even if another role protects different variables.
+  This has been done to simplify the configuration and to get it more in line with how refusals work in Icinga Web.
+
 **Removed Features**
 
 * The migration widget in the top right has been removed. If you have not adjusted your navigation items,
