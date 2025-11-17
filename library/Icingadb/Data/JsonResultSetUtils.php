@@ -51,7 +51,10 @@ trait JsonResultSetUtils
         $keysAndValues = [];
         foreach ($model as $key => $value) {
             if ($value instanceof Model) {
-                $keysAndValues[$key] = $this->createObject($value);
+                $object = $this->createObject($value);
+                if ($object !== []) {
+                    $keysAndValues[$key] = $object;
+                }
             } else {
                 $keysAndValues[$key] = $this->formatValue($key, $value);
             }
@@ -63,10 +66,7 @@ trait JsonResultSetUtils
     public static function stream(Query $query): void
     {
         $model = $query->getModel();
-        if (
-            ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode)
-            && empty($query->getColumns())
-        ) {
+        if ($model instanceof Host || $model instanceof Service || $model instanceof DependencyNode) {
             $query->setResultSetClass(VolatileJsonResults::class);
         } else {
             $query->setResultSetClass(__CLASS__);

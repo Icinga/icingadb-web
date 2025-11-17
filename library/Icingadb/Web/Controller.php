@@ -22,6 +22,8 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
@@ -57,9 +59,6 @@ class Controller extends CompatController
 
     /** @var bool */
     private $formatProcessed = false;
-
-    /** @var array|null Columns to be included in csv/json exports, when null all columns are included */
-    protected ?array $columns = null;
 
     /**
      * Get the filter created from query string parameters
@@ -105,8 +104,17 @@ class Controller extends CompatController
             }
         }
 
-        $query->withColumns($columns);
-        $this->columns = $columns;
+        if ($this->format === 'csv' || $this->format === 'json') {
+            if ($query->getModel() instanceof Host && ! in_array('host.id', $columns)) {
+                $columns[] = 'host.id';
+            } elseif ($query->getModel() instanceof Service && ! in_array('service.id', $columns)) {
+                $columns[] = 'service.id';
+            }
+
+            $query->columns($columns);
+        } else {
+            $query->withColumns($columns);
+        }
 
         if (! $viewMode) {
             $viewModeSwitcher->setViewMode('tabular');
@@ -369,10 +377,6 @@ class Controller extends CompatController
             if (! Url::fromRequest()->hasParam('limit')) {
                 $query->limit(null)
                     ->offset(null);
-            }
-
-            if ($this->columns !== null) {
-                $query->columns($this->columns);
             }
         }
 
