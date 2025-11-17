@@ -123,7 +123,7 @@ class VolatileStateResults extends ResultSet
             if ($this->columns !== null) {
                 $normalizedColumns = array_map(function ($column) use ($type) {
                     return preg_replace("/^($type\.state\.|state\.)/", '', $column);
-                }, iterator_to_array($this->columns));
+                }, $this->columns);
 
                 $stateColumns = array_intersect($normalizedColumns, $columns);
                 return [$stateColumns, $this->resolver->getBehaviors($state)];
