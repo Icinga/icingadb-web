@@ -185,10 +185,6 @@ class Controller extends CompatController
 
                 try {
                     $preferencesStore = PreferencesStore::create(new ConfigObject([
-                        //TODO: Don't set store key as it will no longer be needed once we drop support for
-                        // lower version of icingaweb2 then v2.11.
-                        //https://github.com/Icinga/icingaweb2/pull/4765
-                        'store'     => Config::app()->get('global', 'config_backend', 'db'),
                         'resource'  => Config::app()->get('global', 'config_resource')
                     ]), $user);
                     $preferencesStore->load();
@@ -405,51 +401,6 @@ class Controller extends CompatController
         }
 
         $this->getTabs()->enableDataExports();
-    }
-
-    /**
-     * @todo Remove once support for Icinga Web 2 v2.9.x is dropped
-     */
-    protected function sendAsPdf()
-    {
-        if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
-            throw new ConfigurationError('The pdfexport module is required for exports to PDF');
-        }
-
-        if (version_compare(Version::VERSION, '2.10.0', '>=')) {
-            parent::sendAsPdf();
-            return;
-        }
-
-        putenv('ICINGAWEB_EXPORT_FORMAT=pdf');
-        Environment::raiseMemoryLimit('512M');
-        Environment::raiseExecutionTime(300);
-
-        $time = DateFormatter::formatDateTime(time());
-
-        $doc = (new PrintableHtmlDocument())
-            ->setTitle($this->view->title ?? '')
-            ->setHeader(Html::wantHtml([
-                Html::tag('span', ['class' => 'title']),
-                Html::tag('time', null, $time)
-            ]))
-            ->setFooter(Html::wantHtml([
-                Html::tag('span', null, [
-                    t('Page') . ' ',
-                    Html::tag('span', ['class' => 'pageNumber']),
-                    ' / ',
-                    Html::tag('span', ['class' => 'totalPages'])
-                ]),
-                Html::tag('p', null, Url::fromRequest()->setParams($this->params))
-            ]))
-            ->addHtml($this->content);
-        $doc->getAttributes()->add('class', 'icinga-module module-icingadb');
-
-        Pdfexport::first()->streamPdfFromHtml($doc, sprintf(
-            '%s-%s',
-            $this->view->title ?: $this->getRequest()->getActionName(),
-            $time
-        ));
     }
 
     public function dispatch($action)
