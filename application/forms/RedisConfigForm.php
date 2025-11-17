@@ -20,6 +20,7 @@ use Icinga\Web\Form;
 use ipl\Validator\PrivateKeyValidator;
 use ipl\Validator\X509CertValidator;
 use Throwable;
+use Zend_Config_Exception;
 use Zend_Form_Decorator_Abstract;
 use Zend_Validate_Callback;
 
@@ -538,7 +539,7 @@ class RedisConfigForm extends ConfigForm
 
         try {
             $connectionConfig->saveIni();
-        } catch (NotWritableError $e) {
+        } catch (NotWritableError | Zend_Config_Exception $e) {
             $this->addDecorator('ViewScript', array(
                 'viewModule'   => 'default',
                 'viewScript'   => 'showConfiguration.phtml',
