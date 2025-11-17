@@ -5,6 +5,10 @@ If you are upgrading across multiple versions, make sure to follow the steps for
 
 ## Upgrading to Icinga DB Web v1.3
 
+**Requirements**
+
+* The minimum required Icinga Web version is now 2.12.
+
 **Removed Features**
 
 * The routes `users`, `user`, `usergroup` and `usergroups` have been removed.
