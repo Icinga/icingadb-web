@@ -96,7 +96,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                 }
             }
 
-            $stateChange->setIcon($item->state->getIcon());
+            $stateChange->setIcon($this->getStateBallIcon($item));
             $stateChange->setHandled(
                 $item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)
             );
@@ -109,7 +109,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         $ballSize = $layout === 'minimal' ? StateBall::SIZE_BIG : StateBall::SIZE_LARGE;
 
         $stateBall = new StateBall($item->state->getStateText(), $ballSize);
-        $stateBall->add($item->state->getIcon());
+        $stateBall->add($this->getStateBallIcon($item));
         if ($item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
@@ -275,15 +275,27 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         }
 
         if (! $item->notifications_enabled) {
-            $statusIcons->addHtml(
-                new Icon('bell-slash', ['title' => $this->translate('Notifications disabled')])
-            );
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" has notifications disabled'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" has notifications disabled'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::NOTIFICATIONS_DISABLED, ['title' => $title]));
         }
 
         if (! $item->active_checks_enabled) {
-            $statusIcons->addHtml(
-                new Icon('eye-slash', ['title' => $this->translate('Active checks disabled')])
-            );
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" has active checks disabled'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" has active checks disabled'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::ACTIVE_CHECKS_DISABLED, ['title' => $title]));
         }
 
         $performanceData = new HtmlElement('div', Attributes::create(['class' => 'performance-data']));
@@ -337,5 +349,32 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         }
 
         return false;
+    }
+
+    protected function getStateBallIcon($item): ?Icon
+    {
+        $icon = $item->state->getIcon();
+
+        if ($icon === null) {
+            if (! $item->notifications_enabled) {
+                $icon = new Icon(Icons::NOTIFICATIONS_DISABLED, [
+                    'title' => sprintf(
+                        '%s (%s)',
+                        strtoupper($item->state->getStateTextTranslated()),
+                        $this->translate('has notifications disabled')
+                    )
+                ]);
+            } elseif (! $item->active_checks_enabled) {
+                $icon = new Icon(Icons::ACTIVE_CHECKS_DISABLED, [
+                    'title' => sprintf(
+                        '%s (%s)',
+                        strtoupper($item->state->getStateTextTranslated()),
+                        $this->translate('has active checks disabled')
+                    )
+                ]);
+            }
+        }
+
+        return $icon;
     }
 }
