@@ -36,8 +36,11 @@ class VolatileStateResults extends ResultSet
     /** @var string Object type service */
     protected const TYPE_SERVICE = 'service';
 
-    /** @var array Columns to be selected if they were explicitly set, if empty all columns are selected */
-    protected array $columns;
+    /** @var array|null Columns to be selected if they were explicitly set, if empty all columns are selected */
+    protected ?array $columns;
+
+    /** @var bool Whether the model's ID should be contained in the results */
+    protected bool $includeModelID = true;
 
     public static function fromQuery(Query $query)
     {
@@ -45,6 +48,20 @@ class VolatileStateResults extends ResultSet
         $self->resolver = $query->getResolver();
         $self->redisUnavailable = Backend::getRedis()->isUnavailable();
         $self->columns = $query->getColumns();
+
+        if (! empty($self->columns)) {
+            // The id is necessary to apply the redis-updates
+            if ($query->getModel() instanceof Host && empty(array_intersect(['host.id', 'id'], $self->columns))) {
+                $query->withColumns('host.id');
+                $self->includeModelID = false;
+            } elseif (
+                $query->getModel() instanceof Service &&
+                empty(array_intersect(['service.id', 'id'], $self->columns))
+            ) {
+                $query->withColumns('service.id');
+                $self->includeModelID = false;
+            }
+        }
 
         return $self;
     }
@@ -66,7 +83,12 @@ class VolatileStateResults extends ResultSet
             $this->rewind();
         }
 
-        return parent::current();
+        $result = parent::current();
+        if (! $this->includeModelID) {
+            unset($result['id']);
+        }
+
+        return $result;
     }
 
     public function next(): void
