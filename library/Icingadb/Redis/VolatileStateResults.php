@@ -36,17 +36,15 @@ class VolatileStateResults extends ResultSet
     /** @var string Object type service */
     protected const TYPE_SERVICE = 'service';
 
-    /** @var array|null Columns to be selected if they were explicitly set, if null all columns are selected */
-    protected ?array $columns = null;
+    /** @var array Columns to be selected if they were explicitly set, if empty all columns are selected */
+    protected array $columns;
 
     public static function fromQuery(Query $query)
     {
         $self = parent::fromQuery($query);
         $self->resolver = $query->getResolver();
         $self->redisUnavailable = Backend::getRedis()->isUnavailable();
-        if (! empty($query->getColumns())) {
-            $self->columns = $query->getColumns();
-        }
+        $self->columns = $query->getColumns();
 
         return $self;
     }
@@ -120,10 +118,11 @@ class VolatileStateResults extends ResultSet
                 return ! str_ends_with($column, '_id');
             });
 
-            if ($this->columns !== null) {
-                $normalizedColumns = array_map(function ($column) use ($type) {
-                    return preg_replace("/^($type\.state\.|state\.)/", '', $column);
-                }, $this->columns);
+            if (! empty($this->columns)) {
+                $normalizedColumns = array_map(
+                    fn($column) => preg_replace("/^($type\.state\.|state\.)/", '', $column),
+                    $this->columns
+                );
 
                 $stateColumns = array_intersect($normalizedColumns, $columns);
                 return [$stateColumns, $this->resolver->getBehaviors($state)];

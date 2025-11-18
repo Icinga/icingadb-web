@@ -104,6 +104,8 @@ class Controller extends CompatController
             }
         }
 
+        // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
+        // The model's id must always be selected, to ensure redis updates can be applied.
         if ($this->format === 'csv' || $this->format === 'json') {
             if ($query->getModel() instanceof Host && ! in_array('host.id', $columns)) {
                 $columns[] = 'host.id';

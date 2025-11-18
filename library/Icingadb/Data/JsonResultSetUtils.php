@@ -52,7 +52,9 @@ trait JsonResultSetUtils
         foreach ($model as $key => $value) {
             if ($value instanceof Model) {
                 $object = $this->createObject($value);
-                if ($object !== []) {
+                // If there is no value in the model or it's descendents,
+                // it was not a part of the query, so no JSON object will be created for this model.
+                if (! empty($object)) {
                     $keysAndValues[$key] = $object;
                 }
             } else {
