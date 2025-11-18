@@ -16,6 +16,11 @@ If you are upgrading across multiple versions, make sure to follow the steps for
   if another role denies access to different variables. The same applies to `icingadb/protect/variables`, in which
   case variables protected in one role will now be protected even if another role protects different variables.
   This has been done to simplify the configuration and to get it more in line with how refusals work in Icinga Web.
+* When using the `?columns` parameter to filter for specific columns and exporting to CSV/JSON, the exported file will
+  only contain the listed columns of the Hosts/Services, if the parameter is not set, all columns will be included.
+* If a relation is entirely empty and would result in an empty JSON-object, the JSON-export will not create an object
+  for it at all. (instead of `{"someKey":"someValue","emptyObject":{}}` we will now export `{"someKey":"someValue"}`)
+
 
 **Removed Features**
 
