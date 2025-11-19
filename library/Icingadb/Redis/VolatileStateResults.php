@@ -36,11 +36,32 @@ class VolatileStateResults extends ResultSet
     /** @var string Object type service */
     protected const TYPE_SERVICE = 'service';
 
+    /** @var array|null Columns to be selected if they were explicitly set, if empty all columns are selected */
+    protected ?array $columns;
+
+    /** @var bool Whether the model's ID should be contained in the results */
+    protected bool $includeModelID = true;
+
     public static function fromQuery(Query $query)
     {
         $self = parent::fromQuery($query);
         $self->resolver = $query->getResolver();
         $self->redisUnavailable = Backend::getRedis()->isUnavailable();
+        $self->columns = $query->getColumns();
+
+        if (! empty($self->columns)) {
+            // The id is necessary to apply the redis-updates
+            if ($query->getModel() instanceof Host && empty(array_intersect(['host.id', 'id'], $self->columns))) {
+                $query->withColumns('host.id');
+                $self->includeModelID = false;
+            } elseif (
+                $query->getModel() instanceof Service &&
+                empty(array_intersect(['service.id', 'id'], $self->columns))
+            ) {
+                $query->withColumns('service.id');
+                $self->includeModelID = false;
+            }
+        }
 
         return $self;
     }
@@ -62,7 +83,12 @@ class VolatileStateResults extends ResultSet
             $this->rewind();
         }
 
-        return parent::current();
+        $result = parent::current();
+        if (! $this->includeModelID) {
+            unset($result['id']);
+        }
+
+        return $result;
     }
 
     public function next(): void
@@ -109,8 +135,22 @@ class VolatileStateResults extends ResultSet
         $type = null;
         $showSourceGranted = $this->getAuth()->hasPermission('icingadb/object/show-source');
 
-        $getKeysAndBehaviors = function (State $state): array {
-            return [$state->getColumns(), $this->resolver->getBehaviors($state)];
+        $getKeysAndBehaviors = function (State $state, $type): array {
+            $columns = array_filter($state->getColumns(), function ($column) {
+                return ! str_ends_with($column, '_id');
+            });
+
+            if (! empty($this->columns)) {
+                $normalizedColumns = array_map(
+                    fn($column) => preg_replace("/^($type\.state\.|state\.)/", '', $column),
+                    $this->columns
+                );
+
+                $stateColumns = array_intersect($normalizedColumns, $columns);
+                return [$stateColumns, $this->resolver->getBehaviors($state)];
+            }
+
+            return [$columns, $this->resolver->getBehaviors($state)];
         };
 
         $states = [];
@@ -141,7 +181,7 @@ class VolatileStateResults extends ResultSet
             $states[$type][bin2hex($row->id)] = $row->state;
 
             if (! isset($states[$type]['keys'])) {
-                [$keys, $behaviors] = $getKeysAndBehaviors($row->state);
+                [$keys, $behaviors] = $getKeysAndBehaviors($row->state, $type);
 
                 if (! $showSourceGranted) {
                     $keys = array_diff($keys, ['check_commandline']);
@@ -155,7 +195,7 @@ class VolatileStateResults extends ResultSet
                 $states[self::TYPE_HOST][bin2hex($row->host->id)] = $row->host->state;
 
                 if (! isset($states[self::TYPE_HOST]['keys'])) {
-                    [$keys, $behaviors] = $getKeysAndBehaviors($row->host->state);
+                    [$keys, $behaviors] = $getKeysAndBehaviors($row->host->state, $type);
 
                     $states[self::TYPE_HOST]['keys'] = $keys;
                     $states[self::TYPE_HOST]['behaviors'] = $behaviors;

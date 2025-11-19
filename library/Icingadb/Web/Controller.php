@@ -102,7 +102,12 @@ class Controller extends CompatController
             }
         }
 
-        $query->withColumns($columns);
+        // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
+        if ($this->format === 'csv' || $this->format === 'json') {
+            $query->columns($columns);
+        } else {
+            $query->withColumns($columns);
+        }
 
         if (! $viewMode) {
             $viewModeSwitcher->setViewMode('tabular');

@@ -85,12 +85,14 @@ trait CsvResultSetUtils
             $offset = 0;
         }
 
+        $headerPrinted = false;
         do {
             $query->offset($offset);
             $result = $query->execute()->disableCache();
-            foreach ($result as $i => $keysAndValues) {
-                if ($i === 0) {
+            foreach ($result as $keysAndValues) {
+                if (! $headerPrinted) {
                     echo implode(',', array_keys($keysAndValues));
+                    $headerPrinted = true;
                 }
 
                 echo "\r\n";

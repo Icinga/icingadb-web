@@ -51,7 +51,12 @@ trait JsonResultSetUtils
         $keysAndValues = [];
         foreach ($model as $key => $value) {
             if ($value instanceof Model) {
-                $keysAndValues[$key] = $this->createObject($value);
+                $object = $this->createObject($value);
+                // If there is no value in the model or it's descendents,
+                // it was not a part of the query, so no JSON object will be created for this model.
+                if (! empty($object)) {
+                    $keysAndValues[$key] = $object;
+                }
             } else {
                 $keysAndValues[$key] = $this->formatValue($key, $value);
             }
