@@ -3,6 +3,37 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.3.0 (2025-11-19)
+
+All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/10?closed=1
+
+### Icinga Notifications
+
+This release accompanies the release of Icinga Notifications v0.2.0. We have changed how notification sources are
+configured, and now an integration into Icinga Web is mandatory. Icinga DB Web v1.3 will serve as the integration
+for Icinga DB v1.5.
+
+### New Features
+
+* The *Services* tab of a host and the *History* tab of hosts and services are now filterable (#981, #1293)
+* Exporting hosts and services to CSV or JSON by using the `?columns=…` query parameter now includes only the columns
+  specified in the parameter in the results (#1011)
+
+### Breaking Changes
+
+* The restrictions `icingadb/denylist/variables` and `icingadb/protect/variables` from different roles are now
+  merged into a single list, respectively. This means that variables denied in one role will not show up anymore
+  if another role denies access to different variables. The same applies to `icingadb/protect/variables`, in which
+  case variables protected in one role will now be protected even if another role protects different variables.
+  This has been done to simplify the configuration and to get it more in line with how refusals work in Icinga Web.
+
+### Maintenance
+
+* The migration widget in the upper right has now been removed. We assume most users may be rather annoyed by it, and
+  those who are still unsure when to migrate fully to Icinga DB are unlikely to be finally convinced by it anyway.
+  Modules with support for Icinga DB will now default to use it if available.
+* The upgrading documentation includes more details and other changes, make sure to read it carefully.
+
 ## 1.2.4 (2025-11-19)
 
 This release includes fixes for the following issues:
