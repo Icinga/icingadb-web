@@ -3,6 +3,14 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.2.4 (2025-11-19)
+
+This release includes fixes for the following issues:
+
+* Commandtransport in cluster mode is broken #1292
+* Redis config: Path "/nix/store" is not writable #1269
+* Hide list selection-count and action list hint in minimal layout #1298
+
 ## 1.2.3 (2025-10-16)
 
 **Notice:** This is a security release. It is recommended to upgrade _quickly_.
