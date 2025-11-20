@@ -580,8 +580,6 @@ namespace Icinga\Module\Icingadb {
         $this->provideCssFile(ltrim(substr($path, strlen($cssDirectory)), DIRECTORY_SEPARATOR));
     }
 
-    $this->provideJsFile('action-list.js');
-    $this->provideJsFile('loadmore.js');
     $this->provideJsFile('migrate.js');
     $this->provideJsFile('progress-bar.js');
 }
