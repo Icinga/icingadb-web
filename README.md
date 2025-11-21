@@ -66,4 +66,4 @@ are easily accomplished with the `Continue With` control that operates on filter
 ## License
 
 Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
-[GNU General Public License Version 2](LICENSE).
+[GNU General Public License Version 2](LICENSE) or later.

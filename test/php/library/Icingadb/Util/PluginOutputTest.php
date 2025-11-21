@@ -1,6 +1,6 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2+ */
 
 namespace Tests\Icinga\Module\Icingadb\Util;
 
