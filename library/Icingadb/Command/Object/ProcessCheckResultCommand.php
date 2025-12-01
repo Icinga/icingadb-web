@@ -121,7 +121,7 @@ class ProcessCheckResultCommand extends ObjectsCommand
      *
      * @return  $this
      */
-    public function setPerformanceData(string $performanceData = null): self
+    public function setPerformanceData(?string $performanceData = null): self
     {
         $this->performanceData = $performanceData;
 
