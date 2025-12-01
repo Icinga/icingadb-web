@@ -187,7 +187,6 @@ class UnreachableParent extends DependencyNode
 
         // TODO: ipl-orm doesn't preserve key order :'(
         $columnsProperty = (new \ReflectionClass($nodeSelect))->getProperty('columns');
-        $columnsProperty->setAccessible(true);
         $columnsProperty->setValue($nodeSelect, array_merge(
             [
                 'id' => null,
