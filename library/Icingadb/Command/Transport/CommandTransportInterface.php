@@ -19,5 +19,5 @@ interface CommandTransportInterface
      *
      * @throws  CommandTransportException If sending the Icinga command failed
      */
-    public function send(IcingaCommand $command, int $now = null);
+    public function send(IcingaCommand $command, ?int $now = null);
 }
