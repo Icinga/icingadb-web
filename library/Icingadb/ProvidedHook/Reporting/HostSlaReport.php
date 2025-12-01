@@ -45,7 +45,7 @@ class HostSlaReport extends SlaReport
             ->setValues([(float) $row->sla]);
     }
 
-    protected function fetchSla(Timerange $timerange, Rule $filter = null)
+    protected function fetchSla(Timerange $timerange, ?Rule $filter = null)
     {
         $sla = Host::on($this->getDb())
             ->columns([

@@ -47,13 +47,13 @@ class HostStates
     /**
      * Get the textual representation of the passed host state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function text(int $state = null): string
+    public static function text(?int $state = null): string
     {
         switch (true) {
             case $state === self::UP:
@@ -78,13 +78,13 @@ class HostStates
     /**
      * Get the translated textual representation of the passed host state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function translated(int $state = null): string
+    public static function translated(?int $state = null): string
     {
         switch (true) {
             case $state === self::UP:

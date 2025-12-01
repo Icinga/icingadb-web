@@ -86,7 +86,7 @@ class UnreachableParent extends DependencyNode
         ]));
     }
 
-    public static function on(Connection $db, Model $root = null): Query
+    public static function on(Connection $db, ?Model $root = null): Query
     {
         if ($root === null) {
             throw new InvalidArgumentException('Root node must not be null');

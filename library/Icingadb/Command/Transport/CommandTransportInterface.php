@@ -15,10 +15,10 @@ interface CommandTransportInterface
     /**
      * Send an Icinga command over the Icinga command transport
      *
-     * @param   IcingaCommand   $command    The command to send
-     * @param   int|null        $now        Timestamp of the command or null for now
+     * @param IcingaCommand $command The command to send
+     * @param ?int $now Timestamp of the command or null for now
      *
-     * @throws  CommandTransportException If sending the Icinga command failed
+     * @throws CommandTransportException If sending the Icinga command failed
      */
-    public function send(IcingaCommand $command, int $now = null);
+    public function send(IcingaCommand $command, ?int $now = null);
 }

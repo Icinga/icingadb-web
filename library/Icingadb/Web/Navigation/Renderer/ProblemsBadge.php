@@ -115,7 +115,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         return $this->title;
     }
 
-    public function render(NavigationItem $item = null): string
+    public function render(?NavigationItem $item = null): string
     {
         if ($item === null) {
             $item = $this->getItem();

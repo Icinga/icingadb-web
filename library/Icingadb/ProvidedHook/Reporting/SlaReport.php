@@ -56,13 +56,13 @@ abstract class SlaReport extends ReportHook
      * Fetch SLA according to specified time range and filter
      *
      * @param Timerange $timerange
-     * @param Rule|null $filter
+     * @param ?Rule $filter
      *
      * @return iterable
      */
-    abstract protected function fetchSla(Timerange $timerange, Rule $filter = null);
+    abstract protected function fetchSla(Timerange $timerange, ?Rule $filter = null);
 
-    protected function fetchReportData(Timerange $timerange, array $config = null)
+    protected function fetchReportData(Timerange $timerange, ?array $config = null)
     {
         $rd = $this->createReportData();
         $rows = [];
@@ -214,12 +214,12 @@ abstract class SlaReport extends ReportHook
         ]);
     }
 
-    public function getData(Timerange $timerange, array $config = null)
+    public function getData(Timerange $timerange, ?array $config = null)
     {
         return $this->fetchReportData($timerange, $config);
     }
 
-    public function getHtml(Timerange $timerange, array $config = null)
+    public function getHtml(Timerange $timerange, ?array $config = null)
     {
         $data = $this->getData($timerange, $config);
 

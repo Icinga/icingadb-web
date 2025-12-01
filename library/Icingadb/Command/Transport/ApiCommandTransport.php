@@ -301,13 +301,13 @@ class ApiCommandTransport implements CommandTransportInterface
      * Send the Icinga command over the Icinga 2 API
      *
      * @param IcingaCommand|IcingaApiCommand $command
-     * @param int|null $now
+     * @param ?int $now
      *
      * @throws CommandTransportException
      *
      * @return mixed
      */
-    public function send(IcingaCommand|IcingaApiCommand $command, int $now = null)
+    public function send(IcingaCommand|IcingaApiCommand $command, ?int $now = null)
     {
         if ($command instanceof IcingaCommand) {
             $command = $this->renderer->render($command);
