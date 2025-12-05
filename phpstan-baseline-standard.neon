@@ -49,92 +49,8 @@ parameters:
 			path: application/controllers/CommandTransportController.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:acknowledgeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:addCommentAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:assertIsGrantedOnCommandTargets\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:checkNowAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:fetchCommandTargets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:indexAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:processCheckresultAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:removeAcknowledgementAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:scheduleCheckAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:scheduleDowntimeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:sendCustomNotificationAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:toggleFeaturesAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Parameter \#1 \$form of method Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:handleCommandForm\(\) expects Icinga\\Module\\Icingadb\\Forms\\Command\\CommandForm\|string, Icinga\\Module\\Icingadb\\Forms\\Command\\Object\\ToggleObjectFeaturesForm\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/CommentController.php
-
-		-
-			message: '#^Property Icinga\\Module\\Icingadb\\Controllers\\CommentController\:\:\$commandTargetModel \(ipl\\Orm\\Model\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: application/controllers/CommentController.php
 
@@ -205,92 +121,8 @@ parameters:
 			path: application/controllers/ConfigController.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:acknowledgeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:addCommentAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:assertIsGrantedOnCommandTargets\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:checkNowAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:fetchCommandTargets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:indexAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:processCheckresultAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:removeAcknowledgementAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:scheduleCheckAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:scheduleDowntimeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:sendCustomNotificationAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:toggleFeaturesAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Parameter \#1 \$form of method Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:handleCommandForm\(\) expects Icinga\\Module\\Icingadb\\Forms\\Command\\CommandForm\|string, Icinga\\Module\\Icingadb\\Forms\\Command\\Object\\ToggleObjectFeaturesForm\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/DowntimeController.php
-
-		-
-			message: '#^Property Icinga\\Module\\Icingadb\\Controllers\\DowntimeController\:\:\$commandTargetModel \(ipl\\Orm\\Model\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: application/controllers/DowntimeController.php
 
@@ -469,12 +301,6 @@ parameters:
 			path: application/controllers/HostController.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\HostController\:\:fetchCommandTargets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/controllers/HostController.php
-
-		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\HostController\:\:processCheckresultAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -542,12 +368,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$value of method Icinga\\Web\\Url\:\:setParam\(\) expects array\|bool\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/HostController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: application/controllers/HostController.php
@@ -817,12 +637,6 @@ parameters:
 			path: application/controllers/ServiceController.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\ServiceController\:\:fetchCommandTargets\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/controllers/ServiceController.php
-
-		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\ServiceController\:\:processCheckresultAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -904,12 +718,6 @@ parameters:
 			message: '#^Parameter \#2 \$value of method Icinga\\Web\\Url\:\:setParam\(\) expects array\|bool\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
-			path: application/controllers/ServiceController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
 			path: application/controllers/ServiceController.php
 
 		-
@@ -1855,12 +1663,6 @@ parameters:
 			path: library/Icingadb/Command/Object/GetObjectCommand.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Command\\Object\\ObjectsCommand\:\:getObjects\(\) return type has no value type specified in iterable type Traversable\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: library/Icingadb/Command/Object/ObjectsCommand.php
-
-		-
 			message: '#^Property Icinga\\Module\\Icingadb\\Command\\Object\\ProcessCheckResultCommand\:\:\$performanceData \(string\) does not accept string\|null\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -1937,24 +1739,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: library/Icingadb/Command/Transport/CommandTransportInterface.php
-
-		-
-			message: '#^Cannot access offset ''in_downtime'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: library/Icingadb/Common/IcingaRedis.php
-
-		-
-			message: '#^Cannot access offset ''is_acknowledged'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: library/Icingadb/Common/IcingaRedis.php
-
-		-
-			message: '#^Cannot access offset ''state_type'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: library/Icingadb/Common/IcingaRedis.php
 
 		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Common\\IcingaRedis\:\:fetchHostState\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
@@ -2227,12 +2011,6 @@ parameters:
 			path: library/Icingadb/Compat/CompatHost.php
 
 		-
-			message: '#^Cannot call method columns\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: library/Icingadb/Compat/CompatHost.php
-
-		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -2332,12 +2110,6 @@ parameters:
 			message: '#^Parameter \#2 \$tableName of method ipl\\Orm\\Resolver\:\:qualifyColumn\(\) expects string, int\|string given\.$#'
 			identifier: argument.type
 			count: 2
-			path: library/Icingadb/Compat/CompatHost.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
 			path: library/Icingadb/Compat/CompatHost.php
 
 		-
@@ -2479,12 +2251,6 @@ parameters:
 			path: library/Icingadb/Compat/CompatService.php
 
 		-
-			message: '#^Cannot call method columns\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: library/Icingadb/Compat/CompatService.php
-
-		-
 			message: '#^Cannot call method execute\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -2602,12 +2368,6 @@ parameters:
 			message: '#^Parameter \#2 \$tableName of method ipl\\Orm\\Resolver\:\:qualifyColumn\(\) expects string, int\|string given\.$#'
 			identifier: argument.type
 			count: 2
-			path: library/Icingadb/Compat/CompatService.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 3
 			path: library/Icingadb/Compat/CompatService.php
 
 		-
@@ -3194,12 +2954,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#2 \$targetPath of method ipl\\Orm\\Query\:\:createSubQuery\(\) expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: library/Icingadb/Model/Behavior/FlattenedObjectVars.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: library/Icingadb/Model/Behavior/FlattenedObjectVars.php
@@ -5575,12 +5329,6 @@ parameters:
 			path: library/Icingadb/Web/Control/SearchBar/ObjectSuggestions.php
 
 		-
-			message: '#^Cannot access property \$flatname on array\<int\|string, mixed\>\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: library/Icingadb/Web/Control/SearchBar/ObjectSuggestions.php
-
-		-
 			message: '#^Cannot call method getRoles\(\) on Icinga\\User\|null\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -5847,12 +5595,6 @@ parameters:
 		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Web\\Controller\:\:prepareSearchFilter\(\) has parameter \$additionalColumns with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: library/Icingadb/Web/Controller.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Web\\Controller\:\:sendAsPdf\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: library/Icingadb/Web/Controller.php
 
@@ -6392,12 +6134,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$name of method Icinga\\Module\\Icingadb\\Widget\\Detail\\CustomVarTable\:\:renderArray\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: library/Icingadb/Widget/Detail/CustomVarTable.php
-
-		-
-			message: '#^Parameter \#2 \$value of method ipl\\Html\\Attributes\:\:add\(\) expects array\|bool\|string\|null, int given\.$#'
 			identifier: argument.type
 			count: 1
 			path: library/Icingadb/Widget/Detail/CustomVarTable.php
@@ -7144,12 +6880,6 @@ parameters:
 			message: '#^Parameter \#2 \$tableName of method ipl\\Orm\\Resolver\:\:qualifyColumn\(\) expects string, int\|string given\.$#'
 			identifier: argument.type
 			count: 2
-			path: library/Icingadb/Widget/Detail/ObjectDetail.php
-
-		-
-			message: '#^Possibly invalid array key type array\|bool\|string\|null\.$#'
-			identifier: offsetAccess.invalidOffset
-			count: 1
 			path: library/Icingadb/Widget/Detail/ObjectDetail.php
 
 		-
