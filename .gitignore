@@ -4,4 +4,3 @@
 # Except those related to Git and GitHub
 !.git*
 !.github
-!.phpcs.xml
