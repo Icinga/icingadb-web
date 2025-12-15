@@ -88,7 +88,7 @@ class DbResourcePage extends Form
             return false;
         }
 
-        if (! isset($formData['skip_validation']) || !$formData['skip_validation']) {
+        if (! isset($formData['skip_validation']) || ! $formData['skip_validation']) {
             if (! $this->validateConfiguration()) {
                 $this->addSkipValidationCheckbox();
                 return false;

@@ -12,7 +12,7 @@ use ipl\Stdlib\Filter;
 
 class PivotTable
 {
-    const SORT_ASC = 'asc';
+    public const SORT_ASC = 'asc';
 
     /**
      * The query to fetch as pivot table
