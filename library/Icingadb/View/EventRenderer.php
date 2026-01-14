@@ -18,6 +18,7 @@ use Icinga\Module\Icingadb\Widget\CheckAttempt;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use IntlDateFormatter;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
@@ -29,6 +30,7 @@ use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
+use Locale;
 
 /** @implements ItemRenderer<History> */
 class EventRenderer implements ItemRenderer
@@ -41,9 +43,12 @@ class EventRenderer implements ItemRenderer
     /** @var NotificationRenderer To render NotificationHistory event */
     protected $notificationRenderer;
 
-    public function __construct()
+    protected bool $useRelativeTimestamps;
+
+    public function __construct(bool $useRelativeTimestamps = false)
     {
         $this->notificationRenderer = new NotificationRenderer();
+        $this->useRelativeTimestamps = $useRelativeTimestamps;
     }
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
@@ -413,7 +418,32 @@ class EventRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        $info->addHtml(new TimeAgo($item->event_time->getTimestamp()));
+        if (
+            ($this->useRelativeTimestamps && time() - $item->event_time->getTimestamp() < 3600)
+            || $layout === 'header'
+        ) {
+            $info->addHtml(new TimeAgo($item->event_time->getTimestamp()));
+        } else {
+            $textFormatter = new IntlDateFormatter(
+                Locale::getDefault(),
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::MEDIUM
+            );
+            $time = date('Y-m-d H:i:s', (int) $item->event_time->getTimestamp());
+
+            $info->addHtml(
+                new HtmlElement(
+                    'time',
+                    new Attributes(
+                        [
+                            'datetime' => $time,
+                            'title' => $time
+                        ]
+                    ),
+                    new Text($textFormatter->format($item->event_time->getTimestamp()))
+                )
+            );
+        }
     }
 
     public function assembleFooter($item, HtmlDocument $footer, string $layout): void
