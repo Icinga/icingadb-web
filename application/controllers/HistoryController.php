@@ -5,11 +5,17 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Util\Json;
+use Icinga\Web\Session;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -44,7 +50,9 @@ class HistoryController extends Controller
         ]);
 
         $before = $this->params->shift('before', time());
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl('icingadb/history');
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
@@ -89,6 +97,7 @@ class HistoryController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -98,7 +107,7 @@ class HistoryController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $historyList = (new LoadMoreObjectList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute(), $previousTimestamp, $this->useRelativeTimestamps))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));

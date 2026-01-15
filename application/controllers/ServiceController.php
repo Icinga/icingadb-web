@@ -289,7 +289,9 @@ class ServiceController extends Controller
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
         $url->setParams(['name' => $this->service->name, 'host.name' => $this->service->host->name]);
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl('icingadb/service/history');
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
@@ -344,12 +346,13 @@ class ServiceController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $historyList = (new LoadMoreObjectList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute(), $previousTimestamp, $this->useRelativeTimestamps))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
