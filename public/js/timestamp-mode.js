@@ -45,6 +45,11 @@
          */
         onTimestampModeToggle(event)
         {
+            // The timestamp-toggle always contains one sample of relative time,
+            // the digit parts can be replaced with the current minutes and seconds when switching to relative time
+            const relativeTimeParts = event.target
+                .getAttribute('relative-sample')
+                .split(/\d+/);
             const preference = (event.target.checked) ? 'relative' : 'absolute';
             const container = event.target.closest('.container');
             const url = window.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
@@ -82,7 +87,7 @@
                     $el.removeClass('time-absolute')
                         .addClass('time-ago');
 
-                    $el.text(event.data.self.relativeTime(new Date($el.attr('datetime'))));
+                    $el.text(event.data.self.relativeTime(new Date($el.attr('datetime')), relativeTimeParts));
                 }
             });
         }
@@ -91,10 +96,11 @@
          * Get the relative time to be displayed for a date, returns absolute time if it exceeds one hour
          *
          * @param {Date} date The date to change to relative representation
+         * @param {string[]} timeTemplateParts An array with 3 elements, minutes and seconds are inserted between them
          *
          * @returns {string} The representation of the date in relative time
          */
-        relativeTime(date)
+        relativeTime(date, timeTemplateParts)
         {
             const timestamp = date.getTime();
             // Adjust to the user's timezone
@@ -103,7 +109,12 @@
             if (diff >= 3600) {
                 return this.timeFormatter.format(date);
             } else {
-                return Math.floor(diff / 60) + "m " + Math.floor(diff % 60) + "s ago";
+                // insert current values of minutes and seconds in the same places where they were removed in the sample
+                return timeTemplateParts[0] +
+                    Math.floor(diff / 60) +
+                    timeTemplateParts[1] +
+                    diff % 60 +
+                    timeTemplateParts[2];
             }
         }
     }
