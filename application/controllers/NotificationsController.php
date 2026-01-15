@@ -42,7 +42,9 @@ class NotificationsController extends Controller
 
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl('icingadb/notifications');
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
@@ -87,6 +89,7 @@ class NotificationsController extends Controller
 
         yield $this->export($notifications);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -96,7 +99,11 @@ class NotificationsController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $notificationList = (new LoadMoreObjectList($notifications->execute()))
+        $notificationList = (new LoadMoreObjectList(
+            $notifications->execute(),
+            $previousTimestamp,
+            $this->useRelativeTimestamps
+        ))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));
