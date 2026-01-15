@@ -23,6 +23,7 @@ use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
@@ -32,6 +33,7 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\Environment;
 use Icinga\Util\Json;
+use Icinga\Web\Session;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
@@ -57,6 +59,9 @@ class Controller extends CompatController
 
     /** @var bool */
     private $formatProcessed = false;
+
+    /** @var bool Whether relative or absolute timestamps are to be used */
+    protected bool $useRelativeTimestamps = false;
 
     /**
      * Get the filter created from query string parameters
@@ -266,6 +271,39 @@ class Controller extends CompatController
         }
 
         return $viewModeSwitcher;
+    }
+
+    /**
+     * Create a control to switch between relative and absolute timestamps
+     *
+     * @param string $path The path that is used as key to load the current preference e.g. icingadb/history
+     *
+     * @return TimestampToggle
+     */
+    public function createTimestampControl(string $path)
+    {
+        $timestampMode = $this->params->shift('timestamps');
+        if ($timestampMode === null) {
+            if (
+                Session::getSession()->get('timestamps')
+                && array_key_exists($path, Session::getSession()->get('timestamps'))
+            ) {
+                $timestampMode = Session::getSession()->get('timestamps')[$path];
+            } else {
+                $storedPreferences = Json::decode(
+                    $this->Auth()->getUser()->getPreferences()->getValue('icingadb', 'timestamps'),
+                    true
+                );
+                if ($storedPreferences !== null && array_key_exists($path, $storedPreferences)) {
+                    $timestampMode = $storedPreferences[$path];
+                } else {
+                    $timestampMode = 'absolute';
+                }
+            }
+        }
+
+        $this->useRelativeTimestamps = $timestampMode === 'relative';
+        return new TimestampToggle($this->useRelativeTimestamps);
     }
 
     /**
