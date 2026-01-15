@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Web\Control;
 
 use Icinga\Application\Icinga;
+use Icinga\Date\DateFormatter;
 use ipl\Web\Compat\CompatForm;
 
 class TimestampToggle extends CompatForm
@@ -25,10 +26,11 @@ class TimestampToggle extends CompatForm
     protected function assemble()
     {
         $this->addElement('checkbox', 'timestamp-toggle', [
-            'class'     => 'timestamp-toggle',
-            'id'        => Icinga::app()->getRequest()->protectId('timestamp-toggle'),
-            'label'     => $this->translate('Use relative timestamps'),
-            'value'     => $this->useRelativeTimestamps
+            'class'             => 'timestamp-toggle',
+            'id'                => Icinga::app()->getRequest()->protectId('timestamp-toggle'),
+            'label'             => $this->translate('Use relative timestamps'),
+            'value'             => $this->useRelativeTimestamps,
+            'relative-sample'   => DateFormatter::timeAgo(time())
         ]);
     }
 }
