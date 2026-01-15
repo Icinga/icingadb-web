@@ -145,4 +145,41 @@ class HistoryController extends Controller
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
     }
+
+    /**
+     * Update the user's preferred timestamp mode for path given as key in the body's JSON-data
+     *
+     * @return void
+     */
+    public function timestampAction()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+        $data = json_decode($this->getRequest()->getRawBody(), true);
+        $key = array_keys($data)[0];
+        $value = array_values($data)[0];
+
+        $sessionPreferences = Session::getSession()->get('timestamps');
+        $preferencesStore = PreferencesStore::create(new ConfigObject([
+            'resource'  => Config::app()->get('global', 'config_resource')
+        ]), $this->Auth()->getUser());
+        $storedPreferences = $preferencesStore->load();
+        if ($sessionPreferences !== null) {
+            $sessionPreferences[$key] = $value;
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        } elseif (
+            array_key_exists('icingadb', $storedPreferences)
+            && array_key_exists('timestamps', $storedPreferences['icingadb'])
+        ) {
+            $sessionPreferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
+            $sessionPreferences[$key] = $value;
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        } else {
+            $sessionPreferences = [$key => $value];
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        }
+
+        $storedPreferences['icingadb']['timestamps'] = Json::encode($sessionPreferences);
+        $preferencesStore->save(new Preferences($storedPreferences));
+    }
 }
