@@ -197,10 +197,9 @@ class Controller extends CompatController
                     $preferencesStore = PreferencesStore::create(new ConfigObject([
                         'resource'  => Config::app()->get('global', 'config_resource')
                     ]), $user);
-                    $preferencesStore->load();
-                    $preferencesStore->save(
-                        new Preferences(['icingadb' => ['view_modes' => Json::encode($preferredModes)]])
-                    );
+                    $preferences = $preferencesStore->load();
+                    $preferences['icingadb']['view_modes'] = Json::encode($preferredModes);
+                    $preferencesStore->save(new Preferences($preferences));
                 } catch (Exception $e) {
                     Logger::error('Failed to save preferred view mode for user "%s": %s', $user->getUsername(), $e);
                 }
