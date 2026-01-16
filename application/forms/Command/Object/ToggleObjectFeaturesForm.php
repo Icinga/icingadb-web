@@ -16,7 +16,7 @@ use Traversable;
 
 class ToggleObjectFeaturesForm extends CommandForm
 {
-    const LEAVE_UNCHANGED = 'noop';
+    public const LEAVE_UNCHANGED = 'noop';
 
     protected $features;
 

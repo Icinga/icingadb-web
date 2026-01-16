@@ -739,48 +739,6 @@ parameters:
 			path: application/controllers/HostsController.php
 
 		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\MigrateController\:\:backendSupportAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\MigrateController\:\:checkboxStateAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\MigrateController\:\:checkboxSubmitAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\MigrateController\:\:monitoringUrlAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\MigrateController\:\:searchUrlAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Parameter \#1 \$url of static method Icinga\\Web\\Url\:\:fromPath\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: application/controllers/MigrateController.php
-
-		-
-			message: '#^Parameter \#2 \$subject of function preg_match expects string, string\|false given\.$#'
-			identifier: argument.type
-			count: 3
-			path: application/controllers/MigrateController.php
-
-		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\NotificationsController\:\:completeAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -1217,90 +1175,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: application/controllers/TacticalController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UserController\:\:indexAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$title of method ipl\\Web\\Compat\\CompatController\:\:setTitle\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Property Icinga\\Module\\Icingadb\\Controllers\\UserController\:\:\$user \(Icinga\\Module\\Icingadb\\Model\\User\) does not accept ipl\\Orm\\Model\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsergroupController\:\:indexAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsergroupController.php
-
-		-
-			message: '#^Parameter \#1 \$title of method ipl\\Web\\Compat\\CompatController\:\:setTitle\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/UsergroupController.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method ipl\\Stdlib\\Filter\:\:equal\(\) expects array\|bool\|float\|int\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/UsergroupController.php
-
-		-
-			message: '#^Property Icinga\\Module\\Icingadb\\Controllers\\UsergroupController\:\:\$usergroup \(Icinga\\Module\\Icingadb\\Model\\Usergroup\) does not accept ipl\\Orm\\Model\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: application/controllers/UsergroupController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsergroupsController\:\:completeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsergroupsController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsergroupsController\:\:indexAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsergroupsController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsergroupsController\:\:searchEditorAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsergroupsController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsersController\:\:completeAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsersController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsersController\:\:indexAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsersController.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Controllers\\UsersController\:\:searchEditorAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UsersController.php
 
 		-
 			message: '#^Method Icinga\\Module\\Icingadb\\Forms\\ApiTransportForm\:\:assemble\(\) has no return type specified\.$#'
@@ -1847,24 +1721,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: application/forms/RedisConfigForm.php
-
-		-
-			message: '#^Call to an undefined method ipl\\Html\\Contract\\FormElement\:\:isChecked\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: application/forms/SetAsBackendForm.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Forms\\SetAsBackendForm\:\:assemble\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/forms/SetAsBackendForm.php
-
-		-
-			message: '#^Method Icinga\\Module\\Icingadb\\Forms\\SetAsBackendForm\:\:onSuccess\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/forms/SetAsBackendForm.php
 
 		-
 			message: '#^Call to an undefined method ipl\\Stdlib\\Filter\\Rule\:\:getColumn\(\)\.$#'
@@ -3269,12 +3125,6 @@ parameters:
 			identifier: return.empty
 			count: 2
 			path: library/Icingadb/Model/Behavior/Bitmask.php
-
-		-
-			message: '#^Cannot cast mixed to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: library/Icingadb/Model/Behavior/BoolCast.php
 
 		-
 			message: '#^Call to an undefined method ipl\\Stdlib\\Filter\\Rule\:\:getColumn\(\)\.$#'
