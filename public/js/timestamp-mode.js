@@ -34,8 +34,11 @@
          */
         onTimestampClick(event)
         {
-            event.stopPropagation();
-            event.target.closest('.container').querySelector('.timestamp-toggle').click();
+            // When used in the dashboard switching timestamp mode is not available
+            if (! event.target.closest('.dashboard')) {
+                event.stopPropagation();
+                event.target.closest('.container').querySelector('.timestamp-toggle').click();
+            }
         }
 
         /**
