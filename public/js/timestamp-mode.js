@@ -77,22 +77,24 @@
                 body: JSON.stringify(body)
             });
 
-            $container.find(
-                '.item-list .history .extended-info time, .item-list .notification .extended-info time'
-            ).each(function () {
-                const $el = $(this);
-                if ($el.hasClass('time-ago')) {
-                    $el.removeClass('time-ago')
-                        .addClass('time-absolute');
-
-                    $el.text(event.data.self.timeFormatter.format(new Date($el.attr('datetime'))));
-                } else {
-                    $el.removeClass('time-absolute')
-                        .addClass('time-ago');
-
-                    $el.text(event.data.self.relativeTime(new Date($el.attr('datetime')), relativeTimeParts));
-                }
-            });
+            if (event.target.checked) {
+                container.querySelectorAll('.content [data-absolute-time]').forEach(el => {
+                    el.removeAttribute('data-absolute-time');
+                    el.setAttribute('data-relative-time', 'ago');
+                    el.innerHTML = event.data.self.relativeTime(
+                        new Date(el.getAttribute('datetime')),
+                        relativeTimeParts
+                    );
+                });
+            } else {
+                container.querySelectorAll('.content [data-relative-time]').forEach(el => {
+                    el.removeAttribute('data-relative-time');
+                    el.setAttribute('data-absolute-time', '');
+                    el.innerHTML =
+                        event.data.self.timeFormatter
+                        .format(new Date(el.getAttribute('datetime')));
+                });
+            }
         }
 
         /**

@@ -436,6 +436,7 @@ class EventRenderer implements ItemRenderer
                     'time',
                     new Attributes(
                         [
+                            'data-absolute-time' => 'ago',
                             'datetime' => $time,
                             'title' => $time
                         ]
