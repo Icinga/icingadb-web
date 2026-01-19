@@ -20,7 +20,41 @@ Connection configuration for the database to which Icinga DB synchronizes monito
 Connection configuration for the Redis® server where Icinga 2 writes check results.
 This data is used to display the latest state information in Icinga DB Web.
 
+You can adjust the Redis® connection settings in the Web UI:
+
 1. Configure the connection to the Redis® server through the `Configuration → Modules → icingadb → Redis` menu.
+
+But you can also do this manually by editing the configuration file `/etc/icingaweb2/modules/icingadb/redis.ini`. The
+basic structure of the file is as follows:
+
+```ini
+[redis]
+
+[redis1]
+
+[redis2]
+```
+
+The `redis` section is used for general options, `redis1` is used for the primary Redis® and `redis2` is used for the
+secondary Redis® in case of high-availability setups. The general options are applied to all Redis® connections.
+
+### Available settings
+
+#### General Redis® Options
+
+| Option | Description                                                                      |
+|--------|----------------------------------------------------------------------------------|
+| tls    | Enable TLS for the connection to Redis®. Set to `1` to enable, or `0` to disable |
+
+#### Primary and Secondary Redis® Options
+
+| Option   | Description                                                                |
+|----------|----------------------------------------------------------------------------|
+| host     | Hostname or IP address of the Redis® server.                               |
+| port     | Port of the Redis® server. Defaults to `6380`.                             |
+| database | Database number to use for the connection. Defaults to `0`.                |
+| username | Username for the Redis® connection. If not set, no authentication is used. |
+| password | Password for the Redis® connection. If not set, no authentication is used. |
 
 !!! info
 
@@ -54,6 +88,20 @@ For this you need an `ApiUser` object with at least the following permissions on
 2. Restart Icinga 2 for these changes to take effect.
 3. Then configure a command transport for Icinga DB Web
    using the credentials you just created via the `Configuration → Modules → icingadb → Command Transports` menu.
+
+But you can also do this manually by editing the configuration file
+`/etc/icingaweb2/modules/icingadb/command_transports.ini`. Every command transport is defined in a separate section
+with `[TRANSPORT_NAME]` as the section header.
+
+### Available settings
+
+| Option    | Description                                 |
+|-----------|---------------------------------------------|
+| transport | Type of command transport. Has to be `api`. |
+| host      | Hostname or IP address of the Icinga 2 API. |
+| port      | Port of the Icinga 2 API.                   |
+| username  | Username for the Icinga 2 API connection.   |
+| password  | Password for the Icinga 2 API connection.   |
 
 !!! info
 
