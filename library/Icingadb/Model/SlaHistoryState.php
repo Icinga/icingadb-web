@@ -8,6 +8,7 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use Icinga\Module\Icingadb\Common\Model;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Relations;
 
 /**
@@ -60,6 +61,11 @@ class SlaHistoryState extends Model
             'host_id',
             'service_id',
             'downtime_id'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'hostgroup' => 'host.hostgroup',
+            'servicegroup' => 'service.servicegroup'
         ]));
     }
 
