@@ -42,6 +42,7 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Web\Widget\CopyToClipboard;
 
 class Controller extends CompatController
 {
@@ -356,7 +357,9 @@ class Controller extends CompatController
                     $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
                 }
 
-                $this->content->add(Html::tag('pre', $sql));
+                $pre = Html::tag('pre', $sql);
+                CopyToClipboard::attachTo($pre);
+                $this->content->add($pre);
             }
 
             return true;
