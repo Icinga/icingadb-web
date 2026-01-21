@@ -71,6 +71,7 @@ class NotificationsController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $previousTimestamp = null;
             $notifications->resetOffset();
             $notifications->limit($page * $limitControl->getLimit());
         }
