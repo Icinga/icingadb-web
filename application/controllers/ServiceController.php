@@ -290,7 +290,8 @@ class ServiceController extends Controller
 
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
-        $url->setParams(['name' => $this->service->name, 'host.name' => $this->service->host->name]);
+        $url->setParam('name', $this->service->name)
+            ->setParam('host.name', $this->service->host->name);
         $previousTimestamp = $this->params->shift('last-entry');
 
         $timestampControl = $this->createTimestampControl('icingadb/service/history');
