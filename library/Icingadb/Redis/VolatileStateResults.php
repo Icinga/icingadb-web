@@ -62,16 +62,12 @@ class VolatileStateResults extends ResultSet
             $this->rewind();
         }
 
-        return parent::current();
-    }
-
-    public function next(): void
-    {
-        parent::next();
-
-        if (! $this->redisUnavailable && $this->isCacheDisabled && $this->valid()) {
-            $this->applyRedisUpdates([parent::current()]);
+        $result = parent::current();
+        if ($this->isCacheDisabled && ! $this->redisUnavailable) {
+            $this->applyRedisUpdates([$result]);
         }
+
+        return $result;
     }
 
     public function key(): int
