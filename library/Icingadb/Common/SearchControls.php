@@ -55,7 +55,7 @@ trait SearchControls
      *
      * @return ContinueWith
      */
-    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar, bool $hasResults): ContinueWith
+    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar, bool $hasResults = true): ContinueWith
     {
         if ($hasResults) {
             $continueWith = ContinueWith::create(
