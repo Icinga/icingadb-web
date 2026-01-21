@@ -161,6 +161,10 @@ class ObjectAuthorization
 
         foreach ($this->getAuth()->getUser()->getRoles() as $role) {
             $roleFilter = Filter::all();
+            if (($restriction = $role->getRestrictions('icingadb/scope/commands'))) {
+                $roleFilter->add($this->parseRestriction($restriction, 'icingadb/scopes/commands'));
+            }
+
             if (($restriction = $role->getRestrictions('icingadb/filter/objects'))) {
                 $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/objects'));
             }
