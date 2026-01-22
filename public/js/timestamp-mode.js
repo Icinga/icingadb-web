@@ -48,8 +48,16 @@
          */
         onTimestampModeToggle(event)
         {
-            // The timestamp-toggle always contains one sample of relative time,
-            // the digit parts can be replaced with the current minutes and seconds when switching to relative time
+            if (icinga.config.timezone !== event.data.self.dateFormatter.resolvedOptions().timeZone) {
+                event.data.self.dateFormatter = new Intl.DateTimeFormat(
+                    icinga.config.locale,
+                    {
+                        dateStyle: 'medium', timeStyle: 'medium',
+                        timeZone: icinga.config.timezone
+                    }
+                );
+            }
+
             const relativeTimeParts = event.target
                 .getAttribute('relative-sample')
                 .split(/\d+/);
