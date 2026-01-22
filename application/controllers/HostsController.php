@@ -97,10 +97,10 @@ class HostsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar);
 
         $results = $hosts->execute();
 
+        $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar, $results->hasResult());
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
                 ->setSort($sortControl->getSort());

@@ -83,9 +83,10 @@ class CommentsController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::commentsDetails(), $searchBar);
 
         $results = $comments->execute();
+
+        $continueWith = $this->createContinueWith(Links::commentsDetails(), $searchBar, $results->hasResult());
 
         $this->addContent(
             (new ObjectList($results))

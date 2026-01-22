@@ -108,9 +108,10 @@ class ServicesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
 
         $results = $services->execute();
+
+        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar, $results->hasResult());
 
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
@@ -279,7 +280,6 @@ class ServicesController extends Controller
         $this->addControl($problemToggle);
         $this->addControl($sortControl);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar);
 
         $pivotFilter = $problemToggle->isChecked() ?
             Filter::equal('service.state.is_problem', 'y') : null;
@@ -316,6 +316,7 @@ class ServicesController extends Controller
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
 
+        $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar, ! empty($pivotData));
         /** Preserve filter and params in view links (the `BaseFilter` implementation for view scripts -.-) */
         $this->view->baseUrl = Url::fromRequest()
             ->onlyWith([
