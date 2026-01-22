@@ -5,11 +5,17 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\User\Preferences;
+use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Util\Json;
+use Icinga\Web\Session;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -44,7 +50,9 @@ class HistoryController extends Controller
         ]);
 
         $before = $this->params->shift('before', time());
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl('icingadb/history');
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
@@ -73,6 +81,7 @@ class HistoryController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $previousTimestamp = null;
             $history->resetOffset();
             $history->limit($page * $limitControl->getLimit());
         }
@@ -89,6 +98,7 @@ class HistoryController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -98,7 +108,7 @@ class HistoryController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $historyList = (new LoadMoreObjectList($history->execute()))
+        $historyList = (new LoadMoreObjectList($history->execute(), $previousTimestamp, $this->useRelativeTimestamps))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));
@@ -135,5 +145,42 @@ class HistoryController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    /**
+     * Update the user's preferred timestamp mode for path given as key in the body's JSON-data
+     *
+     * @return void
+     */
+    public function timestampAction()
+    {
+        $this->_helper->viewRenderer->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+        $data = json_decode($this->getRequest()->getRawBody(), true);
+        $key = array_keys($data)[0];
+        $value = array_values($data)[0];
+
+        $sessionPreferences = Session::getSession()->get('timestamps');
+        $preferencesStore = PreferencesStore::create(new ConfigObject([
+            'resource'  => Config::app()->get('global', 'config_resource')
+        ]), $this->Auth()->getUser());
+        $storedPreferences = $preferencesStore->load();
+        if ($sessionPreferences !== null) {
+            $sessionPreferences[$key] = $value;
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        } elseif (
+            array_key_exists('icingadb', $storedPreferences)
+            && array_key_exists('timestamps', $storedPreferences['icingadb'])
+        ) {
+            $sessionPreferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
+            $sessionPreferences[$key] = $value;
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        } else {
+            $sessionPreferences = [$key => $value];
+            Session::getSession()->set('timestamps', $sessionPreferences);
+        }
+
+        $storedPreferences['icingadb']['timestamps'] = Json::encode($sessionPreferences);
+        $preferencesStore->save(new Preferences($storedPreferences));
     }
 }
