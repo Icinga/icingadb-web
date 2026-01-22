@@ -286,7 +286,9 @@ class HostController extends Controller
 
         yield $this->export($services);
 
-        $serviceList = (new ObjectList($services))
+        $results = $services->execute();
+
+        $serviceList = (new ObjectList($results))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
@@ -297,7 +299,8 @@ class HostController extends Controller
         $this->addControl($searchBar);
         $continueWith = $this->createContinueWith(
             Links::servicesDetails()->setFilter(Filter::equal('host.name', $this->host->name)),
-            $searchBar
+            $searchBar,
+            $results->hasResult()
         );
 
         $this->addContent($serviceList);

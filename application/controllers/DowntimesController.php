@@ -89,9 +89,10 @@ class DowntimesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::downtimesDetails(), $searchBar);
 
         $results = $downtimes->execute();
+
+        $continueWith = $this->createContinueWith(Links::downtimesDetails(), $searchBar, $results->hasResult());
 
         $this->addContent(
             (new ObjectList($results))

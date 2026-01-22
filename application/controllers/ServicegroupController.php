@@ -109,7 +109,9 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
-        $serviceList = (new ObjectList($services))
+        $results = $services->execute();
+
+        $serviceList = (new ObjectList($results))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
@@ -129,7 +131,8 @@ class ServicegroupController extends Controller
         $continueWith = $this->createContinueWith(
             Links::servicesDetails()
                 ->setFilter(Filter::equal('servicegroup.name', $servicegroup->name)),
-            $searchBar
+            $searchBar,
+            $results->hasResult()
         );
 
         $this->addContent($serviceList);
