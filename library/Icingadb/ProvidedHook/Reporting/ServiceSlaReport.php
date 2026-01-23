@@ -44,7 +44,7 @@ class ServiceSlaReport extends SlaReport
             ->setValues([(float) $row->sla]);
     }
 
-    protected function fetchSla(Timerange $timerange, Rule $filter = null)
+    protected function fetchSla(Timerange $timerange, ?Rule $filter = null)
     {
         $sla = Service::on($this->getDb())
             ->columns([

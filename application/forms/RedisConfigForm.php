@@ -675,13 +675,13 @@ class RedisConfigForm extends ConfigForm
      * Wraps the given IPL validator class into a callback validator
      * for usage as the only validator of the element given by name.
      *
-     * @param   string  $cls        IPL validator class FQN
-     * @param   string  $element    Form element name
-     * @param   Closure $additionalValidator
+     * @param   string   $cls        IPL validator class FQN
+     * @param   string   $element    Form element name
+     * @param   ?Closure $additionalValidator
      *
      * @return  array               Callback validator
      */
-    private function wrapIplValidator(string $cls, string $element, Closure $additionalValidator = null): array
+    private function wrapIplValidator(string $cls, string $element, ?Closure $additionalValidator = null): array
     {
         return [
             'Callback',

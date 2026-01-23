@@ -56,7 +56,7 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
     public function rewriteCondition(Condition $condition, $relation = null)
     {
         $column = $condition->metaData()->get('columnName');
-        if (! isset($this->properties[$column])) {
+        if ($column === null || ! isset($this->properties[$column])) {
             return;
         }
 

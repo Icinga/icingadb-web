@@ -786,7 +786,7 @@ class MigrateCommand extends Command
         return $config;
     }
 
-    private function createBackupIni(string $path, Config $config = null): void
+    private function createBackupIni(string $path, ?Config $config = null): void
     {
         $counter = 0;
         while (true) {
