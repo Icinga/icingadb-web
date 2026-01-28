@@ -1,0 +1,218 @@
+{
+    "ServiceTemplate": {
+        "scadvfda": {
+            "check_command": "disk",
+            "fields": [
+                {
+                    "datafield_id": 1,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 2,
+                    "is_required": "n",
+                    "var_filter": null
+                }
+            ],
+            "object_name": "scadvfda",
+            "object_type": "template",
+            "uuid": "e8d4e283-4741-42e0-a4c1-ea6efd740477"
+        },
+        "asfdsfbdg": {
+            "fields": [
+                {
+                    "datafield_id": 1,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 2,
+                    "is_required": "n",
+                    "var_filter": null
+                }
+            ],
+            "object_name": "asfdsfbdg",
+            "object_type": "template",
+            "uuid": "53b68378-ca77-438a-824d-ce43d5261a9d"
+        },
+        "st1": {
+            "check_command": "dummy",
+            "fields": [
+                {
+                    "datafield_id": 5,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 6,
+                    "is_required": "y",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 10,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 9,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 12,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 13,
+                    "is_required": "n",
+                    "var_filter": null
+                },
+                {
+                    "datafield_id": 2,
+                    "is_required": "n",
+                    "var_filter": null
+                }
+            ],
+            "groups": [
+                "foo"
+            ],
+            "object_name": "st1",
+            "object_type": "template",
+            "uuid": "bf099d80-ee7c-4a31-84a5-6916d1543410"
+        }
+    },
+    "DataList": {
+        "cities": {
+            "entries": [
+                {
+                    "entry_name": "firt",
+                    "entry_value": "foo",
+                    "format": "string",
+                    "allowed_roles": [
+                        "admin"
+                    ]
+                },
+                {
+                    "entry_name": "second",
+                    "entry_value": "Second",
+                    "format": "string",
+                    "allowed_roles": null
+                }
+            ],
+            "list_name": "cities",
+            "owner": "icingaadmin",
+            "uuid": "5795dbf7-79ae-43b9-a659-255dd2f2fcab"
+        }
+    },
+    "Datafield": {
+        "1": {
+            "uuid": "7097ac28-8055-472f-b60b-2cd18f45ba6b",
+            "varname": "group",
+            "caption": "Host group",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeString",
+            "format": null,
+            "settings": {
+                "visibility": "visible"
+            },
+            "category": null
+        },
+        "2": {
+            "uuid": "6a6f90bd-c601-4e0d-8083-46af977850e4",
+            "varname": "Test string",
+            "caption": "String to test",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeString",
+            "format": null,
+            "settings": {
+                "visibility": "visible"
+            },
+            "category": null
+        },
+        "5": {
+            "uuid": "79ef7150-9f8c-4808-890c-b9d82c5ba2a5",
+            "varname": "branch",
+            "caption": "Company branch",
+            "description": "something",
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeDatalist",
+            "format": null,
+            "settings": {
+                "behavior": "strict",
+                "data_type": "string",
+                "rename_vars": "y",
+                "datalist": "cities"
+            },
+            "category": "location"
+        },
+        "6": {
+            "uuid": "9ddd34fa-79ac-4e48-b468-e30c69d26a48",
+            "varname": "dict",
+            "caption": "Dictionary",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeDictionary",
+            "format": null,
+            "settings": {
+                "template_name": "st1",
+                "template_object_type": "service"
+            },
+            "category": null
+        },
+        "10": {
+            "uuid": "a9c6e74f-3fd1-403e-9813-f61614732d85",
+            "varname": "dict2",
+            "caption": "Child dictionary",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeDictionary",
+            "format": null,
+            "settings": {
+                "template_name": "st1",
+                "template_object_type": "service"
+            },
+            "category": null
+        },
+        "9": {
+            "uuid": "d030fd44-be9b-4f4f-9d4c-53fc46db7b95",
+            "varname": "foo",
+            "caption": "Dummy Variable",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeString",
+            "format": null,
+            "settings": {
+                "visibility": "visible"
+            },
+            "category": null
+        },
+        "12": {
+            "uuid": "c8050590-44fe-4cb3-ae87-19e0693d9b88",
+            "varname": "locations",
+            "caption": "Locations",
+            "description": "Locations belonging to domain",
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeArray",
+            "format": null,
+            "settings": {},
+            "category": null
+        },
+        "13": {
+            "uuid": "d63601ee-2637-47bd-9cf4-6e6df5bfb3f3",
+            "varname": "related_hosts",
+            "caption": "Related Hosts",
+            "description": null,
+            "datatype": "Icinga\\Module\\Director\\DataType\\DataTypeSqlQuery",
+            "format": null,
+            "settings": {
+                "data_type": "array",
+                "query": "select name, display_name from host where name like 'dummy%' order by name limit 5;",
+                "resource": "icingadb_postgres"
+            },
+            "category": null
+        }
+    },
+    "DatafieldCategory": {
+        "location": {
+            "category_name": "location",
+            "description": null,
+            "originalId": "1"
+        }
+    }
+}

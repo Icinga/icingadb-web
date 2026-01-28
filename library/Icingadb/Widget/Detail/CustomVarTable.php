@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
+use Icinga\Module\Icingadb\Hook\CustomVarEnricherHook;
 use Icinga\Module\Icingadb\Hook\CustomVarRendererHook;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -11,6 +12,7 @@ use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\Orm\Model;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
@@ -101,11 +103,11 @@ class CustomVarTable extends BaseHtmlElement
     protected function renderVar($name, $value)
     {
         if ($this->object !== null && $this->level === 0) {
-            list($name, $value, $group) = call_user_func($this->hookApplier, $name, $value);
-            if ($group !== null) {
-                $this->groups[$group][] = [$name, $value];
-                return;
-            }
+//            list($name, $value, $group) = call_user_func($this->hookApplier, $name, $value);
+//            if ($group !== null) {
+//                $this->groups[$group][] = [$name, $value];
+//                return;
+//            }
         }
 
         $isArray = is_array($value);
@@ -116,6 +118,8 @@ class CustomVarTable extends BaseHtmlElement
             case $isArray:
                 $this->renderObject($name, $value);
                 break;
+            case $value instanceof ValidHtml:
+                // Todo: Needs new implementation
             default:
                 $this->renderScalar($name, $value);
         }
@@ -213,9 +217,9 @@ class CustomVarTable extends BaseHtmlElement
 
     protected function assemble()
     {
-        if ($this->object !== null) {
-            $this->hookApplier = CustomVarRendererHook::prepareForObject($this->object);
-        }
+//        if ($this->object !== null) {
+//            $this->hookApplier = CustomVarRendererHook::prepareForObject($this->object);
+//        }
 
         if ($this->headerTitle !== null) {
             $this->getAttributes()
@@ -249,7 +253,17 @@ class CustomVarTable extends BaseHtmlElement
             ksort($this->data);
         }
 
-        foreach ($this->data as $name => $value) {
+        $groups = [];
+        if ($this->object !== null) {
+            list($enrichedCustomVars, $groups) = CustomVarEnricherHook::prepareEnrichedCustomVars(
+                (array) $this->data,
+                $this->object
+            );
+        } else {
+            $enrichedCustomVars = $this->data;
+        }
+
+        foreach ($enrichedCustomVars as $name => $value) {
             $this->renderVar($name, $value);
         }
 
@@ -257,12 +271,12 @@ class CustomVarTable extends BaseHtmlElement
 
         // Hooks can return objects as replacement for keys, hence a generator is needed for group entries
         $genGenerator = function ($entries) {
-            foreach ($entries as list($key, $value)) {
+            foreach ($entries as $key => $value) {
                 yield $key => $value;
             }
         };
 
-        foreach ($this->groups as $group => $entries) {
+        foreach ($groups as $group => $entries) {
             $this->renderGroup($group, $genGenerator($entries));
         }
     }
