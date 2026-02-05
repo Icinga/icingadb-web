@@ -196,6 +196,9 @@ trait Auth
                 // Hosts and services have a special relation as a service can't exist without its host.
                 // Hence why the hosts restriction is also applied if only services are queried.
                 || $applyServiceRestriction;
+            // Redundancy groups have no relation to anything in order to be subject
+            // for authorization, so they must be exempt from the respective filters.
+            $skipRedundancyGroups = $relations[0] === 'dependency_node';
 
             $hostStateRelation = array_search('host_state', $relations, true);
             $serviceStateRelation = array_search('service_state', $relations, true);
@@ -229,14 +232,18 @@ trait Auth
                 }
 
                 if ($customVarRelationName === false || count($relations) > 1) {
-                    if ($restriction = $role->getRestrictions('icingadb/filter/objects')) {
-                        $roleFilter->add(Filter::any(
-                            Filter::all(
-                                Filter::unlike('host.id', '*'),
-                                Filter::unlike('service.id', '*')
-                            ),
-                            $this->parseRestriction($restriction, 'icingadb/filter/objects')
-                        ));
+                    if (($restriction = $role->getRestrictions('icingadb/filter/objects'))) {
+                        if ($skipRedundancyGroups) {
+                            $roleFilter->add(Filter::any(
+                                Filter::all(
+                                    Filter::unlike('host_id', '*'),
+                                    Filter::unlike('service_id', '*')
+                                ),
+                                $this->parseRestriction($restriction, 'icingadb/filter/objects')
+                            ));
+                        } else {
+                            $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/objects'));
+                        }
                     }
 
                     if ($applyHostRestriction && ($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
@@ -245,7 +252,11 @@ trait Auth
                             $this->forceQueryOptimization($hostFilter, 'hostgroup.name');
                         }
 
-                        $roleFilter->add(Filter::any(Filter::unlike('host.id', '*'), $hostFilter));
+                        if ($skipRedundancyGroups) {
+                            $roleFilter->add(Filter::any(Filter::unlike('host_id', '*'), $hostFilter));
+                        } else {
+                            $roleFilter->add($hostFilter);
+                        }
                     }
 
                     if (
