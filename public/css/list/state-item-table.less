@@ -7,6 +7,19 @@
     th {
       font-weight: normal;
 
+      &.last-th .column-chooser-opener {
+        border-bottom: 1px solid @gray-light;
+
+        .action-link {
+          background-color: @low-sat-blue;
+          .rounded-corners();
+
+          .ball {
+            background-color: @icinga-blue;
+          }
+        }
+      }
+
       // Border styles start
       form {
         padding: 0 0 0 1px;
@@ -83,6 +96,31 @@ table.state-item-table {
       // That's layout, yes, controls overflow when scrolling
       padding: 1em 0 0 0;
       background: @body-bg-color;
+
+      &.last-th {
+        display: flex;
+
+        form {
+          width: 100% - 3em;
+          padding-right: 1px;
+        }
+
+        .column-chooser-opener {
+          white-space: nowrap;
+          padding-left: 0.2em;
+          width: 3em;
+
+          .action-link {
+            padding: 0.3em;
+            height: 1em;
+
+            .ball {
+              margin-right: 1/6em;
+              margin-bottom: 1/6em;
+            }
+          }
+        }
+      }
     }
 
     th button {
