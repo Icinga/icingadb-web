@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Application\Logger;
 use Icinga\Authentication\Auth as IcingaAuth;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Icingadb\Authentication\ObjectAuthorization;
@@ -16,6 +17,7 @@ use ipl\Orm\UnionQuery;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
+use ipl\Web\Filter\Renderer;
 
 trait Auth
 {
@@ -179,11 +181,12 @@ trait Auth
 
         if ($query instanceof UnionQuery) {
             $queries = $query->getUnions();
+            $forceGroupFilterOptimization = true;
         } else {
             $queries = [$query];
+            $forceGroupFilterOptimization = false;
         }
 
-        $orgQuery = $query;
         foreach ($queries as $query) {
             $relations = [$query->getModel()->getTableName()];
             foreach ($query->getWith() as $relationPath => $relation) {
@@ -206,14 +209,14 @@ trait Auth
             $resolver = $query->getResolver();
 
             $queryFilter = Filter::any();
-            $forbiddenVars = Filter::all();
+            $forbiddenVars = Filter::none();
             $obfuscationRules = Filter::all();
             foreach ($this->getAuth()->getUser()->getRoles() as $role) {
                 $roleFilter = Filter::all();
 
                 if ($customVarRelationName !== false) {
                     if (($restriction = $role->getRestrictions('icingadb/denylist/variables'))) {
-                        $forbiddenVars->add($this->parseDenylist(
+                        $this->flattenSemanticallyEqualRules($forbiddenVars, $this->parseDenylist(
                             $restriction,
                             $customVarRelationName
                                 ? $resolver->qualifyColumn('flatname', $customVarRelationName)
@@ -248,7 +251,7 @@ trait Auth
 
                     if ($applyHostRestriction && ($restriction = $role->getRestrictions('icingadb/filter/hosts'))) {
                         $hostFilter = $this->parseRestriction($restriction, 'icingadb/filter/hosts');
-                        if ($orgQuery instanceof UnionQuery) {
+                        if ($forceGroupFilterOptimization) {
                             $this->forceQueryOptimization($hostFilter, 'hostgroup.name');
                         }
 
@@ -264,7 +267,7 @@ trait Auth
                         && ($restriction = $role->getRestrictions('icingadb/filter/services'))
                     ) {
                         $serviceFilter = $this->parseRestriction($restriction, 'icingadb/filter/services');
-                        if ($orgQuery instanceof UnionQuery) {
+                        if ($forceGroupFilterOptimization) {
                             $this->forceQueryOptimization($serviceFilter, 'servicegroup.name');
                         }
 
@@ -273,7 +276,19 @@ trait Auth
                 }
 
                 if (! $roleFilter->isEmpty()) {
-                    $queryFilter->add($roleFilter);
+                    if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+                        Logger::debug(
+                            'Preparing restrictions for user %s with role %s: %s; Current query filter: %s',
+                            $this->getAuth()->getUser()->getUsername(),
+                            $role->getName(),
+                            (new Renderer($roleFilter))->setStrict()->render(),
+                            (new Renderer($queryFilter))->setStrict()->render()
+                        );
+                    }
+
+                    if (! $this->flattenSemanticallyEqualRules($queryFilter, $roleFilter)) {
+                        $queryFilter->add($roleFilter);
+                    }
                 }
             }
 
@@ -354,6 +369,14 @@ trait Auth
 
                     $query->columns($columns);
                 }
+            }
+
+            if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+                Logger::debug(
+                    'Final restrictions for user %s: %s',
+                    $this->getAuth()->getUser()->getUsername(),
+                    (new Renderer($queryFilter))->setStrict()->render()
+                );
             }
 
             $query->filter($queryFilter)
@@ -445,6 +468,51 @@ trait Auth
         }
 
         return $filter;
+    }
+
+    /**
+     * Flatten the given rule into the given chain if they are semantically equal
+     *
+     * This is needed as the same filter may be added multiple times to the same query, which leads to multiple nested
+     * chains of the same type. This method flattens those chains into a single one, which allows for better
+     * optimization and therefore enhanced efficiency.
+     *
+     * @param Filter\Chain $to
+     * @param Filter\Chain $from
+     *
+     * @return bool Whether the $from rule has been added to the $to chain
+     */
+    private function flattenSemanticallyEqualRules(Filter\Chain $to, Filter\Chain $from): bool
+    {
+        $transfer = $from instanceof $to || (! $from instanceof Filter\None && $from->count() === 1);
+        foreach (iterator_to_array($from) as $rule) {
+            if ($rule instanceof Filter\Chain) {
+                if ($transfer) {
+                    if (! $this->flattenSemanticallyEqualRules($to, $rule)) {
+                        $to->add($rule);
+                    }
+
+                    $from->remove($rule);
+                } elseif ($this->flattenSemanticallyEqualRules($from, $rule)) {
+                    $from->remove($rule);
+                }
+            } elseif ($transfer) {
+                $to->add($rule);
+                $from->remove($rule);
+            }
+        }
+
+        if (! $to->has($from)) {
+            if (! $from->isEmpty()) {
+                $to->add($from);
+            }
+
+            return true;
+        } elseif ($from->isEmpty()) {
+            $to->remove($from);
+        }
+
+        return false;
     }
 
     /**
