@@ -79,20 +79,18 @@ class Controller extends CompatController
      * @param ViewModeSwitcher $viewModeSwitcher
      *
      * @return array provided columns
-     *
-     * @throws HttpBadRequestException
      */
     public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher): array
     {
         // All of that is essentially what `ColumnControl::apply()` should do
-        $viewMode = $this->getRequest()->getUrl()->getParam($viewModeSwitcher->getViewModeParam());
+        $viewMode = $viewModeSwitcher->getViewMode();
         $columnsDef = $this->params->shift('columns');
         if (! $columnsDef) {
             if ($viewMode === 'tabular') {
-                $this->httpBadRequest('Missing parameter "columns"');
+                $columnsDef = $this->getDefaultColumnsDef();
+            } else {
+                return [];
             }
-
-            return [];
         }
 
         $columns = [];
@@ -134,14 +132,7 @@ class Controller extends CompatController
         LimitControl $limitControl,
         bool $verticalPagination = false
     ): ViewModeSwitcher {
-        $controllerName = $this->getRequest()->getControllerName();
-
-        // TODO: Make this configurable somehow. The route shouldn't be checked to choose the view modes!
-        if ($controllerName === 'hostgroups' || $controllerName === 'servicegroups') {
-            $viewModeSwitcher = new GridViewModeSwitcher();
-        } else {
-            $viewModeSwitcher = new ViewModeSwitcher();
-        }
+        $viewModeSwitcher = $this->getViewModeSwitcherInstance();
 
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -266,6 +257,17 @@ class Controller extends CompatController
         }
 
         return $viewModeSwitcher;
+    }
+
+    /**
+     * Return an instance of the view mode switcher for the current controller,
+     * controllers that need special view mode switchers should override this method.
+     *
+     * @return ViewModeSwitcher
+     */
+    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
+    {
+        return new ViewModeSwitcher();
     }
 
     /**
@@ -499,5 +501,10 @@ class Controller extends CompatController
         $app->getFrontController()
             ->getPlugin('Zend_Controller_Plugin_ErrorHandler')
             ->setErrorHandlerModule('icingadb');
+    }
+
+    protected function getDefaultColumnsDef(): string
+    {
+        return 'name, state.output';
     }
 }
