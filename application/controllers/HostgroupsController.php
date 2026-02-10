@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\View\HostgroupGridRenderer;
 use Icinga\Module\Icingadb\View\HostgroupRenderer;
+use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -146,5 +147,10 @@ class HostgroupsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
+    {
+        return new GridViewModeSwitcher();
     }
 }
