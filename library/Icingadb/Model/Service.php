@@ -228,9 +228,9 @@ class Service extends Model
         });
 
         $defaults->add('customvars', function (self $subject) {
-            if (! $subject->customvar instanceof ResultSet) {
-                $this->applyRestrictions($subject->customvar);
-            }
+            // In contrast to customvar_flat, we cannot apply restrictions here as denylists and protections
+            // require the flattened values to work. To retrieve only customvars the user has access to, the
+            // `vars` property should be used instead.
 
             $vars = [];
             foreach ($subject->customvar as $customVar) {
