@@ -3,6 +3,31 @@
 Specific version upgrades are described below. Please note that version upgrades are incremental.
 If you are upgrading across multiple versions, make sure to follow the steps for each of them.
 
+## Upgrading to Icinga DB Web v1.4
+
+**Behavior Changes**
+
+Modules that provide integrations for a host's or service's detail view now have unrestricted access to all custom
+variables of said object. This is the case by accessing custom variables via the object's `customvars` property.
+This was always meant to be the case, but due to an implementation oversight, the restrictions configured via
+`icingadb/filter/objects`, `icingadb/filter/hosts` and `icingadb/filter/services` were applied and caused
+unexpected or erroneous behavior. Though, in some cases this may not have been noticed or seen as a problem,
+so when upgrading we recommend to review modules that provide such integrations and check if they rely on the
+previous behavior. If so, accessing the `vars` property of an object should have the desired effect.
+
+The following modules made by Icinga are safe and do not need an update to still work:
+
+* Icinga Business Process Modeling
+* Icinga Web Graphite Integration
+
+Cases where this may not have been noticed are as follows:
+
+* Restrictions only reference `host.*` columns and integrations only require access to host variables.
+* Restrictions only reference `service.*` columns and integrations only require access to service variables.
+
+Since these are very specific cases, we don't expect broad expectation of the previous behavior, but please review
+your setup nonetheless if you use third party or custom modules that access custom variables this way.
+
 ## Upgrading to Icinga DB Web v1.3
 
 **Requirements**
