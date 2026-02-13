@@ -35,6 +35,13 @@ class ApiCommandTransport implements CommandTransportInterface
     protected $host;
 
     /**
+     * API Ca Path
+     *
+     * @var ?string
+     */
+    protected $caPath;
+
+    /**
      * API password
      *
      * @var string
@@ -110,6 +117,30 @@ class ApiCommandTransport implements CommandTransportInterface
     public function setHost(string $host): self
     {
         $this->host = $host;
+
+        return $this;
+    }
+
+    /**
+     * Get the API Ca Path
+     *
+     * @return ?string
+     */
+    public function getCaPath(): ?string
+    {
+        return $this->caPath;
+    }
+
+    /**
+     * Set the API Ca Path
+     *
+     * @param ?string $caPath
+     *
+     * @return  $this
+     */
+    public function setCaPath(?string $caPath): self
+    {
+        $this->caPath = $caPath;
 
         return $this;
     }
@@ -243,10 +274,10 @@ class ApiCommandTransport implements CommandTransportInterface
             $response = (new Client(['timeout' => static::SEND_TIMEOUT]))
                 ->post($this->getUriFor($command->getEndpoint()), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
+                    'verify'        => $this->getCaPath() ?: false,
                     'headers'       => $headers,
                     'json'          => $command->getData(),
-                    'http_errors'   => false,
-                    'verify'        => false
+                    'http_errors'   => false
                 ]);
         } catch (GuzzleException $e) {
             if (str_starts_with(ltrim($e->getMessage()), 'cURL error 28:')) {
@@ -328,9 +359,9 @@ class ApiCommandTransport implements CommandTransportInterface
             $response = (new Client(['timeout' => static::SEND_TIMEOUT]))
                 ->get($this->getUriFor(''), [
                     'auth'          => [$this->getUsername(), $this->getPassword()],
+                    'verify'        => $this->getCaPath() ?: false,
                     'headers'       => ['Accept' => 'application/json'],
-                    'http_errors'   => false,
-                    'verify'        => false
+                    'http_errors'   => false
                 ]);
         } catch (GuzzleException $e) {
             throw new CommandTransportException(
