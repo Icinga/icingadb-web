@@ -220,6 +220,36 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
             );
         }
 
+        if ($item->state->is_acknowledged) {
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" is acknowledged'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" is acknowledged'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::IS_ACKNOWLEDGED, ['title' => $title]));
+        }
+
+        if ($item->state->in_downtime) {
+            if ($isService) {
+                $message = $item->state->is_handled
+                        ? $this->translate('Service "%s" on "%s" is handled by Downtime')
+                        : $this->translate('Service "%s" on "%s" is in Downtime');
+
+                $title = sprintf($message, $item->display_name, $item->host->display_name);
+            } else {
+                $message = $item->state->is_handled
+                        ? $this->translate('Host "%s" is handled by Downtime')
+                        : $this->translate('Host "%s" is in Downtime');
+
+                $title = sprintf($message, $item->display_name);
+            }
+
+            $statusIcons->addHtml(new Icon(Icons::IN_DOWNTIME, ['title' => $title]));
+        }
+
         if ($item->state->is_flapping) {
             $title = $isService
                 ? sprintf(
@@ -227,12 +257,21 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                     $item->display_name,
                     $item->host->display_name
                 )
-                : sprintf(
-                    $this->translate('Host "%s" is in flapping state'),
-                    $item->display_name
-                );
+                : sprintf($this->translate('Host "%s" is in flapping state'), $item->display_name);
 
-            $statusIcons->addHtml(new Icon('random', ['title' => $title]));
+            $statusIcons->addHtml(new Icon(Icons::IS_FLAPPING, ['title' => $title]));
+        }
+
+        if (! $item->state->is_reachable) {
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" is unreachable'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" is unreachable'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::HOST_DOWN, ['title' => $title]));
         }
 
         if (! $item->notifications_enabled) {
