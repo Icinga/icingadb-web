@@ -291,6 +291,10 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
     {
         if ($name === 'icon-image') {
             if (isset($item->icon_image->icon_image)) {
+                if (str_contains($item->icon_image->icon_image, '.')) {
+                    $element->addAttributes(['class' => 'real-image']);
+                }
+
                 $element->addHtml(new IconImage($item->icon_image->icon_image, $item->icon_image_alt));
             }
 
