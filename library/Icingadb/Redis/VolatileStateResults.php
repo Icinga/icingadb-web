@@ -49,6 +49,10 @@ class VolatileStateResults extends ResultSet
         $self->redisUnavailable = Backend::getRedis()->isUnavailable();
         $self->columns = $query->getColumns();
 
+        if ($query->getModel() instanceof HoststateSummary || $query->getModel() instanceof ServicestateSummary) {
+            return $self;
+        }
+                
         if (! empty($self->columns)) {
             // The id is necessary to apply the redis-updates
             if ($query->getModel() instanceof Host && empty(array_intersect(['host.id', 'id'], $self->columns))) {
