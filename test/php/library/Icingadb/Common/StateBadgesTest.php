@@ -83,7 +83,7 @@ class StateBadgesTest extends TestCase
                 return 0;
             }
 
-            public function generateLink($content, Filter\Rule $filter = null): Link
+            public function generateLink($content, ?Filter\Rule $filter = null): Link
             {
                 return parent::createLink($content, $filter);
             }

@@ -83,7 +83,7 @@ class UrlMigrator
         return $url;
     }
 
-    public static function transformParams(Url $url, string $transformerName = null): array
+    public static function transformParams(Url $url, ?string $transformerName = null): array
     {
         $transformer = new self();
 
@@ -156,7 +156,7 @@ class UrlMigrator
      *
      * @return Filter\Rule|false
      */
-    public static function transformFilter(Filter\Rule $filter, string $queryTransformer = null)
+    public static function transformFilter(Filter\Rule $filter, ?string $queryTransformer = null)
     {
         $transformer = new self();
 

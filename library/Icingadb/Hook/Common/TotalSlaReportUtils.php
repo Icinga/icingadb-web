@@ -13,7 +13,7 @@ use function ipl\I18n\t;
 
 trait TotalSlaReportUtils
 {
-    public function getHtml(Timerange $timerange, array $config = null)
+    public function getHtml(Timerange $timerange, ?array $config = null)
     {
         $data = $this->getData($timerange, $config);
         $count = $data->count();

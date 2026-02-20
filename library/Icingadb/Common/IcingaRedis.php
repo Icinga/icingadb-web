@@ -176,7 +176,7 @@ class IcingaRedis
      *
      * @return float|int|null
      */
-    public static function getLastIcingaHeartbeat(Redis $redis = null)
+    public static function getLastIcingaHeartbeat(?Redis $redis = null)
     {
         if ($redis === null) {
             $redis = Backend::getRedis()->getConnection();
@@ -205,7 +205,7 @@ class IcingaRedis
      *
      * @return Redis
      */
-    public static function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null): Redis
+    public static function getPrimaryRedis(?Config $moduleConfig = null, ?Config $redisConfig = null): Redis
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');
@@ -239,7 +239,7 @@ class IcingaRedis
      *
      * @return ?Redis
      */
-    public static function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
+    public static function getSecondaryRedis(?Config $moduleConfig = null, ?Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');

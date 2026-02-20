@@ -100,7 +100,7 @@ class CommandTransport implements CommandTransportInterface
      *
      * @return  mixed
      */
-    public function send(IcingaCommand $command, int $now = null)
+    public function send(IcingaCommand $command, ?int $now = null)
     {
         $errors = [];
         $results = [];

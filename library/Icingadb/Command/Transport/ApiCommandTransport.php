@@ -306,7 +306,7 @@ class ApiCommandTransport implements CommandTransportInterface
      *
      * @return mixed
      */
-    public function send(IcingaCommand|IcingaApiCommand $command, int $now = null)
+    public function send(IcingaCommand|IcingaApiCommand $command, ?int $now = null)
     {
         if ($command instanceof IcingaCommand) {
             $command = $this->renderer->render($command);
