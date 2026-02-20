@@ -74,9 +74,16 @@ final class Backend
                         // user is a reserved key word in PostgreSQL, so we need to quote it.
                         // TODO(lippserd): This is pretty hacky,
                         // reconsider how to properly implement identifier quoting.
-                        $sql = str_replace(' user ', sprintf(' %s ', $quoted), $sql);
-                        $sql = str_replace(' user.', sprintf(' %s.', $quoted), $sql);
-                        $sql = str_replace('(user.', sprintf('(%s.', $quoted), $sql);
+                        $sql = preg_replace('/user$/', sprintf(' %s', $quoted), $sql);
+                        $sql = str_replace(
+                            [' user ', ' user.', '(user.'],
+                            [
+                                sprintf(' %s ', $quoted),
+                                sprintf(' %s.', $quoted),
+                                sprintf('(%s.', $quoted),
+                            ],
+                            $sql
+                        );
                     })
                     ->on(QueryBuilder::ON_ASSEMBLE_SELECT, function (Select $select) {
                         // For SELECT DISTINCT, all ORDER BY columns must appear in SELECT list.
