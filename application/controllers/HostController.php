@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use ArrayIterator;
+use Generator;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Icingadb\Command\Object\GetObjectCommand;
 use Icinga\Module\Icingadb\Command\Transport\CommandTransport;
@@ -19,6 +20,7 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -36,7 +38,6 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
-use Generator;
 
 class HostController extends Controller
 {
@@ -190,6 +191,8 @@ class HostController extends Controller
 
         $history->filter(Filter::lessThanOrEqual('event_time', $before));
         $this->filter($history, $filter);
+
+        OptimizerHints::disableOptimizerForHistoryQueries($history);
 
         yield $this->export($history);
 

@@ -6,9 +6,10 @@ namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
@@ -86,6 +87,8 @@ class HistoryController extends Controller
             Filter::like('host.id', '*'),
             Filter::like('service.id', '*')
         ));
+
+        OptimizerHints::disableOptimizerForHistoryQueries($history);
 
         yield $this->export($history);
 
