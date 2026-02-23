@@ -24,6 +24,7 @@ use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
+use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -200,6 +201,20 @@ class HostsController extends Controller
         $requestData = json_decode($request->getBody()->read(8192), true);
         if (! array_key_exists('type', $requestData['term'])) {
             $requestData['term']['type'] = 'column';
+            $host = new Host();
+            $resolver = new Resolver($host::on($this->getDb()));
+            $columns = iterator_to_array(ObjectSuggestions::collectFilterColumns($host, $resolver));
+
+            $excluded = array_flip($requestData['exclude']);
+            $excludedCustomVars = array_filter(
+                $excluded,
+                fn(string $col) => str_contains($col, '.vars.'),
+                ARRAY_FILTER_USE_KEY
+            );
+
+            $suggestions
+                ->withFixedColumns(array_diff_key($columns, $excluded))
+                ->excludeCustomVars($excludedCustomVars);
         }
 
         $request = $request->withBody(Utils::streamFor(json_encode($requestData)));

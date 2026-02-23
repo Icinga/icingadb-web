@@ -28,6 +28,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
+use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -217,6 +218,20 @@ class ServicesController extends Controller
         $requestData = json_decode($request->getBody()->read(8192), true);
         if (! array_key_exists('type', $requestData['term'])) {
             $requestData['term']['type'] = 'column';
+            $service = new Service();
+            $resolver = new Resolver($service::on($this->getDb()));
+            $columns = iterator_to_array(ObjectSuggestions::collectFilterColumns($service, $resolver));
+
+            $excluded = array_flip($requestData['exclude']);
+            $excludedCustomVars = array_filter(
+                $excluded,
+                fn(string $col) => str_contains($col, '.vars.'),
+                ARRAY_FILTER_USE_KEY
+            );
+
+            $suggestions
+                ->withFixedColumns(array_diff_key($columns, $excluded))
+                ->excludeCustomVars($excludedCustomVars);
         }
 
         $request = $request->withBody(Utils::streamFor(json_encode($requestData)));
@@ -478,5 +493,10 @@ class ServicesController extends Controller
         })->handleRequest(ServerRequest::fromGlobals());
 
         return $problemToggle;
+    }
+
+    protected function getDefaultColumns(): string
+    {
+        return 'service.name, service.state.output';
     }
 }
