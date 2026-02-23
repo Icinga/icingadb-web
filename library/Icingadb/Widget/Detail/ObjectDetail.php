@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
@@ -145,7 +146,7 @@ class ObjectDetail extends BaseHtmlElement
             $item->setObject($this->object);
         }
 
-        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasEnabled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->action_url->first()->action_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
@@ -175,7 +176,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
+        if (Icinga::app()->getModuleManager()->hasEnabled('monitoring')) {
             foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
                 $moduleName = ClassLoader::extractModuleName(get_class($hook));
                 if (! isset($nativeExtensionProviders[$moduleName])) {
@@ -335,7 +336,7 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasEnabled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->notes_url->first()->notes_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
@@ -470,7 +471,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (! Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
+        if (! Icinga::app()->getModuleManager()->hasEnabled('monitoring')) {
             return $extensions;
         }
 
