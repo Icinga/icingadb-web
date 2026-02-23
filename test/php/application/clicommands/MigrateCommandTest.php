@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2023 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Tests\Icinga\Module\Icingadb\Clicommands;
 

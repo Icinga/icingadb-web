@@ -1,5 +1,8 @@
 <?php
 
+// SPDX-FileCopyrightText: 2024 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 namespace Tests\Icinga\Module\Icingadb\Command\Transport;
 
 use Icinga\Module\Icingadb\Command\Object\AddCommentCommand;
