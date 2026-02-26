@@ -127,6 +127,11 @@ abstract class SlaReport extends ReportHook
 
         $rd->setRows($rows);
 
+        // Disconnect from the database, as this hook usually runs isolated and no-one else requires a connection.
+        // Makes only a difference in case of reporting triggering this as part of a scheduled report and prevents
+        // the database connection from being left open unnecessarily and failing upon re-use.
+        $this->getDb()->disconnect();
+
         return $rd;
     }
 
