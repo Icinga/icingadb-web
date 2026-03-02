@@ -85,6 +85,6 @@ class ServiceState extends State
 
     public function getStateTextTranslated(): string
     {
-        return ServiceStates::text($this->soft_state);
+        return ServiceStates::translated($this->soft_state);
     }
 }
