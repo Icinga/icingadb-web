@@ -597,7 +597,7 @@ class MigrateCommand extends Command
         /** @var ConfigObject<string> $newConfigObject */
         foreach ($config->getConfigObject() as $section => $newConfigObject) {
             $configOwner = $newConfigObject->get('owner') ?? '';
-            if ($configOwner && $configOwner !== $owner) {
+            if ($configOwner && ! fnmatch($owner, $configOwner)) {
                 continue;
             }
 
@@ -687,7 +687,7 @@ class MigrateCommand extends Command
         /** @var ConfigObject<string> $configObject */
         foreach ($config->getConfigObject() as $configObject) {
             $configOwner = $configObject->get('owner') ?? '';
-            if ($configOwner && $configOwner !== $owner) {
+            if ($configOwner && ! fnmatch($owner, $configOwner)) {
                 continue;
             }
 
