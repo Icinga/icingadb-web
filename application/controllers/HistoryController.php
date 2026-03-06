@@ -10,10 +10,14 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlElement;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\ButtonLink;
 
 class HistoryController extends Controller
 {
@@ -89,6 +93,14 @@ class HistoryController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl(
+            new ActionLink(
+                'Scroll to top',
+                $this->getRequest()->getUrl() . '#page-1',
+                'angles-up',
+                new Attributes(['class' => 'scroll-to-top'])
+            )
+        );
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -109,6 +121,7 @@ class HistoryController extends Controller
         if ($compact && $page > 1) {
             $this->document->addFrom($historyList);
         } else {
+            $this->addContent(new HtmlElement('span', new Attributes(['id' => 'page-1'])));
             $this->addContent($historyList);
         }
 
