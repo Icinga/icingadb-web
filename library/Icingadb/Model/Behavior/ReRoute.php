@@ -37,28 +37,73 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
         }
 
         if (($path = $this->rewritePath($remainingPath, $relation)) !== null) {
-            $class = get_class($condition);
-            $filter = new $class($relation . $path, $condition->getValue());
-            if ($condition->metaData()->has('forceOptimization')) {
-                $filter->metaData()->set(
-                    'forceOptimization',
-                    $condition->metaData()->get('forceOptimization')
-                );
-            }
+            $chain = $condition->getChain();
+            $rewrittenChain = $chain->metaData()->get('rewrittenChain');
 
             if (
-                in_array(substr($relation, 0, -1), self::MIXED_TYPE_RELATIONS)
+                ! $rewrittenChain
+                && in_array(substr($relation, 0, -1), self::MIXED_TYPE_RELATIONS)
                 && substr($remainingPath, 0, 13) === 'servicegroup.'
             ) {
-                $applyAll = Filter::all();
-                $applyAll->add(Filter::equal($relation . 'object_type', 'host'));
+                if ($chain instanceof Filter\Any) {
+                    $orgChain = Filter::any();
+                } elseif ($chain instanceof Filter\All) {
+                    $orgChain = Filter::all();
+                } else {
+                    $orgChain = Filter::none();
+                }
 
-                $orgFilter = clone $filter;
-                $orgFilter->setColumn($relation . 'host.' . $path);
+                $nestedChain = clone $orgChain;
+                $iterator = $chain->getIterator(true);
 
-                $applyAll->add($orgFilter);
+                for ($iterator->rewind(); $iterator->valid();) {
+                    $rule = $iterator->current();
 
-                $filter = Filter::any($filter, $applyAll);
+                    // If it's not a servicegroup filter just skip it
+                    if (! $rule instanceof Filter\Condition || strpos($rule->getColumn(), 'servicegroup.') === false) {
+                        $iterator->next(); // Advance iterator
+
+                        continue;
+                    }
+
+                    $newRule = clone $rule;
+                    $newRule->setColumn($relation . 'host.' . $path);
+
+                    // This forces the filter processor to put all the rules from the "$any" chain
+                    // into a single sub query instead of wrapping each of the rules into an own sub query
+                    $newRule->metaData()->set('columnPath', $newRule->getColumn());
+                    $newRule->metaData()->set('columnName', 'host.' . $path);
+                    $newRule->metaData()->set('relationPath', $relation);
+
+                    $chain->remove($rule); // Remove rule from the parent chain
+                    $iterator->offsetUnset($iterator->key()); // Iterator is advanced automatically
+
+                    $orgChain->add($rule); // Re-add the rule to the cloned parent chain
+                    $nestedChain->add($newRule);
+                }
+
+                // A dirty hack to prevent the chain of the given condition from being traversed over again!
+                $orgChain->metaData()->set('rewrittenChain', true);
+
+                if (! $nestedChain->isEmpty()) {
+                    $applyAll = Filter::all();
+                    $applyAll->add(Filter::equal($relation . 'object_type', 'host'));
+
+                    $applyAll->add($nestedChain);
+
+                    $filter = Filter::any($orgChain, $applyAll);
+                } else {
+                    $filter = $orgChain;
+                }
+            } else {
+                $class = get_class($condition);
+                $filter = new $class($relation . $path, $condition->getValue());
+                if ($condition->metaData()->has('forceOptimization')) {
+                    $filter->metaData()->set(
+                        'forceOptimization',
+                        $condition->metaData()->get('forceOptimization')
+                    );
+                }
             }
 
             return $filter;
