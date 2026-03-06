@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 use Generator;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Hook\CustomVarsRetrieverHook;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
@@ -135,7 +136,10 @@ class ObjectSuggestions extends Suggestions
         $resolver = $model::on($this->getDb())->getResolver();
 
         $quickFilter = Filter::any();
-        foreach ($model->getSearchColumns() as $column) {
+        $customVarColumns = CustomVarsRetrieverHook::getCustomVarColumns($model);
+        $columns = [...$model->getSearchColumns(), ...$customVarColumns];
+
+        foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
                 $column = $resolver->qualifyColumn($column, $model->getTableName());
             }
