@@ -51,24 +51,14 @@ trait SearchControls
      *
      * @param Url $detailsUrl
      * @param SearchBar $searchBar
-     * @param bool $hasResults Whether the current query has results
      *
      * @return ContinueWith
      */
-    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar, bool $hasResults = true): ContinueWith
+    public function createContinueWith(Url $detailsUrl, SearchBar $searchBar): ContinueWith
     {
-        if ($hasResults) {
-            $continueWith = ContinueWith::create(
-                $detailsUrl,
-                [$searchBar, 'getFilter'],
-                t('Show bulk processing actions for all filtered results'),
-                t('A filter is required to show bulk processing actions'),
-            );
-            $continueWith->setBaseTarget('_next');
-        } else {
-            $continueWith = ContinueWith::createDisabled(t('No items found'));
-        }
-
+        $continueWith = new ContinueWith($detailsUrl, [$searchBar, 'getFilter']);
+        $continueWith->setTitle(t('Show bulk processing actions for all filtered results'));
+        $continueWith->setBaseTarget('_next');
         $continueWith->getAttributes()
             ->set('id', $this->getRequest()->protectId('continue-with'));
 

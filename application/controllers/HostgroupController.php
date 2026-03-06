@@ -102,9 +102,7 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
-        $results = $hosts->execute();
-
-        $hostList = (new ObjectList($results))
+        $hostList = (new ObjectList($hosts))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
@@ -124,8 +122,7 @@ class HostgroupController extends Controller
         $continueWith = $this->createContinueWith(
             Links::hostsDetails()
                 ->setFilter(Filter::equal('hostgroup.name', $hostgroup->name)),
-            $searchBar,
-            $results->hasResult()
+            $searchBar
         );
 
         $this->addContent($hostList);
