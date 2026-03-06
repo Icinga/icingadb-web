@@ -22,7 +22,7 @@ class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
     /** @var Query */
     protected $query;
 
-    public function setQuery(Query $query): self
+    public function setQuery(Query $query): static
     {
         $this->query = $query;
 
