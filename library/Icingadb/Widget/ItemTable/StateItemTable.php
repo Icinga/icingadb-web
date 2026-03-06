@@ -16,6 +16,9 @@ use ipl\I18n\Translation;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
 
@@ -127,6 +130,25 @@ abstract class StateItemTable extends BaseHtmlElement
 
     abstract protected function getVisualColumn(): string;
 
+    abstract protected function getControllerPath(): string;
+
+    protected function createColumnChooserOpener(): ValidHtml
+    {
+        return new HtmlElement(
+            'div',
+            new Attributes(['class' => 'column-chooser-opener']),
+            (new ActionLink(
+                new Ball('xs'),
+                Url::fromPath("icingadb/{$this->getControllerPath()}/columnControl")->setParam(
+                    'columns',
+                    implode(',', array_keys($this->columns))
+                )
+            ))->addHtml(new Ball('xs'))
+                ->addHtml(new Ball('xs'))
+                ->openInModal()
+        );
+    }
+
     protected function getVisualLabel()
     {
         return new Icon('heartbeat', ['title' => $this->translate('Severity')]);
@@ -211,6 +233,12 @@ abstract class StateItemTable extends BaseHtmlElement
             $headerCell = new HtmlElement('th');
             $this->assembleColumnHeader($headerCell, $name, is_int($label) ? $name : $label);
             $headerRow->addHtml($headerCell);
+        }
+
+        if ($headerCell !== null) {
+            $headerCell->addHtml($this->createColumnChooserOpener())
+                ->getAttribute('class')
+                ->addValue('last-th');
         }
 
         $this->addHtml(new HtmlElement('thead', null, $headerRow));

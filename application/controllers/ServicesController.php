@@ -5,6 +5,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Utils;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
@@ -12,8 +13,10 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
+use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
@@ -25,6 +28,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
+use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -210,7 +214,28 @@ class ServicesController extends Controller
     {
         $suggestions = new ObjectSuggestions();
         $suggestions->setModel(Service::class);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $request = clone ServerRequest::fromGlobals();
+        $requestData = json_decode($request->getBody()->read(8192), true);
+        if (! array_key_exists('type', $requestData['term'])) {
+            $requestData['term']['type'] = 'column';
+            $service = new Service();
+            $resolver = new Resolver($service::on($this->getDb()));
+            $columns = iterator_to_array(ObjectSuggestions::collectFilterColumns($service, $resolver));
+
+            $excluded = array_flip($requestData['exclude']);
+            $excludedCustomVars = array_filter(
+                $excluded,
+                fn(string $col) => str_contains($col, '.vars.'),
+                ARRAY_FILTER_USE_KEY
+            );
+
+            $suggestions
+                ->withFixedColumns(array_diff_key($columns, $excluded))
+                ->excludeCustomVars($excludedCustomVars);
+        }
+
+        $request = $request->withBody(Utils::streamFor(json_encode($requestData)));
+        $suggestions->forRequest($request);
         $this->getDocument()->add($suggestions);
     }
 
@@ -375,6 +400,30 @@ class ServicesController extends Controller
         $this->setTitle(t('Adjust Filter'));
     }
 
+    public function columnControlAction()
+    {
+        $this->addTitleTab($this->translate('Select Columns'));
+        $this->addContent(
+            (new ColumnChooser(Url::fromPath('icingadb/services/complete'), Service::on($this->getDb())->getResolver()))
+                ->setAction((string) Url::fromRequest())
+                ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
+                    if ($form->hasBeenSubmitted()) {
+                        $url = Url::fromPath('icingadb/services');
+                        $url->setParam('columns', $form->getValue('columns', ''));
+                        $this->redirectNow($url);
+                    } else {
+                        foreach ($form->getPartUpdates() as $update) {
+                            if (! is_array($update)) {
+                                $update = [$update];
+                            }
+
+                            $this->addPart(...$update);
+                        }
+                    }
+                })->handleRequest($this->getServerRequest())
+        );
+    }
+
     protected function fetchCommandTargets(): Query
     {
         $db = $this->getDb();
@@ -412,6 +461,11 @@ class ServicesController extends Controller
         return new FeatureStatus('service', $summary->first());
     }
 
+    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
+    {
+        return new TabularViewModeSwitcher();
+    }
+
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
         if ($this->params->shift('_hostFilterOnly', false)) {
@@ -439,5 +493,10 @@ class ServicesController extends Controller
         })->handleRequest(ServerRequest::fromGlobals());
 
         return $problemToggle;
+    }
+
+    protected function getDefaultColumns(): string
+    {
+        return 'service.name, service.state.output';
     }
 }
