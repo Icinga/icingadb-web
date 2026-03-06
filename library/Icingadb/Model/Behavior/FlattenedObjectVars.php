@@ -26,14 +26,14 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
     /** @var Query */
     protected $query;
 
-    public function setQuery(Query $query)
+    public function setQuery(Query $query): static
     {
         $this->query = $query;
 
         return $this;
     }
 
-    public function rewriteCondition(Filter\Condition $condition, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null): ?Filter\Condition
     {
         $column = $condition->metaData()->get('columnName');
         if ($column !== null) {
@@ -71,9 +71,11 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
 
             return $condition;
         }
+
+        return null;
     }
 
-    public function rewriteColumn($column, $relation = null)
+    public function rewriteColumn($column, ?string $relation = null): AliasedExpression
     {
         $subQuery = $this->query->createSubQuery(new CustomvarFlat(), $relation)
             ->limit(1)

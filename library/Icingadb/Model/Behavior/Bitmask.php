@@ -53,17 +53,17 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
         return $bits;
     }
 
-    public function rewriteCondition(Condition $condition, $relation = null)
+    public function rewriteCondition(Condition $condition, $relation = null): null
     {
         $column = $condition->metaData()->get('columnName');
         if (! isset($this->properties[$column])) {
-            return;
+            return null;
         }
 
         $values = $condition->getValue();
         if (! is_array($values)) {
             if (is_int($values) || ctype_digit($values)) {
-                return;
+                return null;
             }
 
             $values = [$values];
@@ -79,5 +79,7 @@ class Bitmask extends PropertyBehavior implements RewriteFilterBehavior
         }
 
         $condition->setColumn(sprintf('%s & %s', $condition->getColumn(), $bits));
+
+        return null;
     }
 }
