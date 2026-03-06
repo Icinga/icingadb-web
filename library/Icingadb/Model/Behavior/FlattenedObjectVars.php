@@ -75,7 +75,7 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
         return null;
     }
 
-    public function rewriteColumn($column, $relation = null)
+    public function rewriteColumn($column, ?string $relation = null): AliasedExpression
     {
         $subQuery = $this->query->createSubQuery(new CustomvarFlat(), $relation)
             ->limit(1)
