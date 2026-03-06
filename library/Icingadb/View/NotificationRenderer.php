@@ -14,6 +14,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use IntlDateFormatter;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
@@ -26,6 +27,7 @@ use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
+use Locale;
 
 /** @implements ItemRenderer<NotificationHistory> */
 class NotificationRenderer implements ItemRenderer
@@ -34,6 +36,12 @@ class NotificationRenderer implements ItemRenderer
     use HostLink;
     use ServiceLink;
 
+    protected bool $useRelativeTimestamps;
+
+    public function __construct(bool $useRelativeTimestamps = false)
+    {
+        $this->useRelativeTimestamps = $useRelativeTimestamps;
+    }
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
         $attributes->get('class')->addValue('notification');
@@ -153,7 +161,33 @@ class NotificationRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        $info->addHtml(new TimeAgo($item->send_time->getTimestamp()));
+        if (
+            ($this->useRelativeTimestamps && time() - $item->send_time->getTimestamp() < 3600)
+            || $layout === 'header'
+        ) {
+            $info->addHtml(new TimeAgo($item->send_time->getTimestamp()));
+        } else {
+            $textFormatter = new IntlDateFormatter(
+                Locale::getDefault(),
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::MEDIUM
+            );
+            $time = date('Y-m-d H:i:s', (int) $item->send_time->getTimestamp());
+
+            $info->addHtml(
+                new HtmlElement(
+                    'time',
+                    new Attributes(
+                        [
+                            'data-absolute-time' => 'ago',
+                            'datetime' => $time,
+                            'title' => $time
+                        ]
+                    ),
+                    new Text($textFormatter->format($item->send_time->getTimestamp()))
+                )
+            );
+        }
     }
 
     public function assembleFooter($item, HtmlDocument $footer, string $layout): void

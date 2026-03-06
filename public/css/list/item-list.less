@@ -39,6 +39,22 @@
   > .page-separator + .list-item .main {
     border-top: none;
   }
+
+  .day-separator {
+    background-color: @gray-lighter;
+  }
+}
+
+// Do not highlight the date when there is no control to change the timestamp mode
+.controls + .content .history .extended-info,
+.controls + .content .notification .extended-info {
+  &:hover {
+    .rounded-corners(1em);
+    background: @base-gray-light;
+  }
+
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 
 // Layout
@@ -76,5 +92,11 @@
         margin-left: .417em;
       }
     }
+  }
+
+  .day-separator {
+    display: flex;
+    justify-content: end;
+    padding-right: 1.5em;
   }
 }

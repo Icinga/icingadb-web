@@ -44,4 +44,16 @@ if (! $this::exists('monitoring')) {
             join(DIRECTORY_SEPARATOR, [$modulePath, 'application'])
         );
     }
+
+    $this->addRoute(
+        'icingadb-history-timestamp-preference',
+        new Zend_Controller_Router_Route(
+            'icingadb/history/timestamp-preference',
+            [
+                'module'     => 'icingadb',
+                'controller' => 'history',
+                'action'     => 'timeStamp'
+            ]
+        )
+    );
 }
