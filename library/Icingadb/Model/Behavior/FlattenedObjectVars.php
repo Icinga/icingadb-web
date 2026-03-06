@@ -33,7 +33,7 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
         return $this;
     }
 
-    public function rewriteCondition(Filter\Condition $condition, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null): ?Filter\Condition
     {
         $column = $condition->metaData()->get('columnName');
         if ($column !== null) {
@@ -71,6 +71,8 @@ class FlattenedObjectVars implements RewriteColumnBehavior, QueryAwareBehavior
 
             return $condition;
         }
+
+        return null;
     }
 
     public function rewriteColumn($column, $relation = null)

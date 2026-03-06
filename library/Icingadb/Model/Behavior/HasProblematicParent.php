@@ -83,12 +83,14 @@ class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
     {
     }
 
-    public function rewriteCondition(Filter\Condition $condition, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null): null
     {
         $column = substr($condition->getColumn(), strlen($relation ?? ''));
 
         if ($this->isSelectableColumn($column)) {
             throw new InvalidColumnException($column, $this->query->getModel());
         }
+
+        return null;
     }
 }
