@@ -13,7 +13,7 @@ use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
 
-class Statesummary extends UnionModel
+class StateSummary extends UnionModel
 {
     public static function on(Connection $db)
     {
