@@ -28,9 +28,4 @@ class ServiceItemTable extends StateItemTable
     {
         return 'service.state.severity';
     }
-
-    protected function getControllerPath(): string
-    {
-        return 'services';
-    }
 }

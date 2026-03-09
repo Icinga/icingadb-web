@@ -113,7 +113,8 @@ class HostsController extends Controller
         $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar, $results->hasResult());
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/hosts/columnControl'));
         } else {
             $hostList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
