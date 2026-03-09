@@ -4,27 +4,33 @@
 
 namespace Icinga\Module\Icingadb\Web\Control;
 
-use ipl\Html\Attributes;
-use ipl\Html\HtmlElement;
 use ipl\Orm\Resolver;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\FormElement\TermInput;
 use ipl\Web\FormElement\TermInput\Term;
 use ipl\Web\Url;
-use Psr\Http\Message\ServerRequestInterface;
 
 class ColumnChooser extends CompatForm
 {
+    /** @var string[] The columns already present in the url */
+    protected array $columns = [];
+
     /** @var Url The suggestionUrl for the TermInput {@see TermInput::$suggestionUrl} */
     protected Url $suggestionUrl;
 
     /** @var Resolver The resolver used to validate column names and get their labels */
     protected Resolver $resolver;
 
-    public function __construct(Url $suggestionUrl, Resolver $resolver)
+    public function __construct(Url $suggestionUrl, Resolver $resolver, array $columns = [])
     {
         $this->suggestionUrl = $suggestionUrl;
         $this->resolver = $resolver;
+        $this->columns = $columns;
+    }
+
+    public function getColumns(): array
+    {
+        return $this->columns;
     }
 
     public function getPartUpdates(): array
@@ -69,19 +75,6 @@ class ColumnChooser extends CompatForm
         }
     }
 
-    /**
-     * Get the columns from the request
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return string
-     */
-    protected function getColumns(ServerRequestInterface $request): string
-    {
-        $columns = $request->getQueryParams()['columns'];
-
-        return $columns;
-    }
     protected function assemble()
     {
         $termInput = (new TermInput(
@@ -96,7 +89,7 @@ class ColumnChooser extends CompatForm
             ->setReadOnly()
             ->setOrdered()
             ->setSuggestionUrl($this->suggestionUrl)
-            ->setValue($this->getColumns($this->getRequest()))
+            ->setValue(implode(',', $this->columns))
             ->on(TermInput::ON_ENRICH, $this->validateTermsAndSetLabels(...))
             ->on(TermInput::ON_ADD, $this->validateTermsAndSetLabels(...))
             ->on(TermInput::ON_SAVE, $this->validateTermsAndSetLabels(...))

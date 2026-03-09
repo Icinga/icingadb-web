@@ -83,7 +83,14 @@ class ServicesController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl($services, $viewModeSwitcher, ['service.name', 'service.state.output']);
+        $columns = $this->createColumnControl(
+            $services,
+            $viewModeSwitcher,
+            Url::fromPath('icingadb/services/suggestColumns'),
+            Service::on($this->getDb())->getResolver(),
+            ['service.name', 'service.state.output']
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -395,28 +402,18 @@ class ServicesController extends Controller
     public function columnControlAction()
     {
         $this->addTitleTab($this->translate('Select Columns'));
-        $this->addContent(
-            (new ColumnChooser(
-                Url::fromPath('icingadb/services/suggestColumns'),
-                Service::on($this->getDb())->getResolver()
-            ))
-                ->setAction((string) Url::fromRequest())
-                ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
-                    if ($form->hasBeenSubmitted()) {
-                        $url = Url::fromPath('icingadb/services');
-                        $url->setParam('columns', $form->getValue('columns', ''));
-                        $this->redirectNow($url);
-                    } else {
-                        foreach ($form->getPartUpdates() as $update) {
-                            if (! is_array($update)) {
-                                $update = [$update];
-                            }
-
-                            $this->addPart(...$update);
-                        }
-                    }
-                })->handleRequest($this->getServerRequest())
-        );
+        $columnChooser = $this->createColumnControl(
+            Service::on($this->getDb()),
+            $this->createViewModeSwitcher(
+                $this->createPaginationControl(Service::on($this->getDb())),
+                $this->createLimitControl(),
+                viewModeSwitcherClass: TabularViewModeSwitcher::class
+            ),
+            Url::fromPath('icingadb/services/suggestColumns'),
+            Service::on($this->getDb())->getResolver(),
+            ['service.name', 'service.state.output']
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query
