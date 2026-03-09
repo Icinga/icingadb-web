@@ -44,11 +44,8 @@ class ObjectSuggestions extends Suggestions
     /** @var array */
     protected $customVarSources;
 
-    /** @var ?array<string, mixed> */
+    /** @var ?array<string, string> */
     protected ?array $fixedColumns = null;
-
-    /** @var array Names of excluded custom variables as {model}.vars.{flatname} */
-    protected array $excludedCustomVars = [];
 
     public function __construct()
     {
@@ -256,11 +253,6 @@ class ObjectSuggestions extends Suggestions
                 }
 
                 foreach ($this->customVarSources as $relation => $label) {
-                    $var = $relation . '.vars.' . $search;
-                    if (isset($this->excludedCustomVars[$var])) {
-                        continue;
-                    }
-
                     if (isset($customVar->$relation)) {
                         if ($titleAdded === false) {
                             $this->addHtml(HtmlElement::create(
@@ -322,11 +314,6 @@ class ObjectSuggestions extends Suggestions
             }
 
             foreach ($this->customVarSources as $relation => $label) {
-                $var = $relation . '.vars.' . $search;
-                if (isset($this->excludedCustomVars[$var])) {
-                    continue;
-                }
-
                 if (isset($customVar->$relation)) {
                     // Suggest exact custom variable matches first
                     if ($titleAdded === false) {
@@ -363,7 +350,7 @@ class ObjectSuggestions extends Suggestions
      *
      * @return Select
      */
-    protected function queryCustomvarConfig(Filter\Rule $filter): Select
+    public function queryCustomvarConfig(Filter\Rule $filter): Select
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
@@ -547,20 +534,6 @@ class ObjectSuggestions extends Suggestions
     public function withFixedColumns(array $columns): static
     {
         $this->fixedColumns = $columns;
-
-        return $this;
-    }
-
-    /**
-     * Exclude the array keys from the custom variable suggestions
-     *
-     * @param array<string, mixed> $customVars
-     *
-     * @return $this
-     */
-    public function excludeCustomVars(array $customVars): static
-    {
-        $this->excludedCustomVars = $customVars;
 
         return $this;
     }

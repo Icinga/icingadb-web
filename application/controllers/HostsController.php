@@ -25,10 +25,12 @@ use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
+use ipl\Orm\Relations;
 use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 
 class HostsController extends Controller
@@ -202,29 +204,13 @@ class HostsController extends Controller
     {
         $suggestions = new ObjectSuggestions();
         $suggestions->setModel(Host::class);
-        $request = clone ServerRequest::fromGlobals();
-        $requestData = json_decode($request->getBody()->read(8192), true);
-        if (! array_key_exists('type', $requestData['term'])) {
-            $requestData['term']['type'] = 'column';
-            $host = new Host();
-            $resolver = new Resolver($host::on($this->getDb()));
-            $columns = iterator_to_array(ObjectSuggestions::collectFilterColumns($host, $resolver));
-
-            $excluded = array_flip($requestData['exclude']);
-            $excludedCustomVars = array_filter(
-                $excluded,
-                fn(string $col) => str_contains($col, '.vars.'),
-                ARRAY_FILTER_USE_KEY
-            );
-
-            $suggestions
-                ->withFixedColumns(array_diff_key($columns, $excluded))
-                ->excludeCustomVars($excludedCustomVars);
-        }
-
-        $request = $request->withBody(Utils::streamFor(json_encode($requestData)));
-        $suggestions->forRequest($request);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(new Host());
     }
 
     public function searchEditorAction()
@@ -244,7 +230,7 @@ class HostsController extends Controller
     {
         $this->addTitleTab($this->translate('Select Columns'));
         $this->addContent(
-            (new ColumnChooser(Url::fromPath('icingadb/hosts/complete'), Host::on($this->getDb())->getResolver()))
+            (new ColumnChooser(Url::fromPath('icingadb/hosts/suggestColumns'), Host::on($this->getDb())->getResolver()))
                 ->setAction((string) Url::fromRequest())
                 ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
                     if ($form->hasBeenSubmitted()) {
