@@ -81,7 +81,7 @@ class ServicesController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl($services, $viewModeSwitcher);
+        $columns = $this->createColumnControl($services, $viewModeSwitcher, ['service.name', 'service.state.output']);
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -493,10 +493,5 @@ class ServicesController extends Controller
         })->handleRequest(ServerRequest::fromGlobals());
 
         return $problemToggle;
-    }
-
-    protected function getDefaultColumns(): string
-    {
-        return 'service.name, service.state.output';
     }
 }

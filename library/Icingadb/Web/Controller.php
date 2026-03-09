@@ -79,26 +79,27 @@ class Controller extends CompatController
      *
      * @param Query $query
      * @param ViewModeSwitcher $viewModeSwitcher
+     * @param array $defaultColumns
      *
      * @return array provided columns
      */
-    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher): array
+    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher, array $defaultColumns): array
     {
         // All of that is essentially what `ColumnControl::apply()` should do
         $viewMode = $viewModeSwitcher->getViewMode();
         $columnsDef = $this->params->shift('columns');
         if (! $columnsDef) {
             if ($viewMode === 'tabular') {
-                $columnsDef = $this->getDefaultColumns();
+                $columns = $defaultColumns;
             } else {
                 return [];
             }
-        }
-
-        $columns = [];
-        foreach (explode(',', $columnsDef) as $column) {
-            if ($column = trim($column)) {
-                $columns[] = $column;
+        } else {
+            $columns = [];
+            foreach (explode(',', $columnsDef) as $column) {
+                if ($column = trim($column)) {
+                    $columns[] = $column;
+                }
             }
         }
 
@@ -496,10 +497,5 @@ class Controller extends CompatController
         $app->getFrontController()
             ->getPlugin('Zend_Controller_Plugin_ErrorHandler')
             ->setErrorHandlerModule('icingadb');
-    }
-
-    protected function getDefaultColumns(): string
-    {
-        return 'name, state.output';
     }
 }
