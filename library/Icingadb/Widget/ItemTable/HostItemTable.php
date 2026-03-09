@@ -29,9 +29,4 @@ class HostItemTable extends StateItemTable
     {
         return 'host.state.severity';
     }
-
-    protected function getControllerPath(): string
-    {
-        return 'hosts';
-    }
 }

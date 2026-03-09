@@ -127,7 +127,8 @@ class ServicesController extends Controller
 
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/services/columnControl'));
         } else {
             $serviceList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());

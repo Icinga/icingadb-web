@@ -46,6 +46,9 @@ abstract class StateItemTable extends BaseHtmlElement
     /** @var ?ValidHtml Message to show if the list is empty */
     protected $emptyStateMessage;
 
+    /** @var ?Url The url for the column chooser modal */
+    protected ?Url $columnChooserUrl = null;
+
     /**
      * Create a new item table
      *
@@ -127,11 +130,16 @@ abstract class StateItemTable extends BaseHtmlElement
         return $this;
     }
 
+    public function setColumnChooserUrl(Url $url): static
+    {
+        $this->columnChooserUrl = $url;
+
+        return $this;
+    }
+
     abstract protected function getItemClass(): string;
 
     abstract protected function getVisualColumn(): string;
-
-    abstract protected function getControllerPath(): string;
 
     protected function createColumnChooserOpener(): ValidHtml
     {
@@ -140,7 +148,7 @@ abstract class StateItemTable extends BaseHtmlElement
             new Attributes(['class' => 'column-chooser-opener']),
             (new ActionLink(
                 new Ball('xs'),
-                Url::fromPath("icingadb/{$this->getControllerPath()}/columnControl")->setParam(
+                $this->columnChooserUrl->setParam(
                     'columns',
                     implode(',', array_keys($this->columns))
                 )
@@ -236,7 +244,7 @@ abstract class StateItemTable extends BaseHtmlElement
             $headerRow->addHtml($headerCell);
         }
 
-        if ($headerCell !== null) {
+        if (! empty($this->columns) && $this->columnChooserUrl !== null) {
             $headerCell->addHtml($this->createColumnChooserOpener())
                 ->getAttribute('class')
                 ->addValue('last-th');
