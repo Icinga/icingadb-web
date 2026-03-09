@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Utils;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
@@ -28,10 +29,12 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
+use ipl\Orm\Relations;
 use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
@@ -218,29 +221,13 @@ class ServicesController extends Controller
     {
         $suggestions = new ObjectSuggestions();
         $suggestions->setModel(Service::class);
-        $request = clone ServerRequest::fromGlobals();
-        $requestData = json_decode($request->getBody()->read(8192), true);
-        if (! array_key_exists('type', $requestData['term'])) {
-            $requestData['term']['type'] = 'column';
-            $service = new Service();
-            $resolver = new Resolver($service::on($this->getDb()));
-            $columns = iterator_to_array(ObjectSuggestions::collectFilterColumns($service, $resolver));
-
-            $excluded = array_flip($requestData['exclude']);
-            $excludedCustomVars = array_filter(
-                $excluded,
-                fn(string $col) => str_contains($col, '.vars.'),
-                ARRAY_FILTER_USE_KEY
-            );
-
-            $suggestions
-                ->withFixedColumns(array_diff_key($columns, $excluded))
-                ->excludeCustomVars($excludedCustomVars);
-        }
-
-        $request = $request->withBody(Utils::streamFor(json_encode($requestData)));
-        $suggestions->forRequest($request);
+        $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(new Service());
     }
 
     public function searchEditorAction()
@@ -408,7 +395,10 @@ class ServicesController extends Controller
     {
         $this->addTitleTab($this->translate('Select Columns'));
         $this->addContent(
-            (new ColumnChooser(Url::fromPath('icingadb/services/complete'), Service::on($this->getDb())->getResolver()))
+            (new ColumnChooser(
+                Url::fromPath('icingadb/services/suggestColumns'),
+                Service::on($this->getDb())->getResolver()
+            ))
                 ->setAction((string) Url::fromRequest())
                 ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
                     if ($form->hasBeenSubmitted()) {
