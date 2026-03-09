@@ -124,17 +124,19 @@ class Controller extends CompatController
      * This automatically shifts the view mode URL parameter from {@link $params}.
      *
      * @param PaginationControl $paginationControl
-     * @param LimitControl      $limitControl
-     * @param bool              $verticalPagination
+     * @param LimitControl $limitControl
+     * @param bool $verticalPagination
+     * @param class-string<ViewModeSwitcher> $viewModeSwitcherClass
      *
      * @return ViewModeSwitcher|GridViewModeSwitcher
      */
     public function createViewModeSwitcher(
         PaginationControl $paginationControl,
         LimitControl $limitControl,
-        bool $verticalPagination = false
+        bool $verticalPagination = false,
+        string $viewModeSwitcherClass = ViewModeSwitcher::class
     ): ViewModeSwitcher {
-        $viewModeSwitcher = $this->getViewModeSwitcherInstance();
+        $viewModeSwitcher = new $viewModeSwitcherClass();
 
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -259,17 +261,6 @@ class Controller extends CompatController
         }
 
         return $viewModeSwitcher;
-    }
-
-    /**
-     * Return an instance of the view mode switcher for the current controller,
-     * controllers that need special view mode switchers should override this method.
-     *
-     * @return ViewModeSwitcher
-     */
-    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
-    {
-        return new ViewModeSwitcher();
     }
 
     /**

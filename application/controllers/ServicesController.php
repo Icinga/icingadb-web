@@ -76,7 +76,11 @@ class ServicesController extends Controller
             ],
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
         $columns = $this->createColumnControl($services, $viewModeSwitcher);
 
         $searchBar = $this->createSearchBar($services, [
@@ -460,11 +464,6 @@ class ServicesController extends Controller
         $this->filter($summary);
 
         return new FeatureStatus('service', $summary->first());
-    }
-
-    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
-    {
-        return new TabularViewModeSwitcher();
     }
 
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
