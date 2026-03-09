@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Icingadb\Web\Control;
 
+use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Resolver;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\FormElement\TermInput;
@@ -69,7 +70,7 @@ class ColumnChooser extends CompatForm
                 if ($label !== null) {
                     $term->setLabel($label);
                 }
-            } catch (\Exception) {
+            } catch (InvalidRelationException) {
                 $term->setMessage($this->translate('Is not a valid column'));
             }
         }
