@@ -69,7 +69,7 @@ class HostsController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl($hosts, $viewModeSwitcher);
+        $columns = $this->createColumnControl($hosts, $viewModeSwitcher, ['host.name', 'host.state.output']);
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -294,10 +294,5 @@ class HostsController extends Controller
         $this->filter($summary);
 
         return new FeatureStatus('host', $summary->first());
-    }
-
-    protected function getDefaultColumns(): string
-    {
-        return 'host.name, host.state.output';
     }
 }
