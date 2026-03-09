@@ -54,7 +54,7 @@ class CustomvarFlat extends Model
             'flatname_checksum'
         ]));
         $behaviors->add(new class implements RewriteFilterBehavior {
-            public function rewriteCondition(Condition $condition, $relation = null)
+            public function rewriteCondition(Condition $condition, $relation = null): ?Filter\Chain
             {
                 if ($condition->metaData()->has('requiresTransformation')) {
                     /** @var string $columnName */
@@ -65,6 +65,8 @@ class CustomvarFlat extends Model
 
                     return Filter::all($nameFilter, $valueFilter);
                 }
+
+                return null;
             }
         });
     }

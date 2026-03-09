@@ -10,6 +10,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\UnionModel;
+use ipl\Orm\UnionQuery;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
@@ -38,7 +39,7 @@ use ipl\Sql\Select;
  */
 class Hostgroupsummary extends UnionModel
 {
-    public static function on(Connection $db)
+    public static function on(Connection $db): UnionQuery
     {
         $q = parent::on($db);
 
@@ -156,7 +157,7 @@ class Hostgroupsummary extends UnionModel
         return 'display_name';
     }
 
-    public function getUnions()
+    public function getUnions(): array
     {
         $unions = [
             [
