@@ -167,7 +167,10 @@ class Controller extends CompatController
         }
 
         $viewModeSwitcher->populate([
-            $viewModeSwitcher->getViewModeParam() => $this->params->shift($viewModeSwitcher->getViewModeParam())
+            $viewModeSwitcher->getViewModeParam() => $this->params->shift(
+                $viewModeSwitcher->getViewModeParam(),
+                $viewModeSwitcher->getDefaultViewMode()
+            )
         ]);
 
         $session = $this->Window()->getSessionNamespace(
