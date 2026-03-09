@@ -15,6 +15,27 @@ Connection configuration for the database to which Icinga DB synchronizes monito
 2. Configure the resource you just created as the database connection for the Icinga DB Web module using the
    `Configuration → Modules → icingadb → Database` menu.
 
+This configuration is stored in `/etc/icingaweb2/modules/icingadb/config.ini`. The `resource`
+option must match the name of the database resource you created for the Icinga DB database,
+for example:
+
+```
+[icingadb]
+resource = "icingadb"
+```
+
+If you use MySQL or MariaDB and notice poor performance for history queries, you can also
+disable the query optimizer for these queries in the same section:
+
+```
+[icingadb]
+...
+disable_optimizer_for_history_queries = 1
+```
+
+This adds hints to disable the optimizer for history queries and may improve
+performance on some MySQL/MariaDB versions.
+
 ## Redis® Configuration
 
 Connection configuration for the Redis® server where Icinga 2 writes check results.
