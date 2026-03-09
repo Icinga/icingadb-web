@@ -24,6 +24,7 @@ use Icinga\Module\Icingadb\Common\Model;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -38,6 +39,7 @@ use Icinga\Util\Json;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
+use ipl\Orm\Resolver;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
@@ -84,10 +86,15 @@ class Controller extends CompatController
      * @param ViewModeSwitcher $viewModeSwitcher
      * @param array $defaultColumns
      *
-     * @return array provided columns
+     * @return ColumnChooser provided columns
      */
-    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher, array $defaultColumns): array
-    {
+    public function createColumnControl(
+        Query $query,
+        ViewModeSwitcher $viewModeSwitcher,
+        Url $suggestionUrl,
+        Resolver $resolver,
+        array $defaultColumns
+    ): ColumnChooser {
         // All of that is essentially what `ColumnControl::apply()` should do
         $viewMode = $viewModeSwitcher->getViewMode();
         $columnsDef = $this->params->shift('columns');
@@ -95,7 +102,7 @@ class Controller extends CompatController
             if ($viewMode === 'tabular') {
                 $columns = $defaultColumns;
             } else {
-                return [];
+                return new ColumnChooser($suggestionUrl, $resolver);
             }
         } else {
             $columns = [];
@@ -117,9 +124,23 @@ class Controller extends CompatController
             $viewModeSwitcher->setViewMode('tabular');
         }
 
-        // For now this also returns the columns, but they should be accessible
-        // by calling `ColumnControl::getColumns()` in the future
-        return $columns;
+        return (new ColumnChooser($suggestionUrl, $resolver, $columns))
+            ->setAction((string) Url::fromRequest())
+            ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
+                if ($form->hasBeenSubmitted()) {
+                    $url = Url::fromPath('icingadb/services');
+                    $url->setParam('columns', $form->getValue('columns', ''));
+                    $this->redirectNow($url);
+                } else {
+                    foreach ($form->getPartUpdates() as $update) {
+                        if (! is_array($update)) {
+                            $update = [$update];
+                        }
+
+                        $this->addPart(...$update);
+                    }
+                }
+            });
     }
 
     /**

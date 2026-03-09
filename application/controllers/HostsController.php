@@ -72,7 +72,14 @@ class HostsController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl($hosts, $viewModeSwitcher, ['host.name', 'host.state.output']);
+        $columns = $this->createColumnControl(
+            $hosts,
+            $viewModeSwitcher,
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            Host::on($this->getDb())->getResolver(),
+            ['host.name', 'host.state.output']
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -230,25 +237,18 @@ class HostsController extends Controller
     public function columnControlAction()
     {
         $this->addTitleTab($this->translate('Select Columns'));
-        $this->addContent(
-            (new ColumnChooser(Url::fromPath('icingadb/hosts/suggestColumns'), Host::on($this->getDb())->getResolver()))
-                ->setAction((string) Url::fromRequest())
-                ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
-                    if ($form->hasBeenSubmitted()) {
-                        $url = Url::fromPath('icingadb/hosts');
-                        $url->setParam('columns', $form->getValue('columns', ''));
-                        $this->redirectNow($url);
-                    } else {
-                        foreach ($form->getPartUpdates() as $update) {
-                            if (! is_array($update)) {
-                                $update = [$update];
-                            }
-
-                            $this->addPart(...$update);
-                        }
-                    }
-                })->handleRequest($this->getServerRequest())
-        );
+        $columnChooser = $this->createColumnControl(
+            Host::on($this->getDb()),
+            $this->createViewModeSwitcher(
+                $this->createPaginationControl(Host::on($this->getDb())),
+                $this->createLimitControl(),
+                viewModeSwitcherClass: TabularViewModeSwitcher::class
+            ),
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            Host::on($this->getDb())->getResolver(),
+            ['host.name', 'host.state.output']
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query
