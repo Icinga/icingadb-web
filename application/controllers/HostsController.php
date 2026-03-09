@@ -64,7 +64,11 @@ class HostsController extends Controller
             ],
             ['host.state.severity DESC', 'host.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
         $columns = $this->createColumnControl($hosts, $viewModeSwitcher);
 
         $searchBar = $this->createSearchBar($hosts, [
@@ -290,11 +294,6 @@ class HostsController extends Controller
         $this->filter($summary);
 
         return new FeatureStatus('host', $summary->first());
-    }
-
-    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
-    {
-        return new TabularViewModeSwitcher();
     }
 
     protected function getDefaultColumns(): string
