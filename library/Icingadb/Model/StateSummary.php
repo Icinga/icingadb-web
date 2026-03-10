@@ -60,7 +60,7 @@ class StateSummary extends UnionModel
 
     public function getKeyName()
     {
-        return "hosts_acknowledged";
+        return "dummy_id";
     }
 
     public function getColumns()
@@ -103,6 +103,7 @@ class StateSummary extends UnionModel
             }
         }
 
+        $modifiedColumns['dummy_id'] =  new Expression('0');
 
         return $modifiedColumns;
     }
