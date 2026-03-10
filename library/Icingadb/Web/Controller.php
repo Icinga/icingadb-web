@@ -167,7 +167,10 @@ class Controller extends CompatController
         }
 
         $viewModeSwitcher->populate([
-            $viewModeSwitcher->getViewModeParam() => $this->params->shift($viewModeSwitcher->getViewModeParam())
+            $viewModeSwitcher->getViewModeParam() => $this->params->shift(
+                $viewModeSwitcher->getViewModeParam(),
+                $viewModeSwitcher->getDefaultViewMode()
+            )
         ]);
 
         $session = $this->Window()->getSessionNamespace(
@@ -318,11 +321,11 @@ class Controller extends CompatController
     /**
      * Require permission to access the given route
      *
-     * @param string $name If NULL, the current controller name is used
+     * @param ?string $name If NULL, the current controller name is used
      *
      * @throws SecurityException
      */
-    public function assertRouteAccess(string $name = null)
+    public function assertRouteAccess(?string $name = null)
     {
         if (! $name) {
             $name = $this->getRequest()->getControllerName();
@@ -450,7 +453,7 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query, Filter\Rule $filter = null): self
+    public function filter(Query $query, ?Filter\Rule $filter = null): self
     {
         if ($this->format !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
             $this->applyRestrictions($query);
