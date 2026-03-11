@@ -26,7 +26,7 @@ class TimestampToggle extends CompatForm
     protected function assemble()
     {
         $this->addElement('checkbox', 'timestamp-toggle', [
-            'class'             => 'timestamp-toggle',
+            'class'             => 'timestamp-toggle autosubmit',
             'id'                => Icinga::app()->getRequest()->protectId('timestamp-toggle'),
             'label'             => $this->translate('Use relative timestamps'),
             'value'             => $this->useRelativeTimestamps,

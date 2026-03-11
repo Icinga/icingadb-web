@@ -74,16 +74,6 @@
                 });
 
             icinga.history.replaceCurrentState();
-            // Update session and user Preferences, desired keys are e.g. icingadb/history
-            let body = {};
-            body[url.split('?')[0].replace(/^(\/icingaweb2\/)/,"")] = preference;
-            fetch(location.origin + icinga.config.baseUrl + '/icingadb/history/timestamp-preference', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
 
             if (event.target.checked) {
                 container.querySelectorAll('.content [data-absolute-time]').forEach(el => {
