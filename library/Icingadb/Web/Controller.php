@@ -304,7 +304,39 @@ class Controller extends CompatController
         }
 
         $this->useRelativeTimestamps = $timestampMode === 'relative';
-        return new TimestampToggle($this->useRelativeTimestamps);
+        return (new TimestampToggle($this->useRelativeTimestamps))
+            ->on(
+                TimestampToggle::ON_SUBMIT,
+                function (TimestampToggle $form) use ($path) {
+                    $this->_helper->viewRenderer->setNoRender(true);
+                    $this->_helper->layout->disableLayout();
+                    $value = $form->getValue('timestamp-toggle') === 'y' ? 'relative' : 'absolute';
+
+                    $sessionPreferences = Session::getSession()->get('timestamps');
+                    $preferencesStore = PreferencesStore::create(new ConfigObject([
+                        'resource'  => Config::app()->get('global', 'config_resource')
+                    ]), $this->Auth()->getUser());
+                    $storedPreferences = $preferencesStore->load();
+                    if ($sessionPreferences !== null) {
+                        $sessionPreferences[$path] = $value;
+                        Session::getSession()->set('timestamps', $sessionPreferences);
+                    } elseif (
+                        array_key_exists('icingadb', $storedPreferences)
+                        && array_key_exists('timestamps', $storedPreferences['icingadb'])
+                    ) {
+                        $sessionPreferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
+                        $sessionPreferences[$path] = $value;
+                        Session::getSession()->set('timestamps', $sessionPreferences);
+                    } else {
+                        $sessionPreferences = [$path => $value];
+                        Session::getSession()->set('timestamps', $sessionPreferences);
+                    }
+
+                    $storedPreferences['icingadb']['timestamps'] = Json::encode($sessionPreferences);
+                    $preferencesStore->save(new Preferences($storedPreferences));
+                    $this->ignoreXhrBody();
+                }
+            )->handleRequest($this->getServerRequest());
     }
 
     /**
