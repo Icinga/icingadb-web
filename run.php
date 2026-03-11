@@ -25,24 +25,9 @@ if ($this::exists('reporting')) {
     $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServicesSlaReport');
 }
 
-if (! $this::exists('monitoring')) {
-    $modulePath = null;
-    foreach ($this->app->getModuleManager()->getModuleDirs() as $path) {
-        $pathToTest = join(DIRECTORY_SEPARATOR, [$path, 'monitoring']);
-        if (file_exists($pathToTest)) {
-            $modulePath = $pathToTest;
-            break;
-        }
-    }
-
-    if ($modulePath === null) {
-        Icinga\Application\Logger::error('Unable to locate monitoring module');
-    } else {
-        // Ensure we can load some classes/interfaces for compatibility with legacy hooks
-        $this->app->getLoader()->registerNamespace(
-            'Icinga\\Module\\Monitoring',
-            join(DIRECTORY_SEPARATOR, [$modulePath, 'library', 'Monitoring']),
-            join(DIRECTORY_SEPARATOR, [$modulePath, 'application'])
-        );
-    }
+if (! $this::exists('monitoring') && $this->app->getModuleManager()->hasInstalled('monitoring')) {
+    // For compatibility reasons, Icinga DB Web also supports hooks originally written for the monitoring module.
+    // This requires the monitoring module to be either enabled or installed.
+    // If it is only installed, its autoloader must be registered manually to resolve monitoring module hook classes.
+    $this->app->getModuleManager()->getModule('monitoring', assertLoaded: false)->registerAutoloader();
 }
