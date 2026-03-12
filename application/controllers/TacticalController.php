@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Model\StateSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
@@ -49,10 +50,13 @@ class TacticalController extends Controller
             $filter = $searchBar->getFilter();
         }
 
+        $stateSummary = StateSummary::on($db);
+
         $this->filter($hoststateSummary, $filter);
         $this->filter($servicestateSummary, $filter);
+        $this->filter($stateSummary, $filter);
 
-        yield $this->export($hoststateSummary, $servicestateSummary);
+        yield $this->export($stateSummary);
 
         $this->addControl($searchBar);
 
