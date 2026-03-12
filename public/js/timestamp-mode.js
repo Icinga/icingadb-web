@@ -65,12 +65,12 @@
             const container = event.target.closest('.container');
             const url = window.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
             $(container).data('icingaUrl', url);
-            container.querySelectorAll('.load-more')
+
+            container.querySelectorAll('.load-more .action-link, .refresh-container-control')
                 .forEach((el) => {
-                    let actionLink = el.querySelector('a');
-                    let loadMoreUrl = actionLink.getAttribute('href');
+                    let loadMoreUrl = el.getAttribute('href');
                     loadMoreUrl = window.icinga.utils.addUrlParams(loadMoreUrl, {timestamps: preference});
-                    actionLink.setAttribute('href', loadMoreUrl);
+                    el.setAttribute('href', loadMoreUrl);
                 });
 
             icinga.history.replaceCurrentState();
