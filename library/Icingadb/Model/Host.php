@@ -8,7 +8,6 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Model;
-use ipl\Orm\AliasedExpression;
 use ipl\Orm\Behavior\BoolCast;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -16,8 +15,6 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
-use ipl\Sql\Expression;
-use ipl\Sql\Select;
 
 /**
  * Host model.
@@ -117,8 +114,7 @@ class Host extends Model
             'zone_name',
             'zone_id',
             'command_endpoint_name',
-            'command_endpoint_id',
-            'in_hostgroup_bar' => new Expression('%s=?', ['hostgroup.name'], 'bar')
+            'command_endpoint_id'
         ];
 
         if (Backend::supportsDependencies()) {
@@ -131,7 +127,6 @@ class Host extends Model
     public function getColumnDefinitions()
     {
         $columns = [
-            'foobar' => 'foobar',
             'environment_id'            => t('Environment Id'),
             'name_checksum'             => t('Host Name Checksum'),
             'properties_checksum'       => t('Host Properties Checksum'),

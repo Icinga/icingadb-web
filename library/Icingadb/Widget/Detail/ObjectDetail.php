@@ -146,7 +146,7 @@ class ObjectDetail extends BaseHtmlElement
             $item->setObject($this->object);
         }
 
-        $monitoringInstalled = Icinga::app()->getModuleManager()->hasEnabled('monitoring');
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->action_url->first()->action_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
@@ -176,7 +176,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (Icinga::app()->getModuleManager()->hasEnabled('monitoring')) {
+        if (Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
             foreach (Hook::all('Monitoring\\' . ucfirst($this->objectType) . 'Actions') as $hook) {
                 $moduleName = ClassLoader::extractModuleName(get_class($hook));
                 if (! isset($nativeExtensionProviders[$moduleName])) {
@@ -336,7 +336,7 @@ class ObjectDetail extends BaseHtmlElement
         $navigation = new Navigation();
         $notes = trim($this->object->notes);
 
-        $monitoringInstalled = Icinga::app()->getModuleManager()->hasEnabled('monitoring');
+        $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
         foreach ($this->object->notes_url->first()->notes_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
@@ -471,7 +471,7 @@ class ObjectDetail extends BaseHtmlElement
             }
         }
 
-        if (! Icinga::app()->getModuleManager()->hasEnabled('monitoring')) {
+        if (! Icinga::app()->getModuleManager()->hasInstalled('monitoring')) {
             return $extensions;
         }
 
