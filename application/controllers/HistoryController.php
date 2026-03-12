@@ -51,6 +51,7 @@ class HistoryController extends Controller
 
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
+        $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
         $timestampControl = $this->createTimestampControl('icingadb/history');
         $limitControl = $this->createLimitControl();
@@ -108,10 +109,17 @@ class HistoryController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $historyList = (new LoadMoreObjectList($history->execute(), $previousTimestamp, $this->useRelativeTimestamps))
+        $historyList = (new LoadMoreObjectList(
+            $history->execute(),
+            $previousTimestamp,
+            $this->useRelativeTimestamps,
+            $useInteractiveTimestamps
+        ))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl(
+                $url->setParam('before', $before)->setParam('interactiveTimestamps', $useInteractiveTimestamps)
+            );
         if ($compact) {
             $historyList->setPageNumber($page);
         }

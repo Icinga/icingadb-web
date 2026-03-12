@@ -41,6 +41,7 @@ class NotificationsController extends Controller
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
+        $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
         $timestampControl = $this->createTimestampControl('icingadb/notifications');
         $limitControl = $this->createLimitControl();
@@ -99,11 +100,14 @@ class NotificationsController extends Controller
         $notificationList = (new LoadMoreObjectList(
             $notifications->execute(),
             $previousTimestamp,
-            $this->useRelativeTimestamps
+            $this->useRelativeTimestamps,
+            $useInteractiveTimestamps
         ))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
-            ->setLoadMoreUrl($url->setParam('before', $before));
+            ->setLoadMoreUrl(
+                $url->setParam('before', $before)->setParam('interactiveTimestamps', $useInteractiveTimestamps)
+            );
 
         if ($compact) {
             $notificationList->setPageNumber($page);
