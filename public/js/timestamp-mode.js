@@ -10,12 +10,7 @@
             super(icinga);
 
             this.on('change', '.timestamp-toggle', this.onTimestampModeToggle, this);
-            this.on(
-                'click',
-                '.item-list .history .extended-info time, .item-list .notification .extended-info time',
-                this.onTimestampClick,
-                this
-            );
+            this.on('click', '.interactive-time', this.onTimestampClick, this);
             this.dateFormatter = new Intl.DateTimeFormat(
                 icinga.config.locale,
                 { dateStyle: 'medium', timeStyle: 'medium', timeZone: icinga.config.timezone }
@@ -34,11 +29,8 @@
          */
         onTimestampClick(event)
         {
-            // When used in the dashboard switching timestamp mode is not available
-            if (! event.target.closest('.dashboard')) {
-                event.stopPropagation();
-                event.target.closest('.container').querySelector('.timestamp-toggle').click();
-            }
+            event.stopPropagation();
+            event.target.closest('.container').querySelector('.timestamp-toggle').click();
         }
 
         /**
@@ -76,7 +68,7 @@
             icinga.history.replaceCurrentState();
 
             if (event.target.checked) {
-                container.querySelectorAll('.content [data-absolute-time]').forEach(el => {
+                container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-absolute-time');
                     el.setAttribute('data-relative-time', 'ago');
                     el.innerHTML = event.data.self.relativeTime(
@@ -85,7 +77,7 @@
                     );
                 });
             } else {
-                container.querySelectorAll('.content [data-relative-time]').forEach(el => {
+                container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-relative-time');
                     el.setAttribute('data-absolute-time', '');
                     el.innerHTML =

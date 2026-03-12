@@ -46,10 +46,13 @@ class EventRenderer implements ItemRenderer
 
     protected bool $useRelativeTimestamps;
 
-    public function __construct(bool $useRelativeTimestamps = false)
+    protected bool $interactiveTimestamps;
+
+    public function __construct(bool $useRelativeTimestamps = false, bool $interactiveTimestamps = false)
     {
         $this->notificationRenderer = new NotificationRenderer();
         $this->useRelativeTimestamps = $useRelativeTimestamps;
+        $this->interactiveTimestamps = $interactiveTimestamps;
     }
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
@@ -423,29 +426,33 @@ class EventRenderer implements ItemRenderer
             ($this->useRelativeTimestamps && time() - $item->event_time->getTimestamp() < 3600)
             || $layout === 'header'
         ) {
-            $info->addHtml(new TimeAgo($item->event_time->getTimestamp()));
+            $time = new TimeAgo($item->event_time->getTimestamp());
         } else {
             $textFormatter = new IntlDateFormatter(
                 Locale::getDefault(),
                 IntlDateFormatter::NONE,
                 IntlDateFormatter::MEDIUM
             );
-            $time = date('Y-m-d H:i:s', (int) $item->event_time->getTimestamp());
+            $dateTime = date('Y-m-d H:i:s', (int) $item->event_time->getTimestamp());
 
-            $info->addHtml(
-                new HtmlElement(
-                    'time',
-                    new Attributes(
-                        [
-                            'data-absolute-time' => 'ago',
-                            'datetime' => $time,
-                            'title' => $time
-                        ]
-                    ),
-                    new Text($textFormatter->format($item->event_time->getTimestamp()))
-                )
+            $time = new HtmlElement(
+                'time',
+                new Attributes(
+                    [
+                        'data-absolute-time' => 'ago',
+                        'datetime' => $dateTime,
+                        'title' => $dateTime
+                    ]
+                ),
+                new Text($textFormatter->format($item->event_time->getTimestamp()))
             );
         }
+
+        if ($this->interactiveTimestamps) {
+            $time->setAttribute('class', 'interactive-time');
+        }
+
+        $info->addHtml($time);
     }
 
     public function assembleFooter($item, HtmlDocument $footer, string $layout): void

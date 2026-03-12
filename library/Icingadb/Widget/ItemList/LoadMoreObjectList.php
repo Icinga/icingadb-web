@@ -38,13 +38,17 @@ class LoadMoreObjectList extends ObjectList
     /** @var ?int The timestamp of the previous element in the list */
     protected ?int $previousTimeStamp = null;
 
-    public function __construct(ResultSet $data, ?int $previousTimeStamp = null, bool $useRelativeTimestamps = false)
-    {
-        ItemList::__construct($data, function (Model $item) use ($useRelativeTimestamps) {
+    public function __construct(
+        ResultSet $data,
+        ?int $previousTimeStamp = null,
+        bool $useRelativeTimestamps = false,
+        bool $interactiveTimestamps = true
+    ) {
+        ItemList::__construct($data, function (Model $item) use ($useRelativeTimestamps, $interactiveTimestamps) {
             if ($item instanceof NotificationHistory) {
-                return new NotificationRenderer($useRelativeTimestamps);
+                return new NotificationRenderer($useRelativeTimestamps, $interactiveTimestamps);
             } elseif ($item instanceof History) {
-                return new EventRenderer($useRelativeTimestamps);
+                return new EventRenderer($useRelativeTimestamps, $interactiveTimestamps);
             }
 
             throw new NotImplementedError('Not implemented');
