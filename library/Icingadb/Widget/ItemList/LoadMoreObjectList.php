@@ -17,7 +17,6 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Orm\ResultSet;
-use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\ItemList;
 use Locale;
 
@@ -75,42 +74,28 @@ class LoadMoreObjectList extends ObjectList
             'MMM d, YYYY'
         );
 
-        $addDaySeparator = function ($previousDate, $date) use ($formatter) {
-            if (! $previousDate || $formatter->format($previousDate) !== $formatter->format($date)) {
-                return new HtmlElement(
+        $this->on(self::BEFORE_ITEM_ADD, function ($item, $data) use ($formatter) {
+            if ($data instanceof NotificationHistory) {
+                $timestamp = $data->send_time->getTimestamp();
+            } else {
+                $timestamp = $data->event_time->getTimestamp();
+            }
+
+            if (
+                $this->previousTimeStamp === null
+                || $formatter->format($this->previousTimeStamp) !== $formatter->format($timestamp)
+            ) {
+                $this->addHtml(new HtmlElement(
                     'li',
                     new Attributes(['class' => ['day-separator']]),
-                    new Text($formatter->format($date))
-                );
+                    new Text($formatter->format($timestamp))
+                ));
             }
 
-            return null;
-        };
+            $this->previousTimeStamp = $timestamp;
+        });
 
-        foreach ($this->data as $data) {
-            if (! $data instanceof NotificationHistory) {
-                $daySeparator = $addDaySeparator($this->previousTimeStamp, $data->event_time->getTimestamp());
-                $this->previousTimeStamp = $data->event_time->getTimestamp();
-            } else {
-                $daySeparator = $addDaySeparator($this->previousTimeStamp, $data->send_time->getTimestamp());
-                $this->previousTimeStamp = $data->history->event_time->getTimestamp();
-            }
-
-            if ($daySeparator !== null) {
-                $this->addHtml($daySeparator);
-            }
-
-            $item = $this->createListItem($data);
-            $this->emit(self::BEFORE_ITEM_ADD, [$item, $data]);
-            $this->addHtml($item);
-            $this->emit(self::ON_ITEM_ADD, [$item, $data]);
-        }
-
+        parent::assemble();
         $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp);
-
-        if ($this->isEmpty()) {
-            $this->setTag('div');
-            $this->addHtml(new EmptyState($this->getEmptyStateMessage()));
-        }
     }
 }
