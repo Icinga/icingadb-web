@@ -216,7 +216,10 @@ class HostController extends Controller
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl(
-                $url->setParam('before', $before)->setParam('interactiveTimestamps', $useInteractiveTimestamps)
+                $url->setParam('before', $before)->setParam(
+                    'interactiveTimestamps',
+                    $useInteractiveTimestamps
+                )->setFilter($filter)
             );
 
         if ($compact) {
