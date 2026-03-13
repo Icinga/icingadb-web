@@ -70,7 +70,7 @@ class LoadMoreObjectList extends ObjectList
             IntlDateFormatter::NONE,
             'UTC',
             IntlDateFormatter::GREGORIAN,
-            'MMM d, YYYY'
+            'MMM d, yyyy'
         );
 
         $this->on(self::BEFORE_ITEM_ADD, function ($item, $data) use ($formatter) {
