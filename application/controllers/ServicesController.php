@@ -88,7 +88,8 @@ class ServicesController extends Controller
             $viewModeSwitcher,
             Url::fromPath('icingadb/services/suggestColumns'),
             Service::on($this->getDb())->getResolver(),
-            ['service.name', 'service.state.output']
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
         )
             ->getColumns();
 
@@ -411,7 +412,8 @@ class ServicesController extends Controller
             ),
             Url::fromPath('icingadb/services/suggestColumns'),
             Service::on($this->getDb())->getResolver(),
-            ['service.name', 'service.state.output']
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
         )->handleRequest($this->getServerRequest());
         $this->addContent($columnChooser);
     }

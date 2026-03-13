@@ -91,7 +91,8 @@ class Controller extends CompatController
         ViewModeSwitcher $viewModeSwitcher,
         Url $suggestionUrl,
         Resolver $resolver,
-        array $defaultColumns
+        array $defaultColumns,
+        Url $redirectUrl
     ): ColumnChooser {
         // All of that is essentially what `ColumnControl::apply()` should do
         $viewMode = $viewModeSwitcher->getViewMode();
@@ -124,11 +125,10 @@ class Controller extends CompatController
 
         return (new ColumnChooser($suggestionUrl, $resolver, $columns))
             ->setAction((string) Url::fromRequest())
-            ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) {
+            ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
-                    $url = Url::fromPath('icingadb/services');
-                    $url->setParam('columns', $form->getValue('columns', ''));
-                    $this->redirectNow($url);
+                    $redirectUrl->setParam('columns', $form->getValue('columns', ''));
+                    $this->redirectNow($redirectUrl);
                 } else {
                     foreach ($form->getPartUpdates() as $update) {
                         if (! is_array($update)) {
