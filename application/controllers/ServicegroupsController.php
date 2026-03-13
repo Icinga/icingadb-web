@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\View\ServicegroupGridRenderer;
 use Icinga\Module\Icingadb\View\ServicegroupRenderer;
+use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -134,5 +135,10 @@ class ServicegroupsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
+    {
+        return new GridViewModeSwitcher();
     }
 }

@@ -6,13 +6,16 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Utils;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
+use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
@@ -22,9 +25,12 @@ use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
+use ipl\Orm\Relations;
+use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 
 class HostsController extends Controller
@@ -61,8 +67,20 @@ class HostsController extends Controller
             ],
             ['host.state.severity DESC', 'host.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        $columns = $this->createColumnControl($hosts, $viewModeSwitcher);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
+        $columns = $this->createColumnControl(
+            $hosts,
+            $viewModeSwitcher,
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            Host::on($this->getDb())->getResolver(),
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -104,7 +122,8 @@ class HostsController extends Controller
         $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar, $results->hasResult());
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/hosts/columnControl'));
         } else {
             $hostList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -198,6 +217,11 @@ class HostsController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(new Host());
+    }
+
     public function searchEditorAction()
     {
         $editor = $this->createSearchEditor(Host::on($this->getDb()), [
@@ -209,6 +233,24 @@ class HostsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function columnControlAction()
+    {
+        $this->addTitleTab($this->translate('Select Columns'));
+        $columnChooser = $this->createColumnControl(
+            Host::on($this->getDb()),
+            $this->createViewModeSwitcher(
+                $this->createPaginationControl(Host::on($this->getDb())),
+                $this->createLimitControl(),
+                viewModeSwitcherClass: TabularViewModeSwitcher::class,
+            ),
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            Host::on($this->getDb())->getResolver(),
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query
