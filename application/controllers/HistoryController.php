@@ -5,17 +5,11 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Application\Config;
-use Icinga\Data\ConfigObject;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
-use Icinga\User\Preferences;
-use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Util\Json;
-use Icinga\Web\Session;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
