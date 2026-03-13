@@ -5,8 +5,8 @@
 namespace Icinga\Module\Icingadb\Web\Control;
 
 use Icinga\Application\Icinga;
-use Icinga\Date\DateFormatter;
 use ipl\Web\Compat\CompatForm;
+use ipl\Web\Widget\TimeAgo;
 
 class TimestampToggle extends CompatForm
 {
@@ -30,7 +30,7 @@ class TimestampToggle extends CompatForm
             'id'                => Icinga::app()->getRequest()->protectId('timestamp-toggle'),
             'label'             => $this->translate('Use relative timestamps'),
             'value'             => $this->useRelativeTimestamps,
-            'relative-sample'   => DateFormatter::timeAgo(time())
+            'relative-sample'   => trim(strip_tags((string) new TimeAgo()))
         ]);
     }
 }
