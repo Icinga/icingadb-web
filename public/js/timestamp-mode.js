@@ -12,7 +12,7 @@
             this.on('change', '.timestamp-toggle', this.onTimestampModeToggle, this);
             this.on('click', '.interactive-time', this.onTimestampClick, this);
             this.dateFormatter = new Intl.DateTimeFormat(
-                icinga.config.locale,
+                'en-US',
                 { dateStyle: 'medium', timeStyle: 'medium', timeZone: icinga.config.timezone }
             );
             this.timeFormatter = new Intl.DateTimeFormat(
@@ -40,19 +40,6 @@
          */
         onTimestampModeToggle(event)
         {
-            if (icinga.config.timezone !== event.data.self.dateFormatter.resolvedOptions().timeZone) {
-                event.data.self.dateFormatter = new Intl.DateTimeFormat(
-                    icinga.config.locale,
-                    {
-                        dateStyle: 'medium', timeStyle: 'medium',
-                        timeZone: icinga.config.timezone
-                    }
-                );
-            }
-
-            const relativeTimeParts = event.target
-                .getAttribute('relative-sample')
-                .split(/\d+/);
             const preference = (event.target.checked) ? 'relative' : 'absolute';
             const container = event.target.closest('.container');
             const url = window.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
@@ -68,48 +55,30 @@
             icinga.history.replaceCurrentState();
 
             if (event.target.checked) {
+                const parts = event.target.getAttribute('relative-sample').split(/\d+/);
+
                 container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-absolute-time');
                     el.setAttribute('data-relative-time', 'ago');
-                    el.innerHTML = event.data.self.relativeTime(
-                        new Date(el.getAttribute('datetime')),
-                        relativeTimeParts
-                    );
+
+                    const diff = Math.floor((
+                        new Date(event.data.self.dateFormatter.format(new Date()))
+                        - new Date(el.getAttribute('datetime'))
+                    ) / 1000);
+
+                    if (diff < 3600) {
+                        el.textContent = parts[0]
+                            + Math.floor(diff / 60) + parts[1]
+                            + Math.floor(diff % 60) + parts[2];
+                    }
                 });
             } else {
                 container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-relative-time');
                     el.setAttribute('data-absolute-time', '');
-                    el.innerHTML =
-                        event.data.self.timeFormatter
+                    el.textContent = event.data.self.timeFormatter
                         .format(new Date(el.getAttribute('datetime')));
                 });
-            }
-        }
-
-        /**
-         * Get the relative time to be displayed for a date, returns absolute time if it exceeds one hour
-         *
-         * @param {Date} date The date to change to relative representation
-         * @param {string[]} timeTemplateParts An array with 3 elements, minutes and seconds are inserted between them
-         *
-         * @returns {string} The representation of the date in relative time
-         */
-        relativeTime(date, timeTemplateParts)
-        {
-            const timestamp = date.getTime();
-            // Adjust to the user's timezone
-            const now = new Date(this.dateFormatter.format(new Date()));
-            const diff = (now.getTime() - timestamp) / 1000;
-            if (diff >= 3600) {
-                return this.timeFormatter.format(date);
-            } else {
-                // insert current values of minutes and seconds in the same places where they were removed in the sample
-                return timeTemplateParts[0] +
-                    Math.floor(diff / 60) +
-                    timeTemplateParts[1] +
-                    diff % 60 +
-                    timeTemplateParts[2];
             }
         }
     }
