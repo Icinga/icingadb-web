@@ -77,7 +77,8 @@ class HostsController extends Controller
             $viewModeSwitcher,
             Url::fromPath('icingadb/hosts/suggestColumns'),
             Host::on($this->getDb())->getResolver(),
-            ['host.name', 'host.state.output']
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
         )
             ->getColumns();
 
@@ -242,11 +243,12 @@ class HostsController extends Controller
             $this->createViewModeSwitcher(
                 $this->createPaginationControl(Host::on($this->getDb())),
                 $this->createLimitControl(),
-                viewModeSwitcherClass: TabularViewModeSwitcher::class
+                viewModeSwitcherClass: TabularViewModeSwitcher::class,
             ),
             Url::fromPath('icingadb/hosts/suggestColumns'),
             Host::on($this->getDb())->getResolver(),
-            ['host.name', 'host.state.output']
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
         )->handleRequest($this->getServerRequest());
         $this->addContent($columnChooser);
     }
