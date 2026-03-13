@@ -42,6 +42,21 @@
   > .page-separator + .list-item .main {
     border-top: none;
   }
+
+  .day-separator {
+    background-color: @gray-lighter;
+  }
+}
+
+.interactive-time {
+  &:hover {
+    .rounded-corners(1em);
+    background: @base-gray-light;
+  }
+
+  user-select: none;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 
 // Layout
@@ -79,5 +94,11 @@
         margin-left: .417em;
       }
     }
+  }
+
+  .day-separator {
+    display: flex;
+    justify-content: end;
+    padding-right: 1.5em;
   }
 }

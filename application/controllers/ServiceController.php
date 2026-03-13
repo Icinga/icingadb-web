@@ -290,8 +290,12 @@ class ServiceController extends Controller
 
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
-        $url->setParams(['name' => $this->service->name, 'host.name' => $this->service->host->name]);
+        $url->setParam('name', $this->service->name)
+            ->setParam('host.name', $this->service->host->name);
+        $previousTimestamp = $this->params->shift('last-entry');
+        $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
+        $timestampControl = $this->createTimestampControl('icingadb/service/history');
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
@@ -337,6 +341,7 @@ class ServiceController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $previousTimestamp = null;
             $history->resetOffset();
             $history->limit($page * $limitControl->getLimit());
         }
@@ -348,15 +353,26 @@ class ServiceController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $historyList = (new LoadMoreObjectList($history->execute()))
+        $historyList = (new LoadMoreObjectList(
+            $history->execute(),
+            $previousTimestamp,
+            $this->useRelativeTimestamps,
+            $useInteractiveTimestamps
+        ))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
+            ->setLoadMoreUrl(
+                $url->setParam('before', $before)->setParam(
+                    'interactiveTimestamps',
+                    $useInteractiveTimestamps
+                )->setFilter($filter)
+            );
 
         if ($compact) {
             $historyList->setPageNumber($page);
