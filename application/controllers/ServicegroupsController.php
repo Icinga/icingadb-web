@@ -44,7 +44,11 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: GridViewModeSwitcher::class
+        );
 
         $sortControl = $this->createSortControl(
             $servicegroups,
@@ -134,10 +138,5 @@ class ServicegroupsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
-    }
-
-    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
-    {
-        return new GridViewModeSwitcher();
     }
 }
