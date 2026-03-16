@@ -144,7 +144,7 @@ class HostController extends Controller
         $previousTimestamp = $this->params->shift('last-entry');
         $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
-        $timestampControl = $this->createTimestampControl('icingadb/host/history');
+        $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(

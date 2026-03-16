@@ -274,63 +274,56 @@ class Controller extends CompatController
     /**
      * Create a control to switch between relative and absolute timestamps
      *
-     * @param string $path The path that is used as key to load the current preference e.g. icingadb/history
-     *
      * @return TimestampToggle
      */
-    public function createTimestampControl(string $path)
+    public function createTimestampControl()
     {
+        $path = $this->getRequest()->getUrl()->getPath();
         $timestampMode = $this->params->shift('timestamps');
+        $user = $this->Auth()->getUser();
         if ($timestampMode === null) {
-            if (
-                Session::getSession()->get('timestamps')
-                && array_key_exists($path, Session::getSession()->get('timestamps'))
-            ) {
-                $timestampMode = Session::getSession()->get('timestamps')[$path];
-            } else {
-                $storedPreferences = Json::decode(
-                    $this->Auth()->getUser()->getPreferences()->getValue('icingadb', 'timestamps'),
+            if (($preferences = $user->getAdditional('icingadb.timestamps')) === null) {
+                $preferences = Json::decode(
+                    $user->getPreferences()->getValue('icingadb', 'timestamps', '[]'),
                     true
                 );
-                if ($storedPreferences !== null && array_key_exists($path, $storedPreferences)) {
-                    $timestampMode = $storedPreferences[$path];
-                } else {
-                    $timestampMode = 'absolute';
-                }
+                $user->setAdditional('icingadb.timestamps', $preferences);
             }
+
+            $timestampMode = array_key_exists($path, $preferences) ? $preferences[$path] : 'absolute';
         }
 
         return (new TimestampToggle($timestampMode === 'relative'))
             ->on(
                 TimestampToggle::ON_SUBMIT,
-                function (TimestampToggle $form) use ($path) {
+                function (TimestampToggle $form) use ($path, $user) {
+                    // The js changes the representation in the frontend, this request only saves the preference,
+                    // so we can skip all unnecessary work and signal the frontend not to replace the DOM
                     $this->_helper->viewRenderer->setNoRender(true);
                     $this->_helper->layout->disableLayout();
+                    $this->ignoreXhrBody();
+
                     $value = $form->getValue('timestamp-toggle') === 'y' ? 'relative' : 'absolute';
 
-                    $sessionPreferences = Session::getSession()->get('timestamps');
                     $preferencesStore = PreferencesStore::create(new ConfigObject([
                         'resource'  => Config::app()->get('global', 'config_resource')
-                    ]), $this->Auth()->getUser());
+                    ]), $user);
                     $storedPreferences = $preferencesStore->load();
-                    if ($sessionPreferences !== null) {
-                        $sessionPreferences[$path] = $value;
-                        Session::getSession()->set('timestamps', $sessionPreferences);
-                    } elseif (
-                        array_key_exists('icingadb', $storedPreferences)
-                        && array_key_exists('timestamps', $storedPreferences['icingadb'])
-                    ) {
-                        $sessionPreferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
-                        $sessionPreferences[$path] = $value;
-                        Session::getSession()->set('timestamps', $sessionPreferences);
-                    } else {
-                        $sessionPreferences = [$path => $value];
-                        Session::getSession()->set('timestamps', $sessionPreferences);
+                    if (($preferences = $user->getAdditional('icingadb.timestamps')) === null) {
+                        if (
+                            array_key_exists('icingadb', $storedPreferences)
+                            && array_key_exists('timestamps', $storedPreferences['icingadb'])
+                        ) {
+                            $preferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
+                        } else {
+                            $preferences = [];
+                        }
                     }
 
-                    $storedPreferences['icingadb']['timestamps'] = Json::encode($sessionPreferences);
+                    $preferences[$path] = $value;
+                    $user->setAdditional('icingadb.timestamps', $preferences);
+                    $storedPreferences['icingadb']['timestamps'] = Json::encode($preferences);
                     $preferencesStore->save(new Preferences($storedPreferences));
-                    $this->ignoreXhrBody();
                 }
             )->handleRequest($this->getServerRequest());
     }
