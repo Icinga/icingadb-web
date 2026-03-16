@@ -29,6 +29,7 @@ use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
+use ipl\Web\Widget\Time;
 use ipl\Web\Widget\TimeAgo;
 use Locale;
 
@@ -43,10 +44,12 @@ class EventRenderer implements ItemRenderer
     /** @var NotificationRenderer To render NotificationHistory event */
     protected $notificationRenderer;
 
+    /** @var bool Whether to use relative timestamps */
     protected bool $useRelativeTimestamps;
 
     protected bool $interactiveTimestamps;
 
+    /** @param bool $useRelativeTimestamps Whether to use relative timestamps */
     public function __construct(bool $useRelativeTimestamps = false, bool $interactiveTimestamps = false)
     {
         $this->notificationRenderer = new NotificationRenderer();
@@ -427,27 +430,17 @@ class EventRenderer implements ItemRenderer
         ) {
             $time = new TimeAgo($item->event_time->getTimestamp());
         } else {
-            $textFormatter = new IntlDateFormatter(
-                Locale::getDefault(),
-                IntlDateFormatter::NONE,
-                IntlDateFormatter::MEDIUM
-            );
-            $dateTime = date('Y-m-d H:i:s', (int) $item->event_time->getTimestamp());
-
-            $time = new HtmlElement(
-                'time',
-                new Attributes(
-                    [
-                        'data-absolute-time' => 'ago',
-                        'datetime' => $dateTime,
-                        'title' => $dateTime
-                    ]
-                ),
-                new Text($textFormatter->format($item->event_time->getTimestamp()))
-            );
+            $time = (new Time($item->event_time))
+                ->setFormatter(
+                    new IntlDateFormatter(
+                        Locale::getDefault(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::MEDIUM
+                    )
+                );
         }
 
-        if ($this->interactiveTimestamps) {
+        if ($layout !== 'header') {
             $time->setAttribute('class', 'interactive-time');
         }
 
