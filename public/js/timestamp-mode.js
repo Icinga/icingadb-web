@@ -56,8 +56,6 @@
             icinga.history.replaceCurrentState();
 
             if (event.target.checked) {
-                const parts = event.target.getAttribute('relative-sample').split(/\d+/);
-
                 container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-absolute-time');
                     el.setAttribute('data-relative-time', 'ago');
@@ -68,6 +66,7 @@
                     ) / 1000);
 
                     if (diff < 3600) {
+                        const parts = el.getAttribute('data-ago-label').split(/\d+/);
                         el.textContent = parts[0]
                             + Math.floor(diff / 60) + parts[1]
                             + Math.floor(diff % 60) + parts[2];

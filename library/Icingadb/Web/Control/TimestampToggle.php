@@ -42,8 +42,7 @@ class TimestampToggle extends CompatForm
         $this->addElement('checkbox', 'timestamp-toggle', [
             'class'             => ['timestamp-toggle', 'autosubmit'],
             'label'             => $this->translate('Use relative timestamps'),
-            'value'             => $this->useRelativeTimestamps,
-            'relative-sample'   => trim(strip_tags((string) new TimeAgo()))
+            'value'             => $this->useRelativeTimestamps
         ]);
     }
 }
