@@ -6,16 +6,13 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use GuzzleHttp\Psr7\Utils;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
-use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
-use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
@@ -30,12 +27,9 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
-use ipl\Orm\Relations;
-use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
-use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
