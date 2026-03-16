@@ -104,7 +104,7 @@ class NotificationsController extends Controller
         $notificationList = (new LoadMoreObjectList(
             $notifications->execute(),
             $previousTimestamp,
-            $this->useRelativeTimestamps,
+            $timestampControl->getUseRelativeTimestamps(),
             $useInteractiveTimestamps
         ))
             ->setPageSize($limitControl->getLimit())

@@ -24,6 +24,16 @@ class TimestampToggle extends CompatForm
         $this->useRelativeTimestamps = $useRelativeTimestamps;
     }
 
+    /**
+     * Get whether relative or absolute timestamps are to be used
+     *
+     * @return bool
+     */
+    public function getUseRelativeTimestamps(): bool
+    {
+        return $this->useRelativeTimestamps;
+    }
+
     protected function assemble()
     {
         $this->addElement('checkbox', 'timestamp-toggle', [
