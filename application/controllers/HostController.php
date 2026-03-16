@@ -30,7 +30,7 @@ use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
-use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
@@ -207,7 +207,7 @@ class HostController extends Controller
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $historyList = (new LoadMoreObjectList(
+        $historyList = (new HistoryObjectList(
             $history->execute(),
             $previousTimestamp,
             $timestampControl->getUseRelativeTimestamps(),

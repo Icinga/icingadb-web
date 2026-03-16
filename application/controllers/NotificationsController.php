@@ -11,7 +11,7 @@ use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -101,7 +101,7 @@ class NotificationsController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $notificationList = (new LoadMoreObjectList(
+        $notificationList = (new HistoryObjectList(
             $notifications->execute(),
             $previousTimestamp,
             $timestampControl->getUseRelativeTimestamps(),
