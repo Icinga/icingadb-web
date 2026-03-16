@@ -43,7 +43,7 @@ class NotificationsController extends Controller
         $previousTimestamp = $this->params->shift('last-entry');
         $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
-        $timestampControl = $this->createTimestampControl('icingadb/notifications');
+        $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
