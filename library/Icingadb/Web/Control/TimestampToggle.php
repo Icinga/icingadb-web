@@ -5,9 +5,7 @@
 
 namespace Icinga\Module\Icingadb\Web\Control;
 
-use Icinga\Application\Icinga;
 use ipl\Web\Compat\CompatForm;
-use ipl\Web\Widget\TimeAgo;
 
 class TimestampToggle extends CompatForm
 {
@@ -16,9 +14,14 @@ class TimestampToggle extends CompatForm
 
     protected $defaultAttributes = [
         'name'    => 'Use relative timestamps',
-        'class'   => 'icinga-form icinga-controls inline'
+        'class'   => ['icinga-form', 'icinga-controls', 'inline']
     ];
 
+    /**
+     * A toggle that allows to switch between absolute and relative timestamps
+     *
+     * @param bool $useRelativeTimestamps Whether to use relative timestamps
+     */
     public function __construct(bool $useRelativeTimestamps = false)
     {
         $this->useRelativeTimestamps = $useRelativeTimestamps;
@@ -37,8 +40,7 @@ class TimestampToggle extends CompatForm
     protected function assemble()
     {
         $this->addElement('checkbox', 'timestamp-toggle', [
-            'class'             => 'timestamp-toggle autosubmit',
-            'id'                => Icinga::app()->getRequest()->protectId('timestamp-toggle'),
+            'class'             => ['timestamp-toggle', 'autosubmit'],
             'label'             => $this->translate('Use relative timestamps'),
             'value'             => $this->useRelativeTimestamps,
             'relative-sample'   => trim(strip_tags((string) new TimeAgo()))
