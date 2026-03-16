@@ -43,7 +43,11 @@ class HostgroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: GridViewModeSwitcher::class
+        );
 
         if ($viewModeSwitcher->getViewMode() === 'grid') {
             $hostgroups->without([
@@ -147,10 +151,5 @@ class HostgroupsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
-    }
-
-    protected function getViewModeSwitcherInstance(): ViewModeSwitcher
-    {
-        return new GridViewModeSwitcher();
     }
 }
