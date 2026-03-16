@@ -20,7 +20,7 @@ use ipl\Web\Widget\ItemList;
 use Locale;
 
 /**
- * LoadMoreObjectList
+ * HistoryObjectList
  *
  * Create a list of History or NotificationHistory objects with a Load more link
  * and add a separator when a new day begins.
@@ -29,13 +29,21 @@ use Locale;
  *
  * @extends ObjectList<Item>
  */
-class LoadMoreObjectList extends ObjectList
+class HistoryObjectList extends ObjectList
 {
     use LoadMore;
 
     /** @var ?int The timestamp of the previous element in the list */
     protected ?int $previousTimeStamp = null;
 
+    /**
+     * A list of History or NotificationHistory objects with a Load more link and add a separator between days.
+     *
+     * @param ResultSet $data
+     * @param ?int $previousTimeStamp
+     * @param bool $useRelativeTimestamps
+     * @param bool $interactiveTimestamps
+     */
     public function __construct(
         ResultSet $data,
         ?int $previousTimeStamp = null,
@@ -56,13 +64,7 @@ class LoadMoreObjectList extends ObjectList
         $this->previousTimeStamp = $previousTimeStamp;
     }
 
-    /**
-     * Add a separator with the next date when a new day begins in the history.
-     * The timestamp of the last entry is added to the loadMoreURl to make this possible.
-     *
-     * @return void
-     */
-    protected function assemble(): void
+    protected function init(): void
     {
         $formatter = new IntlDateFormatter(
             Locale::getDefault(),
@@ -94,7 +96,7 @@ class LoadMoreObjectList extends ObjectList
             $this->previousTimeStamp = $timestamp;
         });
 
-        parent::assemble();
-        $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp);
+        $this->on(self::ON_ASSEMBLED, fn () => $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp));
+        parent::init();
     }
 }

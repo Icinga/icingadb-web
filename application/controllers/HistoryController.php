@@ -9,7 +9,7 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -103,7 +103,7 @@ class HistoryController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $historyList = (new LoadMoreObjectList(
+        $historyList = (new HistoryObjectList(
             $history->execute(),
             $previousTimestamp,
             $timestampControl->getUseRelativeTimestamps(),
