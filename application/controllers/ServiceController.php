@@ -358,7 +358,7 @@ class ServiceController extends Controller
         $historyList = (new LoadMoreObjectList(
             $history->execute(),
             $previousTimestamp,
-            $this->useRelativeTimestamps,
+            $timestampControl->getUseRelativeTimestamps(),
             $useInteractiveTimestamps
         ))
             ->setViewMode($viewModeSwitcher->getViewMode())

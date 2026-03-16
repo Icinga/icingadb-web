@@ -60,9 +60,6 @@ class Controller extends CompatController
     /** @var bool */
     private $formatProcessed = false;
 
-    /** @var bool Whether relative or absolute timestamps are to be used */
-    protected bool $useRelativeTimestamps = false;
-
     /**
      * Get the filter created from query string parameters
      *
@@ -301,8 +298,7 @@ class Controller extends CompatController
             }
         }
 
-        $this->useRelativeTimestamps = $timestampMode === 'relative';
-        return (new TimestampToggle($this->useRelativeTimestamps))
+        return (new TimestampToggle($timestampMode === 'relative'))
             ->on(
                 TimestampToggle::ON_SUBMIT,
                 function (TimestampToggle $form) use ($path) {
