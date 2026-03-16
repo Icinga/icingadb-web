@@ -27,6 +27,7 @@ use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
+use ipl\Web\Widget\Time;
 use ipl\Web\Widget\TimeAgo;
 use Locale;
 
@@ -37,10 +38,12 @@ class NotificationRenderer implements ItemRenderer
     use HostLink;
     use ServiceLink;
 
+    /** @var bool Whether to use relative timestamps */
     protected bool $useRelativeTimestamps;
 
     protected bool $interactiveTimestamps;
 
+    /** @param bool $useRelativeTimestamps Whether to use relative timestamps */
     public function __construct(bool $useRelativeTimestamps = false, bool $interactiveTimestamps = false)
     {
         $this->useRelativeTimestamps = $useRelativeTimestamps;
@@ -171,27 +174,17 @@ class NotificationRenderer implements ItemRenderer
         ) {
             $time = new TimeAgo($item->send_time->getTimestamp());
         } else {
-            $textFormatter = new IntlDateFormatter(
-                Locale::getDefault(),
-                IntlDateFormatter::NONE,
-                IntlDateFormatter::MEDIUM
-            );
-            $dateTime = date('Y-m-d H:i:s', (int) $item->send_time->getTimestamp());
-
-            $time = new HtmlElement(
-                'time',
-                new Attributes(
-                    [
-                        'data-absolute-time' => 'ago',
-                        'datetime' => $dateTime,
-                        'title' => $dateTime
-                    ]
-                ),
-                new Text($textFormatter->format($item->send_time->getTimestamp()))
-            );
+            $time = (new Time($item->send_time))
+                ->setFormatter(
+                    new IntlDateFormatter(
+                        Locale::getDefault(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::MEDIUM
+                    )
+                );
         }
 
-        if ($this->interactiveTimestamps) {
+        if ($layout !== 'header') {
             $time->setAttribute('class', 'interactive-time');
         }
 
