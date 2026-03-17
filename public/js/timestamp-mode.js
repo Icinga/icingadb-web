@@ -24,14 +24,23 @@
 
         /**
          * Stop event propagation, so that the list-item underneath is not clicked,
-         * click the columns timestamp-toggle instead
+         * and toggle the timestamp mode of the container
          *
          * @param event The click event of the timestamp
          */
         onTimestampClick(event)
         {
             event.stopPropagation();
-            event.target.closest('.container').querySelector('.timestamp-toggle').click();
+
+            const container = event.target.closest('.container');
+            const toggle = container.querySelector('.timestamp-toggle');
+
+            if (toggle) {
+                toggle.click();
+            } else {
+                const isRelative = event.target.hasAttribute('data-relative-time');
+                event.data.self.applyTimestampMode(container, ! isRelative);
+            }
         }
 
         /**
@@ -41,27 +50,37 @@
          */
         onTimestampModeToggle(event)
         {
-            const preference = (event.target.checked) ? 'relative' : 'absolute';
             const container = event.target.closest('.container');
-            const url = window.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
+            event.data.self.applyTimestampMode(container, event.target.checked);
+        }
+
+        /**
+         * Apply the given timestamp mode to all interactive timestamps in the container
+         *
+         * @param {Element} container The container element
+         * @param {boolean} relative  Whether to show relative timestamps
+         */
+        applyTimestampMode(container, relative)
+        {
+            const preference = relative ? 'relative' : 'absolute';
+            const url = this.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
             $(container).data('icingaUrl', url);
 
             container.querySelectorAll('.load-more .action-link, .refresh-container-control, .primary-nav li.active a')
                 .forEach((el) => {
-                    let loadMoreUrl = el.getAttribute('href');
-                    loadMoreUrl = window.icinga.utils.addUrlParams(loadMoreUrl, {timestamps: preference});
-                    el.setAttribute('href', loadMoreUrl);
+                    let elementUrl = el.getAttribute('href');
+                    elementUrl = this.icinga.utils.addUrlParams(elementUrl, {timestamps: preference});
+                    el.setAttribute('href', elementUrl);
                 });
 
-            icinga.history.replaceCurrentState();
+            this.icinga.history.replaceCurrentState();
 
-            if (event.target.checked) {
+            if (relative) {
                 container.querySelectorAll('.content .interactive-time').forEach(el => {
-                    el.removeAttribute('data-absolute-time');
                     el.setAttribute('data-relative-time', 'ago');
 
                     const diff = Math.floor((
-                        new Date(event.data.self.dateFormatter.format(new Date()))
+                        new Date(this.dateFormatter.format(new Date()))
                         - new Date(el.getAttribute('datetime'))
                     ) / 1000);
 
@@ -75,9 +94,7 @@
             } else {
                 container.querySelectorAll('.content .interactive-time').forEach(el => {
                     el.removeAttribute('data-relative-time');
-                    el.setAttribute('data-absolute-time', '');
-                    el.textContent = event.data.self.timeFormatter
-                        .format(new Date(el.getAttribute('datetime')));
+                    el.textContent = this.timeFormatter.format(new Date(el.getAttribute('datetime')));
                 });
             }
         }
