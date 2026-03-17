@@ -293,7 +293,6 @@ class ServiceController extends Controller
         $url->setParam('name', $this->service->name)
             ->setParam('host.name', $this->service->host->name);
         $previousTimestamp = $this->params->shift('last-entry');
-        $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
         $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
@@ -363,16 +362,10 @@ class ServiceController extends Controller
             $history->execute(),
             $previousTimestamp,
             $timestampControl->getUseRelativeTimestamps(),
-            $useInteractiveTimestamps
         ))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
-            ->setLoadMoreUrl(
-                $url->setParam('before', $before)->setParam(
-                    'interactiveTimestamps',
-                    $useInteractiveTimestamps
-                )->setFilter($filter)
-            );
+            ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
         if ($compact) {
             $historyList->setPageNumber($page);
