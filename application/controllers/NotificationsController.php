@@ -41,7 +41,6 @@ class NotificationsController extends Controller
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
-        $useInteractiveTimestamps = $this->params->shift('interactiveTimestamps', ! $compact);
 
         $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
@@ -101,13 +100,10 @@ class NotificationsController extends Controller
             $notifications->execute(),
             $previousTimestamp,
             $timestampControl->getUseRelativeTimestamps(),
-            $useInteractiveTimestamps
         ))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
-            ->setLoadMoreUrl(
-                $url->setParam('before', $before)->setParam('interactiveTimestamps', $useInteractiveTimestamps)
-            );
+            ->setLoadMoreUrl($url->setParam('before', $before));
 
         if ($compact) {
             $notificationList->setPageNumber($page);

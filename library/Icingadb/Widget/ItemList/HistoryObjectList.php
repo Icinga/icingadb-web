@@ -42,19 +42,14 @@ class HistoryObjectList extends ObjectList
      * @param ResultSet $data
      * @param ?int $previousTimeStamp
      * @param bool $useRelativeTimestamps
-     * @param bool $interactiveTimestamps
      */
-    public function __construct(
-        ResultSet $data,
-        ?int $previousTimeStamp = null,
-        bool $useRelativeTimestamps = false,
-        bool $interactiveTimestamps = true
-    ) {
-        ItemList::__construct($data, function (Model $item) use ($useRelativeTimestamps, $interactiveTimestamps) {
+    public function __construct(ResultSet $data, ?int $previousTimeStamp = null, bool $useRelativeTimestamps = false)
+    {
+        ItemList::__construct($data, function (Model $item) use ($useRelativeTimestamps) {
             if ($item instanceof NotificationHistory) {
-                return new NotificationRenderer($useRelativeTimestamps, $interactiveTimestamps);
+                return new NotificationRenderer($useRelativeTimestamps);
             } elseif ($item instanceof History) {
-                return new EventRenderer($useRelativeTimestamps, $interactiveTimestamps);
+                return new EventRenderer($useRelativeTimestamps);
             }
 
             throw new NotImplementedError('Not implemented');
