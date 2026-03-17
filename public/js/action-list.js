@@ -316,7 +316,9 @@
                     }
 
                     _this.clearSelection(activeItems);
-                    if (toActiveItem.classList.contains('page-separator')) {
+                    if (toActiveItem.classList.contains('page-separator')
+                        || toActiveItem.classList.contains('day-separator')
+                    ) {
                         toActiveItem = _this.getDirectionalNext(toActiveItem, event.key);
                     }
                 }
