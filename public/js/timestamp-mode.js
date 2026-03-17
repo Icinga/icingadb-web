@@ -46,7 +46,7 @@
             const url = window.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
             $(container).data('icingaUrl', url);
 
-            container.querySelectorAll('.load-more .action-link, .refresh-container-control')
+            container.querySelectorAll('.load-more .action-link, .refresh-container-control, .primary-nav li.active a')
                 .forEach((el) => {
                     let loadMoreUrl = el.getAttribute('href');
                     loadMoreUrl = window.icinga.utils.addUrlParams(loadMoreUrl, {timestamps: preference});
