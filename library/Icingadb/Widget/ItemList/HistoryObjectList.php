@@ -64,11 +64,8 @@ class HistoryObjectList extends ObjectList
     {
         $formatter = new IntlDateFormatter(
             Locale::getDefault(),
-            IntlDateFormatter::NONE,
-            IntlDateFormatter::NONE,
-            'UTC',
-            IntlDateFormatter::GREGORIAN,
-            'MMM d, yyyy'
+            IntlDateFormatter::MEDIUM,
+            IntlDateFormatter::NONE
         );
 
         $this->on(self::BEFORE_ITEM_ADD, function ($item, $data) use ($formatter) {
