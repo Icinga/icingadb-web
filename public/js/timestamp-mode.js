@@ -66,12 +66,15 @@
             const url = this.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
             $(container).data('icingaUrl', url);
 
-            container.querySelectorAll('.load-more .action-link, .refresh-container-control, .primary-nav li.active a')
-                .forEach((el) => {
-                    let elementUrl = el.getAttribute('href');
-                    elementUrl = this.icinga.utils.addUrlParams(elementUrl, {timestamps: preference});
-                    el.setAttribute('href', elementUrl);
+            [
+                ['.load-more .action-link, .refresh-container-control, .primary-nav li.active a', 'href'],
+                ['.search-editor-opener', 'data-search-editor-url'],
+                ['.search-bar', 'action'],
+            ].forEach(([selector, attr]) => {
+                container.querySelectorAll(selector).forEach((el) => {
+                    el.setAttribute(attr, this.icinga.utils.addUrlParams(el.getAttribute(attr), {timestamps: preference}));
                 });
+            });
 
             this.icinga.history.replaceCurrentState();
 
