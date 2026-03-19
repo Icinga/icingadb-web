@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -25,7 +26,8 @@ class NotificationsController extends Controller
         $preserveParams = [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM
         ];
 
         $db = $this->getDb();
@@ -133,7 +135,8 @@ class NotificationsController extends Controller
         $editor = $this->createSearchEditor(NotificationHistory::on($this->getDb()), [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM
         ]);
 
         $this->getDocument()->add($editor);

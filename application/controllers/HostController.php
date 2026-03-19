@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
@@ -156,6 +157,7 @@ class HostController extends Controller
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM,
             'name'
         ];
 
@@ -541,6 +543,7 @@ class HostController extends Controller
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
             ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM,
             'name'
         ];
         $editor = $this->createSearchEditor(
