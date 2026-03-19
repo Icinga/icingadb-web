@@ -71,6 +71,7 @@ class StateSummary extends UnionModel
 
     public function getSearchColumns()
     {
+        return ['service.name_ci', 'host.name_ci'];
     }
 
     public function getDefaultSort()
