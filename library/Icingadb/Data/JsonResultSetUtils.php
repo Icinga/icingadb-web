@@ -85,13 +85,16 @@ trait JsonResultSetUtils
             $offset = 0;
         }
 
+        $first = true;
         echo '[';
 
         do {
             $query->offset($offset);
             $result = $query->execute()->disableCache();
-            foreach ($result as $i => $object) {
-                if ($i > 0 || $offset !== 0) {
+            foreach ($result as $object) {
+                if ($first) {
+                    $first = false;
+                } else {
                     echo ",\n";
                 }
 
