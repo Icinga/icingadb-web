@@ -21,7 +21,7 @@ class Sni extends SniHook
     /**
      * @inheritDoc
      */
-    public function getHosts(Filter $filter = null): Generator
+    public function getHosts(?Filter $filter = null): Generator
     {
         $this->getDb()->ping();
 

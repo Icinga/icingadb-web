@@ -94,14 +94,14 @@ class CommandTransport implements CommandTransportInterface
      *
      * This will try one configured transport after another until the command has been successfully sent.
      *
-     * @param   IcingaCommand   $command    The command to send
-     * @param   int|null        $now        Timestamp of the command or null for now
+     * @param IcingaCommand $command The command to send
+     * @param ?int $now Timestamp of the command or null for now
      *
-     * @throws  CommandTransportException   If sending the Icinga command failed
+     * @return mixed
      *
-     * @return  mixed
+     * @throws CommandTransportException If sending the Icinga command failed
      */
-    public function send(IcingaCommand $command, int $now = null)
+    public function send(IcingaCommand $command, ?int $now = null)
     {
         $errors = [];
         $results = [];

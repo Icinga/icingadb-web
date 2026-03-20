@@ -118,7 +118,7 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return Link
      */
-    protected function createLink($content, Filter\Rule $filter = null): Link
+    protected function createLink($content, ?Filter\Rule $filter = null): Link
     {
         $url = clone $this->getUrl();
 

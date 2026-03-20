@@ -105,7 +105,8 @@ class ViewModeSwitcher extends Form
     {
         $viewMode = $this->getPopulatedValue($this->getViewModeParam(), $this->getDefaultViewMode());
 
-        if (array_key_exists($viewMode, static::$viewModes)) {
+        // View mode stays null if explicitly populated with null.
+        if ($viewMode !== null && array_key_exists($viewMode, static::$viewModes)) {
             return $viewMode;
         }
 

@@ -115,11 +115,11 @@ class PivotTable
     /**
      * Set the filter to apply on the query for the x-axis
      *
-     * @param   Filter\Rule  $filter
+     * @param ?Filter\Rule $filter
      *
-     * @return  $this
+     * @return $this
      */
-    public function setXAxisFilter(Filter\Rule $filter = null): self
+    public function setXAxisFilter(?Filter\Rule $filter = null): self
     {
         $this->xAxisFilter = $filter;
         return  $this;
@@ -128,11 +128,11 @@ class PivotTable
     /**
      * Set the filter to apply on the query for the y-axis
      *
-     * @param   Filter\Rule  $filter
+     * @param ?Filter\Rule $filter
      *
-     * @return  $this
+     * @return $this
      */
-    public function setYAxisFilter(Filter\Rule $filter = null): self
+    public function setYAxisFilter(?Filter\Rule $filter = null): self
     {
         $this->yAxisFilter = $filter;
         return  $this;
@@ -203,13 +203,13 @@ class PivotTable
     /**
      * Return the value for the given request parameter
      *
-     * @param   string  $axis       The axis for which to return the parameter ('x' or 'y')
-     * @param   string  $param      The parameter name to return
-     * @param   int     $default    The default value to return
+     * @param string $axis The axis for which to return the parameter ('x' or 'y')
+     * @param string $param The parameter name to return
+     * @param ?int $default The default value to return
      *
-     * @return  int
+     * @return int
      */
-    protected function getPaginationParameter(string $axis, string $param, int $default = null): int
+    protected function getPaginationParameter(string $axis, string $param, ?int $default = null): int
     {
         /** @var Web $app */
         $app = Icinga::app();
@@ -326,12 +326,12 @@ class PivotTable
      *
      * $limit and $page are taken from the current request if not given.
      *
-     * @param   int     $limit  The maximum amount of entries to fetch
-     * @param   int     $page   The page to set as current one
+     * @param ?int $limit The maximum amount of entries to fetch
+     * @param ?int $page The page to set as current one
      *
-     * @return  Paginatable
+     * @return Paginatable
      */
-    public function paginateXAxis(int $limit = null, int $page = null): Paginatable
+    public function paginateXAxis(?int $limit = null, ?int $page = null): Paginatable
     {
         if ($limit === null || $page === null) {
             if ($limit === null) {
@@ -358,12 +358,12 @@ class PivotTable
      *
      * $limit and $page are taken from the current request if not given.
      *
-     * @param int $limit The maximum amount of entries to fetch
-     * @param int $page The page to set as current one
+     * @param ?int $limit The maximum amount of entries to fetch
+     * @param ?int $page The page to set as current one
      *
-     * @return  Paginatable
+     * @return Paginatable
      */
-    public function paginateYAxis(int $limit = null, int $page = null): Paginatable
+    public function paginateYAxis(?int $limit = null, ?int $page = null): Paginatable
     {
         if ($limit === null || $page === null) {
             if ($limit === null) {
