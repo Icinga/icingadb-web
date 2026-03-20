@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Chart\Donut;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Model\StateSummary;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -26,7 +27,7 @@ class ServiceSummaryDonut extends Card
     /** @var ServicestateSummary */
     protected $summary;
 
-    public function __construct(ServicestateSummary $summary)
+    public function __construct(ServicestateSummary|StateSummary $summary)
     {
         $this->summary = $summary;
     }

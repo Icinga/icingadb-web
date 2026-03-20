@@ -66,7 +66,8 @@ class StateSummary extends UnionModel
 
     public function getColumns()
     {
-        return $this->getModifiedColumns(['HoststateSummary' => 'SUM', 'ServicestateSummary' => 'SUM']);
+        $cols = $this->getModifiedColumns(['HoststateSummary' => 'SUM', 'ServicestateSummary' => 'SUM']);
+        return $cols;
     }
 
     public function getSearchColumns()
@@ -76,6 +77,7 @@ class StateSummary extends UnionModel
 
     public function getDefaultSort()
     {
+        return 'dummy_id DESC';
     }
 
     public function getModifiedColumns($config)
@@ -83,10 +85,19 @@ class StateSummary extends UnionModel
         $modifiedColumns = [];
 
         foreach ($config as $model => $expression) {
+
+            $modifiedColumns['dummy_id'] = new Expression('null');
+
             if ($model === "ServicestateSummary") {
                 $columns = (new ServicestateSummary())->getSummaryColumns();
+                if ($expression === "0") {
+                    $modifiedColumns['dummy_id'] = new Expression('1');
+                }
             } elseif ($model === "HoststateSummary") {
                 $columns = (new HoststateSummary())->getSummaryColumns();
+                if ($expression === "0") {
+                    $modifiedColumns['dummy_id'] = new Expression('0');
+                }
             } else {
                 throw new \Exception("Unsupported Model");
             }
@@ -103,9 +114,8 @@ class StateSummary extends UnionModel
                     $modifiedColumns[$name] = $name;
                 }
             }
-        }
 
-        $modifiedColumns['dummy_id'] =  new Expression('0');
+        }
 
         return $modifiedColumns;
     }
@@ -113,6 +123,7 @@ class StateSummary extends UnionModel
 
     public function getUnions()
     {
+
         $unions = [
             [
                 HoststateSummary::class,
