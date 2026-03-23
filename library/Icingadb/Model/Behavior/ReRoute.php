@@ -29,11 +29,11 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
         return $this->routes;
     }
 
-    public function rewriteCondition(Filter\Condition $condition, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null): ?Filter\Rule
     {
         $remainingPath = $condition->metaData()->get('columnName', '');
         if (strpos($remainingPath, '.') === false) {
-            return;
+            return null;
         }
 
         if (($path = $this->rewritePath($remainingPath, $relation)) !== null) {
@@ -63,6 +63,8 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
 
             return $filter;
         }
+
+        return null;
     }
 
     public function rewritePath(string $path, ?string $relation = null): ?string
