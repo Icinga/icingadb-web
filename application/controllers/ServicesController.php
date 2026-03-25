@@ -80,7 +80,6 @@ class ServicesController extends Controller
         );
         $columns = $this->createColumnControl(
             $services,
-            $viewModeSwitcher,
             Url::fromPath('icingadb/services/suggestColumns'),
             ['service.name', 'service.state.output'],
             Url::fromPath('icingadb/services')
@@ -399,11 +398,6 @@ class ServicesController extends Controller
         $this->addTitleTab($this->translate('Select Columns'));
         $columnChooser = $this->createColumnControl(
             Service::on($this->getDb()),
-            $this->createViewModeSwitcher(
-                $this->createPaginationControl(Service::on($this->getDb())),
-                $this->createLimitControl(),
-                viewModeSwitcherClass: TabularViewModeSwitcher::class
-            ),
             Url::fromPath('icingadb/services/suggestColumns'),
             ['service.name', 'service.state.output'],
             Url::fromPath('icingadb/services')

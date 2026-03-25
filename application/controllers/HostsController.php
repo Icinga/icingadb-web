@@ -69,7 +69,6 @@ class HostsController extends Controller
         );
         $columns = $this->createColumnControl(
             $hosts,
-            $viewModeSwitcher,
             Url::fromPath('icingadb/hosts/suggestColumns'),
             ['host.name', 'host.state.output'],
             Url::fromPath('icingadb/hosts')
@@ -234,11 +233,6 @@ class HostsController extends Controller
         $this->addTitleTab($this->translate('Select Columns'));
         $columnChooser = $this->createColumnControl(
             Host::on($this->getDb()),
-            $this->createViewModeSwitcher(
-                $this->createPaginationControl(Host::on($this->getDb())),
-                $this->createLimitControl(),
-                viewModeSwitcherClass: TabularViewModeSwitcher::class,
-            ),
             Url::fromPath('icingadb/hosts/suggestColumns'),
             ['host.name', 'host.state.output'],
             Url::fromPath('icingadb/hosts')
