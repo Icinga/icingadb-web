@@ -129,6 +129,13 @@ abstract class StateItemTable extends BaseHtmlElement
         return $this;
     }
 
+    /**
+     * Set the Url for the Form opened by the column-chooser-opener
+     *
+     * @param Url $url
+     *
+     * @return $this
+     */
     public function setColumnChooserUrl(Url $url): static
     {
         $this->columnChooserUrl = $url;
@@ -140,6 +147,11 @@ abstract class StateItemTable extends BaseHtmlElement
 
     abstract protected function getVisualColumn(): string;
 
+    /**
+     * Create an action-link that opens a ColumnChooser form in a modal
+     *
+     * @return ValidHtml
+     */
     protected function createColumnChooserOpener(): ValidHtml
     {
         return new HtmlElement(
