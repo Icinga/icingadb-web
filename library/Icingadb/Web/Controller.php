@@ -81,7 +81,6 @@ class Controller extends CompatController
      * Create column control
      *
      * @param Query $query
-     * @param ViewModeSwitcher $viewModeSwitcher
      * @param Url $suggestionUrl
      * @param array $defaultColumns
      * @param Url $redirectUrl
@@ -90,19 +89,13 @@ class Controller extends CompatController
      */
     public function createColumnControl(
         Query $query,
-        ViewModeSwitcher $viewModeSwitcher,
         Url $suggestionUrl,
         array $defaultColumns,
         Url $redirectUrl
     ): ColumnChooser {
-        $viewMode = $viewModeSwitcher->getViewMode();
         $columnsDef = $this->params->shift('columns');
         if (! $columnsDef) {
-            if ($viewMode === 'tabular') {
-                $columns = $defaultColumns;
-            } else {
-                return new ColumnChooser($suggestionUrl, $query->getResolver());
-            }
+            $columns = $defaultColumns;
         } else {
             $columns = [];
             foreach (explode(',', $columnsDef) as $column) {
@@ -117,10 +110,6 @@ class Controller extends CompatController
             $query->columns($columns);
         } else {
             $query->withColumns($columns);
-        }
-
-        if (! $viewMode) {
-            $viewModeSwitcher->setViewMode('tabular');
         }
 
         return (new ColumnChooser($suggestionUrl, $query->getResolver(), $columns))
