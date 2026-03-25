@@ -6,12 +6,12 @@ Make sure you use `icingadb` as the module name. The following requirements must
 
 ### Requirements
 
-* PHP (≥8.2)
+* PHP ≥ 8.2
 * MySQL or PostgreSQL PDO PHP libraries
 * The following PHP modules must be installed: `cURL`, `dom`, `json`, `libxml`
-* [Icinga DB](https://github.com/Icinga/icingadb) (≥1.4)
-* [Icinga Web 2](https://github.com/Icinga/icingaweb2) (≥2.12)
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥0.19)
-* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (≥0.14)
+* [Icinga DB](https://github.com/Icinga/icingadb) ≥ 1.4
+* [Icinga Web 2](https://github.com/Icinga/icingaweb2) ≥ 2.12
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) ≥ 0.19.0
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) ≥ 0.15.0
 
 <!-- {% include "02-Installation.md" %} -->
