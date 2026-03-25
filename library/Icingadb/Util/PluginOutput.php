@@ -26,6 +26,7 @@ class PluginOutput extends HtmlString
         '~(\[|\()UNKNOWN(\]|\))~',
         '~(\[|\()UP(\]|\))~',
         '~(\[|\()DOWN(\]|\))~',
+        '~(\[|\()INFO(\]|\))~',
         '~\@{6,}~'
     ];
 
@@ -39,6 +40,7 @@ class PluginOutput extends HtmlString
         '<span class="state-ball ball-size-m state-unknown"></span>',
         '<span class="state-ball ball-size-m state-up"></span>',
         '<span class="state-ball ball-size-m state-down"></span>',
+        '<span class="state-ball ball-size-m state-info"></span>',
         '@@@@@@'
     ];
 
