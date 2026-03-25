@@ -394,7 +394,7 @@ class ServicesController extends Controller
 
     public function columnControlAction()
     {
-        $this->addTitleTab($this->translate('Select Columns'));
+        $this->setTitle($this->translate('Select Columns'));
         $columnChooser = $this->createColumnControl(
             Service::on($this->getDb()),
             Url::fromPath('icingadb/services/suggestColumns'),

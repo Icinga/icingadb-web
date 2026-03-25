@@ -229,7 +229,7 @@ class HostsController extends Controller
 
     public function columnControlAction()
     {
-        $this->addTitleTab($this->translate('Select Columns'));
+        $this->setTitle($this->translate('Select Columns'));
         $columnChooser = $this->createColumnControl(
             Host::on($this->getDb()),
             Url::fromPath('icingadb/hosts/suggestColumns'),
