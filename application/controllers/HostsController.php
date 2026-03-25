@@ -70,7 +70,6 @@ class HostsController extends Controller
             $hosts,
             $viewModeSwitcher,
             Url::fromPath('icingadb/hosts/suggestColumns'),
-            Host::on($this->getDb())->getResolver(),
             ['host.name', 'host.state.output'],
             Url::fromPath('icingadb/hosts')
         )
@@ -240,7 +239,6 @@ class HostsController extends Controller
                 viewModeSwitcherClass: TabularViewModeSwitcher::class,
             ),
             Url::fromPath('icingadb/hosts/suggestColumns'),
-            Host::on($this->getDb())->getResolver(),
             ['host.name', 'host.state.output'],
             Url::fromPath('icingadb/hosts')
         )->handleRequest($this->getServerRequest());

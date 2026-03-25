@@ -81,7 +81,6 @@ class ServicesController extends Controller
             $services,
             $viewModeSwitcher,
             Url::fromPath('icingadb/services/suggestColumns'),
-            Service::on($this->getDb())->getResolver(),
             ['service.name', 'service.state.output'],
             Url::fromPath('icingadb/services')
         )
@@ -405,7 +404,6 @@ class ServicesController extends Controller
                 viewModeSwitcherClass: TabularViewModeSwitcher::class
             ),
             Url::fromPath('icingadb/services/suggestColumns'),
-            Service::on($this->getDb())->getResolver(),
             ['service.name', 'service.state.output'],
             Url::fromPath('icingadb/services')
         )->handleRequest($this->getServerRequest());
