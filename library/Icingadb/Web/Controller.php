@@ -82,7 +82,9 @@ class Controller extends CompatController
      *
      * @param Query $query
      * @param ViewModeSwitcher $viewModeSwitcher
+     * @param Url $suggestionUrl
      * @param array $defaultColumns
+     * @param Url $redirectUrl
      *
      * @return ColumnChooser provided columns
      */
@@ -90,18 +92,16 @@ class Controller extends CompatController
         Query $query,
         ViewModeSwitcher $viewModeSwitcher,
         Url $suggestionUrl,
-        Resolver $resolver,
         array $defaultColumns,
         Url $redirectUrl
     ): ColumnChooser {
-        // All of that is essentially what `ColumnControl::apply()` should do
         $viewMode = $viewModeSwitcher->getViewMode();
         $columnsDef = $this->params->shift('columns');
         if (! $columnsDef) {
             if ($viewMode === 'tabular') {
                 $columns = $defaultColumns;
             } else {
-                return new ColumnChooser($suggestionUrl, $resolver);
+                return new ColumnChooser($suggestionUrl, $query->getResolver());
             }
         } else {
             $columns = [];
@@ -123,7 +123,7 @@ class Controller extends CompatController
             $viewModeSwitcher->setViewMode('tabular');
         }
 
-        return (new ColumnChooser($suggestionUrl, $resolver, $columns))
+        return (new ColumnChooser($suggestionUrl, $query->getResolver(), $columns))
             ->setAction((string) Url::fromRequest())
             ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
