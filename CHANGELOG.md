@@ -3,6 +3,26 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.4.0
+
+All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/14?closed=1
+
+### New Features
+
+* PHP 8.5 is now supported (#1315)
+* Exported SQL queries are now easier to copy (#991)
+* History queries can now disable the MySQL/MariaDB query optimizer via configuration to work around performance
+  problems on affected database versions (#1219)
+* State pictograms now cover additional states and show tooltips to make them easier to understand (#1271, #1262)
+* SLA history can now be filtered by hostgroup (#1324)
+* `[INFO]` and `(INFO)` in plugin output are now rendered as visual state indicators instead of plain text (#1348)
+
+### Fixes
+
+* Empty or incomplete object custom variables are handled correctly (#1332)
+* Setups without the `monitoring` module no longer produce unnecessary integration errors (#1346)
+* JSON exports with pagination now generate valid JSON without a leading comma (#1349)
+
 ## 1.3.0 (2025-11-19)
 
 All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/10?closed=1
