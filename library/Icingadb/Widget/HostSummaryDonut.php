@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Chart\Donut;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Model\StateSummary;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -28,7 +29,7 @@ class HostSummaryDonut extends Card
     /** @var HoststateSummary */
     protected $summary;
 
-    public function __construct(HoststateSummary $summary)
+    public function __construct(HoststateSummary|StateSummary $summary)
     {
         $this->summary = $summary;
     }
