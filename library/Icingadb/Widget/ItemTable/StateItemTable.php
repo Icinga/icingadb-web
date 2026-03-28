@@ -17,6 +17,9 @@ use ipl\I18n\Translation;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
 
@@ -42,6 +45,9 @@ abstract class StateItemTable extends BaseHtmlElement
 
     /** @var ?ValidHtml Message to show if the list is empty */
     protected $emptyStateMessage;
+
+    /** @var ?Url The url for the column chooser modal */
+    protected ?Url $columnChooserUrl = null;
 
     /**
      * Create a new item table
@@ -124,9 +130,33 @@ abstract class StateItemTable extends BaseHtmlElement
         return $this;
     }
 
+    public function setColumnChooserUrl(Url $url): static
+    {
+        $this->columnChooserUrl = $url;
+
+        return $this;
+    }
+
     abstract protected function getItemClass(): string;
 
     abstract protected function getVisualColumn(): string;
+
+    protected function createColumnChooserOpener(): ValidHtml
+    {
+        return new HtmlElement(
+            'div',
+            new Attributes(['class' => 'column-chooser-opener']),
+            (new ActionLink(
+                new Ball('xs'),
+                $this->columnChooserUrl->setParam(
+                    'columns',
+                    implode(',', array_keys($this->columns))
+                )
+            ))->addHtml(new Ball('xs'))
+                ->addHtml(new Ball('xs'))
+                ->openInModal()
+        );
+    }
 
     protected function getVisualLabel()
     {
@@ -212,6 +242,12 @@ abstract class StateItemTable extends BaseHtmlElement
             $headerCell = new HtmlElement('th');
             $this->assembleColumnHeader($headerCell, $name, is_int($label) ? $name : $label);
             $headerRow->addHtml($headerCell);
+        }
+
+        if (! empty($this->columns) && $this->columnChooserUrl !== null) {
+            $headerCell->addHtml($this->createColumnChooserOpener())
+                ->getAttribute('class')
+                ->addValue('last-th');
         }
 
         $this->addHtml(new HtmlElement('thead', null, $headerRow));

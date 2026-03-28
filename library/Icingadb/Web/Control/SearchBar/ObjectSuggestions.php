@@ -350,7 +350,7 @@ class ObjectSuggestions extends Suggestions
      *
      * @return Select
      */
-    protected function queryCustomvarConfig(Filter\Rule $filter): Select
+    public function queryCustomvarConfig(Filter\Rule $filter): Select
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();

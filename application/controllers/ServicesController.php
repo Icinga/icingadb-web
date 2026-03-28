@@ -6,15 +6,19 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Utils;
 use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
+use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
+use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
@@ -26,9 +30,12 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
 use ipl\Orm\Query;
+use ipl\Orm\Relations;
+use ipl\Orm\Resolver;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
@@ -72,8 +79,20 @@ class ServicesController extends Controller
             ],
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        $columns = $this->createColumnControl($services, $viewModeSwitcher);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
+        $columns = $this->createColumnControl(
+            $services,
+            $viewModeSwitcher,
+            Url::fromPath('icingadb/services/suggestColumns'),
+            Service::on($this->getDb())->getResolver(),
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -116,7 +135,8 @@ class ServicesController extends Controller
 
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/services/columnControl'));
         } else {
             $serviceList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -213,6 +233,11 @@ class ServicesController extends Controller
         $suggestions->setModel(Service::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(new Service());
     }
 
     public function searchEditorAction()
@@ -374,6 +399,24 @@ class ServicesController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function columnControlAction()
+    {
+        $this->addTitleTab($this->translate('Select Columns'));
+        $columnChooser = $this->createColumnControl(
+            Service::on($this->getDb()),
+            $this->createViewModeSwitcher(
+                $this->createPaginationControl(Service::on($this->getDb())),
+                $this->createLimitControl(),
+                viewModeSwitcherClass: TabularViewModeSwitcher::class
+            ),
+            Url::fromPath('icingadb/services/suggestColumns'),
+            Service::on($this->getDb())->getResolver(),
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query
