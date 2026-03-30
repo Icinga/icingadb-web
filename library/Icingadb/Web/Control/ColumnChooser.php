@@ -58,21 +58,6 @@ class ColumnChooser extends CompatForm
         return $this->getElement('columns')->prepareMultipartUpdate($this->getRequest());
     }
 
-    public function isValid()
-    {
-        if (! parent::isValid()) {
-            return false;
-        }
-
-        foreach ($this->getElement('columns')->getTerms() as $term) {
-            if ($term->getMessage() !== null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Validate terms, mark invalid ones, and set labels
      *
