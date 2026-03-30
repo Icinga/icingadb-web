@@ -6,15 +6,13 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Model\StateSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use ipl\Orm\Query;
-use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 
@@ -26,8 +24,8 @@ class TacticalController extends Controller
 
         $db = $this->getDb();
 
-        $hoststateSummary = HoststateSummary::on($db);
         $servicestateSummary = ServicestateSummary::on($db);
+        $stateSummary = StateSummary::on($db);
 
         $this->handleSearchRequest($servicestateSummary, [
             'host.name_ci',
@@ -49,20 +47,21 @@ class TacticalController extends Controller
             $filter = $searchBar->getFilter();
         }
 
-        $this->filter($hoststateSummary, $filter);
-        $this->filter($servicestateSummary, $filter);
 
-        yield $this->export($hoststateSummary, $servicestateSummary);
+        $this->filter($stateSummary, $filter);
+
+        yield $this->export($stateSummary);
 
         $this->addControl($searchBar);
 
+        $data = $stateSummary->execute();
         $this->addContent(
-            (new HostSummaryDonut($hoststateSummary->first()))
+            (new HostSummaryDonut($data->current()))
                 ->setBaseFilter($filter)
         );
-
+        $data->next();
         $this->addContent(
-            (new ServiceSummaryDonut($servicestateSummary->first()))
+            (new ServiceSummaryDonut($data->current()))
                 ->setBaseFilter($filter)
         );
 
