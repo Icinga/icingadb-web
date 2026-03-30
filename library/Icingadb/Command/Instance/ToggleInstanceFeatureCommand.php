@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Command\Instance;
 
@@ -14,32 +15,32 @@ class ToggleInstanceFeatureCommand extends IcingaCommand
     /**
      * Feature for enabling or disabling active host checks on an Icinga instance
      */
-    const FEATURE_ACTIVE_HOST_CHECKS = 'active_host_checks_enabled';
+    public const FEATURE_ACTIVE_HOST_CHECKS = 'active_host_checks_enabled';
 
     /**
      * Feature for enabling or disabling active service checks on an Icinga instance
      */
-    const FEATURE_ACTIVE_SERVICE_CHECKS = 'active_service_checks_enabled';
+    public const FEATURE_ACTIVE_SERVICE_CHECKS = 'active_service_checks_enabled';
 
     /**
      * Feature for enabling or disabling host and service event handlers on an Icinga instance
      */
-    const FEATURE_EVENT_HANDLERS = 'event_handlers_enabled';
+    public const FEATURE_EVENT_HANDLERS = 'event_handlers_enabled';
 
     /**
      * Feature for enabling or disabling host and service flap detection on an Icinga instance
      */
-    const FEATURE_FLAP_DETECTION = 'flap_detection_enabled';
+    public const FEATURE_FLAP_DETECTION = 'flap_detection_enabled';
 
     /**
      * Feature for enabling or disabling host and service notifications on an Icinga instance
      */
-    const FEATURE_NOTIFICATIONS = 'notifications_enabled';
+    public const FEATURE_NOTIFICATIONS = 'notifications_enabled';
 
     /**
      * Feature for enabling or disabling the processing of host and service performance data on an Icinga instance
      */
-    const FEATURE_PERFORMANCE_DATA = 'process_performance_data';
+    public const FEATURE_PERFORMANCE_DATA = 'process_performance_data';
 
     /**
      * Feature that is to be enabled or disabled

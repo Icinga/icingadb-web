@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2025 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -8,6 +9,7 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use Icinga\Module\Icingadb\Common\Model;
+use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Relations;
 
 /**
@@ -60,6 +62,11 @@ class SlaHistoryState extends Model
             'host_id',
             'service_id',
             'downtime_id'
+        ]));
+
+        $behaviors->add(new ReRoute([
+            'hostgroup' => 'host.hostgroup',
+            'servicegroup' => 'service.servicegroup'
         ]));
     }
 

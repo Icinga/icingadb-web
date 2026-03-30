@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2024 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Tests\Icinga\Modules\Icingadb\Model\Behavior;
 

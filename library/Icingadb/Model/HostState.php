@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -85,6 +86,6 @@ class HostState extends State
 
     public function getStateTextTranslated(): string
     {
-        return HostStates::text($this->soft_state);
+        return HostStates::translated($this->soft_state);
     }
 }

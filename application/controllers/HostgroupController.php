@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Controllers;
 
@@ -102,7 +103,9 @@ class HostgroupController extends Controller
 
         yield $this->export($hosts);
 
-        $hostList = (new ObjectList($hosts))
+        $results = $hosts->execute();
+
+        $hostList = (new ObjectList($results))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
@@ -122,7 +125,8 @@ class HostgroupController extends Controller
         $continueWith = $this->createContinueWith(
             Links::hostsDetails()
                 ->setFilter(Filter::equal('hostgroup.name', $hostgroup->name)),
-            $searchBar
+            $searchBar,
+            $results->hasResult()
         );
 
         $this->addContent($hostList);

@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Web\Navigation\Renderer;
 
@@ -18,8 +19,8 @@ abstract class ProblemsBadge extends NavigationItemRenderer
 {
     use Database;
 
-    const STATE_CRITICAL = 'critical';
-    const STATE_UNKNOWN = 'unknown';
+    public const STATE_CRITICAL = 'critical';
+    public const STATE_UNKNOWN = 'unknown';
 
     /** @var int Count cache */
     protected $count;
@@ -114,7 +115,7 @@ abstract class ProblemsBadge extends NavigationItemRenderer
         return $this->title;
     }
 
-    public function render(NavigationItem $item = null): string
+    public function render(?NavigationItem $item = null): string
     {
         if ($item === null) {
             $item = $this->getItem();

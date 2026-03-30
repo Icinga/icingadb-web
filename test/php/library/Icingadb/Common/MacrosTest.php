@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Tests\Icinga\Modules\Icingadb\Common;
 
@@ -17,7 +18,7 @@ class MacrosTest extends TestCase
 {
     use Macros;
 
-    const VARS = [
+    public const VARS = [
         'os'      => "Ubuntu",
         'days[0]' => 'mo',
         'days[1]' => 'tue',

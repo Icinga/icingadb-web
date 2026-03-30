@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Controllers;
 
@@ -89,9 +90,10 @@ class DowntimesController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
-        $continueWith = $this->createContinueWith(Links::downtimesDetails(), $searchBar);
 
         $results = $downtimes->execute();
+
+        $continueWith = $this->createContinueWith(Links::downtimesDetails(), $searchBar, $results->hasResult());
 
         $this->addContent(
             (new ObjectList($results))

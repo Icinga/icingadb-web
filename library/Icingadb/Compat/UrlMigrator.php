@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Compat;
 
@@ -12,13 +13,13 @@ use ipl\Web\Url;
 
 class UrlMigrator
 {
-    const NO_YES = ['n', 'y'];
-    const USE_EXPR = 'use-expr';
-    const SORT_ONLY = 'sort-only';
-    const LOWER_EXPR = 'lower-expr';
-    const DROP = 'drop';
+    public const NO_YES = ['n', 'y'];
+    public const USE_EXPR = 'use-expr';
+    public const SORT_ONLY = 'sort-only';
+    public const LOWER_EXPR = 'lower-expr';
+    public const DROP = 'drop';
 
-    const SUPPORTED_PATHS = [
+    public const SUPPORTED_PATHS = [
         'monitoring/list/hosts' => ['hosts', 'icingadb/hosts'],
         'monitoring/hosts/show' => ['multipleHosts', 'icingadb/hosts/details'],
         'monitoring/host/show'  => ['host', 'icingadb/host'],
@@ -83,7 +84,7 @@ class UrlMigrator
         return $url;
     }
 
-    public static function transformParams(Url $url, string $transformerName = null): array
+    public static function transformParams(Url $url, ?string $transformerName = null): array
     {
         $transformer = new self();
 
@@ -152,11 +153,11 @@ class UrlMigrator
      * Transform the given legacy filter
      *
      * @param Filter\Rule $filter
-     * @param string|null $queryTransformer
+     * @param ?string $queryTransformer
      *
      * @return Filter\Rule|false
      */
-    public static function transformFilter(Filter\Rule $filter, string $queryTransformer = null)
+    public static function transformFilter(Filter\Rule $filter, ?string $queryTransformer = null)
     {
         $transformer = new self();
 

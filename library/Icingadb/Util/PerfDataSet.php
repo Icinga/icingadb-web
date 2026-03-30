@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Util;
 
@@ -134,11 +135,11 @@ class PerfDataSet implements IteratorAggregate
      * Return all characters between the current parser position and the given character
      *
      * @param string $stopChar The character on which to stop
-     * @param string $backtrackOn The character on which to backtrack
+     * @param ?string $backtrackOn The character on which to backtrack
      *
      * @return string
      */
-    protected function readUntil(string $stopChar, string $backtrackOn = null): string
+    protected function readUntil(string $stopChar, ?string $backtrackOn = null): string
     {
         $start = $this->parserPos;
         $breakCharEncounteredAt = null;

@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -10,6 +11,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\UnionModel;
+use ipl\Orm\UnionQuery;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
@@ -33,7 +35,7 @@ use ipl\Sql\Select;
  */
 class ServicegroupSummary extends UnionModel
 {
-    public static function on(Connection $db)
+    public static function on(Connection $db): UnionQuery
     {
         $q = parent::on($db);
 
@@ -134,7 +136,7 @@ class ServicegroupSummary extends UnionModel
         return 'display_name';
     }
 
-    public function getUnions()
+    public function getUnions(): array
     {
         $unions = [
             [

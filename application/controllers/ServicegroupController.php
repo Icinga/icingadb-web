@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Controllers;
 
@@ -109,7 +110,9 @@ class ServicegroupController extends Controller
 
         yield $this->export($services);
 
-        $serviceList = (new ObjectList($services))
+        $results = $services->execute();
+
+        $serviceList = (new ObjectList($results))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
@@ -129,7 +132,8 @@ class ServicegroupController extends Controller
         $continueWith = $this->createContinueWith(
             Links::servicesDetails()
                 ->setFilter(Filter::equal('servicegroup.name', $servicegroup->name)),
-            $searchBar
+            $searchBar,
+            $results->hasResult()
         );
 
         $this->addContent($serviceList);

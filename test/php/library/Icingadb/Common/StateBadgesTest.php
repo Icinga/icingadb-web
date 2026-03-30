@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2023 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Tests\Icinga\Modules\Icingadb\Common;
 
@@ -83,7 +84,7 @@ class StateBadgesTest extends TestCase
                 return 0;
             }
 
-            public function generateLink($content, Filter\Rule $filter = null): Link
+            public function generateLink($content, ?Filter\Rule $filter = null): Link
             {
                 return parent::createLink($content, $filter);
             }

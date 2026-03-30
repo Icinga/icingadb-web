@@ -1,9 +1,5 @@
 # Icinga DB Web
 
-[![PHP Support](https://img.shields.io/badge/php-%3E%3D%208.2-777BB4?logo=PHP)](https://php.net/)
-![Build Status](https://github.com/Icinga/icingadb-web/actions/workflows/php.yml/badge.svg?branch=main)
-[![Github Tag](https://img.shields.io/github/tag/Icinga/icingadb-web.svg)](https://github.com/Icinga/icingadb-web/releases/latest)
-
 Icinga DB is a set of components for publishing, synchronizing and
 visualizing monitoring data in the Icinga ecosystem, consisting of:
 
@@ -66,4 +62,4 @@ are easily accomplished with the `Continue With` control that operates on filter
 ## License
 
 Icinga DB Web and the Icinga DB Web documentation are licensed under the terms of the
-[GNU General Public License Version 2](LICENSE).
+[GNU General Public License Version 3](LICENSE.md).

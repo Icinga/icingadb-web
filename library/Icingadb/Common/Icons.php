@@ -1,32 +1,37 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
 class Icons
 {
-    const COMMENT = 'comment';
+    public const COMMENT = 'comment';
 
-    const HOST_DOWN = 'sitemap';
+    public const HOST_DOWN = 'sitemap';
 
-    const UNREACHABLE = 'sitemap';
+    public const UNREACHABLE = 'sitemap';
 
-    const IN_DOWNTIME = 'plug';
+    public const IN_DOWNTIME = 'plug';
 
-    const IS_ACKNOWLEDGED = 'check';
+    public const IS_ACKNOWLEDGED = 'check';
 
-    const IS_FLAPPING = 'bolt';
+    public const IS_FLAPPING = 'bolt';
 
-    const IS_PERSISTENT = 'thumbtack';
+    public const IS_PERSISTENT = 'thumbtack';
 
-    const NOTIFICATION = 'bell';
+    public const NOTIFICATION = 'bell';
 
-    const REMOVE = 'trash';
+    public const REMOVE = 'trash';
 
-    const USER = 'user';
+    public const NOTIFICATIONS_DISABLED = 'bell-slash';
 
-    const USERGROUP = 'users';
+    public const ACTIVE_CHECKS_DISABLED = 'eye-slash';
 
-    const WARNING = 'exclamation-triangle';
+    public const USER = 'user';
+
+    public const USERGROUP = 'users';
+
+    public const WARNING = 'exclamation-triangle';
 }

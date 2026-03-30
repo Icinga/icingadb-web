@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -54,7 +55,7 @@ class CustomvarFlat extends Model
             'flatname_checksum'
         ]));
         $behaviors->add(new class implements RewriteFilterBehavior {
-            public function rewriteCondition(Condition $condition, $relation = null)
+            public function rewriteCondition(Condition $condition, $relation = null): ?Filter\Chain
             {
                 if ($condition->metaData()->has('requiresTransformation')) {
                     /** @var string $columnName */
@@ -65,6 +66,8 @@ class CustomvarFlat extends Model
 
                     return Filter::all($nameFilter, $valueFilter);
                 }
+
+                return null;
             }
         });
     }

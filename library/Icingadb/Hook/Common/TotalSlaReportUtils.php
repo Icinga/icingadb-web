@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2023 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Hook\Common;
 
@@ -13,7 +14,7 @@ use function ipl\I18n\t;
 
 trait TotalSlaReportUtils
 {
-    public function getHtml(Timerange $timerange, array $config = null)
+    public function getHtml(Timerange $timerange, ?array $config = null)
     {
         $data = $this->getData($timerange, $config);
         $count = $data->count();

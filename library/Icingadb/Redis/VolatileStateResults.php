@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Redis;
 
@@ -42,7 +43,7 @@ class VolatileStateResults extends ResultSet
     /** @var bool Whether the model's ID should be contained in the results */
     protected bool $includeModelID = true;
 
-    public static function fromQuery(Query $query)
+    public static function fromQuery(Query $query): static
     {
         $self = parent::fromQuery($query);
         $self->resolver = $query->getResolver();
@@ -76,28 +77,22 @@ class VolatileStateResults extends ResultSet
         return $this->redisUnavailable;
     }
 
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         if (! $this->redisUnavailable && ! $this->updatesApplied && ! $this->isCacheDisabled) {
             $this->rewind();
         }
 
         $result = parent::current();
+        if ($this->isCacheDisabled && ! $this->redisUnavailable) {
+            $this->applyRedisUpdates([$result]);
+        }
+
         if (! $this->includeModelID) {
             unset($result['id']);
         }
 
         return $result;
-    }
-
-    public function next(): void
-    {
-        parent::next();
-
-        if (! $this->redisUnavailable && $this->isCacheDisabled && $this->valid()) {
-            $this->applyRedisUpdates([parent::current()]);
-        }
     }
 
     public function key(): int

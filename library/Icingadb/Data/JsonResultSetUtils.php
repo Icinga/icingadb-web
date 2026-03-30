@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Data;
 
@@ -84,13 +85,16 @@ trait JsonResultSetUtils
             $offset = 0;
         }
 
+        $first = true;
         echo '[';
 
         do {
             $query->offset($offset);
             $result = $query->execute()->disableCache();
-            foreach ($result as $i => $object) {
-                if ($i > 0 || $offset !== 0) {
+            foreach ($result as $object) {
+                if ($first) {
+                    $first = false;
+                } else {
                     echo ",\n";
                 }
 

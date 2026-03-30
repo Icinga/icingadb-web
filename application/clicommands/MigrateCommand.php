@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2023 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2023 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Clicommands;
 
@@ -597,7 +598,7 @@ class MigrateCommand extends Command
         /** @var ConfigObject<string> $newConfigObject */
         foreach ($config->getConfigObject() as $section => $newConfigObject) {
             $configOwner = $newConfigObject->get('owner') ?? '';
-            if ($configOwner && $configOwner !== $owner) {
+            if ($configOwner && ! fnmatch($owner, $configOwner)) {
                 continue;
             }
 
@@ -687,7 +688,7 @@ class MigrateCommand extends Command
         /** @var ConfigObject<string> $configObject */
         foreach ($config->getConfigObject() as $configObject) {
             $configOwner = $configObject->get('owner') ?? '';
-            if ($configOwner && $configOwner !== $owner) {
+            if ($configOwner && ! fnmatch($owner, $configOwner)) {
                 continue;
             }
 
@@ -786,7 +787,7 @@ class MigrateCommand extends Command
         return $config;
     }
 
-    private function createBackupIni(string $path, Config $config = null): void
+    private function createBackupIni(string $path, ?Config $config = null): void
     {
         $counter = 0;
         while (true) {

@@ -1,4 +1,5 @@
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 @exports: {
   @iplWebAssets: "../lib/icinga/icinga-php-library";
@@ -22,6 +23,10 @@ div.show-more {
 .state-ball.state-not-available {
   .ball-solid(@gray-light);
   .animate(pulse 1.5s infinite both);
+}
+
+.state-ball.state-info {
+  .ball-solid(@default-text-color);
 }
 
 .icon-ball {

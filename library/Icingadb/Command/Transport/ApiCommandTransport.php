@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Command\Transport;
 
@@ -25,7 +26,7 @@ class ApiCommandTransport implements CommandTransportInterface
     /**
      * Transport identifier
      */
-    const TRANSPORT = 'api';
+    public const TRANSPORT = 'api';
 
     /**
      * API host
@@ -300,13 +301,13 @@ class ApiCommandTransport implements CommandTransportInterface
      * Send the Icinga command over the Icinga 2 API
      *
      * @param IcingaCommand|IcingaApiCommand $command
-     * @param int|null $now
+     * @param ?int $now
      *
      * @throws CommandTransportException
      *
      * @return mixed
      */
-    public function send(IcingaCommand|IcingaApiCommand $command, int $now = null)
+    public function send(IcingaCommand|IcingaApiCommand $command, ?int $now = null)
     {
         if ($command instanceof IcingaCommand) {
             $command = $this->renderer->render($command);

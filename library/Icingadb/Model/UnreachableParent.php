@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2024 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -85,7 +86,7 @@ class UnreachableParent extends DependencyNode
         ]));
     }
 
-    public static function on(Connection $db, Model $root = null): Query
+    public static function on(Connection $db, ?Model $root = null): Query
     {
         if ($root === null) {
             throw new InvalidArgumentException('Root node must not be null');
@@ -187,7 +188,6 @@ class UnreachableParent extends DependencyNode
 
         // TODO: ipl-orm doesn't preserve key order :'(
         $columnsProperty = (new \ReflectionClass($nodeSelect))->getProperty('columns');
-        $columnsProperty->setAccessible(true);
         $columnsProperty->setValue($nodeSelect, array_merge(
             [
                 'id' => null,

@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model;
 
@@ -228,9 +229,9 @@ class Service extends Model
         });
 
         $defaults->add('customvars', function (self $subject) {
-            if (! $subject->customvar instanceof ResultSet) {
-                $this->applyRestrictions($subject->customvar);
-            }
+            // In contrast to customvar_flat, we cannot apply restrictions here as denylists and protections
+            // require the flattened values to work. To retrieve only customvars the user has access to, the
+            // `vars` property should be used instead.
 
             $vars = [];
             foreach ($subject->customvar as $customVar) {

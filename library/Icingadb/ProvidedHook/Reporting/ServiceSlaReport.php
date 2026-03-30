@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2022 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\ProvidedHook\Reporting;
 
@@ -44,7 +45,7 @@ class ServiceSlaReport extends SlaReport
             ->setValues([(float) $row->sla]);
     }
 
-    protected function fetchSla(Timerange $timerange, Rule $filter = null)
+    protected function fetchSla(Timerange $timerange, ?Rule $filter = null)
     {
         $sla = Service::on($this->getDb())
             ->columns([

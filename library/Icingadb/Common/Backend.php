@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2024 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
@@ -14,6 +15,7 @@ use ipl\Sql\Expression;
 use ipl\Sql\QueryBuilder;
 use ipl\Sql\Select;
 use PDO;
+use Pdo\Mysql;
 
 /**
  * Singleton providing access to the Icinga DB and Redis
@@ -60,7 +62,8 @@ final class Backend
 
             $config->options = [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
             if ($config->db === 'mysql') {
-                $config->options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET SESSION SQL_MODE='STRICT_TRANS_TABLES"
+                $config->options[Mysql::ATTR_INIT_COMMAND]
+                    = "SET SESSION SQL_MODE='STRICT_TRANS_TABLES"
                     . ",NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'";
             }
 
@@ -74,9 +77,16 @@ final class Backend
                         // user is a reserved key word in PostgreSQL, so we need to quote it.
                         // TODO(lippserd): This is pretty hacky,
                         // reconsider how to properly implement identifier quoting.
-                        $sql = str_replace(' user ', sprintf(' %s ', $quoted), $sql);
-                        $sql = str_replace(' user.', sprintf(' %s.', $quoted), $sql);
-                        $sql = str_replace('(user.', sprintf('(%s.', $quoted), $sql);
+                        $sql = preg_replace('/user$/', sprintf(' %s', $quoted), $sql);
+                        $sql = str_replace(
+                            [' user ', ' user.', '(user.'],
+                            [
+                                sprintf(' %s ', $quoted),
+                                sprintf(' %s.', $quoted),
+                                sprintf('(%s.', $quoted),
+                            ],
+                            $sql
+                        );
                     })
                     ->on(QueryBuilder::ON_ASSEMBLE_SELECT, function (Select $select) {
                         // For SELECT DISTINCT, all ORDER BY columns must appear in SELECT list.

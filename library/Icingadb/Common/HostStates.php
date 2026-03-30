@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
@@ -9,11 +10,11 @@ namespace Icinga\Module\Icingadb\Common;
  */
 class HostStates
 {
-    const UP = 0;
+    public const UP = 0;
 
-    const DOWN = 1;
+    public const DOWN = 1;
 
-    const PENDING = 99;
+    public const PENDING = 99;
 
     /**
      * Get the integer value of the given textual host state
@@ -46,13 +47,13 @@ class HostStates
     /**
      * Get the textual representation of the passed host state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function text(int $state = null): string
+    public static function text(?int $state = null): string
     {
         switch (true) {
             case $state === self::UP:
@@ -77,13 +78,13 @@ class HostStates
     /**
      * Get the translated textual representation of the passed host state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given host state is invalid, i.e. not known
      */
-    public static function translated(int $state = null): string
+    public static function translated(?int $state = null): string
     {
         switch (true) {
             case $state === self::UP:

@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2020 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Setup;
 
@@ -88,7 +89,7 @@ class DbResourcePage extends Form
             return false;
         }
 
-        if (! isset($formData['skip_validation']) || !$formData['skip_validation']) {
+        if (! isset($formData['skip_validation']) || ! $formData['skip_validation']) {
             if (! $this->validateConfiguration()) {
                 $this->addSkipValidationCheckbox();
                 return false;

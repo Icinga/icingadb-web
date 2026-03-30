@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Web\Control;
 
@@ -22,10 +23,10 @@ class ViewModeSwitcher extends Form
     ];
 
     /** @var string Default view mode */
-    const DEFAULT_VIEW_MODE = 'common';
+    public const DEFAULT_VIEW_MODE = 'common';
 
     /** @var string Default view mode param */
-    const DEFAULT_VIEW_MODE_PARAM = 'view';
+    public const DEFAULT_VIEW_MODE_PARAM = 'view';
 
     /** @var array View mode-icon pairs */
     public static $viewModes = [
@@ -104,7 +105,8 @@ class ViewModeSwitcher extends Form
     {
         $viewMode = $this->getPopulatedValue($this->getViewModeParam(), $this->getDefaultViewMode());
 
-        if (array_key_exists($viewMode, static::$viewModes)) {
+        // View mode stays null if explicitly populated with null.
+        if ($viewMode !== null && array_key_exists($viewMode, static::$viewModes)) {
             return $viewMode;
         }
 

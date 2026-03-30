@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2022 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2022 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\ProvidedHook\Reporting;
 
@@ -29,10 +30,10 @@ abstract class SlaReport extends ReportHook
     use Database;
 
     /** @var float If an SLA value is lower than the threshold, it is considered not ok */
-    const DEFAULT_THRESHOLD = 99.5;
+    public const DEFAULT_THRESHOLD = 99.5;
 
     /** @var int The amount of decimal places for the report result */
-    const DEFAULT_REPORT_PRECISION = 2;
+    public const DEFAULT_REPORT_PRECISION = 2;
 
     /**
      * Create and return a {@link ReportData} container
@@ -55,13 +56,13 @@ abstract class SlaReport extends ReportHook
      * Fetch SLA according to specified time range and filter
      *
      * @param Timerange $timerange
-     * @param Rule|null $filter
+     * @param ?Rule $filter
      *
      * @return iterable
      */
-    abstract protected function fetchSla(Timerange $timerange, Rule $filter = null);
+    abstract protected function fetchSla(Timerange $timerange, ?Rule $filter = null);
 
-    protected function fetchReportData(Timerange $timerange, array $config = null)
+    protected function fetchReportData(Timerange $timerange, ?array $config = null)
     {
         $rd = $this->createReportData();
         $rows = [];
@@ -126,6 +127,11 @@ abstract class SlaReport extends ReportHook
         }
 
         $rd->setRows($rows);
+
+        // Disconnect from the database, as this hook usually runs isolated and no-one else requires a connection.
+        // Makes only a difference in case of reporting triggering this as part of a scheduled report and prevents
+        // the database connection from being left open unnecessarily and failing upon re-use.
+        $this->getDb()->disconnect();
 
         return $rd;
     }
@@ -208,12 +214,12 @@ abstract class SlaReport extends ReportHook
         ]);
     }
 
-    public function getData(Timerange $timerange, array $config = null)
+    public function getData(Timerange $timerange, ?array $config = null)
     {
         return $this->fetchReportData($timerange, $config);
     }
 
-    public function getHtml(Timerange $timerange, array $config = null)
+    public function getHtml(Timerange $timerange, ?array $config = null)
     {
         $data = $this->getData($timerange, $config);
 

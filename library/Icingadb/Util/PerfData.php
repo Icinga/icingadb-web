@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2021 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2021 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Util;
 
@@ -11,9 +12,9 @@ use LogicException;
 
 class PerfData
 {
-    const PERFDATA_OK = 'ok';
-    const PERFDATA_WARNING = 'warning';
-    const PERFDATA_CRITICAL = 'critical';
+    public const PERFDATA_OK = 'ok';
+    public const PERFDATA_WARNING = 'warning';
+    public const PERFDATA_CRITICAL = 'critical';
 
     /**
      * The performance data value being parsed

@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2025 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2025 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\View;
 
@@ -96,7 +97,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                 }
             }
 
-            $stateChange->setIcon($item->state->getIcon());
+            $stateChange->setIcon($this->getStateBallIcon($item));
             $stateChange->setHandled(
                 $item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)
             );
@@ -109,7 +110,7 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         $ballSize = $layout === 'minimal' ? StateBall::SIZE_BIG : StateBall::SIZE_LARGE;
 
         $stateBall = new StateBall($item->state->getStateText(), $ballSize);
-        $stateBall->add($item->state->getIcon());
+        $stateBall->add($this->getStateBallIcon($item));
         if ($item->state->is_problem && ($item->state->is_handled || ! $item->state->is_reachable)) {
             $stateBall->getAttributes()->add('class', 'handled');
         }
@@ -220,6 +221,36 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
             );
         }
 
+        if ($item->state->is_acknowledged) {
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" is acknowledged'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" is acknowledged'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::IS_ACKNOWLEDGED, ['title' => $title]));
+        }
+
+        if ($item->state->in_downtime) {
+            if ($isService) {
+                $message = $item->state->is_handled
+                        ? $this->translate('Service "%s" on "%s" is handled by Downtime')
+                        : $this->translate('Service "%s" on "%s" is in Downtime');
+
+                $title = sprintf($message, $item->display_name, $item->host->display_name);
+            } else {
+                $message = $item->state->is_handled
+                        ? $this->translate('Host "%s" is handled by Downtime')
+                        : $this->translate('Host "%s" is in Downtime');
+
+                $title = sprintf($message, $item->display_name);
+            }
+
+            $statusIcons->addHtml(new Icon(Icons::IN_DOWNTIME, ['title' => $title]));
+        }
+
         if ($item->state->is_flapping) {
             $title = $isService
                 ? sprintf(
@@ -227,24 +258,45 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
                     $item->display_name,
                     $item->host->display_name
                 )
-                : sprintf(
-                    $this->translate('Host "%s" is in flapping state'),
-                    $item->display_name
-                );
+                : sprintf($this->translate('Host "%s" is in flapping state'), $item->display_name);
 
-            $statusIcons->addHtml(new Icon('random', ['title' => $title]));
+            $statusIcons->addHtml(new Icon(Icons::IS_FLAPPING, ['title' => $title]));
+        }
+
+        if (! $item->state->is_reachable) {
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" is unreachable'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" is unreachable'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::HOST_DOWN, ['title' => $title]));
         }
 
         if (! $item->notifications_enabled) {
-            $statusIcons->addHtml(
-                new Icon('bell-slash', ['title' => $this->translate('Notifications disabled')])
-            );
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" has notifications disabled'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" has notifications disabled'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::NOTIFICATIONS_DISABLED, ['title' => $title]));
         }
 
         if (! $item->active_checks_enabled) {
-            $statusIcons->addHtml(
-                new Icon('eye-slash', ['title' => $this->translate('Active checks disabled')])
-            );
+            $title = $isService
+                ? sprintf(
+                    $this->translate('Service "%s" on "%s" has active checks disabled'),
+                    $item->display_name,
+                    $item->host->display_name
+                )
+                : sprintf($this->translate('Host "%s" has active checks disabled'), $item->display_name);
+
+            $statusIcons->addHtml(new Icon(Icons::ACTIVE_CHECKS_DISABLED, ['title' => $title]));
         }
 
         $performanceData = new HtmlElement('div', Attributes::create(['class' => 'performance-data']));
@@ -298,5 +350,32 @@ abstract class BaseHostAndServiceRenderer implements ItemRenderer
         }
 
         return false;
+    }
+
+    protected function getStateBallIcon(Host|Service $item): ?Icon
+    {
+        $icon = $item->state->getIcon();
+
+        if ($icon === null) {
+            if (! $item->notifications_enabled) {
+                $icon = new Icon(Icons::NOTIFICATIONS_DISABLED, [
+                    'title' => sprintf(
+                        '%s (%s)',
+                        strtoupper($item->state->getStateTextTranslated()),
+                        $this->translate('has notifications disabled')
+                    )
+                ]);
+            } elseif (! $item->active_checks_enabled) {
+                $icon = new Icon(Icons::ACTIVE_CHECKS_DISABLED, [
+                    'title' => sprintf(
+                        '%s (%s)',
+                        strtoupper($item->state->getStateTextTranslated()),
+                        $this->translate('has active checks disabled')
+                    )
+                ]);
+            }
+        }
+
+        return $icon;
     }
 }

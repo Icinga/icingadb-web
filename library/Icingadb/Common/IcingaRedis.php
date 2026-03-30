@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
@@ -172,11 +173,11 @@ class IcingaRedis
     /**
      * Get the last icinga heartbeat from redis
      *
-     * @param Redis|null $redis
+     * @param ?Redis $redis
      *
      * @return float|int|null
      */
-    public static function getLastIcingaHeartbeat(Redis $redis = null)
+    public static function getLastIcingaHeartbeat(?Redis $redis = null)
     {
         if ($redis === null) {
             $redis = Backend::getRedis()->getConnection();
@@ -200,12 +201,12 @@ class IcingaRedis
     /**
      * Get the primary redis instance
      *
-     * @param Config|null $moduleConfig
-     * @param Config|null $redisConfig
+     * @param ?Config $moduleConfig
+     * @param ?Config $redisConfig
      *
      * @return Redis
      */
-    public static function getPrimaryRedis(Config $moduleConfig = null, Config $redisConfig = null): Redis
+    public static function getPrimaryRedis(?Config $moduleConfig = null, ?Config $redisConfig = null): Redis
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');
@@ -234,12 +235,12 @@ class IcingaRedis
     /**
      * Get the secondary redis instance if exists
      *
-     * @param Config|null $moduleConfig
-     * @param Config|null $redisConfig
+     * @param ?Config $moduleConfig
+     * @param ?Config $redisConfig
      *
      * @return ?Redis
      */
-    public static function getSecondaryRedis(Config $moduleConfig = null, Config $redisConfig = null)
+    public static function getSecondaryRedis(?Config $moduleConfig = null, ?Config $redisConfig = null)
     {
         if ($moduleConfig === null) {
             $moduleConfig = Config::module('icingadb');

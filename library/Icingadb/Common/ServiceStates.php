@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
@@ -9,15 +10,15 @@ namespace Icinga\Module\Icingadb\Common;
  */
 class ServiceStates
 {
-    const OK = 0;
+    public const OK = 0;
 
-    const WARNING = 1;
+    public const WARNING = 1;
 
-    const CRITICAL = 2;
+    public const CRITICAL = 2;
 
-    const UNKNOWN = 3;
+    public const UNKNOWN = 3;
 
-    const PENDING = 99;
+    public const PENDING = 99;
 
     /**
      * Get the integer value of the given textual service state
@@ -56,13 +57,13 @@ class ServiceStates
     /**
      * Get the textual representation of the passed service state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function text(int $state = null): string
+    public static function text(?int $state = null): string
     {
         switch (true) {
             case $state === self::OK:
@@ -93,13 +94,13 @@ class ServiceStates
     /**
      * Get the translated textual representation of the passed service state
      *
-     * @param int|null $state
+     * @param ?int $state
      *
      * @return string
      *
      * @throws \InvalidArgumentException If the given service state is invalid, i.e. not known
      */
-    public static function translated(int $state = null): string
+    public static function translated(?int $state = null): string
     {
         switch (true) {
             case $state === self::OK:

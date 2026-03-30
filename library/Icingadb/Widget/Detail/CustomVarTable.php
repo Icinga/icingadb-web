@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
@@ -51,7 +52,7 @@ class CustomVarTable extends BaseHtmlElement
      * @param iterable $data
      * @param ?Model $object
      */
-    public function __construct($data, Model $object = null)
+    public function __construct($data, ?Model $object = null)
     {
         $this->data = $data;
         $this->object = $object;

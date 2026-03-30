@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Web;
 
@@ -42,6 +43,7 @@ use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Web\Widget\CopyToClipboard;
 
 class Controller extends CompatController
 {
@@ -317,11 +319,11 @@ class Controller extends CompatController
     /**
      * Require permission to access the given route
      *
-     * @param string $name If NULL, the current controller name is used
+     * @param ?string $name If NULL, the current controller name is used
      *
      * @throws SecurityException
      */
-    public function assertRouteAccess(string $name = null)
+    public function assertRouteAccess(?string $name = null)
     {
         if (! $name) {
             $name = $this->getRequest()->getControllerName();
@@ -352,11 +354,13 @@ class Controller extends CompatController
                     }
                 }
 
-                if (!empty($unused)) {
+                if (! empty($unused)) {
                     $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
                 }
 
-                $this->content->add(Html::tag('pre', $sql));
+                $pre = Html::tag('pre', $sql);
+                CopyToClipboard::attachTo($pre);
+                $this->content->add($pre);
             }
 
             return true;
@@ -447,7 +451,7 @@ class Controller extends CompatController
         return parent::addContent($content);
     }
 
-    public function filter(Query $query, Filter\Rule $filter = null): self
+    public function filter(Query $query, ?Filter\Rule $filter = null): self
     {
         if ($this->format !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
             $this->applyRestrictions($query);

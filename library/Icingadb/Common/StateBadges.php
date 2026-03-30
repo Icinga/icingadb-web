@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Common;
 
@@ -117,7 +118,7 @@ abstract class StateBadges extends BaseHtmlElement
      *
      * @return Link
      */
-    protected function createLink($content, Filter\Rule $filter = null): Link
+    protected function createLink($content, ?Filter\Rule $filter = null): Link
     {
         $url = clone $this->getUrl();
 

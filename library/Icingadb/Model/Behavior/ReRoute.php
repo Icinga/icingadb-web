@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Model\Behavior;
 
@@ -17,7 +18,7 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
      *
      * @var string[]
      */
-    const MIXED_TYPE_RELATIONS = ['downtime', 'comment', 'history', 'notification_history'];
+    public const MIXED_TYPE_RELATIONS = ['downtime', 'comment', 'history', 'notification_history'];
 
     public function __construct(array $routes)
     {
@@ -29,11 +30,11 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
         return $this->routes;
     }
 
-    public function rewriteCondition(Filter\Condition $condition, $relation = null)
+    public function rewriteCondition(Filter\Condition $condition, $relation = null): ?Filter\Rule
     {
         $remainingPath = $condition->metaData()->get('columnName', '');
         if (strpos($remainingPath, '.') === false) {
-            return;
+            return null;
         }
 
         if (($path = $this->rewritePath($remainingPath, $relation)) !== null) {
@@ -63,6 +64,8 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
 
             return $filter;
         }
+
+        return null;
     }
 
     public function rewritePath(string $path, ?string $relation = null): ?string

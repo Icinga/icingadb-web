@@ -1,6 +1,7 @@
 <?php
 
-/* Icinga DB Web | (c) 2020 Icinga GmbH | GPLv2 */
+// SPDX-FileCopyrightText: 2019 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
@@ -23,7 +24,7 @@ use ipl\Web\Widget\VerticalKeyValue;
 
 class CheckStatistics extends Card
 {
-    const TOP_LEFT_BUBBLE_FLAG = <<<'SVG'
+    public const TOP_LEFT_BUBBLE_FLAG = <<<'SVG'
 <svg viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'>
     <path class='bg' d='M0 0L13 13L3.15334e-06 13L0 0Z'/>
     <path class='border' fill-rule='evenodd' clip-rule='evenodd'
@@ -31,7 +32,7 @@ class CheckStatistics extends Card
 </svg>
 SVG;
 
-    const TOP_RIGHT_BUBBLE_FLAG = <<<'SVG'
+    public const TOP_RIGHT_BUBBLE_FLAG = <<<'SVG'
 <svg viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'>
     <path class='bg' d="M12 0L-1 13L12 13L12 0Z"/>
     <path class='border' fill-rule="evenodd" clip-rule="evenodd"
