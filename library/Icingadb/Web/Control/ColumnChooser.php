@@ -23,11 +23,27 @@ class ColumnChooser extends CompatForm
     /** @var Resolver The resolver used to validate column names and get their labels */
     protected Resolver $resolver;
 
-    public function __construct(Url $suggestionUrl, Resolver $resolver, array $columns = [])
+    /**
+     * Create a new ColumnChooser
+     *
+     * @param Url $suggestionUrl URL to fetch column suggestions from
+     * @param Resolver $resolver Resolver to validate column names and get their labels
+     * @param string|array $columns A string of comma separated columns or an array of columns
+     */
+    public function __construct(Url $suggestionUrl, Resolver $resolver, string|array $columns = [])
     {
+        if (is_string($columns)) {
+            foreach (explode(',', $columns) as $column) {
+                if ($column = trim($column)) {
+                    $this->columns[] = $column;
+                }
+            }
+        } else {
+            $this->columns = $columns;
+        }
+
         $this->suggestionUrl = $suggestionUrl;
         $this->resolver = $resolver;
-        $this->columns = $columns;
     }
 
     public function getColumns(): array

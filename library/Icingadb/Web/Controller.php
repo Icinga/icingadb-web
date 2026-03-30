@@ -94,26 +94,8 @@ class Controller extends CompatController
         array $defaultColumns,
         Url $redirectUrl
     ): ColumnChooser {
-        $columnsDef = $this->params->shift('columns');
-        if (! $columnsDef) {
-            $columns = $defaultColumns;
-        } else {
-            $columns = [];
-            foreach (explode(',', $columnsDef) as $column) {
-                if ($column = trim($column)) {
-                    $columns[] = $column;
-                }
-            }
-        }
-
-        // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
-        if ($this->format === 'csv' || $this->format === 'json') {
-            $query->columns($columns);
-        } else {
-            $query->withColumns($columns);
-        }
-
-        return (new ColumnChooser($suggestionUrl, $query->getResolver(), $columns))
+        $columnsDef = $this->params->shift('columns', $defaultColumns);
+        $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columnsDef))
             ->setAction((string) Url::fromRequest())
             ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
@@ -124,11 +106,19 @@ class Controller extends CompatController
                         if (! is_array($update)) {
                             $update = [$update];
                         }
-
                         $this->addPart(...$update);
                     }
                 }
             });
+
+        // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
+        if ($this->format === 'csv' || $this->format === 'json') {
+            $query->columns($chooser->getColumns());
+        } else {
+            $query->withColumns($chooser->getColumns());
+        }
+
+        return $chooser;
     }
 
     /**
