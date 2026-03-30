@@ -23,9 +23,9 @@ use Icinga\Module\Icingadb\Common\Model;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
-use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
@@ -38,7 +38,6 @@ use Icinga\Util\Json;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
-use ipl\Orm\Resolver;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
@@ -517,51 +516,20 @@ class Controller extends CompatController
      */
     protected function suggestColumns(Model $model): void
     {
-        $resolver = new Resolver($model::on($this->getDb()));
-
-        $select = (new ObjectSuggestions())->queryCustomvarConfig(Filter::Any());
-
-        $customVars = [];
-        $parsedArrayVars = [];
-        foreach ($this->getDb()->select($select) as $customVar) {
-            $search = $customVar->flatname;
-            if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
-                $name = substr($search, 0, -(strlen($matches[1]) + 2));
-                if (isset($parsedArrayVars[$name])) {
-                    continue;
-                }
-
-                $parsedArrayVars[$name] = true;
-                $search = $name . '[*]';
-            }
-
-            foreach ($customVar as $key => $value) {
-                if ($key !== 'flatname' && $value === 1) {
-                    $var = $key . '.vars.' . $search;
-                    $customVars[$var] = $resolver->getColumnDefinition($var)->getLabel();
-                }
-            }
-        }
-
-        $columns = array_merge(
-            $customVars,
-            array_unique(iterator_to_array(ObjectSuggestions::collectFilterColumns($model, $resolver)))
-        );
-
+        $query = $model::on($this->getDb());
+        $provider = new QueryColumnsProvider($query);
         $suggestions = new SearchSuggestions(
-            (function () use (&$suggestions, $columns) {
-                foreach ($columns as $column => $label) {
-                    if (
-                        ! in_array($column, $suggestions->getExcludeTerms())
-                        && $suggestions->matchSearch($label)
-                    ) {
-                        yield ['search' => $column, 'label' => $label, 'title' => $label];
+            (function () use (&$suggestions, $provider) {
+                $provider->setSearchTerm($suggestions->getSearchTerm());
+                foreach ($provider as $suggestion) {
+                    if (! in_array($suggestion['search'], $suggestions->getExcludeTerms())) {
+                        yield $suggestion;
                     }
                 }
             })()
         );
-
         $suggestions->forRequest(ServerRequest::fromGlobals());
+        $suggestions->setGroupingCallback(fn($x) => $x['group']);
         $this->getDocument()->addHtml($suggestions);
     }
 }
