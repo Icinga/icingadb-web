@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
@@ -72,8 +73,18 @@ class ServicesController extends Controller
             ],
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        $columns = $this->createColumnControl($services, $viewModeSwitcher);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
+        $columns = $this->createColumnControl(
+            $services,
+            Url::fromPath('icingadb/services/suggestColumns'),
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -116,7 +127,8 @@ class ServicesController extends Controller
 
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/services/columnControl'));
         } else {
             $serviceList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -213,6 +225,11 @@ class ServicesController extends Controller
         $suggestions->setModel(Service::class);
         $suggestions->forRequest(ServerRequest::fromGlobals());
         $this->getDocument()->add($suggestions);
+    }
+
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(new Service());
     }
 
     public function searchEditorAction()
@@ -374,6 +391,18 @@ class ServicesController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function columnControlAction()
+    {
+        $this->setTitle($this->translate('Select Columns'));
+        $columnChooser = $this->createColumnControl(
+            Service::on($this->getDb()),
+            Url::fromPath('icingadb/services/suggestColumns'),
+            ['service.name', 'service.state.output'],
+            Url::fromPath('icingadb/services')
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query

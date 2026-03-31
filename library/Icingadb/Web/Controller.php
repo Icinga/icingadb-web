@@ -20,9 +20,12 @@ use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
+use Icinga\Module\Icingadb\Common\Model;
 use Icinga\Module\Icingadb\Common\SearchControls;
 use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
+use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
+use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
@@ -42,6 +45,7 @@ use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
 use ipl\Web\Filter\QueryString;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 
@@ -78,46 +82,43 @@ class Controller extends CompatController
      * Create column control
      *
      * @param Query $query
-     * @param ViewModeSwitcher $viewModeSwitcher
+     * @param Url $suggestionUrl
+     * @param array $defaultColumns
+     * @param Url $redirectUrl
      *
-     * @return array provided columns
-     *
-     * @throws HttpBadRequestException
+     * @return ColumnChooser provided columns
      */
-    public function createColumnControl(Query $query, ViewModeSwitcher $viewModeSwitcher): array
-    {
-        // All of that is essentially what `ColumnControl::apply()` should do
-        $viewMode = $this->getRequest()->getUrl()->getParam($viewModeSwitcher->getViewModeParam());
-        $columnsDef = $this->params->shift('columns');
-        if (! $columnsDef) {
-            if ($viewMode === 'tabular') {
-                $this->httpBadRequest('Missing parameter "columns"');
-            }
-
-            return [];
-        }
-
-        $columns = [];
-        foreach (explode(',', $columnsDef) as $column) {
-            if ($column = trim($column)) {
-                $columns[] = $column;
-            }
-        }
+    public function createColumnControl(
+        Query $query,
+        Url $suggestionUrl,
+        array $defaultColumns,
+        Url $redirectUrl
+    ): ColumnChooser {
+        $columnsDef = $this->params->shift('columns', $defaultColumns);
+        $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columnsDef))
+            ->setAction((string) Url::fromRequest())
+            ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
+                if ($form->hasBeenSubmitted()) {
+                    $redirectUrl->setParam('columns', $form->getValue('columns', ''));
+                    $this->redirectNow($redirectUrl);
+                } else {
+                    foreach ($form->getPartUpdates() as $update) {
+                        if (! is_array($update)) {
+                            $update = [$update];
+                        }
+                        $this->addPart(...$update);
+                    }
+                }
+            });
 
         // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
         if ($this->format === 'csv' || $this->format === 'json') {
-            $query->columns($columns);
+            $query->columns($chooser->getColumns());
         } else {
-            $query->withColumns($columns);
+            $query->withColumns($chooser->getColumns());
         }
 
-        if (! $viewMode) {
-            $viewModeSwitcher->setViewMode('tabular');
-        }
-
-        // For now this also returns the columns, but they should be accessible
-        // by calling `ColumnControl::getColumns()` in the future
-        return $columns;
+        return $chooser;
     }
 
     /**
@@ -126,24 +127,19 @@ class Controller extends CompatController
      * This automatically shifts the view mode URL parameter from {@link $params}.
      *
      * @param PaginationControl $paginationControl
-     * @param LimitControl      $limitControl
-     * @param bool              $verticalPagination
+     * @param LimitControl $limitControl
+     * @param bool $verticalPagination
+     * @param class-string<ViewModeSwitcher> $viewModeSwitcherClass
      *
      * @return ViewModeSwitcher|GridViewModeSwitcher
      */
     public function createViewModeSwitcher(
         PaginationControl $paginationControl,
         LimitControl $limitControl,
-        bool $verticalPagination = false
+        bool $verticalPagination = false,
+        string $viewModeSwitcherClass = ViewModeSwitcher::class
     ): ViewModeSwitcher {
-        $controllerName = $this->getRequest()->getControllerName();
-
-        // TODO: Make this configurable somehow. The route shouldn't be checked to choose the view modes!
-        if ($controllerName === 'hostgroups' || $controllerName === 'servicegroups') {
-            $viewModeSwitcher = new GridViewModeSwitcher();
-        } else {
-            $viewModeSwitcher = new ViewModeSwitcher();
-        }
+        $viewModeSwitcher = new $viewModeSwitcherClass();
 
         $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
 
@@ -503,5 +499,31 @@ class Controller extends CompatController
         $app->getFrontController()
             ->getPlugin('Zend_Controller_Plugin_ErrorHandler')
             ->setErrorHandlerModule('icingadb');
+    }
+
+    /**
+     * Add column suggestions for the given model
+     *
+     * @param Model $model
+     *
+     * @return void
+     */
+    protected function suggestColumns(Model $model): void
+    {
+        $query = $model::on($this->getDb());
+        $provider = new QueryColumnsProvider($query);
+        $suggestions = new SearchSuggestions(
+            (function () use (&$suggestions, $provider) {
+                $provider->setSearchTerm($suggestions->getSearchTerm());
+                foreach ($provider as $suggestion) {
+                    if (! in_array($suggestion['search'], $suggestions->getExcludeTerms())) {
+                        yield $suggestion;
+                    }
+                }
+            })()
+        );
+        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $suggestions->setGroupingCallback(fn($x) => $x['group']);
+        $this->getDocument()->addHtml($suggestions);
     }
 }
