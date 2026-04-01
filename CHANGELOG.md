@@ -3,6 +3,16 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.3.1 (2026-04-01)
+
+All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/15?closed=1
+
+### Notable Fixes
+
+* Setups without the `monitoring` module no longer produce unnecessary integration errors (#1346)
+* JSON exports with pagination now generate valid JSON without a leading comma (#1349)
+* SLA reports scheduleded via the reporting module do not crash its daemon anymore (#1339)
+
 ## 1.3.0 (2025-11-19)
 
 All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/10?closed=1
