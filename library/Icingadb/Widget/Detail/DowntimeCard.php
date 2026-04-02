@@ -217,7 +217,12 @@ class DowntimeCard extends BaseHtmlElement
                     Html::tag(
                         'div',
                         ['class' => 'bubble upwards'],
-                        new VerticalKeyValue(t('Start'), new TimeAgo($this->start))
+                        new VerticalKeyValue(
+                            t('Start'),
+                            time() > $this->start
+                                ? new TimeAgo($this->start)
+                                : new TimeUntil($this->start)
+                        )
                     )
                 ),
                 Html::tag(
