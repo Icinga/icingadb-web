@@ -24,6 +24,7 @@ use ipl\Sql\Select;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\SearchBar\Suggestions;
+use ipl\Web\FormElement\SearchSuggestions;
 use IteratorAggregate;
 
 /**
@@ -45,7 +46,10 @@ class QueryColumnsProvider implements IteratorAggregate
     protected ?array $fixedColumns = null;
 
     /** @var array<string, string> Relations to suggest customvars from */
-    protected array $customVarSources;
+    protected array $customVarSources = [];
+
+    /** @var array<string> Columns not to include in the result */
+    protected array $excludedColumns = [];
 
     /**
      * Create a new QueryColumnsProvider
@@ -57,7 +61,6 @@ class QueryColumnsProvider implements IteratorAggregate
     {
         $this->query = $query;
         $this->searchTerm = $searchTerm;
-        $this->customVarSources = static::getDefaultCustomVarSources();
     }
 
     /**
@@ -171,7 +174,10 @@ class QueryColumnsProvider implements IteratorAggregate
             $this->query->getResolver()
         );
         foreach ($columns as $columnName => $columnMeta) {
-            if ($this->matchSuggestion($columnName, $columnMeta, $this->searchTerm)) {
+            if (
+                ! in_array($columnName, $this->excludedColumns)
+                && $this->matchSuggestion($columnName, $columnMeta, $this->searchTerm)
+            ) {
                 yield [
                     'search' => $columnName,
                     'label'  => $columnMeta,
@@ -345,6 +351,16 @@ class QueryColumnsProvider implements IteratorAggregate
         $tableName = $customVars->getModel()->getTableName();
         $resolver = $customVars->getResolver();
 
+        $excludedByRelation = [];
+        foreach ($this->excludedColumns as $column) {
+            foreach ($this->customVarSources as $relation => $_) {
+                $prefix = $relation . '.vars.';
+                if (str_starts_with($column, $prefix)) {
+                    $excludedByRelation[$relation][] = substr($column, strlen($prefix));
+                }
+            }
+        }
+
         $scalarQueries = [];
         $aggregates = ['flatname'];
         foreach ($resolver->getRelations($customVars->getModel()) as $name => $relation) {
@@ -356,7 +372,17 @@ class QueryColumnsProvider implements IteratorAggregate
 
                 $this->applyBaseFilter($query);
 
-                $aggregates[$name] = new Expression("MAX($name)");
+                if (isset($excludedByRelation[$name])) {
+                    $placeholders = implode(', ', array_fill(0, count($excludedByRelation[$name]), '?'));
+                    $aggregates[$name] = new Expression(
+                        "CASE WHEN flatname NOT IN ($placeholders) THEN MAX($name) ELSE NULL END",
+                        null,
+                        ...$excludedByRelation[$name]
+                    );
+                } else {
+                    $aggregates[$name] = new Expression("MAX($name)");
+                }
+
                 $scalarQueries[$name] = $query->assembleSelect()
                     ->resetColumns()->columns(new Expression('1'))
                     ->limit(1);
@@ -388,25 +414,33 @@ class QueryColumnsProvider implements IteratorAggregate
     }
 
     /**
-     * Get the default customvar sources
+     * Prepare to act as provider for the given SearchSuggestions
      *
-     * @return array<string, string>
+     * @param SearchSuggestions $suggestions
+     *
+     * @return $this
      */
-    public static function getDefaultCustomVarSources()
+    public function forSuggestions(SearchSuggestions $suggestions): static
     {
-        return [
-            'checkcommand'          => t('Checkcommand %s', '..<customvar-name>'),
-            'eventcommand'          => t('Eventcommand %s', '..<customvar-name>'),
-            'host'                  => t('Host %s', '..<customvar-name>'),
-            'hostgroup'             => t('Hostgroup %s', '..<customvar-name>'),
-            'notification'          => t('Notification %s', '..<customvar-name>'),
-            'notificationcommand'   => t('Notificationcommand %s', '..<customvar-name>'),
-            'service'               => t('Service %s', '..<customvar-name>'),
-            'servicegroup'          => t('Servicegroup %s', '..<customvar-name>'),
-            'timeperiod'            => t('Timeperiod %s', '..<customvar-name>'),
-            'user'                  => t('Contact %s', '..<customvar-name>'),
-            'usergroup'             => t('Contactgroup %s', '..<customvar-name>')
-        ];
+        $this->setSearchTerm($suggestions->getSearchTerm());
+        $this->setExcludedColumns($suggestions->getExcludeTerms());
+        $suggestions->setGroupingCallback(fn($x) => $x['group']);
+
+        return $this;
+    }
+
+    /**
+     * Set columns to exclude from the suggestions
+     *
+     * @param array $columns
+     *
+     * @return $this
+     */
+    public function setExcludedColumns(array $columns): static
+    {
+        $this->excludedColumns = $columns;
+
+        return $this;
     }
 
     /**
