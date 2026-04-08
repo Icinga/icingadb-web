@@ -38,7 +38,19 @@ class ObjectSuggestions extends Suggestions
 
     public function __construct()
     {
-        $this->customVarSources = QueryColumnsProvider::getDefaultCustomVarSources();
+        $this->customVarSources = [
+            'checkcommand'          => t('Checkcommand %s', '..<customvar-name>'),
+            'eventcommand'          => t('Eventcommand %s', '..<customvar-name>'),
+            'host'                  => t('Host %s', '..<customvar-name>'),
+            'hostgroup'             => t('Hostgroup %s', '..<customvar-name>'),
+            'notification'          => t('Notification %s', '..<customvar-name>'),
+            'notificationcommand'   => t('Notificationcommand %s', '..<customvar-name>'),
+            'service'               => t('Service %s', '..<customvar-name>'),
+            'servicegroup'          => t('Servicegroup %s', '..<customvar-name>'),
+            'timeperiod'            => t('Timeperiod %s', '..<customvar-name>'),
+            'user'                  => t('Contact %s', '..<customvar-name>'),
+            'usergroup'             => t('Contactgroup %s', '..<customvar-name>')
+        ];
     }
 
     /**

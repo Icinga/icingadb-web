@@ -46,9 +46,24 @@ class ColumnChooser extends CompatForm
         $this->resolver = $resolver;
     }
 
+    /**
+     * Get the columns already present in the url
+     *
+     * @return string[] An array with all columns already present in the url
+     */
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Get the value of the columns field
+     *
+     * @return string The value of the columns field
+     */
+    public function getColumnsValue(): string
+    {
+        return $this->getValue('columns');
     }
 
     public function getPartUpdates(): array
@@ -82,10 +97,7 @@ class ColumnChooser extends CompatForm
     {
         $termInput = (new TermInput(
             'columns',
-            [
-                'type' => 'text',
-                'label' => $this->translate('Selected Columns'),
-            ]
+            ['label' => $this->translate('Selected Columns'),]
         ))
             ->setRequired()
             ->setVerticalTermDirection()

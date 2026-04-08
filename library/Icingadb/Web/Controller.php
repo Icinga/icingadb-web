@@ -86,7 +86,7 @@ class Controller extends CompatController
      * @param array $defaultColumns
      * @param Url $redirectUrl
      *
-     * @return ColumnChooser provided columns
+     * @return ColumnChooser
      */
     public function createColumnControl(
         Query $query,
@@ -94,12 +94,12 @@ class Controller extends CompatController
         array $defaultColumns,
         Url $redirectUrl
     ): ColumnChooser {
-        $columnsDef = $this->params->shift('columns', $defaultColumns);
+        $columnsDef = $this->params->shift('columns') ?? $defaultColumns;
         $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columnsDef))
             ->setAction((string) Url::fromRequest())
             ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
-                    $redirectUrl->setParam('columns', $form->getValue('columns', ''));
+                    $redirectUrl->setParam('columns', $form->getColumnsValue());
                     $this->redirectNow($redirectUrl);
                 } else {
                     foreach ($form->getPartUpdates() as $update) {
@@ -504,26 +504,18 @@ class Controller extends CompatController
     /**
      * Add column suggestions for the given model
      *
-     * @param Model $model
+     * @param class-string<Model> $model
+     * @param array<string, string> $customVarSources
      *
      * @return void
      */
-    protected function suggestColumns(Model $model): void
+    protected function suggestColumns(string $model, array $customVarSources = []): void
     {
         $query = $model::on($this->getDb());
-        $provider = new QueryColumnsProvider($query);
-        $suggestions = new SearchSuggestions(
-            (function () use (&$suggestions, $provider) {
-                $provider->setSearchTerm($suggestions->getSearchTerm());
-                foreach ($provider as $suggestion) {
-                    if (! in_array($suggestion['search'], $suggestions->getExcludeTerms())) {
-                        yield $suggestion;
-                    }
-                }
-            })()
-        );
+        $provider = (new QueryColumnsProvider($query))->setCustomVarSources($customVarSources);
+        $suggestions = new SearchSuggestions($provider);
         $suggestions->forRequest(ServerRequest::fromGlobals());
-        $suggestions->setGroupingCallback(fn($x) => $x['group']);
+        $provider->forSuggestions($suggestions);
         $this->getDocument()->addHtml($suggestions);
     }
 }
