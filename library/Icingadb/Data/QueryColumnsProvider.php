@@ -385,19 +385,18 @@ class QueryColumnsProvider implements IteratorAggregate
                 );
 
                 $this->applyBaseFilter($query);
+                $select = $query->assembleSelect();
 
                 if (isset($excludedByRelation[$name])) {
-                    $placeholders = implode(', ', array_fill(0, count($excludedByRelation[$name]), '?'));
-                    $aggregates[$name] = new Expression(
-                        "CASE WHEN flatname NOT IN ($placeholders) THEN MAX($name) ELSE NULL END",
-                        null,
+                    $flatname = $resolver->qualifyColumn('flatname', $resolver->getAlias($customVars->getModel()));
+                    $select->where(
+                        "$flatname Not In (?)",
                         ...$excludedByRelation[$name]
                     );
-                } else {
-                    $aggregates[$name] = new Expression("MAX($name)");
                 }
 
-                $scalarQueries[$name] = $query->assembleSelect()
+                $aggregates[$name] = new Expression("MAX($name)");
+                $scalarQueries[$name] = $select
                     ->resetColumns()->columns(new Expression('1'))
                     ->limit(1);
             }
