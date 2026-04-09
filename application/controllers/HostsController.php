@@ -212,8 +212,8 @@ class HostsController extends Controller
     public function suggestColumnsAction()
     {
         $this->suggestColumns(Host::class, [
-            'host'                  => t('Host %s', '..<customvar-name>'),
-            'service'               => t('Service %s', '..<customvar-name>')
+            'host' => t('Host %s', '..<customvar-name>'),
+            'service' => t('Service %s', '..<customvar-name>')
         ]);
     }
 
