@@ -105,6 +105,20 @@ class QueryColumnsProvider implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * Set columns to exclude from the suggestions
+     *
+     * @param array $columns
+     *
+     * @return $this
+     */
+    public function setExcludedColumns(array $columns): static
+    {
+        $this->excludedColumns = $columns;
+
+        return $this;
+    }
+
     public function getIterator(): Generator
     {
         $exactVarSearches = [];
@@ -175,7 +189,7 @@ class QueryColumnsProvider implements IteratorAggregate
         );
         foreach ($columns as $columnName => $columnMeta) {
             if (
-                ! in_array($columnName, $this->excludedColumns)
+                ! in_array($columnName, $this->excludedColumns, true)
                 && $this->matchSuggestion($columnName, $columnMeta, $this->searchTerm)
             ) {
                 yield [
@@ -425,20 +439,6 @@ class QueryColumnsProvider implements IteratorAggregate
         $this->setSearchTerm($suggestions->getSearchTerm());
         $this->setExcludedColumns($suggestions->getExcludeTerms());
         $suggestions->setGroupingCallback(fn($x) => $x['group']);
-
-        return $this;
-    }
-
-    /**
-     * Set columns to exclude from the suggestions
-     *
-     * @param array $columns
-     *
-     * @return $this
-     */
-    public function setExcludedColumns(array $columns): static
-    {
-        $this->excludedColumns = $columns;
 
         return $this;
     }

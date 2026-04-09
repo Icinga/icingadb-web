@@ -514,7 +514,7 @@ class Controller extends CompatController
         $query = $model::on($this->getDb());
         $provider = (new QueryColumnsProvider($query))->setCustomVarSources($customVarSources);
         $suggestions = new SearchSuggestions($provider);
-        $suggestions->forRequest(ServerRequest::fromGlobals());
+        $suggestions->forRequest($this->getServerRequest());
         $provider->forSuggestions($suggestions);
         $this->getDocument()->addHtml($suggestions);
     }
