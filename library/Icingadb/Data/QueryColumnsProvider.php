@@ -12,6 +12,7 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\I18n\Translation;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use ipl\Orm\Relation;
@@ -35,6 +36,7 @@ class QueryColumnsProvider implements IteratorAggregate
     use Auth;
     use BaseFilter;
     use Database;
+    use Translation;
 
     /** @var Query The query to collect columns from */
     protected Query $query;
@@ -169,7 +171,7 @@ class QueryColumnsProvider implements IteratorAggregate
                     yield [
                         'search' => $relation . '.vars.' . $search,
                         'label'  => sprintf($label, $name),
-                        'group'  => t('Best Suggestions')
+                        'group'  => $this->translate('Best Suggestions')
                     ];
                 }
             }
@@ -195,7 +197,7 @@ class QueryColumnsProvider implements IteratorAggregate
                 yield [
                     'search' => $columnName,
                     'label'  => $columnMeta,
-                    'group'  => t('Columns')
+                    'group'  => $this->translate('Columns')
                 ];
             }
         }
@@ -239,7 +241,7 @@ class QueryColumnsProvider implements IteratorAggregate
                     yield [
                         'search' => $relation . '.vars.' . $search,
                         'label'  => sprintf($label, $name),
-                        'group'  => t('Custom Variables')
+                        'group'  => $this->translate('Custom Variables')
                     ];
                 }
             }
@@ -390,7 +392,7 @@ class QueryColumnsProvider implements IteratorAggregate
                 if (isset($excludedByRelation[$name])) {
                     $flatname = $resolver->qualifyColumn('flatname', $resolver->getAlias($customVars->getModel()));
                     $select->where(
-                        "$flatname Not In (?)",
+                        "$flatname NOT IN (?)",
                         ...$excludedByRelation[$name]
                     );
                 }

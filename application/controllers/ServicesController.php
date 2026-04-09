@@ -230,8 +230,8 @@ class ServicesController extends Controller
     public function suggestColumnsAction()
     {
         $this->suggestColumns(Service::class, [
-            'host'                  => t('Host %s', '..<customvar-name>'),
-            'service'               => t('Service %s', '..<customvar-name>')
+            'host' => t('Host %s', '..<customvar-name>'),
+            'service' => t('Service %s', '..<customvar-name>')
         ]);
     }
 
