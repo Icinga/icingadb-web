@@ -12,6 +12,11 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
@@ -52,6 +57,9 @@ class QueryColumnsProvider implements IteratorAggregate
 
     /** @var array<string> Columns not to include in the result */
     protected array $excludedColumns = [];
+
+    /** @var bool Whether to include relation path in column labels */
+    protected bool $showRelationLabels = false;
 
     /**
      * Create a new QueryColumnsProvider
@@ -194,11 +202,16 @@ class QueryColumnsProvider implements IteratorAggregate
                 ! in_array($columnName, $this->excludedColumns, true)
                 && $this->matchSuggestion($columnName, $columnMeta, $this->searchTerm)
             ) {
-                yield [
+                $result = [
                     'search' => $columnName,
                     'label'  => $columnMeta,
                     'group'  => $this->translate('Columns')
                 ];
+                if ($this->showRelationLabels && static::shouldShowRelationFor($columnName, $this->query->getModel())) {
+                    $result['label-html'] = $this->getLabelWithRelation($columnName, $columnMeta);
+                }
+
+                yield $result;
             }
         }
     }
@@ -440,6 +453,7 @@ class QueryColumnsProvider implements IteratorAggregate
         $this->setSearchTerm($suggestions->getSearchTerm());
         $this->setExcludedColumns($suggestions->getExcludeTerms());
         $suggestions->setGroupingCallback(fn($x) => $x['group']);
+        $this->showRelationLabels = true;
 
         return $this;
     }
@@ -477,6 +491,59 @@ class QueryColumnsProvider implements IteratorAggregate
 
         if ($this->hasBaseFilter()) {
             $query->filter($this->getBaseFilter());
+        }
+    }
+
+    /**
+     * Get the label for the column with its relation path
+     *
+     * @param string $column
+     * @param string $label
+     *
+     * @return ValidHtml
+     */
+    protected function getLabelWithRelation(string $column, string $label): ValidHtml
+    {
+        $relationPath = substr($column, 0, strrpos($column, '.'));
+        $span = new HtmlElement(
+            'span',
+            Attributes::create(['class' => 'relation-path']),
+            Text::create($relationPath)
+        );
+
+        return (new HtmlDocument())
+            ->addHtml(Text::create($label))
+            ->addHtml($span);
+    }
+
+    /**
+     * Return whether the relation should be shown for the given column of the given model
+     *
+     * @param string $column
+     * @param Model $model
+     *
+     * @return bool
+     */
+    public static function shouldShowRelationFor(string $column, Model $model): bool
+    {
+        if (str_contains($column, '.vars.')) {
+            return false;
+        }
+
+        $tableName = $model->getTableName();
+        $columnPath = explode('.', $column);
+
+        switch (count($columnPath)) {
+            case 3:
+                if ($columnPath[1] !== 'state' || ! in_array($tableName, ['host', 'service'])) {
+                    return true;
+                }
+
+            // For host/service state relation columns apply the same rules
+            case 2:
+                return $columnPath[0] !== $tableName;
+            default:
+                return true;
         }
     }
 }
