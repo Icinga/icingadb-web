@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
@@ -61,8 +62,18 @@ class HostsController extends Controller
             ],
             ['host.state.severity DESC', 'host.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
-        $columns = $this->createColumnControl($hosts, $viewModeSwitcher);
+        $viewModeSwitcher = $this->createViewModeSwitcher(
+            $paginationControl,
+            $limitControl,
+            viewModeSwitcherClass: TabularViewModeSwitcher::class
+        );
+        $columns = $this->createColumnControl(
+            $hosts,
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
+        )
+            ->getColumns();
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -104,7 +115,8 @@ class HostsController extends Controller
         $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar, $results->hasResult());
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
-                ->setSort($sortControl->getSort());
+                ->setSort($sortControl->getSort())
+                ->setColumnChooserUrl(Url::fromPath('icingadb/hosts/columnControl'));
         } else {
             $hostList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -198,6 +210,14 @@ class HostsController extends Controller
         $this->getDocument()->add($suggestions);
     }
 
+    public function suggestColumnsAction()
+    {
+        $this->suggestColumns(Host::class, [
+            'host' => t('Host %s', '..<customvar-name>'),
+            'service' => t('Service %s', '..<customvar-name>')
+        ]);
+    }
+
     public function searchEditorAction()
     {
         $editor = $this->createSearchEditor(Host::on($this->getDb()), [
@@ -209,6 +229,18 @@ class HostsController extends Controller
 
         $this->getDocument()->add($editor);
         $this->setTitle(t('Adjust Filter'));
+    }
+
+    public function columnControlAction()
+    {
+        $this->setTitle($this->translate('Select Columns'));
+        $columnChooser = $this->createColumnControl(
+            Host::on($this->getDb()),
+            Url::fromPath('icingadb/hosts/suggestColumns'),
+            ['host.name', 'host.state.output'],
+            Url::fromPath('icingadb/hosts')
+        )->handleRequest($this->getServerRequest());
+        $this->addContent($columnChooser);
     }
 
     protected function fetchCommandTargets(): Query

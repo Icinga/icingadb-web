@@ -5,7 +5,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Web\Control\SearchBar;
@@ -20,7 +20,7 @@ trait SearchControls
 
     public function fetchFilterColumns(Query $query): array
     {
-        return iterator_to_array(ObjectSuggestions::collectFilterColumns($query->getModel(), $query->getResolver()));
+        return iterator_to_array(QueryColumnsProvider::collectFilterColumns($query->getModel(), $query->getResolver()));
     }
 
     /**
