@@ -89,25 +89,7 @@ class ObjectSuggestions extends Suggestions
 
     protected function shouldShowRelationFor(string $column): bool
     {
-        if (strpos($column, '.vars.') !== false) {
-            return false;
-        }
-
-        $tableName = $this->getModel()->getTableName();
-        $columnPath = explode('.', $column);
-
-        switch (count($columnPath)) {
-            case 3:
-                if ($columnPath[1] !== 'state' || ! in_array($tableName, ['host', 'service'])) {
-                    return true;
-                }
-
-                // For host/service state relation columns apply the same rules
-            case 2:
-                return $columnPath[0] !== $tableName;
-            default:
-                return true;
-        }
+        return QueryColumnsProvider::shouldShowRelationFor($column, $this->getModel());
     }
 
     private function applyBaseFilter(Query $query): void
