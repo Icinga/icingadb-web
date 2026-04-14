@@ -469,7 +469,7 @@ class QueryColumnsProvider implements IteratorAggregate
      *
      * @return bool
      */
-    protected function matchSuggestion($path, $label, $searchTerm)
+    protected function matchSuggestion(string $path, string $label, string $searchTerm): bool
     {
         if (preg_match('/[_.](id|bin|checksum)$/', $path)) {
             // Only suggest exotic columns if the user knows about them
