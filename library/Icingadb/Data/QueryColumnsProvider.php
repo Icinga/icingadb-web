@@ -485,7 +485,7 @@ class QueryColumnsProvider implements IteratorAggregate
      *
      * @param Query $query
      */
-    private function applyBaseFilter(Query $query): void
+    protected function applyBaseFilter(Query $query): void
     {
         $this->applyRestrictions($query);
 
