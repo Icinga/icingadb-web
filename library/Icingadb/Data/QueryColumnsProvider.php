@@ -208,7 +208,7 @@ class QueryColumnsProvider implements IteratorAggregate
                     'group'  => $this->translate('Columns')
                 ];
                 if ($this->showRelationLabels && static::shouldShowRelationFor($columnName, $this->query->getModel())) {
-                    $result['label-html'] = $this->getLabelWithRelation($columnName, $columnMeta);
+                    $result['details'] = $this->getLabelWithRelation($columnName, $columnMeta);
                 }
 
                 yield $result;
