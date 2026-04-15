@@ -12,18 +12,6 @@
 
       &.last-th .column-chooser-opener {
         border-bottom: 1px solid @gray-light;
-
-        .action-link {
-          &:hover {
-            background-color: @low-sat-blue;
-          }
-
-          .rounded-corners();
-
-          .ball {
-            background-color: @icinga-blue;
-          }
-        }
       }
 
       // Border styles start
@@ -115,15 +103,12 @@ table.state-item-table {
           white-space: nowrap;
           padding-left: 0.2em;
           width: 3em;
+          display: flex;
+          align-items: stretch;
 
-          .action-link {
-            padding: 0.3em;
-            height: 1em;
-
-            .ball {
-              margin-right: 1/6em;
-              margin-bottom: 1/6em;
-            }
+          .control-button {
+            display: inline-flex;
+            align-items: center;
           }
         }
       }

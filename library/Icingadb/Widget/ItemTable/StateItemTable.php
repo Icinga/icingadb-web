@@ -22,6 +22,7 @@ use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 /** @todo Figure out what this might (should) have in common with the new ItemTable implementation */
 abstract class StateItemTable extends BaseHtmlElement
@@ -158,14 +159,14 @@ abstract class StateItemTable extends BaseHtmlElement
         return new HtmlElement(
             'div',
             new Attributes(['class' => 'column-chooser-opener']),
-            (new ActionLink(
-                new Ball('xs'),
+            (new Link(
+                new Icon('ellipsis'),
                 $this->columnChooserUrl->setParam(
                     'columns',
                     implode(',', array_keys($this->columns))
-                )
-            ))->addHtml(new Ball('xs'))
-                ->addHtml(new Ball('xs'))
+                ),
+                new Attributes(['class' => 'control-button'])
+            ))
                 ->openInModal()
         );
     }
