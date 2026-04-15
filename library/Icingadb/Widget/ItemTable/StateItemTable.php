@@ -18,8 +18,6 @@ use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
-use ipl\Web\Widget\ActionLink;
-use ipl\Web\Widget\Ball;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -157,8 +155,13 @@ abstract class StateItemTable extends BaseHtmlElement
     protected function createColumnChooserOpener(): ValidHtml
     {
         return new HtmlElement(
-            'div',
-            new Attributes(['class' => 'column-chooser-opener']),
+            'span',
+            new Attributes(
+                [
+                    'class' => 'column-chooser-opener',
+                    'title' => $this->translate('Choose columns')
+                ]
+            ),
             (new Link(
                 new Icon('ellipsis'),
                 $this->columnChooserUrl->setParam(

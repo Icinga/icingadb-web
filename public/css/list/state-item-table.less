@@ -95,20 +95,18 @@ table.state-item-table {
         display: flex;
 
         form {
-          width: ~"calc(100% - 3em)";
+          flex: 1 1 auto;
           padding-right: 1px;
         }
 
         .column-chooser-opener {
-          white-space: nowrap;
-          padding-left: 0.2em;
           width: 3em;
-          display: flex;
-          align-items: stretch;
+          line-height: 1;
+          padding-left: 0.2em;
 
-          .control-button {
-            display: inline-flex;
-            align-items: center;
+          i.icon {
+            font-size: 2em;
+            line-height: 0.5;
           }
         }
       }
