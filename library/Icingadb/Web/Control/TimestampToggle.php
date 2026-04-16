@@ -10,7 +10,7 @@ use ipl\Web\Compat\CompatForm;
 class TimestampToggle extends CompatForm
 {
     /** @var string Default timestamp mode param */
-    public const string DEFAULT_TIMESTAMP_MODE_PARAM = 'timestamps';
+    public const DEFAULT_TIMESTAMP_MODE_PARAM = 'timestamps';
     /** @var bool Whether relative or absolute timestamps are to be used */
     protected bool $useRelativeTimestamps;
 
