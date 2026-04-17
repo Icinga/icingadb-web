@@ -4,6 +4,8 @@
 // Style
 
 .item-list {
+  @interactive-time-hover-bg: @base-gray-light;
+
   .load-more:hover,
   .page-separator:hover {
     background: none;
@@ -42,6 +44,21 @@
   > .page-separator + .list-item .main {
     border-top: none;
   }
+
+  .interactive-time {
+    &:hover {
+      .rounded-corners(1em);
+      background: @interactive-time-hover-bg;
+    }
+
+    user-select: none;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .day-separator {
+    background-color: @gray-lighter;
+  }
 }
 
 // Layout
@@ -79,5 +96,11 @@
         margin-left: .417em;
       }
     }
+  }
+
+  .day-separator {
+    display: flex;
+    justify-content: end;
+    padding-right: 1.5em;
   }
 }

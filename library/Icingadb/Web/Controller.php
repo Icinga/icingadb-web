@@ -27,6 +27,7 @@ use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Module\Pdfexport\PrintableHtmlDocument;
@@ -36,6 +37,7 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\Environment;
 use Icinga\Util\Json;
+use Icinga\Web\Session;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
@@ -190,10 +192,9 @@ class Controller extends CompatController
                     $preferencesStore = PreferencesStore::create(new ConfigObject([
                         'resource'  => Config::app()->get('global', 'config_resource')
                     ]), $user);
-                    $preferencesStore->load();
-                    $preferencesStore->save(
-                        new Preferences(['icingadb' => ['view_modes' => Json::encode($preferredModes)]])
-                    );
+                    $preferences = $preferencesStore->load();
+                    $preferences['icingadb']['view_modes'] = Json::encode($preferredModes);
+                    $preferencesStore->save(new Preferences($preferences));
                 } catch (Exception $e) {
                     Logger::error('Failed to save preferred view mode for user "%s": %s', $user->getUsername(), $e);
                 }
@@ -264,6 +265,60 @@ class Controller extends CompatController
         }
 
         return $viewModeSwitcher;
+    }
+
+    /**
+     * Create a control to switch between relative and absolute timestamps
+     *
+     * @return TimestampToggle
+     */
+    public function createTimestampControl()
+    {
+        $path = $this->getRequest()->getUrl()->getPath();
+        $timestampMode = $this->params->shift('timestamps');
+        $user = $this->Auth()->getUser();
+        if ($timestampMode === null) {
+            $preferences = $user->getAdditional('icingadb.timestamps');
+            if ($preferences === null) {
+                $preferences = Json::decode(
+                    $user->getPreferences()->getValue('icingadb', 'timestamps', '[]'),
+                    true
+                );
+                $user->setAdditional('icingadb.timestamps', $preferences);
+            }
+
+            $timestampMode = $preferences[$path] ?? 'absolute';
+        }
+
+        return (new TimestampToggle($timestampMode === 'relative'))
+            ->on(
+                TimestampToggle::ON_SUBMIT,
+                function (TimestampToggle $form) use ($path, $user) {
+                    // The js changes the representation in the frontend, this request only saves the preference,
+                    // so we can skip all unnecessary work and signal the frontend not to replace the DOM
+                    $this->_helper->viewRenderer->setNoRender(true);
+                    $this->_helper->layout->disableLayout();
+                    $this->ignoreXhrBody();
+
+                    $value = $form->getValue('timestamp-toggle') === 'y' ? 'relative' : 'absolute';
+
+                    try {
+                        $preferencesStore = PreferencesStore::create(new ConfigObject([
+                            'resource' => Config::app()->get('global', 'config_resource')
+                        ]), $user);
+                        $storedPreferences = $preferencesStore->load();
+                        $preferences = $user->getAdditional('icingadb.timestamps')
+                            ?? Json::decode($storedPreferences['icingadb']['timestamps'] ?? '[]', true);
+
+                        $preferences[$path] = $value;
+                        $user->setAdditional('icingadb.timestamps', $preferences);
+                        $storedPreferences['icingadb']['timestamps'] = Json::encode($preferences);
+                        $preferencesStore->save(new Preferences($storedPreferences));
+                    } catch (Exception $e) {
+                        Logger::error('Failed to save timestamp mode for user "%s": %s', $user->getUsername(), $e);
+                    }
+                }
+            )->handleRequest($this->getServerRequest());
     }
 
     /**

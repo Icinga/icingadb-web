@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use IntlDateFormatter;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
@@ -26,7 +27,9 @@ use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
+use ipl\Web\Widget\Time;
 use ipl\Web\Widget\TimeAgo;
+use Locale;
 
 /** @implements ItemRenderer<NotificationHistory> */
 class NotificationRenderer implements ItemRenderer
@@ -35,6 +38,18 @@ class NotificationRenderer implements ItemRenderer
     use HostLink;
     use ServiceLink;
 
+    /** @var bool Whether to use relative timestamps */
+    protected bool $useRelativeTimestamps;
+
+    /**
+     * Create a NotificationRenderer
+     *
+     * @param bool $useRelativeTimestamps Whether to use relative timestamps
+     */
+    public function __construct(bool $useRelativeTimestamps = false)
+    {
+        $this->useRelativeTimestamps = $useRelativeTimestamps;
+    }
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
         $attributes->get('class')->addValue('notification');
@@ -154,7 +169,27 @@ class NotificationRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        $info->addHtml(new TimeAgo($item->send_time->getTimestamp()));
+        if (
+            $layout === 'header'
+            || ($this->useRelativeTimestamps && time() - $item->send_time->getTimestamp() < 3600)
+        ) {
+            $time = new TimeAgo($item->send_time->getTimestamp());
+        } else {
+            $time = (new Time($item->send_time))
+                ->setFormatter(
+                    new IntlDateFormatter(
+                        Locale::getDefault(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::MEDIUM
+                    )
+                );
+        }
+
+        if ($layout !== 'header') {
+            $time->setAttribute('class', 'interactive-time');
+        }
+
+        $info->addHtml($time);
     }
 
     public function assembleFooter($item, HtmlDocument $footer, string $layout): void

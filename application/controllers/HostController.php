@@ -23,6 +23,7 @@ use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
@@ -30,7 +31,7 @@ use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostMetaInfo;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
-use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
@@ -141,7 +142,9 @@ class HostController extends Controller
         $before = $this->params->shift('before', time());
         $url = Url::fromRequest()->setParams(clone $this->params);
         $url->setParam('name', $this->host->name);
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
         $sortControl = $this->createSortControl(
@@ -156,6 +159,7 @@ class HostController extends Controller
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM,
             'name'
         ];
 
@@ -186,6 +190,7 @@ class HostController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $previousTimestamp = null;
             $history->resetOffset();
             $history->limit($page * $limitControl->getLimit());
         }
@@ -197,12 +202,17 @@ class HostController extends Controller
 
         yield $this->export($history);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
-        $historyList = (new LoadMoreObjectList($history->execute()))
+        $historyList = (new HistoryObjectList(
+            $history->execute(),
+            $previousTimestamp,
+            $timestampControl->getUseRelativeTimestamps(),
+        ))
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
@@ -540,6 +550,7 @@ class HostController extends Controller
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
             ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM,
             'name'
         ];
         $editor = $this->createSearchEditor(
