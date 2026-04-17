@@ -306,25 +306,21 @@ class Controller extends CompatController
 
                     $value = $form->getValue('timestamp-toggle') === 'y' ? 'relative' : 'absolute';
 
-                    $preferencesStore = PreferencesStore::create(new ConfigObject([
-                        'resource'  => Config::app()->get('global', 'config_resource')
-                    ]), $user);
-                    $storedPreferences = $preferencesStore->load();
-                    if (($preferences = $user->getAdditional('icingadb.timestamps')) === null) {
-                        if (
-                            array_key_exists('icingadb', $storedPreferences)
-                            && array_key_exists('timestamps', $storedPreferences['icingadb'])
-                        ) {
-                            $preferences = Json::decode($storedPreferences['icingadb']['timestamps'], true);
-                        } else {
-                            $preferences = [];
-                        }
-                    }
+                    try {
+                        $preferencesStore = PreferencesStore::create(new ConfigObject([
+                            'resource' => Config::app()->get('global', 'config_resource')
+                        ]), $user);
+                        $storedPreferences = $preferencesStore->load();
+                        $preferences = $user->getAdditional('icingadb.timestamps')
+                            ?? Json::decode($storedPreferences['icingadb']['timestamps'] ?? '[]', true);
 
-                    $preferences[$path] = $value;
-                    $user->setAdditional('icingadb.timestamps', $preferences);
-                    $storedPreferences['icingadb']['timestamps'] = Json::encode($preferences);
-                    $preferencesStore->save(new Preferences($storedPreferences));
+                        $preferences[$path] = $value;
+                        $user->setAdditional('icingadb.timestamps', $preferences);
+                        $storedPreferences['icingadb']['timestamps'] = Json::encode($preferences);
+                        $preferencesStore->save(new Preferences($storedPreferences));
+                    } catch (Exception $e) {
+                        Logger::error('Failed to save timestamp mode for user "%s": %s', $user->getUsername(), $e);
+                    }
                 }
             )->handleRequest($this->getServerRequest());
     }
