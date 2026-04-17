@@ -5,10 +5,13 @@
 
 namespace Icinga\Module\Icingadb\Web\Control;
 
-use ipl\Web\Compat\CompatForm;
+use ipl\Html\Form;
+use ipl\I18n\Translation;
 
-class TimestampToggle extends CompatForm
+class TimestampToggle extends Form
 {
+    use Translation;
+
     /** @var string Default timestamp mode param */
     public const DEFAULT_TIMESTAMP_MODE_PARAM = 'timestamps';
 
@@ -45,7 +48,26 @@ class TimestampToggle extends CompatForm
         $this->addElement('checkbox', 'timestamp-toggle', [
             'class'             => ['timestamp-toggle', 'autosubmit'],
             'label'             => $this->translate('Use relative timestamps'),
-            'value'             => $this->useRelativeTimestamps
+            'value'             => $this->useRelativeTimestamps,
+            'decorators'        => [
+                'Label',
+                'LabelGroup' => [
+                    'name' => 'HtmlTag',
+                    'options' => [
+                        'tag' => 'div',
+                        'class' => 'control-label-group',
+                    ]
+                ],
+                'Checkbox',
+                'RenderElement',
+                'ControlGroup' => [
+                    'name' => 'HtmlTag',
+                    'options' => [
+                        'tag' => 'div',
+                        'class' => 'control-group'
+                    ]
+                ]
+            ]
         ]);
     }
 }
