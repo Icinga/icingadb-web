@@ -10,6 +10,10 @@
     th {
       font-weight: normal;
 
+      &.last-th .column-chooser-opener {
+        border-bottom: 1px solid @gray-light;
+      }
+
       // Border styles start
       form {
         padding: 0 0 0 1px;
@@ -86,6 +90,26 @@ table.state-item-table {
       // That's layout, yes, controls overflow when scrolling
       padding: 1em 0 0 0;
       background: @body-bg-color;
+
+      &.last-th {
+        display: flex;
+
+        form {
+          flex: 1 1 auto;
+          padding-right: 1px;
+        }
+
+        .column-chooser-opener {
+          width: 3em;
+          line-height: 1;
+          padding-left: 0.2em;
+
+          i.icon {
+            font-size: 2em;
+            line-height: 0.5;
+          }
+        }
+      }
     }
 
     th button {

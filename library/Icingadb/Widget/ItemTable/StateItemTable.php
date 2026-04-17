@@ -17,8 +17,10 @@ use ipl\I18n\Translation;
 use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Url;
 use ipl\Web\Widget\EmptyStateBar;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 /** @todo Figure out what this might (should) have in common with the new ItemTable implementation */
 abstract class StateItemTable extends BaseHtmlElement
@@ -42,6 +44,9 @@ abstract class StateItemTable extends BaseHtmlElement
 
     /** @var ?ValidHtml Message to show if the list is empty */
     protected $emptyStateMessage;
+
+    /** @var ?Url The url for the column chooser modal */
+    protected ?Url $columnChooserUrl = null;
 
     /**
      * Create a new item table
@@ -124,9 +129,50 @@ abstract class StateItemTable extends BaseHtmlElement
         return $this;
     }
 
+    /**
+     * Set the Url for the Form opened by the column-chooser-opener
+     *
+     * @param Url $url
+     *
+     * @return $this
+     */
+    public function setColumnChooserUrl(Url $url): static
+    {
+        $this->columnChooserUrl = $url;
+
+        return $this;
+    }
+
     abstract protected function getItemClass(): string;
 
     abstract protected function getVisualColumn(): string;
+
+    /**
+     * Create an action-link that opens a ColumnChooser form in a modal
+     *
+     * @return ValidHtml
+     */
+    protected function createColumnChooserOpener(): ValidHtml
+    {
+        return new HtmlElement(
+            'span',
+            new Attributes(
+                [
+                    'class' => 'column-chooser-opener',
+                    'title' => $this->translate('Choose columns')
+                ]
+            ),
+            (new Link(
+                new Icon('ellipsis'),
+                $this->columnChooserUrl->setParam(
+                    'columns',
+                    implode(',', array_keys($this->columns))
+                ),
+                new Attributes(['class' => 'control-button'])
+            ))
+                ->openInModal()
+        );
+    }
 
     protected function getVisualLabel()
     {
@@ -212,6 +258,12 @@ abstract class StateItemTable extends BaseHtmlElement
             $headerCell = new HtmlElement('th');
             $this->assembleColumnHeader($headerCell, $name, is_int($label) ? $name : $label);
             $headerRow->addHtml($headerCell);
+        }
+
+        if (! empty($this->columns) && $this->columnChooserUrl !== null) {
+            $headerCell->addHtml($this->createColumnChooserOpener())
+                ->getAttribute('class')
+                ->addValue('last-th');
         }
 
         $this->addHtml(new HtmlElement('thead', null, $headerRow));

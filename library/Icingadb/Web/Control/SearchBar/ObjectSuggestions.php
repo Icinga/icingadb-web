@@ -5,26 +5,15 @@
 
 namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 
-use Generator;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
-use Icinga\Module\Icingadb\Model\CustomvarFlat;
-use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Util\ObjectSuggestionsCursor;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
-use ipl\Orm\Relation;
-use ipl\Orm\Relation\BelongsToMany;
-use ipl\Orm\Relation\HasOne;
-use ipl\Orm\Resolver;
-use ipl\Orm\UnionModel;
-use ipl\Sql\Expression;
-use ipl\Sql\Select;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Seq;
@@ -100,25 +89,7 @@ class ObjectSuggestions extends Suggestions
 
     protected function shouldShowRelationFor(string $column): bool
     {
-        if (strpos($column, '.vars.') !== false) {
-            return false;
-        }
-
-        $tableName = $this->getModel()->getTableName();
-        $columnPath = explode('.', $column);
-
-        switch (count($columnPath)) {
-            case 3:
-                if ($columnPath[1] !== 'state' || ! in_array($tableName, ['host', 'service'])) {
-                    return true;
-                }
-
-                // For host/service state relation columns apply the same rules
-            case 2:
-                return $columnPath[0] !== $tableName;
-            default:
-                return true;
-        }
+        return QueryColumnsProvider::shouldShowRelationFor($column, $this->getModel());
     }
 
     private function applyBaseFilter(Query $query): void
@@ -158,7 +129,8 @@ class ObjectSuggestions extends Suggestions
         if (strpos($column, ' ') !== false) {
             // $column may be a label
             list($path, $_) = Seq::find(
-                $this->fixedColumns ?? self::collectFilterColumns($query->getModel(), $query->getResolver()),
+                $this->fixedColumns
+                    ?? QueryColumnsProvider::collectFilterColumns($query->getModel(), $query->getResolver()),
                 $column,
                 false
             );
@@ -225,289 +197,36 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
 
-        $parsedArrayVars = [];
-        $exactSearchTerm = trim($searchTerm, ' *');
-        $exactVarSearches = [];
-        $titleAdded = false;
+        $provider = (new QueryColumnsProvider($query, $searchTerm))
+            ->setCustomVarSources($this->customVarSources);
 
-        // Suggest exact custom variable matches first
-        if ($exactSearchTerm !== '') {
-            foreach (
-                $this->getDb()->select($this->queryCustomvarConfig(
-                    Filter::any(
-                        Filter::equal('flatname', $exactSearchTerm),
-                        Filter::like('flatname', $exactSearchTerm . '[*]') // Filter for array type custom variables
-                    )
-                )) as $customVar
-            ) {
-                $search = $name = $customVar->flatname;
-                $exactVarSearches[] = $search;
-                if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
-                    $name = substr($search, 0, -(strlen($matches[1]) + 2));
-                    if (isset($parsedArrayVars[$name])) {
-                        continue;
-                    }
-
-                    $parsedArrayVars[$name] = true;
-                    $search = $name . '[*]';
-                }
-
-                foreach ($this->customVarSources as $relation => $label) {
-                    if (isset($customVar->$relation)) {
-                        if ($titleAdded === false) {
-                            $this->addHtml(HtmlElement::create(
-                                'li',
-                                ['class' => static::SUGGESTION_TITLE_CLASS],
-                                t('Best Suggestions')
-                            ));
-
-                            $titleAdded = true;
-                        }
-
-                        yield $relation . '.vars.' . $search => sprintf($label, $name);
-                    }
-                }
-            }
+        if ($this->fixedColumns !== null) {
+            $provider->setFixedColumns($this->fixedColumns);
         }
 
-        // Ordinary columns comes after exact matches,
-        // or if there ar no exact matches they come first
-        $titleAdded = false;
-        $columns = $this->fixedColumns ?? self::collectFilterColumns($query->getModel(), $query->getResolver());
-        foreach ($columns as $columnName => $columnMeta) {
-            if ($this->matchSuggestion($columnName, $columnMeta, $searchTerm)) {
-                if ($titleAdded === false) {
-                    $this->addHtml(HtmlElement::create(
-                        'li',
-                        ['class' => static::SUGGESTION_TITLE_CLASS],
-                        t('Columns')
-                    ));
-
-                    $titleAdded = true;
-                }
-
-                yield $columnName => $columnMeta;
-            }
+        if ($this->hasBaseFilter()) {
+            $provider->setBaseFilter($this->getBaseFilter());
         }
 
-        // Finally, the other custom variable suggestions
-        $titleAdded = false;
-        if (! empty($exactVarSearches)) {
-            $varFilter = Filter::all(
-                Filter::like('flatname', $searchTerm),
-                Filter::unequal('flatname', $exactVarSearches)
-            );
-        } else {
-            $varFilter = Filter::like('flatname', $searchTerm);
-        }
-
-        foreach ($this->getDb()->select($this->queryCustomvarConfig($varFilter)) as $customVar) {
-            $search = $name = $customVar->flatname;
-            if (preg_match('/\w+(?:\[(\d*)])+$/', $search, $matches)) {
-                $name = substr($search, 0, -(strlen($matches[1]) + 2));
-                if (isset($parsedArrayVars[$name])) {
-                    continue;
-                }
-
-                $parsedArrayVars[$name] = true;
-                $search = $name . '[*]';
+        $currentGroup = null;
+        foreach ($provider as $item) {
+            if (isset($item['group']) && $item['group'] !== $currentGroup) {
+                $currentGroup = $item['group'];
+                $this->addHtml(HtmlElement::create(
+                    'li',
+                    ['class' => static::SUGGESTION_TITLE_CLASS],
+                    $currentGroup
+                ));
             }
 
-            foreach ($this->customVarSources as $relation => $label) {
-                if (isset($customVar->$relation)) {
-                    // Suggest exact custom variable matches first
-                    if ($titleAdded === false) {
-                        $this->addHtml(HtmlElement::create(
-                            'li',
-                            ['class' => static::SUGGESTION_TITLE_CLASS],
-                            t('Custom Variables')
-                        ));
-
-                        $titleAdded = true;
-                    }
-
-                    yield $relation . '.vars.' . $search => sprintf($label, $name);
-                }
-            }
+            yield $item['search'] => $item['label'];
         }
-    }
-
-    protected function matchSuggestion($path, $label, $searchTerm)
-    {
-        if (preg_match('/[_.](id|bin|checksum)$/', $path)) {
-            // Only suggest exotic columns if the user knows about them
-            $trimmedSearch = trim($searchTerm, ' *');
-            return substr($path, -strlen($trimmedSearch)) === $trimmedSearch;
-        }
-
-        return parent::matchSuggestion($path, $label, $searchTerm);
-    }
-
-    /**
-     * Create a query to fetch all available custom variables matching the given filter
-     *
-     * @param Filter\Rule $filter
-     *
-     * @return Select
-     */
-    protected function queryCustomvarConfig(Filter\Rule $filter): Select
-    {
-        $customVars = CustomvarFlat::on($this->getDb());
-        $tableName = $customVars->getModel()->getTableName();
-        $resolver = $customVars->getResolver();
-
-        $scalarQueries = [];
-        $aggregates = ['flatname'];
-        foreach ($resolver->getRelations($customVars->getModel()) as $name => $relation) {
-            if (isset($this->customVarSources[$name]) && $relation instanceof BelongsToMany) {
-                $query = $customVars->createSubQuery(
-                    $relation->getTarget(),
-                    $resolver->qualifyPath($name, $tableName)
-                );
-
-                $this->applyBaseFilter($query);
-
-                $aggregates[$name] = new Expression("MAX($name)");
-                $scalarQueries[$name] = $query->assembleSelect()
-                    ->resetColumns()->columns(new Expression('1'))
-                    ->limit(1);
-            }
-        }
-
-        $customVars->columns('flatname');
-        $this->applyRestrictions($customVars);
-        $customVars->filter($filter);
-
-        // applyRestrictions() does not hide protected vars, but since querying them is not possible anymore,
-        // we have to. Otherwise, the user can choose a protected var and get an error.
-        $protectedVarFilter = Filter::any();
-        foreach ($this->getAuth()->getRestrictions('icingadb/protect/variables') as $restriction) {
-            $protectedVarFilter->add($this->parseDenylist($restriction, 'flatname'));
-        }
-
-        $customVars->filter($protectedVarFilter);
-
-        $idColumn = $resolver->qualifyColumn('id', $resolver->getAlias($customVars->getModel()));
-        $customVars = $customVars->assembleSelect();
-
-        $customVars->columns($scalarQueries);
-        $customVars->groupBy($idColumn);
-        $customVars->limit(static::DEFAULT_LIMIT);
-
-        // This outer query exists only because there's no way to combine aggregates and sub queries (yet)
-        return (new Select())->columns($aggregates)->from(['results' => $customVars])->groupBy('flatname');
     }
 
     protected function filterColumnSuggestions($data, $searchTerm)
     {
         // Remove filtering here, as fetchColumnSuggestions already performs it
         yield from $data;
-    }
-
-    /**
-     * Collect all columns of this model and its relations that can be used for filtering
-     *
-     * @param Model $model
-     * @param Resolver $resolver
-     *
-     * @return Generator
-     */
-    public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
-    {
-        if ($model instanceof UnionModel) {
-            $models = [];
-            foreach ($model->getUnions() as $union) {
-                /** @var Model $unionModel */
-                $unionModel = new $union[0]();
-                $models[$unionModel->getTableName()] = $unionModel;
-                self::collectRelations($resolver, $unionModel, $models, []);
-            }
-        } else {
-            $models = [$model->getTableName() => $model];
-            self::collectRelations($resolver, $model, $models, []);
-        }
-
-        /** @var Model $targetModel */
-        foreach ($models as $path => $targetModel) {
-            foreach ($resolver->getColumnDefinitions($targetModel) as $columnName => $definition) {
-                yield $path . '.' . $columnName => $definition->getLabel();
-            }
-        }
-
-        foreach ($resolver->getBehaviors($model) as $behavior) {
-            if ($behavior instanceof ReRoute) {
-                foreach ($behavior->getRoutes() as $name => $route) {
-                    $relation = $resolver->resolveRelation(
-                        $resolver->qualifyPath($route, $model->getTableName()),
-                        $model
-                    );
-                    foreach ($resolver->getColumnDefinitions($relation->getTarget()) as $columnName => $definition) {
-                        yield $name . '.' . $columnName => $definition->getLabel();
-                    }
-                }
-            }
-        }
-
-        if ($model instanceof UnionModel) {
-            $queries = $model->getUnions();
-            $baseModelClass = end($queries)[0];
-            $model = new $baseModelClass();
-        }
-
-        $foreignMetaDataSources = [];
-        if (! $model instanceof Host) {
-            $foreignMetaDataSources[] = 'host.user';
-            $foreignMetaDataSources[] = 'host.usergroup';
-        }
-
-        if (! $model instanceof Service) {
-            $foreignMetaDataSources[] = 'service.user';
-            $foreignMetaDataSources[] = 'service.usergroup';
-        }
-
-        foreach ($foreignMetaDataSources as $path) {
-            $foreignColumnDefinitions = $resolver->getColumnDefinitions($resolver->resolveRelation(
-                $resolver->qualifyPath($path, $model->getTableName()),
-                $model
-            )->getTarget());
-            foreach ($foreignColumnDefinitions as $columnName => $columnDefinition) {
-                yield "$path.$columnName" => $columnDefinition->getLabel();
-            }
-        }
-    }
-
-    /**
-     * Collect all direct relations of the given model
-     *
-     * A direct relation is either a direct descendant of the model
-     * or a descendant of such related in a to-one cardinality.
-     *
-     * @param Resolver $resolver
-     * @param Model $subject
-     * @param array $models
-     * @param array $path
-     */
-    protected static function collectRelations(Resolver $resolver, Model $subject, array &$models, array $path)
-    {
-        foreach ($resolver->getRelations($subject) as $name => $relation) {
-            /** @var Relation $relation */
-            if (
-                empty($path) || (
-                    ($name === 'state' && $path[count($path) - 1] !== 'last_comment')
-                    || $name === 'last_comment'
-                    || $name === 'notificationcommand' && $path[0] === 'notification'
-                )
-            ) {
-                $relationPath = [$name];
-                if ($relation instanceof HasOne && empty($path)) {
-                    array_unshift($relationPath, $subject->getTableName());
-                }
-
-                $relationPath = array_merge($path, $relationPath);
-                $models[join('.', $relationPath)] = $relation->getTarget();
-                self::collectRelations($resolver, $relation->getTarget(), $models, $relationPath);
-            }
-        }
     }
 
     /**
