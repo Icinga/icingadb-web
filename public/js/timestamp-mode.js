@@ -23,8 +23,9 @@
         }
 
         /**
-         * Stop event propagation, so that the list-item underneath is not clicked,
-         * and toggle the timestamp mode of the container
+         * Toggle the timestamp mode of the container
+         *
+         * This method stops event propagation, so that the list-item underneath is not clicked.
          *
          * @param event The click event of the timestamp
          */

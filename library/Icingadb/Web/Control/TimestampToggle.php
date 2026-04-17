@@ -20,7 +20,7 @@ class TimestampToggle extends CompatForm
     ];
 
     /**
-     * A toggle that allows to switch between absolute and relative timestamps
+     * Create a toggle to switch between absolute and relative timestamps
      *
      * @param bool $useRelativeTimestamps Whether to use relative timestamps
      */
@@ -30,7 +30,7 @@ class TimestampToggle extends CompatForm
     }
 
     /**
-     * Get whether relative or absolute timestamps are to be used
+     * Get whether relative timestamps should be used
      *
      * @return bool
      */

@@ -48,7 +48,11 @@ class EventRenderer implements ItemRenderer
     /** @var bool Whether to use relative timestamps */
     protected bool $useRelativeTimestamps;
 
-    /** @param bool $useRelativeTimestamps Whether to use relative timestamps */
+    /**
+     * Create an EventRenderer
+     *
+     * @param bool $useRelativeTimestamps Whether to use relative timestamps
+     */
     public function __construct(bool $useRelativeTimestamps = false)
     {
         $this->notificationRenderer = new NotificationRenderer();

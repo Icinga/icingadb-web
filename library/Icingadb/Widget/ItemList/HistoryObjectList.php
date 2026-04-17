@@ -23,9 +23,6 @@ use Locale;
 /**
  * HistoryObjectList
  *
- * Create a list of History or NotificationHistory objects with a Load more link
- * and add a separator when a new day begins.
- *
  * @template Item of NotificationHistory|History
  *
  * @extends ObjectList<Item>
@@ -38,7 +35,7 @@ class HistoryObjectList extends ObjectList
     protected ?int $previousTimeStamp = null;
 
     /**
-     * A list of History or NotificationHistory objects with a Load more link and add a separator between days.
+     * Create a list of History or NotificationHistory objects with a Load more link and add a separator between days.
      *
      * @param ResultSet $data
      * @param ?int $previousTimeStamp

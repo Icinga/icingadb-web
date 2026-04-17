@@ -41,7 +41,11 @@ class NotificationRenderer implements ItemRenderer
     /** @var bool Whether to use relative timestamps */
     protected bool $useRelativeTimestamps;
 
-    /** @param bool $useRelativeTimestamps Whether to use relative timestamps */
+    /**
+     * Create a NotificationRenderer
+     *
+     * @param bool $useRelativeTimestamps Whether to use relative timestamps
+     */
     public function __construct(bool $useRelativeTimestamps = false)
     {
         $this->useRelativeTimestamps = $useRelativeTimestamps;
