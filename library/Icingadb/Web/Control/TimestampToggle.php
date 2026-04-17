@@ -7,9 +7,11 @@ namespace Icinga\Module\Icingadb\Web\Control;
 
 use ipl\Html\Form;
 use ipl\I18n\Translation;
+use ipl\Web\Common\FormUid;
 
 class TimestampToggle extends Form
 {
+    use FormUid;
     use Translation;
 
     /** @var string Default timestamp mode param */
@@ -31,6 +33,7 @@ class TimestampToggle extends Form
     public function __construct(bool $useRelativeTimestamps = false)
     {
         $this->useRelativeTimestamps = $useRelativeTimestamps;
+        $this->addElementDecoratorLoaderPaths([['ipl\\Web\\Compat\\FormDecorator', 'Decorator']]);
     }
 
     /**
@@ -69,5 +72,6 @@ class TimestampToggle extends Form
                 ]
             ]
         ]);
+        $this->addElement($this->createUidElement());
     }
 }
