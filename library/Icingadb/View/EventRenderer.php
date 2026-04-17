@@ -427,8 +427,8 @@ class EventRenderer implements ItemRenderer
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
         if (
-            ($this->useRelativeTimestamps && time() - $item->event_time->getTimestamp() < 3600)
-            || $layout === 'header'
+            $layout === 'header'
+            || ($this->useRelativeTimestamps && time() - $item->event_time->getTimestamp() < 3600)
         ) {
             $time = new TimeAgo($item->event_time->getTimestamp());
         } else {

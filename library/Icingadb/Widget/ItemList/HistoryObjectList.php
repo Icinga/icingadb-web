@@ -13,6 +13,7 @@ use Icinga\Module\Icingadb\View\EventRenderer;
 use Icinga\Module\Icingadb\View\NotificationRenderer;
 use IntlDateFormatter;
 use ipl\Html\Attributes;
+use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
@@ -59,13 +60,14 @@ class HistoryObjectList extends ObjectList
 
     protected function init(): void
     {
+        parent::init();
         $formatter = new IntlDateFormatter(
             Locale::getDefault(),
             IntlDateFormatter::MEDIUM,
             IntlDateFormatter::NONE
         );
 
-        $this->on(self::BEFORE_ITEM_ADD, function ($item, $data) use ($formatter) {
+        $this->on(ItemList::BEFORE_ITEM_ADD, function ($item, $data) use ($formatter) {
             if ($data instanceof NotificationHistory) {
                 $timestamp = $data->send_time->getTimestamp();
             } else {
@@ -86,7 +88,9 @@ class HistoryObjectList extends ObjectList
             $this->previousTimeStamp = $timestamp;
         });
 
-        $this->on(self::ON_ASSEMBLED, fn () => $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp));
-        parent::init();
+        $this->on(
+            HtmlDocument::ON_ASSEMBLED,
+            fn() => $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp)
+        );
     }
 }

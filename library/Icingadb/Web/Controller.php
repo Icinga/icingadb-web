@@ -282,7 +282,8 @@ class Controller extends CompatController
         $timestampMode = $this->params->shift('timestamps');
         $user = $this->Auth()->getUser();
         if ($timestampMode === null) {
-            if (($preferences = $user->getAdditional('icingadb.timestamps')) === null) {
+            $preferences = $user->getAdditional('icingadb.timestamps');
+            if ($preferences === null) {
                 $preferences = Json::decode(
                     $user->getPreferences()->getValue('icingadb', 'timestamps', '[]'),
                     true
@@ -290,7 +291,7 @@ class Controller extends CompatController
                 $user->setAdditional('icingadb.timestamps', $preferences);
             }
 
-            $timestampMode = array_key_exists($path, $preferences) ? $preferences[$path] : 'absolute';
+            $timestampMode = $preferences[$path] ?? 'absolute';
         }
 
         return (new TimestampToggle($timestampMode === 'relative'))

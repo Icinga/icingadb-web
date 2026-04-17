@@ -170,8 +170,8 @@ class NotificationRenderer implements ItemRenderer
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
         if (
-            ($this->useRelativeTimestamps && time() - $item->send_time->getTimestamp() < 3600)
-            || $layout === 'header'
+            $layout === 'header'
+            || ($this->useRelativeTimestamps && time() - $item->send_time->getTimestamp() < 3600)
         ) {
             $time = new TimeAgo($item->send_time->getTimestamp());
         } else {

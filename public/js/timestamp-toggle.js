@@ -39,8 +39,7 @@
             if (toggle) {
                 toggle.click();
             } else {
-                const isRelative = event.target.hasAttribute('data-relative-time');
-                event.data.self.applyTimestampMode(container, ! isRelative);
+                event.data.self.applyTimestampMode(container, ! event.target.hasAttribute('data-relative-time'));
             }
         }
 
@@ -51,8 +50,7 @@
          */
         onTimestampModeToggle(event)
         {
-            const container = event.target.closest('.container');
-            event.data.self.applyTimestampMode(container, event.target.checked);
+            event.data.self.applyTimestampMode(event.target.closest('.container'), event.target.checked);
         }
 
         /**
@@ -67,11 +65,11 @@
             const url = this.icinga.utils.addUrlParams($(container).data('icingaUrl'), {timestamps: preference});
             $(container).data('icingaUrl', url);
 
-            [
-                ['.load-more .action-link, .refresh-container-control, .primary-nav li.active a', 'href'],
-                ['.search-editor-opener', 'data-search-editor-url'],
-                ['.search-bar', 'action'],
-            ].forEach(([selector, attr]) => {
+            Object.entries({
+                '.load-more .action-link, .refresh-container-control, .primary-nav li.active a': 'href',
+                '.search-editor-opener': 'data-search-editor-url',
+                '.search-bar': 'action'
+            }).forEach(([selector, attr]) => {
                 container.querySelectorAll(selector).forEach((el) => {
                     el.setAttribute(attr, this.icinga.utils.addUrlParams(el.getAttribute(attr), {timestamps: preference}));
                 });

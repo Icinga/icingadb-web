@@ -30,16 +30,4 @@ if (! $this::exists('monitoring') && $this->app->getModuleManager()->hasInstalle
     // This requires the monitoring module to be either enabled or installed.
     // If it is only installed, its autoloader must be registered manually to resolve monitoring module hook classes.
     $this->app->getModuleManager()->getModule('monitoring', assertLoaded: false)->registerAutoloader();
-
-    $this->addRoute(
-        'icingadb-history-timestamp-preference',
-        new Zend_Controller_Router_Route(
-            'icingadb/history/timestamp-preference',
-            [
-                'module'     => 'icingadb',
-                'controller' => 'history',
-                'action'     => 'timeStamp'
-            ]
-        )
-    );
 }
