@@ -289,8 +289,10 @@ class ServiceController extends Controller
         ));
 
         $before = $this->params->shift('before', time());
-        $url = Url::fromRequest()->setParams(clone $this->params);
-        $url->setParams(['name' => $this->service->name, 'host.name' => $this->service->host->name]);
+        $url = Url::fromRequest()->setParams(
+            (clone $this->params)
+                ->addValues(['name' => $this->service->name, 'host.name' => $this->service->host->name])
+        );
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($history);
