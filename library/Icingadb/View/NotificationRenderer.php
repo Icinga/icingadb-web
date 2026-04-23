@@ -15,6 +15,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
+use IntlDateFormatter;
 use InvalidArgumentException;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlDocument;
@@ -26,7 +27,9 @@ use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
+use ipl\Web\Widget\Time;
 use ipl\Web\Widget\TimeAgo;
+use Locale;
 
 /** @implements ItemRenderer<NotificationHistory> */
 class NotificationRenderer implements ItemRenderer
@@ -34,6 +37,19 @@ class NotificationRenderer implements ItemRenderer
     use Translation;
     use HostLink;
     use ServiceLink;
+
+    /** @var bool Whether to use relative timestamps */
+    protected bool $useRelativeTimestamps;
+
+    /**
+     * Create a NotificationRenderer
+     *
+     * @param bool $useRelativeTimestamps Whether to use relative timestamps
+     */
+    public function __construct(bool $useRelativeTimestamps = false)
+    {
+        $this->useRelativeTimestamps = $useRelativeTimestamps;
+    }
 
     public function assembleAttributes($item, Attributes $attributes, string $layout): void
     {
@@ -154,7 +170,29 @@ class NotificationRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        $info->addHtml(new TimeAgo($item->send_time->getTimestamp()));
+        $timeRelative = new TimeAgo($item->send_time);
+        if ($layout !== 'header') {
+            $timeAbsolute = (new Time($item->send_time))
+                ->setFormatter(
+                    new IntlDateFormatter(
+                        Locale::getDefault(),
+                        IntlDateFormatter::NONE,
+                        IntlDateFormatter::MEDIUM
+                    )
+                );
+
+            $timeAbsolute->setAttribute('class', 'icingadb-history-timestamp');
+            $timeRelative->setAttribute('class', 'icingadb-history-timestamp');
+            if ($this->useRelativeTimestamps) {
+                $timeAbsolute->setAttribute('hidden', true);
+            } else {
+                $timeRelative->setAttribute('hidden', true);
+            }
+
+            $info->addHtml($timeAbsolute);
+        }
+
+        $info->addHtml($timeRelative);
     }
 
     public function assembleFooter($item, HtmlDocument $footer, string $layout): void
