@@ -9,9 +9,10 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Widget\ItemList\LoadMoreObjectList;
+use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
@@ -27,7 +28,8 @@ class NotificationsController extends Controller
         $preserveParams = [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM
         ];
 
         $db = $this->getDb();
@@ -42,7 +44,9 @@ class NotificationsController extends Controller
 
         $this->handleSearchRequest($notifications);
         $before = $this->params->shift('before', time());
+        $previousTimestamp = $this->params->shift('last-entry');
 
+        $timestampControl = $this->createTimestampControl();
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($notifications);
         $sortControl = $this->createSortControl(
@@ -71,6 +75,7 @@ class NotificationsController extends Controller
         $page = $paginationControl->getCurrentPageNumber();
 
         if ($page > 1 && ! $compact) {
+            $previousTimestamp = null;
             $notifications->resetOffset();
             $notifications->limit($page * $limitControl->getLimit());
         }
@@ -87,6 +92,7 @@ class NotificationsController extends Controller
 
         yield $this->export($notifications);
 
+        $this->addControl($timestampControl);
         $this->addControl($sortControl);
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
@@ -96,7 +102,11 @@ class NotificationsController extends Controller
             ->onlyWith($preserveParams)
             ->setFilter($filter);
 
-        $notificationList = (new LoadMoreObjectList($notifications->execute()))
+        $notificationList = (new HistoryObjectList(
+            $notifications->execute(),
+            $previousTimestamp,
+            $timestampControl->isEnabled()
+        ))
             ->setPageSize($limitControl->getLimit())
             ->setViewMode($viewModeSwitcher->getViewMode())
             ->setLoadMoreUrl($url->setParam('before', $before));
@@ -129,7 +139,8 @@ class NotificationsController extends Controller
         $editor = $this->createSearchEditor(NotificationHistory::on($this->getDb()), [
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
-            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM
         ]);
 
         $this->getDocument()->add($editor);

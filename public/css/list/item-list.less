@@ -42,6 +42,21 @@
   > .page-separator + .list-item .main {
     border-top: none;
   }
+
+  .icingadb-history-timestamp {
+    &:hover {
+      .rounded-corners(1em);
+      background: @gray-light;
+    }
+
+    .user-select(none);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .day-separator {
+    background-color: @gray-lighter;
+  }
 }
 
 // Layout
@@ -79,5 +94,11 @@
         margin-left: .417em;
       }
     }
+  }
+
+  .day-separator {
+    display: flex;
+    justify-content: end;
+    padding-right: 1.5em;
   }
 }
