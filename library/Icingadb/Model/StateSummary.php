@@ -13,7 +13,6 @@ use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 
-
 class StateSummary extends UnionModel
 {
     public static function on(Connection $db)
@@ -85,7 +84,6 @@ class StateSummary extends UnionModel
         $modifiedColumns = [];
 
         foreach ($config as $model => $expression) {
-
             $modifiedColumns['dummy_id'] = new Expression('null');
 
             if ($model === "ServicestateSummary") {
@@ -114,7 +112,6 @@ class StateSummary extends UnionModel
                     $modifiedColumns[$name] = $name;
                 }
             }
-
         }
 
         return $modifiedColumns;
@@ -144,6 +141,4 @@ class StateSummary extends UnionModel
 
         return $unions;
     }
-
-
 }
