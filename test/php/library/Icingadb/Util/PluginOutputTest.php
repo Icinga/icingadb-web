@@ -38,9 +38,9 @@ class PluginOutputTest extends TestCase
 INPUT;
 
         $expectedOutput = <<<'EXPECTED_OUTPUT'
-<span class="state-ball ball-size-m state-ok">[OK]</span> Dummy state
-    \_ <span class="state-ball ball-size-m state-ok">[OK]</span> Fake &quot;state&quot;
-    \_ <span class="state-ball ball-size-m state-warning">[WARNING]</span> Fake state again
+<span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Dummy state
+    \_ <span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Fake &quot;state&quot;
+    \_ <span class="state-ball ball-size-m state-warning"><i class="sr-only">[WARNING]</i></span> Fake state again
 EXPECTED_OUTPUT;
 
         $this->checkOutput($expectedOutput, $input);
@@ -55,7 +55,7 @@ EXPECTED_OUTPUT;
 INPUT;
 
         $expectedOutput = <<<'EXPECTED_OUTPUT'
-<span class="state-ball ball-size-m state-ok">[OK]</span> Dummy
+<span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Dummy
 EXPECTED_OUTPUT;
 
         $this->checkOutput($expectedOutput, $input, 10);
@@ -86,9 +86,9 @@ INPUT;
 
         $expectedOutput = <<<'EXPECTED_OUTPUT'
 Hello <h3>World</h3>, this "is" a <strong>test</strong>.
-<span class="state-ball ball-size-m state-ok">[OK]</span> Dummy state
-    \_ <span class="state-ball ball-size-m state-ok">[OK]</span> Fake "state"
-    \_ <span class="state-ball ball-size-m state-warning">[WARNING]</span> Fake state again
+<span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Dummy state
+    \_ <span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Fake "state"
+    \_ <span class="state-ball ball-size-m state-warning"><i class="sr-only">[WARNING]</i></span> Fake state again
 text <span> ends </span> here
 EXPECTED_OUTPUT;
 
@@ -106,7 +106,7 @@ INPUT;
 
         $expectedOutput = <<<'EXPECTED_OUTPUT'
 Hello <h3>World</h3>, this "is" a <strong>test</strong>.
-<span class="state-ball ball-size-m state-ok">[OK]</span> Dummy state
+<span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span> Dummy state
     special chars: !@#$%^&amp;*()_+{}|:"&lt;&gt;?`-=[]\;',&#8203;./
 text <span> ends </span> here
 EXPECTED_OUTPUT;
@@ -150,7 +150,7 @@ EXPECTED_OUTPUT;
 
             $input = sprintf('[%s] Test', $s);
             $expectedOutput = sprintf(
-                '<span class="state-ball ball-size-m state-%s">[%s]</span> Test',
+                '<span class="state-ball ball-size-m state-%s"><i class="sr-only">[%s]</i></span> Test',
                 $l,
                 $s
             );
@@ -172,7 +172,7 @@ EXPECTED_OUTPUT;
 
             $input = sprintf('%s [%s] Test', $dummyHtml, $s);
             $expectedOutput = sprintf(
-                '%s <span class="state-ball ball-size-m state-%s">[%s]</span> Test',
+                '%s <span class="state-ball ball-size-m state-%s"><i class="sr-only">[%s]</i></span> Test',
                 $dummyHtml,
                 $l,
                 $s

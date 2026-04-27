@@ -34,13 +34,13 @@ class PluginOutput extends HtmlString
     protected const TEXT_REPLACEMENTS = [
         "\t",
         "\n",
-        '<span class="state-ball ball-size-m state-ok">[OK]</span>',
-        '<span class="state-ball ball-size-m state-warning">[WARNING]</span>',
-        '<span class="state-ball ball-size-m state-critical">[CRITICAL]</span>',
-        '<span class="state-ball ball-size-m state-unknown">[UNKNOWN]</span>',
-        '<span class="state-ball ball-size-m state-up">[UP]</span>',
-        '<span class="state-ball ball-size-m state-down">[DOWN]</span>',
-        '<span class="state-ball ball-size-m state-info">[INFO]</span>',
+        '<span class="state-ball ball-size-m state-ok"><i class="sr-only">[OK]</i></span>',
+        '<span class="state-ball ball-size-m state-warning"><i class="sr-only">[WARNING]</i></span>',
+        '<span class="state-ball ball-size-m state-critical"><i class="sr-only">[CRITICAL]</i></span>',
+        '<span class="state-ball ball-size-m state-unknown"><i class="sr-only">[UNKNOWN]</i></span>',
+        '<span class="state-ball ball-size-m state-up"><i class="sr-only">[UP]</i></span>',
+        '<span class="state-ball ball-size-m state-down"><i class="sr-only">[DOWN]</i></span>',
+        '<span class="state-ball ball-size-m state-info"><i class="sr-only">[INFO]</i></span>',
         '@@@@@@'
     ];
 
