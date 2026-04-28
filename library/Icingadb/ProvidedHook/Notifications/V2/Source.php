@@ -80,4 +80,23 @@ class Source implements SourceHook
 
         return $editor;
     }
+
+    public function getSuggestionUrl(): Url
+    {
+        return Url::fromPath(
+            'icingadb/suggest/restriction-column',
+            ['_disableLayout' => true, 'showCompact' => true]
+        );
+    }
+
+    public function isValidColumn(string $column): bool
+    {
+        return array_key_exists($column, $this->allowedColumns)
+            || preg_match('/^(?:host|service)\.vars\./i', $column);
+    }
+
+    public function getColumnLabel(string $column): ?string
+    {
+        return $this->allowedColumns[$column] ?? null;
+    }
 }
