@@ -6,8 +6,6 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Module\Icingadb\Model\Host;
-use Icinga\Module\Icingadb\Model\Service;
-use Icinga\Module\Icingadb\ProvidedHook\Notifications\V1\Source;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use ipl\Web\Compat\CompatController;
 
@@ -16,13 +14,7 @@ class SuggestController extends CompatController
     public function restrictionColumnAction(): void
     {
         $suggestions = (new ObjectSuggestions())
-            ->setModel(
-                match ($this->params->getRequired('type')) {
-                    'host', Source::TYPE_ALL => Host::class,
-                    'service' => Service::class,
-                    default => $this->httpBadRequest('Invalid type')
-                }
-            )
+            ->setModel(Host::class)
             ->onlyWithCustomVarSources(['host', 'service'])
             ->withFixedColumns([
                 'host.name' => $this->translate('Host Name'),
