@@ -16,6 +16,7 @@ $this->provideHook('Reporting/Report', 'Reporting/TotalServiceSlaReport');
 
 if ($this::exists('notifications')) {
     $this->provideHook('Notifications/v1/Source');
+    $this->provideHook('Notifications/v2/Icinga2Source');
 }
 
 if ($this::exists('reporting')) {
