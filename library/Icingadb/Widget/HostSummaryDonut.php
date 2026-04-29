@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Chart\Donut;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Model\TacticalStateSummary;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -17,7 +18,6 @@ use ipl\Html\Text;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\Card;
-use ipl\Web\Filter\QueryString;
 
 class HostSummaryDonut extends Card
 {
@@ -25,10 +25,10 @@ class HostSummaryDonut extends Card
 
     protected $defaultAttributes = ['class' => 'donut-container', 'data-base-target' => '_next'];
 
-    /** @var HoststateSummary */
+    /** @var HoststateSummary|TacticalStateSummary */
     protected $summary;
 
-    public function __construct(HoststateSummary $summary)
+    public function __construct(HoststateSummary|TacticalStateSummary $summary)
     {
         $this->summary = $summary;
     }

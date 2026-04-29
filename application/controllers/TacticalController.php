@@ -6,15 +6,13 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Model\TacticalStateSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
-use ipl\Orm\Query;
-use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
 
@@ -26,17 +24,16 @@ class TacticalController extends Controller
 
         $db = $this->getDb();
 
-        $hoststateSummary = HoststateSummary::on($db);
-        $servicestateSummary = ServicestateSummary::on($db);
+        $tacticalSummary = TacticalStateSummary::on($db);
 
-        $this->handleSearchRequest($servicestateSummary, [
+        $this->handleSearchRequest($tacticalSummary, [
             'host.name_ci',
             'host.display_name',
             'host.address',
             'host.address6'
         ]);
 
-        $searchBar = $this->createSearchBar($servicestateSummary);
+        $searchBar = $this->createSearchBar($tacticalSummary);
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
                 $filter = $this->getFilter();
@@ -49,22 +46,26 @@ class TacticalController extends Controller
             $filter = $searchBar->getFilter();
         }
 
-        $this->filter($hoststateSummary, $filter);
-        $this->filter($servicestateSummary, $filter);
+        $this->filter($tacticalSummary, $filter);
 
-        yield $this->export($hoststateSummary, $servicestateSummary);
+        yield $this->export($tacticalSummary);
 
         $this->addControl($searchBar);
 
-        $this->addContent(
-            (new HostSummaryDonut($hoststateSummary->first()))
-                ->setBaseFilter($filter)
-        );
-
-        $this->addContent(
-            (new ServiceSummaryDonut($servicestateSummary->first()))
-                ->setBaseFilter($filter)
-        );
+        foreach ($tacticalSummary as $row) {
+            // The query is a union and always yields host state results first
+            if ($row->type === "host_state") {
+                $this->addContent(
+                    (new HostSummaryDonut($row))
+                        ->setBaseFilter($filter)
+                );
+            } elseif ($row->type === "service_state") {
+                $this->addContent(
+                    (new ServiceSummaryDonut($row))
+                        ->setBaseFilter($filter)
+                );
+            }
+        }
 
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
