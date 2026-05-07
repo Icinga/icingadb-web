@@ -188,7 +188,7 @@ class IcingaRedis
         $rs = $redis->xread(1, null, [$stream], '0');
 
         if (is_array($rs)) {
-            $timestampKeyPos = array_search('timestamp', $rs[$stream][0][1], true);
+            $timestampKeyPos = array_search('timestamp', $rs[$stream][0][1] ?? [], true);
 
             if ($timestampKeyPos !== false && isset($rs[$stream][0][1][$timestampKeyPos + 1])) {
                 return $rs[$stream][0][1][$timestampKeyPos + 1] / 1000;
