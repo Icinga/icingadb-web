@@ -169,19 +169,23 @@ class Source implements SourceHook
 
         $queries = [];
         if ($type === 'host' || $type === self::TYPE_ALL) {
+            $idFilter = Filter::equal('host.id', ':host_id');
+            $idFilter->metaData()->set('behaviorsApplied', true);
+            $envFilter = Filter::equal('host.environment_id', ':environment_id');
+            $envFilter->metaData()->set('behaviorsApplied', true);
+
             $queries['host'] = Host::on(Backend::getDb())
-                ->filter(Filter::all(
-                    Filter::equal('host.id', ':host_id'),
-                    Filter::equal('host.environment_id', ':environment_id')
-                ));
+                ->filter(Filter::all($idFilter, $envFilter));
         }
 
         if ($type === 'service' || $type === self::TYPE_ALL) {
+            $idFilter = Filter::equal('service.id', ':service_id');
+            $idFilter->metaData()->set('behaviorsApplied', true);
+            $envFilter = Filter::equal('service.environment_id', ':environment_id');
+            $envFilter->metaData()->set('behaviorsApplied', true);
+
             $queries['service'] = Service::on(Backend::getDb())
-                ->filter(Filter::all(
-                    Filter::equal('service.id', ':service_id'),
-                    Filter::equal('service.environment_id', ':environment_id')
-                ));
+                ->filter(Filter::all($idFilter, $envFilter));
         }
 
         return json_encode([
