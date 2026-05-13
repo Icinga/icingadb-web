@@ -13,7 +13,6 @@ use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
-use ipl\Stdlib\Seq;
 use ipl\Web\Control\SearchBar\Suggestions;
 
 class ObjectSuggestions extends Suggestions
@@ -111,19 +110,6 @@ class ObjectSuggestions extends Suggestions
         $model = $this->getModel();
         $query = $model::on($this->getDb());
         $query->limit(static::DEFAULT_LIMIT);
-
-        if (str_contains($column, ' ')) {
-            // $column may be a label
-            [$path, $_] = Seq::find(
-                $this->fixedColumns
-                ?? QueryColumnsProvider::collectFilterColumns($query->getModel(), $query->getResolver()),
-                $column,
-                false
-            );
-            if ($path !== null) {
-                $column = $path;
-            }
-        }
 
         $provider = new QueryValuesProvider($query, $column, $searchTerm, $searchFilter);
 
