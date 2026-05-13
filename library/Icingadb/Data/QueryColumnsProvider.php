@@ -269,7 +269,7 @@ class QueryColumnsProvider implements IteratorAggregate
      *
      * @return Generator
      */
-    public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
+    protected static function collectFilterColumns(Model $model, Resolver $resolver): Generator
     {
         if ($model instanceof UnionModel) {
             $models = [];
