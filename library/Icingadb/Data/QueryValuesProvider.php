@@ -5,8 +5,8 @@
 
 namespace Icinga\Module\Icingadb\Data;
 
+use Generator;
 use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Util\ObjectSuggestionsCursor;
 use ipl\I18n\Translation;
 use ipl\Orm\Exception\InvalidColumnException;
 use ipl\Orm\Exception\InvalidRelationException;
@@ -15,8 +15,6 @@ use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\SearchBar\SearchException;
 use IteratorAggregate;
-use PDO;
-use Traversable;
 
 /**
  * Provide value suggestions for a given column and query
@@ -55,7 +53,7 @@ class QueryValuesProvider implements IteratorAggregate
         $this->searchFilter = $searchFilter;
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): Generator
     {
         $columnPath = $this->query->getResolver()->qualifyPath($this->column, $this->query->getModel()->getTableName());
         [$targetPath, $columnName] = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath, 2);
@@ -66,21 +64,13 @@ class QueryValuesProvider implements IteratorAggregate
             $targetPath = substr($targetPath, 0, -4) . 'customvar_flat';
         }
 
-        if (str_contains($targetPath, '.')) {
-            try {
-                $this->query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
-            } catch (InvalidRelationException $e) {
-                throw new SearchException(sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation()));
-            }
-        }
-
         if ($isCustomVar) {
             $columnPath = $targetPath . '.flatvalue';
             $this->query->filter(Filter::like($targetPath . '.flatname', $columnName));
         }
 
         $inputFilter = Filter::like($columnPath, $this->searchTerm);
-        $this->query->columns($columnPath);
+        $this->query->columns(['value' => $columnPath]);
         $this->query->orderBy($columnPath);
 
         if ($this->searchFilter instanceof Filter\None) {
@@ -105,11 +95,16 @@ class QueryValuesProvider implements IteratorAggregate
             $this->query->filter($this->getBaseFilter());
         }
 
+        $this->query->getSelectBase()->distinct();
+
         try {
-            return (new ObjectSuggestionsCursor($this->query->getDb(), $this->query->assembleSelect()->distinct()))
-                ->setFetchMode(PDO::FETCH_COLUMN);
+            foreach ($this->query as $object) {
+                yield ['search' => $object->value, 'label' => $object->value];
+            }
         } catch (InvalidColumnException $e) {
             throw new SearchException(sprintf($this->translate('"%s" is not a valid column'), $e->getColumn()));
+        } catch (InvalidRelationException $e) {
+             throw new SearchException(sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation()));
         }
     }
 }
