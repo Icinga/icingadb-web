@@ -122,7 +122,8 @@ class Icinga2Source implements SourceHook
                 'host' => $this->translate('Host %s', '..<customvar-name>'),
                 'service' => $this->translate('Service %s', '..<customvar-name>')
             ])
-            ->setFixedColumns($this->allowedColumns);
+            ->setFixedColumns($this->allowedColumns)
+            ->setShowRelationLabels();
     }
 
     public function getJsonPaths(string ...$columns): array
