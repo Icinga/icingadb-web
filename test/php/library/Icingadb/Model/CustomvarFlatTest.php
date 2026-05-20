@@ -53,7 +53,19 @@ class CustomvarFlatTest extends TestCase
         ["real_list[0]","one","real_list","[\"one\",\"two\",\"three\"]"],
         ["[1].2.[3].4.[5].6","123456","[1].2","{\"[3].4\":{\"[5].6\":123456}}"],
         ["ex.ample.com","cba","ex.ample.com","\"cba\""],
-        ["[4]","four","[4]","\"four\""]
+        ["[4]","four","[4]","\"four\""],
+        [
+            "disks.disk /.disk_partitions",
+            "result",
+            "disks",
+            "{\"disk /\":{\"disk_partitions\":\"result\"}}",
+        ],
+        [
+            "test.con[0]cat.foo[1]bar.foo[2]bar",
+            "result",
+            "test",
+            "{\"con[0]cat\":{\"foo[1]bar\":{\"foo[2]bar\":\"result\"}}}",
+        ]
     ];
 
     public const SPECIAL_CHAR_TEST_RESULT = [
@@ -85,7 +97,15 @@ class CustomvarFlatTest extends TestCase
             ]
         ],
         "ex.ample.com" => "cba",
-        "[4]" => "four"
+        "[4]" => "four",
+        "disks" => [
+            "disk /" => ["disk_partitions" => "result"]
+        ],
+        "test" => [
+            "con[0]cat" => [
+                "foo[1]bar" => ["foo[2]bar" => "result"]
+            ]
+        ]
     ];
 
     public function testUnflatteningOfEmptyCustomVariables()
