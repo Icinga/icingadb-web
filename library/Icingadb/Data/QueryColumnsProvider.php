@@ -449,10 +449,17 @@ class QueryColumnsProvider implements IteratorAggregate
 
         $customVars->columns($scalarQueries);
         $customVars->groupBy($idColumn);
-        $customVars->limit(Suggestions::DEFAULT_LIMIT);
 
-        // This outer query exists only because there's no way to combine aggregates and sub queries (yet)
-        return (new Select())->columns($aggregates)->from(['results' => $customVars])->groupBy('flatname');
+        $outerQuery = (new Select())
+            ->columns($aggregates)
+            ->from(['results' => $customVars])
+            ->groupBy('flatname')
+            ->limit(Suggestions::DEFAULT_LIMIT);
+        foreach ($scalarQueries as $name => $_) {
+            $outerQuery->orHaving("MAX($name) = 1");
+        }
+
+        return $outerQuery;
     }
 
     /**
