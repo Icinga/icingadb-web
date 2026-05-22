@@ -184,7 +184,7 @@ class CustomvarFlat extends Model
                 $sourcePath = ltrim(substr($var->flatname, strlen($realName)), '.');
                 $path = array_merge(
                     [$realName],
-                    $sourcePath
+                    $sourcePath !== ''
                         ? preg_split('/(?<=.)\.|(?<!^|\.)(?=\[\d+](?:[.\[]|$))/', $sourcePath)
                         : []
                 );

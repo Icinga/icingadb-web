@@ -54,6 +54,7 @@ class CustomvarFlatTest extends TestCase
         ["[1].2.[3].4.[5].6","123456","[1].2","{\"[3].4\":{\"[5].6\":123456}}"],
         ["ex.ample.com","cba","ex.ample.com","\"cba\""],
         ["[4]","four","[4]","\"four\""],
+        ["port.0", "123", "port", "{\"port\":[123]}"],
         [
             "disks.disk /.disk_partitions",
             "result",
@@ -98,6 +99,7 @@ class CustomvarFlatTest extends TestCase
         ],
         "ex.ample.com" => "cba",
         "[4]" => "four",
+        "port" => [123],
         "disks" => [
             "disk /" => ["disk_partitions" => "result"]
         ],
