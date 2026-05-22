@@ -8,18 +8,12 @@ namespace Icinga\Module\Icingadb\Web\Control\SearchBar;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
-use Icinga\Module\Icingadb\Util\ObjectSuggestionsCursor;
+use Icinga\Module\Icingadb\Data\QueryValuesProvider;
 use ipl\Html\HtmlElement;
-use ipl\Orm\Exception\InvalidColumnException;
-use ipl\Orm\Exception\InvalidRelationException;
 use ipl\Orm\Model;
-use ipl\Orm\Query;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
-use ipl\Stdlib\Seq;
-use ipl\Web\Control\SearchBar\SearchException;
 use ipl\Web\Control\SearchBar\Suggestions;
-use PDO;
 
 class ObjectSuggestions extends Suggestions
 {
@@ -92,15 +86,6 @@ class ObjectSuggestions extends Suggestions
         return QueryColumnsProvider::shouldShowRelationFor($column, $this->getModel());
     }
 
-    private function applyBaseFilter(Query $query): void
-    {
-        $this->applyRestrictions($query);
-
-        if ($this->hasBaseFilter()) {
-            $query->filter($this->getBaseFilter());
-        }
-    }
-
     protected function createQuickSearchFilter($searchTerm)
     {
         $model = $this->getModel();
@@ -126,70 +111,13 @@ class ObjectSuggestions extends Suggestions
         $query = $model::on($this->getDb());
         $query->limit(static::DEFAULT_LIMIT);
 
-        if (strpos($column, ' ') !== false) {
-            // $column may be a label
-            list($path, $_) = Seq::find(
-                $this->fixedColumns
-                    ?? QueryColumnsProvider::collectFilterColumns($query->getModel(), $query->getResolver()),
-                $column,
-                false
-            );
-            if ($path !== null) {
-                $column = $path;
-            }
+        $provider = new QueryValuesProvider($query, $column, $searchTerm, $searchFilter);
+
+        if ($this->hasBaseFilter()) {
+            $provider->setBaseFilter($this->getBaseFilter());
         }
 
-        $columnPath = $query->getResolver()->qualifyPath($column, $model->getTableName());
-        list($targetPath, $columnName) = preg_split('/(?<=vars)\.|\.(?=[^.]+$)/', $columnPath, 2);
-
-        $isCustomVar = false;
-        if (substr($targetPath, -5) === '.vars') {
-            $isCustomVar = true;
-            $targetPath = substr($targetPath, 0, -4) . 'customvar_flat';
-        }
-
-        if (strpos($targetPath, '.') !== false) {
-            try {
-                $query->with($targetPath); // TODO: Remove this, once ipl/orm does it as early
-            } catch (InvalidRelationException $e) {
-                throw new SearchException(sprintf(t('"%s" is not a valid relation'), $e->getRelation()));
-            }
-        }
-
-        if ($isCustomVar) {
-            $columnPath = $targetPath . '.flatvalue';
-            $query->filter(Filter::like($targetPath . '.flatname', $columnName));
-        }
-
-        $inputFilter = Filter::like($columnPath, $searchTerm);
-        $query->columns($columnPath);
-        $query->orderBy($columnPath);
-
-        // This had so many iterations, if it still doesn't work, consider removing it entirely :(
-        if ($searchFilter instanceof Filter\None) {
-            $query->filter($inputFilter);
-        } elseif ($searchFilter instanceof Filter\All) {
-            $searchFilter->add($inputFilter);
-
-            // There may be columns part of $searchFilter which target the base table. These must be
-            // optimized, otherwise they influence what we'll suggest to the user. (i.e. less)
-            // The $inputFilter on the other hand must not be optimized, which it wouldn't, but since
-            // we force optimization on its parent chain, we have to negate that.
-            $searchFilter->metaData()->set('forceOptimization', true);
-            $inputFilter->metaData()->set('forceOptimization', false);
-        } else {
-            $searchFilter = $inputFilter;
-        }
-
-        $query->filter($searchFilter);
-        $this->applyBaseFilter($query);
-
-        try {
-            return (new ObjectSuggestionsCursor($query->getDb(), $query->assembleSelect()->distinct()))
-                ->setFetchMode(PDO::FETCH_COLUMN);
-        } catch (InvalidColumnException $e) {
-            throw new SearchException(sprintf(t('"%s" is not a valid column'), $e->getColumn()));
-        }
+        return $provider;
     }
 
     protected function fetchColumnSuggestions($searchTerm)

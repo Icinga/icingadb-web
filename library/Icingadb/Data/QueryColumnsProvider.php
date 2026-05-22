@@ -129,6 +129,20 @@ class QueryColumnsProvider implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * Set whether to show relation labels
+     *
+     * @param bool $showRelationLabels
+     *
+     * @return $this
+     */
+    public function setShowRelationLabels(bool $showRelationLabels = true): static
+    {
+        $this->showRelationLabels = $showRelationLabels;
+
+        return $this;
+    }
+
     public function getIterator(): Generator
     {
         $exactVarSearches = [];
@@ -269,7 +283,7 @@ class QueryColumnsProvider implements IteratorAggregate
      *
      * @return Generator
      */
-    public static function collectFilterColumns(Model $model, Resolver $resolver): Generator
+    protected static function collectFilterColumns(Model $model, Resolver $resolver): Generator
     {
         if ($model instanceof UnionModel) {
             $models = [];

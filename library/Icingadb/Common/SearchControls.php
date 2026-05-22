@@ -5,7 +5,6 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
-use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Web\Control\SearchBar;
@@ -16,11 +15,6 @@ trait SearchControls
 {
     use \ipl\Web\Compat\SearchControls {
         \ipl\Web\Compat\SearchControls::createSearchBar as private webCreateSearchBar;
-    }
-
-    public function fetchFilterColumns(Query $query): array
-    {
-        return iterator_to_array(QueryColumnsProvider::collectFilterColumns($query->getModel(), $query->getResolver()));
     }
 
     /**
