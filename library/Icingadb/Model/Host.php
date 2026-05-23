@@ -257,17 +257,20 @@ class Host extends Model
         $relations->hasOne('unreachable_parent', UnreachableParent::class)->setJoinType('LEFT');
 
         $relations->belongsTo('environment', Environment::class);
-        $relations->belongsTo('eventcommand', Eventcommand::class);
+        $relations->belongsTo('eventcommand', Eventcommand::class)
+            ->setJoinType('LEFT');
         $relations->belongsTo('checkcommand', Checkcommand::class);
         $relations->belongsTo('timeperiod', Timeperiod::class)
             ->setCandidateKey('check_timeperiod_id')
             ->setJoinType('LEFT');
         $relations->belongsTo('action_url', ActionUrl::class)
             ->setCandidateKey('action_url_id')
-            ->setForeignKey('id');
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('notes_url', NotesUrl::class)
             ->setCandidateKey('notes_url_id')
-            ->setForeignKey('id');
+            ->setForeignKey('id')
+            ->setJoinType('LEFT');
         $relations->belongsTo('icon_image', IconImage::class)
             ->setCandidateKey('icon_image_id')
             ->setJoinType('LEFT');
