@@ -424,6 +424,8 @@ class QueryColumnsProvider implements IteratorAggregate
                     );
                 }
 
+                $name = $this->getDb()->getAdapter()->quoteIdentifier($name);
+
                 $aggregates[$name] = new Expression("MAX($name)");
                 $scalarQueries[$name] = $select
                     ->resetColumns()->columns(new Expression('1'))
