@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook\Notifications\V2;
 
+use ArrayIterator;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
@@ -37,10 +38,15 @@ class Icinga2Source implements SourceHook
     public function __construct()
     {
         $this->allowedColumns = [
+            'object.type' => $this->translate('Object Type'),
             'host.name' => $this->translate('Host Name'),
+            'host.display_name' => $this->translate('Host Display Name'),
             'hostgroup.name' => $this->translate('Hostgroup Name'),
+            'hostgroup.display_name' => $this->translate('Hostgroup Display Name'),
             'service.name' => $this->translate('Service Name'),
-            'servicegroup.name' => $this->translate('Servicegroup Name')
+            'service.display_name' => $this->translate('Service Display Name'),
+            'servicegroup.name' => $this->translate('Servicegroup Name'),
+            'servicegroup.display_name' => $this->translate('Servicegroup Display Name')
         ];
     }
 
@@ -107,6 +113,13 @@ class Icinga2Source implements SourceHook
 
     public function getValueSuggestions(string $column, string $searchTerm, Chain $searchFilter): Traversable
     {
+        if ($column === 'object.type') {
+            return new ArrayIterator([
+                ['search' => 'host'],
+                ['search' => 'service']
+            ]);
+        }
+
         return new QueryValuesProvider(
             Host::on($this->getDb())->limit(50),
             $column,
