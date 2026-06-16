@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Module\Icingadb\Hook\SearchColumnsProviderHook;
 use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Web\Control\SearchBar;
@@ -35,7 +36,19 @@ trait SearchControls
             $searchBar->addWrapper(Html::tag('div', ['class' => 'search-controls']));
         }
 
+        $model = $query->getModel();
+        $defaultColumns = $model->getSearchColumns();
+        $columns = SearchColumnsProviderHook::getCustomVarColumns($model, $defaultColumns);
+        $searchBar->setSearchColumns($columns);
+
+        $searchBar->handleRequest($this->getServerRequest());
+
         return $searchBar;
+    }
+
+    private function callHandleRequest()
+    {
+        return false;
     }
 
     /**
