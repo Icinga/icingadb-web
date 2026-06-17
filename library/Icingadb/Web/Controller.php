@@ -13,7 +13,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Web;
 use Icinga\Data\ConfigObject;
-use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
@@ -23,6 +22,7 @@ use Icinga\Module\Icingadb\Data\CsvResultSet;
 use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
+use Icinga\Module\Icingadb\Hook\SearchColumnsProviderHook;
 use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
@@ -349,7 +349,9 @@ class Controller extends CompatController
      */
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
-        $columns = array_merge($query->getModel()->getSearchColumns(), $additionalColumns);
+        $model = $query->getModel();
+        $defaultColumns = $model->getSearchColumns();
+        $columns = SearchColumnsProviderHook::getCustomVarColumns($model, $defaultColumns);
         foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
                 $column = $query->getResolver()->qualifyColumn($column, $query->getModel()->getTableName());

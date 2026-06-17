@@ -9,6 +9,7 @@ use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Data\QueryValuesProvider;
+use Icinga\Module\Icingadb\Hook\SearchColumnsProviderHook;
 use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
 use ipl\Stdlib\BaseFilter;
@@ -92,7 +93,10 @@ class ObjectSuggestions extends Suggestions
         $resolver = $model::on($this->getDb())->getResolver();
 
         $quickFilter = Filter::any();
-        foreach ($model->getSearchColumns() as $column) {
+        $defaultColumns = $model->getSearchColumns();
+        $columns = SearchColumnsProviderHook::getCustomVarColumns($model, $defaultColumns);
+
+        foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
                 $column = $resolver->qualifyColumn($column, $model->getTableName());
             }
