@@ -8,6 +8,8 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Backend;
 use ipl\Orm\Behavior\BoolCast;
+use Icinga\Module\Icingadb\Model\SlaHistoryDowntime;
+use Icinga\Module\Icingadb\Model\SlaHistoryState;
 use Icinga\Module\Icingadb\Model\Behavior\HasProblematicParent;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
@@ -285,6 +287,8 @@ class Service extends Model
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
+        $relations->hasMany('sla_history_downtime', SlaHistoryDowntime::class)->setJoinType('LEFT');
+        $relations->hasMany('sla_history_state', SlaHistoryState::class);
 
         $relations->belongsToMany('from', DependencyEdge::class)
             ->setTargetCandidateKey('from_node_id')
