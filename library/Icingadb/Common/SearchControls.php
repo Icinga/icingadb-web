@@ -6,9 +6,9 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Hook\SearchColumnsProviderHook;
-use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Web\Control\SearchBar;
+use ipl\Web\Control\SearchEditor;
 use ipl\Web\Url;
 use ipl\Web\Widget\ContinueWith;
 
@@ -16,6 +16,7 @@ trait SearchControls
 {
     use \ipl\Web\Compat\SearchControls {
         \ipl\Web\Compat\SearchControls::createSearchBar as private webCreateSearchBar;
+        \ipl\Web\Compat\SearchControls::createSearchEditor as private webCreateSearchEditor;
     }
 
     /**
@@ -31,11 +32,6 @@ trait SearchControls
     {
         $searchBar = $this->webCreateSearchBar($query, ...$params);
 
-        if (($wrapper = $searchBar->getWrapper()) && ! $wrapper->getWrapper()) {
-            // TODO: Remove this once ipl-web v0.7.0 is required
-            $searchBar->addWrapper(Html::tag('div', ['class' => 'search-controls']));
-        }
-
         $model = $query->getModel();
         $defaultColumns = $model->getSearchColumns();
         $columns = SearchColumnsProviderHook::getCustomVarColumns($model, $defaultColumns);
@@ -49,6 +45,20 @@ trait SearchControls
     private function callHandleRequest()
     {
         return false;
+    }
+
+    /**
+     * Necessary because {@see self::callHandleRequest()} prevents the {@see webCreateSearchEditor()} from calling
+     * $editor->handleRequest()
+     *
+     * @inheritdoc
+     */
+    public function createSearchEditor(Query $query, ...$params): SearchEditor
+    {
+        $editor = $this->webCreateSearchEditor($query, ...$params);
+        $editor->handleRequest($this->getServerRequest());
+
+        return $editor;
     }
 
     /**
