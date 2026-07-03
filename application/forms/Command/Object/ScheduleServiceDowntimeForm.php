@@ -120,7 +120,6 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'localDateTime',
             'start',
             [
-                'data-use-datetime-picker'  => true,
                 'required'                  => true,
                 'value'                     => $this->start,
                 'label'                     => t('Start Time'),
@@ -133,7 +132,6 @@ class ScheduleServiceDowntimeForm extends CommandForm
             'localDateTime',
             'end',
             [
-                'data-use-datetime-picker'  => true,
                 'required'                  => true,
                 'label'                     => t('End Time'),
                 'description'               => t('Set the end date and time for the downtime.'),
