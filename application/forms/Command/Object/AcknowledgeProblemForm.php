@@ -152,7 +152,6 @@ class AcknowledgeProblemForm extends CommandForm
                 'localDateTime',
                 'expire_time',
                 [
-                    'data-use-datetime-picker'  => true,
                     'required'                  => true,
                     'value'                     => $expireTime,
                     'label'                     => t('Expire Time'),

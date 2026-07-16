@@ -75,7 +75,6 @@ class ScheduleCheckForm extends CommandForm
             'localDateTime',
             'check_time',
             [
-                'data-use-datetime-picker'  => true,
                 'required'                  => true,
                 'label'                     => t('Check Time'),
                 'description'               => t('Set the date and time when the check should be scheduled.'),
