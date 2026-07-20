@@ -13,12 +13,19 @@ use Icinga\Module\Icingadb\Data\QueryValuesProvider;
 use Icinga\Module\Icingadb\Model\Customvar;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\View\HostRenderer;
+use Icinga\Module\Icingadb\View\ServiceRenderer;
 use Icinga\Module\Notifications\Hook\V2\SourceHook;
+use ipl\Html\HtmlElement;
+use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Filter\Chain;
 use ipl\Stdlib\Filter\Condition;
 use ipl\Web\Control\SearchBar\SearchException;
+use ipl\Web\Layout\MinimalItemLayout;
 use ipl\Web\Widget\IcingaIcon;
 use ipl\Web\Widget\Icon;
 use Traversable;
@@ -235,5 +242,36 @@ class Icinga2Source implements SourceHook
         }
 
         return $column;
+    }
+
+    public function createObjectLink(array $idTags): ?ValidHtml
+    {
+        if (isset($idTags['service'])) {
+            $object = Service::on($this->getDb())
+                ->with(['host', 'state', 'host.state'])
+                ->setResultSetClass(VolatileStateResults::class)
+                ->filter(Filter::all(
+                    Filter::equal('service.name', $idTags['service']),
+                    Filter::equal('host.name', $idTags['host'])
+                ))
+                ->first();
+        } else {
+            $object = Host::on($this->getDb())
+                ->with('state')
+                ->setResultSetClass(VolatileStateResults::class)
+                ->filter(Filter::equal('host.name', $idTags['host']))
+                ->first();
+        }
+
+        if ($object === null) {
+            return null;
+        }
+
+        $item = new MinimalItemLayout(
+            $object,
+            $object instanceof Service ? new ServiceRenderer() : new HostRenderer()
+        );
+
+        return new HtmlElement('div', $item->getAttributes(), $item);
     }
 }
