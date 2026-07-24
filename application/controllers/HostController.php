@@ -599,7 +599,7 @@ class HostController extends Controller
      */
     protected function fetchDependencyNodes(bool $parents = false): Query
     {
-        $query = DependencyNode::forHost($this->host->id, $this->getDb(), $parents)
+        $query = DependencyNode::on($this->getDb())
             ->with([
                 'host',
                 'host.state',
@@ -612,6 +612,10 @@ class HostController extends Controller
                 'redundancy_group',
                 'redundancy_group.state'
             ])
+            ->filter(Filter::equal(
+                sprintf('%s.host.id', $parents ? 'child' : 'parent'),
+                $this->host->id
+            ))
             ->setResultSetClass(VolatileStateResults::class);
 
         $this->applyRestrictions($query);

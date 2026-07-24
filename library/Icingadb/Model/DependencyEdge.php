@@ -21,9 +21,9 @@ use ipl\Orm\Relations;
  * @property string $display_name
  * @property string $dependency_edge_state_id
  *
- * @property DependencyNode|Query $child
- * @property DependencyNode|Query $parent
- * @property DependencyEdgeState|Query $state
+ * @property Query<DependencyNode>|DependencyNode $child
+ * @property Query<DependencyNode>|DependencyNode $parent
+ * @property Query<DependencyEdgeState>|DependencyEdgeState $state
  */
 class DependencyEdge extends Model
 {
@@ -68,11 +68,5 @@ class DependencyEdge extends Model
         $relations->hasOne('state', DependencyEdgeState::class)
             ->setCandidateKey('dependency_edge_state_id')
             ->setForeignKey('id');
-
-        // "from" and "to" are only necessary for sub-query filters.
-        $relations->belongsTo('from', DependencyNode::class)
-            ->setCandidateKey('from_node_id');
-        $relations->belongsTo('to', DependencyNode::class)
-            ->setCandidateKey('to_node_id');
     }
 }
