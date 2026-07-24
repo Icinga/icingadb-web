@@ -73,8 +73,8 @@ class Hostgroup extends Model
     {
         $behaviors->add(new ReRoute([
             'servicegroup'  => 'service.servicegroup',
-            'parent'        => 'host.from.to',
-            'child'         => 'host.to.from'
+            'parent'        => 'host.dependency_node.parent',
+            'child'         => 'host.dependency_node.child'
         ]));
 
         $behaviors->add(new Binary([
