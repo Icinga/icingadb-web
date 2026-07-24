@@ -15,6 +15,7 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
+use ipl\Stdlib\Filter;
 
 /**
  * Host model.
@@ -290,7 +291,9 @@ class Host extends Model
         $relations->hasMany('sla_history_downtime', SlaHistoryDowntime::class)->setJoinType('LEFT');
         $relations->hasMany('history', History::class);
         $relations->hasMany('sla_history_state', SlaHistoryState::class);
-        $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
+        $relations->hasMany('notification', Notification::class)
+            ->setFilter(Filter::unlike('service_id', '*'))
+            ->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
 
