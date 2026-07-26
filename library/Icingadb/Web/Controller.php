@@ -34,12 +34,14 @@ use Icinga\Util\Environment;
 use Icinga\Util\Json;
 use ipl\Html\Html;
 use ipl\Html\ValidHtml;
+use ipl\Orm\Common\SortUtil;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Filter;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\PaginationControl;
+use ipl\Web\Control\SortControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
@@ -115,6 +117,77 @@ class Controller extends CompatController
         }
 
         return $chooser;
+    }
+
+    /**
+     * Create and return the SortControl
+     *
+     * Besides the given columns, this also offers the ones configured in `sortcontrols.ini`.
+     *
+     * @param Query                 $query
+     * @param array<string, string> $columns Sort spec to label map
+     *
+     * @return SortControl
+     */
+    public function createSortControl(Query $query, array $columns): SortControl
+    {
+        // Normalize here already, otherwise configured specs won't deduplicate against the built-in ones
+        $normalized = [];
+        foreach ($columns as $spec => $label) {
+            $normalized[SortUtil::normalizeSortSpec($spec)] = $label;
+        }
+
+        // Union, not array_merge: built-in options keep their label and their position
+        $columns = $normalized + $this->fetchConfiguredSortColumns();
+
+        // The parent detects its optional third parameter by argument count, so don't pass it unconditionally
+        return func_num_args() === 3
+            ? parent::createSortControl($query, $columns, func_get_arg(2))
+            : parent::createSortControl($query, $columns);
+    }
+
+    /**
+     * Fetch additional sort columns for the current view from `sortcontrols.ini`
+     *
+     * An entry applies if its `type` matches either the controller name (e.g. `hostgroups`)
+     * or controller and action (e.g. `host/services`).
+     *
+     * @return array<string, string> Sort spec to label map
+     */
+    protected function fetchConfiguredSortColumns(): array
+    {
+        try {
+            $config = Config::module('icingadb', 'sortcontrols');
+        } catch (Exception $e) {
+            Logger::error('Cannot load sortcontrols.ini: %s', $e->getMessage());
+
+            return [];
+        }
+
+        $request = $this->getRequest();
+        $viewKeys = [
+            $request->getControllerName(),
+            $request->getControllerName() . '/' . $request->getActionName()
+        ];
+
+        $columns = [];
+        foreach ($config as $name => $entry) {
+            $types = array_filter(array_map('trim', explode(',', (string) $entry->get('type'))));
+            if (! array_intersect($viewKeys, $types)) {
+                continue;
+            }
+
+            $sort = trim((string) $entry->get('sort'));
+            if ($sort === '') {
+                Logger::warning('Sort control "%s" in sortcontrols.ini has no sort spec, ignoring it', $name);
+
+                continue;
+            }
+
+            $columns[SortUtil::normalizeSortSpec($sort)] = (string) ($entry->get('title') ?: $sort);
+        }
+
+        return $columns;
     }
 
     /**
