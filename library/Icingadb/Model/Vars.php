@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Model;
 
 use Icinga\Module\Icingadb\Model\Behavior\FlattenedObjectVars;
 use ipl\Orm\Behaviors;
+use ipl\Orm\Relations;
 use ipl\Sql\Connection;
 
 class Vars extends CustomvarFlat
@@ -25,5 +26,11 @@ class Vars extends CustomvarFlat
         parent::createBehaviors($behaviors);
 
         $behaviors->add(new FlattenedObjectVars());
+    }
+
+    public function createRelations(Relations $relations)
+    {
+        // No relations, otherwise the ORM tries to map column names with them and thus breaks up
+        // flattened variable names in case their structure happens to match the relation structure.
     }
 }
