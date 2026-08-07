@@ -162,7 +162,12 @@ trait CommandActions
             $form = new $form();
         }
 
-        $form->setObjects($this->getCommandTargets());
+        $objects = $this->getCommandTargets();
+        if (! is_array($objects)) {
+            $objects = $objects->execute();
+        }
+
+        $form->setObjects($objects);
 
         if (! $isApi || $isXhr) {
             $this->handleWebRequest($form);
