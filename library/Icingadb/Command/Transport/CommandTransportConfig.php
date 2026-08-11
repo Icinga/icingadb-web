@@ -25,6 +25,7 @@ class CommandTransportConfig extends IniRepository
             // API options
             'host',
             'port',
+            'caPath',
             'username',
             'password'
         ]
