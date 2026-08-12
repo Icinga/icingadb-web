@@ -270,9 +270,7 @@ class ServiceController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $db = $this->getDb();
-
-        $history = History::on($db)->with([
+        $history = $this->service->history->with([
             'host',
             'host.state',
             'service',
@@ -284,10 +282,6 @@ class ServiceController extends Controller
             'acknowledgement',
             'state'
         ]);
-        $history->filter(Filter::all(
-            Filter::equal('history.host_id', $this->service->host_id),
-            Filter::equal('history.service_id', $this->service->id)
-        ));
 
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
