@@ -47,6 +47,9 @@ trait DetailActions
     public function initializeDetailActions(): self
     {
         $this->getAttributes()
+            ->registerAttributeCallback('data-interactable-action-list', function () {
+                return $this->getDetailActionsDisabled() ? null : true;
+            })
             ->registerAttributeCallback('class', function () {
                 return $this->getDetailActionsDisabled() ? null : 'action-list';
             })
