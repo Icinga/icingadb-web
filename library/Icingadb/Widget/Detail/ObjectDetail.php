@@ -225,8 +225,6 @@ class ObjectDetail extends BaseHtmlElement
             ->with($relations)
             ->limit(3)
             ->peekAhead();
-        // TODO: This should be automatically done by the model/resolver and added as ON condition
-        $comments->filter(Filter::equal('object_type', $this->objectType));
 
         $comments = $comments->execute();
         /** @var ResultSet $comments */
@@ -276,8 +274,6 @@ class ObjectDetail extends BaseHtmlElement
             ->with($relations)
             ->limit(3)
             ->peekAhead();
-        // TODO: This should be automatically done by the model/resolver and added as ON condition
-        $downtimes->filter(Filter::equal('object_type', $this->objectType));
 
         $downtimes = $downtimes->execute();
         /** @var ResultSet $downtimes */
