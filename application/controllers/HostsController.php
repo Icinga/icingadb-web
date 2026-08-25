@@ -176,8 +176,6 @@ class HostsController extends Controller
 
         $comments = Host::on($db)->with(['comment']);
         $comments->getWith()['host.comment']->setJoinType('INNER');
-        // TODO: This should be automatically done by the model/resolver and added as ON condition
-        $comments->filter(Filter::equal('comment.object_type', 'host'));
         $this->filter($comments);
         $summary->comments_total = $comments->count();
 

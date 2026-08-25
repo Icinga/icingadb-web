@@ -121,9 +121,7 @@ class HostController extends Controller
             $this->controls->addAttributes(['class' => 'overdue']);
         }
 
-        $db = $this->getDb();
-
-        $history = History::on($db)->with([
+        $history = $this->host->history->with([
             'host',
             'host.state',
             'comment',
@@ -133,11 +131,6 @@ class HostController extends Controller
             'acknowledgement',
             'state'
         ]);
-
-        $history->filter(Filter::all(
-            Filter::equal('history.host_id', $this->host->id),
-            Filter::unlike('history.service_id', '*')
-        ));
 
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
@@ -599,7 +592,7 @@ class HostController extends Controller
      */
     protected function fetchDependencyNodes(bool $parents = false): Query
     {
-        $query = DependencyNode::forHost($this->host->id, $this->getDb(), $parents)
+        $query = DependencyNode::on($this->getDb())
             ->with([
                 'host',
                 'host.state',
@@ -612,6 +605,10 @@ class HostController extends Controller
                 'redundancy_group',
                 'redundancy_group.state'
             ])
+            ->filter(Filter::equal(
+                sprintf('%s.host.id', $parents ? 'child' : 'parent'),
+                $this->host->id
+            ))
             ->setResultSetClass(VolatileStateResults::class);
 
         $this->applyRestrictions($query);

@@ -14,6 +14,7 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
 use Icinga\Module\Icingadb\Common\Model;
+use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
 
@@ -55,6 +56,10 @@ use ipl\Orm\ResultSet;
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
  * @property ?int $total_children
+ *
+ * @property Query<ServiceState>|ServiceState $state
+ * @property Query<DependencyNode>|DependencyNode $dependency_node
+ * @property Query<UnreachableParent>|UnreachableParent $unreachable_parent
  */
 class Service extends Model
 {
@@ -186,8 +191,8 @@ class Service extends Model
         ]));
 
         $behaviors->add(new ReRoute([
-            'child'         => 'to.from',
-            'parent'        => 'from.to',
+            'child'         => 'dependency_node.child',
+            'parent'        => 'dependency_node.parent',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
         ]));
@@ -285,14 +290,5 @@ class Service extends Model
         $relations->hasMany('history', History::class);
         $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class);
-
-        $relations->belongsToMany('from', DependencyEdge::class)
-            ->setTargetCandidateKey('from_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
-        $relations->belongsToMany('to', DependencyEdge::class)
-            ->setTargetCandidateKey('to_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
     }
 }

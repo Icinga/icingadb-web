@@ -193,8 +193,6 @@ class ServicesController extends Controller
 
         $comments = Service::on($db)->with(['comment']);
         $comments->getWith()['service.comment']->setJoinType('INNER');
-        // TODO: This should be automatically done by the model/resolver and added as ON condition
-        $comments->filter(Filter::equal('comment.object_type', 'service'));
         $this->filter($comments);
         $summary->comments_total = $comments->count();
 

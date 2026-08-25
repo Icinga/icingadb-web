@@ -13,8 +13,10 @@ use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Defaults;
+use ipl\Orm\Query;
 use ipl\Orm\Relations;
 use ipl\Orm\ResultSet;
+use ipl\Stdlib\Filter;
 
 /**
  * Host model.
@@ -59,6 +61,10 @@ use ipl\Orm\ResultSet;
  * @property string $command_endpoint_name
  * @property ?string $command_endpoint_id
  * @property ?int $total_children
+ *
+ * @property Query<HostState>|HostState $state
+ * @property Query<DependencyNode>|DependencyNode $dependency_node
+ * @property Query<UnreachableParent>|UnreachableParent $unreachable_parent
  */
 class Host extends Model
 {
@@ -196,8 +202,8 @@ class Host extends Model
         ]));
 
         $behaviors->add(new ReRoute([
-            'child'         => 'to.from',
-            'parent'        => 'from.to',
+            'child'         => 'dependency_node.child',
+            'parent'        => 'dependency_node.parent',
             'servicegroup'  => 'service.servicegroup',
             'user'          => 'notification.user',
             'usergroup'     => 'notification.usergroup'
@@ -253,8 +259,12 @@ class Host extends Model
     public function createRelations(Relations $relations)
     {
         $relations->hasOne('state', HostState::class)->setJoinType('LEFT');
-        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
-        $relations->hasOne('unreachable_parent', UnreachableParent::class)->setJoinType('LEFT');
+        $relations->hasOne('dependency_node', DependencyNode::class)
+            ->setFilter(Filter::unlike('service_id', '*'))
+            ->setJoinType('LEFT');
+        $relations->hasOne('unreachable_parent', UnreachableParent::class)
+            ->setFilter(Filter::unlike('service_id', '*'))
+            ->setJoinType('LEFT');
 
         $relations->belongsTo('environment', Environment::class);
         $relations->belongsTo('eventcommand', Eventcommand::class);
@@ -285,22 +295,21 @@ class Host extends Model
         $relations->belongsToMany('hostgroup', Hostgroup::class)
             ->through(HostgroupMember::class);
 
-        $relations->hasMany('comment', Comment::class)->setJoinType('LEFT');
-        $relations->hasMany('downtime', Downtime::class)->setJoinType('LEFT');
+        $relations->hasMany('comment', Comment::class)
+            ->setFilter(Filter::equal('object_type', 'host'))
+            ->setJoinType('LEFT');
+        $relations->hasMany('downtime', Downtime::class)
+            ->setFilter(Filter::equal('object_type', 'host'))
+            ->setJoinType('LEFT');
         $relations->hasMany('sla_history_downtime', SlaHistoryDowntime::class)->setJoinType('LEFT');
-        $relations->hasMany('history', History::class);
+        $relations->hasMany('history', History::class)
+            ->setFilter(Filter::equal('object_type', 'host'));
         $relations->hasMany('sla_history_state', SlaHistoryState::class);
-        $relations->hasMany('notification', Notification::class)->setJoinType('LEFT');
-        $relations->hasMany('notification_history', NotificationHistory::class);
+        $relations->hasMany('notification', Notification::class)
+            ->setFilter(Filter::unlike('service_id', '*'))
+            ->setJoinType('LEFT');
+        $relations->hasMany('notification_history', NotificationHistory::class)
+            ->setFilter(Filter::equal('object_type', 'host'));
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
-
-        $relations->belongsToMany('from', DependencyEdge::class)
-            ->setTargetCandidateKey('from_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
-        $relations->belongsToMany('to', DependencyEdge::class)
-            ->setTargetCandidateKey('to_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
     }
 }

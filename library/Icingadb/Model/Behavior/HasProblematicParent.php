@@ -49,12 +49,12 @@ class HasProblematicParent implements RewriteColumnBehavior, QueryAwareBehavior
             ->setDb($this->query->getDb())
             ->setModel($subQueryModel)
             ->columns([new Expression('1')])
-            ->utilize('from')
+            ->utilize('child')
             ->limit(1)
             ->filter(Filter::equal('state.failed', 'y'));
 
         $subQueryResolver = $subQuery->getResolver()->setAliasPrefix('hpp_');
-        $subQueryTarget = $subQueryResolver->resolveRelation($subQueryModel->getTableName() . '.from')->getTarget();
+        $subQueryTarget = $subQueryResolver->resolveRelation($subQueryModel->getTableName() . '.child')->getTarget();
         $targetForeignKey = $subQueryResolver->qualifyColumn(
             'service_id',
             $subQueryResolver->getAlias($subQueryTarget)
