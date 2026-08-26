@@ -145,7 +145,7 @@ final class Backend
             self::$schemaVersion = Schema::on(self::getDb())
                 ->columns('version')
                 ->first()
-                ->version ?? 0;
+                ?->version ?? 0;
         }
 
         return self::$schemaVersion;

@@ -148,7 +148,7 @@ class ObjectDetail extends BaseHtmlElement
 
         $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
-        foreach ($this->object->action_url->first()->action_url ?? [] as $url) {
+        foreach ($this->object->action_url->first()?->action_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
             $navigation->addItem(
                 Html::wantHtml([
@@ -338,7 +338,7 @@ class ObjectDetail extends BaseHtmlElement
 
         $monitoringInstalled = Icinga::app()->getModuleManager()->hasInstalled('monitoring');
         $obj = $monitoringInstalled ? $this->compatObject() : $this->object;
-        foreach ($this->object->notes_url->first()->notes_url ?? [] as $url) {
+        foreach ($this->object->notes_url->first()?->notes_url ?? [] as $url) {
             $url = $this->expandMacros($url, $obj);
             $navigation->addItem(
                 Html::wantHtml([
