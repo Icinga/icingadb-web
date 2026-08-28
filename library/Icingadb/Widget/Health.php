@@ -8,12 +8,15 @@ namespace Icinga\Module\Icingadb\Widget;
 use Icinga\Module\Icingadb\ProvidedHook\IcingaHealth;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
+use ipl\I18n\Translation;
 use ipl\Web\Widget\TimeAgo;
 use ipl\Web\Widget\TimeSince;
 use ipl\Web\Widget\VerticalKeyValue;
 
 class Health extends BaseHtmlElement
 {
+    use Translation;
+
     protected $data;
 
     protected $tag = 'section';
@@ -35,21 +38,21 @@ class Health extends BaseHtmlElement
         ) {
             $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [
                 sprintf(
-                    t('Icinga DB is outdated, please upgrade to version %s or later.'),
+                    $this->translate('Icinga DB is outdated, please upgrade to version %s or later.'),
                     IcingaHealth::REQUIRED_ICINGADB_VERSION
                 )
             ]));
         } elseif ($this->data->heartbeat->getTimestamp() > time() - 60) {
             $this->add(Html::tag('div', ['class' => 'icinga-health up'], [
                 Html::sprintf(
-                    t('Icinga 2 is up and running %s', '...since <timespan>'),
+                    $this->translate('Icinga 2 is up and running %s', '...since <timespan>'),
                     new TimeSince($this->data->icinga2_start_time->getTimestamp())
                 )
             ]));
         } else {
             $this->add(Html::tag('div', ['class' => 'icinga-health down'], [
                 Html::sprintf(
-                    t('Icinga 2 or Icinga DB is not running %s', '...since <timespan>'),
+                    $this->translate('Icinga 2 or Icinga DB is not running %s', '...since <timespan>'),
                     new TimeSince($this->data->heartbeat->getTimestamp())
                 )
             ]));
@@ -57,27 +60,27 @@ class Health extends BaseHtmlElement
 
         $icingaInfo = Html::tag('div', ['class' => 'icinga-info'], [
             new VerticalKeyValue(
-                t('Icinga 2 Version'),
+                $this->translate('Icinga 2 Version'),
                 $this->data->icinga2_version
             ),
             new VerticalKeyValue(
-                t('Icinga 2 Start Time'),
+                $this->translate('Icinga 2 Start Time'),
                 new TimeAgo($this->data->icinga2_start_time->getTimestamp())
             ),
             new VerticalKeyValue(
-                t('Last Heartbeat'),
+                $this->translate('Last Heartbeat'),
                 new TimeAgo($this->data->heartbeat->getTimestamp())
             ),
             new VerticalKeyValue(
-                t('Active Icinga 2 Endpoint'),
+                $this->translate('Active Icinga 2 Endpoint'),
                 $this->data->endpoint->name ?: t('N/A')
             ),
             new VerticalKeyValue(
-                t('Icinga DB Version'),
+                $this->translate('Icinga DB Version'),
                 $this->data->icingadb_version ?? t('N/A')
             ),
             new VerticalKeyValue(
-                t('Active Icinga Web Endpoint'),
+                $this->translate('Active Icinga Web Endpoint'),
                 gethostname() ?: t('N/A')
             )
         ]);

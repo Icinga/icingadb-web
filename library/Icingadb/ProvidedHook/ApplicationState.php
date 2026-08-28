@@ -7,32 +7,38 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Exception;
 use Icinga\Application\Hook\ApplicationStateHook;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Web\Session;
+use ipl\I18n\Translation;
 use ipl\Stdlib\Filter;
 
 class ApplicationState extends ApplicationStateHook
 {
+    use Auth;
     use Database;
+    use Translation;
 
     public function collectMessages()
     {
+        $session = Session::getSession()->getNamespace('icingadb');
+
         try {
             $lastIcingaHeartbeat = IcingaRedis::getLastIcingaHeartbeat();
         } catch (Exception $e) {
-            $downSince = Session::getSession()->getNamespace('icingadb')->get('redis.down-since');
+            $downSince = $session->get('redis.down-since');
 
             if ($downSince === null) {
                 $downSince = time();
-                Session::getSession()->getNamespace('icingadb')->set('redis.down-since', $downSince);
+                $session->set('redis.down-since', $downSince);
             }
 
             $this->addError(
                 'icingadb/redis-down',
                 $downSince,
-                sprintf(t("Can't connect to Redis: %s"), $e->getMessage())
+                sprintf($this->translate("Can't connect to Redis: %s"), $e->getMessage())
             );
 
             return;
@@ -45,19 +51,17 @@ class ApplicationState extends ApplicationStateHook
             ->first();
 
         if ($instance === null) {
-            $noInstanceSince = Session::getSession()
-                ->getNamespace('icingadb')->get('icingadb.no-instance-since');
+            $noInstanceSince = $session->get('icingadb.no-instance-since');
 
             if ($noInstanceSince === null) {
                 $noInstanceSince = time();
-                Session::getSession()
-                    ->getNamespace('icingadb')->set('icingadb.no-instance-since', $noInstanceSince);
+                $session->set('icingadb.no-instance-since', $noInstanceSince);
             }
 
             $this->addError(
                 'icingadb/no-instance',
                 $noInstanceSince,
-                t(
+                $this->translate(
                     'It seems that Icinga DB is not running.'
                     . ' Make sure Icinga DB is running and writing into the database.'
                 )
@@ -65,48 +69,41 @@ class ApplicationState extends ApplicationStateHook
 
             return;
         } else {
-            Session::getSession()->getNamespace('icingadb')->delete('db.no-instance-since');
+            $session->delete('db.no-instance-since');
         }
 
         $outdatedDbHeartbeat = $instance->heartbeat->getTimestamp() < time() - 60;
 
         if ($lastIcingaHeartbeat === null) {
-            $missingSince = Session::getSession()
-                ->getNamespace('icingadb')->get('redis.heartbeat-missing-since');
+            $missingSince = $session->get('redis.heartbeat-missing-since');
 
             if ($missingSince === null) {
                 $missingSince = time();
-                Session::getSession()
-                    ->getNamespace('icingadb')->set('redis.heartbeat-missing-since', $missingSince);
+                $session->set('redis.heartbeat-missing-since', $missingSince);
             }
 
             $lastIcingaHeartbeat = $missingSince;
         } else {
-            Session::getSession()->getNamespace('icingadb')->delete('redis.heartbeat-missing-since');
+            $session->delete('redis.heartbeat-missing-since');
         }
 
-        switch (true) {
-            case $outdatedDbHeartbeat && $instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat:
-                $this->addError(
-                    'icingadb/redis-outdated',
-                    $lastIcingaHeartbeat,
-                    t('Redis is outdated. Make sure Icinga 2 is running and connected to Redis.')
-                );
-
-                break;
-            case $outdatedDbHeartbeat:
-                $this->addError(
-                    'icingadb/icingadb-down',
-                    $instance->heartbeat->getTimestamp(),
-                    t(
-                        'It seems that Icinga DB is not running.'
-                        . ' Make sure Icinga DB is running and writing into the database.'
-                    )
-                );
-
-                break;
+        if ($outdatedDbHeartbeat && $instance->heartbeat->getTimestamp() > $lastIcingaHeartbeat) {
+            $this->addError(
+                'icingadb/redis-outdated',
+                $lastIcingaHeartbeat,
+                $this->translate('Redis is outdated. Make sure Icinga 2 is running and connected to Redis.')
+            );
+        } elseif ($outdatedDbHeartbeat) {
+            $this->addError(
+                'icingadb/icingadb-down',
+                $instance->heartbeat->getTimestamp(),
+                $this->translate(
+                    'It seems that Icinga DB is not running.'
+                    . ' Make sure Icinga DB is running and writing into the database.'
+                )
+            );
         }
 
-        Session::getSession()->getNamespace('icingadb')->delete('redis.down-since');
+        $session->delete('redis.down-since');
     }
 }
