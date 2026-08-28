@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Icinga\Application\Hook\HealthHook;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Instance;
@@ -14,6 +15,7 @@ use ipl\Web\Url;
 
 class IcingaHealth extends HealthHook
 {
+    use Auth;
     use Database;
     use Translation;
 
@@ -79,6 +81,19 @@ class IcingaHealth extends HealthHook
                 $this->translate('Icinga DB is outdated, please upgrade to version %s or later.'),
                 self::REQUIRED_ICINGADB_VERSION
             ));
+        } elseif (
+            isset($instance->notifications_healthy)
+            && ! $instance->notifications_healthy
+            && (
+                $this->getAuth()->hasPermission('icingadb/notifications/manage')
+                || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
+            )
+        ) {
+            $this->setState(self::STATE_CRITICAL);
+            $this->setMessage($this->translate(
+                'Notification transmission has been interrupted.'
+                . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
+            ));
         } else {
             $this->setState(self::STATE_OK);
             $warningMessages = [];
@@ -121,6 +136,7 @@ class IcingaHealth extends HealthHook
                 'icinga2_start_time' => $instance->icinga2_start_time->getTimestamp(),
                 'icinga2_version' => $instance->icinga2_version,
                 'icingadb_version' => $instance->icingadb_version ?? null,
+                'notifications_healthy' => $instance->notifications_healthy ?? null,
                 'endpoint' => ['name' => $instance->endpoint->name]
             ]);
         }
@@ -151,6 +167,10 @@ class IcingaHealth extends HealthHook
                 ]);
             if (Backend::supportsDependencies()) {
                 $query->withColumns('icingadb_version');
+            }
+
+            if (Backend::supportsNotifications()) {
+                $query->withColumns('notifications_healthy');
             }
 
             $this->instance = $query->first();

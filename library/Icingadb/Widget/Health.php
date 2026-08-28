@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\Widget;
 
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\ProvidedHook\IcingaHealth;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -15,6 +16,7 @@ use ipl\Web\Widget\VerticalKeyValue;
 
 class Health extends BaseHtmlElement
 {
+    use Auth;
     use Translation;
 
     protected $data;
@@ -40,6 +42,20 @@ class Health extends BaseHtmlElement
                 sprintf(
                     $this->translate('Icinga DB is outdated, please upgrade to version %s or later.'),
                     IcingaHealth::REQUIRED_ICINGADB_VERSION
+                )
+            ]));
+        } elseif (
+            isset($this->data->notifications_healthy)
+            && ! $this->data->notifications_healthy
+            &&  (
+                $this->getAuth()->hasPermission('icingadb/notifications/manage')
+                || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
+            )
+        ) {
+            $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [
+                $this->translate(
+                    'Notification transmission has been interrupted.'
+                    . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
                 )
             ]));
         } elseif ($this->data->heartbeat->getTimestamp() > time() - 60) {
@@ -82,7 +98,13 @@ class Health extends BaseHtmlElement
             new VerticalKeyValue(
                 $this->translate('Active Icinga Web Endpoint'),
                 gethostname() ?: t('N/A')
-            )
+            ),
+            isset($this->data->notifications_healthy) ? new VerticalKeyValue(
+                $this->translate('Icinga Notifications Connection'),
+                $this->data->notifications_healthy
+                    ? $this->translate('Healthy')
+                    : $this->translate('Unhealthy')
+            ) : null
         ]);
         $this->add($icingaInfo);
     }

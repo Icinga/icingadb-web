@@ -105,5 +105,33 @@ class ApplicationState extends ApplicationStateHook
         }
 
         $session->delete('redis.down-since');
+
+        if (isset($instance->notifications_healthy) && ! $instance->notifications_healthy) {
+            if (
+                ! $this->getAuth()->hasPermission('icingadb/notifications/manage')
+                && ! $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
+            ) {
+                // Do not show this error to users who do not rely on it
+
+                return;
+            }
+
+            $unhealthySince = $session->get('notifications.unhealthy-since');
+            if ($unhealthySince === null) {
+                $unhealthySince = time();
+                $session->set('notifications.unhealthy-since', $unhealthySince);
+            }
+
+            $this->addError(
+                'icingadb/notifications-unhealthy',
+                $unhealthySince,
+                $this->translate(
+                    'Notification transmission has been interrupted.'
+                    . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
+                )
+            );
+        } else {
+            $session->delete('notifications.unhealthy-since');
+        }
     }
 }
