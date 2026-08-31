@@ -10,7 +10,6 @@ use Icinga\Authentication\Auth;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Dashboards\Hook\DashletControls;
 use Icinga\Module\Dashboards\Hook\DashletHook;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Util\Json;
 use ipl\I18n\Translation;
@@ -20,33 +19,51 @@ use ipl\Web\Url;
 /**
  * Offers this module's object lists as one dashlet type for the dashboards module.
  *
- * One type, not one per list: which objects to list is a control of the dashlet
- * ({@see self::OBJECT_TYPES}), so adding Downtimes, Comments, Notifications or History is adding a row rather
- * than writing a class. The routes, the sort columns and the default order are all data for the same reason.
+ * One type, not one per list: which objects to list is a control of the dashlet ({@see self::OBJECT_TYPES}), so
+ * a seventh list is a row rather than a class. The route, the sort columns and the default order are all data
+ * for the same reason.
  *
  * Nothing here queries anything. The dashlet embeds one of this module's own list routes, which the dashboards
  * module renders in the *viewer's* session — so `icingadb/filter/objects` and every other restriction applies to
  * whoever is looking rather than to whoever built the dashboard, and the list refreshes on the interval its own
  * controller asks for.
  *
- * The sort tables are copied from the controllers that own them
- * ({@see \Icinga\Module\Icingadb\Controllers\HostsController::indexAction()} and its services counterpart)
- * rather than read out of them: a controller builds its `SortControl` from a request, and there is none here.
- * The copy is why a column added there has to be added here too — the two cannot drift silently in the other
- * direction, since a stored order this table no longer offers falls back to the default.
+ * The sort tables are copied from the controllers that own them ({@see
+ * \Icinga\Module\Icingadb\Controllers\HostsController::indexAction()} and its five counterparts) rather than
+ * read out of them: a controller builds its `SortControl` from a request, and there is none here. The copy is
+ * why a column added there has to be added here too — the two cannot drift silently in the other direction,
+ * since a stored order this table no longer offers falls back to the default.
+ *
+ * **Two things about that copy are load-bearing.** A spec is written the way `SortUtil::normalizeSortSpec()`
+ * leaves it — comma-separated with no space, since it trims each term (`ipl-orm`
+ * `src/Common/SortUtil.php`) — because `SortControl` looks its options up by exactly that string, and a spec
+ * spaced the way the controllers write it would not be found. And every `default` below is the order the list
+ * itself opens in: four of the six controllers pass no default to `createSortControl()` at all, so theirs comes
+ * from the model's own `getDefaultSort()`, which is what is repeated here.
+ *
+ * **Tabular is deliberately not offered.** Hosts and Services have a fourth view mode
+ * ({@see \Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher}); the other four lists do not, and it
+ * needs a column control a dashlet has no room for. Offering a mode two of six object types understand would
+ * mean view modes per object type for one edge case, so all six get the three every list has.
  */
 class ObjectList extends DashletHook
 {
     use Translation;
 
     /**
-     * @var array<string, array{label: string, route: string, sort: array<string, string>, default: string}>
+     * Every list this module offers as a dashlet
      *
-     * Labels are filled in by {@see self::objectTypes()}, which is where they can be translated.
+     * `route` is the path rather than a `Links` call, so that a seventh list is one more row and not one more
+     * branch — and because two of these six have no factory there to call.
+     *
+     * `label` is the tab title its own controller sets, so a dashlet names a list the way the menu does.
+     *
+     * @var array<string, array{label: string, route: string, sort: array<string, string>, default: string}>
      */
     private const OBJECT_TYPES = [
         'hosts' => [
-            'route'   => 'hosts',
+            'label'   => 'Hosts',
+            'route'   => 'icingadb/hosts',
             'sort'    => [
                 'host.display_name'                                          => 'Name',
                 'host.state.severity desc,host.state.last_state_change desc' => 'Severity',
@@ -56,7 +73,8 @@ class ObjectList extends DashletHook
             'default' => 'host.state.severity desc,host.state.last_state_change desc',
         ],
         'services' => [
-            'route'   => 'services',
+            'label'   => 'Services',
+            'route'   => 'icingadb/services',
             'sort'    => [
                 'service.display_name'                                             => 'Name',
                 'service.state.severity desc,service.state.last_state_change desc' => 'Severity',
@@ -65,6 +83,50 @@ class ObjectList extends DashletHook
                 'host.display_name'                                                => 'Host',
             ],
             'default' => 'service.state.severity desc,service.state.last_state_change desc',
+        ],
+        'downtimes' => [
+            'label'   => 'Downtimes',
+            'route'   => 'icingadb/downtimes',
+            'sort'    => [
+                'downtime.is_in_effect desc,downtime.start_time desc' => 'Is In Effect',
+                'downtime.entry_time'                                 => 'Entry Time',
+                'host.display_name'                                   => 'Host',
+                'service.display_name'                                => 'Service',
+                'downtime.author'                                     => 'Author',
+                'downtime.start_time desc'                            => 'Start Time',
+                'downtime.end_time desc'                              => 'End Time',
+                'downtime.scheduled_start_time desc'                  => 'Scheduled Start Time',
+                'downtime.scheduled_end_time desc'                    => 'Scheduled End Time',
+                'downtime.duration desc'                              => 'Duration',
+            ],
+            'default' => 'downtime.is_in_effect desc,downtime.start_time desc',
+        ],
+        'comments' => [
+            'label'   => 'Comments',
+            'route'   => 'icingadb/comments',
+            'sort'    => [
+                'comment.entry_time desc'  => 'Entry Time',
+                'host.display_name'        => 'Host',
+                'service.display_name'     => 'Service',
+                'comment.author'           => 'Author',
+                'comment.expire_time desc' => 'Expire Time',
+            ],
+            'default' => 'comment.entry_time desc',
+        ],
+        // One order each, so their Sorting select has a single option. Left in rather than hidden per object
+        // type: the direction beside it still means something, and a control that comes and went with the
+        // object type would move every field below it.
+        'notifications' => [
+            'label'   => 'Notifications',
+            'route'   => 'icingadb/notifications',
+            'sort'    => ['notification_history.send_time desc' => 'Send Time'],
+            'default' => 'notification_history.send_time desc',
+        ],
+        'history' => [
+            'label'   => 'History',
+            'route'   => 'icingadb/history',
+            'sort'    => ['history.event_time desc,history.event_type desc' => 'Event Time'],
+            'default' => 'history.event_time desc,history.event_type desc',
         ],
     ];
 
@@ -110,8 +172,7 @@ class ObjectList extends DashletHook
             $objectType = array_key_first(self::OBJECT_TYPES);
         }
 
-        // Through Links, so the routes stay spelled in the one place this module spells them.
-        return self::OBJECT_TYPES[$objectType]['route'] === 'services' ? Links::services() : Links::hosts();
+        return Url::fromPath(self::OBJECT_TYPES[$objectType]['route']);
     }
 
     /**
@@ -158,7 +219,7 @@ class ObjectList extends DashletHook
             }
 
             $types[$name] = [
-                'label'       => $this->translateInDomain('icingadb', ucfirst($name)),
+                'label'       => $this->translateInDomain('icingadb', $objectType['label']),
                 'sort'        => $sort,
                 'sortDefault' => $objectType['default'],
             ];
