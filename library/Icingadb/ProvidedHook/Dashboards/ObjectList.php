@@ -41,14 +41,33 @@ use ipl\Web\Url;
  * itself opens in: four of the six controllers pass no default to `createSortControl()` at all, so theirs comes
  * from the model's own `getDefaultSort()`, which is what is repeated here.
  *
- * **Tabular is deliberately not offered.** Hosts and Services have a fourth view mode
- * ({@see \Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher}); the other four lists do not, and it
- * needs a column control a dashlet has no room for. Offering a mode two of six object types understand would
- * mean view modes per object type for one edge case, so all six get the three every list has.
+ * **View modes are per object type as well.** Hosts and Services have a fourth, `tabular`
+ * ({@see \Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher}); the other four lists do not, so they
+ * declare no `view` and take the three every list has. The panel renders only the modes the chosen object type
+ * has — a mode a list simply does not have is absent rather than greyed out.
+ *
+ * Two things a tabular dashlet does that a full-page tabular list does not, both for want of a `columns`
+ * parameter the dashlet has nowhere to store: it shows only the two columns the controllers pass
+ * `createColumnControl()` as defaults, and it renders a column-chooser opener whose choice cannot stick
+ * ({@see \Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable}, which adds it whenever columns and a chooser
+ * url are both set, with no `showCompact` guard). A Columns control would answer both and does not exist yet.
  */
 class ObjectList extends DashletHook
 {
     use Translation;
+
+    /**
+     * @var array<string, string> The view modes a state list offers, `TabularViewModeSwitcher::$viewModes`
+     *
+     * Labels, where the switcher's own array holds icon names. Declared here rather than taken from the
+     * dashboards module's three because `view` is this module's parameter and `tabular` is its mode.
+     */
+    private const STATE_VIEW_MODES = [
+        'minimal'  => 'Minimal',
+        'common'   => 'Default',
+        'detailed' => 'Detailed',
+        'tabular'  => 'Tabular',
+    ];
 
     /**
      * Every list this module offers as a dashlet
@@ -58,7 +77,16 @@ class ObjectList extends DashletHook
      *
      * `label` is the tab title its own controller sets, so a dashlet names a list the way the menu does.
      *
-     * @var array<string, array{label: string, route: string, sort: array<string, string>, default: string}>
+     * `view` is omitted by the four lists that have only the usual three modes — the dashboards module fills
+     * those in, so only a difference is declared.
+     *
+     * @var array<string, array{
+     *     label: string,
+     *     route: string,
+     *     sort: array<string, string>,
+     *     default: string,
+     *     view?: array<string, string>
+     * }>
      */
     private const OBJECT_TYPES = [
         'hosts' => [
@@ -71,6 +99,7 @@ class ObjectList extends DashletHook
                 'host.state.last_state_change desc'                          => 'Last State Change',
             ],
             'default' => 'host.state.severity desc,host.state.last_state_change desc',
+            'view'    => self::STATE_VIEW_MODES,
         ],
         'services' => [
             'label'   => 'Services',
@@ -83,6 +112,7 @@ class ObjectList extends DashletHook
                 'host.display_name'                                                => 'Host',
             ],
             'default' => 'service.state.severity desc,service.state.last_state_change desc',
+            'view'    => self::STATE_VIEW_MODES,
         ],
         'downtimes' => [
             'label'   => 'Downtimes',
@@ -205,7 +235,12 @@ class ObjectList extends DashletHook
     /**
      * Get the object types as the dashboards module's collector takes them
      *
-     * @return array<string, array{label: string, sort: array<string, string>, sortDefault: string}>
+     * @return array<string, array{
+     *     label: string,
+     *     sort: array<string, string>,
+     *     sortDefault: string,
+     *     view?: array<string, string>
+     * }>
      */
     private function objectTypes(): array
     {
@@ -223,6 +258,16 @@ class ObjectList extends DashletHook
                 'sort'        => $sort,
                 'sortDefault' => $objectType['default'],
             ];
+
+            // Only where this type differs from the usual three; the dashboards module fills the rest in.
+            if (isset($objectType['view'])) {
+                $types[$name]['view'] = array_map(
+                    function (string $label): string {
+                        return $this->translateInDomain('icingadb', $label);
+                    },
+                    $objectType['view']
+                );
+            }
         }
 
         return $types;
