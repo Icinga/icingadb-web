@@ -237,8 +237,10 @@ class ObjectList extends DashletHook
      * Claim a captured Icinga DB list as an Object List dashlet
      *
      * The reverse of {@see self::getRoute()}: the object type is the route's own path, looked up in the same
-     * table, and it is all this hook has to answer — sorting, the view mode and the filter are read off the
-     * URL for it, against the very tables and modes declared in {@see self::configure()}.
+     * table. Sorting and the filter are always read off the URL, against the very tables declared in
+     * {@see self::configure()} — this hook answers for them only where the URL itself does not, which for the
+     * view mode and the page size is the same "whatever this reader prefers" case {@see self::normalizeUrl()}
+     * pins on every render, answered here once instead, from the author's own effective value.
      *
      * Three parameters are removed rather than left to become part of the filter: none of them are something a
      * dashlet has anywhere to keep. `columns` is one list column short of what would be needed
@@ -259,7 +261,24 @@ class ObjectList extends DashletHook
 
             $url->remove(['columns', 'before', 'last-entry', TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM]);
 
-            return [DashletControls::OBJECT_TYPE => $name];
+            $claim = [DashletControls::OBJECT_TYPE => $name];
+
+            // The same pin {@see self::normalizeUrl()} applies on every render, needed here too: a captured
+            // URL with neither param present did not mean "the control's default", it meant "whatever this
+            // reader was looking at" — which the dashlet only ever gets one chance to ask, right now, before
+            // it becomes whoever opens the dashboard next. Left to the module's own generic fallback, a
+            // captured view would silently forget an author's own view-mode or page-size preference instead
+            // of keeping it. Answered only where the URL is silent; a value it did carry is read off it by the
+            // module itself, from the very declarations above.
+            if (! $url->hasParam(ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM)) {
+                $claim[DashletControls::VIEW_MODE] = self::viewModeFor($path);
+            }
+
+            if (! $url->hasParam(LimitControl::DEFAULT_LIMIT_PARAM)) {
+                $claim[DashletControls::LIMIT] = (string) self::limit();
+            }
+
+            return $claim;
         }
 
         return null;
