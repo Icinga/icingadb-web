@@ -3,6 +3,27 @@
 Specific version upgrades are described below. Please note that version upgrades are incremental.
 If you are upgrading across multiple versions, make sure to follow the steps for each of them.
 
+## Upgrading to Icinga DB Web v1.5
+
+**Icinga Notifications Support**
+
+Host and service problems that are tracked by Icinga Notifications can be subscribed to. A subscriber receives
+their notifications without being responsible for them. A user who acknowledges such a problem becomes a manager
+of its incident in Icinga Notifications, which suppresses notifications to anyone else who did not explicitly
+subscribe. The acknowledgement remains until the host or service recovers. The *Send Notification*,
+*Sticky Acknowledgement* and *Use Expire Time* options of the acknowledgement form are therefore not shown in
+this case.
+
+These two features are guarded by the new permissions `icingadb/notifications/subscribe` and
+`icingadb/notifications/manage`. As long as a user has neither, nothing changes for them. Subscription actions
+are not offered and acknowledgements work exactly as before. Both features additionally require a contact
+configured for the user in Icinga Notifications. For users without a matching contact the actions will be
+shown, but disabled with a hint explaining the reason.
+
+We recommend to make use of this when migrating. Set up Icinga Notifications, configure contacts and event rules
+and verify that problems are tracked as expected. Only once you are confident the setup is complete, grant the new
+permissions to users.
+
 ## Upgrading to Icinga DB Web v1.4
 
 **Behavior Changes**

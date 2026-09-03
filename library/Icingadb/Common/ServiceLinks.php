@@ -106,4 +106,14 @@ abstract class ServiceLinks
             ['name' => $service->name, 'host.name' => $host->name]
         );
     }
+
+    public static function subscribe(Service $service, Host $host): Url
+    {
+        return Url::fromPath('icingadb/service/subscribe', ['name' => $service->name, 'host.name' => $host->name]);
+    }
+
+    public static function unsubscribe(Service $service, Host $host): Url
+    {
+        return Url::fromPath('icingadb/service/unsubscribe', ['name' => $service->name, 'host.name' => $host->name]);
+    }
 }

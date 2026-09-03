@@ -11,6 +11,7 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Data\PivotTable;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
@@ -35,6 +36,7 @@ use ipl\Web\Url;
 class ServicesController extends Controller
 {
     use CommandActions;
+    use SubscribeIncidents;
 
     public function indexAction()
     {

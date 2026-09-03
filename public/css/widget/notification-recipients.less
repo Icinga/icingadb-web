@@ -1,0 +1,25 @@
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+.recipient-list li, .subscriber-list li {
+  display: inline-block;
+  line-height: 2;
+
+  .ack-badge {
+    margin-left: .25em;
+  }
+
+  &:not(:last-child)::after {
+    content: ',';
+    margin-right: .25em;
+    color: @text-color-light;
+  }
+}
+
+.recipient-list .recipient {
+  white-space: nowrap;
+
+  i {
+    color: @text-color-light;
+  }
+}

@@ -20,6 +20,7 @@ use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -45,6 +46,7 @@ class HostController extends Controller
 {
     use CommandActions;
     use HookActions;
+    use SubscribeIncidents;
 
     /** @var Host The host object */
     protected $host;

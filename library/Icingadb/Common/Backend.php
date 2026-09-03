@@ -6,7 +6,9 @@
 namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Application\Config as AppConfig;
+use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
+use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Module\Icingadb\Model\Schema;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Config as SqlConfig;
@@ -14,6 +16,7 @@ use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\QueryBuilder;
 use ipl\Sql\Select;
+use ipl\Stdlib\Filter;
 use PDO;
 use Pdo\Mysql;
 
@@ -33,6 +36,12 @@ final class Backend
 
     /** @var ?bool Whether the current Icinga DB version supports dependencies */
     private static $supportsDependencies;
+
+    /** @var ?bool Whether the current Icinga DB version supports notifications */
+    private static $supportsNotifications;
+
+    /** @var ?bool Whether Icinga DB reports a healthy notifications component */
+    private static $notificationsHealthy;
 
     /**
      * Set the connection to the Icinga DB
@@ -195,5 +204,47 @@ final class Backend
         }
 
         return self::$supportsDependencies;
+    }
+
+    /**
+     * Whether the current Icinga DB version supports notifications
+     *
+     * @return bool
+     */
+    public static function supportsNotifications(): bool
+    {
+        if (self::$supportsNotifications === null) {
+            if (self::getDb()->getAdapter() instanceof Pgsql) {
+                self::$supportsNotifications = self::getDbSchemaVersion() >= 6;
+            } else {
+                self::$supportsNotifications = self::getDbSchemaVersion() >= 8;
+            }
+        }
+
+        return self::$supportsNotifications;
+    }
+
+    /**
+     * Whether an Icinga Notifications component is set up
+     *
+     * For now this checks whether a healthy component is available
+     *
+     * @return bool
+     */
+    public static function notificationsSetUp(): bool
+    {
+        if (self::$notificationsHealthy === null) {
+            self::$notificationsHealthy = Icinga::app()->getModuleManager()->hasEnabled('notifications')
+                && self::supportsNotifications()
+                // TODO: Instead of checking for a healthy component, check if a configured component exists
+                //       in the icingadb_config table
+                && Instance::on(self::getDb())
+                    ->columns('notifications_healthy')
+                    ->filter(Filter::equal('responsible', true))
+                    ->first()
+                    ?->notifications_healthy === true;
+        }
+
+        return self::$notificationsHealthy;
     }
 }

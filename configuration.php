@@ -100,6 +100,21 @@ namespace Icinga\Module\Icingadb {
         'icingadb/command/send-custom-notification',
         $this->translate('Allow to send custom notifications for hosts and services')
     );
+    $this->providePermission(
+        'icingadb/notifications/subscribe',
+        $this->translate(
+            'Allow to subscribe to host and service problems and receive their notifications.'
+            . ' Requires the Icinga Notifications component with a contact configured for the user'
+        )
+    );
+    $this->providePermission(
+        'icingadb/notifications/manage',
+        $this->translate(
+            'Allow to become responsible for host and service problems'
+            . ' by acknowledging them and receive their notifications.'
+            . ' Requires the Icinga Notifications component with a contact configured for the user'
+        )
+    );
 
     $this->providePermission(
         'icingadb/object/show-source',

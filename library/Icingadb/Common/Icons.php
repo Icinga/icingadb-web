@@ -34,4 +34,6 @@ class Icons
     public const USERGROUP = 'users';
 
     public const WARNING = 'exclamation-triangle';
+
+    public const SCHEDULE = 'calendar';
 }

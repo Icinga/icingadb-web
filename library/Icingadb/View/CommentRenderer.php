@@ -101,14 +101,16 @@ class CommentRenderer implements ItemRenderer
         ];
 
         if ($isAck) {
-            $label = [Text::create('ack')];
+            $label = [new Icon('check-circle')];
 
             if ($item->is_persistent) {
-                array_unshift($label, new Icon(Icons::IS_PERSISTENT));
+                $label[] = new Icon(Icons::IS_PERSISTENT);
             }
 
+            $label[] = Text::create('ack');
+
             $headerParts[] = Text::create(' ');
-            $headerParts[] = new HtmlElement('span', Attributes::create(['class' => 'ack-badge badge']), ...$label);
+            $headerParts[] = new HtmlElement('span', Attributes::create(['class' => 'ack-badge']), ...$label);
         }
 
         if ($expires !== null) {
