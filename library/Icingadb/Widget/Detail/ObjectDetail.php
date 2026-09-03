@@ -27,6 +27,7 @@ use Icinga\Module\Icingadb\Model\DependencyEdge;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
+use Icinga\Module\Icingadb\Notifications\IncidentFinder;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Navigation\Action;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
@@ -42,6 +43,7 @@ use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
+use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
 use ipl\Sql\Expression;
 use ipl\Sql\Filter\Exists;
 use ipl\Web\Widget\CopyToClipboard;
@@ -381,7 +383,7 @@ class ObjectDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createNotifications(): array
+    protected function createConfiguredContacts(): array
     {
         [$users, $usergroups] = $this->getUsersAndUsergroups();
 
@@ -399,8 +401,16 @@ class ObjectDetail extends BaseHtmlElement
             );
         }
 
+        if (
+            ! $userList->hasContent()
+            && ! $usergroupList->hasContent()
+            && Backend::notificationsSetUp()
+        ) {
+            return [];
+        }
+
         return [
-            Html::tag('h2', t('Notifications')),
+            Html::tag('h2', t('Configured Contacts')),
             new HorizontalKeyValue(
                 t('Contacts'),
                 $userList->hasContent() ? $userList : new EmptyState(t('No contacts configured.'))
@@ -411,6 +421,95 @@ class ObjectDetail extends BaseHtmlElement
                     ? $usergroupList
                     : new EmptyState(t('No contact groups configured.'))
             )
+        ];
+    }
+
+    protected function createNotificationRecipients(): array
+    {
+        if (! Backend::notificationsSetUp()) {
+            return [];
+        }
+
+        $incident = IncidentFinder::forObject($this->object);
+
+        $subscriberList = [];
+        $recipientList = [];
+        try {
+            $subscribers = $incident->getSubscribers();
+        } catch (IncidentNotFoundException) {
+            return [];
+        }
+
+        foreach ($subscribers as $subscriber) {
+            $isManager = $subscriber['role'] === 'manager';
+            $changedAt = DateFormatter::formatDateTime($subscriber['roleChangedAt']->getTimestamp());
+
+            $subscriberItem = Html::tag('li', [
+                'title' => $isManager
+                    ? sprintf(t('%s acknowledged on %s'), $subscriber['name'], $changedAt)
+                    : sprintf(t('%s subscribed on %s'), $subscriber['name'], $changedAt)
+            ], Text::create($subscriber['name']));
+
+            if ($isManager) {
+                $subscriberItem->addHtml(
+                    Html::tag(
+                        'span',
+                        ['class' => ['ack-badge']],
+                        [
+                            new Icon('check-circle'),
+                            Text::create('ack')
+                        ]
+                    )
+                );
+            }
+
+            $subscriberList[] = $subscriberItem;
+        }
+
+        $recipientIcons = [
+            'contact' => Icons::USER,
+            'contactgroup' => Icons::USERGROUP,
+            'schedule' => Icons::SCHEDULE,
+        ];
+
+        $translatedTypes = [
+            'contact' => t('Contact'),
+            'contactgroup' => t('Contact Group'),
+            'schedule' => t('Schedule'),
+        ];
+
+        foreach ($incident->getRecipients() as $recipient) {
+            $icon = new Icon($recipientIcons[$recipient['type']]);
+            $name = $recipient['name'];
+            $recipientList[] = Html::tag(
+                'li',
+                [
+                    'title' => sprintf(
+                        '[%s] %s',
+                        $translatedTypes[$recipient['type']],
+                        $name
+                    )
+                ],
+                Html::tag(
+                    'span',
+                    ['class' => 'recipient'],
+                    [$icon, Text::create($name)]
+                )
+            );
+        }
+
+        $subscribersValue = empty($subscriberList)
+            ? new EmptyState(t('No subscribers.'))
+            : Html::tag('div', ['class' => 'subscriber-list'], $subscriberList);
+
+        $recipientsValue = empty($recipientList)
+            ? new EmptyState(t('No recipients.'))
+            : Html::tag('div', ['class' => 'recipient-list'], $recipientList);
+
+        return [
+            Html::tag('h2', t('Notification Recipients')),
+            new HorizontalKeyValue(t('Subscribers'), $subscribersValue),
+            new HorizontalKeyValue(t('Recipients'), $recipientsValue),
         ];
     }
 
