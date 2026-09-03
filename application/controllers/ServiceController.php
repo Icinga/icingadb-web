@@ -18,6 +18,7 @@ use Icinga\Module\Icingadb\Hook\TabHook\HookActions;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -43,6 +44,7 @@ class ServiceController extends Controller
 {
     use CommandActions;
     use HookActions;
+    use SubscribeIncidents;
 
     /** @var Service The service object */
     protected $service;

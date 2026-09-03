@@ -29,6 +29,7 @@ use ipl\Orm\Relations;
  * @property DateTime $icinga2_start_time
  * @property string $icinga2_version
  * @property string $icingadb_version
+ * @property ?bool $notifications_healthy
  */
 class Instance extends Model
 {
@@ -63,6 +64,10 @@ class Instance extends Model
             $columns[] = 'icingadb_version';
         }
 
+        if (Backend::supportsNotifications()) {
+            $columns[] = 'notifications_healthy';
+        }
+
         return $columns;
     }
 
@@ -85,7 +90,8 @@ class Instance extends Model
             'icinga2_event_handlers_enabled',
             'icinga2_flap_detection_enabled',
             'icinga2_notifications_enabled',
-            'icinga2_performance_data_enabled'
+            'icinga2_performance_data_enabled',
+            'notifications_healthy'
         ]));
 
         $behaviors->add(new Binary([

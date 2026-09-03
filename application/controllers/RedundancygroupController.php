@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Data\DependencyNodes;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
+use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
@@ -28,6 +29,7 @@ use ipl\Web\Widget\Tabs;
 class RedundancygroupController extends Controller
 {
     use CommandActions;
+    use SubscribeIncidents;
 
     /** @var string */
     protected $groupId;

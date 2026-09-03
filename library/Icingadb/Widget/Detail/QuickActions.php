@@ -6,12 +6,17 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\HostLinks;
 use Icinga\Module\Icingadb\Common\ServiceLinks;
 use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Module\Icingadb\Notifications\IncidentFinder;
+use Icinga\Module\Icingadb\Notifications\SubscriptionForm;
+use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
+use Icinga\Module\Notifications\Integrations\Incidents;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;
@@ -34,22 +39,86 @@ class QuickActions extends BaseHtmlElement
 
     protected function assemble()
     {
+        $affectsIncidents = $this->isGrantedOn('icingadb/notifications/manage', $this->object)
+            && Backend::notificationsSetUp();
+
         if ($this->object->state->is_problem) {
             if ($this->object->state->is_acknowledged) {
                 if ($this->isGrantedOn('icingadb/command/remove-acknowledgement', $this->object)) {
-                    $removeAckForm = (new RemoveAcknowledgementForm())
-                        ->setAction($this->getLink('removeAcknowledgement'))
-                        ->setObjects([$this->object]);
+                    if ($affectsIncidents && ! Incidents::canManage($this->getAuth()->getUser())) {
+                        $this->assembleDisabledAction(
+                            t('Remove acknowledgement'),
+                            'trash',
+                            t(
+                                'You cannot remove this acknowledgement, as there is no Icinga Notifications contact'
+                                . ' configured for your account'
+                            )
+                        );
+                    } else {
+                        $removeAckForm = (new RemoveAcknowledgementForm())
+                            ->setAction($this->getLink('removeAcknowledgement'))
+                            ->setObjects([$this->object]);
 
-                    $this->add(Html::tag('li', $removeAckForm));
+                        $this->add(Html::tag('li', $removeAckForm));
+                    }
                 }
             } elseif ($this->isGrantedOn('icingadb/command/acknowledge-problem', $this->object)) {
-                $this->assembleAction(
-                    'acknowledge',
-                    t('Acknowledge'),
-                    'check-circle',
-                    t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
-                );
+                $disabled = false;
+                $title = t('Acknowledge this problem, suppress all future notifications for it and tag it as '
+                    . 'being handled');
+                if ($affectsIncidents) {
+                    if (Incidents::canManage($this->getAuth()->getUser())) {
+                        $title = t(
+                            'Acknowledge this problem and tag it as being handled, so that only you and anyone'
+                            . ' who subscribes will receive its notifications'
+                        );
+                    } else {
+                        $disabled = true;
+                        $title = t(
+                            'You cannot acknowledge this problem, as there is no Icinga Notifications contact'
+                            . ' configured for your account'
+                        );
+                    }
+                }
+
+                if ($disabled) {
+                    $this->assembleDisabledAction(t('Acknowledge'), 'check-circle', $title);
+                } else {
+                    $this->assembleAction('acknowledge', t('Acknowledge'), 'check-circle', $title);
+                }
+            }
+        }
+
+        if ($this->isGrantedOn('icingadb/notifications/subscribe', $this->object) && Backend::notificationsSetUp()) {
+            $user = $this->getAuth()->getUser();
+            $incident = IncidentFinder::forObject($this->object);
+
+            try {
+                // If no incident exists this will throw and no subscribe action is added at all
+                $role = $incident->getRole($user);
+                if (! Incidents::canSubscribe($user)) {
+                    $this->assembleDisabledAction(
+                        t('Subscribe'),
+                        'share',
+                        t(
+                            'You cannot subscribe, as there is no Icinga Notifications contact'
+                            . ' configured for your account'
+                        )
+                    );
+                } else {
+                    if ($role !== 'manager') {
+                        $action = $role === 'subscriber' ? 'unsubscribe' : 'subscribe';
+
+                        $this->addHtml(
+                            Html::tag(
+                                'li',
+                                (new SubscriptionForm($action === 'subscribe'))
+                                    ->setAction($this->getLink($action))
+                            )
+                        );
+                    }
+                }
+            } catch (IncidentNotFoundException) {
             }
         }
 
@@ -131,6 +200,33 @@ class QuickActions extends BaseHtmlElement
                 'title'               => $title,
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
+            ],
+            [
+                new Icon($icon),
+                $label
+            ]
+        );
+
+        $this->add(Html::tag('li', $link));
+    }
+
+    /**
+     * Add a disabled action
+     *
+     * @param string $label
+     * @param string $icon
+     * @param string $title
+     *
+     * @return void
+     */
+    protected function assembleDisabledAction(string $label, string $icon, string $title)
+    {
+        $link = Html::tag(
+            'a',
+            [
+                'class'    => 'action-link',
+                'title'    => $title,
+                'disabled' => true
             ],
             [
                 new Icon($icon),

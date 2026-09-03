@@ -9,6 +9,7 @@ use CallbackFilterIterator;
 use Icinga\Module\Icingadb\Command\Object\RemoveAcknowledgementCommand;
 use Icinga\Module\Icingadb\Forms\Command\CommandForm;
 use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Notifications\ManagesIncidents;
 use Icinga\Web\Notification;
 use ipl\Orm\Model;
 use ipl\Web\Widget\Icon;
@@ -19,6 +20,8 @@ use function ipl\Stdlib\iterable_value_first;
 
 class RemoveAcknowledgementForm extends CommandForm
 {
+    use ManagesIncidents;
+
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
@@ -26,6 +29,7 @@ class RemoveAcknowledgementForm extends CommandForm
                 return;
             }
 
+            $this->manageIncidents(false);
             $countObjects = count($this->getObjects());
             if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(

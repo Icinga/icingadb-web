@@ -74,4 +74,14 @@ abstract class HostLinks
     {
         return Url::fromPath('icingadb/host/services', ['name' => $host->name]);
     }
+
+    public static function subscribe(Host $host): Url
+    {
+        return Url::fromPath('icingadb/host/subscribe', ['name' => $host->name]);
+    }
+
+    public static function unsubscribe(Host $host): Url
+    {
+        return Url::fromPath('icingadb/host/unsubscribe', ['name' => $host->name]);
+    }
 }

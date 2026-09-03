@@ -6,8 +6,11 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
+use Icinga\Module\Icingadb\Notifications\SubscriptionForm;
+use Icinga\Module\Notifications\Integrations\Incidents;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Stdlib\BaseFilter;
@@ -123,6 +126,13 @@ class MultiselectQuickActions extends BaseHtmlElement
         $activeChecks = "{$this->getColumnPrefix()}_active_checks_enabled";
         $passiveChecks = "{$this->getColumnPrefix()}_passive_checks_enabled";
 
+        $affectsIncidents = $this->isGrantedOnType(
+            'icingadb/notifications/manage',
+            $this->type,
+            $this->getBaseFilter(),
+            false
+        ) && Backend::notificationsSetUp();
+
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
             && $this->isGrantedOnType(
@@ -132,12 +142,29 @@ class MultiselectQuickActions extends BaseHtmlElement
                 false
             )
         ) {
-            $this->assembleAction(
-                'acknowledge',
-                t('Acknowledge'),
-                'check-circle',
-                t('Acknowledge this problem, suppress all future notifications for it and tag it as being handled')
-            );
+            $disabled = false;
+            $title = t('Acknowledge this problem, suppress all future notifications for it and tag it as '
+                . 'being handled');
+            if ($affectsIncidents) {
+                if (Incidents::canManage($this->getAuth()->getUser())) {
+                    $title = t(
+                        'Acknowledge this problem and tag it as being handled, so that only you and anyone'
+                        . ' who subscribes will receive its notifications'
+                    );
+                } else {
+                    $disabled = true;
+                    $title = t(
+                        'You cannot acknowledge this problem, as there is no Icinga Notifications contact'
+                        . ' configured for your account'
+                    );
+                }
+            }
+
+            if ($disabled) {
+                $this->assembleDisabledAction(t('Acknowledge'), 'check-circle', $title);
+            } else {
+                $this->assembleAction('acknowledge', t('Acknowledge'), 'check-circle', $title);
+            }
         }
 
         if (
@@ -149,12 +176,45 @@ class MultiselectQuickActions extends BaseHtmlElement
                 false
             )
         ) {
-            $removeAckForm = (new RemoveAcknowledgementForm())
-                ->setAction($this->getLink('removeAcknowledgement'))
-                // TODO: This is a hack as for the button label the count of objects is used. setCount? setMultiple?
-                ->setObjects(array_fill(0, $this->summary->$acks, null));
+            if ($affectsIncidents && ! Incidents::canManage($this->getAuth()->getUser())) {
+                $this->assembleDisabledAction(
+                    tp('Remove acknowledgement', 'Remove acknowledgements', $this->summary->$acks),
+                    'trash',
+                    t(
+                        'You cannot remove this acknowledgement, as there is no Icinga Notifications contact'
+                        . ' configured for your account'
+                    )
+                );
+            } else {
+                $removeAckForm = (new RemoveAcknowledgementForm())
+                    ->setAction($this->getLink('removeAcknowledgement'))
+                    // TODO: This is a hack as for the button label the count of objects is used. setCount? setMultiple?
+                    ->setObjects(array_fill(0, $this->summary->$acks, null));
 
-            $this->add(Html::tag('li', $removeAckForm));
+                $this->add(Html::tag('li', $removeAckForm));
+            }
+        }
+
+        if (
+            $this->summary->$acks + $this->summary->$unacknowledged > 0
+            && $this->isGrantedOnType('icingadb/notifications/subscribe', $this->type, $this->getBaseFilter(), false)
+            && Backend::notificationsSetUp()
+        ) {
+            if (Incidents::canSubscribe($this->getAuth()->getUser())) {
+                $this->add(Html::tag('li', (new SubscriptionForm(true))
+                    ->setAction($this->getLink('subscribe'))));
+                $this->add(Html::tag('li', (new SubscriptionForm(false))
+                    ->setAction($this->getLink('unsubscribe'))));
+            } else {
+                $this->assembleDisabledAction(
+                    t('Subscribe'),
+                    'share',
+                    t(
+                        'You cannot subscribe, as there is no Icinga Notifications contact'
+                        . ' configured for your account'
+                    )
+                );
+            }
         }
 
         if (
@@ -262,6 +322,24 @@ class MultiselectQuickActions extends BaseHtmlElement
                 'title'               => $title,
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
+            ],
+            [
+                new Icon($icon),
+                $label
+            ]
+        );
+
+        $this->add(Html::tag('li', $link));
+    }
+
+    protected function assembleDisabledAction(string $label, string $icon, string $title)
+    {
+        $link = Html::tag(
+            'a',
+            [
+                'class'    => 'action-link',
+                'title'    => $title,
+                'disabled' => true
             ],
             [
                 new Icon($icon),

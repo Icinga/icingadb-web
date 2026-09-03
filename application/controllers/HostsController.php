@@ -10,6 +10,7 @@ use Icinga\Module\Icingadb\Common\CommandActions;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -31,6 +32,7 @@ use ipl\Web\Url;
 class HostsController extends Controller
 {
     use CommandActions;
+    use SubscribeIncidents;
 
     public function indexAction()
     {
