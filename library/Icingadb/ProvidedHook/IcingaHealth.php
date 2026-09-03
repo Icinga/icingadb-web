@@ -6,14 +6,18 @@
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
 use Icinga\Application\Hook\HealthHook;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Instance;
+use ipl\I18n\Translation;
 use ipl\Web\Url;
 
 class IcingaHealth extends HealthHook
 {
+    use Auth;
     use Database;
+    use Translation;
 
     public const REQUIRED_ICINGADB_VERSION = '1.4.0';
 
@@ -54,13 +58,13 @@ class IcingaHealth extends HealthHook
 
         if ($instance === null) {
             $this->setState(self::STATE_UNKNOWN);
-            $this->setMessage(t(
+            $this->setMessage($this->translate(
                 'Icinga DB is not running or not writing into the database'
                 . ' (make sure the icinga feature "icingadb" is enabled)'
             ));
         } elseif ($instance->heartbeat->getTimestamp() < time() - 60) {
             $this->setState(self::STATE_CRITICAL);
-            $this->setMessage(t(
+            $this->setMessage($this->translate(
                 'Icinga DB is not running or not writing into the database'
                 . ' (make sure the icinga feature "icingadb" is enabled)'
             ));
@@ -74,8 +78,21 @@ class IcingaHealth extends HealthHook
         ) {
             $this->setState(self::STATE_CRITICAL);
             $this->setMessage(sprintf(
-                t('Icinga DB is outdated, please upgrade to version %s or later.'),
+                $this->translate('Icinga DB is outdated, please upgrade to version %s or later.'),
                 self::REQUIRED_ICINGADB_VERSION
+            ));
+        } elseif (
+            isset($instance->notifications_healthy)
+            && ! $instance->notifications_healthy
+            && (
+                $this->getAuth()->hasPermission('icingadb/notifications/manage')
+                || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
+            )
+        ) {
+            $this->setState(self::STATE_CRITICAL);
+            $this->setMessage($this->translate(
+                'Notification transmission has been interrupted.'
+                . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
             ));
         } else {
             $this->setState(self::STATE_OK);
@@ -83,24 +100,24 @@ class IcingaHealth extends HealthHook
 
             if (! $instance->icinga2_active_host_checks_enabled) {
                 $this->setState(self::STATE_WARNING);
-                $warningMessages[] = t('Active host checks are disabled');
+                $warningMessages[] = $this->translate('Active host checks are disabled');
             }
 
             if (! $instance->icinga2_active_service_checks_enabled) {
                 $this->setState(self::STATE_WARNING);
-                $warningMessages[] = t('Active service checks are disabled');
+                $warningMessages[] = $this->translate('Active service checks are disabled');
             }
 
             if (! $instance->icinga2_notifications_enabled) {
                 $this->setState(self::STATE_WARNING);
-                $warningMessages[] = t('Notifications are disabled');
+                $warningMessages[] = $this->translate('Notifications are disabled');
             }
 
             if ($this->getState() === self::STATE_WARNING) {
                 $this->setMessage(implode("; ", $warningMessages));
             } else {
                 $this->setMessage(sprintf(
-                    t('Icinga DB is running and writing into the database. (Version: %s)'),
+                    $this->translate('Icinga DB is running and writing into the database. (Version: %s)'),
                     $instance->icingadb_version
                 ));
             }
@@ -119,6 +136,7 @@ class IcingaHealth extends HealthHook
                 'icinga2_start_time' => $instance->icinga2_start_time->getTimestamp(),
                 'icinga2_version' => $instance->icinga2_version,
                 'icingadb_version' => $instance->icingadb_version ?? null,
+                'notifications_healthy' => $instance->notifications_healthy ?? null,
                 'endpoint' => ['name' => $instance->endpoint->name]
             ]);
         }
@@ -149,6 +167,10 @@ class IcingaHealth extends HealthHook
                 ]);
             if (Backend::supportsDependencies()) {
                 $query->withColumns('icingadb_version');
+            }
+
+            if (Backend::supportsNotifications()) {
+                $query->withColumns('notifications_healthy');
             }
 
             $this->instance = $query->first();
