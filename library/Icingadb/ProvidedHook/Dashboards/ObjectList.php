@@ -10,6 +10,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Dashboards\Hook\DashletControls;
 use Icinga\Module\Dashboards\Hook\DashletHook;
+use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Util\Json;
 use ipl\I18n\Translation;
@@ -230,6 +231,38 @@ class ObjectList extends DashletHook
         }
 
         return $url;
+    }
+
+    /**
+     * Claim a captured Icinga DB list as an Object List dashlet
+     *
+     * The reverse of {@see self::getRoute()}: the object type is the route's own path, looked up in the same
+     * table, and it is all this hook has to answer — sorting, the view mode and the filter are read off the
+     * URL for it, against the very tables and modes declared in {@see self::configure()}.
+     *
+     * Three parameters are removed rather than left to become part of the filter: none of them are something a
+     * dashlet has anywhere to keep. `columns` is one list column short of what would be needed
+     * (`self::OBJECT_TYPES` carries no such table, and the class docblock already names the gap); `before` and
+     * `last-entry` pin the two time-scrolled lists to the exact moment the page was scrolled to
+     * (`refs/icingadb-web application/controllers/HistoryController.php:50-51`,
+     * `NotificationsController.php:46-47`), which a captured dashlet showing the same moment forever, rather
+     * than "now", would be the wrong answer for.
+     */
+    public function capture(Url $url): ?array
+    {
+        $path = $url->getPath();
+
+        foreach (self::OBJECT_TYPES as $name => $objectType) {
+            if ($objectType['route'] !== $path) {
+                continue;
+            }
+
+            $url->remove(['columns', 'before', 'last-entry', TimestampToggle::DEFAULT_TIMESTAMP_MODE_PARAM]);
+
+            return [DashletControls::OBJECT_TYPE => $name];
+        }
+
+        return null;
     }
 
     /**
