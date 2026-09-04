@@ -30,6 +30,9 @@ use ipl\Orm\Relations;
  * @property string $icinga2_version
  * @property string $icingadb_version
  * @property ?bool $notifications_healthy
+ * @property string $icingadb_service_user
+ * @property ?string $notifications_discovered_socket_path
+ * @property bool $notifications_synchronize_with_database
  */
 class Instance extends Model
 {
@@ -66,6 +69,9 @@ class Instance extends Model
 
         if (Backend::supportsNotifications()) {
             $columns[] = 'notifications_healthy';
+            $columns[] = 'icingadb_service_user';
+            $columns[] = 'notifications_discovered_socket_path';
+            $columns[] = 'notifications_synchronize_with_database';
         }
 
         return $columns;
@@ -91,7 +97,8 @@ class Instance extends Model
             'icinga2_flap_detection_enabled',
             'icinga2_notifications_enabled',
             'icinga2_performance_data_enabled',
-            'notifications_healthy'
+            'notifications_healthy',
+            'notifications_synchronize_with_database'
         ]));
 
         $behaviors->add(new Binary([
