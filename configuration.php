@@ -559,10 +559,10 @@ namespace Icinga\Module\Icingadb {
         ]);
     }
 
-    $this->provideConfigTab('database', [
-        'label' => t('Database'),
-        'title' => t('Configure the database backend'),
-        'url'   => 'config/database'
+    $this->provideConfigTab('general-settings', [
+        'label' => t('General Settings'),
+        'title' => t('Configure general settings'),
+        'url'   => 'config/general-settings'
     ]);
     $this->provideConfigTab('redis', [
         'label' => t('Redis'),
