@@ -57,6 +57,7 @@ class Environment extends Model
         $relations->hasMany('checkcommand_envvar', CheckcommandEnvvar::class);
         $relations->hasMany('comment', Comment::class);
         $relations->hasMany('comment_history', CommentHistory::class);
+        $relations->hasMany('config', Config::class);
         $relations->hasMany('customvar', Customvar::class);
         $relations->hasMany('customvar_flat', CustomvarFlat::class);
         $relations->hasMany('downtime', Downtime::class);

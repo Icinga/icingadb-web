@@ -89,7 +89,7 @@ class ErrorController extends IcingaErrorController
             ),
             new Link(
                 Html::tag('strong', 'which one it is'),
-                Url::fromPath('icingadb/config/database')
+                Url::fromPath('icingadb/config/general-settings')
             )
         ));
 
