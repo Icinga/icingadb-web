@@ -22,9 +22,8 @@ use ipl\Orm\Relations;
  * @property string $environment_id
  * @property string $display_name
  *
- * @property (?RedundancyGroupState)|Query $state
- * @property DependencyEdge|Query $from
- * @property DependencyEdge|Query $to
+ * @property Query<RedundancyGroupState>|RedundancyGroupState $state
+ * @property Query<DependencyNode>|DependencyNode $dependency_node
  *
  * @property RedundancyGroupSummary $summary
  */
@@ -64,8 +63,9 @@ class RedundancyGroup extends Model
             'environment_id'
         ]));
         $behaviors->add(new ReRoute([
-            'child' => 'to.from',
-            'parent' => 'from.to'
+            'child' => 'dependency_node.child',
+            'parent' => 'dependency_node.parent',
+            'from' => 'dependency_node' // Compatibility with dependencies < v1.0.4 only
         ]));
     }
 
@@ -74,16 +74,8 @@ class RedundancyGroup extends Model
         $relations->hasOne('state', RedundancyGroupState::class)
             ->setJoinType('LEFT');
 
-        $relations->hasOne('dependency_node', DependencyNode::class)->setJoinType('LEFT');
-
-        $relations->belongsToMany('from', DependencyEdge::class)
-            ->setTargetCandidateKey('from_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
-        $relations->belongsToMany('to', DependencyEdge::class)
-            ->setTargetCandidateKey('to_node_id')
-            ->setTargetForeignKey('id')
-            ->through(DependencyNode::class);
+        $relations->hasOne('dependency_node', DependencyNode::class)
+            ->setJoinType('LEFT');
     }
 
     public function createDefaults(Defaults $defaults): void

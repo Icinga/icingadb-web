@@ -30,9 +30,9 @@ use ipl\Stdlib\Filter;
  * @property ?string $redundancy_group_id
  * @property int $is_group_member
  *
- * @property (?Host)|Query $host
- * @property (?Service)|Query $service
- * @property (?RedundancyGroup)|Query $redundancy_group
+ * @property Query<Host>|Host $host
+ * @property Query<Service>|Service $service
+ * @property Query<RedundancyGroup>|RedundancyGroup $redundancy_group
  */
 class UnreachableParent extends DependencyNode
 {
@@ -170,9 +170,9 @@ class UnreachableParent extends DependencyNode
                 'id' => 'to_node_id',
                 'child_id' => 'from_node_id',
                 'level' => new Expression('urn.level + 1'),
-                'host_id' => 'to.host_id',
-                'service_id' => 'to.service_id',
-                'redundancy_group_id' => 'to.redundancy_group_id',
+                'host_id' => 'parent.host_id',
+                'service_id' => 'parent.service_id',
+                'redundancy_group_id' => 'parent.redundancy_group_id',
                 'is_group_member' => new Expression('urn.redundancy_group_id IS NOT NULL AND urn.level > 0'),
                 '_has_problematic_parent' => new Expression(sprintf(
                     'EXISTS(SELECT 1 FROM %s immediate_parents'
