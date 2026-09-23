@@ -425,6 +425,7 @@ class GeneralConfigForm extends ConfigForm
                 $serviceUsers[$instance->icingadb_service_user] = true;
             }
 
+            $sources = [];
             if ($enable && in_array(static::URL_CONFIG_KEY, $writableKeys, true)) {
                 foreach (array_keys($serviceUsers) as $serviceUser) {
                     $source = Source::get($serviceUser);
@@ -433,6 +434,7 @@ class GeneralConfigForm extends ConfigForm
                     }
 
                     $source->setType('icinga2');
+                    $sources[] = $source;
                 }
             }
 
@@ -471,7 +473,7 @@ class GeneralConfigForm extends ConfigForm
                     }
                 });
 
-            if (isset($source)) {
+            foreach ($sources as $source) {
                 $source->save();
             }
         } catch (Throwable $e) {
