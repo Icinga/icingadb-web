@@ -14,6 +14,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
 use ipl\Html\HtmlString;
+use ipl\Web\FormElement\SearchSuggestions;
 
 class ConfigController extends Controller
 {
@@ -49,6 +50,27 @@ class ConfigController extends Controller
         $this->mergeTabs($this->Module()->getConfigTabs()->activate('redis'));
 
         $this->addFormToContent($form);
+    }
+
+    public function completeAction(): void
+    {
+        $suggestions = (new SearchSuggestions(
+            (function () use (&$suggestions) {
+                foreach (GeneralConfigForm::knownRelations() as $search => $label) {
+                    if (in_array($search, $suggestions->getExcludeTerms(), true)) {
+                        continue;
+                    }
+
+                    if (
+                        $suggestions->matchSearch($label)
+                        || $suggestions->matchSearch($search)
+                    ) {
+                        yield ['search' => $search, 'label' => $label];
+                    }
+                }
+            })()
+        ))->forRequest($this->getServerRequest());
+        $this->getDocument()->add($suggestions);
     }
 
     protected function addFormToContent(Form $form)
