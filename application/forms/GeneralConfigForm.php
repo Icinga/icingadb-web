@@ -212,10 +212,11 @@ class GeneralConfigForm extends ConfigForm
                 ['class' => 'description'],
                 Text::create(
                     $this->translate(
-                        'Relations to include in every event sent to Icinga Notifications.'
-                        . ' If Icinga Notifications requires a relation that is not included, it has to request it'
-                        . ' from Icinga DB. Choosing the relations your event rules commonly use makes'
-                        . ' this communication more efficient.'
+                        'Host and service information selected here, such as groups or custom variables,'
+                        . ' is included in every event sent to Icinga Notifications. If an event rule needs something'
+                        . ' that was not included, Icinga Notifications asks for it and Icinga DB has to send the event'
+                        . ' again. Select what your event rules frequently use to avoid this extra step, but leave'
+                        . ' out anything no rule needs, since it would be sent with every event.'
                     )
                 )
             )
