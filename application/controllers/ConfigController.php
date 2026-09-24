@@ -14,6 +14,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
 use ipl\Html\HtmlString;
+use ipl\Web\FormElement\SearchSuggestions;
 
 class ConfigController extends Controller
 {
