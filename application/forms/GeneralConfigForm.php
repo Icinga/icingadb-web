@@ -32,6 +32,7 @@ use ipl\Web\Widget\Callout;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
 use function ipl\Stdlib\iterable_value_first;
@@ -45,6 +46,9 @@ class GeneralConfigForm extends ConfigForm
 
     /** @var string Config key under which the default relations for events sent to Icinga Notifications are stored */
     public const RELATIONS_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_DEFAULT_RELATIONS';
+
+    /** @var string Config key under which the Icinga Web URL transmitted to Icinga Notifications is stored */
+    public const ICINGAWEB2_URL_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_ICINGAWEB2_URL';
 
     protected $defaultAttributes = [
         'class' => ['icinga-form', 'icinga-controls', 'general-config-form'],
@@ -361,7 +365,12 @@ class GeneralConfigForm extends ConfigForm
             $configuredEndpoints = [];
             $configRows = ConfigModel::on($this->getDb())
                 ->columns(['endpoint_id', 'locked', 'env_key', 'env_value'])
-                ->filter(Filter::equal('env_key', [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY]));
+                ->filter(
+                    Filter::equal(
+                        'env_key',
+                        [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY, static::ICINGAWEB2_URL_CONFIG_KEY]
+                    )
+                );
             foreach ($configRows as $configRow) {
                 if ($configRow->locked) {
                     $this->lockConfigKey(
@@ -411,7 +420,7 @@ class GeneralConfigForm extends ConfigForm
         }
 
         $writableKeys = array_diff(
-            [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY],
+            [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY, static::ICINGAWEB2_URL_CONFIG_KEY],
             array_keys($this->configKeyLockReasons)
         );
         if (empty($writableKeys)) {
@@ -453,40 +462,61 @@ class GeneralConfigForm extends ConfigForm
                 }
             }
 
+            $icingaweb2Url = null;
+            if ($enable && in_array(static::ICINGAWEB2_URL_CONFIG_KEY, $writableKeys, true)) {
+                $icingaweb2Url = $this->detectIcingaweb2Url();
+            }
+
             $this->getDb()
-                ->transaction(function () use ($enable, $endpoints, $environmentId, $writableKeys, $relations) {
-                    $environmentId = $this->encodeBinary($environmentId, 'environment_id');
-                    foreach ($endpoints as $endpointId => $socketPath) {
-                        $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
+                ->transaction(
+                    function () use ($enable, $endpoints, $environmentId, $writableKeys, $relations, $icingaweb2Url) {
+                        $environmentId = $this->encodeBinary($environmentId, 'environment_id');
+                        foreach ($endpoints as $endpointId => $socketPath) {
+                            $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
 
-                        $this->getDb()->delete('icingadb_config', [
-                            'environment_id = ?' => $environmentId,
-                            'endpoint_id = ?' => $endpointId,
-                            'env_key IN (?)' => $writableKeys,
-                            'locked = ?' => 'n'
-                        ]);
-
-                        if ($enable && $socketPath !== null && in_array(static::URL_CONFIG_KEY, $writableKeys, true)) {
-                            $this->getDb()->insert('icingadb_config', [
-                                'environment_id' => $environmentId,
-                                'endpoint_id' => $endpointId,
-                                'env_key' => static::URL_CONFIG_KEY,
-                                'env_value' => 'unix://' . $socketPath,
-                                'locked' => 'n'
+                            $this->getDb()->delete('icingadb_config', [
+                                'environment_id = ?' => $environmentId,
+                                'endpoint_id = ?' => $endpointId,
+                                'env_key IN (?)' => $writableKeys,
+                                'locked = ?' => 'n'
                             ]);
-                        }
 
-                        if ($relations !== '' && in_array(static::RELATIONS_CONFIG_KEY, $writableKeys, true)) {
-                            $this->getDb()->insert('icingadb_config', [
-                                'environment_id' => $environmentId,
-                                'endpoint_id' => $endpointId,
-                                'env_key' => static::RELATIONS_CONFIG_KEY,
-                                'env_value' => $relations,
-                                'locked' => 'n'
-                            ]);
+                            if (
+                                $enable
+                                && $socketPath !== null
+                                && in_array(static::URL_CONFIG_KEY, $writableKeys, true)
+                            ) {
+                                $this->getDb()->insert('icingadb_config', [
+                                    'environment_id' => $environmentId,
+                                    'endpoint_id' => $endpointId,
+                                    'env_key' => static::URL_CONFIG_KEY,
+                                    'env_value' => 'unix://' . $socketPath,
+                                    'locked' => 'n'
+                                ]);
+                            }
+
+                            if ($relations !== '' && in_array(static::RELATIONS_CONFIG_KEY, $writableKeys, true)) {
+                                $this->getDb()->insert('icingadb_config', [
+                                    'environment_id' => $environmentId,
+                                    'endpoint_id' => $endpointId,
+                                    'env_key' => static::RELATIONS_CONFIG_KEY,
+                                    'env_value' => $relations,
+                                    'locked' => 'n'
+                                ]);
+                            }
+
+                            if ($icingaweb2Url !== null) {
+                                $this->getDb()->insert('icingadb_config', [
+                                    'environment_id' => $environmentId,
+                                    'endpoint_id' => $endpointId,
+                                    'env_key' => static::ICINGAWEB2_URL_CONFIG_KEY,
+                                    'env_value' => $icingaweb2Url,
+                                    'locked' => 'n'
+                                ]);
+                            }
                         }
                     }
-                });
+                );
 
             foreach ($sources as $source) {
                 $source->save();
@@ -591,5 +621,29 @@ class GeneralConfigForm extends ConfigForm
     private function defaultEndpointId(): string
     {
         return str_repeat(chr(0), 20);
+    }
+
+    /**
+     * Detect the absolute Url of Icinga Web, respecting X-Forwarded-* headers set by reverse proxies
+     *
+     * @return string
+     */
+    private function detectIcingaweb2Url(): string
+    {
+        $serverParams = $this->getRequest()->getServerParams();
+
+        $request = new Request(server: $serverParams);
+        $request->headers->replace($this->getRequest()->getHeaders());
+
+        // Trusts X-Forwarded-* from any peer: only safe because this form requires config/modules
+        Request::setTrustedProxies(
+            isset($serverParams['REMOTE_ADDR']) ? [$serverParams['REMOTE_ADDR']] : [],
+            Request::HEADER_X_FORWARDED_PROTO
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PREFIX
+        );
+
+        return $request->getSchemeAndHttpHost() . $request->getBaseUrl();
     }
 }
