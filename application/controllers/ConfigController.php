@@ -52,27 +52,6 @@ class ConfigController extends Controller
         $this->addFormToContent($form);
     }
 
-    public function completeAction(): void
-    {
-        $suggestions = (new SearchSuggestions(
-            (function () use (&$suggestions) {
-                foreach (GeneralConfigForm::knownRelations() as $search => $label) {
-                    if (in_array($search, $suggestions->getExcludeTerms(), true)) {
-                        continue;
-                    }
-
-                    if (
-                        $suggestions->matchSearch($label)
-                        || $suggestions->matchSearch($search)
-                    ) {
-                        yield ['search' => $search, 'label' => $label];
-                    }
-                }
-            })()
-        ))->forRequest($this->getServerRequest());
-        $this->getDocument()->add($suggestions);
-    }
-
     protected function addFormToContent(Form $form)
     {
         $this->addContent(new HtmlString($form->render()));

@@ -23,6 +23,7 @@ use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Str;
 use ipl\Web\Common\CalloutType;
+use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\FormElement\TermInput;
 use ipl\Web\FormElement\TermInput\Term;
 use ipl\Web\Url;
@@ -81,23 +82,6 @@ class GeneralConfigForm extends ConfigForm
         parent::__construct($config);
 
         $this->applyDefaultElementDecorators();
-    }
-
-    /**
-     * Get the relations that can be included by default in events sent to Icinga Notifications
-     *
-     * @return array<string, string>
-     */
-    public static function knownRelations(): array
-    {
-        return [
-            '$.host' => t('Host'),
-            '$.hostgroups[*].name' => t('Hostgroups'),
-            '$.services[*].name' => t('Services'),
-            '$.servicegroups[*].name' => t('Servicegroups'),
-            '$.host.vars' => t('Host Variables'),
-            '$.services[*].vars' => t('Service Variables'),
-        ];
     }
 
     protected function onSuccess(): void
@@ -246,6 +230,23 @@ class GeneralConfigForm extends ConfigForm
             );
         }
 
+        $suggestions = (new SearchSuggestions(
+            (function () use (&$suggestions) {
+                foreach ($this->knownRelations() as $search => $label) {
+                    if (in_array($search, $suggestions->getExcludeTerms(), true)) {
+                        continue;
+                    }
+
+                    if (
+                        $suggestions->matchSearch($label)
+                        || $suggestions->matchSearch($search)
+                    ) {
+                        yield ['search' => $search, 'label' => $label];
+                    }
+                }
+            })()
+        ));
+
         $relations = (new TermInput(
             'relations',
             [
@@ -256,7 +257,7 @@ class GeneralConfigForm extends ConfigForm
         ))
             ->setVerticalTermDirection()
             ->setReadOnly()
-            ->setSuggestionUrl(Url::fromPath('icingadb/config/complete'))
+            ->setSuggestions($suggestions)
             ->setValue($this->defaultRelations ?? '')
             ->on(TermInput::ON_ENRICH, $this->validateAndEnrichRelations(...))
             ->on(TermInput::ON_ADD, $this->validateAndEnrichRelations(...))
@@ -527,11 +528,28 @@ class GeneralConfigForm extends ConfigForm
     }
 
     /**
+     * Get the relations that can be included by default in events sent to Icinga Notifications
+     *
+     * @return array<string, string>
+     */
+    private function knownRelations(): array
+    {
+        return [
+            '$.host' => $this->translate('Host'),
+            '$.hostgroups[*].name' => $this->translate('Hostgroups'),
+            '$.services[*].name' => $this->translate('Services'),
+            '$.servicegroups[*].name' => $this->translate('Servicegroups'),
+            '$.host.vars' => $this->translate('Host Variables'),
+            '$.services[*].vars' => $this->translate('Service Variables')
+        ];
+    }
+
+    /**
      * @param array<Term> $terms
      */
     private function validateAndEnrichRelations(array $terms): void
     {
-        $knownRelations = static::knownRelations();
+        $knownRelations = $this->knownRelations();
 
         foreach ($terms as $term) {
             if (isset($knownRelations[$term->getSearchValue()])) {
