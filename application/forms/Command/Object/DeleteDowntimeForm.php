@@ -40,6 +40,8 @@ class DeleteDowntimeForm extends CommandForm
 
     protected function assembleSubmitButton()
     {
+        $totalDowntimes = count($this->getObjects());
+
         $isDisabled = true;
         foreach ($this->getObjects() as $downtime) {
             if ($downtime->scheduled_by === null) {
@@ -59,7 +61,7 @@ class DeleteDowntimeForm extends CommandForm
                     : null,
                 'label' => [
                     new Icon('trash'),
-                    tp('Delete downtime', 'Delete downtimes', count($this->getObjects()))
+                    tp('Delete downtime', 'Delete downtimes', $totalDowntimes)
                 ]
             ]
         );
