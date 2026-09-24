@@ -161,9 +161,7 @@ class GeneralConfigForm extends ConfigForm
                     $this->translate('Notifications configuration is not possible')
                 )
             );
-        }
-
-        if (isset($this->configKeyLockReasons[static::URL_CONFIG_KEY])) {
+        } elseif (isset($this->configKeyLockReasons[static::URL_CONFIG_KEY])) {
             $notifications->addHtml(
                 $this->createLockReasons(
                     $this->configKeyLockReasons[static::URL_CONFIG_KEY],
