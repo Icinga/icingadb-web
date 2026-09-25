@@ -244,6 +244,16 @@ class Icinga2Source implements SourceHook
         return $column;
     }
 
+    public function getEventTypes(): array
+    {
+        return [
+            'downtime_start' => $this->translate('Downtime Start'),
+            'downtime_end' => $this->translate('Downtime End'),
+            'flapping_start' => $this->translate('Flapping Start'),
+            'flapping_end' => $this->translate('Flapping End')
+        ];
+    }
+
     public function createObjectLink(array $idTags): ?ValidHtml
     {
         if (isset($idTags['service'])) {
