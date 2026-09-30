@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\View;
 
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -16,6 +17,7 @@ use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\CheckAttempt;
+use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownLine;
 use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
@@ -426,6 +428,27 @@ class EventRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
+        if (Backend::supportsNotifications() && $item->alert_count > 0 && $layout === 'minimal') {
+            $info->addHtml(
+                new HtmlElement(
+                    'span',
+                    Attributes::create([
+                        'class' => 'alert-count',
+                        'title' => sprintf(
+                            $this->translatePlural(
+                                '%d Notification has been sent. Click for details.',
+                                '%d Notifications have been sent. Click for details.',
+                                $item->alert_count
+                            ),
+                            $item->alert_count
+                        )
+                    ]),
+                    new Icon(Icons::NOTIFICATION),
+                    Text::create($item->alert_count)
+                )
+            );
+        }
+
         $timeRelative = new TimeAgo($item->event_time);
         if ($layout !== 'header') {
             $timeAbsolute = (new Time($item->event_time))
@@ -457,6 +480,41 @@ class EventRenderer implements ItemRenderer
 
     public function assemble($item, string $name, HtmlDocument $element, string $layout): bool
     {
-        return false; // no custom sections
+        if ($name !== 'sent-notifications') {
+            return false;
+        }
+
+        $alerts = $item->alert
+            ->orderBy('triggered_at', 'asc')
+            ->execute();
+
+        $details = new HtmlElement(
+            'details',
+            Attributes::create([
+                'class'               => 'collapsible',
+                'data-no-persistence' => true,
+                'open'                => $layout === 'detailed'
+            ])
+        );
+        $details->addHtml(
+            new HtmlElement(
+                'summary',
+                Attributes::create(['class' => 'collapsible-control']),
+                new Icon('angle-right', ['class' => 'expand-icon']),
+                new Icon('angle-down', ['class' => 'collapse-icon']),
+                Text::create(sprintf(
+                    $this->translatePlural('%d Notification', '%d Notifications', $item->alert_count),
+                    $item->alert_count
+                ))
+            ),
+            (new ObjectList($alerts))
+                ->addAttributes(Attributes::create(['class' => 'alert-list']))
+                ->setViewMode('detailed')
+                ->setDetailActionsDisabled()
+        );
+
+        $element->addHtml($details);
+
+        return true;
     }
 }

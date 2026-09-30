@@ -1,0 +1,71 @@
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Style
+
+.item-layout.alert {
+  .icon-ball {
+    .ball-solid(@gray-light);
+    border: none;
+    color: @text-color;
+  }
+
+  .title .membership .icon {
+    color: @text-color-light;
+  }
+}
+
+.item-layout.history {
+  .extended-info .alert-count {
+    color: @text-color-light;
+  }
+
+  .sent-notifications > details > summary {
+    color: @icinga-blue;
+    cursor: pointer;
+    .user-select(none);
+
+    &:hover {
+      .rounded-corners(1em);
+      background: @gray-light;
+    }
+
+    &:focus:not(:focus-visible) {
+      outline: none;
+    }
+  }
+}
+
+// Layout
+
+.item-layout.alert {
+  .icon-ball i.icon.fa-paper-plane::before {
+    margin-right: .2em;
+  }
+}
+
+.item-layout.history {
+  .extended-info .alert-count {
+    margin-right: 1em;
+
+    .icon::before {
+      margin-right: .25em;
+    }
+  }
+
+  .sent-notifications {
+    > details > summary {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: .25em;
+      width: fit-content;
+      margin-left: auto;
+      padding: 0 .5em;
+    }
+
+    > details > .alert-list {
+      margin-top: .5em;
+    }
+  }
+}

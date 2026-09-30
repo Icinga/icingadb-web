@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Widget\ItemList;
 use Icinga\Exception\NotImplementedError;
 use Icinga\Module\Icingadb\Common\DetailActions;
 use Icinga\Module\Icingadb\Common\Links;
+use Icinga\Module\Icingadb\Model\AlertHistory;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Downtime;
@@ -19,6 +20,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
+use Icinga\Module\Icingadb\View\AlertRenderer;
 use Icinga\Module\Icingadb\View\CommentRenderer;
 use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use Icinga\Module\Icingadb\View\HostRenderer;
@@ -42,8 +44,8 @@ use ipl\Web\Widget\ItemList;
  *
  * Create a list of icingadb objects
  *
- * @template Result of DependencyNode|Service|Host|Usergroup|User|Comment|Downtime
- * @template Item of RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime = Result
+ * @template Result of DependencyNode|Service|Host|Usergroup|User|Comment|Downtime|AlertHistory
+ * @template Item of RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime|AlertHistory = Result
  *
  * @extends ItemList<Result, Item>
  */
@@ -71,6 +73,8 @@ class ObjectList extends ItemList
                 return new CommentRenderer();
             } elseif ($item instanceof Downtime) {
                 return new DowntimeRenderer();
+            } elseif ($item instanceof AlertHistory) {
+                return new AlertRenderer();
             }
 
             throw new NotImplementedError('Not implemented');
