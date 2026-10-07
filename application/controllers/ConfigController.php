@@ -35,6 +35,13 @@ class ConfigController extends Controller
 
                 $this->redirectNow('icingadb/config/general-settings');
             })
+            ->on(GeneralConfigForm::ON_SENT, function (GeneralConfigForm $form) {
+                if (! $form->hasBeenSubmitted()) {
+                    foreach ($form->getPartUpdates() as $update) {
+                        $this->addPart(...$update);
+                    }
+                }
+            })
             ->handleRequest($this->getServerRequest());
 
         $this->addContent($form);

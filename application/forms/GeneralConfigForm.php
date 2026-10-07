@@ -18,14 +18,15 @@ use Icinga\Web\Form\ConfigForm;
 use Icinga\Web\Session;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\Sql\Config;
 use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Str;
 use ipl\Web\Common\CalloutType;
 use ipl\Web\FormElement\SearchSuggestions;
-use ipl\Web\FormElement\TermInput;
 use ipl\Web\FormElement\TermInput\Term;
+use ipl\Web\FormElement\TermInputElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\Callout;
 use ipl\Web\Widget\Icon;
@@ -102,6 +103,24 @@ class GeneralConfigForm extends ConfigForm
             $this->readNotificationsConfig();
             $this->addNotificationsSection();
         }
+    }
+
+    /**
+     * Get the updates to transmit for the default relations during multipart responses
+     *
+     * @return array<array{0: ValidHtml, 1: ?string}>
+     */
+    public function getPartUpdates(): array
+    {
+        $this->ensureAssembled();
+
+        if (! $this->hasElement('notifications')) {
+            return [];
+        }
+
+        return $this->getElement('notifications')
+            ->getElement('relations')
+            ->prepareMultipartUpdate($this->getRequest());
     }
 
     private function addDatabaseSection(): void
@@ -246,29 +265,25 @@ class GeneralConfigForm extends ConfigForm
             })()
         ));
 
-        $relations = (new TermInput(
+        /** @var TermInputElement $relations */
+        $relations = $this->createElement(
+            'termInput',
             'relations',
             [
                 'label' => $this->translate('Default relations'),
                 'disabled' => $this->notificationsLocked
                     || isset($this->configKeyLockReasons[static::RELATIONS_CONFIG_KEY])
             ]
-        ))
+        );
+        $relations
             ->setVerticalTermDirection()
             ->setReadOnly()
             ->setSuggestions($suggestions)
             ->setValue($this->defaultRelations ?? '')
-            ->on(TermInput::ON_ENRICH, $this->validateAndEnrichRelations(...))
-            ->on(TermInput::ON_ADD, $this->validateAndEnrichRelations(...))
-            ->on(TermInput::ON_SAVE, $this->validateAndEnrichRelations(...))
-            ->on(TermInput::ON_PASTE, $this->validateAndEnrichRelations(...));
-
-        $decorators = $notifications->getDefaultElementDecorators();
-        $relations->setDefaultElementDecorators($decorators);
-        $relations->addElementDecoratorLoaderPaths([['ipl\\Web\\Compat\\FormDecorator', 'Decorator']]);
-        $relations->getDecorators()
-            ->addDecoratorLoader('ipl\\Web\\Compat\\FormDecorator', 'Decorator')
-            ->addDecorators(array_filter($decorators, fn($decorator) => $decorator !== 'Fieldset'));
+            ->on(TermInputElement::ON_ENRICH, $this->validateAndEnrichRelations(...))
+            ->on(TermInputElement::ON_ADD, $this->validateAndEnrichRelations(...))
+            ->on(TermInputElement::ON_SAVE, $this->validateAndEnrichRelations(...))
+            ->on(TermInputElement::ON_PASTE, $this->validateAndEnrichRelations(...));
 
         $notifications->addElement($relations);
     }
