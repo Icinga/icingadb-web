@@ -230,10 +230,10 @@ class GeneralConfigForm extends ConfigForm
                 Text::create(
                     $this->translate(
                         'Host and service information selected here, such as groups or custom variables,'
-                        . ' is included in every event sent to Icinga Notifications. If an event rule needs something'
-                        . ' that was not included, Icinga Notifications asks for it and Icinga DB has to send the event'
-                        . ' again. Select what your event rules frequently use to avoid this extra step, but leave'
-                        . ' out anything no rule needs, since it would be sent with every event.'
+                        . ' is included in every event sent to Icinga Notifications. If an event rule\'s filter'
+                        . ' needs something that was not included, Icinga Notifications asks for it and Icinga DB has'
+                        . ' to send the event again. Select what your event rule filters frequently use to avoid this'
+                        . ' extra step, but leave out anything no rule needs, since it would be sent with every event.'
                     )
                 )
             )
@@ -248,22 +248,12 @@ class GeneralConfigForm extends ConfigForm
             );
         }
 
-        $suggestions = (new SearchSuggestions(
-            (function () use (&$suggestions) {
-                foreach ($this->knownRelations() as $search => $label) {
-                    if (in_array($search, $suggestions->getExcludeTerms(), true)) {
-                        continue;
-                    }
+        $suggestions = [];
+        foreach ($this->knownRelations() as $search => $label) {
+            $suggestions[] = ['search' => $search, 'label' => $label];
+        }
 
-                    if (
-                        $suggestions->matchSearch($label)
-                        || $suggestions->matchSearch($search)
-                    ) {
-                        yield ['search' => $search, 'label' => $label];
-                    }
-                }
-            })()
-        ));
+        $suggestions = new SearchSuggestions($suggestions);
 
         /** @var TermInputElement $relations */
         $relations = $this->createElement(
@@ -319,6 +309,7 @@ class GeneralConfigForm extends ConfigForm
 
             $instances = Instance::on($this->getDb())->columns(
                 [
+                    'environment_id',
                     'endpoint_id',
                     'notifications_discovered_socket_path',
                     'notifications_synchronize_with_database',
@@ -361,7 +352,12 @@ class GeneralConfigForm extends ConfigForm
             $configuredEndpoints = [];
             $configRows = ConfigModel::on($this->getDb())
                 ->columns(['endpoint_id', 'locked', 'env_key', 'env_value'])
-                ->filter(Filter::equal('env_key', [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY]));
+                ->filter(
+                    Filter::all(
+                        Filter::equal('env_key', [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY]),
+                        Filter::equal('environment_id', $instance->environment_id)
+                    )
+                );
             foreach ($configRows as $configRow) {
                 if ($configRow->locked) {
                     $this->lockConfigKey(
@@ -423,8 +419,7 @@ class GeneralConfigForm extends ConfigForm
 
         try {
             $serviceUsers = [];
-            $endpoints = [];
-            $environmentId = null;
+            $environments = [];
             // The loop is required so that all instances are configured in the HA case
             foreach (
                 Instance::on($this->getDb())->columns([
@@ -434,9 +429,8 @@ class GeneralConfigForm extends ConfigForm
                     'notifications_discovered_socket_path'
                 ]) as $instance
             ) {
-                $environmentId = $instance->environment_id;
                 $endpointId = $instance->endpoint_id ?? $this->defaultEndpointId();
-                $endpoints[$endpointId] = $instance->notifications_discovered_socket_path;
+                $environments[$instance->environment_id][$endpointId] = $instance->notifications_discovered_socket_path;
                 $serviceUsers[$instance->icingadb_service_user] = true;
             }
 
@@ -454,36 +448,41 @@ class GeneralConfigForm extends ConfigForm
             }
 
             $this->getDb()
-                ->transaction(function () use ($enable, $endpoints, $environmentId, $writableKeys, $relations) {
-                    $environmentId = $this->encodeBinary($environmentId, 'environment_id');
-                    foreach ($endpoints as $endpointId => $socketPath) {
-                        $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
+                ->transaction(function () use ($enable, $environments, $writableKeys, $relations) {
+                    foreach ($environments as $environmentId => $endpoints) {
+                        $environmentId = $this->encodeBinary($environmentId, 'environment_id');
+                        foreach ($endpoints as $endpointId => $socketPath) {
+                            $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
 
-                        $this->getDb()->delete('icingadb_config', [
-                            'environment_id = ?' => $environmentId,
-                            'endpoint_id = ?' => $endpointId,
-                            'env_key IN (?)' => $writableKeys,
-                            'locked = ?' => 'n'
-                        ]);
-
-                        if ($enable && $socketPath !== null && in_array(static::URL_CONFIG_KEY, $writableKeys, true)) {
-                            $this->getDb()->insert('icingadb_config', [
-                                'environment_id' => $environmentId,
-                                'endpoint_id' => $endpointId,
-                                'env_key' => static::URL_CONFIG_KEY,
-                                'env_value' => 'unix://' . $socketPath,
-                                'locked' => 'n'
+                            $this->getDb()->delete('icingadb_config', [
+                                'environment_id = ?' => $environmentId,
+                                'endpoint_id = ?' => $endpointId,
+                                'env_key IN (?)' => $writableKeys,
+                                'locked = ?' => 'n'
                             ]);
-                        }
 
-                        if ($relations !== '' && in_array(static::RELATIONS_CONFIG_KEY, $writableKeys, true)) {
-                            $this->getDb()->insert('icingadb_config', [
-                                'environment_id' => $environmentId,
-                                'endpoint_id' => $endpointId,
-                                'env_key' => static::RELATIONS_CONFIG_KEY,
-                                'env_value' => $relations,
-                                'locked' => 'n'
-                            ]);
+                            if (
+                                $enable && $socketPath !== null
+                                && in_array(static::URL_CONFIG_KEY, $writableKeys, true)
+                            ) {
+                                $this->getDb()->insert('icingadb_config', [
+                                    'environment_id' => $environmentId,
+                                    'endpoint_id' => $endpointId,
+                                    'env_key' => static::URL_CONFIG_KEY,
+                                    'env_value' => 'unix://' . $socketPath,
+                                    'locked' => 'n'
+                                ]);
+                            }
+
+                            if ($relations !== '' && in_array(static::RELATIONS_CONFIG_KEY, $writableKeys, true)) {
+                                $this->getDb()->insert('icingadb_config', [
+                                    'environment_id' => $environmentId,
+                                    'endpoint_id' => $endpointId,
+                                    'env_key' => static::RELATIONS_CONFIG_KEY,
+                                    'env_value' => $relations,
+                                    'locked' => 'n'
+                                ]);
+                            }
                         }
                     }
                 });
