@@ -109,13 +109,13 @@ class QuickActions extends BaseHtmlElement
                     if ($role !== 'manager') {
                         $action = $role === 'subscriber' ? 'unsubscribe' : 'subscribe';
 
-                        $this->addHtml(
-                            Html::tag(
-                                'li',
-                                (new SubscriptionForm($action === 'subscribe'))
-                                    ->setAction($this->getLink($action))
-                            )
-                        );
+                        $form = (new SubscriptionForm($action === 'subscribe'))
+                            ->setAction($this->getLink($action));
+                        if ($incident->getPendingAction() === $action) {
+                            $form->setPendingJob($incident->getPendingJobAttributes());
+                        }
+
+                        $this->addHtml(Html::tag('li', $form));
                     }
                 }
             } catch (IncidentNotFoundException) {

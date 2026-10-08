@@ -39,7 +39,7 @@ trait ManagesIncidents
                     if ($manage) {
                         $incident->addManager($username);
                     } else {
-                        $incident->removeManager($username);
+                        $incident->removeManager();
                     }
                 }
             }
