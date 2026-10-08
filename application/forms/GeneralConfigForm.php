@@ -446,12 +446,12 @@ class GeneralConfigForm extends ConfigForm
      *
      * @return string
      */
-    private function detectIcingaweb2Url(): string
+    protected function detectIcingaweb2Url(): string
     {
-        $request = Icinga::app()->getRequest();
+        $request = $this->getRequest();
 
-        $protocol = $this->getForwardedHeader('X-Forwarded-Proto') ?? $request->getScheme();
-        $host = $this->getForwardedHeader('X-Forwarded-Host') ?? $request->getHttpHost();
+        $protocol = $this->getForwardedHeader('X-Forwarded-Proto') ?? $request->getUri()->getScheme();
+        $host = $this->getForwardedHeader('X-Forwarded-Host') ?? $request->getHeaderLine('Host');
 
         $defaultPort = $protocol === 'http' ? '80' : '443';
         $port = $this->getForwardedHeader('X-Forwarded-Port');
@@ -463,16 +463,21 @@ class GeneralConfigForm extends ConfigForm
             $host .= ':' . $port;
         }
 
-        return $protocol . '://' . $host . $request->getBaseUrl();
+        return $protocol . '://' . $host . $this->getBasePath();
     }
 
     private function getForwardedHeader(string $name): ?string
     {
-        $value = Icinga::app()->getRequest()->getHeader($name);
-        if ($value === false) {
+        $value = $this->getRequest()->getHeaderLine($name);
+        if ($value === '') {
             return null;
         }
 
         return trim(explode(',', $value)[0]);
+    }
+
+    protected function getBasePath(): string
+    {
+        return Icinga::app()->getRequest()->getBaseUrl();
     }
 }
