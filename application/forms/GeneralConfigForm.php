@@ -24,9 +24,10 @@ use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Str;
 use ipl\Web\Common\CalloutType;
+use ipl\Web\FormDecorator\IcingaFormDecorator;
 use ipl\Web\FormElement\SearchSuggestions;
+use ipl\Web\FormElement\TermInput;
 use ipl\Web\FormElement\TermInput\Term;
-use ipl\Web\FormElement\TermInputElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\Callout;
 use ipl\Web\Widget\Icon;
@@ -255,25 +256,26 @@ class GeneralConfigForm extends ConfigForm
 
         $suggestions = new SearchSuggestions($suggestions);
 
-        /** @var TermInputElement $relations */
-        $relations = $this->createElement(
-            'termInput',
+        $relations = (new TermInput(
             'relations',
             [
                 'label' => $this->translate('Default relations'),
                 'disabled' => $this->notificationsLocked
                     || isset($this->configKeyLockReasons[static::RELATIONS_CONFIG_KEY])
             ]
-        );
-        $relations
-            ->setVerticalTermDirection()
+        ))
             ->setReadOnly()
             ->setSuggestions($suggestions)
             ->setValue($this->defaultRelations ?? '')
-            ->on(TermInputElement::ON_ENRICH, $this->validateAndEnrichRelations(...))
-            ->on(TermInputElement::ON_ADD, $this->validateAndEnrichRelations(...))
-            ->on(TermInputElement::ON_SAVE, $this->validateAndEnrichRelations(...))
-            ->on(TermInputElement::ON_PASTE, $this->validateAndEnrichRelations(...));
+            ->on(TermInput::ON_ENRICH, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_ADD, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_SAVE, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_PASTE, $this->validateAndEnrichRelations(...));
+
+        // TODO: TermInput is not compatible with the new decorators yet: https://github.com/Icinga/ipl-web/pull/317
+        $legacyDecorator = new IcingaFormDecorator();
+        $relations->setDefaultElementDecorator($legacyDecorator);
+        $legacyDecorator->decorate($relations);
 
         $notifications->addElement($relations);
     }
