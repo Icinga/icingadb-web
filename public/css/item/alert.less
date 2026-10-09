@@ -20,7 +20,7 @@
     color: @text-color-light;
   }
 
-  .sent-notifications > details > summary {
+  .sent-notifications .collapsible-control {
     color: @icinga-blue;
     cursor: pointer;
     .user-select(none);
@@ -30,19 +30,13 @@
       background: @gray-light;
     }
 
-    &:focus:not(:focus-visible) {
+    &:not(:focus-visible) {
       outline: none;
     }
   }
 }
 
 // Layout
-
-.item-layout.alert {
-  .icon-ball i.icon.fa-paper-plane::before {
-    margin-right: .2em;
-  }
-}
 
 .item-layout.history {
   .extended-info .alert-count {
