@@ -507,8 +507,7 @@ class EventRenderer implements ItemRenderer
             ),
             (new ObjectList($alerts))
                 ->addAttributes(Attributes::create(['class' => 'alert-list']))
-                ->setViewMode('detailed')
-                ->setDetailActionsDisabled()
+                ->setViewMode('common')
         );
 
         $element->addHtml($details);

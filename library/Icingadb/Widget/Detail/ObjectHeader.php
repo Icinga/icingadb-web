@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Model\AlertHistory;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\History;
@@ -16,6 +17,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Model\User;
 use Icinga\Module\Icingadb\Model\Usergroup;
+use Icinga\Module\Icingadb\View\AlertRenderer;
 use Icinga\Module\Icingadb\View\CommentRenderer;
 use Icinga\Module\Icingadb\View\DowntimeRenderer;
 use Icinga\Module\Icingadb\View\EventRenderer;
@@ -36,7 +38,7 @@ use ipl\Web\Layout\ItemLayout;
  *
  * Create a header for icingadb object
  *
- * @phpstan-type _PART1 = RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime|History
+ * @phpstan-type _PART1 = RedundancyGroup|Service|Host|Usergroup|User|Comment|Downtime|History|AlertHistory
  * @phpstan-type _PART2 = Hostgroupsummary|ServicegroupSummary
  *
  * @template Item of _PART1|_PART2
@@ -96,6 +98,10 @@ class ObjectHeader extends BaseHtmlElement
                 break;
             case $this->object instanceof History:
                 $renderer = new EventRenderer();
+
+                break;
+            case $this->object instanceof AlertHistory:
+                $renderer = new AlertRenderer();
 
                 break;
             case $this->object instanceof Hostgroupsummary:

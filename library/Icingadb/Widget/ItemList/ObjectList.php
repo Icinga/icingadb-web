@@ -261,6 +261,12 @@ class ObjectList extends ItemList
                     ->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
 
                 break;
+            case $object instanceof AlertHistory:
+                $this
+                    ->setDetailUrl(Url::fromPath('icingadb/alert'))
+                    ->addDetailFilterAttribute($item, Filter::equal('id', bin2hex($object->id)));
+
+                break;
         }
 
         return $item;

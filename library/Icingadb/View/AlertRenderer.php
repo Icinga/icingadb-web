@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\View;
 
 use Icinga\Module\Icingadb\Common\Icons;
+use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Model\AlertHistory;
 use ipl\Html\Attributes;
 use ipl\Html\FormattedString;
@@ -16,6 +17,7 @@ use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
 use ipl\Web\Common\ItemRenderer;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 use ipl\Web\Widget\StateBall;
 use ipl\Web\Widget\TimeAgo;
 
@@ -47,21 +49,17 @@ class AlertRenderer implements ItemRenderer
 
     public function assembleTitle($item, HtmlDocument $title, string $layout): void
     {
-        $contact = new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($item->contact_name ?? $this->translate('unknown', 'name of a notification recipient'))
+        $sentence = FormattedString::create(
+            $this->translate('Sent notification via %s to %s'),
+            $item->channel_name ?? $this->translate('unknown', 'name of a notification channel'),
+            $item->contact_name ?? $this->translate('unknown', 'name of a notification recipient')
         );
 
-        $channel = new HtmlElement(
-            'span',
-            Attributes::create(['class' => 'subject']),
-            Text::create($item->channel_name ?? $this->translate('unknown', 'name of a notification channel'))
-        );
-
-        $title->addHtml(
-            FormattedString::create($this->translate('Sent notification via %s to %s'), $channel, $contact)
-        );
+        if ($layout === 'header') {
+            $title->addHtml(new HtmlElement('span', Attributes::create(['class' => 'subject']), $sentence));
+        } else {
+            $title->addHtml(new Link($sentence, Links::alert($item), ['class' => 'subject']));
+        }
 
         $membership = $this->createMembership($item);
         if ($membership !== null) {
@@ -74,7 +72,7 @@ class AlertRenderer implements ItemRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
-        $caption->addHtml(Text::create($item->event_message));
+        $caption->addHtml(Text::create(substr($item->event_message, 0, 1024)));
     }
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void

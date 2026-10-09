@@ -662,8 +662,7 @@ class EventDetail extends BaseHtmlElement
             new HtmlElement('h2', null, Text::create(t('Alerts'))),
             (new ObjectList($alerts))
                 ->addAttributes(Attributes::create(['class' => 'alert-list']))
-                ->setViewMode('detailed')
-                ->setDetailActionsDisabled()
+                ->setViewMode('common')
         ];
     }
 

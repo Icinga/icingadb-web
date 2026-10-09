@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\Common;
 
+use Icinga\Module\Icingadb\Model\AlertHistory;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Model\History;
@@ -140,5 +141,10 @@ abstract class Links
     public static function event(History $event): Url
     {
         return Url::fromPath('icingadb/event', ['id' => bin2hex($event->id)]);
+    }
+
+    public static function alert(AlertHistory $alert): Url
+    {
+        return Url::fromPath('icingadb/alert', ['id' => bin2hex($alert->id)]);
     }
 }
