@@ -39,6 +39,12 @@ class GeneralConfigForm extends ConfigForm
     /** @var string Config key under which Icinga DB's Notifications socket URL is stored */
     public const URL_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_URL';
 
+    /** @var string Config key under which the Icinga Web URL transmitted to Icinga Notifications is stored */
+    public const ICINGAWEB2_URL_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_ICINGAWEB2_URL';
+
+    /** @var string The path this form is served at, relative to Icinga Web's base path */
+    private const PATH = 'icingadb/config/general-settings';
+
     protected $defaultAttributes = [
         'class' => ['icinga-form', 'icinga-controls', 'general-config-form'],
         'name'  => 'general-config-form'
@@ -64,6 +70,9 @@ class GeneralConfigForm extends ConfigForm
 
     /** @var bool Whether Icinga DB reports that it fails to transmit notifications */
     private bool $unhealthy = false;
+
+    /** @var bool Whether the Icinga Web URL is managed locally */
+    private bool $icingaweb2UrlLocked = false;
 
     public function __construct(ApplicationConfig $config)
     {
@@ -266,11 +275,18 @@ class GeneralConfigForm extends ConfigForm
 
             $configuredEndpoints = [];
             $managedLocally = false;
-            foreach (
-                ConfigModel::on($this->getDb())
-                    ->columns(['endpoint_id', 'locked', 'environment_id'])
-                    ->filter(Filter::equal('env_key', static::URL_CONFIG_KEY)) as $configRow
-            ) {
+            $configRows = ConfigModel::on($this->getDb())
+                ->columns(['endpoint_id', 'locked', 'env_key'])
+                ->filter(Filter::equal('env_key', [static::URL_CONFIG_KEY, static::ICINGAWEB2_URL_CONFIG_KEY]));
+            foreach ($configRows as $configRow) {
+                if ($configRow->env_key === static::ICINGAWEB2_URL_CONFIG_KEY) {
+                    if ($configRow->locked) {
+                        $this->icingaweb2UrlLocked = true;
+                    }
+
+                    continue;
+                }
+
                 $configuredEndpoints[$configRow->endpoint_id] = true;
 
                 if ($configRow->locked) {
@@ -347,7 +363,9 @@ class GeneralConfigForm extends ConfigForm
                 }
             }
 
-            $this->getDb()->transaction(function () use ($enable, $endpoints, $environmentId) {
+            $icingaweb2Url = $this->detectIcingaweb2Url();
+
+            $this->getDb()->transaction(function () use ($enable, $endpoints, $environmentId, $icingaweb2Url) {
                 $environmentId = $this->encodeBinary($environmentId, 'environment_id');
                 foreach ($endpoints as $endpointId => $socketPath) {
                     $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
@@ -355,7 +373,7 @@ class GeneralConfigForm extends ConfigForm
                     $this->getDb()->delete('icingadb_config', [
                         'environment_id = ?' => $environmentId,
                         'endpoint_id = ?' => $endpointId,
-                        'env_key = ?' => static::URL_CONFIG_KEY,
+                        'env_key IN (?)' => [static::URL_CONFIG_KEY, static::ICINGAWEB2_URL_CONFIG_KEY],
                         'locked = ?' => 'n'
                     ]);
 
@@ -367,6 +385,16 @@ class GeneralConfigForm extends ConfigForm
                             'env_value' => 'unix://' . $socketPath,
                             'locked' => 'n'
                         ]);
+
+                        if (! $this->icingaweb2UrlLocked) {
+                            $this->getDb()->insert('icingadb_config', [
+                                'environment_id' => $environmentId,
+                                'endpoint_id' => $endpointId,
+                                'env_key' => static::ICINGAWEB2_URL_CONFIG_KEY,
+                                'env_value' => $icingaweb2Url,
+                                'locked' => 'n'
+                            ]);
+                        }
                     }
                 }
             });
@@ -413,5 +441,60 @@ class GeneralConfigForm extends ConfigForm
     private function defaultEndpointId(): string
     {
         return str_repeat(chr(0), 20);
+    }
+
+    /**
+     * Detect the absolute Url of Icinga Web, respecting X-Forwarded-* headers set by reverse proxies
+     *
+     * @return string
+     */
+    private function detectIcingaweb2Url(): string
+    {
+        $request = $this->getRequest();
+
+        $protocol = $this->getForwardedHeader('X-Forwarded-Proto') ?? $request->getUri()->getScheme();
+        $host = $this->getForwardedHeader('X-Forwarded-Host') ?? $request->getHeaderLine('Host');
+
+        $defaultPort = $protocol === 'http' ? '80' : '443';
+        $port = $this->getForwardedHeader('X-Forwarded-Port');
+        if (
+            $port !== null
+            && $port !== $defaultPort
+            && parse_url($protocol . '://' . $host, PHP_URL_PORT) === null
+        ) {
+            $host .= ':' . $port;
+        }
+
+        return $protocol . '://' . $host . $this->getBasePath();
+    }
+
+    private function getForwardedHeader(string $name): ?string
+    {
+        $value = $this->getRequest()->getHeaderLine($name);
+        if ($value === '') {
+            return null;
+        }
+
+        return trim(explode(',', $value)[0]);
+    }
+
+    /**
+     * Get the base path of Icinga Web
+     *
+     * Uses the prefix announced by a reverse proxy via X-Forwarded-Prefix if present,
+     * otherwise cuts this form's path off the request path, so the form must be served at {@see self::PATH}.
+     *
+     * @return string
+     */
+    private function getBasePath(): string
+    {
+        $prefix = $this->getForwardedHeader('X-Forwarded-Prefix');
+        if ($prefix !== null) {
+            return rtrim($prefix, '/');
+        }
+
+        $path = rtrim($this->getRequest()->getUri()->getPath(), '/');
+
+        return substr($path, 0, -strlen('/' . self::PATH));
     }
 }
