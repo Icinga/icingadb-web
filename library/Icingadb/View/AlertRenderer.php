@@ -40,7 +40,7 @@ class AlertRenderer implements ItemRenderer
             HtmlElement::create(
                 'div',
                 ['class' => ['icon-ball', 'ball-size-' . $ballSize]],
-                new Icon(Icons::NOTIFIED)
+                new Icon(Icons::NOTIFICATION)
             )
         );
     }
@@ -50,13 +50,13 @@ class AlertRenderer implements ItemRenderer
         $contact = new HtmlElement(
             'span',
             Attributes::create(['class' => 'subject']),
-            Text::create($item->contact_name ?? $this->translate('unknown'))
+            Text::create($item->contact_name ?? $this->translate('unknown', 'name of a notification recipient'))
         );
 
         $channel = new HtmlElement(
             'span',
             Attributes::create(['class' => 'subject']),
-            Text::create($item->channel_name ?? $this->translate('unknown'))
+            Text::create($item->channel_name ?? $this->translate('unknown', 'name of a notification channel'))
         );
 
         $title->addHtml(
@@ -101,7 +101,7 @@ class AlertRenderer implements ItemRenderer
     protected function createMembership(AlertHistory $item): ?ValidHtml
     {
         if (isset($item->contactgroup_name)) {
-            $icon = new Icon(Icons::USERGROUP, ['title' => $this->translate('Contact group')]);
+            $icon = new Icon(Icons::USERGROUP, ['title' => $this->translate('Contact Group')]);
             $name = $item->contactgroup_name;
         } elseif (isset($item->schedule_name)) {
             $icon = new Icon(Icons::SCHEDULE, ['title' => $this->translate('Schedule')]);

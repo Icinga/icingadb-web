@@ -6,7 +6,6 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
-use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
@@ -102,9 +101,7 @@ class HistoryObjectList extends ObjectList
         $layout = parent::getItemLayout($item);
 
         if (
-            Backend::supportsNotifications()
-            && $item instanceof History
-            && $item->alert_count > 0
+            ! empty($item->alert_count)
             && $layout->getName() !== MinimalItemLayout::NAME
         ) {
             $layout->after(ItemLayout::CAPTION, 'sent-notifications');

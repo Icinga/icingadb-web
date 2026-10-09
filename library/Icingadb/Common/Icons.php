@@ -36,6 +36,4 @@ class Icons
     public const WARNING = 'exclamation-triangle';
 
     public const SCHEDULE = 'calendar';
-
-    public const NOTIFIED = 'paper-plane';
 }

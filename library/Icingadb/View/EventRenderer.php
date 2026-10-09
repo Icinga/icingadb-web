@@ -6,7 +6,6 @@
 namespace Icinga\Module\Icingadb\View;
 
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -428,7 +427,7 @@ class EventRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        if (Backend::supportsNotifications() && $item->alert_count > 0 && $layout === 'minimal') {
+        if (! empty($item->alert_count) && $layout === 'minimal') {
             $info->addHtml(
                 new HtmlElement(
                     'span',
@@ -436,8 +435,8 @@ class EventRenderer implements ItemRenderer
                         'class' => 'alert-count',
                         'title' => sprintf(
                             $this->translatePlural(
-                                '%d Notification has been sent. Click for details.',
-                                '%d Notifications have been sent. Click for details.',
+                                '%d Alert has been sent. Click for details.',
+                                '%d Alerts have been sent. Click for details.',
                                 $item->alert_count
                             ),
                             $item->alert_count
@@ -485,8 +484,7 @@ class EventRenderer implements ItemRenderer
         }
 
         $alerts = $item->alert
-            ->orderBy('triggered_at', 'asc')
-            ->execute();
+            ->orderBy('triggered_at', 'asc');
 
         $details = new HtmlElement(
             'details',
@@ -503,7 +501,7 @@ class EventRenderer implements ItemRenderer
                 new Icon('angle-right', ['class' => 'expand-icon']),
                 new Icon('angle-down', ['class' => 'collapse-icon']),
                 Text::create(sprintf(
-                    $this->translatePlural('%d Notification', '%d Notifications', $item->alert_count),
+                    $this->translatePlural('%d Alert', '%d Alerts', $item->alert_count),
                     $item->alert_count
                 ))
             ),

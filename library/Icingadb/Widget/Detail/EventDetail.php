@@ -10,7 +10,6 @@ use DateTimeZone;
 use Icinga\Application\Config;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
-use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
@@ -652,19 +651,17 @@ class EventDetail extends BaseHtmlElement
 
     protected function createSentNotifications(): array
     {
-        if (! Backend::supportsNotifications() || ! $this->event->alert_count) {
+        if (empty($this->event->alert_count)) {
             return [];
         }
 
         $alerts = $this->event->alert
-            ->orderBy('triggered_at', 'asc')
-            ->execute();
+            ->orderBy('triggered_at', 'asc');
 
         return [
-            new HtmlElement('h2', null, Text::create(t('Sent Notifications'))),
+            new HtmlElement('h2', null, Text::create(t('Alerts'))),
             (new ObjectList($alerts))
-                ->addAttributes(Attributes
-                    ::create(['class' => 'alert-list']))
+                ->addAttributes(Attributes::create(['class' => 'alert-list']))
                 ->setViewMode('detailed')
                 ->setDetailActionsDisabled()
         ];

@@ -60,7 +60,7 @@ class AlertHistory extends Model
             'schedule_name'     => t('Alert Schedule Name'),
             'channel_name'      => t('Alert Channel Name'),
             'triggered_at'      => t('Alert Triggered At'),
-            'event_message'     => t('Alert Event Message')
+            'event_message'     => t('Alert Message')
         ];
     }
 
