@@ -18,11 +18,16 @@ use Icinga\Web\Form\ConfigForm;
 use Icinga\Web\Session;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\Sql\Config;
 use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
 use ipl\Stdlib\Str;
 use ipl\Web\Common\CalloutType;
+use ipl\Web\FormDecorator\IcingaFormDecorator;
+use ipl\Web\FormElement\SearchSuggestions;
+use ipl\Web\FormElement\TermInput;
+use ipl\Web\FormElement\TermInput\Term;
 use ipl\Web\Url;
 use ipl\Web\Widget\Callout;
 use ipl\Web\Widget\Icon;
@@ -39,16 +44,19 @@ class GeneralConfigForm extends ConfigForm
     /** @var string Config key under which Icinga DB's Notifications socket URL is stored */
     public const URL_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_URL';
 
+    /** @var string Config key under which the default relations for events sent to Icinga Notifications are stored */
+    public const RELATIONS_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_DEFAULT_RELATIONS';
+
     protected $defaultAttributes = [
         'class' => ['icinga-form', 'icinga-controls', 'general-config-form'],
         'name'  => 'general-config-form'
     ];
 
-    /** @var bool Whether the assisted configuration is unavailable and the form is read-only */
-    private bool $locked = false;
+    /** @var bool Whether the notifications section is read-only */
+    private bool $notificationsLocked = false;
 
-    /** @var string[] The reasons why the toggle is disabled */
-    private array $lockMessages = [];
+    /** @var string[] The reasons why the notifications section is disabled */
+    private array $notificationsLockReasons = [];
 
     /** @var bool Whether notifications are enabled */
     private bool $notificationsEnabled = false;
@@ -64,6 +72,12 @@ class GeneralConfigForm extends ConfigForm
 
     /** @var bool Whether Icinga DB reports that it fails to transmit notifications */
     private bool $unhealthy = false;
+
+    /** @var ?string The configured default relations as comma separated JSONPaths, null if not configured */
+    private ?string $defaultRelations = null;
+
+    /** @var array<string, string[]> Lock reasons for individual config items, keyed by config key */
+    private array $configKeyLockReasons = [];
 
     public function __construct(ApplicationConfig $config)
     {
@@ -90,6 +104,24 @@ class GeneralConfigForm extends ConfigForm
             $this->readNotificationsConfig();
             $this->addNotificationsSection();
         }
+    }
+
+    /**
+     * Get the updates to transmit for the default relations during multipart responses
+     *
+     * @return array<array{0: ValidHtml, 1: ?string}>
+     */
+    public function getPartUpdates(): array
+    {
+        $this->ensureAssembled();
+
+        if (! $this->hasElement('notifications')) {
+            return [];
+        }
+
+        return $this->getElement('notifications')
+            ->getElement('relations')
+            ->prepareMultipartUpdate($this->getRequest());
     }
 
     private function addDatabaseSection(): void
@@ -142,21 +174,18 @@ class GeneralConfigForm extends ConfigForm
             )
         ]));
 
-        if ($this->locked) {
+        if ($this->notificationsLocked) {
             $notifications->addHtml(
-                new Callout(
-                    CalloutType::Info,
-                    count($this->lockMessages) === 1
-                        ? $this->lockMessages[0]
-                        : HtmlElement::create(
-                            'ul',
-                            ['class' => 'lock-reasons'],
-                            array_map(
-                                fn(string $message) => HtmlElement::create('li', null, $message),
-                                $this->lockMessages
-                            )
-                        ),
-                    $this->translate('Assisted configuration is not possible')
+                $this->createLockReasons(
+                    $this->notificationsLockReasons,
+                    $this->translate('Notifications configuration is not possible')
+                )
+            );
+        } elseif (isset($this->configKeyLockReasons[static::URL_CONFIG_KEY])) {
+            $notifications->addHtml(
+                $this->createLockReasons(
+                    $this->configKeyLockReasons[static::URL_CONFIG_KEY],
+                    $this->translate('Enabling or disabling notifications is not possible')
                 )
             );
         }
@@ -184,15 +213,71 @@ class GeneralConfigForm extends ConfigForm
             );
         }
 
-        if ($this->locked || $this->databaseChanged) {
+        if ($this->notificationsLocked || $this->databaseChanged) {
             $notifications->clearPopulatedValue('enabled');
+            $notifications->clearPopulatedValue('relations');
         }
 
         $notifications->addElement('checkbox', 'enabled', [
-            'disabled' => $this->locked,
+            'disabled' => $this->notificationsLocked || isset($this->configKeyLockReasons[static::URL_CONFIG_KEY]),
             'label'    => $this->translate('Enable notifications'),
             'value'    => $this->notificationsEnabled
         ]);
+
+        $notifications->addHtml(
+            HtmlElement::create(
+                'p',
+                ['class' => 'description'],
+                Text::create(
+                    $this->translate(
+                        'Host and service information selected here, such as groups or custom variables,'
+                        . ' is included in every event sent to Icinga Notifications. If an event rule\'s filter'
+                        . ' needs something that was not included, Icinga Notifications asks for it and Icinga DB has'
+                        . ' to send the event again. Select what your event rule filters frequently use to avoid this'
+                        . ' extra step, but leave out anything no rule needs, since it would be sent with every event.'
+                    )
+                )
+            )
+        );
+
+        if (isset($this->configKeyLockReasons[static::RELATIONS_CONFIG_KEY])) {
+            $notifications->addHtml(
+                $this->createLockReasons(
+                    $this->configKeyLockReasons[static::RELATIONS_CONFIG_KEY],
+                    $this->translate('Configuring default relations is not possible')
+                )
+            );
+        }
+
+        $suggestions = [];
+        foreach ($this->knownRelations() as $search => $label) {
+            $suggestions[] = ['search' => $search, 'label' => $label];
+        }
+
+        $suggestions = new SearchSuggestions($suggestions);
+
+        $relations = (new TermInput(
+            'relations',
+            [
+                'label' => $this->translate('Default relations'),
+                'disabled' => $this->notificationsLocked
+                    || isset($this->configKeyLockReasons[static::RELATIONS_CONFIG_KEY])
+            ]
+        ))
+            ->setReadOnly()
+            ->setSuggestions($suggestions)
+            ->setValue($this->defaultRelations ?? '')
+            ->on(TermInput::ON_ENRICH, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_ADD, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_SAVE, $this->validateAndEnrichRelations(...))
+            ->on(TermInput::ON_PASTE, $this->validateAndEnrichRelations(...));
+
+        // TODO: TermInput is not compatible with the new decorators yet: https://github.com/Icinga/ipl-web/pull/317
+        $legacyDecorator = new IcingaFormDecorator();
+        $relations->setDefaultElementDecorator($legacyDecorator);
+        $legacyDecorator->decorate($relations);
+
+        $notifications->addElement($relations);
     }
 
     /**
@@ -239,6 +324,9 @@ class GeneralConfigForm extends ConfigForm
 
                 return;
             } elseif (count($instances) > 1) {
+                // Each environment has one responsible instance, so several of them mean several environments.
+                // Supporting those would require one toggle per environment just to allow differing config.
+                // Such setups have to be configured manually.
                 $this->lockNotifications(
                     $this->translate('Assisted configuration for multiple environments is not supported.')
                 );
@@ -256,7 +344,8 @@ class GeneralConfigForm extends ConfigForm
             }
 
             if ($instance->notifications_discovered_socket_path === null) {
-                $this->lockNotifications(
+                $this->lockConfigKey(
+                    static::URL_CONFIG_KEY,
                     $this->translate('No Unix socket for Icinga Notifications was discovered.')
                 );
             }
@@ -265,26 +354,27 @@ class GeneralConfigForm extends ConfigForm
             $this->unhealthy = $instance->notifications_healthy === false;
 
             $configuredEndpoints = [];
-            $managedLocally = false;
-            foreach (
-                ConfigModel::on($this->getDb())
-                    ->columns(['endpoint_id', 'locked', 'environment_id'])
-                    ->filter(Filter::equal('env_key', static::URL_CONFIG_KEY)) as $configRow
-            ) {
-                $configuredEndpoints[$configRow->endpoint_id] = true;
-
+            $configRows = ConfigModel::on($this->getDb())
+                ->columns(['endpoint_id', 'locked', 'env_key', 'env_value'])
+                ->filter(Filter::equal('env_key', [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY]));
+            foreach ($configRows as $configRow) {
                 if ($configRow->locked) {
-                    $managedLocally = true;
+                    $this->lockConfigKey(
+                        $configRow->env_key,
+                        $this->translate('This configuration item is managed locally.')
+                    );
                 }
-            }
 
-            if ($managedLocally) {
-                $this->lockNotifications($this->translate('The configuration is managed locally.'));
+                if ($configRow->env_key === static::URL_CONFIG_KEY) {
+                    $configuredEndpoints[$configRow->endpoint_id] = true;
+                } elseif ($configRow->env_key === static::RELATIONS_CONFIG_KEY && $this->defaultRelations === null) {
+                    $this->defaultRelations = $configRow->env_value;
+                }
             }
 
             $enabled = isset($configuredEndpoints[$instance->endpoint_id ?? $this->defaultEndpointId()]);
 
-            if ($enabled) {
+            if ($enabled && ! isset($this->configKeyLockReasons[static::URL_CONFIG_KEY])) {
                 if (Source::get($serviceUser)->getName() === null) {
                     $enabled = false;
                     $this->sourceMissing = true;
@@ -311,11 +401,20 @@ class GeneralConfigForm extends ConfigForm
      */
     private function saveNotificationsConfig(): void
     {
-        if ($this->locked || ! $this->hasElement('notifications')) {
+        if ($this->notificationsLocked || ! $this->hasElement('notifications')) {
             return;
         }
 
-        $enable = $this->getValue('notifications')['enabled'] === 'y';
+        $writableKeys = array_diff(
+            [static::URL_CONFIG_KEY, static::RELATIONS_CONFIG_KEY],
+            array_keys($this->configKeyLockReasons)
+        );
+        if (empty($writableKeys)) {
+            return;
+        }
+
+        $enable = $this->getElement('notifications')->getElement('enabled')->isChecked();
+        $relations = $this->getElement('notifications')->getValue('relations');
 
         try {
             $serviceUsers = [];
@@ -336,7 +435,8 @@ class GeneralConfigForm extends ConfigForm
                 $serviceUsers[$instance->icingadb_service_user] = true;
             }
 
-            if ($enable) {
+            $sources = [];
+            if ($enable && in_array(static::URL_CONFIG_KEY, $writableKeys, true)) {
                 foreach (array_keys($serviceUsers) as $serviceUser) {
                     $source = Source::get($serviceUser);
                     if ($source->getName() === null) {
@@ -344,43 +444,53 @@ class GeneralConfigForm extends ConfigForm
                     }
 
                     $source->setType('icinga2');
+                    $sources[] = $source;
                 }
             }
 
-            $this->getDb()->transaction(function () use ($enable, $endpoints, $environmentId) {
-                $environmentId = $this->encodeBinary($environmentId, 'environment_id');
-                foreach ($endpoints as $endpointId => $socketPath) {
-                    $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
+            $this->getDb()
+                ->transaction(function () use ($enable, $endpoints, $environmentId, $writableKeys, $relations) {
+                    $environmentId = $this->encodeBinary($environmentId, 'environment_id');
+                    foreach ($endpoints as $endpointId => $socketPath) {
+                        $endpointId = $this->encodeBinary($endpointId, 'endpoint_id');
 
-                    $this->getDb()->delete('icingadb_config', [
-                        'environment_id = ?' => $environmentId,
-                        'endpoint_id = ?' => $endpointId,
-                        'env_key = ?' => static::URL_CONFIG_KEY,
-                        'locked = ?' => 'n'
-                    ]);
-
-                    if ($enable && $socketPath !== null) {
-                        $this->getDb()->insert('icingadb_config', [
-                            'environment_id' => $environmentId,
-                            'endpoint_id' => $endpointId,
-                            'env_key' => static::URL_CONFIG_KEY,
-                            'env_value' => 'unix://' . $socketPath,
-                            'locked' => 'n'
+                        $this->getDb()->delete('icingadb_config', [
+                            'environment_id = ?' => $environmentId,
+                            'endpoint_id = ?' => $endpointId,
+                            'env_key IN (?)' => $writableKeys,
+                            'locked = ?' => 'n'
                         ]);
-                    }
-                }
-            });
 
-            if (isset($source)) {
+                        if ($enable && $socketPath !== null && in_array(static::URL_CONFIG_KEY, $writableKeys, true)) {
+                            $this->getDb()->insert('icingadb_config', [
+                                'environment_id' => $environmentId,
+                                'endpoint_id' => $endpointId,
+                                'env_key' => static::URL_CONFIG_KEY,
+                                'env_value' => 'unix://' . $socketPath,
+                                'locked' => 'n'
+                            ]);
+                        }
+
+                        if ($relations !== '' && in_array(static::RELATIONS_CONFIG_KEY, $writableKeys, true)) {
+                            $this->getDb()->insert('icingadb_config', [
+                                'environment_id' => $environmentId,
+                                'endpoint_id' => $endpointId,
+                                'env_key' => static::RELATIONS_CONFIG_KEY,
+                                'env_value' => $relations,
+                                'locked' => 'n'
+                            ]);
+                        }
+                    }
+                });
+
+            foreach ($sources as $source) {
                 $source->save();
             }
         } catch (Throwable $e) {
             Logger::error('Assisted Icinga Notifications configuration failed: %s', $e);
 
             throw new RuntimeException(
-                $enable
-                    ? $this->translate('Failed to enable notifications. Please check the log.')
-                    : $this->translate('Failed to disable notifications. Please check the log.'),
+                $this->translate('Failed to save the Icinga Notifications configuration. Please check the log.'),
                 previous: $e
             );
         }
@@ -388,12 +498,75 @@ class GeneralConfigForm extends ConfigForm
 
     private function lockNotifications(string $message): static
     {
-        $this->locked = true;
-        if (! in_array($message, $this->lockMessages, true)) {
-            $this->lockMessages[] = $message;
+        $this->notificationsLocked = true;
+        if (! in_array($message, $this->notificationsLockReasons, true)) {
+            $this->notificationsLockReasons[] = $message;
         }
 
         return $this;
+    }
+
+    private function lockConfigKey(string $key, string $message): static
+    {
+        if (! in_array($message, $this->configKeyLockReasons[$key] ?? [], true)) {
+            $this->configKeyLockReasons[$key][] = $message;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $messages
+     */
+    private function createLockReasons(array $messages, ?string $title = null): Callout
+    {
+        return new Callout(
+            CalloutType::Info,
+            count($messages) === 1
+                ? $messages[0]
+                : HtmlElement::create(
+                    'ul',
+                    ['class' => 'lock-reasons'],
+                    array_map(
+                        fn(string $message) => HtmlElement::create('li', null, $message),
+                        $messages
+                    )
+                ),
+            $title
+        );
+    }
+
+    /**
+     * Get the relations that can be included by default in events sent to Icinga Notifications
+     *
+     * @return array<string, string>
+     */
+    private function knownRelations(): array
+    {
+        return [
+            '$.host' => $this->translate('Host'),
+            '$.hostgroups[*].name' => $this->translate('Hostgroups'),
+            '$.services[*].name' => $this->translate('Services'),
+            '$.servicegroups[*].name' => $this->translate('Servicegroups'),
+            '$.host.vars' => $this->translate('Host Variables'),
+            '$.services[*].vars' => $this->translate('Service Variables')
+        ];
+    }
+
+    /**
+     * @param array<Term> $terms
+     */
+    private function validateAndEnrichRelations(array $terms): void
+    {
+        $knownRelations = $this->knownRelations();
+
+        foreach ($terms as $term) {
+            if (isset($knownRelations[$term->getSearchValue()])) {
+                $term->setLabel($knownRelations[$term->getSearchValue()]);
+            } else {
+                $term->setMessage($this->translate('Is not a supported relation'));
+            }
+        }
     }
 
     private function encodeBinary(string $value, string $column): string
