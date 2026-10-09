@@ -69,6 +69,10 @@
         }
 
         onClick(event) {
+            if (event.target.closest('.collapsible-control')) {
+                return;
+            }
+
             let _this = event.data.self;
             let target = event.currentTarget;
 

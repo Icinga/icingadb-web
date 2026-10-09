@@ -18,6 +18,8 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Orm\Model;
 use ipl\Orm\ResultSet;
+use ipl\Web\Layout\ItemLayout;
+use ipl\Web\Layout\MinimalItemLayout;
 use ipl\Web\Widget\ItemList;
 use Locale;
 
@@ -92,5 +94,19 @@ class HistoryObjectList extends ObjectList
             HtmlDocument::ON_ASSEMBLED,
             fn() => $this->loadMoreUrl->setParam('last-entry', $this->previousTimeStamp)
         );
+    }
+
+    public function getItemLayout($item): ItemLayout
+    {
+        $layout = parent::getItemLayout($item);
+
+        if (
+            ! empty($item->alert_count)
+            && $layout->getName() !== MinimalItemLayout::NAME
+        ) {
+            $layout->after(ItemLayout::CAPTION, 'sent-notifications');
+        }
+
+        return $layout;
     }
 }
