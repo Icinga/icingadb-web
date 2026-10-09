@@ -7,9 +7,10 @@ namespace Tests\Icinga\Module\Icingadb\Forms;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
+use Icinga\Module\Icingadb\Forms\GeneralConfigForm;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Tests\Icinga\Module\Icingadb\Lib\GeneralConfigForm;
+use ReflectionMethod;
 
 class GeneralConfigFormTest extends TestCase
 {
@@ -59,6 +60,15 @@ class GeneralConfigFormTest extends TestCase
                 'https://example.com/icingaweb2',
                 'http://icingaweb:8080/icingaweb2/icingadb/config/general-settings',
                 ['X-Forwarded-Proto' => 'https, http', 'X-Forwarded-Host' => 'example.com, proxy.internal']
+            ],
+            'forwarded prefix' => [
+                'https://example.com/icingaweb2',
+                'http://icingaweb:8080/icingadb/config/general-settings',
+                [
+                    'X-Forwarded-Proto'  => 'https',
+                    'X-Forwarded-Host'   => 'example.com',
+                    'X-Forwarded-Prefix' => '/icingaweb2'
+                ]
             ]
         ];
     }
@@ -69,6 +79,6 @@ class GeneralConfigFormTest extends TestCase
         $form = (new GeneralConfigForm(new Config()))
             ->setRequest(new ServerRequest('POST', $requestUrl, $headers));
 
-        $this->assertSame($expected, $form->detectIcingaweb2Url());
+        $this->assertSame($expected, (new ReflectionMethod($form, 'detectIcingaweb2Url'))->invoke($form));
     }
 }

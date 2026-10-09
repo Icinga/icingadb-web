@@ -6,7 +6,6 @@
 namespace Icinga\Module\Icingadb\Forms;
 
 use Icinga\Application\Config as ApplicationConfig;
-use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Modules\Module;
 use Icinga\Data\ResourceFactory;
@@ -42,6 +41,9 @@ class GeneralConfigForm extends ConfigForm
 
     /** @var string Config key under which the Icinga Web URL transmitted to Icinga Notifications is stored */
     public const ICINGAWEB2_URL_CONFIG_KEY = 'ICINGADB_NOTIFICATIONS_ICINGAWEB2_URL';
+
+    /** @var string The path this form is served at, relative to Icinga Web's base path */
+    private const PATH = 'icingadb/config/general-settings';
 
     protected $defaultAttributes = [
         'class' => ['icinga-form', 'icinga-controls', 'general-config-form'],
@@ -446,7 +448,7 @@ class GeneralConfigForm extends ConfigForm
      *
      * @return string
      */
-    protected function detectIcingaweb2Url(): string
+    private function detectIcingaweb2Url(): string
     {
         $request = $this->getRequest();
 
@@ -476,8 +478,23 @@ class GeneralConfigForm extends ConfigForm
         return trim(explode(',', $value)[0]);
     }
 
-    protected function getBasePath(): string
+    /**
+     * Get the base path of Icinga Web
+     *
+     * Uses the prefix announced by a reverse proxy via X-Forwarded-Prefix if present,
+     * otherwise cuts this form's path off the request path, so the form must be served at {@see self::PATH}.
+     *
+     * @return string
+     */
+    private function getBasePath(): string
     {
-        return Icinga::app()->getRequest()->getBaseUrl();
+        $prefix = $this->getForwardedHeader('X-Forwarded-Prefix');
+        if ($prefix !== null) {
+            return rtrim($prefix, '/');
+        }
+
+        $path = rtrim($this->getRequest()->getUri()->getPath(), '/');
+
+        return substr($path, 0, -strlen('/' . self::PATH));
     }
 }
