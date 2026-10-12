@@ -12,9 +12,9 @@ use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\HostSummaryDonut;
 use Icinga\Module\Icingadb\Widget\ServiceSummaryDonut;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 
 class TacticalController extends Controller
 {

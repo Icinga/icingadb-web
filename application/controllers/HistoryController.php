@@ -11,11 +11,11 @@ use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class HistoryController extends Controller
@@ -59,8 +59,10 @@ class HistoryController extends Controller
                 'history.event_time desc, history.event_type desc' => t('Event Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $searchBar = $this->createSearchBar($history, $preserveParams);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -114,7 +116,7 @@ class HistoryController extends Controller
             $timestampControl->isEnabled()
         ))
             ->setPageSize($limitControl->getLimit())
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setLoadMoreUrl($url->setParam('before', $before));
         if ($compact) {
             $historyList->setPageNumber($page);

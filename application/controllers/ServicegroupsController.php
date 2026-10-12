@@ -10,18 +10,15 @@ use Icinga\Module\Icingadb\Model\Servicegroup;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\View\ServicegroupGridRenderer;
 use Icinga\Module\Icingadb\View\ServicegroupRenderer;
-use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
 use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Html\Attributes;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
-use ipl\Web\Widget\ItemList;
 
 class ServicegroupsController extends Controller
 {
@@ -45,10 +42,20 @@ class ServicegroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($servicegroups);
-        $viewModeSwitcher = $this->createViewModeSwitcher(
-            $paginationControl,
-            $limitControl,
-            viewModeSwitcherClass: GridViewModeSwitcher::class
+        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher->setViewModes(
+            new ViewModeSwitcher\ViewMode(
+                'list',
+                'default',
+                t('List view active'),
+                t('Switch to list view')
+            ),
+            new ViewModeSwitcher\ViewMode(
+                'grid',
+                'grid',
+                t('Grid view active'),
+                t('Switch to grid view')
+            )
         );
 
         $sortControl = $this->createSortControl(
@@ -66,6 +73,8 @@ class ServicegroupsController extends Controller
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam()
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -93,7 +102,7 @@ class ServicegroupsController extends Controller
 
         $results = $servicegroups->execute();
 
-        if ($viewModeSwitcher->getViewMode() === 'grid') {
+        if ($viewModeSwitcher->getViewMode()->getName() === 'grid') {
             $content = new ObjectGrid($results, (new ServicegroupGridRenderer())->setBaseFilter($filter));
         } else {
             $content = new ObjectTable($results, (new ServicegroupRenderer())->setBaseFilter($filter));
