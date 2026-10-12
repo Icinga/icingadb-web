@@ -59,7 +59,7 @@ class Icinga2Source implements SourceHook
 
     public function getSourceLabel(): string
     {
-        return 'Icinga';
+        return 'Icinga 2';
     }
 
     public function getSourceIcon(): Icon
