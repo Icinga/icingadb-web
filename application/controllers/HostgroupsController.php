@@ -10,15 +10,14 @@ use Icinga\Module\Icingadb\Model\Hostgroup;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\View\HostgroupGridRenderer;
 use Icinga\Module\Icingadb\View\HostgroupRenderer;
-use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\ObjectGrid;
 use Icinga\Module\Icingadb\Widget\ItemTable\ObjectTable;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class HostgroupsController extends Controller
@@ -43,13 +42,23 @@ class HostgroupsController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($hostgroups);
-        $viewModeSwitcher = $this->createViewModeSwitcher(
-            $paginationControl,
-            $limitControl,
-            viewModeSwitcherClass: GridViewModeSwitcher::class
+        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher->setViewModes(
+            new ViewModeSwitcher\ViewMode(
+                'list',
+                'default',
+                $this->translate('List view active'),
+                $this->translate('Switch to list view')
+            ),
+            new ViewModeSwitcher\ViewMode(
+                'grid',
+                'grid',
+                $this->translate('Grid view active'),
+                $this->translate('Switch to grid view')
+            )
         );
 
-        if ($viewModeSwitcher->getViewMode() === 'grid') {
+        if ($viewModeSwitcher->getViewMode()->getName() === 'grid') {
             $hostgroups->without([
                 'services_critical_handled',
                 'services_critical_unhandled',
@@ -79,6 +88,8 @@ class HostgroupsController extends Controller
             $viewModeSwitcher->getViewModeParam()
         ]);
 
+        $this->handleControls($this->getServerRequest());
+
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
                 $filter = $this->getFilter();
@@ -105,7 +116,7 @@ class HostgroupsController extends Controller
 
         $results = $hostgroups->execute();
 
-        if ($viewModeSwitcher->getViewMode() === 'grid') {
+        if ($viewModeSwitcher->getViewMode()->getName() === 'grid') {
             $content = new ObjectGrid($results, (new HostgroupGridRenderer())->setBaseFilter($filter));
         } else {
             $content = new ObjectTable($results, (new HostgroupRenderer())->setBaseFilter($filter));

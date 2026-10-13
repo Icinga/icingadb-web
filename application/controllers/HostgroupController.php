@@ -11,7 +11,6 @@ use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Hostgroupsummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
@@ -20,6 +19,7 @@ use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 
 class HostgroupController extends Controller
 {
@@ -78,7 +78,7 @@ class HostgroupController extends Controller
                 'host.state.last_state_change desc'                          => t('Last State Change')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -86,6 +86,8 @@ class HostgroupController extends Controller
             $viewModeSwitcher->getViewModeParam(),
             'name'
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -106,7 +108,7 @@ class HostgroupController extends Controller
         $results = $hosts->execute();
 
         $hostList = (new ObjectList($results))
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...

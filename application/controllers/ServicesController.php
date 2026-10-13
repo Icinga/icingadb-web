@@ -16,14 +16,12 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\ProblemToggle;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\ServiceItemTable;
 use Icinga\Module\Icingadb\Widget\ServiceStatusBar;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Util\Environment;
 use ipl\Html\HtmlString;
@@ -31,6 +29,7 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class ServicesController extends Controller
@@ -75,11 +74,13 @@ class ServicesController extends Controller
             ],
             ['service.state.severity DESC', 'service.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher(
-            $paginationControl,
-            $limitControl,
-            viewModeSwitcherClass: TabularViewModeSwitcher::class
-        );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher->addViewMode(new ViewModeSwitcher\ViewMode(
+            'tabular',
+            'tabular',
+            $this->translate('Tabular view active'),
+            $this->translate('Switch to tabular view')
+        ));
         $columns = $this->createColumnControl(
             $services,
             Url::fromPath('icingadb/services/suggestColumns'),
@@ -94,6 +95,8 @@ class ServicesController extends Controller
             $viewModeSwitcher->getViewModeParam(),
             'columns'
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -127,13 +130,13 @@ class ServicesController extends Controller
 
         $continueWith = $this->createContinueWith(Links::servicesDetails(), $searchBar, $results->hasResult());
 
-        if ($viewModeSwitcher->getViewMode() === 'tabular') {
+        if ($viewModeSwitcher->getViewMode()->getName() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
                 ->setSort($sortControl->getSort())
                 ->setColumnChooserUrl(Url::fromPath('icingadb/services/columnControl'));
         } else {
             $serviceList = (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode());
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName());
         }
 
         $serviceList->setEmptyStateMessage($paginationControl->getEmptyStateMessage());

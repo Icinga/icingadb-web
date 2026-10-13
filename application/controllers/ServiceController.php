@@ -23,7 +23,6 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
@@ -37,6 +36,7 @@ use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
 
@@ -124,7 +124,7 @@ class ServiceController extends Controller
             ]
         );
 
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
@@ -136,6 +136,8 @@ class ServiceController extends Controller
                 'host.name'
             ]
         );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -162,7 +164,7 @@ class ServiceController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
@@ -189,7 +191,7 @@ class ServiceController extends Controller
             ]
         );
 
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $preserveParams = [
             $limitControl->getLimitParam(),
@@ -208,6 +210,8 @@ class ServiceController extends Controller
                 Url::fromPath('icingadb/service/children-complete')
                     ->setParams(clone $requestParams)
             );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -234,7 +238,7 @@ class ServiceController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
@@ -301,7 +305,7 @@ class ServiceController extends Controller
                 'history.event_time desc, history.event_type desc' => $this->translate('Event Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $preserveParams = [
             $limitControl->getLimitParam(),
@@ -321,6 +325,8 @@ class ServiceController extends Controller
                 Url::fromPath('icingadb/service/history-complete')
                     ->setParams(clone $requestParams)
             );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -362,7 +368,7 @@ class ServiceController extends Controller
             $previousTimestamp,
             $timestampControl->isEnabled()
         ))
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
