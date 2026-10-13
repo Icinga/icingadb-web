@@ -14,6 +14,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
 use ipl\Html\HtmlString;
+use ipl\Web\FormElement\SearchSuggestions;
 
 class ConfigController extends Controller
 {
@@ -33,6 +34,13 @@ class ConfigController extends Controller
                 Notification::success($this->translate('New configuration settings have been saved.'));
 
                 $this->redirectNow('icingadb/config/general-settings');
+            })
+            ->on(GeneralConfigForm::ON_SENT, function (GeneralConfigForm $form) {
+                if (! $form->hasBeenSubmitted()) {
+                    foreach ($form->getPartUpdates() as $update) {
+                        $this->addPart(...$update);
+                    }
+                }
             })
             ->handleRequest($this->getServerRequest());
 
