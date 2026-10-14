@@ -8,8 +8,8 @@ namespace Icinga\Module\Icingadb\Notifications;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
-use Icinga\Module\Notifications\Integrations\Incident;
-use Icinga\Module\Notifications\Integrations\Incidents;
+use Icinga\Module\Notifications\Integrations\V1\Incident;
+use Icinga\Module\Notifications\Integrations\V1\Incidents;
 use InvalidArgumentException;
 use ipl\Stdlib\Seq;
 

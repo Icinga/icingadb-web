@@ -16,7 +16,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Notifications\IncidentFinder;
 use Icinga\Module\Icingadb\Notifications\SubscriptionForm;
 use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
-use Icinga\Module\Notifications\Integrations\Incidents;
+use Icinga\Module\Notifications\Integrations\V1\Incidents;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;

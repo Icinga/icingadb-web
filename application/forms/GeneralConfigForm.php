@@ -13,7 +13,7 @@ use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Config as ConfigModel;
 use Icinga\Module\Icingadb\Model\Instance;
-use Icinga\Module\Notifications\Integrations\Source;
+use Icinga\Module\Notifications\Integrations\V1\Source;
 use Icinga\Web\Form\ConfigForm;
 use Icinga\Web\Session;
 use ipl\Html\HtmlElement;
