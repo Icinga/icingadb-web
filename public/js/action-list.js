@@ -69,6 +69,10 @@
         }
 
         onClick(event) {
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
             let _this = event.data.self;
             let target = event.currentTarget;
 
@@ -146,6 +150,7 @@
                     : activeItems[activeItems.length - 1].dataset.icingaDetailFilter;
             }
 
+            _this.clearNestedSelections(list);
             _this.clearSelection(toDeactivateItems);
             _this.setActive(toActiveItems);
             _this.addSelectionCountToFooter(list);
@@ -205,6 +210,7 @@
          *
          * - `Shift + ArrowUp|ArrowDown` = Multiselect
          * - `ArrowUp|ArrowDown` = Select next/previous
+         * - `ArrowLeft|ArrowRight` = Collapse/expand nested list
          * - `Ctrl|cmd + A` = Select all on currect page
          *
          * @param event
@@ -214,12 +220,20 @@
             let list = null;
             let pressedArrowDownKey = event.key === 'ArrowDown';
             let pressedArrowUpKey = event.key === 'ArrowUp';
+            let pressedArrowLeftKey = event.key === 'ArrowLeft';
+            let pressedArrowRightKey = event.key === 'ArrowRight';
             let focusedElement = document.activeElement;
 
             if (
                 _this.isProcessingLoadMore
                 || ! event.key // input auto-completion is triggered
-                || (event.key.toLowerCase() !== 'a' && ! pressedArrowDownKey && ! pressedArrowUpKey)
+                || (
+                    event.key.toLowerCase() !== 'a'
+                    && ! pressedArrowDownKey
+                    && ! pressedArrowUpKey
+                    && ! pressedArrowLeftKey
+                    && ! pressedArrowRightKey
+                )
             ) {
                 return;
             }
@@ -256,6 +270,11 @@
                 return;
             }
 
+            if ((pressedArrowLeftKey || pressedArrowRightKey) && (event.altKey || event.metaKey)) {
+                // Browser history navigation
+                return;
+            }
+
             event.preventDefault();
 
             let allItems = _this.getAllItems(list);
@@ -271,6 +290,20 @@
 
             if (! lastActivatedItem && activeItems.length) {
                 lastActivatedItem = activeItems[activeItems.length - 1];
+            }
+
+            if (pressedArrowLeftKey || pressedArrowRightKey) {
+                if (! lastActivatedItem) {
+                    return;
+                }
+
+                if (pressedArrowLeftKey) {
+                    _this.collapseNestedList(lastActivatedItem);
+                } else {
+                    _this.expandNestedList(lastActivatedItem);
+                }
+
+                return;
             }
 
             let directionalNextItem = _this.getDirectionalNext(lastActivatedItem, event.key);
@@ -307,7 +340,7 @@
                     [toActiveItem, markAsLastActive] = _this.findToActiveItem(lastActivatedItem, event.key);
                 }
             } else {
-                toActiveItem = directionalNextItem ?? lastActivatedItem;
+                toActiveItem = _this.getNestedNext(lastActivatedItem, event.key) ?? lastActivatedItem;
 
                 if (toActiveItem) {
                     if (toActiveItem.classList.contains('load-more')) {
@@ -329,6 +362,7 @@
                 return;
             }
 
+            list = toActiveItem.closest('.action-list');
             _this.setActive(toActiveItem);
             _this.setLastActivatedItemUrl(
                 markAsLastActive ? markAsLastActive.dataset.icingaDetailFilter : toActiveItem.dataset.icingaDetailFilter
@@ -336,6 +370,84 @@
             _this.scrollItemIntoView(toActiveItem, event.key);
             _this.addSelectionCountToFooter(list);
             _this.loadDetailUrl(list);
+        }
+
+        /**
+         * Expand the nested list of the given item
+         *
+         * @param {Element} item
+         */
+        expandNestedList(item) {
+            const details = this.getNestedCollapsible(item);
+            if (details) {
+                this.icinga.behaviors.collapsible.expand(details);
+            }
+        }
+
+        /**
+         * Collapse the nested list of the given item
+         *
+         * @param {Element} item
+         */
+        collapseNestedList(item) {
+            const details = this.getNestedCollapsible(item);
+            if (details) {
+                const collapsible = this.icinga.behaviors.collapsible;
+                collapsible.collapse(details, collapsible.calculateCollapsedHeight(details));
+            }
+        }
+
+        /**
+         * Get the collapsible <details> element wrapping the nested action list of the given item
+         *
+         * @param {Element} item
+         *
+         * @returns {Element|null}
+         */
+        getNestedCollapsible(item) {
+            return item.querySelector('.action-list')?.closest('details.collapsible') ?? null;
+        }
+
+        /**
+         * Get the next list item according to the pressed key (`ArrowUp` or `ArrowDown`),
+         * entering and leaving expanded nested lists
+         *
+         * @param {Element} item
+         * @param {string} eventKey
+         *
+         * @returns {Element|null}
+         */
+        getNestedNext(item, eventKey) {
+            if (eventKey === 'ArrowDown') {
+                const nested = this.getNestedCollapsible(item);
+                if (nested !== null && ! nested.classList.contains('collapsed')) {
+                    return nested.querySelector('.list-item');
+                }
+
+                return this.getDirectionalNext(item, eventKey)
+                    ?? this.getDirectionalNext(item.parentElement.closest('.list-item'), eventKey);
+            }
+
+            let previous = this.getDirectionalNext(item, eventKey);
+            if (previous === null) {
+                return item.parentElement.closest('.list-item');
+            }
+
+            if (previous.matches('.page-separator, .day-separator')) {
+                previous = this.getDirectionalNext(previous, eventKey);
+                if (previous === null) {
+                    return null;
+                }
+            }
+
+            const nested = this.getNestedCollapsible(previous);
+            if (nested !== null && ! nested.classList.contains('collapsed')) {
+                const nestedItems = nested.querySelectorAll('.list-item');
+
+                return nestedItems[nestedItems.length - 1] ?? previous;
+            }
+
+            return previous;
         }
 
         /**
@@ -452,6 +564,21 @@
         }
 
         /**
+         * Clear the selection of the parent action list and all of its nested lists, except the given one
+         *
+         * @param currentList
+         */
+        clearNestedSelections(currentList) {
+            const outerList = currentList.parentElement.closest('.action-list') ?? currentList;
+
+            [outerList, ...outerList.querySelectorAll('.action-list')].forEach(otherList => {
+                if (otherList !== currentList) {
+                    this.clearSelection(this.getActiveItems(otherList));
+                }
+            });
+        }
+
+        /**
          * Load the detail url with selected items
          *
          * @param list The action list
@@ -556,12 +683,13 @@
          * @param pressedKey Pressed key (`ArrowUp` or `ArrowDown`)
          */
         handleLoadMoreNavigate(loadMoreElement, lastActivatedItem, pressedKey) {
+            const previousItem = loadMoreElement.previousElementSibling;
             let req = this.loadMore(loadMoreElement.firstChild);
             this.isProcessingLoadMore = true;
             req.done(() => {
                 this.isProcessingLoadMore = false;
-                // list has now new items, so select the lastActivatedItem and then move forward
-                let toActiveItem = lastActivatedItem.nextElementSibling;
+                // list has now new items, so select the item following the previous one and then move forward
+                let toActiveItem = previousItem.nextElementSibling;
                 while (toActiveItem) {
                     if (toActiveItem.hasAttribute('data-action-item')) {
                         this.clearSelection([lastActivatedItem]);
@@ -802,6 +930,7 @@
                     _this.clearDashboardSelections(dashboard, list);
                 }
 
+                _this.clearNestedSelections(list);
                 _this.clearSelection(_this.getAllItems(list).filter(item => !toActiveItems.includes(item)));
                 _this.setActive(toActiveItems);
             }
