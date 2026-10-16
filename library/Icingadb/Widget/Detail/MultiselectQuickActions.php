@@ -10,7 +10,7 @@ use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Forms\Command\Object\CheckNowForm;
 use Icinga\Module\Icingadb\Forms\Command\Object\RemoveAcknowledgementForm;
 use Icinga\Module\Icingadb\Notifications\SubscriptionForm;
-use Icinga\Module\Notifications\Integrations\Incidents;
+use Icinga\Module\Notifications\Integrations\V1\Incidents;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Stdlib\BaseFilter;

@@ -64,6 +64,10 @@ class HostState extends State
             $columns['is_sticky_acknowledgement'] = t('Acknowledgement Is Sticky');
         }
 
+        if (Backend::supportsNotifications()) {
+            $columns['acknowledgement_set_time'] = t('Host Acknowledgement Set Time');
+        }
+
         return $columns;
     }
 

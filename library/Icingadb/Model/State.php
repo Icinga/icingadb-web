@@ -40,6 +40,7 @@ use ipl\Web\Widget\Icon;
  * @property bool $is_acknowledged Whether the state is acknowledged
  * @property bool $is_sticky_acknowledgement Whether the acknowledgement is sticky
  * @property ?string $acknowledgement_comment_id The id of acknowledgement comment
+ * @property ?DateTime $acknowledgement_set_time The time of the acknowledgement
  * @property ?string $last_comment_id The id of last comment
  * @property bool $in_downtime Whether the node is in downtime
  * @property ?int $execution_time The check execution time
@@ -110,6 +111,10 @@ abstract class State extends Model
             $columns[] = 'is_sticky_acknowledgement';
         }
 
+        if (Backend::supportsNotifications()) {
+            $columns[] = 'acknowledgement_set_time';
+        }
+
         return $columns;
     }
 
@@ -131,7 +136,8 @@ abstract class State extends Model
             'last_update',
             'last_state_change',
             'next_check',
-            'next_update'
+            'next_update',
+            'acknowledgement_set_time'
         ]));
 
         $behaviors->add(new Binary([

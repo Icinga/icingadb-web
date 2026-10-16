@@ -5,6 +5,8 @@
 
 namespace Icinga\Module\Icingadb\Command\Object;
 
+use DateTime;
+
 /**
  * Acknowledge a host or service problem
  */
@@ -42,6 +44,9 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      * @var int
      */
     protected $expireTime;
+
+    /** @var ?DateTime Timestamp of when the acknowledgement is set */
+    protected ?DateTime $acknowledgementTime = null;
 
     /**
      * Set whether the acknowledgement is sticky
@@ -130,6 +135,20 @@ class AcknowledgeProblemCommand extends WithCommentCommand
     }
 
     /**
+     * Set the time of the acknowledgement
+     *
+     * @param DateTime $acknowledgementTime
+     *
+     * @return $this
+     */
+    public function setAcknowledgementTime(DateTime $acknowledgementTime): static
+    {
+        $this->acknowledgementTime = $acknowledgementTime;
+
+        return $this;
+    }
+
+    /**
      * Get the time when the acknowledgement should expire
      *
      * @return ?int
@@ -137,5 +156,15 @@ class AcknowledgeProblemCommand extends WithCommentCommand
     public function getExpireTime()
     {
         return $this->expireTime;
+    }
+
+    /**
+     * Get the time of the acknowledgement
+     *
+     * @return ?DateTime
+     */
+    public function getAcknowledgementTime(): ?DateTime
+    {
+        return $this->acknowledgementTime;
     }
 }

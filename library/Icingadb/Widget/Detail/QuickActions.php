@@ -16,7 +16,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Notifications\IncidentFinder;
 use Icinga\Module\Icingadb\Notifications\SubscriptionForm;
 use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
-use Icinga\Module\Notifications\Integrations\Incidents;
+use Icinga\Module\Notifications\Integrations\V1\Incidents;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Widget\Icon;
@@ -109,13 +109,13 @@ class QuickActions extends BaseHtmlElement
                     if ($role !== 'manager') {
                         $action = $role === 'subscriber' ? 'unsubscribe' : 'subscribe';
 
-                        $this->addHtml(
-                            Html::tag(
-                                'li',
-                                (new SubscriptionForm($action === 'subscribe'))
-                                    ->setAction($this->getLink($action))
-                            )
-                        );
+                        $form = (new SubscriptionForm($action === 'subscribe'))
+                            ->setAction($this->getLink($action));
+                        if ($incident->getPendingAction() === $action) {
+                            $form->setPendingJob($incident->getPendingJobAttributes());
+                        }
+
+                        $this->addHtml(Html::tag('li', $form));
                     }
                 }
             } catch (IncidentNotFoundException) {

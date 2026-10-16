@@ -227,6 +227,10 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             $data['expiry'] = $command->getExpireTime();
         }
 
+        if ($command->getAcknowledgementTime() !== null) {
+            $data['set_time'] = (int) $command->getAcknowledgementTime()->format('U');
+        }
+
         $this->applyFilter($data, $command->getObjects());
         return IcingaApiCommand::create($endpoint, $data);
     }

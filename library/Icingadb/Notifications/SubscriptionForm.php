@@ -25,6 +25,9 @@ class SubscriptionForm extends Form
     /** @var int The count of objects that are being subscribed/unsubscribed */
     protected int $count = 0;
 
+    /** @var ?array Attributes of the submit button while the role change of this form is pending */
+    protected ?array $pendingJobAttributes = null;
+
     /**
      * Create a new SubscriptionForm
      *
@@ -75,6 +78,21 @@ class SubscriptionForm extends Form
         return $this;
     }
 
+    /**
+     * Mark the form as waiting for the role change it requested
+     *
+     * @param array $attributes The attributes of the pending job
+     *                          {@see \Icinga\Module\Notifications\Integrations\V1\Incident::getPendingJobAttributes()}
+     *
+     * @return $this
+     */
+    public function setPendingJob(array $attributes): static
+    {
+        $this->pendingJobAttributes = $attributes;
+
+        return $this;
+    }
+
     protected function assemble(): void
     {
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
@@ -88,5 +106,11 @@ class SubscriptionForm extends Form
                     : [new Icon('bell-slash'), $this->translate('Unsubscribe')]
             ]
         );
+
+        if ($this->pendingJobAttributes !== null) {
+            $this->getElement('btn_submit')->getAttributes()
+                ->add('class', 'active')
+                ->set($this->pendingJobAttributes);
+        }
     }
 }

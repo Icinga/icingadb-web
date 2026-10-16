@@ -43,6 +43,9 @@ final class Backend
     /** @var ?bool Whether Icinga DB reports a healthy notifications component */
     private static $notificationsHealthy;
 
+    /** @var ?string The normalized version of the responsible Icinga 2 instance */
+    private static ?string $icinga2Version = null;
+
     /**
      * Set the connection to the Icinga DB
      *
@@ -246,5 +249,23 @@ final class Backend
         }
 
         return self::$notificationsHealthy;
+    }
+
+    /**
+     * Get the version of the responsible Icinga 2 instance, normalized for version_compare()
+     *
+     * @return string
+     */
+    public static function getIcinga2Version(): string
+    {
+        if (self::$icinga2Version === null) {
+            self::$icinga2Version = Instance::on(self::getDb())
+                ->columns('icinga2_version')
+                ->filter(Filter::equal('responsible', true))
+                ->first()
+                ?->icinga2_version ?? '';
+        }
+
+        return self::$icinga2Version;
     }
 }

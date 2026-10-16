@@ -31,6 +31,16 @@ class AcknowledgeProblemForm extends CommandForm
 {
     use ManagesIncidents;
 
+    /**
+     * The acknowledgement's set time, `null` if Icinga 2 does not support setting it
+     *
+     * Generated once in {@see static::getCommands()} and used for both the `set_time` sent to Icinga 2 and the
+     * UUIDs written to the Icinga Notifications job queue.
+     *
+     * @var ?DateTime
+     */
+    protected ?DateTime $setTime = null;
+
     public function __construct()
     {
         $this->on(self::ON_SUCCESS, function () {
@@ -38,7 +48,7 @@ class AcknowledgeProblemForm extends CommandForm
                 return;
             }
 
-            $this->manageIncidents(true);
+            $this->manageIncidents(true, $this->setTime);
             $countObjects = count($this->getObjects());
             if (iterable_value_first($this->getObjects()) instanceof Host) {
                 $message = sprintf(tp(
@@ -234,6 +244,11 @@ class AcknowledgeProblemForm extends CommandForm
         if (($expireTime = $this->getValue('expire_time')) !== null) {
             /** @var DateTime $expireTime */
             $command->setExpireTime($expireTime->getTimestamp());
+        }
+
+        if (version_compare(Backend::getIcinga2Version(), 'v2.16.6', '>=')) {
+            $this->setTime = new DateTime();
+            $command->setAcknowledgementTime($this->setTime);
         }
 
         $granted->rewind(); // Forwards the pointer to the first element
