@@ -16,6 +16,7 @@ use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\TicketLinks;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
+use Icinga\Module\Icingadb\Widget\ItemList\AlertList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\MarkdownText;
 use Icinga\Module\Icingadb\Common\ServiceLink;
@@ -29,7 +30,7 @@ use Icinga\Module\Icingadb\Model\NotificationHistory;
 use Icinga\Module\Icingadb\Model\StateHistory;
 use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ShowMore;
-use ipl\Web\Url;
+use ipl\Html\Attributes;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
@@ -182,7 +183,8 @@ class EventDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             0   => $pluginOutput,
             200 => $eventInfo,
-            500 => $notifiedUsers
+            500 => $notifiedUsers,
+            501 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -285,7 +287,8 @@ class EventDetail extends BaseHtmlElement
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             0   => $pluginOutput,
-            200 => $eventInfo
+            200 => $eventInfo,
+            501 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -408,6 +411,7 @@ class EventDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $commentInfo,
             201 => $eventInfo,
+            501 => $this->createSentNotifications(),
             600 => $cancelInfo
         ], $this->createExtensions()));
     }
@@ -482,6 +486,7 @@ class EventDetail extends BaseHtmlElement
             200 => $commentInfo,
             201 => $eventInfo,
             500 => $tiedToAckInfo,
+            501 => $this->createSentNotifications(),
             600 => $removedInfo
         ], $this->createExtensions()));
     }
@@ -531,7 +536,8 @@ class EventDetail extends BaseHtmlElement
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
-            200 => $eventInfo
+            200 => $eventInfo,
+            501 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -639,8 +645,26 @@ class EventDetail extends BaseHtmlElement
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $commentInfo,
-            201 => $eventInfo
+            201 => $eventInfo,
+            501 => $this->createSentNotifications()
         ], $this->createExtensions()));
+    }
+
+    protected function createSentNotifications(): array
+    {
+        if (empty($this->event->alert_count)) {
+            return [];
+        }
+
+        $alerts = $this->event->alert
+            ->orderBy('triggered_at', 'asc');
+
+        return [
+            new HtmlElement('h2', null, Text::create(t('Alerts'))),
+            (new AlertList($alerts, referenceTime: $this->event->event_time))
+                ->addAttributes(Attributes::create(['class' => 'alert-list']))
+                ->setViewMode('common')
+        ];
     }
 
     protected function createExtensions(): array
