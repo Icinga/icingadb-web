@@ -51,6 +51,7 @@ class Environment extends Model
     {
         $relations->hasMany('acknowledgement_history', AcknowledgementHistory::class);
         $relations->hasMany('action_url', ActionUrl::class);
+        $relations->hasMany('alert_history', AlertHistory::class);
         $relations->hasMany('checkcommand', Checkcommand::class);
         $relations->hasMany('checkcommand_argument', CheckcommandArgument::class);
         $relations->hasMany('checkcommand_customvar', CheckcommandCustomvar::class);
