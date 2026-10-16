@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Model;
 
 use DateTime;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
@@ -33,6 +34,7 @@ use ipl\Orm\Relations;
  * @property ?string $state_history_id
  * @property string $event_type
  * @property DateTime $event_time
+ * @property ?int $alert_count
  */
 class History extends Model
 {
@@ -48,7 +50,7 @@ class History extends Model
 
     public function getColumns()
     {
-        return [
+        $columns = [
             'environment_id',
             'endpoint_id',
             'object_type',
@@ -63,11 +65,17 @@ class History extends Model
             'event_type',
             'event_time'
         ];
+
+        if (Backend::supportsNotifications()) {
+            $columns[] = 'alert_count';
+        }
+
+        return $columns;
     }
 
     public function getColumnDefinitions()
     {
-        return [
+        $columnDefinitions = [
             'environment_id'    => t('Environment Id'),
             'endpoint_id'       => t('Endpoint Id'),
             'object_type'       => t('Object Type'),
@@ -76,6 +84,12 @@ class History extends Model
             'event_type'        => t('Event Type'),
             'event_time'        => t('Event Time')
         ];
+
+        if (Backend::supportsNotifications()) {
+            $columnDefinitions['alert_count'] = t('Alert Count');
+        }
+
+        return $columnDefinitions;
     }
 
     public function getDefaultSort()
@@ -139,6 +153,9 @@ class History extends Model
         $relations->hasOne('state', StateHistory::class)
             ->setCandidateKey('state_history_id')
             ->setForeignKey('id')
+            ->setJoinType('LEFT');
+
+        $relations->hasMany('alert', AlertHistory::class)
             ->setJoinType('LEFT');
     }
 }
