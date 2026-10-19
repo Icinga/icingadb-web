@@ -121,7 +121,12 @@ class ObjectSuggestions extends Suggestions
             $provider->setBaseFilter($this->getBaseFilter());
         }
 
-        return $provider;
+        foreach ($provider as $result) {
+            $search = $result['search'];
+            unset($result['search']);
+
+            yield $search => $result;
+        }
     }
 
     protected function fetchColumnSuggestions($searchTerm)
