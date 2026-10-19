@@ -163,7 +163,7 @@ trait CommandActions
         }
 
         $objects = $this->getCommandTargets();
-        if (! is_array($objects)) {
+        if ($objects instanceof Query) {
             $objects = $objects->execute();
         }
 
