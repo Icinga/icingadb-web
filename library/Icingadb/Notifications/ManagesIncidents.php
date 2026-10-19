@@ -67,7 +67,7 @@ trait ManagesIncidents
                                 ? $this->deriveDeterministicEventUUID(
                                     'ack_set',
                                     $incident->getObjectIdTags(),
-                                    (int) $ackSetTime->format('Uv')
+                                    (int) $ackSetTime->format('U') * 1000
                                 )
                                 : null
                         );
