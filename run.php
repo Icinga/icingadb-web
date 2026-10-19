@@ -20,6 +20,7 @@ $this->provideHook('Icingadb/ServiceActions', 'CreateServiceSlaReport');
 $this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostsSlaReport');
 $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServicesSlaReport');
 $this->provideHook('Dashboards/Dashlet', 'Dashboards/ObjectList');
+$this->provideHook('Dashboards/Dashlet', 'Dashboards/TacticalOverview');
 
 if (! $this::exists('monitoring') && $this->app->getModuleManager()->hasInstalled('monitoring')) {
     // For compatibility reasons, Icinga DB Web also supports hooks originally written for the monitoring module.

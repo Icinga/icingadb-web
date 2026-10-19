@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Module\Icingadb\Model\HoststateSummary;
 use Icinga\Module\Icingadb\Model\ServicestateSummary;
 use Icinga\Module\Icingadb\Model\TacticalStateSummary;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
@@ -70,6 +71,42 @@ class TacticalController extends Controller
         if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
             $this->sendMultipartUpdate();
         }
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    /**
+     * The hosts donut alone, for the dashboards module's Tactical Overview dashlet
+     *
+     * No search bar: the filter is the dashlet's own, and arrives as the query string.
+     */
+    public function hostsAction()
+    {
+        $this->addTitleTab(t('Tactical Overview'));
+
+        $summary = HoststateSummary::on($this->getDb());
+        $this->filter($summary);
+
+        yield $this->export($summary);
+
+        $this->addContent((new HostSummaryDonut($summary->first()))->setBaseFilter($this->getFilter()));
+
+        $this->setAutorefreshInterval(10);
+    }
+
+    /**
+     * The services donut alone, for the dashboards module's Tactical Overview dashlet
+     */
+    public function servicesAction()
+    {
+        $this->addTitleTab(t('Tactical Overview'));
+
+        $summary = ServicestateSummary::on($this->getDb());
+        $this->filter($summary);
+
+        yield $this->export($summary);
+
+        $this->addContent((new ServiceSummaryDonut($summary->first()))->setBaseFilter($this->getFilter()));
 
         $this->setAutorefreshInterval(10);
     }
