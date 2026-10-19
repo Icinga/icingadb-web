@@ -7,15 +7,16 @@ namespace Icinga\Module\Icingadb\Notifications;
 
 use ArrayIterator;
 use CallbackFilterIterator;
+use Countable;
 use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Util\Environment;
 use ipl\Html\Form;
-use ipl\Orm\Query;
 use ipl\Web\Url;
 use IteratorIterator;
+use Traversable;
 
 /**
  * @phpstan-require-extends Controller
@@ -26,13 +27,16 @@ trait SubscribeIncidents
      * Subscribe or unsubscribe the incident of each object
      *
      * @param bool $subscribe
-     * @param array<Host|Service>|Query<Host|Service> $objects
+     * @param array<Host|Service>|(Traversable<Host|Service>&Countable) $objects
      * @param Url $redirectUrl The URL to redirect to after the form has been handled
      *
      * @return void
      */
-    protected function handleSubscription(bool $subscribe, array|Query $objects, Url $redirectUrl): void
-    {
+    protected function handleSubscription(
+        bool $subscribe,
+        array|(Traversable&Countable) $objects,
+        Url $redirectUrl
+    ): void {
         if (Backend::notificationsSetUp()) {
             $form = (new SubscriptionForm($subscribe))
                 ->setObjectCount(count($objects))
