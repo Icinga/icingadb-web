@@ -19,6 +19,7 @@ if ($this::exists('dashboards')) {
     // The guard is not needed — `provideHook()` only records a class name, and nothing loads the class while
     // that module is disabled — but it is where a reader looks for the relationship.
     $this->provideHook('Dashboards/Dashlet', 'Dashboards/ObjectList');
+    $this->provideHook('Dashboards/Dashlet', 'Dashboards/TacticalOverview');
 }
 
 if ($this::exists('notifications')) {
