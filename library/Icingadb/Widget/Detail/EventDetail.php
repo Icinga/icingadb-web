@@ -659,11 +659,22 @@ class EventDetail extends BaseHtmlElement
         $alerts = $this->event->alert
             ->orderBy('triggered_at', 'asc');
 
+        $this->applyRestrictions($alerts);
+
+        $results = $alerts->execute();
+
+        $list = (new AlertList($results, referenceTime: $this->event->event_time))
+            ->addAttributes(Attributes::create(['class' => 'alert-list']))
+            ->setViewMode('common');
+        if (! $results->hasResult()) {
+            $list->setEmptyStateMessage(
+                t('You have insufficient privileges to see all alerts.')
+            );
+        }
+
         return [
             new HtmlElement('h2', null, Text::create(t('Alerts'))),
-            (new AlertList($alerts, referenceTime: $this->event->event_time))
-                ->addAttributes(Attributes::create(['class' => 'alert-list']))
-                ->setViewMode('common')
+            $list
         ];
     }
 

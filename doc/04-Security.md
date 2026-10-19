@@ -51,6 +51,7 @@ Filters limit users to a specific set of results.
 | icingadb/filter/objects  | Restrict access to the Icinga objects that match the filter            |
 | icingadb/filter/hosts    | Restrict access to the Icinga hosts and services that match the filter |
 | icingadb/filter/services | Restrict access to the Icinga services that match the filter           |
+| icingadb/filter/alerts   | Restrict access to the Icinga alerts that match the filter             |
 
 `icingadb/filter/objects` will only allow users to access matching objects. This applies to all objects,
 not just hosts or services. It should be one or more [filter expressions](#filter-expressions).
@@ -60,6 +61,9 @@ unrestricted. It should be one or more [filter expressions](#filter-expressions)
 
 `icingadb/filter/services` will only allow users to access matching services. Other objects remain unrestricted.
 It should be one or more [filter expressions](#filter-expressions).
+
+`icingadb/filter/alerts` will only allow users to access matching alerts as part of either the event overview
+or host/service history. Other history remains unrestricted. It should be one or more [filter expressions](#filter-expressions).
 
 ### Denylists
 
@@ -105,6 +109,14 @@ It is possible to use [match patterns](#match-patterns).
 
 These consist of one or more [filter expressions](https://icinga.com/docs/icinga-web-2/latest/doc/06-Security/#filter-expressions).
 
+##### Allowed columns
+
+For the restrictions:
+
+* `icingadb/filter/objects`
+* `icingadb/filter/hosts`
+* `icingadb/filter/services`
+
 Allowed columns are:
 
 * host.name
@@ -117,6 +129,13 @@ Allowed columns are:
 * service.usergroup.name
 * host.vars.[\<variable path\>](#variable-paths)
 * service.vars.[\<variable path\>](#variable-paths)
+
+For `icingadb/filter/alerts` allowed columns are:
+
+* contact_name
+* contactgroup_name
+* schedule_name
+* channel_name
 
 #### Match Patterns
 
