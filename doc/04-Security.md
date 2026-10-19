@@ -9,7 +9,7 @@ The same applies to routes, objects and variables. To these, users can be restri
 
 > **Restricted Command Permissions:**
 >
-> If a role [limits users](#filters) to a specific set of results, the command
+> If a role [limits users](#filters) to a specific set of results, the command/notifications
 > permissions or refusals of the very same role only apply to these results.
 
 | Name                                           | Allow...                                                                         |
@@ -35,6 +35,15 @@ The same applies to routes, objects and variables. To these, users can be restri
 | icingadb/command/feature/object/flap-detection | to toggle flap detection on host and service objects                             |
 | icingadb/command/send-custom-notification      | to send custom notifications for hosts and services                              |
 | icingadb/object/show-source                    | to view an object's source data. (May contain sensitive data!)                   |
+
+The following permissions are available to allow users access to the Icinga Notifications integration. They additionally
+require a contact configured for the user in Icinga Notifications. For users without a matching contact the actions will
+be shown, but disabled with a hint explaining the reason.
+
+| Name                             | Allow...                                                                            |
+|----------------------------------|-------------------------------------------------------------------------------------|
+| icingadb/notifications/subscribe | to subscribe to host and service problems and receive their notifications           |
+| icingadb/notifications/manage    | to become responsible for host and service problems and receive their notifications |
 
 ## Restrictions
 
