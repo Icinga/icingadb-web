@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\View;
 
 use Icinga\Date\DateFormatter;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\HostLink;
 use Icinga\Module\Icingadb\Common\HostStates;
 use Icinga\Module\Icingadb\Common\Icons;
@@ -22,10 +23,12 @@ use Icinga\Module\Icingadb\Widget\PluginOutputContainer;
 use Icinga\Module\Icingadb\Widget\StateChange;
 use IntlDateFormatter;
 use ipl\Html\Attributes;
+use ipl\Html\FormattedString;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
+use ipl\Orm\ResultSet;
 use ipl\Web\Common\ItemRenderer;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
@@ -38,6 +41,7 @@ use Locale;
 /** @implements ItemRenderer<History> */
 class EventRenderer implements ItemRenderer
 {
+    use Auth;
     use Translation;
     use TicketLinks;
     use HostLink;
@@ -486,31 +490,64 @@ class EventRenderer implements ItemRenderer
         $alerts = $item->alert
             ->orderBy('triggered_at', 'asc');
 
-        $details = new HtmlElement(
-            'details',
-            Attributes::create([
-                'class'               => 'collapsible',
-                'data-no-persistence' => true,
-                'open'                => $layout === 'detailed'
-            ])
-        );
-        $details->addHtml(
-            new HtmlElement(
-                'summary',
-                Attributes::create(['class' => 'collapsible-control']),
-                new Icon('angle-right', ['class' => 'expand-icon']),
-                new Icon('angle-down', ['class' => 'collapse-icon']),
-                Text::create(sprintf(
-                    $this->translatePlural('%d Alert', '%d Alerts', $item->alert_count),
-                    $item->alert_count
-                ))
-            ),
-            (new AlertList($alerts, $this->useRelativeTimestamps, $item->event_time))
-                ->addAttributes(Attributes::create(['class' => 'alert-list']))
-                ->setViewMode('minimal')
-        );
+        $this->applyRestrictions($alerts);
 
-        $element->addHtml($details);
+        $results = $alerts->execute();
+        if ($results->hasResult()) {
+            $details = new HtmlElement(
+                'details',
+                Attributes::create([
+                    'class'               => 'collapsible',
+                    'data-no-persistence' => true,
+                    'open'                => $layout === 'detailed'
+                ])
+            );
+            $details->addHtml(
+                $results->count() < $item->alert_count
+                    ? new HtmlElement(
+                        'summary',
+                        Attributes::create([
+                            'class' => ['alert-count', 'collapsible-control'],
+                            'title' => $this->translate('You have insufficient privileges to see all alerts.')
+                        ]),
+                        new Icon('angle-right', ['class' => 'expand-icon']),
+                        new Icon('angle-down', ['class' => 'collapse-icon']),
+                        FormattedString::create(
+                            // translators: %d is the number of alerts the user is permitted to access, %s the total
+                            $this->translate('%d%s Alerts'),
+                            $results->count(),
+                            new EmptyState(sprintf('/ %d', $item->alert_count))
+                        )
+                    )
+                    : new HtmlElement(
+                        'summary',
+                        Attributes::create(['class' => ['alert-count', 'collapsible-control']]),
+                        new Icon('angle-right', ['class' => 'expand-icon']),
+                        new Icon('angle-down', ['class' => 'collapse-icon']),
+                        Text::create(sprintf(
+                            $this->translatePlural('%d Alert', '%d Alerts', $item->alert_count),
+                            $item->alert_count
+                        ))
+                    ),
+                (new AlertList($results, $this->useRelativeTimestamps, $item->event_time))
+                    ->addAttributes(Attributes::create(['class' => 'alert-list']))
+                    ->setViewMode('minimal')
+            );
+
+            $element->addHtml($details);
+        } else {
+            $element->addHtml(
+                (new EmptyState(
+                    Text::create(sprintf(
+                        $this->translatePlural('%d Alert', '%d Alerts', $item->alert_count),
+                        $item->alert_count
+                    ))
+                ))->addAttributes(Attributes::create([
+                    'class' => 'alert-count',
+                    'title' => $this->translate('You have insufficient privileges to see all alerts.')
+                ]))
+            );
+        }
 
         return true;
     }

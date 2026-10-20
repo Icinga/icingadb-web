@@ -12,7 +12,9 @@ use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behavior\MillisecondTimestamp;
 use ipl\Orm\Behaviors;
 use Icinga\Module\Icingadb\Common\Model;
+use ipl\Orm\Query;
 use ipl\Orm\Relations;
+use ipl\Orm\ResultSet;
 
 /**
  * Model for table `history`
@@ -35,6 +37,8 @@ use ipl\Orm\Relations;
  * @property string $event_type
  * @property DateTime $event_time
  * @property ?int $alert_count
+ *
+ * @property ResultSet<AlertHistory>|Query<AlertHistory> $alert
  */
 class History extends Model
 {

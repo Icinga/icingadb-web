@@ -203,6 +203,7 @@ trait Auth
             // Redundancy groups have no relation to anything in order to be subject
             // for authorization, so they must be exempt from the respective filters.
             $skipRedundancyGroups = $relations[0] === 'dependency_node';
+            $applyAlertRestriction = $relations[0] === 'alert_history';
 
             $hostStateRelation = array_search('host_state', $relations, true);
             $serviceStateRelation = array_search('service_state', $relations, true);
@@ -273,6 +274,13 @@ trait Auth
                         }
 
                         $roleFilter->add(Filter::any(Filter::unlike('service.id', '*'), $serviceFilter));
+                    }
+
+                    if (
+                        $applyAlertRestriction
+                        && ($restriction = $role->getRestrictions('icingadb/filter/alerts'))
+                    ) {
+                        $roleFilter->add($this->parseRestriction($restriction, 'icingadb/filter/alerts'));
                     }
                 }
 
@@ -395,19 +403,27 @@ trait Auth
      */
     protected function parseRestriction(string $queryString, string $restriction): Filter\Rule
     {
-        $allowedColumns = [
-            'host.name',
-            'hostgroup.name',
-            'host.user.name',
-            'host.usergroup.name',
-            'service.name',
-            'servicegroup.name',
-            'service.user.name',
-            'service.usergroup.name',
-            '(host|service).vars.<customvar-name>' => function ($c) {
-                return preg_match('/^(?:host|service)\.vars\./i', $c);
-            }
-        ];
+        $allowedColumns = match ($restriction) {
+            'icingadb/filter/alerts' => [
+                'contact_name' => 'alert_history.contact_name',
+                'contactgroup_name' => 'alert_history.contactgroup_name',
+                'schedule_name' => 'alert_history.schedule_name',
+                'channel_name' => 'alert_history.channel_name'
+            ],
+            default => [
+                'host.name',
+                'hostgroup.name',
+                'host.user.name',
+                'host.usergroup.name',
+                'service.name',
+                'servicegroup.name',
+                'service.user.name',
+                'service.usergroup.name',
+                '(host|service).vars.<customvar-name>' => function ($c) {
+                    return preg_match('/^(?:host|service)\.vars\./i', $c);
+                }
+            ]
+        };
 
         return QueryString::fromString($queryString)
             ->on(
@@ -417,7 +433,7 @@ trait Auth
                     $queryString,
                     $allowedColumns
                 ) {
-                    foreach ($allowedColumns as $column) {
+                    foreach ($allowedColumns as $key => $column) {
                         if (is_callable($column)) {
                             if ($column($condition->getColumn())) {
                                 $condition->metaData()->set('_isRestriction', true);
@@ -425,6 +441,11 @@ trait Auth
                                 return;
                             }
                         } elseif ($column === $condition->getColumn()) {
+                            $condition->metaData()->set('_isRestriction', true);
+
+                            return;
+                        } elseif ($key === $condition->getColumn()) {
+                            $condition->setColumn($column);
                             $condition->metaData()->set('_isRestriction', true);
 
                             return;

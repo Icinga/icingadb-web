@@ -137,6 +137,11 @@ namespace Icinga\Module\Icingadb {
     );
 
     $this->provideRestriction(
+        'icingadb/filter/alerts',
+        $this->translate('Restrict access to the Icinga alerts that match the filter')
+    );
+
+    $this->provideRestriction(
         'icingadb/denylist/routes',
         $this->translate('Prevent access to routes that are part of the list')
     );
