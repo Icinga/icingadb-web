@@ -388,7 +388,7 @@ class QueryColumnsProvider implements IteratorAggregate
      *
      * @return Select
      */
-    public function queryCustomvarConfig(Filter\Rule $filter): Select
+    protected function queryCustomvarConfig(Filter\Rule $filter): Select
     {
         $customVars = CustomvarFlat::on($this->getDb());
         $tableName = $customVars->getModel()->getTableName();
