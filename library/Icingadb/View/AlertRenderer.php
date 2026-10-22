@@ -88,7 +88,7 @@ class AlertRenderer implements ItemRenderer
 
     public function assembleCaption($item, HtmlDocument $caption, string $layout): void
     {
-        $caption->addHtml(Text::create(substr($item->event_message, 0, 1024)));
+        $caption->addHtml(Text::create($item->event_summary));
     }
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void

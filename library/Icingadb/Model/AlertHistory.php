@@ -25,6 +25,7 @@ use ipl\Orm\Relations;
  * @property ?string $channel_name
  * @property DateTime $triggered_at
  * @property string $event_message
+ * @property string $event_summary
  */
 class AlertHistory extends Model
 {
@@ -48,7 +49,8 @@ class AlertHistory extends Model
             'schedule_name',
             'channel_name',
             'triggered_at',
-            'event_message'
+            'event_message',
+            'event_summary'
         ];
     }
 
@@ -61,7 +63,8 @@ class AlertHistory extends Model
             'schedule_name'     => t('Alert Schedule Name'),
             'channel_name'      => t('Alert Channel Name'),
             'triggered_at'      => t('Alert Triggered At'),
-            'event_message'     => t('Alert Message')
+            'event_message'     => t('Alert Message'),
+            'event_summary'     => t('Alert Summary'),
         ];
     }
 
