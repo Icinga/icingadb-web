@@ -63,6 +63,7 @@ trait ManagesIncidents
                     if ($manage) {
                         $incident->addManager(
                             $username,
+                            ['downtime_start', 'downtime_end', 'flapping_start', 'flapping_end'],
                             $ackSetTime !== null
                                 ? $this->deriveDeterministicEventUUID(
                                     'ack_set',
