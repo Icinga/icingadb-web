@@ -436,7 +436,35 @@ class ObjectDetail extends BaseHtmlElement
             return [];
         }
 
+        $filter = Filter::any();
+        if (! $this->getAuth()->getUser()->isUnrestricted()) {
+            foreach ($this->getAuth()->getUser()->getRoles() as $role) {
+                if (($restriction = $role->getRestrictions('icingadb/filter/alerts'))) {
+                    $filter->add($this->parseRestriction($restriction, 'icingadb/filter/alerts'));
+                }
+            }
+        }
+
+        $recipientIsVisible = function (string $type, string $name) use ($filter): bool {
+            if ($filter->isEmpty()) {
+                return true;
+            }
+
+            return Filter::match($filter, [
+                'alert_history.contact_name'      => $type === 'contact' ? $name : null,
+                'alert_history.contactgroup_name' => $type === 'contactgroup' ? $name : null,
+                'alert_history.schedule_name'     => $type === 'schedule' ? $name : null
+            ]);
+        };
+
+        $subscribersHidden = false;
         foreach ($subscribers as $subscriber) {
+            if (! $recipientIsVisible('contact', $subscriber['name'])) {
+                $subscribersHidden = true;
+
+                continue;
+            }
+
             $isManager = $subscriber['role'] === 'manager';
             $changedAt = DateFormatter::formatDateTime($subscriber['roleChangedAt']->getTimestamp());
 
@@ -474,7 +502,14 @@ class ObjectDetail extends BaseHtmlElement
             'schedule' => t('Schedule'),
         ];
 
+        $recipientsHidden = false;
         foreach ($incident->getRecipients() as $recipient) {
+            if (! $recipientIsVisible($recipient['type'], $recipient['name'])) {
+                $recipientsHidden = true;
+
+                continue;
+            }
+
             $icon = new Icon($recipientIcons[$recipient['type']]);
             $name = $recipient['name'];
             $recipientList[] = Html::tag(
@@ -495,11 +530,15 @@ class ObjectDetail extends BaseHtmlElement
         }
 
         $subscribersValue = empty($subscriberList)
-            ? new EmptyState(t('No subscribers.'))
+            ? new EmptyState($subscribersHidden
+                ? t('You have insufficient privileges to see all subscribers.')
+                : t('No subscribers.'))
             : Html::tag('div', ['class' => 'subscriber-list'], $subscriberList);
 
         $recipientsValue = empty($recipientList)
-            ? new EmptyState(t('No recipients.'))
+            ? new EmptyState($recipientsHidden
+                ? t('You have insufficient privileges to see all recipients.')
+                : t('No recipients.'))
             : Html::tag('div', ['class' => 'recipient-list'], $recipientList);
 
         return [
