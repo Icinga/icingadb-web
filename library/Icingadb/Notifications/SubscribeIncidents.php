@@ -50,7 +50,10 @@ trait SubscribeIncidents
                     if ($granted->valid()) {
                         foreach (IncidentFinder::forObjects($granted) as $incident) {
                             if ($subscribe) {
-                                $incident->addSubscriber($username);
+                                $incident->addSubscriber(
+                                    $username,
+                                    ['downtime_start', 'downtime_end', 'flapping_start', 'flapping_end']
+                                );
                             } else {
                                 $incident->removeSubscriber($username);
                             }
