@@ -184,7 +184,7 @@ class EventDetail extends BaseHtmlElement
             0   => $pluginOutput,
             200 => $eventInfo,
             500 => $notifiedUsers,
-            501 => $this->createSentNotifications()
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -288,7 +288,7 @@ class EventDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             0   => $pluginOutput,
             200 => $eventInfo,
-            501 => $this->createSentNotifications()
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -411,8 +411,8 @@ class EventDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $commentInfo,
             201 => $eventInfo,
-            501 => $this->createSentNotifications(),
-            600 => $cancelInfo
+            600 => $cancelInfo,
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -486,8 +486,8 @@ class EventDetail extends BaseHtmlElement
             200 => $commentInfo,
             201 => $eventInfo,
             500 => $tiedToAckInfo,
-            501 => $this->createSentNotifications(),
-            600 => $removedInfo
+            600 => $removedInfo,
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -537,7 +537,7 @@ class EventDetail extends BaseHtmlElement
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $eventInfo,
-            501 => $this->createSentNotifications()
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
@@ -646,7 +646,7 @@ class EventDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $commentInfo,
             201 => $eventInfo,
-            501 => $this->createSentNotifications()
+            601 => $this->createSentNotifications()
         ], $this->createExtensions()));
     }
 
