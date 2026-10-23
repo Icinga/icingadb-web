@@ -5,7 +5,6 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook\Notifications\V2;
 
-use Icinga\Module\Icingadb\ProvidedHook\Notifications\V1\Source;
 use Icinga\Module\Notifications\Hook\V2\V1FilterMigrationHook;
 use InvalidArgumentException;
 use ipl\Stdlib\Filter;
@@ -32,7 +31,7 @@ class V1FilterMigration implements V1FilterMigrationHook
         }
 
         $typeFilter = match ($data['config']['type']) {
-            Source::TYPE_ALL => null,
+            'all' => null,
             'host' => Filter::equal('object.type', 'host'),
             'service' => Filter::equal('object.type', 'service'),
             default => throw new InvalidArgumentException('Unknown v1 filter type: ' . $data['config']['type'])
