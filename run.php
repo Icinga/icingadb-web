@@ -9,22 +9,16 @@ $this->provideHook('ApplicationState');
 $this->provideHook('X509/Sni');
 $this->provideHook('health', 'IcingaHealth');
 $this->provideHook('health', 'RedisHealth');
+$this->provideHook('Notifications/V2/Icinga2Source');
+$this->provideHook('Notifications/V2/V1FilterMigration');
 $this->provideHook('Reporting/Report', 'Reporting/HostSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/TotalHostSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/ServiceSlaReport');
 $this->provideHook('Reporting/Report', 'Reporting/TotalServiceSlaReport');
-
-if ($this::exists('notifications')) {
-    $this->provideHook('Notifications/V2/Icinga2Source');
-    $this->provideHook('Notifications/V2/V1FilterMigration');
-}
-
-if ($this::exists('reporting')) {
-    $this->provideHook('Icingadb/HostActions', 'CreateHostSlaReport');
-    $this->provideHook('Icingadb/ServiceActions', 'CreateServiceSlaReport');
-    $this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostsSlaReport');
-    $this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServicesSlaReport');
-}
+$this->provideHook('Icingadb/HostActions', 'CreateHostSlaReport');
+$this->provideHook('Icingadb/ServiceActions', 'CreateServiceSlaReport');
+$this->provideHook('Icingadb/HostsDetailExtension', 'CreateHostsSlaReport');
+$this->provideHook('Icingadb/ServicesDetailExtension', 'CreateServicesSlaReport');
 
 if (! $this::exists('monitoring') && $this->app->getModuleManager()->hasInstalled('monitoring')) {
     // For compatibility reasons, Icinga DB Web also supports hooks originally written for the monitoring module.
