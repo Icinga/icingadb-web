@@ -10,10 +10,17 @@ use Icinga\Authentication\Auth;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Dashboards\Hook\DashletControls;
 use Icinga\Module\Dashboards\Hook\DashletHook;
+use Icinga\Module\Icingadb\Model\Comment;
+use Icinga\Module\Icingadb\Model\Downtime;
+use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Model\Host;
+use Icinga\Module\Icingadb\Model\NotificationHistory;
+use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
 use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Util\Json;
 use ipl\I18n\Translation;
+use ipl\Orm\Model;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Url;
 
@@ -55,6 +62,7 @@ use ipl\Web\Url;
  */
 class ObjectList extends DashletHook
 {
+    use FilterColumns;
     use Translation;
 
     /**
@@ -84,6 +92,7 @@ class ObjectList extends DashletHook
      * @var array<string, array{
      *     label: string,
      *     route: string,
+     *     model: class-string<\ipl\Orm\Model>,
      *     sort: array<string, string>,
      *     default: string,
      *     view?: array<string, string>
@@ -93,6 +102,7 @@ class ObjectList extends DashletHook
         'hosts' => [
             'label'   => 'Hosts',
             'route'   => 'icingadb/hosts',
+            'model'   => Host::class,
             'sort'    => [
                 'host.display_name'                                          => 'Name',
                 'host.state.severity desc,host.state.last_state_change desc' => 'Severity',
@@ -105,6 +115,7 @@ class ObjectList extends DashletHook
         'services' => [
             'label'   => 'Services',
             'route'   => 'icingadb/services',
+            'model'   => Service::class,
             'sort'    => [
                 'service.display_name'                                             => 'Name',
                 'service.state.severity desc,service.state.last_state_change desc' => 'Severity',
@@ -118,6 +129,7 @@ class ObjectList extends DashletHook
         'downtimes' => [
             'label'   => 'Downtimes',
             'route'   => 'icingadb/downtimes',
+            'model'   => Downtime::class,
             'sort'    => [
                 'downtime.is_in_effect desc,downtime.start_time desc' => 'Is In Effect',
                 'downtime.entry_time'                                 => 'Entry Time',
@@ -135,6 +147,7 @@ class ObjectList extends DashletHook
         'comments' => [
             'label'   => 'Comments',
             'route'   => 'icingadb/comments',
+            'model'   => Comment::class,
             'sort'    => [
                 'comment.entry_time desc'  => 'Entry Time',
                 'host.display_name'        => 'Host',
@@ -150,12 +163,14 @@ class ObjectList extends DashletHook
         'notifications' => [
             'label'   => 'Notifications',
             'route'   => 'icingadb/notifications',
+            'model'   => NotificationHistory::class,
             'sort'    => ['notification_history.send_time desc' => 'Send Time'],
             'default' => 'notification_history.send_time desc',
         ],
         'history' => [
             'label'   => 'History',
             'route'   => 'icingadb/history',
+            'model'   => History::class,
             'sort'    => ['history.event_time desc,history.event_type desc' => 'Event Time'],
             'default' => 'history.event_time desc,history.event_type desc',
         ],
@@ -231,6 +246,19 @@ class ObjectList extends DashletHook
         }
 
         return $url;
+    }
+
+    /**
+     * Complete the filter with what the list's own search bar completes
+     *
+     * The list's `completeAction()`, which every one of the six has and which answers a POST carrying the term
+     * typed so far. It runs in the viewer's session, so the values offered are those their restrictions allow.
+     */
+    public function getFilterSuggestionUrl(?string $objectType): ?Url
+    {
+        return isset(self::OBJECT_TYPES[$objectType])
+            ? Url::fromPath(self::OBJECT_TYPES[$objectType]['route'] . '/complete')
+            : null;
     }
 
     /**
@@ -323,6 +351,17 @@ class ObjectList extends DashletHook
         }
 
         return $types;
+    }
+
+    private function filterModel(?string $objectType): ?Model
+    {
+        if (! isset(self::OBJECT_TYPES[$objectType])) {
+            return null;
+        }
+
+        $class = self::OBJECT_TYPES[$objectType]['model'];
+
+        return new $class();
     }
 
     /**

@@ -7,6 +7,9 @@ namespace Icinga\Module\Icingadb\ProvidedHook\Dashboards;
 
 use Icinga\Module\Dashboards\Hook\DashletControls;
 use Icinga\Module\Dashboards\Hook\DashletHook;
+use Icinga\Module\Icingadb\Model\HoststateSummary;
+use Icinga\Module\Icingadb\Model\ServicestateSummary;
+use ipl\Orm\Model;
 use ipl\Stdlib\Filter;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
@@ -23,8 +26,15 @@ use ipl\Web\Url;
  */
 class TacticalOverview extends DashletHook
 {
+    use FilterColumns;
+
     /**
-     * @var array<string, array{label: string, route: string}> Every object type, and the route that draws it
+     * @var array<string, array{
+     *     label: string,
+     *     route: string,
+     *     model: class-string<Model>,
+     *     complete: string
+     * }> Every object type, and the route that draws it
      *
      * The first is the default, and where an unknown stored type falls back to.
      */
@@ -32,10 +42,14 @@ class TacticalOverview extends DashletHook
         'hosts' => [
             'label' => 'Hosts',
             'route' => 'icingadb/tactical/hosts',
+            'model' => HoststateSummary::class,
+            'complete' => 'icingadb/hosts/complete',
         ],
         'services' => [
             'label' => 'Services',
             'route' => 'icingadb/tactical/services',
+            'model' => ServicestateSummary::class,
+            'complete' => 'icingadb/services/complete',
         ],
     ];
 
@@ -67,6 +81,31 @@ class TacticalOverview extends DashletHook
 
         $controls->objectType($types);
         $controls->filter();
+    }
+
+    /**
+     * Complete against the list of the same objects, not against the tactical route
+     *
+     * `icingadb/tactical/complete` suggests from the services summary whatever is being drawn, which would
+     * offer service columns to the hosts donut. The summaries are views over the same tables the lists
+     * query, so the lists' own columns are the ones that filter means.
+     */
+    public function getFilterSuggestionUrl(?string $objectType): ?Url
+    {
+        return isset(self::OBJECT_TYPES[$objectType])
+            ? Url::fromPath(self::OBJECT_TYPES[$objectType]['complete'])
+            : null;
+    }
+
+    private function filterModel(?string $objectType): ?Model
+    {
+        if (! isset(self::OBJECT_TYPES[$objectType])) {
+            return null;
+        }
+
+        $class = self::OBJECT_TYPES[$objectType]['model'];
+
+        return new $class();
     }
 
     public function getRoute(array $settings): ?Url
