@@ -64,6 +64,18 @@ class QueryValuesProvider implements IteratorAggregate
             $targetPath = substr($targetPath, 0, -4) . 'customvar_flat';
         }
 
+        if (str_contains($targetPath, '.')) {
+            try {
+                // Restrictions are only applied to relations registered via with(),
+                // which ipl-orm doesn't do automatically for selected columns
+                $this->query->with($targetPath);
+            } catch (InvalidRelationException $e) {
+                throw new SearchException(
+                    sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation())
+                );
+            }
+        }
+
         if ($isCustomVar) {
             $columnPath = $targetPath . '.flatvalue';
             $this->query->filter(Filter::like($targetPath . '.flatname', $columnName));
