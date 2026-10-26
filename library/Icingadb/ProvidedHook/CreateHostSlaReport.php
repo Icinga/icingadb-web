@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
+use Icinga\Application\Modules\Module;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Icingadb\Hook\HostActionsHook;
 use Icinga\Module\Icingadb\Model\Host;
@@ -20,7 +21,7 @@ class CreateHostSlaReport extends HostActionsHook
 
     public function getActionsForObject(Host $host): array
     {
-        if (! Auth::getInstance()->hasPermission('reporting/reports')) {
+        if (! Module::exists('reporting') || ! Auth::getInstance()->hasPermission('reporting/reports')) {
             return [];
         }
 

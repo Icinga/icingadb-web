@@ -5,6 +5,7 @@
 
 namespace Icinga\Module\Icingadb\ProvidedHook;
 
+use Icinga\Application\Modules\Module;
 use Icinga\Authentication\Auth;
 use Icinga\Module\Icingadb\Hook\HostsDetailExtensionHook;
 use ipl\Html\Html;
@@ -22,7 +23,7 @@ class CreateHostsSlaReport extends HostsDetailExtensionHook
 
     public function getHtmlForObjects(Query $hosts): ValidHtml
     {
-        if (Auth::getInstance()->hasPermission('reporting/reports')) {
+        if (Module::exists('reporting') && Auth::getInstance()->hasPermission('reporting/reports')) {
             $filter = QueryString::render($this->getBaseFilter());
 
             return (new HtmlDocument())
