@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Widget;
 
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\ProvidedHook\IcingaHealth;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -52,12 +53,18 @@ class Health extends BaseHtmlElement
                 || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
             )
         ) {
-            $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [
-                $this->translate(
+            if (! Backend::icinga2SupportsNotifications($this->data->icinga2_version)) {
+                $reason = $this->translate(
+                    'Notifications are not transmitted because the Icinga 2 version is outdated.'
+                );
+            } else {
+                $reason = $this->translate(
                     'Notification transmission has been interrupted.'
                     . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
-                )
-            ]));
+                );
+            }
+
+            $this->addHtml(Html::tag('div', ['class' => 'icinga-health down'], [$reason]));
         } elseif ($this->data->heartbeat->getTimestamp() > time() - 60) {
             $this->add(Html::tag('div', ['class' => 'icinga-health up'], [
                 Html::sprintf(

@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Common;
 use Icinga\Application\Config as AppConfig;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
+use Icinga\Module\Icingadb\Model\Config;
 use Icinga\Module\Icingadb\Model\Instance;
 use Icinga\Module\Icingadb\Model\Schema;
 use ipl\Sql\Adapter\Pgsql;
@@ -239,13 +240,11 @@ final class Backend
         if (self::$notificationsHealthy === null) {
             self::$notificationsHealthy = Icinga::app()->getModuleManager()->hasEnabled('notifications')
                 && self::supportsNotifications()
-                // TODO: Instead of checking for a healthy component, check if a configured component exists
-                //       in the icingadb_config table
-                && Instance::on(self::getDb())
-                    ->columns('notifications_healthy')
-                    ->filter(Filter::equal('responsible', true))
-                    ->first()
-                    ?->notifications_healthy === true;
+                && self::icinga2SupportsNotifications()
+                && Config::on(self::getDb())
+                    ->columns('env_value')
+                    ->filter(Filter::equal('env_key', 'ICINGADB_NOTIFICATIONS_URL'))
+                    ->first() !== null;
         }
 
         return self::$notificationsHealthy;
@@ -267,5 +266,21 @@ final class Backend
         }
 
         return self::$icinga2Version;
+    }
+
+    /**
+     * Whether the Icinga 2 version supports Icinga Notifications
+     *
+     * @param ?string $version
+     *
+     * @return bool
+     */
+    public static function icinga2SupportsNotifications(?string $version = null): bool
+    {
+        if (getenv('ICINGAWEB_ENVIRONMENT') === 'dev') {
+            return true;
+        }
+
+        return version_compare($version ?? self::getIcinga2Version(), 'v2.16.6', '>=');
     }
 }

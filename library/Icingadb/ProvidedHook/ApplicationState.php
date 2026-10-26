@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\ProvidedHook;
 use Exception;
 use Icinga\Application\Hook\ApplicationStateHook;
 use Icinga\Module\Icingadb\Common\Auth;
+use Icinga\Module\Icingadb\Common\Backend;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Common\IcingaRedis;
 use Icinga\Module\Icingadb\Model\Instance;
@@ -122,13 +123,21 @@ class ApplicationState extends ApplicationStateHook
                 $session->set('notifications.unhealthy-since', $unhealthySince);
             }
 
+            if (! Backend::icinga2SupportsNotifications($instance->icinga2_version)) {
+                $reason = $this->translate(
+                    'Notifications are not transmitted because the Icinga 2 version is outdated.'
+                );
+            } else {
+                $reason = $this->translate(
+                    'Notification transmission has been interrupted.'
+                    . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
+                );
+            }
+
             $this->addError(
                 'icingadb/notifications-unhealthy',
                 $unhealthySince,
-                $this->translate(
-                    'Notification transmission has been interrupted.'
-                    . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
-                )
+                $reason
             );
         } else {
             $session->delete('notifications.unhealthy-since');
