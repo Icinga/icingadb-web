@@ -123,7 +123,8 @@ class History extends Model
 
         $behaviors->add(new ReRoute([
             'hostgroup'     => 'host.hostgroup',
-            'servicegroup'  => 'service.servicegroup'
+            'servicegroup'  => 'service.servicegroup',
+            'alert_history' => 'alert'
         ]));
     }
 

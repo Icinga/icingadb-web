@@ -64,18 +64,6 @@ class QueryValuesProvider implements IteratorAggregate
             $targetPath = substr($targetPath, 0, -4) . 'customvar_flat';
         }
 
-        if (str_contains($targetPath, '.')) {
-            try {
-                // Restrictions are only applied to relations registered via with(),
-                // which ipl-orm doesn't do automatically for selected columns
-                $this->query->with($targetPath);
-            } catch (InvalidRelationException $e) {
-                throw new SearchException(
-                    sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation())
-                );
-            }
-        }
-
         if ($isCustomVar) {
             $columnPath = $targetPath . '.flatvalue';
             $this->query->filter(Filter::like($targetPath . '.flatname', $columnName));
@@ -102,6 +90,19 @@ class QueryValuesProvider implements IteratorAggregate
 
         $this->query->filter($this->searchFilter);
 
+        if (str_contains($targetPath, '.')) {
+            try {
+                // applyRestrictions() only restricts relations that are already known, but ipl-orm resolves the
+                // relation of the suggested column once the query is assembled, so it must be registered explicitly
+                // beforehand for restrictions to be applied.
+                $this->query->with($targetPath);
+            } catch (InvalidRelationException $e) {
+                throw new SearchException(
+                    sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation())
+                );
+            }
+        }
+
         $this->applyRestrictions($this->query);
         if ($this->hasBaseFilter()) {
             $this->query->filter($this->getBaseFilter());
@@ -115,8 +116,6 @@ class QueryValuesProvider implements IteratorAggregate
             }
         } catch (InvalidColumnException $e) {
             throw new SearchException(sprintf($this->translate('"%s" is not a valid column'), $e->getColumn()));
-        } catch (InvalidRelationException $e) {
-             throw new SearchException(sprintf($this->translate('"%s" is not a valid relation'), $e->getRelation()));
         }
     }
 }

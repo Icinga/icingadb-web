@@ -203,7 +203,7 @@ trait Auth
             // Redundancy groups have no relation to anything in order to be subject
             // for authorization, so they must be exempt from the respective filters.
             $skipRedundancyGroups = $relations[0] === 'dependency_node';
-            $applyAlertRestriction = $relations[0] === 'alert_history';
+            $applyAlertRestriction = in_array('alert_history', $relations, true);
 
             $hostStateRelation = array_search('host_state', $relations, true);
             $serviceStateRelation = array_search('service_state', $relations, true);
