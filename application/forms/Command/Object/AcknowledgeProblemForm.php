@@ -246,7 +246,7 @@ class AcknowledgeProblemForm extends CommandForm
             $command->setExpireTime($expireTime->getTimestamp());
         }
 
-        if (version_compare(Backend::getIcinga2Version(), 'v2.16.6', '>=')) {
+        if (Backend::icinga2SupportsNotifications()) {
             $this->setTime = new DateTime();
             $command->setAcknowledgementTime($this->setTime);
         }

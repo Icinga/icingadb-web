@@ -30,16 +30,12 @@ trait ManagesIncidents
      *
      * @return void
      *
-     * @throws InvalidArgumentException If `$manage` is `true` but no `$ackSetTime` is given for icinga2 >= v2.16.6
+     * @throws InvalidArgumentException If `$manage` is `true` but no `$ackSetTime` is given
      */
     protected function manageIncidents(bool $manage, ?DateTime $ackSetTime = null): void
     {
         if ($this->getAuth()->hasPermission('icingadb/notifications/manage') && Backend::notificationsSetUp()) {
-            if (
-                $manage
-                && $ackSetTime === null
-                && version_compare(Backend::getIcinga2Version(), 'v2.16.6', '>=')
-            ) {
+            if ($manage && $ackSetTime === null) {
                 throw new InvalidArgumentException('An acknowledgement set time is required to manage incidents');
             }
 

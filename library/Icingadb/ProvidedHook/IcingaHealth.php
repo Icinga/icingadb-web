@@ -90,10 +90,18 @@ class IcingaHealth extends HealthHook
             )
         ) {
             $this->setState(self::STATE_CRITICAL);
-            $this->setMessage($this->translate(
-                'Notification transmission has been interrupted.'
-                . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
-            ));
+            if (! Backend::icinga2SupportsNotifications($instance->icinga2_version)) {
+                $message = $this->translate(
+                    'Notifications are not transmitted because the Icinga 2 version is outdated.'
+                );
+            } else {
+                $message = $this->translate(
+                    'Notification transmission has been interrupted.'
+                    . ' Make sure Icinga DB is able to connect to Icinga Notifications.'
+                );
+            }
+
+            $this->setMessage($message);
         } else {
             $this->setState(self::STATE_OK);
             $warningMessages = [];

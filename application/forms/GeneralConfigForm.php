@@ -324,7 +324,8 @@ class GeneralConfigForm extends ConfigForm
                     'notifications_discovered_socket_path',
                     'notifications_synchronize_with_database',
                     'icingadb_service_user',
-                    'notifications_healthy'
+                    'notifications_healthy',
+                    'icinga2_version'
                 ]
             )->filter(Filter::equal('responsible', true))->execute();
 
@@ -344,6 +345,12 @@ class GeneralConfigForm extends ConfigForm
             }
 
             $instance = iterable_value_first($instances);
+            if (! Backend::icinga2SupportsNotifications($instance->icinga2_version)) {
+                $this->lockNotifications(
+                    $this->translate('The Icinga 2 version is outdated. Please update to configure notifications.')
+                );
+            }
+
             if (! $instance->notifications_synchronize_with_database) {
                 $this->lockNotifications(
                     $this->translate('Synchronization of the configuration with the database is disabled.')
