@@ -3,26 +3,26 @@
 Specific version upgrades are described below. Please note that version upgrades are incremental.
 If you are upgrading across multiple versions, make sure to follow the steps for each of them.
 
-## Upgrading to Icinga DB Web v1.5
+## Upgrading to Icinga DB Web v1.5.0
 
-**Icinga Notifications Support**
+**Icinga Notifications v1.0.0 Support**
 
-Host and service problems that are tracked by Icinga Notifications can be subscribed to. A subscriber receives
-their notifications without being responsible for them. A user who acknowledges such a problem becomes a manager
-of its incident in Icinga Notifications, which suppresses notifications to anyone else who did not explicitly
-subscribe. The acknowledgement remains until the host or service recovers. The *Send Notification*,
-*Sticky Acknowledgement* and *Use Expire Time* options of the acknowledgement form are therefore not shown in
-this case.
+Icinga DB v1.6.0 and Icinga DB Web 1.5.0 can act together as an integration for
+[Icinga Notifications](https://icinga.com/docs/icinga-notifications/latest/).
 
-These features are guarded by the new permission `icingadb/notifications/usage`. Without it, nothing changes for
-a user. Subscription actions are not offered and acknowledgements work exactly as before. Icinga Notification's
-recipients and alerts sent by it are not accessible.
+There are several new additions to the authorization configuration, which need to be considered when
+[configuring the Icinga Notifications integration](03-Configuration.md#icinga-notifications-configuration)
+for the first time.
 
-We recommend to make use of this when migrating. Set up Icinga Notifications, configure contacts and event rules
-and verify that problems are tracked as expected. Only once you are confident the setup is complete, grant the new
-permissions to users.
+**Different Behavior of the Filter Columns `host.user.name` and `service.user.name`**
 
-## Upgrading to Icinga DB Web v1.4
+If you use `host.user.name` in a restriction, first audit the effect this upgrade will have on roles that use it.
+Since this column now only applies to contacts associated with a host, users may find that they have access to more
+hosts or fewer services than before. If they have access to more hosts, this is intended effect, and you shouldn't
+worry about this, considering that the previous behavior was a bug. If they have access to fewer services, you may
+need to include `service.user.name` in the restriction as well to restore the previous behavior.
+
+## Upgrading to Icinga DB Web v1.4.0
 
 **Behavior Changes**
 
@@ -47,11 +47,11 @@ Cases where this may not have been noticed are as follows:
 Since these are very specific cases, we don't expect broad expectation of the previous behavior, but please review
 your setup nonetheless if you use third party or custom modules that access custom variables this way.
 
-## Upgrading to Icinga DB Web v1.3
+## Upgrading to Icinga DB Web v1.3.0
 
 **Requirements**
 
-* The minimum required Icinga Web version is now 2.12.
+* The minimum required Icinga Web version is now 2.12.0.
 
 **Breaking Changes**
 
@@ -74,13 +74,13 @@ your setup nonetheless if you use third party or custom modules that access cust
   * The alternatives (`contacts`, `contact` , `contactgroup` and `contactgroups`) have been available since v1.2.
 * The migration widget in the top right has been removed. If you have not adjusted your navigation items,
   dashboards and bookmarks to support the new filter syntax, you will need to do so manually now (see [Upgrading to
-  Icinga DB Web v1.1](#upgrading-to-icinga-db-web-v11) for details).
+  Icinga DB Web v1.1.0](#upgrading-to-icinga-db-web-v110) for details).
   * Modules with support for IDO and Icinga DB will now default to use Icinga DB.
   * The accompanying endpoint `icingadb/migrate/monitoring-url` has been removed.
 * The class `Icinga\Module\Icingadb\Model\Behavior\BoolCast` has been removed.
   * Use `\ipl\Orm\Behavior\BoolCast` instead.
 
-## Upgrading to Icinga DB Web v1.2
+## Upgrading to Icinga DB Web v1.2.0
 
 **Requirements**
 
@@ -107,7 +107,7 @@ The following classes have been deprecated and will be removed in a future relea
 The following methods have been deprecated and will be removed in a future release:
 * `\Icinga\Module\Icingadb\Common\IcingaRedis::instance()`: Use `\Icinga\Module\Icingadb\Common\Backend::getRedis()` instead.
 
-## Upgrading to Icinga DB Web v1.1
+## Upgrading to Icinga DB Web v1.1.0
 
 **Breaking Changes**
 
@@ -128,7 +128,7 @@ to only transform filters of such:
 
 By default, this creates backups of menu items, dashboards and roles. Pass `--no-backup` to disable this.
 
-## Upgrading to Icinga DB Web v1.0
+## Upgrading to Icinga DB Web v1.0.0
 
 **Requirements**
 

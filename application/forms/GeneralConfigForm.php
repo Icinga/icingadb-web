@@ -171,7 +171,8 @@ class GeneralConfigForm extends ConfigForm
                     new Icon('arrow-up-right-from-square')
                 ],
                 Url::fromPath(
-                    'https://icinga.com/docs/icinga-db/latest/doc/03-Configuration/#notifications-configuration'
+                    'https://icinga.com/docs/icinga-db-web/latest/doc/'
+                    . '03-Configuration/#icinga-notifications-configuration'
                 ),
                 ['target' => '_blank']
             )
