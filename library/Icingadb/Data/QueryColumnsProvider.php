@@ -451,6 +451,7 @@ class QueryColumnsProvider implements IteratorAggregate
 
         $customVars->columns($scalarQueries);
         $customVars->groupBy($idColumn);
+        $customVars->limit(Suggestions::DEFAULT_LIMIT);
 
         $outerQuery = (new Select())
             ->columns($aggregates)
