@@ -3,6 +3,38 @@
 Please make sure to always read our [Upgrading](https://icinga.com/docs/icinga-db-web/latest/doc/05-Upgrading/)
 documentation before switching to a new version.
 
+## 1.5.0
+
+All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/16?closed=1
+
+### Icinga Notifications v1.0.0 Support
+
+This release accompanies the release of Icinga Notifications v1.0.0 and Icinga DB v1.6.0. Earlier versions of Icinga
+Notifications are no longer compatible. The integration covers the following features:
+
+* Setting up Icinga DB for Icinga Notifications [has never been easier](doc/03-Configuration.md#icinga-notifications-configuration).
+* Host and service details show recipients that were notified about the current problem.
+* The event overview and object histories indicate how many alerts were triggered by which event and provide easy access
+  to more details.
+
+### New Features
+
+* The event overview, notification history and object histories are now separated by date and allow choosing between
+  relative and absolute display of times. #1065
+* The host and service overview now include a fourth view mode that represents the table layout previously only
+  available by changing the address bar. You can now also choose the displayed columns easily via the … button
+  in the table header. #82
+
+### Breaking Changes
+
+* The filter column `host.user.name` applies only to contacts associated with a host now. If used in a restriction,
+  users may find that they have access to more hosts or fewer services than before. #975
+
+### Fixes
+
+* Exporting the tactical overview to CSV or JSON works now. #1334
+* Custom variables with `host_` or `service_` prefix now have values in tabular view. #1400
+
 ## 1.4.0
 
 All included changes can be found on the milestone: https://github.com/Icinga/icingadb-web/milestone/14?closed=1
@@ -30,8 +62,8 @@ All included changes can be found on the milestone: https://github.com/Icinga/ic
 ### Icinga Notifications
 
 This release accompanies the release of Icinga Notifications v0.2.0. We have changed how notification sources are
-configured, and now an integration into Icinga Web is mandatory. Icinga DB Web v1.3 will serve as the integration
-for Icinga DB v1.5.
+configured, and now an integration into Icinga Web is mandatory. Icinga DB Web v1.3.0 will serve as the integration
+for Icinga DB v1.5.0.
 
 ### New Features
 
@@ -118,7 +150,7 @@ of modules with no official support for Icinga DB Web is working again, even if 
 Action and Note URLs, which disappeared with v1.0.1, are also visible again.
 
 Some enhancements also found their way in this release. They include improved compatibility with Icinga DB's
-asynchronous behavior and its migration tool included in the v1.1 release.
+asynchronous behavior and its migration tool included in the v1.1.0 release.
 
 ## 1.0.1 (2022-09-08)
 

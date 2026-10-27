@@ -7,10 +7,10 @@ The same applies to routes, objects and variables. To these, users can be restri
 
 ## Permissions
 
-> **Restricted Command Permissions:**
->
-> If a role [limits users](#filters) to a specific set of results, the command and icingadb/notifications/subscribe
-> permissions or refusals of the very same role only apply to these results.
+!!! info
+
+    If a role [limits users](#filters) to a specific set of results, the command and `icingadb/notifications/subscribe`
+    permissions or refusals of the very same role only apply to these results.
 
 | Name                                           | Allow...                                                                         |
 |------------------------------------------------|----------------------------------------------------------------------------------|
@@ -55,9 +55,9 @@ allows to set an expiry date or to create non-sticky acknowledgements.
 
 Filters limit users to a specific set of results.
 
-> **Note:**
->
-> Filters from multiple roles will widen available access.
+!!! info
+
+    Filters from multiple roles will widen available access.
 
 | Name                     | Description                                                            |
 |--------------------------|------------------------------------------------------------------------|
@@ -82,9 +82,9 @@ or host/service history. Other history remains unrestricted. It should be one or
 
 Denylists prevent users from accessing information and in some cases will block them entirely from it.
 
-> **Note:**
->
-> Denylists from multiple roles will further limit access.
+!!! info
+
+    Denylists from multiple roles will further limit access.
 
 | Name                        | Description                                                       |
 |-----------------------------|-------------------------------------------------------------------|
@@ -104,9 +104,9 @@ possible to use [match patterns](#match-patterns).
 
 Protections prevent users from accessing actual data. They will know that there is something, but not what exactly.
 
-> **Note:**
->
-> Denylists from multiple roles will further limit access.
+!!! info
+
+    Protections from multiple roles will further limit access.
 
 | Name                       | Description                                                                  |
 |----------------------------|------------------------------------------------------------------------------|
