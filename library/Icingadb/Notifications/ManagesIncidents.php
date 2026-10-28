@@ -34,53 +34,46 @@ trait ManagesIncidents
      */
     protected function manageIncidents(bool $manage, ?DateTime $ackSetTime = null): void
     {
-        if ($this->getAuth()->hasPermission('icingadb/notifications/manage') && Backend::notificationsSetUp()) {
+        if ($this->getAuth()->hasPermission('icingadb/notifications/usage') && Backend::notificationsSetUp()) {
             if ($manage && $ackSetTime === null) {
                 throw new InvalidArgumentException('An acknowledgement set time is required to manage incidents');
             }
 
             $username = $this->getAuth()->getUser()->getUsername();
             $objects = $this->getObjects();
-            $objects = new CallbackFilterIterator(
-                is_array($objects) ? new ArrayIterator($objects) : new IteratorIterator($objects),
-                fn ($object) => $this->isGrantedOn('icingadb/notifications/manage', $object)
-            );
 
-            $objects->rewind();
-            if ($objects->valid()) {
-                $ackTimes = [];
-                if (! $manage) {
-                    foreach ($objects as $object) {
-                        $ackTimes[$this->objectKey($object)] = $object->state->acknowledgement_set_time;
-                    }
+            $ackTimes = [];
+            if (! $manage) {
+                foreach ($objects as $object) {
+                    $ackTimes[$this->objectKey($object)] = $object->state->acknowledgement_set_time;
                 }
+            }
 
-                foreach (IncidentFinder::forObjects($objects) as $incident) {
-                    if ($manage) {
-                        $incident->addManager(
-                            $username,
-                            ['downtime_start', 'downtime_end', 'flapping_start', 'flapping_end'],
-                            $ackSetTime !== null
-                                ? $this->deriveDeterministicEventUUID(
-                                    'ack_set',
-                                    $incident->getObjectIdTags(),
-                                    (int) $ackSetTime->format('U') * 1000
-                                )
-                                : null
-                        );
-                    } else {
-                        $tags = $incident->getObjectIdTags();
-                        $ackTime = $ackTimes[$this->objectKey($tags)] ?? null;
-                        $incident->removeManager(
-                            $ackTime !== null
-                                ? $this->deriveDeterministicEventUUID(
-                                    'ack_clear',
-                                    $tags,
-                                    (int) $ackTime->format('Uv')
-                                )
-                                : null
-                        );
-                    }
+            foreach (IncidentFinder::forObjects($objects) as $incident) {
+                if ($manage) {
+                    $incident->addManager(
+                        $username,
+                        ['downtime_start', 'downtime_end', 'flapping_start', 'flapping_end'],
+                        $ackSetTime !== null
+                            ? $this->deriveDeterministicEventUUID(
+                                'ack_set',
+                                $incident->getObjectIdTags(),
+                                (int) $ackSetTime->format('U') * 1000
+                            )
+                            : null
+                    );
+                } else {
+                    $tags = $incident->getObjectIdTags();
+                    $ackTime = $ackTimes[$this->objectKey($tags)] ?? null;
+                    $incident->removeManager(
+                        $ackTime !== null
+                            ? $this->deriveDeterministicEventUUID(
+                                'ack_clear',
+                                $tags,
+                                (int) $ackTime->format('Uv')
+                            )
+                            : null
+                    );
                 }
             }
         }

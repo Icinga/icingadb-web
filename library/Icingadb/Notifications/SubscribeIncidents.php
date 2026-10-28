@@ -37,7 +37,7 @@ trait SubscribeIncidents
         array|(Traversable&Countable) $objects,
         Url $redirectUrl
     ): void {
-        if (Backend::notificationsSetUp()) {
+        if ($this->hasPermission('icingadb/notifications/usage') && Backend::notificationsSetUp()) {
             $form = (new SubscriptionForm($subscribe))
                 ->setObjectCount(count($objects))
                 ->on(Form::ON_SUBMIT, function () use ($subscribe, $objects, $redirectUrl) {

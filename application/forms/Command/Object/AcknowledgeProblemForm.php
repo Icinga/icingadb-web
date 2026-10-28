@@ -70,7 +70,7 @@ class AcknowledgeProblemForm extends CommandForm
 
     protected function assembleElements()
     {
-        $canManage = $this->getAuth()->hasPermission('icingadb/notifications/manage') && Backend::notificationsSetUp();
+        $canManage = $this->getAuth()->hasPermission('icingadb/notifications/usage') && Backend::notificationsSetUp();
 
         if ($canManage) {
             $description = t(

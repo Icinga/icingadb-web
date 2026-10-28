@@ -400,6 +400,7 @@ class ObjectDetail extends BaseHtmlElement
         if (
             ! $userList->hasContent()
             && ! $usergroupList->hasContent()
+            && $this->getAuth()->hasPermission('icingadb/notifications/usage')
             && Backend::notificationsSetUp()
         ) {
             return [];
@@ -422,7 +423,7 @@ class ObjectDetail extends BaseHtmlElement
 
     protected function createNotificationRecipients(): array
     {
-        if (! Backend::notificationsSetUp()) {
+        if (! $this->getAuth()->hasPermission('icingadb/notifications/usage') || ! Backend::notificationsSetUp()) {
             return [];
         }
 
