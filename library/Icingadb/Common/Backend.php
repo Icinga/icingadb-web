@@ -41,8 +41,8 @@ final class Backend
     /** @var ?bool Whether the current Icinga DB version supports notifications */
     private static $supportsNotifications;
 
-    /** @var ?bool Whether Icinga DB reports a healthy notifications component */
-    private static $notificationsHealthy;
+    /** @var ?bool Whether Icinga DB is set up to connect to Icinga Notifications */
+    private static $notificationsSetUp;
 
     /** @var ?string The normalized version of the responsible Icinga 2 instance */
     private static ?string $icinga2Version = null;
@@ -229,25 +229,24 @@ final class Backend
     }
 
     /**
-     * Whether an Icinga Notifications component is set up
-     *
-     * For now this checks whether a healthy component is available
+     * Whether Icinga DB is set up to connect to Icinga Notifications
      *
      * @return bool
      */
     public static function notificationsSetUp(): bool
     {
-        if (self::$notificationsHealthy === null) {
-            self::$notificationsHealthy = Icinga::app()->getModuleManager()->hasEnabled('notifications')
+        if (self::$notificationsSetUp === null) {
+            self::$notificationsSetUp = Icinga::app()->getModuleManager()->hasEnabled('notifications')
                 && self::supportsNotifications()
                 && self::icinga2SupportsNotifications()
-                && Config::on(self::getDb())
-                    ->columns('env_value')
-                    ->filter(Filter::equal('env_key', 'ICINGADB_NOTIFICATIONS_URL'))
+                && Instance::on(self::getDb())
+                    ->columns('notifications_healthy')
+                    ->filter(Filter::equal('responsible', true))
+                    ->filter(Filter::like('notifications_healthy', '*'))
                     ->first() !== null;
         }
 
-        return self::$notificationsHealthy;
+        return self::$notificationsSetUp;
     }
 
     /**
