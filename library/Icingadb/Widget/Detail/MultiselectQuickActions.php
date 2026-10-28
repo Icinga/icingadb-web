@@ -126,12 +126,8 @@ class MultiselectQuickActions extends BaseHtmlElement
         $activeChecks = "{$this->getColumnPrefix()}_active_checks_enabled";
         $passiveChecks = "{$this->getColumnPrefix()}_passive_checks_enabled";
 
-        $affectsIncidents = $this->isGrantedOnType(
-            'icingadb/notifications/manage',
-            $this->type,
-            $this->getBaseFilter(),
-            false
-        ) && Backend::notificationsSetUp();
+        $affectsIncidents = $this->getAuth()->hasPermission('icingadb/notifications/usage')
+            && Backend::notificationsSetUp();
 
         if (
             $this->summary->$unacknowledged > $this->summary->$acks
@@ -196,9 +192,9 @@ class MultiselectQuickActions extends BaseHtmlElement
         }
 
         if (
-            $this->summary->$acks + $this->summary->$unacknowledged > 0
+            $affectsIncidents
+            && $this->summary->$acks + $this->summary->$unacknowledged > 0
             && $this->isGrantedOnType('icingadb/notifications/subscribe', $this->type, $this->getBaseFilter(), false)
-            && Backend::notificationsSetUp()
         ) {
             if (Incidents::canSubscribe($this->getAuth()->getUser())) {
                 $this->add(Html::tag('li', (new SubscriptionForm(true))

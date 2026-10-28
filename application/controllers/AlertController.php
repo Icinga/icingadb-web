@@ -19,6 +19,8 @@ class AlertController extends Controller
     {
         $this->addTitleTab($this->translate('Alert'));
 
+        $this->assertPermission('icingadb/notifications/usage');
+
         $id = hex2bin($this->params->getRequired('id'));
 
         $query = AlertHistory::on($this->getDb())

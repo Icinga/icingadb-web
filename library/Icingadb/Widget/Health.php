@@ -48,10 +48,7 @@ class Health extends BaseHtmlElement
         } elseif (
             isset($this->data->notifications_healthy)
             && ! $this->data->notifications_healthy
-            &&  (
-                $this->getAuth()->hasPermission('icingadb/notifications/manage')
-                || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
-            )
+            && $this->getAuth()->hasPermission('icingadb/notifications/usage')
         ) {
             if (! Backend::icinga2SupportsNotifications($this->data->icinga2_version)) {
                 $reason = $this->translate(

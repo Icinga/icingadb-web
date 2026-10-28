@@ -14,11 +14,9 @@ subscribe. The acknowledgement remains until the host or service recovers. The *
 *Sticky Acknowledgement* and *Use Expire Time* options of the acknowledgement form are therefore not shown in
 this case.
 
-These two features are guarded by the new permissions `icingadb/notifications/subscribe` and
-`icingadb/notifications/manage`. As long as a user has neither, nothing changes for them. Subscription actions
-are not offered and acknowledgements work exactly as before. Both features additionally require a contact
-configured for the user in Icinga Notifications. For users without a matching contact the actions will be
-shown, but disabled with a hint explaining the reason.
+These features are guarded by the new permission `icingadb/notifications/usage`. Without it, nothing changes for
+a user. Subscription actions are not offered and acknowledgements work exactly as before. Icinga Notification's
+recipients and alerts sent by it are not accessible.
 
 We recommend to make use of this when migrating. Set up Icinga Notifications, configure contacts and event rules
 and verify that problems are tracked as expected. Only once you are confident the setup is complete, grant the new

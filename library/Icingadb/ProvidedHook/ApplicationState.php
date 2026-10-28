@@ -108,10 +108,7 @@ class ApplicationState extends ApplicationStateHook
         $session->delete('redis.down-since');
 
         if (isset($instance->notifications_healthy) && ! $instance->notifications_healthy) {
-            if (
-                ! $this->getAuth()->hasPermission('icingadb/notifications/manage')
-                && ! $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
-            ) {
+            if (! $this->getAuth()->hasPermission('icingadb/notifications/usage')) {
                 // Do not show this error to users who do not rely on it
 
                 return;

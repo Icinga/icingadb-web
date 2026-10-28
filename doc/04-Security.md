@@ -9,7 +9,7 @@ The same applies to routes, objects and variables. To these, users can be restri
 
 > **Restricted Command Permissions:**
 >
-> If a role [limits users](#filters) to a specific set of results, the command/notifications
+> If a role [limits users](#filters) to a specific set of results, the command and icingadb/notifications/subscribe
 > permissions or refusals of the very same role only apply to these results.
 
 | Name                                           | Allow...                                                                         |
@@ -37,13 +37,17 @@ The same applies to routes, objects and variables. To these, users can be restri
 | icingadb/object/show-source                    | to view an object's source data. (May contain sensitive data!)                   |
 
 The following permissions are available to allow users access to the Icinga Notifications integration. They additionally
-require a contact configured for the user in Icinga Notifications. For users without a matching contact the actions will
-be shown, but disabled with a hint explaining the reason.
+require a contact configured for the user in Icinga Notifications. For users without a matching contact, the _Acknowledge_
+or _Subscribe_ action will be shown, but disabled with a hint explaining the reason.
 
-| Name                             | Allow...                                                                            |
-|----------------------------------|-------------------------------------------------------------------------------------|
-| icingadb/notifications/subscribe | to subscribe to host and service problems and receive their notifications           |
-| icingadb/notifications/manage    | to become responsible for host and service problems and receive their notifications |
+| Name                             | Allow...                                                                  |
+|----------------------------------|---------------------------------------------------------------------------|
+| icingadb/notifications/usage     | general access to the Icinga Notifications integration                    |
+| icingadb/notifications/subscribe | to subscribe to host and service problems and receive their notifications |
+
+`icingadb/notifications/usage`'s *general access* means that it permits to see Icinga Notification recipients in a
+host's or service's detail and sent alerts in the respective history. It also controls whether the *Acknowledge* action
+allows to set an expiry date or to create non-sticky acknowledgements.
 
 ## Restrictions
 

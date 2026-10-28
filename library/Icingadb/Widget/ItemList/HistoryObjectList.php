@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Widget\ItemList;
 
 use Icinga\Exception\NotImplementedError;
+use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\LoadMore;
 use Icinga\Module\Icingadb\Model\History;
 use Icinga\Module\Icingadb\Model\NotificationHistory;
@@ -32,6 +33,7 @@ use Locale;
  */
 class HistoryObjectList extends ObjectList
 {
+    use Auth;
     use LoadMore;
 
     /** @var ?int The timestamp of the recently added list item, used to detect day changes */
@@ -102,6 +104,7 @@ class HistoryObjectList extends ObjectList
 
         if (
             ! empty($item->alert_count)
+            && $this->getAuth()->hasPermission('icingadb/notifications/usage')
             && $layout->getName() !== MinimalItemLayout::NAME
         ) {
             $layout->after(ItemLayout::MAIN, 'sent-notifications');

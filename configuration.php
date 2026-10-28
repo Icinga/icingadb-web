@@ -108,11 +108,11 @@ namespace Icinga\Module\Icingadb {
         )
     );
     $this->providePermission(
-        'icingadb/notifications/manage',
+        'icingadb/notifications/usage',
         $this->translate(
-            'Allow to become responsible for host and service problems'
-            . ' by acknowledging them and receive their notifications.'
-            . ' Requires the Icinga Notifications component with a contact configured for the user'
+            'Allow general access to the Icinga Notifications integration.'
+            . ' Permits to see recipients, alerts and changes how acknowledgements are handled.'
+            . ' See our documentation for more information.'
         )
     );
 

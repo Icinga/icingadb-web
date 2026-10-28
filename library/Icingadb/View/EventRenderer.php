@@ -431,7 +431,11 @@ class EventRenderer implements ItemRenderer
 
     public function assembleExtendedInfo($item, HtmlDocument $info, string $layout): void
     {
-        if (! empty($item->alert_count) && $layout === 'minimal') {
+        if (
+            ! empty($item->alert_count)
+            && $layout === 'minimal'
+            && $this->getAuth()->hasPermission('icingadb/notifications/usage')
+        ) {
             $info->addHtml(
                 new HtmlElement(
                     'span',

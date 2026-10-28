@@ -84,10 +84,7 @@ class IcingaHealth extends HealthHook
         } elseif (
             isset($instance->notifications_healthy)
             && ! $instance->notifications_healthy
-            && (
-                $this->getAuth()->hasPermission('icingadb/notifications/manage')
-                || $this->getAuth()->hasPermission('icingadb/notifications/subscribe')
-            )
+            && $this->getAuth()->hasPermission('icingadb/notifications/usage')
         ) {
             $this->setState(self::STATE_CRITICAL);
             if (! Backend::icinga2SupportsNotifications($instance->icinga2_version)) {

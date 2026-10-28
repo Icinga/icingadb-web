@@ -39,7 +39,7 @@ class QuickActions extends BaseHtmlElement
 
     protected function assemble()
     {
-        $affectsIncidents = $this->isGrantedOn('icingadb/notifications/manage', $this->object)
+        $affectsIncidents = $this->getAuth()->hasPermission('icingadb/notifications/usage')
             && Backend::notificationsSetUp();
 
         if ($this->object->state->is_problem) {
@@ -89,7 +89,7 @@ class QuickActions extends BaseHtmlElement
             }
         }
 
-        if ($this->isGrantedOn('icingadb/notifications/subscribe', $this->object) && Backend::notificationsSetUp()) {
+        if ($affectsIncidents && $this->isGrantedOn('icingadb/notifications/subscribe', $this->object)) {
             $user = $this->getAuth()->getUser();
             $incident = IncidentFinder::forObject($this->object);
 
