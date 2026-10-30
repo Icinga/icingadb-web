@@ -26,6 +26,7 @@ use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
@@ -69,13 +70,18 @@ class HostsController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl(
+        $columnChooser = $this->createColumnControl(
             $hosts,
             Url::fromPath('icingadb/hosts/suggestColumns'),
             ['host.name', 'host.state.output'],
-            Url::fromPath('icingadb/hosts')
-        )
-            ->getColumns();
+            [
+                $paginationControl->getPageParam(),
+                $sortControl->getSortParam(),
+                $limitControl->getLimitParam(),
+                $viewModeSwitcher->getViewModeParam()
+            ]
+        );
+        $columns = $columnChooser->getColumns();
 
         $searchBar = $this->createSearchBar($hosts, [
             $limitControl->getLimitParam(),
@@ -118,7 +124,7 @@ class HostsController extends Controller
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
                 ->setSort($sortControl->getSort())
-                ->setColumnChooserUrl(Url::fromPath('icingadb/hosts/columnControl'));
+                ->setColumnChooserUrl($columnChooser->getOpenerUrl());
         } else {
             $hostList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -238,7 +244,12 @@ class HostsController extends Controller
             Host::on($this->getDb()),
             Url::fromPath('icingadb/hosts/suggestColumns'),
             ['host.name', 'host.state.output'],
-            Url::fromPath('icingadb/hosts')
+            [
+                PaginationControl::DEFAULT_PAGE_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ]
         )->handleRequest($this->getServerRequest());
         $this->addContent($columnChooser);
     }

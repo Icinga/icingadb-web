@@ -77,10 +77,12 @@ class Controller extends CompatController
     /**
      * Create column control
      *
+     * If the controller has a `columnControlAction()`, the chooser gets an opener url pointing to it.
+     *
      * @param Query $query
      * @param Url $suggestionUrl
      * @param array $defaultColumns
-     * @param Url $redirectUrl
+     * @param array $preserveParams Query params to preserve when redirecting and in the opener url
      *
      * @return ColumnChooser
      */
@@ -88,11 +90,23 @@ class Controller extends CompatController
         Query $query,
         Url $suggestionUrl,
         array $defaultColumns,
-        Url $redirectUrl
+        array $preserveParams = []
     ): ColumnChooser {
         $columnsDef = $this->params->shift('columns') ?? $defaultColumns;
+
+        $requestUrl = Url::fromRequest();
+        $moduleName = $this->getRequest()->getModuleName();
+        $controllerName = $this->getRequest()->getControllerName();
+
+        $preservedParams = $requestUrl->onlyWith($preserveParams)->getParams();
+        $filter = QueryString::parse((string) $this->params->without($preserveParams));
+
+        $redirectUrl = Url::fromPath("$moduleName/$controllerName")
+            ->setParams($preservedParams)
+            ->setFilter($filter);
+
         $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columnsDef))
-            ->setAction((string) Url::fromRequest())
+            ->setAction((string) $requestUrl)
             ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
                     $redirectUrl->setParam('columns', $form->getColumnsValue());
@@ -106,6 +120,14 @@ class Controller extends CompatController
                     }
                 }
             });
+
+        if (method_exists($this, 'columnControlAction')) {
+            $chooser->setOpenerUrl(
+                Url::fromPath("$moduleName/$controllerName/column-control")
+                    ->setParams(clone $preservedParams)
+                    ->setFilter($filter)
+            );
+        }
 
         // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
         if ($this->format === 'csv' || $this->format === 'json') {

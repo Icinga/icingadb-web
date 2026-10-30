@@ -23,6 +23,9 @@ class ColumnChooser extends CompatForm
     /** @var Resolver The resolver used to validate column names and get their labels */
     protected Resolver $resolver;
 
+    /** @var ?Url The url to open this chooser with, without the columns param */
+    protected ?Url $openerUrl = null;
+
     /**
      * Create a new ColumnChooser
      *
@@ -54,6 +57,34 @@ class ColumnChooser extends CompatForm
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Set the url to open this chooser with
+     *
+     * @param ?Url $url
+     *
+     * @return $this
+     */
+    public function setOpenerUrl(?Url $url): static
+    {
+        $this->openerUrl = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get the url to open this chooser with, including the current columns
+     *
+     * @return ?Url
+     */
+    public function getOpenerUrl(): ?Url
+    {
+        if ($this->openerUrl === null) {
+            return null;
+        }
+
+        return (clone $this->openerUrl)->setParam('columns', implode(',', $this->columns));
     }
 
     /**
