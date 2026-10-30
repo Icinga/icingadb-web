@@ -30,6 +30,7 @@ use ipl\Html\HtmlString;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\PaginationControl;
 use ipl\Web\Control\SortControl;
 use ipl\Web\Url;
 
@@ -80,13 +81,18 @@ class ServicesController extends Controller
             $limitControl,
             viewModeSwitcherClass: TabularViewModeSwitcher::class
         );
-        $columns = $this->createColumnControl(
+        $columnChooser = $this->createColumnControl(
             $services,
             Url::fromPath('icingadb/services/suggestColumns'),
             ['service.name', 'service.state.output'],
-            Url::fromPath('icingadb/services')
-        )
-            ->getColumns();
+            [
+                $paginationControl->getPageParam(),
+                $sortControl->getSortParam(),
+                $limitControl->getLimitParam(),
+                $viewModeSwitcher->getViewModeParam()
+            ]
+        );
+        $columns = $columnChooser->getColumns();
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -130,7 +136,7 @@ class ServicesController extends Controller
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
                 ->setSort($sortControl->getSort())
-                ->setColumnChooserUrl(Url::fromPath('icingadb/services/columnControl'));
+                ->setColumnChooserUrl($columnChooser->getOpenerUrl());
         } else {
             $serviceList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
@@ -403,7 +409,12 @@ class ServicesController extends Controller
             Service::on($this->getDb()),
             Url::fromPath('icingadb/services/suggestColumns'),
             ['service.name', 'service.state.output'],
-            Url::fromPath('icingadb/services')
+            [
+                PaginationControl::DEFAULT_PAGE_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM
+            ]
         )->handleRequest($this->getServerRequest());
         $this->addContent($columnChooser);
     }
