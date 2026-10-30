@@ -25,7 +25,6 @@ use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\OptimizerHints;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\HostDetail;
 use Icinga\Module\Icingadb\Widget\Detail\HostInspectionDetail;
@@ -39,6 +38,7 @@ use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
 
@@ -149,7 +149,7 @@ class HostController extends Controller
                 'history.event_time desc, history.event_type desc' => $this->translate('Event Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl, true);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $preserveParams = [
             $limitControl->getLimitParam(),
@@ -168,6 +168,8 @@ class HostController extends Controller
                 Url::fromPath('icingadb/host/history-complete')
                     ->setParams(clone $requestParams)
             );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -209,7 +211,7 @@ class HostController extends Controller
             $previousTimestamp,
             $timestampControl->isEnabled()
         ))
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setPageSize($limitControl->getLimit())
             ->setLoadMoreUrl($url->setParam('before', $before)->setFilter($filter));
 
@@ -251,7 +253,7 @@ class HostController extends Controller
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($services);
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $sortControl = $this->createSortControl(
             $services,
             [
@@ -280,6 +282,8 @@ class HostController extends Controller
                     ->setParams(clone $requestParams)
             );
 
+        $this->handleControls($this->getServerRequest());
+
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
                 $filter = $this->getFilter();
@@ -299,7 +303,7 @@ class HostController extends Controller
         $results = $services->execute();
 
         $serviceList = (new ObjectList($results))
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
         $this->addControl($paginationControl);
@@ -338,7 +342,7 @@ class HostController extends Controller
             ]
         );
 
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
@@ -349,6 +353,8 @@ class HostController extends Controller
                 'name'
             ]
         );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -375,7 +381,7 @@ class HostController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
@@ -402,7 +408,7 @@ class HostController extends Controller
             ]
         );
 
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $preserveParams = [
             $limitControl->getLimitParam(),
@@ -420,6 +426,8 @@ class HostController extends Controller
                 Url::fromPath('icingadb/host/children-complete')
                     ->setParams(clone $requestParams)
             );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -446,7 +454,7 @@ class HostController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
