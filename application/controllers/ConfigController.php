@@ -31,7 +31,7 @@ class ConfigController extends Controller
 
         $form = (new GeneralConfigForm(Config::module('icingadb')))
             ->on(GeneralConfigForm::ON_SUBMIT, function (GeneralConfigForm $form) {
-                Notification::success($this->translate('New configuration settings have been saved.'));
+                Notification::success($this->translate('Saved new configuration settings successfully'));
 
                 $this->redirectNow('icingadb/config/general-settings');
             })
