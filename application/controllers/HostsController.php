@@ -124,7 +124,7 @@ class HostsController extends Controller
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
                 ->setSort($sortControl->getSort())
-                ->setColumnChooserUrl($columnChooser->getOpenerUrl());
+                ->setColumnChooserUrl($columnChooser->getOpenerUrl()?->setFilter($filter));
         } else {
             $hostList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());

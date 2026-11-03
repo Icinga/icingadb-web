@@ -136,7 +136,7 @@ class ServicesController extends Controller
         if ($viewModeSwitcher->getViewMode() === 'tabular') {
             $serviceList = (new ServiceItemTable($results, ServiceItemTable::applyColumnMetaData($services, $columns)))
                 ->setSort($sortControl->getSort())
-                ->setColumnChooserUrl($columnChooser->getOpenerUrl());
+                ->setColumnChooserUrl($columnChooser->getOpenerUrl()?->setFilter($filter));
         } else {
             $serviceList = (new ObjectList($results))
                 ->setViewMode($viewModeSwitcher->getViewMode());
