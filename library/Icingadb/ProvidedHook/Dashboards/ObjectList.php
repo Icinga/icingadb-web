@@ -205,6 +205,11 @@ class ObjectList extends DashletHook
         $controls->sortBy();
 
         $controls->filter();
+
+        // Released independently of dashboards, which may predate it.
+        if (method_exists($controls, 'autoScroll')) {
+            $controls->autoScroll();
+        }
     }
 
     public function getRoute(array $settings): ?Url
