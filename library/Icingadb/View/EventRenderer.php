@@ -269,7 +269,10 @@ class EventRenderer implements ItemRenderer
                     } else {
                         $subjectLabel = $this->translate('Acknowledgement cleared by author');
                     }
-                } elseif (isset($item->acknowledgement->expire_time)) {
+                } elseif (
+                    isset($item->acknowledgement->expire_time)
+                    && $item->acknowledgement->clear_time >= $item->acknowledgement->expire_time
+                ) {
                     $subjectLabel = $this->translate('Acknowledgement expired');
                 } else {
                     $subjectLabel = $this->translate('Acknowledgement cleared');
