@@ -71,6 +71,11 @@ class TacticalOverview extends DashletHook
         return $this->translateInDomain('icingadb', 'The state of hosts or services at a glance.');
     }
 
+    public function getModuleLabel(): ?string
+    {
+        return 'Icinga DB';
+    }
+
     public function configure(DashletControls $controls): void
     {
         $types = [];
