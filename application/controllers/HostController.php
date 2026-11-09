@@ -34,6 +34,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\Detail\QuickActions;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
+use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
@@ -388,7 +389,8 @@ class HostController extends Controller
 
     public function childrenAction(): Generator
     {
-        $nodesQuery = $this->fetchDependencyNodes();
+        $affected = (bool) $this->params->shift('affected', '0');
+        $nodesQuery = $this->fetchDependencyNodes(affected: $affected);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -408,6 +410,7 @@ class HostController extends Controller
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
+            'affected',
             'name'
         ];
 
@@ -444,6 +447,10 @@ class HostController extends Controller
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
 
+        if ($affected) {
+            $this->addContent(Html::tag('h2', $this->translate('Affected Objects')));
+        }
+
         $this->addContent(
             (new ObjectList($nodesQuery))
                 ->setViewMode($viewModeSwitcher->getViewMode())
@@ -470,12 +477,17 @@ class HostController extends Controller
 
     public function childrenCompleteAction(): void
     {
+        $affected = (bool) $this->params->shift('affected', '0');
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
-            ->forRequest($this->getServerRequest());
+            ->setBaseFilter(Filter::equal('parent.host.id', $this->host->id));
 
+        if ($affected) {
+            $suggestions->setValueFilter(DependencyNode::affectedBy($this->host, $this->getDb())->getFilter());
+        }
+
+        $suggestions->forRequest($this->getServerRequest());
         $this->getDocument()->add($suggestions);
     }
 
@@ -522,6 +534,7 @@ class HostController extends Controller
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
             ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'affected',
             'name'
         ];
 
@@ -589,12 +602,17 @@ class HostController extends Controller
      * Fetch the dependency nodes of the current host
      *
      * @param bool $parents Whether to fetch the parents or the children
+     * @param bool $affected Whether to restrict children to those affected by failed dependencies
      *
      * @return Query
      */
-    protected function fetchDependencyNodes(bool $parents = false): Query
+    protected function fetchDependencyNodes(bool $parents = false, bool $affected = false): Query
     {
-        $query = DependencyNode::on($this->getDb())
+        $query = $affected
+            ? DependencyNode::affectedBy($this->host, $this->getDb())
+            : DependencyNode::on($this->getDb());
+
+        $query
             ->with([
                 'host',
                 'host.state',
