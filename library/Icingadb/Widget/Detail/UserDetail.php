@@ -10,12 +10,16 @@ use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\User;
 use ipl\Html\Attributes;
-use ipl\Web\Widget\EmptyState;
-use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
+use ipl\I18n\Translation;
+use ipl\Stdlib\Filter;
+use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\HorizontalKeyValue;
 
 /**
  * Contact details with a list of group memberships
@@ -24,6 +28,7 @@ class UserDetail extends BaseHtmlElement
 {
     use Auth;
     use Database;
+    use Translation;
 
     /** @var User The given user */
     protected $user;
@@ -70,7 +75,7 @@ class UserDetail extends BaseHtmlElement
         $serviceStates = implode(', ', $this->localizeStates($serviceStates));
         $types = implode(', ', $this->localizeTypes($this->user->types));
 
-        return [
+        $details = [
             new HtmlElement('h2', null, Text::create(t('Details'))),
             new HorizontalKeyValue(t('Name'), $this->user->name),
             new HorizontalKeyValue(
@@ -84,6 +89,20 @@ class UserDetail extends BaseHtmlElement
             new HorizontalKeyValue(t('Service States'), $serviceStates ?: t('All')),
             new HorizontalKeyValue(t('Types'), $types ?: t('All'))
         ];
+
+        if ($this->isPermittedRoute('notifications')) {
+            $details[] = new HorizontalKeyValue(
+                $this->translate('Notifications'),
+                (new ActionLink(
+                    $this->translate('Show notifications'),
+                    Url::fromPath('icingadb/notifications')
+                        ->setFilter(Filter::equal('user.name', $this->user->name)),
+                    'share'
+                ))->setBaseTarget('_next')
+            );
+        }
+
+        return $details;
     }
 
     /**
