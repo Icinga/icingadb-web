@@ -132,11 +132,11 @@ abstract class StateItemTable extends BaseHtmlElement
     /**
      * Set the Url for the Form opened by the column-chooser-opener
      *
-     * @param Url $url
+     * @param ?Url $url
      *
      * @return $this
      */
-    public function setColumnChooserUrl(Url $url): static
+    public function setColumnChooserUrl(?Url $url): static
     {
         $this->columnChooserUrl = $url;
 
@@ -164,10 +164,7 @@ abstract class StateItemTable extends BaseHtmlElement
             ),
             (new Link(
                 new Icon('ellipsis'),
-                $this->columnChooserUrl->setParam(
-                    'columns',
-                    implode(',', array_keys($this->columns))
-                ),
+                $this->columnChooserUrl,
                 new Attributes(['class' => 'control-button'])
             ))
                 ->openInModal()
