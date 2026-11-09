@@ -193,6 +193,11 @@ class ObjectList extends DashletHook
         return $this->translateInDomain('icingadb', 'A filtered list of monitored objects.');
     }
 
+    public function getModuleLabel(): ?string
+    {
+        return 'Icinga DB';
+    }
+
     public function configure(DashletControls $controls): void
     {
         $controls->objectType($this->objectTypes());
