@@ -85,6 +85,7 @@ class RedundancygroupController extends Controller
 
         $list = $this->createEmbeddedList(
             $this->fetchDependencyNodes(true),
+            $this->translate('Group Members'),
             [
                 'name'                                  => $this->translate('Name'),
                 'severity desc, last_state_change desc' => $this->translate('Severity'),

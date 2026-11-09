@@ -72,7 +72,7 @@ class EventController extends Controller
                 ->filter(Filter::equal('notification_history.history.id', $this->event->id));
             $this->applyRestrictions($users);
 
-            $list = $this->createEmbeddedList($users, [
+            $list = $this->createEmbeddedList($users, $this->translate('Notified Contacts'), [
                 'user.display_name' => $this->translate('Name'),
                 'user.email'        => $this->translate('Email'),
                 'user.pager'        => $this->translate('Pager Address / Number'),

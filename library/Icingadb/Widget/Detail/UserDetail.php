@@ -93,10 +93,7 @@ class UserDetail extends BaseHtmlElement
      */
     protected function createUsergroupList(): array
     {
-        return [
-            new HtmlElement('h2', null, Text::create(t('Groups'))),
-            $this->groups,
-        ];
+        return [$this->groups];
     }
 
     protected function createExtensions(): array

@@ -78,10 +78,7 @@ class UsergroupDetail extends BaseHtmlElement
      */
     protected function createUserList(): array
     {
-        return [
-            new HtmlElement('h2', null, Text::create(t('Contacts'))),
-            $this->users,
-        ];
+        return [$this->users];
     }
 
     protected function createExtensions(): array

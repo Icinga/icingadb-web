@@ -172,7 +172,7 @@ class EventDetail extends BaseHtmlElement
                 $notification->users_notified
             ), $notification->users_notified));
         } elseif ($notification->users_notified > 0) {
-            $notifiedUsers[] = $this->notifiedUsers;
+            $notifiedUsers = [$this->notifiedUsers];
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([

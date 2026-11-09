@@ -109,10 +109,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
      */
     protected function createGroupMembers(): array
     {
-        return [
-            HtmlElement::create('h2', null, Text::create($this->translate('Group Members'))),
-            $this->members,
-        ];
+        return [$this->members];
     }
 
     protected function assemble(): void

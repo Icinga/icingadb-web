@@ -7,6 +7,7 @@ namespace Icinga\Module\Icingadb\Common;
 
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Orm\Query;
 
 /**
@@ -33,6 +34,7 @@ trait EmbeddedList
      * )
      *
      * @param Query<TRow> $query The scoped list query
+     * @param string $title The list heading
      * @param array<string, string> $sortColumns Sort specifications and labels
      * @param string[] $preserveParams Parent parameters to preserve in search URLs
      * @param ?string $searchEditorPath Override the filter editor route
@@ -42,6 +44,7 @@ trait EmbeddedList
      */
     protected function createEmbeddedList(
         Query $query,
+        string $title,
         array $sortColumns,
         array $preserveParams,
         ?string $searchEditorPath = null
@@ -96,8 +99,9 @@ trait EmbeddedList
             return null;
         }
 
-        return HtmlElement::create('div', null, [
-            HtmlElement::create('div', ['class' => 'controls default-layout'], [
+        return HtmlElement::create('div', ['class' => 'embedded-list'], [
+            HtmlElement::create('div', ['class' => 'embedded-list-controls'], [
+                HtmlElement::create('h2', null, Text::create($title)),
                 $pagination,
                 $sortControl,
                 $limitControl,

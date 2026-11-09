@@ -54,7 +54,7 @@ class ContactgroupController extends Controller
             ->filter(Filter::equal('usergroup.id', $this->usergroup->id));
         $this->applyRestrictions($users);
 
-        $list = $this->createEmbeddedList($users, [
+        $list = $this->createEmbeddedList($users, $this->translate('Contacts'), [
             'user.display_name' => $this->translate('Name'),
             'user.email'        => $this->translate('Email'),
             'user.pager'        => $this->translate('Pager Address / Number'),
