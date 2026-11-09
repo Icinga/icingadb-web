@@ -7,20 +7,19 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
-use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
-use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
+/**
+ * Redundancy group details with a list of members
+ */
 class RedundancyGroupDetail extends BaseHtmlElement
 {
     use Auth;
@@ -38,11 +37,12 @@ class RedundancyGroupDetail extends BaseHtmlElement
     protected $tag = 'div';
 
     /**
-     * Create a new redundancy group detail widget
+     * Create a new RedundancyGroupDetail
      *
      * @param RedundancyGroup $group
+     * @param ValidHtml $members The scoped member list and its controls
      */
-    public function __construct(RedundancyGroup $group)
+    public function __construct(RedundancyGroup $group, protected readonly ValidHtml $members)
     {
         $this->group = $group;
     }
@@ -50,7 +50,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
     /**
      * Create hook extensions
      *
-     * @return array
+     * @return array<int, ValidHtml>
      */
     protected function createExtensions(): array
     {
@@ -105,34 +105,13 @@ class RedundancyGroupDetail extends BaseHtmlElement
     /**
      * Create a list of group members
      *
-     * @return BaseHtmlElement[]
+     * @return ValidHtml[]
      */
     protected function createGroupMembers(): array
     {
-        $membersQuery = DependencyNode::on($this->getDb())
-            ->with([
-                'host',
-                'host.state',
-                'service',
-                'service.state',
-                'service.host',
-                'service.host.state'
-            ])
-            ->filter(Filter::equal('child.redundancy_group.id', $this->group->id))
-            ->limit(5)
-            ->peekAhead();
-
-        $this->applyRestrictions($membersQuery);
-
-        // TODO: Do not execute at this time. The widget may be replaced by a hook in which case the result is unused.
-        $members = $membersQuery->execute();
-
         return [
             HtmlElement::create('h2', null, Text::create($this->translate('Group Members'))),
-            (new ObjectList($members))
-                ->setEmptyStateMessage($this->translate('You are not authorized to view these objects.')),
-            (new ShowMore($members, Url::fromPath('icingadb/redundancygroup/members', ['id' => $this->group->id])))
-                ->setBaseTarget('_self')
+            $this->members,
         ];
     }
 

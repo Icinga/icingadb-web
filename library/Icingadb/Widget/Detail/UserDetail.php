@@ -7,19 +7,19 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\User;
-use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
-use ipl\Web\Url;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
 
+/**
+ * Contact details with a list of group memberships
+ */
 class UserDetail extends BaseHtmlElement
 {
     use Auth;
@@ -32,7 +32,13 @@ class UserDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct(User $user)
+    /**
+     * Create a new UserDetail
+     *
+     * @param User $user
+     * @param ValidHtml $groups The scoped membership list and its controls
+     */
+    public function __construct(User $user, protected readonly ValidHtml $groups)
     {
         $this->user = $user;
     }
@@ -80,19 +86,16 @@ class UserDetail extends BaseHtmlElement
         ];
     }
 
+    /**
+     * Create the groups section
+     *
+     * @return ValidHtml[]
+     */
     protected function createUsergroupList(): array
     {
-        $userGroups = $this->user->usergroup->limit(6)->peekAhead()->execute();
-
-        $showMoreLink = (new ShowMore(
-            $userGroups,
-            Links::usergroups()->addParams(['user.name' => $this->user->name])
-        ))->setBaseTarget('_next');
-
         return [
             new HtmlElement('h2', null, Text::create(t('Groups'))),
-            new ObjectList($userGroups),
-            $showMoreLink
+            $this->groups,
         ];
     }
 
@@ -105,8 +108,8 @@ class UserDetail extends BaseHtmlElement
     {
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $this->createUserDetail(),
+            400 => $this->createCustomVars(),
             500 => $this->createUsergroupList(),
-            700 => $this->createCustomVars()
         ], $this->createExtensions()));
     }
 

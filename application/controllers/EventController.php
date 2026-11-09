@@ -5,14 +5,21 @@
 
 namespace Icinga\Module\Icingadb\Controllers;
 
+use Icinga\Module\Icingadb\Common\EmbeddedList;
 use Icinga\Module\Icingadb\Model\History;
+use Icinga\Module\Icingadb\Model\User;
+use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\EventDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use ipl\Stdlib\Filter;
+use ipl\Web\Control\LimitControl;
+use ipl\Web\Control\SortControl;
 
 class EventController extends Controller
 {
+    use EmbeddedList;
+
     /** @var History */
     protected $event;
 
@@ -20,7 +27,7 @@ class EventController extends Controller
     {
         $this->addTitleTab(t('Event'));
 
-        $id = $this->params->getRequired('id');
+        $id = $this->params->shiftRequired('id');
 
         $query = History::on($this->getDb())
             ->with([
@@ -59,7 +66,70 @@ class EventController extends Controller
 
     public function indexAction()
     {
+        $list = null;
+        if ($this->event->event_type === 'notification' && $this->isPermittedRoute('contacts')) {
+            $users = User::on($this->getDb())
+                ->filter(Filter::equal('notification_history.history.id', $this->event->id));
+            $this->applyRestrictions($users);
+
+            $list = $this->createEmbeddedList($users, [
+                'user.display_name' => $this->translate('Name'),
+                'user.email'        => $this->translate('Email'),
+                'user.pager'        => $this->translate('Pager Address / Number'),
+            ], ['id']);
+            if ($list === null) {
+                $this->sendMultipartUpdate();
+
+                return;
+            }
+        }
+
         $this->addControl(new ObjectHeader($this->event));
-        $this->addContent(new EventDetail($this->event));
+        $this->addContent(new EventDetail($this->event, $list));
+    }
+
+    /**
+     * Show filter suggestions for the notified contacts
+     *
+     * @return void
+     */
+    public function completeAction(): void
+    {
+        $this->assertRouteAccess('contacts');
+
+        if ($this->event->event_type !== 'notification') {
+            $this->httpBadRequest($this->translate('This event has no notified contacts'));
+        }
+
+        $suggestions = (new ObjectSuggestions())
+            ->setModel(User::class)
+            ->onlyWithCustomVarSources(['user'])
+            ->setBaseFilter(Filter::equal('notification_history.history.id', $this->event->id))
+            ->forRequest($this->getServerRequest());
+
+        $this->getDocument()->add($suggestions);
+    }
+
+    /**
+     * Show the filter editor for the notified contacts
+     *
+     * @return void
+     */
+    public function searchEditorAction(): void
+    {
+        $this->assertRouteAccess('contacts');
+
+        if ($this->event->event_type !== 'notification') {
+            $this->httpBadRequest($this->translate('This event has no notified contacts'));
+        }
+
+        $editor = $this->createSearchEditor(User::on($this->getDb()), [
+            LimitControl::DEFAULT_LIMIT_PARAM,
+            SortControl::DEFAULT_SORT_PARAM,
+            'id',
+        ]);
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
     }
 }
