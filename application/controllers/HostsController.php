@@ -14,19 +14,18 @@ use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Util\FeatureStatus;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Control\TabularViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectsDetail;
 use Icinga\Module\Icingadb\Widget\HostStatusBar;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ItemTable\HostItemTable;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class HostsController extends Controller
@@ -64,11 +63,13 @@ class HostsController extends Controller
             ],
             ['host.state.severity DESC', 'host.state.last_state_change DESC']
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher(
-            $paginationControl,
-            $limitControl,
-            viewModeSwitcherClass: TabularViewModeSwitcher::class
-        );
+        $viewModeSwitcher = $this->createViewModeSwitcher();
+        $viewModeSwitcher->addViewMode(new ViewModeSwitcher\ViewMode(
+            'tabular',
+            'tabular',
+            $this->translate('Tabular view active'),
+            $this->translate('Switch to tabular view')
+        ));
         $columns = $this->createColumnControl(
             $hosts,
             Url::fromPath('icingadb/hosts/suggestColumns'),
@@ -83,6 +84,8 @@ class HostsController extends Controller
             $viewModeSwitcher->getViewModeParam(),
             'columns'
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -115,13 +118,13 @@ class HostsController extends Controller
         $results = $hosts->execute();
 
         $continueWith = $this->createContinueWith(Links::hostsDetails(), $searchBar, $results->hasResult());
-        if ($viewModeSwitcher->getViewMode() === 'tabular') {
+        if ($viewModeSwitcher->getViewMode()->getName() === 'tabular') {
             $hostList = (new HostItemTable($results, HostItemTable::applyColumnMetaData($hosts, $columns)))
                 ->setSort($sortControl->getSort())
                 ->setColumnChooserUrl(Url::fromPath('icingadb/hosts/columnControl'));
         } else {
             $hostList = (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode());
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName());
         }
 
         $hostList->setEmptyStateMessage($paginationControl->getEmptyStateMessage());

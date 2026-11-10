@@ -12,7 +12,6 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteCommentForm;
 use Icinga\Module\Icingadb\Model\Comment;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Model;
@@ -20,6 +19,7 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class CommentsController extends Controller
@@ -54,12 +54,14 @@ class CommentsController extends Controller
                 'comment.expire_time desc' => t('Expire Time')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $searchBar = $this->createSearchBar($comments, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam()
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -91,7 +93,7 @@ class CommentsController extends Controller
 
         $this->addContent(
             (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 

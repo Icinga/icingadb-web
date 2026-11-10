@@ -12,7 +12,6 @@ use Icinga\Module\Icingadb\Forms\Command\Object\DeleteDowntimeForm;
 use Icinga\Module\Icingadb\Model\Downtime;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
 use Icinga\Module\Icingadb\Web\Controller;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Orm\Model;
@@ -20,6 +19,7 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 
 class DowntimesController extends Controller
@@ -59,12 +59,14 @@ class DowntimesController extends Controller
                 'downtime.duration desc'                               => t('Duration')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
         $searchBar = $this->createSearchBar($downtimes, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam()
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -97,7 +99,7 @@ class DowntimesController extends Controller
 
         $this->addContent(
             (new ObjectList($results))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 

@@ -11,7 +11,6 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\ServicegroupSummary;
 use Icinga\Module\Icingadb\Redis\VolatileStateResults;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\ObjectHeader;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
@@ -19,6 +18,7 @@ use ipl\Html\Html;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 
 class ServicegroupController extends Controller
 {
@@ -85,7 +85,7 @@ class ServicegroupController extends Controller
                 'host.display_name'                                                => t('Host')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $searchBar = $this->createSearchBar($services, [
             $limitControl->getLimitParam(),
@@ -93,6 +93,8 @@ class ServicegroupController extends Controller
             $viewModeSwitcher->getViewModeParam(),
             'name'
         ]);
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -113,7 +115,7 @@ class ServicegroupController extends Controller
         $results = $services->execute();
 
         $serviceList = (new ObjectList($results))
-            ->setViewMode($viewModeSwitcher->getViewMode())
+            ->setViewMode($viewModeSwitcher->getViewMode()->getName())
             ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
 
         // ICINGAWEB_EXPORT_FORMAT is not set yet and $this->format is inaccessible, yeah...

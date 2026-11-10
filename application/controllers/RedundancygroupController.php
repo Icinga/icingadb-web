@@ -12,7 +12,6 @@ use Icinga\Module\Icingadb\Model\RedundancyGroup;
 use Icinga\Module\Icingadb\Model\RedundancyGroupSummary;
 use Icinga\Module\Icingadb\Notifications\SubscribeIncidents;
 use Icinga\Module\Icingadb\Web\Control\SearchBar\ObjectSuggestions;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Controller;
 use Icinga\Module\Icingadb\Widget\Detail\MultiselectQuickActions;
 use Icinga\Module\Icingadb\Widget\Detail\RedundancyGroupDetail;
@@ -23,6 +22,7 @@ use ipl\Orm\Query;
 use ipl\Stdlib\Filter;
 use ipl\Web\Control\LimitControl;
 use ipl\Web\Control\SortControl;
+use ipl\Web\Control\ViewModeSwitcher;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
 
@@ -108,7 +108,7 @@ class RedundancygroupController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $searchBar = $this->createSearchBar(
             $nodesQuery,
@@ -119,6 +119,8 @@ class RedundancygroupController extends Controller
                 'id'
             ]
         );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -144,7 +146,7 @@ class RedundancygroupController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 
@@ -171,7 +173,7 @@ class RedundancygroupController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change')
             ]
         );
-        $viewModeSwitcher = $this->createViewModeSwitcher($paginationControl, $limitControl);
+        $viewModeSwitcher = $this->createViewModeSwitcher();
 
         $preserveParams = [
             $limitControl->getLimitParam(),
@@ -189,6 +191,8 @@ class RedundancygroupController extends Controller
                 Url::fromPath('icingadb/redundancygroup/children-complete')
                     ->setParams(clone $requestParams)
             );
+
+        $this->handleControls($this->getServerRequest());
 
         if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
             if ($searchBar->hasBeenSubmitted()) {
@@ -214,7 +218,7 @@ class RedundancygroupController extends Controller
 
         $this->addContent(
             (new ObjectList($nodesQuery))
-                ->setViewMode($viewModeSwitcher->getViewMode())
+                ->setViewMode($viewModeSwitcher->getViewMode()->getName())
                 ->setEmptyStateMessage($paginationControl->getEmptyStateMessage())
         );
 

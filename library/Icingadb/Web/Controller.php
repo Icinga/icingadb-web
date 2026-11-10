@@ -7,7 +7,6 @@ namespace Icinga\Module\Icingadb\Web;
 
 use Exception;
 use Generator;
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -23,9 +22,7 @@ use Icinga\Module\Icingadb\Data\JsonResultSet;
 use Icinga\Module\Icingadb\Data\QueryColumnsProvider;
 use Icinga\Module\Icingadb\Web\Control\ColumnChooser;
 use Icinga\Module\Icingadb\Hook\SearchColumnsProviderHook;
-use Icinga\Module\Icingadb\Web\Control\GridViewModeSwitcher;
 use Icinga\Module\Icingadb\Web\Control\TimestampToggle;
-use Icinga\Module\Icingadb\Web\Control\ViewModeSwitcher;
 use Icinga\Module\Icingadb\Widget\ItemTable\StateItemTable;
 use Icinga\Security\SecurityException;
 use Icinga\User\Preferences;
@@ -37,9 +34,8 @@ use ipl\Html\ValidHtml;
 use ipl\Orm\Query;
 use ipl\Orm\UnionQuery;
 use ipl\Stdlib\Filter;
+use ipl\Web\Common\Controls;
 use ipl\Web\Compat\CompatController;
-use ipl\Web\Control\LimitControl;
-use ipl\Web\Control\PaginationControl;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\FormElement\SearchSuggestions;
 use ipl\Web\Url;
@@ -48,6 +44,7 @@ use ipl\Web\Widget\CopyToClipboard;
 class Controller extends CompatController
 {
     use Auth;
+    use Controls;
     use Database;
     use SearchControls;
 
@@ -72,6 +69,43 @@ class Controller extends CompatController
         }
 
         return $this->filter;
+    }
+
+    protected function getPreferredViewMode(): ?string
+    {
+        // Migrate persisted preferred view modes from icingadb to the icingaweb namespace.
+        $user = $this->Auth()->getUser();
+        if (($preferredModes = $user->getAdditional('icingadb.view_modes')) === null) {
+            try {
+                $preferredModes = Json::decode(
+                    $user->getPreferences()->getValue('icingadb', 'view_modes', '[]'),
+                    true
+                );
+            } catch (JsonDecodeException $e) {
+                Logger::error('Failed to load preferred view modes for user "%s": %s', $user->getUsername(), $e);
+                $preferredModes = [];
+            }
+        }
+
+        if (! empty($preferredModes)) {
+            try {
+                $preferencesStore = PreferencesStore::create(new ConfigObject([
+                    'resource'  => Config::app()->get('global', 'config_resource')
+                ]), $user);
+                $preferences = $preferencesStore->load();
+                $existingPreferences = Json::decode($preferences['icingaweb']['view_modes'] ?? '[]', true);
+                $preferredModes = array_merge($existingPreferences, $preferredModes);
+                $preferences['icingaweb']['view_modes'] = Json::encode($preferredModes);
+                unset($preferences['icingadb']['view_modes']);
+                $preferencesStore->save(new Preferences($preferences));
+                $user->setAdditional('icingaweb.view_modes', $preferredModes);
+                $user->setAdditional('icingadb.view_modes', []);
+            } catch (Exception $e) {
+                Logger::error('Failed to migrate preferred view modes for user "%s": %s', $user->getUsername(), $e);
+            }
+        }
+
+        return parent::getPreferredViewMode();
     }
 
     /**
@@ -115,150 +149,6 @@ class Controller extends CompatController
         }
 
         return $chooser;
-    }
-
-    /**
-     * Create and return the ViewModeSwitcher
-     *
-     * This automatically shifts the view mode URL parameter from {@link $params}.
-     *
-     * @param PaginationControl $paginationControl
-     * @param LimitControl $limitControl
-     * @param bool $verticalPagination
-     * @param class-string<ViewModeSwitcher> $viewModeSwitcherClass
-     *
-     * @return ViewModeSwitcher|GridViewModeSwitcher
-     */
-    public function createViewModeSwitcher(
-        PaginationControl $paginationControl,
-        LimitControl $limitControl,
-        bool $verticalPagination = false,
-        string $viewModeSwitcherClass = ViewModeSwitcher::class
-    ): ViewModeSwitcher {
-        $viewModeSwitcher = new $viewModeSwitcherClass();
-
-        $viewModeSwitcher->setIdProtector([$this->getRequest(), 'protectId']);
-
-        $user = $this->Auth()->getUser();
-        if (($preferredModes = $user->getAdditional('icingadb.view_modes')) === null) {
-            try {
-                $preferredModes = Json::decode(
-                    $user->getPreferences()->getValue('icingadb', 'view_modes', '[]'),
-                    true
-                );
-            } catch (JsonDecodeException $e) {
-                Logger::error('Failed to load preferred view modes for user "%s": %s', $user->getUsername(), $e);
-                $preferredModes = [];
-            }
-
-            $user->setAdditional('icingadb.view_modes', $preferredModes);
-        }
-
-        $requestRoute = $this->getRequest()->getUrl()->getPath();
-        if (isset($preferredModes[$requestRoute])) {
-            $viewModeSwitcher->setDefaultViewMode($preferredModes[$requestRoute]);
-        }
-
-        $viewModeSwitcher->populate([
-            $viewModeSwitcher->getViewModeParam() => $this->params->shift($viewModeSwitcher->getViewModeParam())
-        ]);
-
-        $session = $this->Window()->getSessionNamespace(
-            'icingadb-viewmode-' . $this->Window()->getContainerId()
-        );
-
-        $viewModeSwitcher->on(
-            ViewModeSwitcher::ON_SUCCESS,
-            function (ViewModeSwitcher $viewModeSwitcher) use (
-                $user,
-                $preferredModes,
-                $paginationControl,
-                $verticalPagination,
-                &$session
-            ) {
-                $viewMode = $viewModeSwitcher->getValue($viewModeSwitcher->getViewModeParam());
-                $requestUrl = Url::fromRequest();
-
-                $preferredModes[$requestUrl->getPath()] = $viewMode;
-                $user->setAdditional('icingadb.view_modes', $preferredModes);
-
-                try {
-                    $preferencesStore = PreferencesStore::create(new ConfigObject([
-                        'resource'  => Config::app()->get('global', 'config_resource')
-                    ]), $user);
-                    $preferences = $preferencesStore->load();
-                    $preferences['icingadb']['view_modes'] = Json::encode($preferredModes);
-                    $preferencesStore->save(new Preferences($preferences));
-                } catch (Exception $e) {
-                    Logger::error('Failed to save preferred view mode for user "%s": %s', $user->getUsername(), $e);
-                }
-
-                $pageParam = $paginationControl->getPageParam();
-                $limitParam = LimitControl::DEFAULT_LIMIT_PARAM;
-                $currentPage = $paginationControl->getCurrentPageNumber();
-
-                $requestUrl->setParam($viewModeSwitcher->getViewModeParam(), $viewMode);
-                if (! $requestUrl->hasParam($limitParam)) {
-                    if ($viewMode === 'minimal' || $viewMode === 'grid') {
-                        $session->set('previous_page', $currentPage);
-                        $session->set('request_path', $requestUrl->getPath());
-
-                        $limit = $paginationControl->getLimit();
-                        if (! $verticalPagination) {
-                            // We are computing it based on the first element being rendered on this current page
-                            $currentPage = (int) (floor((($currentPage * $limit) - $limit) / ($limit * 2)) + 1);
-                        } else {
-                            $currentPage = (int) (round($currentPage * $limit / ($limit * 2)));
-                        }
-
-                        $session->set('current_page', $currentPage);
-                    } elseif (
-                        $viewModeSwitcher->getDefaultViewMode() === 'minimal'
-                        || $viewModeSwitcher->getDefaultViewMode() === 'grid'
-                    ) {
-                        $limit = $paginationControl->getLimit();
-                        if ($currentPage === $session->get('current_page')) {
-                            // No other page numbers have been selected, i.e the user only
-                            // switches back and forth without changing the page numbers
-                            $currentPage =  $session->get('previous_page');
-                        } elseif (! $verticalPagination) {
-                            $currentPage = (int) (floor((($currentPage * $limit) - $limit) / ($limit / 2)) + 1);
-                        } else {
-                            $currentPage = (int) (floor($currentPage * $limit / ($limit / 2)));
-                        }
-
-                        $session->clear();
-                    }
-
-                    if (($requestUrl->hasParam($pageParam) && $currentPage > 1) || $currentPage > 1) {
-                        $requestUrl->setParam($pageParam, $currentPage);
-                    } else {
-                        $requestUrl->remove($pageParam);
-                    }
-                }
-
-                $this->redirectNow($requestUrl);
-            }
-        )->handleRequest(ServerRequest::fromGlobals());
-
-        $viewMode = $viewModeSwitcher->getViewMode();
-        if ($viewMode === 'minimal' || $viewMode === 'grid') {
-            $hasLimitParam = Url::fromRequest()->hasParam($limitControl->getLimitParam());
-
-            if ($paginationControl->getDefaultPageSize() <= LimitControl::DEFAULT_LIMIT && ! $hasLimitParam) {
-                $paginationControl->setDefaultPageSize($paginationControl->getDefaultPageSize() * 2);
-                $limitControl->setDefaultLimit($limitControl->getDefaultLimit() * 2);
-
-                $paginationControl->apply();
-            }
-        }
-
-        $requestPath =  $session->get('request_path');
-        if ($requestPath && $requestPath !== $requestRoute) {
-            $session->clear();
-        }
-
-        return $viewModeSwitcher;
     }
 
     /**
