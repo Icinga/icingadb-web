@@ -15,10 +15,12 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
+use ipl\Web\Url;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class AlertDetail extends BaseHtmlElement
 {
@@ -30,8 +32,22 @@ class AlertDetail extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'alert-detail'];
 
-    public function __construct(protected AlertHistory $alert)
-    {
+    /**
+     * Create a new AlertDetail
+     *
+     * @param AlertHistory $alert
+     * @param ?Url $channelUrl The matching current channel or filtered channel list, omitted when unavailable
+     * @param ?Url $contactUrl The matching current contact or filtered contact list, omitted when unavailable
+     * @param ?Url $contactgroupUrl The matching current group or filtered group list, omitted when unavailable
+     * @param ?Url $scheduleUrl The matching current schedule or filtered schedule list, omitted when unavailable
+     */
+    public function __construct(
+        protected AlertHistory $alert,
+        protected readonly ?Url $channelUrl = null,
+        protected readonly ?Url $contactUrl = null,
+        protected readonly ?Url $contactgroupUrl = null,
+        protected readonly ?Url $scheduleUrl = null
+    ) {
     }
 
     protected function assemble()
@@ -52,13 +68,19 @@ class AlertDetail extends BaseHtmlElement
             ),
             new HorizontalKeyValue(
                 $this->translate('Channel'),
-                $this->alert->channel_name
-                    ?? new EmptyState($this->translate('N/A'))
+                $this->channelUrl !== null
+                    ? new Link($this->alert->channel_name, $this->channelUrl, ['data-base-target' => '_next'])
+                    : ($this->alert->channel_name ?? new EmptyState($this->translate('N/A')))
             ),
             new HorizontalKeyValue(
                 $this->translate('Recipient'),
                 isset($this->alert->contact_name)
-                    ? [new Icon(Icons::USER), $this->alert->contact_name]
+                    ? [
+                        new Icon(Icons::USER),
+                        $this->contactUrl !== null
+                            ? new Link($this->alert->contact_name, $this->contactUrl, ['data-base-target' => '_next'])
+                            : $this->alert->contact_name,
+                    ]
                     : new EmptyState($this->translate('N/A'))
             )
         ];
@@ -66,12 +88,26 @@ class AlertDetail extends BaseHtmlElement
         if (isset($this->alert->contactgroup_name)) {
             $eventInfo[] = new HorizontalKeyValue(
                 $this->translate('Contact Group'),
-                [new Icon(Icons::USERGROUP), $this->alert->contactgroup_name]
+                [
+                    new Icon(Icons::USERGROUP),
+                    $this->contactgroupUrl !== null
+                        ? new Link(
+                            $this->alert->contactgroup_name,
+                            $this->contactgroupUrl,
+                            ['data-base-target' => '_next']
+                        )
+                        : $this->alert->contactgroup_name,
+                ]
             );
         } elseif (isset($this->alert->schedule_name)) {
             $eventInfo[] = new HorizontalKeyValue(
                 $this->translate('Schedule'),
-                [new Icon(Icons::SCHEDULE), $this->alert->schedule_name]
+                [
+                    new Icon(Icons::SCHEDULE),
+                    $this->scheduleUrl !== null
+                        ? new Link($this->alert->schedule_name, $this->scheduleUrl, ['data-base-target' => '_next'])
+                        : $this->alert->schedule_name,
+                ]
             );
         }
 
