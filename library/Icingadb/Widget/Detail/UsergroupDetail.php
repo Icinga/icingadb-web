@@ -71,16 +71,6 @@ class UsergroupDetail extends BaseHtmlElement
         return $content;
     }
 
-    /**
-     * Create the contacts section
-     *
-     * @return ValidHtml[]
-     */
-    protected function createUserList(): array
-    {
-        return [$this->users];
-    }
-
     protected function createExtensions(): array
     {
         return ObjectDetailExtensionHook::loadExtensions($this->usergroup);
@@ -94,7 +84,7 @@ class UsergroupDetail extends BaseHtmlElement
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             400 => $this->createCustomVars(),
-            500 => $this->createUserList(),
+            500 => $this->users,
         ], $this->createExtensions()));
     }
 }

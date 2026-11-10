@@ -21,6 +21,7 @@ trait EmbeddedList
      * The query must already contain the parent scope and access restrictions.
      * User filters are added to this scope. Callers must send a multipart update
      * and skip assembling the detail view when this method returns null.
+     * A supplied list must wrap the same query instance.
      *
      * @template TRow of (
      *   \Icinga\Module\Icingadb\Model\DependencyNode
@@ -38,6 +39,8 @@ trait EmbeddedList
      * @param array<string, string> $sortColumns Sort specifications and labels
      * @param string[] $preserveParams Parent parameters to preserve in search URLs
      * @param ?string $searchEditorPath Override the filter editor route
+     * @param ?ObjectList<TRow, *> $list A preconfigured list for the scoped query
+     * @param ?string $defaultSort Override the model's default sort specification
      *
      * @return ?HtmlElement The complete list HTML, including its empty state,
      *   or null when a multipart update is prepared
@@ -47,11 +50,13 @@ trait EmbeddedList
         string $title,
         array $sortColumns,
         array $preserveParams,
-        ?string $searchEditorPath = null
+        ?string $searchEditorPath = null,
+        ?ObjectList $list = null,
+        ?string $defaultSort = null,
     ): ?HtmlElement {
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($query);
-        $sortControl = $this->createSortControl($query, $sortColumns);
+        $sortControl = $this->createSortControl($query, $sortColumns, $defaultSort);
         $searchBar = $this->createSearchBar($query, array_merge($preserveParams, [
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
@@ -74,8 +79,8 @@ trait EmbeddedList
 
         $query->filter($filter);
 
-        $list = (new ObjectList($query))
-            ->setEmptyStateMessage($paginationControl->getEmptyStateMessage());
+        $list ??= new ObjectList($query);
+        $list->setEmptyStateMessage($paginationControl->getEmptyStateMessage() ?? $list->getEmptyStateMessage());
         $results = HtmlElement::create('div', [
             'id' => $this->getRequest()->protectId('detail-list'),
         ], $list);

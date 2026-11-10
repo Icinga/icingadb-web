@@ -102,21 +102,11 @@ class RedundancyGroupDetail extends BaseHtmlElement
         ];
     }
 
-    /**
-     * Create a list of group members
-     *
-     * @return ValidHtml[]
-     */
-    protected function createGroupMembers(): array
-    {
-        return [$this->members];
-    }
-
     protected function assemble(): void
     {
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             0 => $this->createRootProblems(),
-            510 => $this->createGroupMembers(),
+            510 => $this->members,
         ], $this->createExtensions()));
     }
 }

@@ -93,7 +93,7 @@ class RedundancygroupController extends Controller
                 'last_state_change desc'                => $this->translate('Last State Change'),
             ],
             ['id'],
-            'icingadb/redundancygroup/detail-search-editor'
+            'icingadb/redundancygroup/detail-search-editor',
         );
         if ($list === null) {
             $this->sendMultipartUpdate();
@@ -301,7 +301,7 @@ class RedundancygroupController extends Controller
                 LimitControl::DEFAULT_LIMIT_PARAM,
                 SortControl::DEFAULT_SORT_PARAM,
                 'id',
-            ]
+            ],
         );
 
         $this->getDocument()->add($editor);

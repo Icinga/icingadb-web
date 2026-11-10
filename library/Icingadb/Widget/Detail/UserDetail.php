@@ -97,22 +97,12 @@ class UserDetail extends BaseHtmlElement
                     $this->translate('Show notifications'),
                     Url::fromPath('icingadb/notifications')
                         ->setFilter(Filter::equal('user.name', $this->user->name)),
-                    'share'
-                ))->setBaseTarget('_next')
+                    'share',
+                ))->setBaseTarget('_next'),
             );
         }
 
         return $details;
-    }
-
-    /**
-     * Create the groups section
-     *
-     * @return ValidHtml[]
-     */
-    protected function createUsergroupList(): array
-    {
-        return [$this->groups];
     }
 
     protected function createExtensions(): array
@@ -125,7 +115,7 @@ class UserDetail extends BaseHtmlElement
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $this->createUserDetail(),
             400 => $this->createCustomVars(),
-            500 => $this->createUsergroupList(),
+            500 => $this->groups,
         ], $this->createExtensions()));
     }
 
