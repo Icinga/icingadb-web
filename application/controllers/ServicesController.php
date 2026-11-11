@@ -84,7 +84,8 @@ class ServicesController extends Controller
             $services,
             Url::fromPath('icingadb/services/suggestColumns'),
             ['service.name', 'service.state.output'],
-            Url::fromPath('icingadb/services')
+            Url::fromPath('icingadb/services'),
+            $viewModeSwitcher->getViewMode() === 'tabular'
         )
             ->getColumns();
 

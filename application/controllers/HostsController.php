@@ -73,7 +73,8 @@ class HostsController extends Controller
             $hosts,
             Url::fromPath('icingadb/hosts/suggestColumns'),
             ['host.name', 'host.state.output'],
-            Url::fromPath('icingadb/hosts')
+            Url::fromPath('icingadb/hosts'),
+            $viewModeSwitcher->getViewMode() === 'tabular'
         )
             ->getColumns();
 
