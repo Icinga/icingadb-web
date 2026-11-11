@@ -81,6 +81,7 @@ class Controller extends CompatController
      * @param Url $suggestionUrl
      * @param array $defaultColumns
      * @param Url $redirectUrl
+     * @param bool $isTabular
      *
      * @return ColumnChooser
      */
@@ -88,10 +89,11 @@ class Controller extends CompatController
         Query $query,
         Url $suggestionUrl,
         array $defaultColumns,
-        Url $redirectUrl
+        Url $redirectUrl,
+        bool $isTabular = false
     ): ColumnChooser {
-        $columnsDef = $this->params->shift('columns') ?? $defaultColumns;
-        $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columnsDef))
+        $columns = $this->params->shift('columns');
+        $chooser = (new ColumnChooser($suggestionUrl, $query->getResolver(), $columns ?? $defaultColumns))
             ->setAction((string) Url::fromRequest())
             ->on(ColumnChooser::ON_SENT, function (ColumnChooser $form) use ($redirectUrl) {
                 if ($form->hasBeenSubmitted()) {
@@ -107,9 +109,11 @@ class Controller extends CompatController
                 }
             });
 
-        // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
         if ($this->format === 'csv' || $this->format === 'json') {
-            $query->columns($chooser->getColumns());
+            // Restrict the export to the shown columns: the chosen ones, or the default ones in tabular view mode
+            if ($columns !== null || $isTabular) {
+                $query->columns($chooser->getColumns());
+            }
         } else {
             $query->withColumns($chooser->getColumns());
         }
