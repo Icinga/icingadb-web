@@ -99,7 +99,9 @@ class Controller extends CompatController
         $controllerName = $this->getRequest()->getControllerName();
 
         $preservedParams = $requestUrl->onlyWith($preserveParams)->getParams();
-        $filter = QueryString::parse((string) $this->params->without($preserveParams));
+        $filter = QueryString::parse(
+            (string) $this->getRequest()->getUrl()->getParams()->without([...$preserveParams, 'columns'])
+        );
 
         $redirectUrl = Url::fromPath("$moduleName/$controllerName")
             ->setParams($preservedParams)
