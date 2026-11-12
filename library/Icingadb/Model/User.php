@@ -8,6 +8,7 @@ namespace Icinga\Module\Icingadb\Model;
 use Icinga\Module\Icingadb\Model\Behavior\Bitmask;
 use Icinga\Module\Icingadb\Model\Behavior\ReRoute;
 use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behavior\BoolCast;
 use ipl\Orm\Behaviors;
 use Icinga\Module\Icingadb\Common\Model;
 use ipl\Orm\Relations;
@@ -22,7 +23,7 @@ use ipl\Orm\Relations;
  * @property string $display_name
  * @property string $email
  * @property string $pager
- * @property string $notifications_enabled
+ * @property bool $notifications_enabled
  * @property ?string $timeperiod_id
  * @property string[] $states
  * @property string[] $types
@@ -90,6 +91,8 @@ class User extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
+        $behaviors->add(new BoolCast(['notifications_enabled']));
+
         $behaviors->add(new ReRoute([
             'host'          => 'notification.host',
             'service'       => 'notification.service',

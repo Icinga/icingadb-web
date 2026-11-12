@@ -114,6 +114,103 @@ div.show-more {
   }
 }
 
+.embedded-list {
+  // Keep the main header above the list's sticky controls.
+  isolation: isolate;
+}
+
+.embedded-list-controls {
+  .clearfix();
+  position: sticky;
+  // Compensate for content padding to stick directly below the main controls.
+  top: -1em;
+  z-index: 1;
+  background-color: @body-bg-color;
+  margin: 0 -1em;
+  padding: 0 1em;
+
+  > h2 {
+    clear: both;
+    float: none;
+    margin: 0;
+    padding-top: .5em;
+  }
+
+  > .pagination-control {
+    float: left;
+  }
+
+  > .sort-control,
+  > .limit-control {
+    float: right;
+    margin-left: .5em;
+  }
+
+  > .limit-control {
+    margin-right: .5em;
+  }
+
+  > .search-controls {
+    clear: both;
+  }
+
+  > :not(:only-child) {
+    margin-bottom: .5em;
+  }
+
+  > .sort-control,
+  > .search-controls > .control-button:last-child {
+    margin-right: -.5em;
+  }
+
+  > .search-controls > .search-bar {
+    .search-suggestions {
+      margin-bottom: 2.5em;
+    }
+
+    .filter-input-area {
+      --term-padding-v: 0px;
+    }
+  }
+
+  .icinga-controls {
+    .control-label-group {
+      margin-top: 0;
+      margin-bottom: 0;
+      line-height: 1.5em;
+      padding-top: .25em;
+      padding-bottom: .25em;
+    }
+
+    input,
+    select {
+      max-width: 16em;
+    }
+
+    select {
+      padding-right: 1.526em;
+      margin-top: 0;
+      margin-bottom: 0;
+      line-height: 1;
+      max-height: 2em;
+    }
+  }
+
+  .autosubmit-info {
+    display: none;
+  }
+}
+
+@media print {
+  .embedded-list-controls {
+    position: static;
+
+    > :not(h2) {
+      display: none;
+    }
+  }
+}
+
 .content > h2:first-child,
 .object-detail > h2:first-child {
   margin-top: 0;

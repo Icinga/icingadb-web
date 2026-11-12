@@ -7,23 +7,28 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\User;
-use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
-use ipl\Web\Url;
-use ipl\Web\Widget\EmptyState;
-use ipl\Web\Widget\HorizontalKeyValue;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Html\ValidHtml;
+use ipl\I18n\Translation;
+use ipl\Stdlib\Filter;
+use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\HorizontalKeyValue;
 
+/**
+ * Contact details with a list of group memberships
+ */
 class UserDetail extends BaseHtmlElement
 {
     use Auth;
     use Database;
+    use Translation;
 
     /** @var User The given user */
     protected $user;
@@ -32,7 +37,13 @@ class UserDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct(User $user)
+    /**
+     * Create a new UserDetail
+     *
+     * @param User $user
+     * @param ValidHtml $groups The scoped membership list and its controls
+     */
+    public function __construct(User $user, protected readonly ValidHtml $groups)
     {
         $this->user = $user;
     }
@@ -64,7 +75,7 @@ class UserDetail extends BaseHtmlElement
         $serviceStates = implode(', ', $this->localizeStates($serviceStates));
         $types = implode(', ', $this->localizeTypes($this->user->types));
 
-        return [
+        $details = [
             new HtmlElement('h2', null, Text::create(t('Details'))),
             new HorizontalKeyValue(t('Name'), $this->user->name),
             new HorizontalKeyValue(
@@ -78,22 +89,20 @@ class UserDetail extends BaseHtmlElement
             new HorizontalKeyValue(t('Service States'), $serviceStates ?: t('All')),
             new HorizontalKeyValue(t('Types'), $types ?: t('All'))
         ];
-    }
 
-    protected function createUsergroupList(): array
-    {
-        $userGroups = $this->user->usergroup->limit(6)->peekAhead()->execute();
+        if ($this->isPermittedRoute('notifications')) {
+            $details[] = new HorizontalKeyValue(
+                $this->translate('Notifications'),
+                (new ActionLink(
+                    $this->translate('Show notifications'),
+                    Url::fromPath('icingadb/notifications')
+                        ->setFilter(Filter::equal('user.name', $this->user->name)),
+                    'share',
+                ))->setBaseTarget('_next'),
+            );
+        }
 
-        $showMoreLink = (new ShowMore(
-            $userGroups,
-            Links::usergroups()->addParams(['user.name' => $this->user->name])
-        ))->setBaseTarget('_next');
-
-        return [
-            new HtmlElement('h2', null, Text::create(t('Groups'))),
-            new ObjectList($userGroups),
-            $showMoreLink
-        ];
+        return $details;
     }
 
     protected function createExtensions(): array
@@ -105,8 +114,8 @@ class UserDetail extends BaseHtmlElement
     {
         $this->add(ObjectDetailExtensionHook::injectExtensions([
             200 => $this->createUserDetail(),
-            500 => $this->createUsergroupList(),
-            700 => $this->createCustomVars()
+            400 => $this->createCustomVars(),
+            500 => $this->groups,
         ], $this->createExtensions()));
     }
 
