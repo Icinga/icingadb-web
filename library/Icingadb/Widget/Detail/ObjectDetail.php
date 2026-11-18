@@ -858,13 +858,14 @@ class ObjectDetail extends BaseHtmlElement
 
         if ($this->object instanceof Host) {
             $failedEdges
-                ->filter(Filter::equal('parent.host.id', $this->object->id))
-                ->filter(Filter::unlike('parent.service.id', '*'));
+                ->filter(Filter::equal('parent.host_id', $this->object->id))
+                ->filter(Filter::unlike('parent.service_id', '*'));
         } else {
-            $failedEdges->filter(Filter::equal('parent.service.id', $this->object->id));
+            $failedEdges
+                ->filter(Filter::equal('parent.service_id', $this->object->id))
+                ->filter(Filter::equal('parent.host_id', $this->object->host_id));
         }
 
-        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
         $edgeResolver = $failedEdges->getResolver();
 
         $childAlias = $edgeResolver->getAlias(
