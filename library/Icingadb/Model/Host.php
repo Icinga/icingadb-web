@@ -299,20 +299,20 @@ class Host extends Model
             ->through(HostgroupMember::class);
 
         $relations->hasMany('comment', Comment::class)
-            ->setFilter(Filter::equal('object_type', 'host'))
+            ->setFilter(Filter::unlike('service_id', '*'))
             ->setJoinType('LEFT');
         $relations->hasMany('downtime', Downtime::class)
-            ->setFilter(Filter::equal('object_type', 'host'))
+            ->setFilter(Filter::unlike('service_id', '*'))
             ->setJoinType('LEFT');
         $relations->hasMany('sla_history_downtime', SlaHistoryDowntime::class)->setJoinType('LEFT');
         $relations->hasMany('history', History::class)
-            ->setFilter(Filter::equal('object_type', 'host'));
+            ->setFilter(Filter::unlike('service_id', '*'));
         $relations->hasMany('sla_history_state', SlaHistoryState::class);
         $relations->hasMany('notification', Notification::class)
             ->setFilter(Filter::unlike('service_id', '*'))
             ->setJoinType('LEFT');
         $relations->hasMany('notification_history', NotificationHistory::class)
-            ->setFilter(Filter::equal('object_type', 'host'));
+            ->setFilter(Filter::unlike('service_id', '*'));
         $relations->hasMany('service', Service::class)->setJoinType('LEFT');
     }
 }

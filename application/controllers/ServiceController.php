@@ -283,7 +283,9 @@ class ServiceController extends Controller
             'notification',
             'acknowledgement',
             'state'
-        ]);
+        ])
+            // Ensure a proper index is used
+            ->filter(Filter::equal('host_id', $this->service->host_id));
 
         $before = $this->params->shift('before', time());
         $previousTimestamp = $this->params->shift('last-entry');
@@ -413,7 +415,10 @@ class ServiceController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(History::class)
-            ->setBaseFilter(Filter::equal('service.id', $this->service->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('service_id', $this->service->id),
+                Filter::equal('host_id', $this->service->host_id)
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);
