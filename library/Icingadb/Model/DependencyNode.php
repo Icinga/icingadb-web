@@ -146,14 +146,18 @@ class DependencyNode extends Model
      *
      * @return Query
      *
-     * @deprecated Use {@see static::on()} instead and filter for `child|parent.host.id`.
+     * @deprecated Use {@see static::on()} instead and filter for e.g. `child.host_id=$id&child.service_id!~*`.
      */
     public static function forHost(string $hostId, Connection $db, bool $fetchParents = false): Query
     {
+        $positiveUnlike = Filter::unlike(sprintf('%s.service_id', $fetchParents ? 'child' : 'parent'), '*');
+        $positiveUnlike->metaData()->set('treat-positively', true);
+
         return static::on($db)
             ->filter(Filter::equal(
-                sprintf('%s.host.id', $fetchParents ? 'child' : 'parent'),
+                sprintf('%s.host_id', $fetchParents ? 'child' : 'parent'),
                 $hostId
-            ));
+            ))
+            ->filter($positiveUnlike);
     }
 }

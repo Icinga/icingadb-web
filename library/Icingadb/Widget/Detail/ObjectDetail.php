@@ -699,9 +699,12 @@ class ObjectDetail extends BaseHtmlElement
         $groupBy = false;
 
         if ($this->objectType === 'host') {
+            $positiveUnlike = Filter::unlike('notification.service_id', '*');
+            $positiveUnlike->metaData()->set('treat-positively', true);
+
             $objectFilter = Filter::all(
                 Filter::equal('notification.host_id', $this->object->id),
-                Filter::unlike('notification.service_id', '*')
+                $positiveUnlike
             );
             $objectFilter->metaData()->set('forceOptimization', false);
             $groupBy = true;
@@ -857,14 +860,18 @@ class ObjectDetail extends BaseHtmlElement
             ->filter(Filter::equal('state.failed', 'y'));
 
         if ($this->object instanceof Host) {
+            $positiveUnlike = Filter::unlike('parent.service_id', '*');
+            $positiveUnlike->metaData()->set('treat-positively', true);
+
             $failedEdges
-                ->filter(Filter::equal('parent.host.id', $this->object->id))
-                ->filter(Filter::unlike('parent.service.id', '*'));
+                ->filter(Filter::equal('parent.host_id', $this->object->id))
+                ->filter($positiveUnlike);
         } else {
-            $failedEdges->filter(Filter::equal('parent.service.id', $this->object->id));
+            $failedEdges
+                ->filter(Filter::equal('parent.service_id', $this->object->id))
+                ->filter(Filter::equal('parent.host_id', $this->object->host_id));
         }
 
-        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
         $edgeResolver = $failedEdges->getResolver();
 
         $childAlias = $edgeResolver->getAlias(

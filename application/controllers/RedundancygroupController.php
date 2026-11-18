@@ -43,7 +43,7 @@ class RedundancygroupController extends Controller
     public function init(): void
     {
         // in case of quick actions, param id is not given
-        $groupId = $this->params->shift('child.redundancy_group.id');
+        $groupId = $this->params->shift('child.redundancy_group_id');
         if ($groupId === null) {
             $groupId = $this->params->shiftRequired('id');
         }
@@ -83,7 +83,7 @@ class RedundancygroupController extends Controller
         // The base filter is required to fetch the correct objects for MultiselectQuickActions::isGrantedOnType() check
         $this->addControl(
             (new MultiselectQuickActions('dependency_node', $this->groupSummary))
-                ->setBaseFilter(Filter::equal('child.redundancy_group.id', $this->groupId))
+                ->setBaseFilter(Filter::equal('child.redundancy_group_id', $this->groupId))
                 ->setAllowToProcessCheckResults(false)
                 ->setColumnPrefix('nodes')
                 ->setUrlPath('icingadb/redundancygroup')
@@ -230,7 +230,7 @@ class RedundancygroupController extends Controller
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("child.redundancy_group.id", $this->groupId))
+            ->setBaseFilter(Filter::equal('child.redundancy_group_id', $this->groupId))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -241,7 +241,7 @@ class RedundancygroupController extends Controller
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("parent.redundancy_group.id", $this->groupId))
+            ->setBaseFilter(Filter::equal('parent.redundancy_group_id', $this->groupId))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -326,7 +326,7 @@ class RedundancygroupController extends Controller
     private function fetchDependencyNodes(bool $parents = false): Query
     {
         $filterColumn = sprintf(
-            '%s.redundancy_group.id',
+            '%s.redundancy_group_id',
             $parents ? 'child' : 'parent'
         );
 
@@ -350,13 +350,16 @@ class RedundancygroupController extends Controller
 
     protected function fetchCommandTargets()
     {
-        $filter = Filter::all(Filter::equal('child.redundancy_group.id', $this->groupId));
+        $filter = Filter::all(Filter::equal('child.redundancy_group_id', $this->groupId));
 
         if ($this->getRequest()->getActionName() === 'acknowledge') {
+            $positiveUnlike = Filter::unlike('child.service_id', '*');
+            $positiveUnlike->metaData()->set('treat-positively', true);
+
             $filter->add(
                 Filter::any(
                     Filter::all(
-                        Filter::unlike('child.service.id', '*'),
+                        $positiveUnlike,
                         Filter::equal('host.state.is_problem', 'y'),
                         Filter::equal('host.state.is_acknowledged', 'n')
                     ),

@@ -459,10 +459,16 @@ class HostController extends Controller
 
     public function completeAction(): void
     {
+        $positiveUnlike = Filter::unlike('child.service_id', '*');
+        $positiveUnlike->metaData()->set('treat-positively', true);
+
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("child.host.id", $this->host->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('child.host_id', $this->host->id),
+                $positiveUnlike
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -470,10 +476,16 @@ class HostController extends Controller
 
     public function childrenCompleteAction(): void
     {
+        $positiveUnlike = Filter::unlike('parent.service_id', '*');
+        $positiveUnlike->metaData()->set('treat-positively', true);
+
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('parent.host_id', $this->host->id),
+                $positiveUnlike
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -594,6 +606,9 @@ class HostController extends Controller
      */
     protected function fetchDependencyNodes(bool $parents = false): Query
     {
+        $positiveUnlike = Filter::unlike(sprintf('%s.service_id', $parents ? 'child' : 'parent'), '*');
+        $positiveUnlike->metaData()->set('treat-positively', true);
+
         $query = DependencyNode::on($this->getDb())
             ->with([
                 'host',
@@ -608,9 +623,10 @@ class HostController extends Controller
                 'redundancy_group.state'
             ])
             ->filter(Filter::equal(
-                sprintf('%s.host.id', $parents ? 'child' : 'parent'),
+                sprintf('%s.host_id', $parents ? 'child' : 'parent'),
                 $this->host->id
             ))
+            ->filter($positiveUnlike)
             ->setResultSetClass(VolatileStateResults::class);
 
         $this->applyRestrictions($query);

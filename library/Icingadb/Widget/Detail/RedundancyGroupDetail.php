@@ -118,7 +118,7 @@ class RedundancyGroupDetail extends BaseHtmlElement
                 'service.host',
                 'service.host.state'
             ])
-            ->filter(Filter::equal('child.redundancy_group.id', $this->group->id))
+            ->filter(Filter::equal('child.redundancy_group_id', $this->group->id))
             ->limit(5)
             ->peekAhead();
 
