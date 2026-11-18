@@ -462,7 +462,10 @@ class HostController extends Controller
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("child.host.id", $this->host->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('child.host_id', $this->host->id),
+                Filter::unlike('child.service_id', "*")
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -473,7 +476,10 @@ class HostController extends Controller
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("parent.host.id", $this->host->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('parent.host_id', $this->host->id),
+                Filter::unlike('parent.service_id', "*")
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->add($suggestions);
@@ -608,8 +614,12 @@ class HostController extends Controller
                 'redundancy_group.state'
             ])
             ->filter(Filter::equal(
-                sprintf('%s.host.id', $parents ? 'child' : 'parent'),
+                sprintf('%s.host_id', $parents ? 'child' : 'parent'),
                 $this->host->id
+            ))
+            ->filter(Filter::unlike(
+                sprintf('%s.service_id', $parents ? 'child' : 'parent'),
+                '*'
             ))
             ->setResultSetClass(VolatileStateResults::class);
 
