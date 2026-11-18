@@ -52,7 +52,9 @@ class ReRoute implements RewriteFilterBehavior, RewritePathBehavior
                 && substr($remainingPath, 0, 13) === 'servicegroup.'
             ) {
                 $applyAll = Filter::all();
-                $applyAll->add(Filter::equal($relation . 'object_type', 'host'));
+                $positiveUnlike = Filter::unlike($relation . 'service_id', '*');
+                $positiveUnlike->metaData()->set('treat-positively', true);
+                $applyAll->add($positiveUnlike);
 
                 $orgFilter = clone $filter;
                 $orgFilter->setColumn($relation . 'host.' . $path);
