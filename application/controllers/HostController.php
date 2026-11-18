@@ -245,7 +245,7 @@ class HostController extends Controller
         ]);
         $services
             ->setResultSetClass(VolatileStateResults::class)
-            ->filter(Filter::equal('host.id', $this->host->id));
+            ->filter(Filter::equal('host_id', $this->host->id));
 
         $this->applyRestrictions($services);
 
@@ -483,7 +483,10 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(History::class)
-            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
+            ->setBaseFilter(Filter::all(
+                Filter::equal('host.id', $this->host->id),
+                Filter::unlike('service_id', '*')
+            ))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);
@@ -493,7 +496,7 @@ class HostController extends Controller
     {
         $suggestions = (new ObjectSuggestions())
             ->setModel(Service::class)
-            ->setBaseFilter(Filter::equal('host.id', $this->host->id))
+            ->setBaseFilter(Filter::equal('host_id', $this->host->id))
             ->forRequest($this->getServerRequest());
 
         $this->getDocument()->addHtml($suggestions);
