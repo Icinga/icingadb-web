@@ -14,6 +14,7 @@ use ipl\Orm\Relation\HasOne;
 use ipl\Orm\Relations;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
+use ipl\Sql\Filter\Exists;
 use ipl\Stdlib\Filter;
 
 /**
@@ -37,6 +38,47 @@ use ipl\Stdlib\Filter;
  */
 class DependencyNode extends Model
 {
+    /**
+     * Create a query for children affected by failed dependencies of the given object
+     *
+     * The caller must apply authorization restrictions to the returned query.
+     *
+     * @param Host|Service $object The parent whose failed dependencies affect the children
+     * @param Connection $db The database connection
+     *
+     * @return Query<static>
+     */
+    public static function affectedBy(Host|Service $object, Connection $db): Query
+    {
+        $query = static::on($db);
+        $failedEdges = DependencyEdge::on($db)
+            ->utilize('child')
+            ->columns([new Expression('1')])
+            ->filter(Filter::equal('state.failed', 'y'));
+
+        if ($object instanceof Host) {
+            $failedEdges
+                ->filter(Filter::equal('parent.host.id', $object->id))
+                ->filter(Filter::unlike('parent.service.id', '*'));
+        } else {
+            $failedEdges->filter(Filter::equal('parent.service.id', $object->id));
+        }
+
+        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
+        $edgeResolver = $failedEdges->getResolver();
+        $childAlias = $edgeResolver->getAlias(
+            $edgeResolver->resolveRelation($failedEdges->getModel()->getTableName() . '.child')->getTarget()
+        );
+
+        $query->filter(new Exists(
+            $failedEdges->assembleSelect()->where(
+                "$childAlias.id = " . $query->getResolver()->qualifyColumn('id', $query->getModel()->getTableName())
+            )
+        ));
+
+        return $query;
+    }
+
     public function getTableName(): string
     {
         return 'dependency_node';

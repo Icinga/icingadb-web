@@ -14,6 +14,7 @@ use ipl\Html\HtmlElement;
 use ipl\Orm\Model;
 use ipl\Stdlib\BaseFilter;
 use ipl\Stdlib\Filter;
+use ipl\Stdlib\Filter\Rule;
 use ipl\Web\Control\SearchBar\Suggestions;
 
 class ObjectSuggestions extends Suggestions
@@ -30,6 +31,8 @@ class ObjectSuggestions extends Suggestions
 
     /** @var ?array<string, string> */
     protected ?array $fixedColumns = null;
+
+    protected ?Rule $valueFilter = null;
 
     public function __construct()
     {
@@ -62,6 +65,23 @@ class ObjectSuggestions extends Suggestions
         }
 
         $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * Set an additional filter for value suggestions
+     *
+     * This filter applies to the suggestion model and is not passed to queries
+     * for custom variable names, which may use different models and aliases.
+     *
+     * @param ?Rule $filter The additional scope for suggested values
+     *
+     * @return $this
+     */
+    public function setValueFilter(?Rule $filter): static
+    {
+        $this->valueFilter = $filter;
 
         return $this;
     }
@@ -117,7 +137,11 @@ class ObjectSuggestions extends Suggestions
 
         $provider = new QueryValuesProvider($query, $column, $searchTerm, $searchFilter);
 
-        if ($this->hasBaseFilter()) {
+        if ($this->valueFilter !== null) {
+            $provider->setBaseFilter($this->hasBaseFilter()
+                ? Filter::all($this->getBaseFilter(), $this->valueFilter)
+                : $this->valueFilter);
+        } elseif ($this->hasBaseFilter()) {
             $provider->setBaseFilter($this->getBaseFilter());
         }
 

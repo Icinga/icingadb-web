@@ -23,7 +23,6 @@ use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Common\Macros;
 use Icinga\Module\Icingadb\Compat\CompatHost;
 use Icinga\Module\Icingadb\Model\CustomvarFlat;
-use Icinga\Module\Icingadb\Model\DependencyEdge;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Module\Icingadb\Model\UnreachableParent;
@@ -44,8 +43,6 @@ use Icinga\Module\Icingadb\Util\PluginOutput;
 use Icinga\Module\Icingadb\Widget\ItemList\DowntimeList;
 use Icinga\Module\Icingadb\Widget\ShowMore;
 use Icinga\Module\Notifications\Integrations\Exception\IncidentNotFoundException;
-use ipl\Sql\Expression;
-use ipl\Sql\Filter\Exists;
 use ipl\Web\Widget\CopyToClipboard;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\EmptyStateBar;
@@ -62,6 +59,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Orm\ResultSet;
 use ipl\Stdlib\Filter;
+use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBall;
 use Throwable;
@@ -825,7 +823,7 @@ class ObjectDetail extends BaseHtmlElement
             return null;
         }
 
-        $affectedObjects = DependencyNode::on($this->getDb())
+        $affectedObjects = DependencyNode::affectedBy($this->object, $this->getDb())
             ->with([
                 'redundancy_group',
                 'redundancy_group.state',
@@ -851,42 +849,23 @@ class ObjectDetail extends BaseHtmlElement
                 'redundancy_group.state.last_state_change'
             ], SORT_DESC);
 
-        $failedEdges = DependencyEdge::on($this->getDb())
-            ->utilize('child')
-            ->columns([new Expression('1')])
-            ->filter(Filter::equal('state.failed', 'y'));
-
-        if ($this->object instanceof Host) {
-            $failedEdges
-                ->filter(Filter::equal('parent.host.id', $this->object->id))
-                ->filter(Filter::unlike('parent.service.id', '*'));
-        } else {
-            $failedEdges->filter(Filter::equal('parent.service.id', $this->object->id));
-        }
-
-        $failedEdges->getFilter()->metaData()->set('forceOptimization', false);
-        $edgeResolver = $failedEdges->getResolver();
-
-        $childAlias = $edgeResolver->getAlias(
-            $edgeResolver->resolveRelation($failedEdges->getModel()->getTableName() . '.child')->getTarget()
-        );
-
-        $affectedObjects->filter(new Exists(
-            $failedEdges->assembleSelect()
-                ->where(
-                    "$childAlias.id = "
-                    . $affectedObjects->getResolver()
-                        ->qualifyColumn('id', $affectedObjects->getModel()->getTableName())
-                )
-        ));
-
         $this->applyRestrictions($affectedObjects);
+        $results = $affectedObjects->peekAhead()->execute();
+
+        $url = $this->object instanceof Host
+            ? Url::fromPath('icingadb/host/children', ['name' => $this->object->name, 'affected' => 1])
+            : Url::fromPath('icingadb/service/children', [
+                'name'      => $this->object->name,
+                'host.name' => $this->object->host->name,
+                'affected'  => 1,
+            ]);
 
         return [
             HtmlElement::create('h2', null, Text::create(t('Affected Objects'))),
-            (new ObjectList($affectedObjects))->setEmptyStateMessage(
+            (new ObjectList($results))->setEmptyStateMessage(
                 t('You are not authorized to view these objects.')
-            )
+            ),
+            (new ShowMore($results, $url, t('Show all affected objects')))->setBaseTarget('_self'),
         ];
     }
 }

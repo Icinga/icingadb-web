@@ -32,6 +32,7 @@ use Icinga\Module\Icingadb\Widget\Detail\ServiceInspectionDetail;
 use Icinga\Module\Icingadb\Widget\Detail\ServiceMetaInfo;
 use Icinga\Module\Icingadb\Widget\ItemList\HistoryObjectList;
 use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
+use ipl\Html\Html;
 use ipl\Orm\Query;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
@@ -175,7 +176,8 @@ class ServiceController extends Controller
 
     public function childrenAction(): Generator
     {
-        $nodesQuery = $this->fetchDependencyNodes();
+        $affected = (bool) $this->params->shift('affected', '0');
+        $nodesQuery = $this->fetchDependencyNodes(affected: $affected);
 
         $limitControl = $this->createLimitControl();
         $paginationControl = $this->createPaginationControl($nodesQuery);
@@ -195,6 +197,7 @@ class ServiceController extends Controller
             $limitControl->getLimitParam(),
             $sortControl->getSortParam(),
             $viewModeSwitcher->getViewModeParam(),
+            'affected',
             'name',
             'host.name'
         ];
@@ -231,6 +234,10 @@ class ServiceController extends Controller
         $this->addControl($limitControl);
         $this->addControl($viewModeSwitcher);
         $this->addControl($searchBar);
+
+        if ($affected) {
+            $this->addContent(Html::tag('h2', $this->translate('Affected Objects')));
+        }
 
         $this->addContent(
             (new ObjectList($nodesQuery))
@@ -394,12 +401,17 @@ class ServiceController extends Controller
 
     public function childrenCompleteAction(): void
     {
+        $affected = (bool) $this->params->shift('affected', '0');
         $suggestions = (new ObjectSuggestions())
             ->setModel(DependencyNode::class)
             ->onlyWithCustomVarSources(['host', 'service', 'hostgroup', 'servicegroup'])
-            ->setBaseFilter(Filter::equal("parent.service.id", $this->service->id))
-            ->forRequest($this->getServerRequest());
+            ->setBaseFilter(Filter::equal('parent.service.id', $this->service->id));
 
+        if ($affected) {
+            $suggestions->setValueFilter(DependencyNode::affectedBy($this->service, $this->getDb())->getFilter());
+        }
+
+        $suggestions->forRequest($this->getServerRequest());
         $this->getDocument()->add($suggestions);
     }
 
@@ -440,6 +452,7 @@ class ServiceController extends Controller
             LimitControl::DEFAULT_LIMIT_PARAM,
             SortControl::DEFAULT_SORT_PARAM,
             ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
+            'affected',
             'name',
             'host.name'
         ];
@@ -490,12 +503,17 @@ class ServiceController extends Controller
      * Fetch the dependency nodes of the current service
      *
      * @param bool $parents Whether to fetch the parents or the children
+     * @param bool $affected Whether to restrict children to those affected by failed dependencies
      *
      * @return Query
      */
-    protected function fetchDependencyNodes(bool $parents = false): Query
+    protected function fetchDependencyNodes(bool $parents = false, bool $affected = false): Query
     {
-        $query = DependencyNode::on($this->getDb())
+        $query = $affected
+            ? DependencyNode::affectedBy($this->service, $this->getDb())
+            : DependencyNode::on($this->getDb());
+
+        $query
             ->with([
                 'host',
                 'host.state',
