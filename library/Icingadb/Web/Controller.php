@@ -133,7 +133,9 @@ class Controller extends CompatController
 
         // When exporting as CSV or JSON, and the user requested specific columns, only those should be included
         if ($this->format === 'csv' || $this->format === 'json') {
-            $query->columns($chooser->getColumns());
+            if ($chooser->getColumns() !== $defaultColumns) {
+                $query->columns($chooser->getColumns());
+            }
         } else {
             $query->withColumns($chooser->getColumns());
         }
