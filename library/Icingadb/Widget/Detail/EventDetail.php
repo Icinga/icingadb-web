@@ -463,21 +463,22 @@ class EventDetail extends BaseHtmlElement
         $removedInfo = [];
         if ($comment->has_been_removed && $comment->remove_time) {
             $removedInfo[] = new HtmlElement('h2', null, Text::create(t('This comment has been removed')));
+            $removedInfo[] = new HorizontalKeyValue(
+                t('Removed On'),
+                DateFormatter::formatDateTime($comment->remove_time->getTimestamp())
+            );
             if ($comment->removed_by) {
-                $removedInfo[] = new HorizontalKeyValue(
-                    t('Removed On'),
-                    DateFormatter::formatDateTime($comment->remove_time->getTimestamp())
-                );
                 $removedInfo[] = new HorizontalKeyValue(
                     t('Removed by'),
                     [new Icon('user'), $comment->removed_by]
                 );
-            } else {
-                $removedInfo[] = new HorizontalKeyValue(
-                    t('Expired On'),
-                    DateFormatter::formatDateTime($comment->remove_time->getTimestamp())
-                );
             }
+        } elseif (isset($comment->expire_time)) {
+            $removedInfo[] = new HtmlElement('h2', null, Text::create(t('This comment has expired')));
+            $removedInfo[] = new HorizontalKeyValue(
+                t('Expired On'),
+                DateFormatter::formatDateTime($comment->expire_time->getTimestamp())
+            );
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([

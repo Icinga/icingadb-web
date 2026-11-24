@@ -210,14 +210,18 @@ class EventRenderer implements ItemRenderer
 
                 break;
             case 'comment_remove':
-                if (! empty($item->comment->removed_by)) {
-                    if ($item->comment->removed_by !== $item->comment->author) {
-                        $subjectLabel = sprintf(
-                            $this->translate('Comment removed by %s', '..<username>'),
-                            $item->comment->removed_by
-                        );
+                if ($item->comment->has_been_removed) {
+                    if (! empty($item->comment->removed_by)) {
+                        if ($item->comment->removed_by !== $item->comment->author) {
+                            $subjectLabel = sprintf(
+                                $this->translate('Comment removed by %s', '..<username>'),
+                                $item->comment->removed_by
+                            );
+                        } else {
+                            $subjectLabel = $this->translate('Comment removed by author');
+                        }
                     } else {
-                        $subjectLabel = $this->translate('Comment removed by author');
+                        $subjectLabel = $this->translate('Comment removed');
                     }
                 } elseif (isset($item->comment->expire_time)) {
                     $subjectLabel = $this->translate('Comment expired');
