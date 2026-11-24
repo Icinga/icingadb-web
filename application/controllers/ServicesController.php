@@ -39,6 +39,14 @@ class ServicesController extends Controller
     use CommandActions;
     use SubscribeIncidents;
 
+    /** @var bool Whether a search should only match host columns */
+    protected bool $hostFilterOnly = false;
+
+    public function init(): void
+    {
+        $this->hostFilterOnly = (bool) $this->params->shift('_hostFilterOnly', false);
+    }
+
     public function indexAction()
     {
         $this->addTitleTab(t('Services'));
@@ -458,7 +466,7 @@ class ServicesController extends Controller
 
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
-        if ($this->params->shift('_hostFilterOnly', false)) {
+        if ($this->hostFilterOnly) {
             foreach (['host.name_ci', 'host.display_name', 'host.address', 'host.address6'] as $column) {
                 $filter->add(Filter::like($column, "*$search*"));
             }
