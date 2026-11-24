@@ -5,8 +5,6 @@
 
 namespace Icinga\Module\Icingadb\Widget\Detail;
 
-use DateTime;
-use DateTimeZone;
 use Icinga\Application\Config;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Icingadb\Common\Auth;
@@ -608,38 +606,28 @@ class EventDetail extends BaseHtmlElement
                     t('Cleared by'),
                     [new Icon('user'), $acknowledgement->cleared_by]
                 );
+            } elseif (
+                isset($acknowledgement->expire_time)
+                && $acknowledgement->clear_time >= $acknowledgement->expire_time
+            ) {
+                $eventInfo[] = new HorizontalKeyValue(t('Removal Reason'), sprintf(
+                    t('The acknowledgement expired on %s'),
+                    DateFormatter::formatDateTime($acknowledgement->expire_time->getTimestamp())
+                ));
+            } elseif ($acknowledgement->is_sticky) {
+                $eventInfo[] = new HorizontalKeyValue(
+                    t('Reason'),
+                    $acknowledgement->object_type === 'host'
+                        ? t('Host recovered')
+                        : t('Service recovered')
+                );
             } else {
-                $expired = false;
-                if ($acknowledgement->expire_time) {
-                    $now = (new DateTime())->setTimezone(new DateTimeZone('UTC'));
-                    $expiresOn = clone $now;
-                    $expiresOn->setTimestamp($acknowledgement->expire_time->getTimestamp());
-                    if ($now <= $expiresOn) {
-                        $expired = true;
-                        $eventInfo[] = new HorizontalKeyValue(t('Removal Reason'), t(
-                            'The acknowledgement expired on %s',
-                            DateFormatter::formatDateTime($acknowledgement->expire_time->getTimestamp())
-                        ));
-                    }
-                }
-
-                if (! $expired) {
-                    if ($acknowledgement->is_sticky) {
-                        $eventInfo[] = new HorizontalKeyValue(
-                            t('Reason'),
-                            $acknowledgement->object_type === 'host'
-                                ? t('Host recovered')
-                                : t('Service recovered')
-                        );
-                    } else {
-                        $eventInfo[] = new HorizontalKeyValue(
-                            t('Reason'),
-                            $acknowledgement->object_type === 'host'
-                                ? t('Host recovered') // Hosts have no other state between UP and DOWN
-                                : t('Service changed its state')
-                        );
-                    }
-                }
+                $eventInfo[] = new HorizontalKeyValue(
+                    t('Reason'),
+                    $acknowledgement->object_type === 'host'
+                        ? t('Host recovered') // Hosts have no other state between UP and DOWN
+                        : t('Service changed its state')
+                );
             }
         }
 
