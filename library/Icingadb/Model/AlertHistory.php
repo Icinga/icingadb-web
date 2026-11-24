@@ -73,6 +73,21 @@ class AlertHistory extends Model
         return 'alert_history.triggered_at desc';
     }
 
+    /**
+     * @return list<string>
+     */
+    public function getSearchColumns(): array
+    {
+        return [
+            'contact_name',
+            'contactgroup_name',
+            'schedule_name',
+            'channel_name',
+            'event_message',
+            'event_summary',
+        ];
+    }
+
     public function createBehaviors(Behaviors $behaviors)
     {
         $behaviors->add(new Binary(['id', 'history_id', 'environment_id']));

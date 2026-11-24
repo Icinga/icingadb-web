@@ -6,6 +6,7 @@
 namespace Icinga\Module\Icingadb\Controllers;
 
 use Icinga\Module\Icingadb\Common\CommandActions;
+use Icinga\Module\Icingadb\Common\EmbeddedList;
 use Icinga\Module\Icingadb\Data\DependencyNodes;
 use Icinga\Module\Icingadb\Model\DependencyNode;
 use Icinga\Module\Icingadb\Model\RedundancyGroup;
@@ -29,6 +30,7 @@ use ipl\Web\Widget\Tabs;
 class RedundancygroupController extends Controller
 {
     use CommandActions;
+    use EmbeddedList;
     use SubscribeIncidents;
 
     /** @var string */
@@ -79,6 +81,25 @@ class RedundancygroupController extends Controller
     public function indexAction(): void
     {
         $this->loadGroup();
+        $this->setAutorefreshInterval(10);
+
+        $list = $this->createEmbeddedList(
+            $this->fetchDependencyNodes(true),
+            $this->translate('Group Members'),
+            [
+                'name'                                  => $this->translate('Name'),
+                'severity desc, last_state_change desc' => $this->translate('Severity'),
+                'state'                                 => $this->translate('Current State'),
+                'last_state_change desc'                => $this->translate('Last State Change'),
+            ],
+            ['id'],
+            'icingadb/redundancygroup/detail-search-editor',
+        );
+        if ($list === null) {
+            $this->sendMultipartUpdate();
+
+            return;
+        }
 
         // The base filter is required to fetch the correct objects for MultiselectQuickActions::isGrantedOnType() check
         $this->addControl(
@@ -89,7 +110,7 @@ class RedundancygroupController extends Controller
                 ->setUrlPath('icingadb/redundancygroup')
         );
 
-        $this->addContent(new RedundancyGroupDetail($this->group));
+        $this->addContent(new RedundancyGroupDetail($this->group, $list));
     }
 
     public function membersAction(): Generator
@@ -258,6 +279,29 @@ class RedundancygroupController extends Controller
                 ViewModeSwitcher::DEFAULT_VIEW_MODE_PARAM,
                 'id'
             ]
+        );
+
+        $this->getDocument()->add($editor);
+        $this->setTitle($this->translate('Adjust Filter'));
+    }
+
+    /**
+     * Show the filter editor for members embedded in the detail view
+     *
+     * @return void
+     */
+    public function detailSearchEditorAction(): void
+    {
+        $this->loadGroup();
+
+        $editor = $this->createSearchEditor(
+            DependencyNode::on($this->getDb()),
+            Url::fromPath('icingadb/redundancygroup', ['id' => $this->groupId]),
+            [
+                LimitControl::DEFAULT_LIMIT_PARAM,
+                SortControl::DEFAULT_SORT_PARAM,
+                'id',
+            ],
         );
 
         $this->getDocument()->add($editor);

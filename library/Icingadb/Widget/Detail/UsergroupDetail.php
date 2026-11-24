@@ -7,19 +7,19 @@ namespace Icinga\Module\Icingadb\Widget\Detail;
 
 use Icinga\Module\Icingadb\Common\Auth;
 use Icinga\Module\Icingadb\Common\Database;
-use Icinga\Module\Icingadb\Common\Links;
 use Icinga\Module\Icingadb\Hook\ExtensionHook\ObjectDetailExtensionHook;
 use Icinga\Module\Icingadb\Model\Usergroup;
-use Icinga\Module\Icingadb\Widget\ItemList\ObjectList;
-use Icinga\Module\Icingadb\Widget\ShowMore;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Web\Url;
+use ipl\Html\ValidHtml;
 use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\HorizontalKeyValue;
 
+/**
+ * Contact group details with a list of members
+ */
 class UsergroupDetail extends BaseHtmlElement
 {
     use Auth;
@@ -32,7 +32,13 @@ class UsergroupDetail extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    public function __construct(Usergroup $usergroup)
+    /**
+     * Create a new UsergroupDetail
+     *
+     * @param Usergroup $usergroup
+     * @param ValidHtml $users The scoped member list and its controls
+     */
+    public function __construct(Usergroup $usergroup, protected readonly ValidHtml $users)
     {
         $this->usergroup = $usergroup;
     }
@@ -65,22 +71,6 @@ class UsergroupDetail extends BaseHtmlElement
         return $content;
     }
 
-    protected function createUserList(): array
-    {
-        $users = $this->usergroup->user->limit(6)->peekAhead()->execute();
-
-        $showMoreLink = (new ShowMore(
-            $users,
-            Links::users()->addParams(['usergroup.name' => $this->usergroup->name])
-        ))->setBaseTarget('_next');
-
-        return [
-            new HtmlElement('h2', null, Text::create(t('Contacts'))),
-            new ObjectList($users),
-            $showMoreLink
-        ];
-    }
-
     protected function createExtensions(): array
     {
         return ObjectDetailExtensionHook::loadExtensions($this->usergroup);
@@ -93,8 +83,8 @@ class UsergroupDetail extends BaseHtmlElement
         }
 
         $this->add(ObjectDetailExtensionHook::injectExtensions([
-            500 => $this->createUserList(),
-            700 => $this->createCustomVars()
+            400 => $this->createCustomVars(),
+            500 => $this->users,
         ], $this->createExtensions()));
     }
 }
