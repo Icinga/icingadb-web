@@ -376,7 +376,7 @@ class Controller extends CompatController
     protected function prepareSearchFilter(Query $query, string $search, Filter\Any $filter, array $additionalColumns)
     {
         $model = $query->getModel();
-        $defaultColumns = $model->getSearchColumns();
+        $defaultColumns = array_merge($model->getSearchColumns(), $additionalColumns);
         $columns = SearchColumnsProviderHook::getCustomVarColumns($model, $defaultColumns);
         foreach ($columns as $column) {
             if (strpos($column, '.') === false) {
