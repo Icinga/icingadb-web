@@ -187,7 +187,7 @@ class RedundancyGroupSummary extends DependencyNode
     public static function for(string $groupId, Connection $db): Query
     {
         return self::on($db)
-            ->filter(Filter::equal('child.redundancy_group.id', $groupId));
+            ->filter(Filter::equal('child.redundancy_group_id', $groupId));
     }
 
     public function getColumns(): array
